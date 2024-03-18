@@ -4,7 +4,11 @@ Plugin to improve viewing Markdown files in Neovim
 
 # Features
 
-TODO
+- Changes between `rendered` view in normal mode (exact modes are configurable)
+  and raw view in all other modes
+- Highlights headings with different groups depending on level
+- Highlights code blocks to better stand out
+- Replaces whichever style bullet point is being used with provided character
 
 # Dependencies
 
@@ -37,13 +41,16 @@ WIP
                     ] @heading)
 
                     (fenced_code_block) @code
+
+                    (list_item) @item
                 ]]
             ),
             render_modes = { 'n', 'c' },
-            bullets = { '◉', '○', '✸', '✿' },
+            bullet = '○',
             highlights = {
                 headings = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
                 code = 'ColorColumn',
+                bullet = 'Normal',
             },
         })
     end,

@@ -5,11 +5,12 @@ local M = {}
 ---@class UserHighlights
 ---@field public heading? string
 ---@field public code? string
+---@field public bullet? string
 
 ---@class UserConfig
 ---@field public query? Query
 ---@field public render_modes? string[]
----@field public bullets? string[]
+---@field public bullet? string
 ---@field public highlights? Highlights
 
 ---@param opts UserConfig|nil
@@ -28,11 +29,6 @@ function M.setup(opts)
     MatchParen      bg = 1f2e3f (deep blue)                         fg = 31748f (teel)
     ]]
 
-    -- Some attempts to handle nested lists
-    -- (list_item) @item1
-    -- (list_item (list_item (list_item))) @item3
-    -- (list) @item1
-
     ---@type Config
     local default_config = {
         query = vim.treesitter.query.parse(
@@ -48,13 +44,16 @@ function M.setup(opts)
                 ] @heading)
 
                 (fenced_code_block) @code
+
+                (list_item) @item
             ]]
         ),
         render_modes = { 'n', 'c' },
-        bullets = { '◉', '○', '✸', '✿' },
+        bullet = '○',
         highlights = {
             headings = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
             code = 'ColorColumn',
+            bullet = 'Normal',
         },
     }
     state.config = vim.tbl_deep_extend('force', default_config, opts or {})
@@ -98,7 +97,7 @@ M.refresh = function()
     ---@diagnostic disable-next-line: missing-parameter
     for id, node in state.config.query:iter_captures(root, 0) do
         local capture = state.config.query.captures[id]
-        local start_row, _, end_row, _ = node:range()
+        local start_row, start_col, end_row, end_col = node:range()
 
         if capture == 'heading' then
             local level = #vim.treesitter.get_node_text(node, 0)
@@ -115,9 +114,16 @@ M.refresh = function()
                 hl_group = highlights.code,
                 hl_eol = true,
             })
+        elseif capture == 'item' then
+            vim.api.nvim_buf_set_extmark(0, M.namespace, start_row, start_col, {
+                end_row = end_row,
+                end_col = end_col,
+                virt_text = { { state.config.bullet, highlights.bullet } },
+                virt_text_pos = 'overlay',
+            })
         else
-            vim.print('Unknown capture: ' .. capture)
-            vim.print(vim.treesitter.get_node_text(node, 0))
+            -- Should only get here if user provides custom capture, currently unhandled
+            vim.print('Unhandled capture: ' .. capture)
         end
     end
 end
