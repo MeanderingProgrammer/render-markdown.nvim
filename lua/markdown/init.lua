@@ -8,11 +8,31 @@ local M = {}
 
 ---@class UserConfig
 ---@field public query? Query
+---@field public render_modes? string[]
 ---@field public bullets? string[]
 ---@field public highlights? Highlights
 
 ---@param opts UserConfig|nil
 function M.setup(opts)
+    --[[
+    Reference for pre-defined highlight groups and colors
+    ColorColumn     bg = 1f1d2e (dark gray / purple)
+    PmenuExtra      bg = 1f1d2e (dark gray / purple)                fg = 6e6a86 (light purple)
+    CursorColumn    bg = 26233a (more purple version of 1f1d2e)
+    PmenuSel        bg = 26233a (more purple version of 1f1d2e)     fg = e0def4 (white / pink)
+    CurSearch       bg = f6c177 (light orange)                      fg = 191724 (dark gray)
+    DiffAdd         bg = 333c48 (gray / little bit blue)
+    DiffChange      bg = 433842 (pink / gray)
+    DiffDelete      bg = 43293a (darker version of 433842)
+    Visual          bg = 403d52 (lighter version of 1f1d2e)
+    MatchParen      bg = 1f2e3f (deep blue)                         fg = 31748f (teel)
+    ]]
+
+    -- Some attempts to handle nested lists
+    -- (list_item) @item1
+    -- (list_item (list_item (list_item))) @item3
+    -- (list) @item1
+
     ---@type Config
     local default_config = {
         query = vim.treesitter.query.parse(
@@ -30,17 +50,21 @@ function M.setup(opts)
                 (fenced_code_block) @code
             ]]
         ),
+        render_modes = { 'n', 'c' },
         bullets = { '◉', '○', '✸', '✿' },
         highlights = {
-            heading = '@comment.hint',
+            headings = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
             code = 'ColorColumn',
         },
     }
     state.config = vim.tbl_deep_extend('force', default_config, opts or {})
 
+    -- Call immediately to re-render on LazyReload
+    M.refresh()
+
     vim.api.nvim_create_autocmd({
         'FileChangedShellPost',
-        'InsertLeave',
+        'ModeChanged',
         'Syntax',
         'TextChanged',
         'WinResized',
@@ -62,6 +86,10 @@ M.refresh = function()
     -- Remove existing highlights / virtual text
     vim.api.nvim_buf_clear_namespace(0, M.namespace, 0, -1)
 
+    if not vim.tbl_contains(state.config.render_modes, vim.fn.mode()) then
+        return
+    end
+
     local parser = vim.treesitter.get_parser(0, 'markdown')
     local root = parser:parse()[1]:root()
 
@@ -74,15 +102,11 @@ M.refresh = function()
 
         if capture == 'heading' then
             local level = #vim.treesitter.get_node_text(node, 0)
-            local bullet = state.config.bullets[((level - 1) % #state.config.bullets) + 1]
+            local highlight = highlights.headings[((level - 1) % #highlights.headings) + 1]
             vim.api.nvim_buf_set_extmark(0, M.namespace, start_row, 0, {
                 end_row = end_row + 1,
                 end_col = 0,
-                hl_group = highlights.heading,
-                -- This is done to exactly cover over the heading hashtags
-                virt_text = { { string.rep(' ', level - 1) .. bullet, highlights.heading } },
-                virt_text_pos = 'overlay',
-                hl_eol = true,
+                hl_group = highlight,
             })
         elseif capture == 'code' then
             vim.api.nvim_buf_set_extmark(0, M.namespace, start_row, 0, {
@@ -91,6 +115,9 @@ M.refresh = function()
                 hl_group = highlights.code,
                 hl_eol = true,
             })
+        else
+            vim.print('Unknown capture: ' .. capture)
+            vim.print(vim.treesitter.get_node_text(node, 0))
         end
     end
 end

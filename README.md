@@ -2,12 +2,53 @@
 
 Plugin to improve viewing Markdown files in Neovim
 
+# Features
+
+TODO
+
 # Dependencies
 
 - [markdown](https://github.com/tree-sitter-grammars/tree-sitter-markdown/tree/split_parser)
   parser for [treesitter](https://github.com/nvim-treesitter/nvim-treesitter/tree/master):
   Used to parse `markdown` files
 
+# Install
+
+WIP
+
+## Lazy.nvim
+
+```lua
+{
+    'MeanderingProgrammer/markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    config = function()
+        require('markdown').setup({
+            query = vim.treesitter.query.parse(
+                'markdown',
+                [[
+                    (atx_heading [
+                        (atx_h1_marker)
+                        (atx_h2_marker)
+                        (atx_h3_marker)
+                        (atx_h4_marker)
+                        (atx_h5_marker)
+                        (atx_h6_marker)
+                    ] @heading)
+
+                    (fenced_code_block) @code
+                ]]
+            ),
+            render_modes = { 'n', 'c' },
+            bullets = { '◉', '○', '✸', '✿' },
+            highlights = {
+                headings = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
+                code = 'ColorColumn',
+            },
+        })
+    end,
+}
+```
 
 # Related Projects
 
