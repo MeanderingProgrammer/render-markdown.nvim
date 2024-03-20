@@ -12,9 +12,9 @@ Plugin to improve viewing Markdown files in Neovim
 
 # Dependencies
 
-- [markdown](https://github.com/tree-sitter-grammars/tree-sitter-markdown/tree/split_parser)
-  parser for [treesitter](https://github.com/nvim-treesitter/nvim-treesitter/tree/master):
-  Used to parse `markdown` files
+- [markdown](https://github.com/tree-sitter-grammars/tree-sitter-markdown) parser for
+  [treesitter](https://github.com/nvim-treesitter/nvim-treesitter): Used to parse
+  `markdown` files
 
 # Install
 

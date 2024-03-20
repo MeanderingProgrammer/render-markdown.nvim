@@ -89,11 +89,9 @@ M.refresh = function()
         return
     end
 
-    local parser = vim.treesitter.get_parser(0, 'markdown')
-    local root = parser:parse()[1]:root()
-
     local highlights = state.config.highlights
 
+    local root = vim.treesitter.get_parser(0, 'markdown'):parse()[1]:root()
     ---@diagnostic disable-next-line: missing-parameter
     for id, node in state.config.query:iter_captures(root, 0) do
         local capture = state.config.query.captures[id]
