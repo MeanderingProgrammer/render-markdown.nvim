@@ -26,9 +26,10 @@ Plugin to improve viewing Markdown files in Neovim
 ```lua
 {
     'MeanderingProgrammer/markdown.nvim',
+    name = 'render-markdown', -- Only needed if you have another plugin named markdown.nvim
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
     config = function()
-        require('markdown').setup({})
+        require('render-markdown').setup({})
     end,
 }
 ```
@@ -39,7 +40,7 @@ Below is the configuration that gets used by default, any part of it can be modi
 by the user.
 
 ```lua
-require('markdown').setup({
+require('render-markdown').setup({
     -- Capture groups that get pulled from the markdown file, these are later
     -- used to modify how the file gets rendered
     query = vim.treesitter.query.parse(

@@ -1,5 +1,5 @@
-local list = require('markdown.list')
-local state = require('markdown.state')
+local list = require('render-markdown.list')
+local state = require('render-markdown.state')
 
 local M = {}
 
