@@ -4,10 +4,13 @@ Plugin to improve viewing Markdown files in Neovim
 
 Plugin is experimental at this time
 
-![Screenshot](demo/screenshot.png)
+![Rendered Screenshot](demo/rendered.png)
 
-- Left side shows non-rendered view which you would get in insert mode for example
-- Right side shows `rendered` view in normal mode
+- This shows the `rendered`, which you would see in normal mode
+
+![Base Screenshot](demo/base.png)
+
+- This shows the non-rendered view which you would see in insert mode
 
 # Features
 
