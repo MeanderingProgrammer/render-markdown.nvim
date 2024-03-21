@@ -4,17 +4,7 @@ Plugin to improve viewing Markdown files in Neovim
 
 Plugin is experimental at this time
 
-## Rendered
-
-This shows the `rendered` view which you would see in normal mode
-
-![Rendered Screenshot](demo/rendered.png)
-
-## Non-Rendered
-
-This shows the non-rendered view which you would see in insert mode
-
-![Base Screenshot](demo/base.png)
+![Demo](demo/demo.gif)
 
 # Features
 
@@ -79,7 +69,7 @@ require('markdown').setup({
     -- modes will be uneffected by this plugin
     render_modes = { 'n', 'c' },
     -- Characters that will replace the # at the start of markdown headings
-    headings = { '◉', '○', '✸', '✿' },
+    headings = { '󰲡', '󰲣', '󰲥', '󰲧', '󰲩', '󰲫' },
     -- Character to use for the bullet point in lists
     bullet = '○',
     highlights = {

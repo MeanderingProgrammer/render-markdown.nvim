@@ -50,7 +50,7 @@ function M.setup(opts)
             ]]
         ),
         render_modes = { 'n', 'c' },
-        headings = { '◉', '○', '✸', '✿' },
+        headings = { '󰲡', '󰲣', '󰲥', '󰲧', '󰲩', '󰲫' },
         bullet = '○',
         highlights = {
             heading = {
