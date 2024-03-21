@@ -2,10 +2,15 @@ local state = require('markdown.state')
 
 local M = {}
 
+---@class UserTableHighlights
+---@field public head? string
+---@field public row? string
+
 ---@class UserHighlights
 ---@field public heading? string
 ---@field public code? string
 ---@field public bullet? string
+---@field public table? UserTableHighlights
 
 ---@class UserConfig
 ---@field public query? Query
@@ -15,20 +20,6 @@ local M = {}
 
 ---@param opts UserConfig|nil
 function M.setup(opts)
-    --[[
-    Reference for pre-defined highlight groups and colors
-    ColorColumn     bg = 1f1d2e (dark gray / purple)
-    PmenuExtra      bg = 1f1d2e (dark gray / purple)                fg = 6e6a86 (light purple)
-    CursorColumn    bg = 26233a (more purple version of 1f1d2e)
-    PmenuSel        bg = 26233a (more purple version of 1f1d2e)     fg = e0def4 (white / pink)
-    CurSearch       bg = f6c177 (light orange)                      fg = 191724 (dark gray)
-    DiffAdd         bg = 333c48 (gray / little bit blue)
-    DiffChange      bg = 433842 (pink / gray)
-    DiffDelete      bg = 43293a (darker version of 433842)
-    Visual          bg = 403d52 (lighter version of 1f1d2e)
-    MatchParen      bg = 1f2e3f (deep blue)                         fg = 31748f (teel)
-    ]]
-
     ---@type Config
     local default_config = {
         query = vim.treesitter.query.parse(
@@ -46,6 +37,10 @@ function M.setup(opts)
                 (fenced_code_block) @code
 
                 (list_item) @item
+
+                (pipe_table_header) @table_head
+                (pipe_table_delimiter_row) @table_delim
+                (pipe_table_row) @table_row
             ]]
         ),
         render_modes = { 'n', 'c' },
@@ -54,6 +49,10 @@ function M.setup(opts)
             headings = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
             code = 'ColorColumn',
             bullet = 'Normal',
+            table = {
+                head = '@markup.heading',
+                row = 'Normal',
+            },
         },
     }
     state.config = vim.tbl_deep_extend('force', default_config, opts or {})
@@ -117,6 +116,30 @@ M.refresh = function()
                 end_row = end_row,
                 end_col = end_col,
                 virt_text = { { state.config.bullet, highlights.bullet } },
+                virt_text_pos = 'overlay',
+            })
+        elseif vim.tbl_contains({ 'table_head', 'table_delim', 'table_row' }, capture) then
+            local row = vim.treesitter.get_node_text(node, 0)
+            local modified_row = row:gsub('|', '│')
+            if capture == 'table_delim' then
+                -- Order matters here, in particular handling inner intersections before left & right
+                modified_row = modified_row
+                    :gsub('-', '─')
+                    :gsub(' ', '─')
+                    :gsub('─│─', '─┼─')
+                    :gsub('│─', '├─')
+                    :gsub('─│', '─┤')
+            end
+
+            local highlight = highlights.table.head
+            if capture == 'table_row' then
+                highlight = highlights.table.row
+            end
+
+            vim.api.nvim_buf_set_extmark(0, M.namespace, start_row, start_col, {
+                end_row = end_row,
+                end_col = end_col,
+                virt_text = { { modified_row, highlight } },
                 virt_text_pos = 'overlay',
             })
         else

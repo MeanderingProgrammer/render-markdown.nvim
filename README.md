@@ -2,6 +2,8 @@
 
 Plugin to improve viewing Markdown files in Neovim
 
+Plugin is experimental at this time
+
 # Features
 
 - Changes between `rendered` view in normal mode (exact modes are configurable)
@@ -9,6 +11,7 @@ Plugin to improve viewing Markdown files in Neovim
 - Highlights headings with different groups depending on level
 - Highlights code blocks to better stand out
 - Replaces whichever style bullet point is being used with provided character
+- Updates table boarders with better boarder characters, does NOT automatically align
 
 # Dependencies
 
@@ -17,8 +20,6 @@ Plugin to improve viewing Markdown files in Neovim
   `markdown` files
 
 # Install
-
-WIP
 
 ## Lazy.nvim
 
@@ -43,6 +44,10 @@ WIP
                     (fenced_code_block) @code
 
                     (list_item) @item
+
+                    (pipe_table_header) @table_head
+                    (pipe_table_delimiter_row) @table_delim
+                    (pipe_table_row) @table_row
                 ]]
             ),
             render_modes = { 'n', 'c' },
@@ -51,6 +56,10 @@ WIP
                 headings = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
                 code = 'ColorColumn',
                 bullet = 'Normal',
+                table = {
+                    head = '@markup.heading',
+                    row = 'Normal',
+                },
             },
         })
     end,
