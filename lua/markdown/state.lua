@@ -2,8 +2,12 @@
 ---@field public head string
 ---@field public row string
 
+---@class HeadingHighlights
+---@field public backgrounds string[]
+---@field public foregrounds string[]
+
 ---@class Highlights
----@field public headings string[]
+---@field public heading HeadingHighlights
 ---@field public code string
 ---@field public bullet string
 ---@field public table TableHighlights
@@ -11,6 +15,7 @@
 ---@class Config
 ---@field public query Query
 ---@field public render_modes string[]
+---@field public headings string[]
 ---@field public bullet string
 ---@field public highlights Highlights
 

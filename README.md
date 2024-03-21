@@ -78,11 +78,24 @@ require('markdown').setup({
     -- vim modes that will show a rendered view of the markdown file, all other
     -- modes will be uneffected by this plugin
     render_modes = { 'n', 'c' },
+    -- Characters that will replace the # at the start of markdown headings
+    headings = { '◉', '○', '✸', '✿' },
     -- Character to use for the bullet point in lists
     bullet = '○',
     highlights = {
-        -- Groups that get cycled through for rendering headings
-        headings = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
+        heading = {
+            -- Used for rendering heading line backgrounds
+            backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
+            -- Used for rendering the foreground of the heading character only
+            foregrounds = {
+                'markdownH1',
+                'markdownH2',
+                'markdownH3',
+                'markdownH4',
+                'markdownH5',
+                'markdownH6',
+            },
+        },
         -- Used when displaying code blocks
         code = 'ColorColumn',
         -- Used when displaying bullet points in list

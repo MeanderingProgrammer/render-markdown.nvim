@@ -1,3 +1,4 @@
+local list = require('markdown.list')
 local state = require('markdown.state')
 
 local M = {}
@@ -6,8 +7,12 @@ local M = {}
 ---@field public head? string
 ---@field public row? string
 
+---@class UserHeadingHighlights
+---@field public backgrounds? string[]
+---@field public foregrounds? string[]
+
 ---@class UserHighlights
----@field public heading? string
+---@field public heading? UserHeadingHighlights
 ---@field public code? string
 ---@field public bullet? string
 ---@field public table? UserTableHighlights
@@ -15,8 +20,9 @@ local M = {}
 ---@class UserConfig
 ---@field public query? Query
 ---@field public render_modes? string[]
+---@field public headings? string[]
 ---@field public bullet? string
----@field public highlights? Highlights
+---@field public highlights? UserHighlights
 
 ---@param opts UserConfig|nil
 function M.setup(opts)
@@ -44,9 +50,20 @@ function M.setup(opts)
             ]]
         ),
         render_modes = { 'n', 'c' },
+        headings = { '◉', '○', '✸', '✿' },
         bullet = '○',
         highlights = {
-            headings = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
+            heading = {
+                backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
+                foregrounds = {
+                    'markdownH1',
+                    'markdownH2',
+                    'markdownH3',
+                    'markdownH4',
+                    'markdownH5',
+                    'markdownH6',
+                },
+            },
             code = 'ColorColumn',
             bullet = 'Normal',
             table = {
@@ -94,15 +111,23 @@ M.refresh = function()
     ---@diagnostic disable-next-line: missing-parameter
     for id, node in state.config.query:iter_captures(root, 0) do
         local capture = state.config.query.captures[id]
+        local value = vim.treesitter.get_node_text(node, 0)
         local start_row, start_col, end_row, end_col = node:range()
 
         if capture == 'heading' then
-            local level = #vim.treesitter.get_node_text(node, 0)
-            local highlight = highlights.headings[((level - 1) % #highlights.headings) + 1]
+            local level = #value
+            local heading = list.cycle(state.config.headings, level)
+            local background = list.clamp_last(highlights.heading.backgrounds, level)
+            local foreground = list.clamp_last(highlights.heading.foregrounds, level)
+
+            local virt_text = { string.rep(' ', level - 1) .. heading, { foreground, background } }
             vim.api.nvim_buf_set_extmark(0, M.namespace, start_row, 0, {
                 end_row = end_row + 1,
                 end_col = 0,
-                hl_group = highlight,
+                hl_group = background,
+                virt_text = { virt_text },
+                virt_text_pos = 'overlay',
+                hl_eol = true,
             })
         elseif capture == 'code' then
             vim.api.nvim_buf_set_extmark(0, M.namespace, start_row, 0, {
@@ -112,19 +137,18 @@ M.refresh = function()
                 hl_eol = true,
             })
         elseif capture == 'item' then
+            local virt_text = { state.config.bullet, highlights.bullet }
             vim.api.nvim_buf_set_extmark(0, M.namespace, start_row, start_col, {
                 end_row = end_row,
                 end_col = end_col,
-                virt_text = { { state.config.bullet, highlights.bullet } },
+                virt_text = { virt_text },
                 virt_text_pos = 'overlay',
             })
         elseif vim.tbl_contains({ 'table_head', 'table_delim', 'table_row' }, capture) then
-            local row = vim.treesitter.get_node_text(node, 0)
-            local modified_row = row:gsub('|', '│')
+            local row = value:gsub('|', '│')
             if capture == 'table_delim' then
                 -- Order matters here, in particular handling inner intersections before left & right
-                modified_row = modified_row
-                    :gsub('-', '─')
+                row = row:gsub('-', '─')
                     :gsub(' ', '─')
                     :gsub('─│─', '─┼─')
                     :gsub('│─', '├─')
@@ -136,10 +160,11 @@ M.refresh = function()
                 highlight = highlights.table.row
             end
 
+            local virt_text = { row, highlight }
             vim.api.nvim_buf_set_extmark(0, M.namespace, start_row, start_col, {
                 end_row = end_row,
                 end_col = end_col,
-                virt_text = { { modified_row, highlight } },
+                virt_text = { virt_text },
                 virt_text_pos = 'overlay',
             })
         else
