@@ -2,15 +2,25 @@
 
 Plugin to improve viewing Markdown files in Neovim
 
-Plugin is experimental at this time
-
 ![Demo](demo/demo.gif)
+
+# Purpose
+
+There are many existing markdown rendering plugins in the Neovim ecosystem. However,
+most of these rely on syncing a separate browser window with the buffer. This is the
+correct way to do things to get full feature support, however I wanted something that
+worked completely inside of Neovim and made things look slightly "nicer".
+
+The closest one I found to this was [headlines.nvim](https://github.com/lukas-reineke/headlines.nvim),
+which is an awesome plugin that I took several ideas from. However it just didn't have
+quite what I was looking for. In particular I wanted something that would disappear completely
+when editing a file and quickly render some style when viewing the file. Hence this plugin.
 
 # Features
 
-- Changes between `rendered` view in normal mode (exact modes are configurable)
-  and raw view in all other modes
-- Highlights headings with different groups depending on level
+- Functions entirely inside of Neovim with no external windows
+- Changes between `rendered` view in normal mode and raw view in all other modes
+- Highlights headings with different groups depending on level and replaces `#`
 - Highlights code blocks to better stand out
 - Replaces whichever style bullet point is being used with provided character
 - Updates table boarders with better boarder characters, does NOT automatically align
