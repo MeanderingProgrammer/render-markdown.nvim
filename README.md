@@ -28,42 +28,61 @@ Plugin is experimental at this time
     'MeanderingProgrammer/markdown.nvim',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
     config = function()
-        require('markdown').setup({
-            query = vim.treesitter.query.parse(
-                'markdown',
-                [[
-                    (atx_heading [
-                        (atx_h1_marker)
-                        (atx_h2_marker)
-                        (atx_h3_marker)
-                        (atx_h4_marker)
-                        (atx_h5_marker)
-                        (atx_h6_marker)
-                    ] @heading)
-
-                    (fenced_code_block) @code
-
-                    (list_item) @item
-
-                    (pipe_table_header) @table_head
-                    (pipe_table_delimiter_row) @table_delim
-                    (pipe_table_row) @table_row
-                ]]
-            ),
-            render_modes = { 'n', 'c' },
-            bullet = '○',
-            highlights = {
-                headings = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
-                code = 'ColorColumn',
-                bullet = 'Normal',
-                table = {
-                    head = '@markup.heading',
-                    row = 'Normal',
-                },
-            },
-        })
+        require('markdown').setup({})
     end,
 }
+```
+
+## Default Config
+
+Below is the configuration that gets used by default, any part of it can be modified
+by the user.
+
+```lua
+require('markdown').setup({
+    -- Capture groups that get pulled from the markdown file, these are later
+    -- used to modify how the file gets rendered
+    query = vim.treesitter.query.parse(
+        'markdown',
+        [[
+            (atx_heading [
+                (atx_h1_marker)
+                (atx_h2_marker)
+                (atx_h3_marker)
+                (atx_h4_marker)
+                (atx_h5_marker)
+                (atx_h6_marker)
+            ] @heading)
+
+            (fenced_code_block) @code
+
+            (list_item) @item
+
+            (pipe_table_header) @table_head
+            (pipe_table_delimiter_row) @table_delim
+            (pipe_table_row) @table_row
+        ]]
+    ),
+    -- vim modes that will show a rendered view of the markdown file, all other
+    -- modes will be uneffected by this plugin
+    render_modes = { 'n', 'c' },
+    -- Character to use for the bullet point in lists
+    bullet = '○',
+    highlights = {
+        -- Groups that get cycled through for rendering headings
+        headings = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
+        -- Used when displaying code blocks
+        code = 'ColorColumn',
+        -- Used when displaying bullet points in list
+        bullet = 'Normal',
+        table = {
+            -- Used when displaying header in a markdown table
+            head = '@markup.heading',
+            -- Used when displaying non header rows in a markdown table
+            row = 'Normal',
+        },
+    },
+})
 ```
 
 # Related Projects
