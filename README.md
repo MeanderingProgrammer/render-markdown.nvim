@@ -11,7 +11,7 @@ Plugin to improve viewing Markdown files in Neovim
 - Highlights headings with different groups depending on level and replaces `#`
 - Highlights code blocks to better stand out
 - Replaces whichever style bullet point is being used with provided character
-- Updates table boarders with better boarder characters, does NOT automatically align
+- Updates table borders with better border characters, does NOT automatically align
 
 # Dependencies
 
