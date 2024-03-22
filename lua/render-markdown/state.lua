@@ -21,6 +21,7 @@
 ---@field public highlights Highlights
 
 ---@class State
+---@field enabled boolean
 ---@field config Config
 local state = {}
 return state

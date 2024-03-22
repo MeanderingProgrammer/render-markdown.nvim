@@ -101,6 +101,12 @@ require('render-markdown').setup({
 })
 ```
 
+# Commands
+
+`:RenderMarkdownToggle` - Switch between enabling & disabling this plugin
+
+- Function can also be accessed directly through `require('render-markdown').toggle()`
+
 # Purpose
 
 There are many existing markdown rendering plugins in the Neovim ecosystem. However,

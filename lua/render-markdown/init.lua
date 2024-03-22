@@ -75,9 +75,10 @@ function M.setup(opts)
         },
     }
     state.config = vim.tbl_deep_extend('force', default_config, opts or {})
+    state.enabled = true
 
     -- Call immediately to re-render on LazyReload
-    M.refresh()
+    vim.schedule(M.refresh)
 
     vim.api.nvim_create_autocmd({
         'FileChangedShellPost',
@@ -91,9 +92,26 @@ function M.setup(opts)
             vim.schedule(M.refresh)
         end,
     })
+
+    vim.api.nvim_create_user_command(
+        'RenderMarkdownToggle',
+        M.toggle,
+        { desc = 'Switch between enabling & disabling render markdown plugin' }
+    )
 end
 
 M.namespace = vim.api.nvim_create_namespace('render-markdown.nvim')
+
+M.toggle = function()
+    if state.enabled then
+        state.enabled = false
+        vim.schedule(M.clear)
+    else
+        state.enabled = true
+        -- Call to refresh must happen after state change
+        vim.schedule(M.refresh)
+    end
+end
 
 M.clear = function()
     -- Remove existing highlights / virtual text
@@ -101,6 +119,9 @@ M.clear = function()
 end
 
 M.refresh = function()
+    if not state.enabled then
+        return
+    end
     if not vim.tbl_contains(state.config.file_types, vim.bo.filetype) then
         return
     end
