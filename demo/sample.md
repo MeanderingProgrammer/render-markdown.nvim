@@ -22,8 +22,8 @@ if __name__ == "__main__":
 
 * List Item 1
 * List Item 2
-  * Nested List Item 1
-  * Nested List Item 2
+    * Nested List Item 1
+    * Nested List Item 2
 * List Item 3
 
 | Heading 1    | Heading 2    |

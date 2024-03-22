@@ -95,14 +95,17 @@ end
 
 M.namespace = vim.api.nvim_create_namespace('render-markdown.nvim')
 
+M.clear = function()
+    -- Remove existing highlights / virtual text
+    vim.api.nvim_buf_clear_namespace(0, M.namespace, 0, -1)
+end
+
 M.refresh = function()
     if not vim.tbl_contains(state.config.file_types, vim.bo.filetype) then
         return
     end
-
-    -- Remove existing highlights / virtual text
-    vim.api.nvim_buf_clear_namespace(0, M.namespace, 0, -1)
-
+    -- Needs to happen after file_type check and before mode check
+    M.clear()
     if not vim.tbl_contains(state.config.render_modes, vim.fn.mode()) then
         return
     end
@@ -139,7 +142,11 @@ M.refresh = function()
                 hl_eol = true,
             })
         elseif capture == 'item' then
-            local virt_text = { state.config.bullet, highlights.bullet }
+            -- List items from tree-sitter should have leading spaces removed, however there are known
+            -- edge cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
+            -- As a result we handle leading spaces here, can remove if this gets fixed upstream
+            local _, leading_spaces = value:find('^%s*')
+            local virt_text = { string.rep(' ', leading_spaces or 0) .. state.config.bullet, highlights.bullet }
             vim.api.nvim_buf_set_extmark(0, M.namespace, start_row, start_col, {
                 end_row = end_row,
                 end_col = end_col,
