@@ -19,6 +19,7 @@ local M = {}
 
 ---@class UserConfig
 ---@field public query? Query
+---@field public file_types? string[]
 ---@field public render_modes? string[]
 ---@field public headings? string[]
 ---@field public bullet? string
@@ -49,6 +50,7 @@ function M.setup(opts)
                 (pipe_table_row) @table_row
             ]]
         ),
+        file_types = { 'markdown' },
         render_modes = { 'n', 'c' },
         headings = { '󰲡', '󰲣', '󰲥', '󰲧', '󰲩', '󰲫' },
         bullet = '○',
@@ -84,17 +86,17 @@ function M.setup(opts)
         'TextChanged',
         'WinResized',
     }, {
-        group = vim.api.nvim_create_augroup('Markdown', { clear = true }),
+        group = vim.api.nvim_create_augroup('RenderMarkdown', { clear = true }),
         callback = function()
             vim.schedule(M.refresh)
         end,
     })
 end
 
-M.namespace = vim.api.nvim_create_namespace('markdown.nvim')
+M.namespace = vim.api.nvim_create_namespace('render-markdown.nvim')
 
 M.refresh = function()
-    if vim.bo.filetype ~= 'markdown' then
+    if not vim.tbl_contains(state.config.file_types, vim.bo.filetype) then
         return
     end
 

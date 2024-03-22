@@ -64,6 +64,8 @@ require('render-markdown').setup({
             (pipe_table_row) @table_row
         ]]
     ),
+    -- Filetypes this plugin will run on
+    file_types = { 'markdown' },
     -- vim modes that will show a rendered view of the markdown file, all other
     -- modes will be uneffected by this plugin
     render_modes = { 'n', 'c' },

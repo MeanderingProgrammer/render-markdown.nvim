@@ -14,6 +14,7 @@
 
 ---@class Config
 ---@field public query Query
+---@field public file_types string[]
 ---@field public render_modes string[]
 ---@field public headings string[]
 ---@field public bullet string
