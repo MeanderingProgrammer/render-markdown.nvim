@@ -13,7 +13,7 @@
 ---@field public table TableHighlights
 
 ---@class Config
----@field public query Query
+---@field public markdown_query string
 ---@field public file_types string[]
 ---@field public render_modes string[]
 ---@field public headings string[]
@@ -23,5 +23,6 @@
 ---@class State
 ---@field enabled boolean
 ---@field config Config
+---@field markdown_query Query
 local state = {}
 return state

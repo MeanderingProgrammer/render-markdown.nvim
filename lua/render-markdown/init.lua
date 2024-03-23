@@ -18,7 +18,7 @@ local M = {}
 ---@field public table? UserTableHighlights
 
 ---@class UserConfig
----@field public query? Query
+---@field public markdown_query? string
 ---@field public file_types? string[]
 ---@field public render_modes? string[]
 ---@field public headings? string[]
@@ -29,27 +29,24 @@ local M = {}
 function M.setup(opts)
     ---@type Config
     local default_config = {
-        query = vim.treesitter.query.parse(
-            'markdown',
-            [[
-                (atx_heading [
-                    (atx_h1_marker)
-                    (atx_h2_marker)
-                    (atx_h3_marker)
-                    (atx_h4_marker)
-                    (atx_h5_marker)
-                    (atx_h6_marker)
-                ] @heading)
+        markdown_query = [[
+            (atx_heading [
+                (atx_h1_marker)
+                (atx_h2_marker)
+                (atx_h3_marker)
+                (atx_h4_marker)
+                (atx_h5_marker)
+                (atx_h6_marker)
+            ] @heading)
 
-                (fenced_code_block) @code
+            (fenced_code_block) @code
 
-                (list_item) @item
+            (list_item) @item
 
-                (pipe_table_header) @table_head
-                (pipe_table_delimiter_row) @table_delim
-                (pipe_table_row) @table_row
-            ]]
-        ),
+            (pipe_table_header) @table_head
+            (pipe_table_delimiter_row) @table_delim
+            (pipe_table_row) @table_row
+        ]],
         file_types = { 'markdown' },
         render_modes = { 'n', 'c' },
         headings = { '󰲡', '󰲣', '󰲥', '󰲧', '󰲩', '󰲫' },
@@ -74,8 +71,9 @@ function M.setup(opts)
             },
         },
     }
-    state.config = vim.tbl_deep_extend('force', default_config, opts or {})
     state.enabled = true
+    state.config = vim.tbl_deep_extend('force', default_config, opts or {})
+    state.markdown_query = vim.treesitter.query.parse('markdown', state.config.markdown_query)
 
     -- Call immediately to re-render on LazyReload
     vim.schedule(M.refresh)
@@ -143,8 +141,8 @@ end
 M.handle_markdown = function(tree)
     local highlights = state.config.highlights
     ---@diagnostic disable-next-line: missing-parameter
-    for id, node in state.config.query:iter_captures(tree:root(), 0) do
-        local capture = state.config.query.captures[id]
+    for id, node in state.markdown_query:iter_captures(tree:root(), 0) do
+        local capture = state.markdown_query.captures[id]
         local value = vim.treesitter.get_node_text(node, 0)
         local start_row, start_col, end_row, end_col = node:range()
 

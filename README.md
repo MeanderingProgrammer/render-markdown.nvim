@@ -41,29 +41,26 @@ by the user.
 
 ```lua
 require('render-markdown').setup({
-    -- Capture groups that get pulled from the markdown file, these are later
-    -- used to modify how the file gets rendered
-    query = vim.treesitter.query.parse(
-        'markdown',
-        [[
-            (atx_heading [
-                (atx_h1_marker)
-                (atx_h2_marker)
-                (atx_h3_marker)
-                (atx_h4_marker)
-                (atx_h5_marker)
-                (atx_h6_marker)
-            ] @heading)
+    -- Capture groups that get pulled from markdown, these are later used to
+    -- modify how the file gets rendered
+    markdown_query = [[
+        (atx_heading [
+            (atx_h1_marker)
+            (atx_h2_marker)
+            (atx_h3_marker)
+            (atx_h4_marker)
+            (atx_h5_marker)
+            (atx_h6_marker)
+        ] @heading)
 
-            (fenced_code_block) @code
+        (fenced_code_block) @code
 
-            (list_item) @item
+        (list_item) @item
 
-            (pipe_table_header) @table_head
-            (pipe_table_delimiter_row) @table_delim
-            (pipe_table_row) @table_row
-        ]]
-    ),
+        (pipe_table_header) @table_head
+        (pipe_table_delimiter_row) @table_delim
+        (pipe_table_row) @table_row
+    ]],
     -- Filetypes this plugin will run on
     file_types = { 'markdown' },
     -- vim modes that will show a rendered view of the markdown file, all other
