@@ -131,11 +131,19 @@ M.refresh = function()
         return
     end
 
-    local highlights = state.config.highlights
+    vim.treesitter.get_parser():for_each_tree(function(tree, language_tree)
+        local language = language_tree:lang()
+        if language == 'markdown' then
+            M.handle_markdown(tree)
+        end
+    end)
+end
 
-    local root = vim.treesitter.get_parser(0, 'markdown'):parse()[1]:root()
+---@param tree TSTree
+M.handle_markdown = function(tree)
+    local highlights = state.config.highlights
     ---@diagnostic disable-next-line: missing-parameter
-    for id, node in state.config.query:iter_captures(root, 0) do
+    for id, node in state.config.query:iter_captures(tree:root(), 0) do
         local capture = state.config.query.captures[id]
         local value = vim.treesitter.get_node_text(node, 0)
         local start_row, start_col, end_row, end_col = node:range()
