@@ -4,13 +4,13 @@ from argparse import ArgumentParser
 import pyautogui
 
 
-def main(file: str, cast: str) -> None:
+def main(zoom: int, file: str, cast: str) -> None:
     # Open new tmux window
     pyautogui.hotkey("`", "c")
     time.sleep(1.0)
 
     # Zoom in
-    for _ in range(15):
+    for _ in range(zoom):
         pyautogui.hotkey("command", "=")
 
     # Start recording demo file
@@ -49,7 +49,8 @@ def main(file: str, cast: str) -> None:
 
 if __name__ == "__main__":
     parser = ArgumentParser(description="Generate a demo recording using asciinema")
+    parser.add_argument("--zoom", type=int, required=True)
     parser.add_argument("--file", type=str, required=True)
     parser.add_argument("--cast", type=str, required=True)
     args = parser.parse_args()
-    main(args.file, args.cast)
+    main(args.zoom, args.file, args.cast)
