@@ -20,11 +20,11 @@ if __name__ == "__main__":
     main()
 ```
 
-* List Item 1
+- List Item 1
 * List Item 2
     * Nested List Item 1
     * Nested List Item 2
-* List Item 3
++ List Item 3
 
 1. Item 1
 2. Item 2

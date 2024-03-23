@@ -42,9 +42,11 @@ function M.setup(opts)
 
             (fenced_code_block) @code
 
-            (list_marker_plus) @list_marker
-            (list_marker_minus) @list_marker
-            (list_marker_star) @list_marker
+            [
+                (list_marker_plus)
+                (list_marker_minus)
+                (list_marker_star)
+            ] @list_marker
 
             (pipe_table_header) @table_head
             (pipe_table_delimiter_row) @table_delim
