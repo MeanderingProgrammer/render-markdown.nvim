@@ -19,8 +19,8 @@ Plugin to improve viewing Markdown files in Neovim
 - [markdown](https://github.com/tree-sitter-grammars/tree-sitter-markdown) parser for
   [treesitter](https://github.com/nvim-treesitter/nvim-treesitter): Used to parse
   `markdown` files
-- [pylatexenc](https://pypi.org/project/pylatexenc/) to transform `LaTeX` strings to
-  appropriate unicode using `latex2text`, not a mandatory dependency
+- [pylatexenc](https://pypi.org/project/pylatexenc/): Used to transform `LaTeX` strings
+  to appropriate unicode using `latex2text`, not a mandatory dependency
 
 # Install
 
@@ -99,6 +99,7 @@ require('render-markdown').setup({
             -- Used when displaying non header rows in a markdown table
             row = 'Normal',
         },
+        -- Used when displaying LaTeX
         latex = 'Special',
     },
 })
