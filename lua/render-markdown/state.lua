@@ -11,6 +11,7 @@
 ---@field public code string
 ---@field public bullet string
 ---@field public table TableHighlights
+---@field public latex string
 
 ---@class Config
 ---@field public markdown_query string

@@ -16,6 +16,7 @@ local M = {}
 ---@field public code? string
 ---@field public bullet? string
 ---@field public table? UserTableHighlights
+---@field public latex? string
 
 ---@class UserConfig
 ---@field public markdown_query? string
@@ -71,6 +72,7 @@ function M.setup(opts)
                 head = '@markup.heading',
                 row = 'Normal',
             },
+            latex = 'Special',
         },
     }
     state.enabled = true
@@ -134,16 +136,18 @@ M.refresh = function()
     vim.treesitter.get_parser():for_each_tree(function(tree, language_tree)
         local language = language_tree:lang()
         if language == 'markdown' then
-            M.handle_markdown(tree)
+            M.handle_markdown(tree:root())
+        elseif language == 'latex' then
+            M.handle_latex(tree:root())
         end
     end)
 end
 
----@param tree TSTree
-M.handle_markdown = function(tree)
+---@param root TSNode
+M.handle_markdown = function(root)
     local highlights = state.config.highlights
     ---@diagnostic disable-next-line: missing-parameter
-    for id, node in state.markdown_query:iter_captures(tree:root(), 0) do
+    for id, node in state.markdown_query:iter_captures(root, 0) do
         local capture = state.markdown_query.captures[id]
         local value = vim.treesitter.get_node_text(node, 0)
         local start_row, start_col, end_row, end_col = node:range()
@@ -210,6 +214,29 @@ M.handle_markdown = function(tree)
             vim.print('Unhandled capture: ' .. capture)
         end
     end
+end
+
+---@param root TSNode
+M.handle_latex = function(root)
+    if vim.fn.executable('latex2text') ~= 1 then
+        return
+    end
+
+    local latex = vim.treesitter.get_node_text(root, 0)
+    local expression = vim.trim(vim.fn.system('latex2text', latex))
+    local extra_space = vim.fn.strdisplaywidth(latex) - vim.fn.strdisplaywidth(expression)
+    if extra_space < 0 then
+        return
+    end
+
+    local start_row, start_col, end_row, end_col = root:range()
+    local virt_text = { expression .. string.rep(' ', extra_space), state.config.highlights.latex }
+    vim.api.nvim_buf_set_extmark(0, M.namespace, start_row, start_col, {
+        end_row = end_row,
+        end_col = end_col,
+        virt_text = { virt_text },
+        virt_text_pos = 'overlay',
+    })
 end
 
 return M

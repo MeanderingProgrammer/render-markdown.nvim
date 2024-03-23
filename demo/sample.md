@@ -35,3 +35,5 @@ if __name__ == "__main__":
 | Row 1 Item 1 | Row 1 Item 2 |
 | Row 2 Item 1 | Row 2 Item 2 |
 | Row 3 Item 1 | Row 3 Item 2 |
+
+$\sqrt{3x-1}+(1+x)^2$
