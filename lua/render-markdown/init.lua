@@ -41,7 +41,9 @@ function M.setup(opts)
 
             (fenced_code_block) @code
 
-            (list_item) @item
+            (list_marker_plus) @list_marker
+            (list_marker_minus) @list_marker
+            (list_marker_star) @list_marker
 
             (pipe_table_header) @table_head
             (pipe_table_delimiter_row) @table_delim
@@ -168,8 +170,8 @@ M.handle_markdown = function(tree)
                 hl_group = highlights.code,
                 hl_eol = true,
             })
-        elseif capture == 'item' then
-            -- List items from tree-sitter should have leading spaces removed, however there are known
+        elseif capture == 'list_marker' then
+            -- List markers from tree-sitter should have leading spaces removed, however there are known
             -- edge cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
             -- As a result we handle leading spaces here, can remove if this gets fixed upstream
             local _, leading_spaces = value:find('^%s*')
