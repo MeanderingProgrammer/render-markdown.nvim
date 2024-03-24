@@ -54,8 +54,8 @@ function M.setup(opts)
         ]],
         file_types = { 'markdown' },
         render_modes = { 'n', 'c' },
-        headings = { '󰲡', '󰲣', '󰲥', '󰲧', '󰲩', '󰲫' },
-        bullet = '○',
+        headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
+        bullet = '○ ',
         highlights = {
             heading = {
                 backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
