@@ -12,6 +12,7 @@
 ---@field public bullet string
 ---@field public table TableHighlights
 ---@field public latex string
+---@field public quote string
 
 ---@class Config
 ---@field public markdown_query string
@@ -19,6 +20,7 @@
 ---@field public render_modes string[]
 ---@field public headings string[]
 ---@field public bullet string
+---@field public quote string
 ---@field public highlights Highlights
 
 ---@class State

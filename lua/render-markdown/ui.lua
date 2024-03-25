@@ -76,6 +76,14 @@ M.markdown = function(root)
                 virt_text = { virt_text },
                 virt_text_pos = 'overlay',
             })
+        elseif capture == 'quote_marker' then
+            local virt_text = { value:gsub('>', state.config.quote), highlights.quote }
+            vim.api.nvim_buf_set_extmark(0, M.namespace, start_row, start_col, {
+                end_row = end_row,
+                end_col = end_col,
+                virt_text = { virt_text },
+                virt_text_pos = 'overlay',
+            })
         elseif vim.tbl_contains({ 'table_head', 'table_delim', 'table_row' }, capture) then
             local row = value:gsub('|', '│')
             if capture == 'table_delim' then

@@ -17,6 +17,7 @@ local M = {}
 ---@field public bullet? string
 ---@field public table? UserTableHighlights
 ---@field public latex? string
+---@field public quote? string
 
 ---@class UserConfig
 ---@field public markdown_query? string
@@ -24,6 +25,7 @@ local M = {}
 ---@field public render_modes? string[]
 ---@field public headings? string[]
 ---@field public bullet? string
+---@field public quote? string
 ---@field public highlights? UserHighlights
 
 ---@param opts UserConfig|nil
@@ -48,6 +50,9 @@ function M.setup(opts)
                 (list_marker_star)
             ] @list_marker
 
+            (block_quote (block_quote_marker) @quote_marker)
+            (block_quote (paragraph (inline (block_continuation) @quote_marker)))
+
             (pipe_table_header) @table_head
             (pipe_table_delimiter_row) @table_delim
             (pipe_table_row) @table_row
@@ -56,6 +61,7 @@ function M.setup(opts)
         render_modes = { 'n', 'c' },
         headings = { '󰲡', '󰲣', '󰲥', '󰲧', '󰲩', '󰲫' },
         bullet = '○',
+        quote = '┃',
         highlights = {
             heading = {
                 backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
@@ -74,7 +80,8 @@ function M.setup(opts)
                 head = '@markup.heading',
                 row = 'Normal',
             },
-            latex = 'Special',
+            latex = '@markup.math',
+            quote = '@markup.quote',
         },
     }
     state.enabled = true

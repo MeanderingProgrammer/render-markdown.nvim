@@ -8,9 +8,11 @@ Plugin to improve viewing Markdown files in Neovim
 
 - Functions entirely inside of Neovim with no external windows
 - Changes between `rendered` view in normal mode and raw view in all other modes
+- Supports rendering `markdown` injected into other file types
 - Highlights headings with different groups depending on level and replaces `#`
 - Highlights code blocks to better stand out
 - Replaces whichever style bullet point is being used with provided character
+- Replaces block quote leading `>` with provided character
 - Updates table borders with better border characters, does NOT automatically align
 - Basic support for `LaTeX` if `pylatexenc` is installed on system
 
@@ -64,6 +66,9 @@ require('render-markdown').setup({
             (list_marker_star)
         ] @list_marker
 
+        (block_quote (block_quote_marker) @quote_marker)
+        (block_quote (paragraph (inline (block_continuation) @quote_marker)))
+
         (pipe_table_header) @table_head
         (pipe_table_delimiter_row) @table_delim
         (pipe_table_row) @table_row
@@ -73,15 +78,18 @@ require('render-markdown').setup({
     -- vim modes that will show a rendered view of the markdown file, all other
     -- modes will be uneffected by this plugin
     render_modes = { 'n', 'c' },
-    -- Characters that will replace the # at the start of markdown headings
+    -- Characters that will replace the # at the start of headings
     headings = { '󰲡', '󰲣', '󰲥', '󰲧', '󰲩', '󰲫' },
     -- Character to use for the bullet point in lists
     bullet = '○',
+    -- Character that will replace the > at the start of block quotes
+    quote = '┃',
+    -- Define the highlight groups to use when rendering various components
     highlights = {
         heading = {
-            -- Used for rendering heading line backgrounds
+            -- Background of heading line
             backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
-            -- Used for rendering the foreground of the heading character only
+            -- Foreground of heading character only
             foregrounds = {
                 'markdownH1',
                 'markdownH2',
@@ -91,18 +99,20 @@ require('render-markdown').setup({
                 'markdownH6',
             },
         },
-        -- Used when displaying code blocks
+        -- Code blocks
         code = 'ColorColumn',
-        -- Used when displaying bullet points in list
+        -- Bullet points in list
         bullet = 'Normal',
         table = {
-            -- Used when displaying header in a markdown table
+            -- Header of a markdown table
             head = '@markup.heading',
-            -- Used when displaying non header rows in a markdown table
+            -- Non header rows in a markdown table
             row = 'Normal',
         },
-        -- Used when displaying LaTeX
-        latex = 'Special',
+        -- LaTeX blocks
+        latex = '@markup.math',
+        -- Quote character in a block quote
+        quote = '@markup.quote',
     },
 })
 ```
