@@ -59,7 +59,7 @@ function M.setup(opts)
         ]],
         file_types = { 'markdown' },
         render_modes = { 'n', 'c' },
-        headings = { '󰲡', '󰲣', '󰲥', '󰲧', '󰲩', '󰲫' },
+        headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
         bullet = '○',
         quote = '┃',
         highlights = {

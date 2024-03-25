@@ -79,7 +79,7 @@ require('render-markdown').setup({
     -- modes will be uneffected by this plugin
     render_modes = { 'n', 'c' },
     -- Characters that will replace the # at the start of headings
-    headings = { '󰲡', '󰲣', '󰲥', '󰲧', '󰲩', '󰲫' },
+    headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
     -- Character to use for the bullet point in lists
     bullet = '○',
     -- Character that will replace the > at the start of block quotes
