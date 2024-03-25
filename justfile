@@ -1,7 +1,9 @@
-demo:
+default_zoom := '10'
+
+demo zoom=default_zoom:
     rm -f demo/demo.gif
     python demo/record.py \
-      --zoom 10 \
+      --zoom {{zoom}} \
       --file demo/sample.md \
       --cast demo.cast
     # https://docs.asciinema.org/manual/agg/usage/

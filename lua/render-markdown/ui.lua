@@ -121,19 +121,18 @@ M.latex = function(root)
     end
 
     local latex = vim.treesitter.get_node_text(root, 0)
-    local expression = vim.trim(vim.fn.system('latex2text', latex))
-    local extra_space = vim.fn.strdisplaywidth(latex) - vim.fn.strdisplaywidth(expression)
-    if extra_space < 0 then
-        return
-    end
+    local raw_expression = vim.fn.system('latex2text', latex)
+    local expressions = vim.split(vim.trim(raw_expression), '\n', { plain = true })
 
     local start_row, start_col, end_row, end_col = root:range()
-    local virt_text = { expression .. string.rep(' ', extra_space), state.config.highlights.latex }
+    local virt_lines = vim.tbl_map(function(expression)
+        return { { vim.trim(expression), state.config.highlights.latex } }
+    end, expressions)
     vim.api.nvim_buf_set_extmark(0, M.namespace, start_row, start_col, {
         end_row = end_row,
         end_col = end_col,
-        virt_text = { virt_text },
-        virt_text_pos = 'overlay',
+        virt_lines = virt_lines,
+        virt_lines_above = true,
     })
 end
 
