@@ -7,7 +7,8 @@ Plugin to improve viewing Markdown files in Neovim
 # Features
 
 - Functions entirely inside of Neovim with no external windows
-- Changes between `rendered` view in normal mode and raw view in all other modes
+- Changes between `rendered` view in normal mode and `raw` view in all other modes
+- Changes `conceallevel` between `rendered` and `raw` view based on configuration
 - Supports rendering `markdown` injected into other file types
 - Highlights headings with different groups depending on level and replaces `#`
 - Highlights code blocks and inline code to better stand out
@@ -87,6 +88,13 @@ require('render-markdown').setup({
     bullet = '○',
     -- Character that will replace the > at the start of block quotes
     quote = '┃',
+    -- See :h 'conceallevel' for more information about meaning of values
+    conceal = {
+        -- conceallevel used for buffer when not being rendered, get user setting
+        default = vim.opt.conceallevel:get(),
+        -- conceallevel used for buffer when being rendered
+        rendered = 3,
+    },
     -- Define the highlight groups to use when rendering various components
     highlights = {
         heading = {

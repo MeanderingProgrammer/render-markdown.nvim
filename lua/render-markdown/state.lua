@@ -14,6 +14,10 @@
 ---@field public latex string
 ---@field public quote string
 
+---@class Conceal
+---@field public default integer
+---@field public rendered integer
+
 ---@class Config
 ---@field public markdown_query string
 ---@field public inline_query string
@@ -22,6 +26,7 @@
 ---@field public headings string[]
 ---@field public bullet string
 ---@field public quote string
+---@field public conceal Conceal
 ---@field public highlights Highlights
 
 ---@class State

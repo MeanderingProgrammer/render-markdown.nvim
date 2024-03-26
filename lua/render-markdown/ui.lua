@@ -8,6 +8,7 @@ M.namespace = vim.api.nvim_create_namespace('render-markdown.nvim')
 M.clear = function()
     -- Remove existing highlights / virtual text
     vim.api.nvim_buf_clear_namespace(0, M.namespace, 0, -1)
+    vim.opt_local.conceallevel = state.config.conceal.default
 end
 
 M.refresh = function()
@@ -23,6 +24,7 @@ M.refresh = function()
         return
     end
 
+    vim.opt_local.conceallevel = state.config.conceal.rendered
     vim.treesitter.get_parser():for_each_tree(function(tree, language_tree)
         local language = language_tree:lang()
         if language == 'markdown' then

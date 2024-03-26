@@ -19,6 +19,10 @@ local M = {}
 ---@field public latex? string
 ---@field public quote? string
 
+---@class UserConceal
+---@field public default? integer
+---@field public rendered? integer
+
 ---@class UserConfig
 ---@field public markdown_query? string
 ---@field public inline_query? string
@@ -27,6 +31,7 @@ local M = {}
 ---@field public headings? string[]
 ---@field public bullet? string
 ---@field public quote? string
+---@field public conceal? UserConceal
 ---@field public highlights? UserHighlights
 
 ---@param opts UserConfig|nil
@@ -66,6 +71,10 @@ function M.setup(opts)
         headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
         bullet = '○',
         quote = '┃',
+        conceal = {
+            default = vim.opt.conceallevel:get(),
+            rendered = 3,
+        },
         highlights = {
             heading = {
                 backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
