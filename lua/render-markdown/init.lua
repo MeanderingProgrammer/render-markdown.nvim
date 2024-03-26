@@ -21,6 +21,7 @@ local M = {}
 
 ---@class UserConfig
 ---@field public markdown_query? string
+---@field public inline_query? string
 ---@field public file_types? string[]
 ---@field public render_modes? string[]
 ---@field public headings? string[]
@@ -57,6 +58,9 @@ function M.setup(opts)
             (pipe_table_delimiter_row) @table_delim
             (pipe_table_row) @table_row
         ]],
+        inline_query = [[
+            (code_span) @code
+        ]],
         file_types = { 'markdown' },
         render_modes = { 'n', 'c' },
         headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
@@ -87,6 +91,7 @@ function M.setup(opts)
     state.enabled = true
     state.config = vim.tbl_deep_extend('force', default_config, opts or {})
     state.markdown_query = vim.treesitter.query.parse('markdown', state.config.markdown_query)
+    state.inline_query = vim.treesitter.query.parse('markdown_inline', state.config.inline_query)
 
     -- Call immediately to re-render on LazyReload
     vim.schedule(ui.refresh)

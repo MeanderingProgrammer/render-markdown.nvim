@@ -10,7 +10,7 @@ Plugin to improve viewing Markdown files in Neovim
 - Changes between `rendered` view in normal mode and raw view in all other modes
 - Supports rendering `markdown` injected into other file types
 - Highlights headings with different groups depending on level and replaces `#`
-- Highlights code blocks to better stand out
+- Highlights code blocks and inline code to better stand out
 - Replaces whichever style bullet point is being used with provided character
 - Replaces block quote leading `>` with provided character
 - Updates table borders with better border characters, does NOT automatically align
@@ -18,8 +18,8 @@ Plugin to improve viewing Markdown files in Neovim
 
 # Dependencies
 
-- [markdown](https://github.com/tree-sitter-grammars/tree-sitter-markdown) parser for
-  [treesitter](https://github.com/nvim-treesitter/nvim-treesitter): Used to parse
+- [markdown & markdown_inline](https://github.com/tree-sitter-grammars/tree-sitter-markdown)
+  parsers for [treesitter](https://github.com/nvim-treesitter/nvim-treesitter): Used to parse
   `markdown` files
 - [pylatexenc](https://pypi.org/project/pylatexenc/): Used to transform `LaTeX` strings
   to appropriate unicode using `latex2text`, not a mandatory dependency
@@ -46,8 +46,7 @@ by the user.
 
 ```lua
 require('render-markdown').setup({
-    -- Capture groups that get pulled from markdown, these are later used to
-    -- modify how the file gets rendered
+    -- Capture groups that get pulled from markdown
     markdown_query = [[
         (atx_heading [
             (atx_h1_marker)
@@ -73,10 +72,14 @@ require('render-markdown').setup({
         (pipe_table_delimiter_row) @table_delim
         (pipe_table_row) @table_row
     ]],
+    -- Capture groups that get pulled from inline markdown
+    inline_query = [[
+        (code_span) @code
+    ]],
     -- Filetypes this plugin will run on
     file_types = { 'markdown' },
-    -- vim modes that will show a rendered view of the markdown file, all other
-    -- modes will be uneffected by this plugin
+    -- Vim modes that will show a rendered view of the markdown file
+    -- All other modes will be uneffected by this plugin
     render_modes = { 'n', 'c' },
     -- Characters that will replace the # at the start of headings
     headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },

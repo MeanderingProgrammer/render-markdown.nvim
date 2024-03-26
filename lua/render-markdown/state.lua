@@ -16,6 +16,7 @@
 
 ---@class Config
 ---@field public markdown_query string
+---@field public inline_query string
 ---@field public file_types string[]
 ---@field public render_modes string[]
 ---@field public headings string[]
@@ -27,5 +28,6 @@
 ---@field enabled boolean
 ---@field config Config
 ---@field markdown_query Query
+---@field inline_query Query
 local state = {}
 return state

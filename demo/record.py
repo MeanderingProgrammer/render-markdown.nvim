@@ -17,7 +17,7 @@ def main(zoom: int, file: str, cast: str) -> None:
     # https://docs.asciinema.org/manual/cli/usage/
     pyautogui.write(f"asciinema rec -c 'nvim {file}' {cast}")
     pyautogui.press("enter")
-    time.sleep(1.0)
+    time.sleep(1.5)
 
     # Start typing in new heading
     pyautogui.press("o")
@@ -28,11 +28,12 @@ def main(zoom: int, file: str, cast: str) -> None:
     pyautogui.press("esc")
     time.sleep(2.0)
 
-    for _ in range(2):
+    # Swith between insert and normal mode a few times
+    for i in range(2):
         pyautogui.press("i")
-        time.sleep(1.0)
+        time.sleep(i + 1)
         pyautogui.press("esc")
-        time.sleep(2.0)
+        time.sleep((i + 1) * 2)
 
     # Close demo file
     pyautogui.write(":q!")

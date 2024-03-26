@@ -27,6 +27,8 @@ M.refresh = function()
         local language = language_tree:lang()
         if language == 'markdown' then
             M.markdown(tree:root())
+        elseif language == 'markdown_inline' then
+            M.markdown_inline(tree:root())
         elseif language == 'latex' then
             M.latex(tree:root())
         end
@@ -109,7 +111,28 @@ M.markdown = function(root)
             })
         else
             -- Should only get here if user provides custom capture, currently unhandled
-            vim.print('Unhandled capture: ' .. capture)
+            vim.print('Unhandled markdown capture: ' .. capture)
+        end
+    end
+end
+
+---@param root TSNode
+M.markdown_inline = function(root)
+    local highlights = state.config.highlights
+    ---@diagnostic disable-next-line: missing-parameter
+    for id, node in state.inline_query:iter_captures(root, 0) do
+        local capture = state.inline_query.captures[id]
+        local start_row, start_col, end_row, end_col = node:range()
+
+        if capture == 'code' then
+            vim.api.nvim_buf_set_extmark(0, M.namespace, start_row, start_col, {
+                end_row = end_row,
+                end_col = end_col,
+                hl_group = highlights.code,
+            })
+        else
+            -- Should only get here if user provides custom capture, currently unhandled
+            vim.print('Unhandled inline capture: ' .. capture)
         end
     end
 end

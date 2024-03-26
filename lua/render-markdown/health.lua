@@ -13,6 +13,7 @@ local M = {}
 function M.check()
     vim.health.start('Checking required treesitter parsers')
     parser_installed('markdown')
+    parser_installed('markdown_inline')
 end
 
 return M

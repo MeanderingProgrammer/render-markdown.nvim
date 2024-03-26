@@ -21,7 +21,7 @@ if __name__ == "__main__":
 ```
 
 - List Item 1
-* List Item 2
+* List Item 2: with `inline` code
     * Nested List Item 1
     * Nested List Item 2
 + List Item 3
