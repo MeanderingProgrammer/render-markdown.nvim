@@ -20,8 +20,8 @@ Plugin to improve viewing Markdown files in Neovim
 # Dependencies
 
 - [markdown & markdown_inline](https://github.com/tree-sitter-grammars/tree-sitter-markdown)
-  parsers for [treesitter](https://github.com/nvim-treesitter/nvim-treesitter): Used to parse
-  `markdown` files
+  parsers for [treesitter](https://github.com/nvim-treesitter/nvim-treesitter):
+  Used to parse `markdown` files
 - [pylatexenc](https://pypi.org/project/pylatexenc/): Used to transform `LaTeX` strings
   to appropriate unicode using `latex2text`, not a mandatory dependency
 
@@ -137,18 +137,21 @@ require('render-markdown').setup({
 # Purpose
 
 There are many existing markdown rendering plugins in the Neovim ecosystem. However,
-most of these rely on syncing a separate browser window with the buffer. This is the
-correct way to do things to get full feature support, however I wanted something that
-worked completely inside of Neovim and made things look slightly "nicer".
+most of these rely on syncing a separate browser window with the buffer. This is
+the correct way to do things to get full feature support, however I wanted something
+that worked completely inside of Neovim and made things look slightly "nicer".
 
 The closest one I found to this was [headlines.nvim](https://github.com/lukas-reineke/headlines.nvim),
-which is an awesome plugin that I took several ideas from. However it just didn't have
-quite what I was looking for. In particular I wanted something that would disappear completely
-when editing a file and quickly render some style when viewing the file. Hence this plugin.
+which is an awesome plugin that I took several ideas from. However it just didn't
+have quite what I was looking for. In particular I wanted something that would
+disappear completely when editing a file and quickly render some style when viewing
+the file. Hence this plugin.
 
 # Related Projects
 
-- [headlines.nvim](https://github.com/lukas-reineke/headlines.nvim) - Same high level 
-  idea different features
-- [markdown-preview.nvim](https://github.com/iamcco/markdown-preview.nvim) - Uses browser
-- [vim-markdown-composer](https://github.com/euclio/vim-markdown-composer) - Uses browser
+- [headlines.nvim](https://github.com/lukas-reineke/headlines.nvim) - Same high
+  level idea different features
+- [markdown-preview.nvim](https://github.com/iamcco/markdown-preview.nvim) - Uses
+  browser
+- [vim-markdown-composer](https://github.com/euclio/vim-markdown-composer) - Uses
+  browser
