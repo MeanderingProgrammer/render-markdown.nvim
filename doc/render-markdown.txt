@@ -12,6 +12,7 @@ Table of Contents                          *render-markdown-table-of-contents*
 6. Commands                                         |render-markdown-commands|
 7. Purpose                                           |render-markdown-purpose|
 8. Related Projects                         |render-markdown-related-projects|
+9. Links                                               |render-markdown-links|
 
 ==============================================================================
 1. markdown.nvim                               *render-markdown-markdown.nvim*
@@ -38,8 +39,8 @@ Plugin to improve viewing Markdown files in Neovim
 3. Dependencies                                 *render-markdown-dependencies*
 
 - markdown & markdown_inline <https://github.com/tree-sitter-grammars/tree-sitter-markdown>
-    parsers for treesitter <https://github.com/nvim-treesitter/nvim-treesitter>: Used to parse
-    `markdown` files
+    parsers for treesitter <https://github.com/nvim-treesitter/nvim-treesitter>:
+    Used to parse `markdown` files
 - pylatexenc <https://pypi.org/project/pylatexenc/>: Used to transform `LaTeX` strings
     to appropriate unicode using `latex2text`, not a mandatory dependency
 
@@ -180,10 +181,12 @@ this plugin.
 ==============================================================================
 8. Related Projects                         *render-markdown-related-projects*
 
-- headlines.nvim <https://github.com/lukas-reineke/headlines.nvim> - Same high level
-    idea different features
-- markdown-preview.nvim <https://github.com/iamcco/markdown-preview.nvim> - Uses browser
-- vim-markdown-composer <https://github.com/euclio/vim-markdown-composer> - Uses browser
+- headlines.nvim <https://github.com/lukas-reineke/headlines.nvim> - Same high
+    level idea different features
+- markdown-preview.nvim <https://github.com/iamcco/markdown-preview.nvim> - Uses
+    browser
+- vim-markdown-composer <https://github.com/euclio/vim-markdown-composer> - Uses
+    browser
 
 ==============================================================================
 9. Links                                               *render-markdown-links*
