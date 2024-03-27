@@ -40,7 +40,7 @@ Plugin to improve viewing Markdown files in Neovim
 }
 ```
 
-## Default Config
+# Setup
 
 Below is the configuration that gets used by default, any part of it can be modified
 by the user.

@@ -11,3 +11,11 @@ demo zoom=default_zoom:
       --font-family "JetBrainsMono NFM" \
       --last-frame-duration 1
     rm demo.cast
+
+docgen:
+    # https://github.com/kdheepak/panvimdoc
+    # https://pandoc.org/
+    ../../open-source/panvimdoc/panvimdoc.sh \
+      --project-name render-markdown \
+      --input-file README.md \
+      --vim-version 0.9.5
