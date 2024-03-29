@@ -32,6 +32,7 @@ local M = {}
 ---@field public bullet? string
 ---@field public quote? string
 ---@field public conceal? UserConceal
+---@field public fat_tables? boolean
 ---@field public highlights? UserHighlights
 
 ---@param opts UserConfig|nil
@@ -59,6 +60,7 @@ function M.setup(opts)
             (block_quote (block_quote_marker) @quote_marker)
             (block_quote (paragraph (inline (block_continuation) @quote_marker)))
 
+            (pipe_table) @table
             (pipe_table_header) @table_head
             (pipe_table_delimiter_row) @table_delim
             (pipe_table_row) @table_row
@@ -75,6 +77,7 @@ function M.setup(opts)
             default = vim.opt.conceallevel:get(),
             rendered = 3,
         },
+        fat_tables = true,
         highlights = {
             heading = {
                 backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete' },

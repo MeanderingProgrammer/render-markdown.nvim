@@ -88,6 +88,30 @@ M.markdown = function(root)
                 virt_text = { virt_text },
                 virt_text_pos = 'overlay',
             })
+        elseif capture == 'table' then
+            if state.config.fat_tables then
+                local lines = vim.api.nvim_buf_get_lines(0, start_row, end_row, false)
+                local table_head = list.first(lines)
+                local table_tail = list.last(lines)
+                if #table_head == #table_tail then
+                    local headings = vim.split(table_head, '|', { plain = true, trimempty = true })
+                    local sections = vim.tbl_map(function(part)
+                        return string.rep('─', #part)
+                    end, headings)
+
+                    local line_above = { { '┌' .. table.concat(sections, '┬') .. '┐', highlights.table.head } }
+                    vim.api.nvim_buf_set_extmark(0, M.namespace, start_row, start_col, {
+                        virt_lines_above = true,
+                        virt_lines = { line_above },
+                    })
+
+                    local line_below = { { '└' .. table.concat(sections, '┴') .. '┘', highlights.table.row } }
+                    vim.api.nvim_buf_set_extmark(0, M.namespace, end_row, start_col, {
+                        virt_lines_above = true,
+                        virt_lines = { line_below },
+                    })
+                end
+            end
         elseif vim.tbl_contains({ 'table_head', 'table_delim', 'table_row' }, capture) then
             local row = value:gsub('|', '│')
             if capture == 'table_delim' then

@@ -1,4 +1,4 @@
-default_zoom := '10'
+default_zoom := '3'
 
 demo zoom=default_zoom:
     rm -f demo/demo.gif

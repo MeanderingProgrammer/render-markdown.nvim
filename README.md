@@ -69,6 +69,7 @@ require('render-markdown').setup({
         (block_quote (block_quote_marker) @quote_marker)
         (block_quote (paragraph (inline (block_continuation) @quote_marker)))
 
+        (pipe_table) @table
         (pipe_table_header) @table_head
         (pipe_table_delimiter_row) @table_delim
         (pipe_table_row) @table_row
@@ -95,6 +96,8 @@ require('render-markdown').setup({
         -- conceallevel used for buffer when being rendered
         rendered = 3,
     },
+    -- Add a line above and below tables to complete look, ends up like a window
+    fat_tables = true,
     -- Define the highlight groups to use when rendering various components
     highlights = {
         heading = {

@@ -27,6 +27,7 @@
 ---@field public bullet string
 ---@field public quote string
 ---@field public conceal Conceal
+---@field public fat_tables boolean
 ---@field public highlights Highlights
 
 ---@class State
