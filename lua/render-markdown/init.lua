@@ -71,7 +71,7 @@ function M.setup(opts)
         file_types = { 'markdown' },
         render_modes = { 'n', 'c' },
         headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
-        bullets = {"●","○","◆","◇"},
+        bullets = { '●', '○', '◆', '◇' },
         quote = '┃',
         conceal = {
             default = vim.opt.conceallevel:get(),

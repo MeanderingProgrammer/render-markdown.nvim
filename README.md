@@ -12,7 +12,7 @@ Plugin to improve viewing Markdown files in Neovim
 - Supports rendering `markdown` injected into other file types
 - Highlights headings with different groups depending on level and replaces `#`
 - Highlights code blocks and inline code to better stand out
-- Replaces whichever style bullet point is being used with provided character
+- Replaces bullet points with provided character based on level
 - Replaces block quote leading `>` with provided character
 - Updates table borders with better border characters, does NOT automatically align
 - Basic support for `LaTeX` if `pylatexenc` is installed on system
@@ -86,7 +86,7 @@ require('render-markdown').setup({
     -- Characters that will replace the # at the start of headings
     headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
     -- Character to use for the bullet points in lists
-    bullets = {"●","○","◆","◇"},
+    bullets = { '●', '○', '◆', '◇' },
     -- Character that will replace the > at the start of block quotes
     quote = '┃',
     -- See :h 'conceallevel' for more information about meaning of values
