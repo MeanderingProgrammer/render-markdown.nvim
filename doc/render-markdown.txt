@@ -112,8 +112,8 @@ modified by the user.
         render_modes = { 'n', 'c' },
         -- Characters that will replace the # at the start of headings
         headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
-        -- Character to use for the bullet point in lists
-        bullet = '○',
+        -- Character to use for the bullet points in lists
+        bullets = {"●","○","◆","◇"},
         -- Character that will replace the > at the start of block quotes
         quote = '┃',
         -- See :h 'conceallevel' for more information about meaning of values

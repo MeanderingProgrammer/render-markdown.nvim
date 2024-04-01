@@ -29,7 +29,7 @@ local M = {}
 ---@field public file_types? string[]
 ---@field public render_modes? string[]
 ---@field public headings? string[]
----@field public bullet? string
+---@field public bullets? string[]
 ---@field public quote? string
 ---@field public conceal? UserConceal
 ---@field public fat_tables? boolean
@@ -71,7 +71,7 @@ function M.setup(opts)
         file_types = { 'markdown' },
         render_modes = { 'n', 'c' },
         headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
-        bullet = '○',
+        bullets = {"●","○","◆","◇"},
         quote = '┃',
         conceal = {
             default = vim.opt.conceallevel:get(),

@@ -37,6 +37,28 @@ M.refresh = function()
     end)
 end
 
+--- Walk through all parent nodes and count the number of nodes with type list
+--- to calculate the level of the given node
+---@param node TSNode
+---@return integer
+M.calculate_list_level = function(node)
+    local candidate = node:parent()
+    local level = 0
+    while candidate ~= nil do
+        local candidate_type = candidate:type()
+        if candidate_type == "section" or candidate_type == "document" then
+            -- when reaching a section or the document we are clearly at the
+            -- top of the list
+            break
+        elseif candidate_type == "list" then
+            -- found a list increase the level and continue
+            level = level + 1
+        end
+        candidate = candidate:parent()
+    end
+    return level
+end
+
 ---@param root TSNode
 M.markdown = function(root)
     local highlights = state.config.highlights
@@ -73,7 +95,10 @@ M.markdown = function(root)
             -- edge cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
             -- As a result we handle leading spaces here, can remove if this gets fixed upstream
             local _, leading_spaces = value:find('^%s*')
-            local virt_text = { string.rep(' ', leading_spaces or 0) .. state.config.bullet, highlights.bullet }
+            -- Get the level of the list_marker by counting the number of parent list nodes
+            local level = M.calculate_list_level(node)
+            local bullet_marker = list.cycle(state.config.bullets, level)
+            local virt_text = { string.rep(' ', leading_spaces or 0) .. bullet_marker, highlights.bullet }
             vim.api.nvim_buf_set_extmark(0, M.namespace, start_row, start_col, {
                 end_row = end_row,
                 end_col = end_col,
