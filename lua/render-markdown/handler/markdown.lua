@@ -15,11 +15,16 @@ M.render = function(namespace, root)
 
         if capture == 'heading' then
             local level = #value
+
             local heading = list.cycle(state.config.headings, level)
+            -- Available width is level + 1, where level = number of `#` characters and one is added
+            -- to account for the space after the last `#` but before the heading title
+            local padding = level + 1 - vim.fn.strdisplaywidth(heading)
+
             local background = list.clamp_last(highlights.heading.backgrounds, level)
             local foreground = list.clamp_last(highlights.heading.foregrounds, level)
 
-            local virt_text = { string.rep(' ', level - 1) .. heading, { foreground, background } }
+            local virt_text = { string.rep(' ', padding) .. heading, { foreground, background } }
             vim.api.nvim_buf_set_extmark(0, namespace, start_row, 0, {
                 end_row = end_row + 1,
                 end_col = 0,
