@@ -58,6 +58,8 @@ require('render-markdown').setup({
             (atx_h6_marker)
         ] @heading)
 
+        (thematic_break) @dash
+
         (fenced_code_block) @code
 
         [
@@ -89,6 +91,8 @@ require('render-markdown').setup({
     bullets = { '●', '○', '◆', '◇' },
     -- Character that will replace the > at the start of block quotes
     quote = '┃',
+    -- Character to use for the horizontal rule
+    dash = '—',
     -- See :h 'conceallevel' for more information about meaning of values
     conceal = {
         -- conceallevel used for buffer when not being rendered, get user setting
@@ -127,6 +131,8 @@ require('render-markdown').setup({
         latex = '@markup.math',
         -- Quote character in a block quote
         quote = '@markup.quote',
+        -- Horizontal rule
+        dash = 'LineNr',
     },
 })
 ```

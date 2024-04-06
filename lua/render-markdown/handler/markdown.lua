@@ -63,6 +63,13 @@ M.render = function(namespace, root)
                 virt_text = { virt_text },
                 virt_text_pos = 'overlay',
             })
+        elseif capture == 'dash' then
+            local width = vim.api.nvim_win_get_width(0)
+            local virt_text = { state.config.dash:rep(width), highlights.dash }
+            vim.api.nvim_buf_set_extmark(0, namespace, start_row, 0, {
+                virt_text = { virt_text },
+                virt_text_pos = 'overlay',
+            })
         elseif capture == 'table' then
             if state.config.fat_tables then
                 local lines = vim.api.nvim_buf_get_lines(0, start_row, end_row, false)

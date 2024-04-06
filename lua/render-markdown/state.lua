@@ -13,6 +13,7 @@
 ---@field public table TableHighlights
 ---@field public latex string
 ---@field public quote string
+---@field public dash string
 
 ---@class Conceal
 ---@field public default integer
@@ -26,6 +27,7 @@
 ---@field public headings string[]
 ---@field public bullets string[]
 ---@field public quote string
+---@field public dash string
 ---@field public conceal Conceal
 ---@field public fat_tables boolean
 ---@field public highlights Highlights

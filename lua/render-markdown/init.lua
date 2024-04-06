@@ -18,6 +18,7 @@ local M = {}
 ---@field public table? UserTableHighlights
 ---@field public latex? string
 ---@field public quote? string
+---@field public dash? string
 
 ---@class UserConceal
 ---@field public default? integer
@@ -31,6 +32,7 @@ local M = {}
 ---@field public headings? string[]
 ---@field public bullets? string[]
 ---@field public quote? string
+---@field public dash? string
 ---@field public conceal? UserConceal
 ---@field public fat_tables? boolean
 ---@field public highlights? UserHighlights
@@ -48,6 +50,8 @@ function M.setup(opts)
                 (atx_h5_marker)
                 (atx_h6_marker)
             ] @heading)
+
+            (thematic_break) @dash
 
             (fenced_code_block) @code
 
@@ -73,6 +77,7 @@ function M.setup(opts)
         headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
         bullets = { '●', '○', '◆', '◇' },
         quote = '┃',
+        dash = '—',
         conceal = {
             default = vim.opt.conceallevel:get(),
             rendered = 3,
@@ -98,6 +103,7 @@ function M.setup(opts)
             },
             latex = '@markup.math',
             quote = '@markup.quote',
+            dash = 'LineNr',
         },
     }
     state.enabled = true
