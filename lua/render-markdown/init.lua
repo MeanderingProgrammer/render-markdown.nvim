@@ -78,8 +78,8 @@ function M.setup(opts)
               ]
             ) @checkbox
 
-            (block_quote (block_quote_marker) @quote_marker)
-            (block_quote (paragraph (inline (block_continuation) @quote_marker)))
+            (block_quote_marker) @quote_marker
+            (block_continuation) @quote_marker
 
             (pipe_table) @table
             (pipe_table_header) @table_head
