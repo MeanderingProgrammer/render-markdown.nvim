@@ -13,6 +13,8 @@ Plugin to improve viewing Markdown files in Neovim
 - Highlights headings with different groups depending on level and replaces `#`
 - Highlights code blocks and inline code to better stand out
 - Replaces bullet points with provided character based on level
+- Replaces checkboxes with provided characters based on state
+- Updates horizontal rules with a full-width line
 - Replaces block quote leading `>` with provided character
 - Updates table borders with better border characters, does NOT automatically align
 - Basic support for `LaTeX` if `pylatexenc` is installed on system
@@ -62,14 +64,29 @@ require('render-markdown').setup({
 
         (fenced_code_block) @code
 
-        [
+        (
+          [
             (list_marker_plus)
             (list_marker_minus)
             (list_marker_star)
-        ] @list_marker
+          ]
+          (paragraph)
+        ) @list_marker
 
-        (block_quote (block_quote_marker) @quote_marker)
-        (block_quote (paragraph (inline (block_continuation) @quote_marker)))
+        (
+          [
+            (list_marker_plus)
+            (list_marker_minus)
+            (list_marker_star)
+          ]
+          [
+            (task_list_marker_unchecked)
+            (task_list_marker_checked)
+          ]
+        ) @checkbox
+
+        (block_quote_marker) @quote_marker
+        (block_continuation) @quote_marker
 
         (pipe_table) @table
         (pipe_table_header) @table_head
@@ -89,6 +106,8 @@ require('render-markdown').setup({
     headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
     -- Character to use for the bullet points in lists
     bullets = { '●', '○', '◆', '◇' },
+    -- Characters to the unticked/ticked checkboxes
+    checkboxes = { '', '' },
     -- Character that will replace the > at the start of block quotes
     quote = '┃',
     -- Character to use for the horizontal rule
@@ -121,6 +140,8 @@ require('render-markdown').setup({
         code = 'ColorColumn',
         -- Bullet points in list
         bullet = 'Normal',
+        -- Checkboxes
+        checkboxes = { 'Normal', 'Normal' },
         table = {
             -- Header of a markdown table
             head = '@markup.heading',
