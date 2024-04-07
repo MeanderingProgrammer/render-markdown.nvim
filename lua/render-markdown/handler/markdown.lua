@@ -70,6 +70,20 @@ M.render = function(namespace, root)
                 virt_text = { virt_text },
                 virt_text_pos = 'overlay',
             })
+        elseif capture == 'checkbox' then
+            value = vim.treesitter.get_node_text(node:next_sibling(), 0)
+            local tmp, _ = value:find('[%s+]')
+            local level = (tmp == nil and 2 or 1)
+            local foreground = list.cycle(highlights.checkboxes, level)
+            local bullet = list.cycle(state.config.checkboxes, level)
+
+            local virt_text = { '  ' .. bullet .. '  ' , foreground }
+            vim.api.nvim_buf_set_extmark(0, namespace, start_row, start_col, {
+                end_row = end_row,
+                end_col = end_col,
+                virt_text = { virt_text },
+                virt_text_pos = 'overlay',
+            })
         elseif capture == 'table' then
             if state.config.fat_tables then
                 local lines = vim.api.nvim_buf_get_lines(0, start_row, end_row, false)

@@ -15,6 +15,7 @@ local M = {}
 ---@field public heading? UserHeadingHighlights
 ---@field public code? string
 ---@field public bullet? string
+---@field public checkboxes? string[]
 ---@field public table? UserTableHighlights
 ---@field public latex? string
 ---@field public quote? string
@@ -31,6 +32,7 @@ local M = {}
 ---@field public render_modes? string[]
 ---@field public headings? string[]
 ---@field public bullets? string[]
+---@field public checkboxes? string[]
 ---@field public quote? string
 ---@field public dash? string
 ---@field public conceal? UserConceal
@@ -55,11 +57,26 @@ function M.setup(opts)
 
             (fenced_code_block) @code
 
-            [
+            (
+              [
                 (list_marker_plus)
                 (list_marker_minus)
                 (list_marker_star)
-            ] @list_marker
+              ]
+              (paragraph)
+            ) @list_marker
+
+            (
+              [
+                (list_marker_plus)
+                (list_marker_minus)
+                (list_marker_star)
+              ]
+              [
+                (task_list_marker_unchecked)
+                (task_list_marker_checked)
+              ]
+            ) @checkbox
 
             (block_quote (block_quote_marker) @quote_marker)
             (block_quote (paragraph (inline (block_continuation) @quote_marker)))
@@ -76,6 +93,7 @@ function M.setup(opts)
         render_modes = { 'n', 'c' },
         headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
         bullets = { '●', '○', '◆', '◇' },
+        checkboxes = { '', '' },
         quote = '┃',
         dash = '—',
         conceal = {
@@ -97,6 +115,7 @@ function M.setup(opts)
             },
             code = 'ColorColumn',
             bullet = 'Normal',
+            checkboxes = { 'Normal', 'Normal' },
             table = {
                 head = '@markup.heading',
                 row = 'Normal',
