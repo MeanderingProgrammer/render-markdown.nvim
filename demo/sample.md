@@ -33,6 +33,8 @@ if __name__ == "__main__":
 2. Item 2
 3. Item 3
 
+---
+
   > Quote line 1
   > Quote line 2
 

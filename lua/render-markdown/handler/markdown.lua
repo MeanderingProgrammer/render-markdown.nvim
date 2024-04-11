@@ -33,6 +33,13 @@ M.render = function(namespace, root)
                 virt_text_pos = 'overlay',
                 hl_eol = true,
             })
+        elseif capture == 'dash' then
+            local width = vim.api.nvim_win_get_width(0)
+            local virt_text = { state.config.dash:rep(width), highlights.dash }
+            vim.api.nvim_buf_set_extmark(0, namespace, start_row, 0, {
+                virt_text = { virt_text },
+                virt_text_pos = 'overlay',
+            })
         elseif capture == 'code' then
             vim.api.nvim_buf_set_extmark(0, namespace, start_row, 0, {
                 end_row = end_row,

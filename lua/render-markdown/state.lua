@@ -8,6 +8,7 @@
 
 ---@class Highlights
 ---@field public heading HeadingHighlights
+---@field public dash string
 ---@field public code string
 ---@field public bullet string
 ---@field public table TableHighlights
@@ -24,6 +25,7 @@
 ---@field public file_types string[]
 ---@field public render_modes string[]
 ---@field public headings string[]
+---@field public dash string
 ---@field public bullets string[]
 ---@field public quote string
 ---@field public conceal Conceal

@@ -13,6 +13,7 @@ local M = {}
 
 ---@class UserHighlights
 ---@field public heading? UserHeadingHighlights
+---@field public dash? string
 ---@field public code? string
 ---@field public bullet? string
 ---@field public table? UserTableHighlights
@@ -29,6 +30,7 @@ local M = {}
 ---@field public file_types? string[]
 ---@field public render_modes? string[]
 ---@field public headings? string[]
+---@field public dash? string
 ---@field public bullets? string[]
 ---@field public quote? string
 ---@field public conceal? UserConceal
@@ -48,6 +50,8 @@ function M.setup(opts)
                 (atx_h5_marker)
                 (atx_h6_marker)
             ] @heading)
+
+            (thematic_break) @dash
 
             (fenced_code_block) @code
 
@@ -71,6 +75,7 @@ function M.setup(opts)
         file_types = { 'markdown' },
         render_modes = { 'n', 'c' },
         headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
+        dash = '—',
         bullets = { '●', '○', '◆', '◇' },
         quote = '┃',
         conceal = {
@@ -90,6 +95,7 @@ function M.setup(opts)
                     'markdownH6',
                 },
             },
+            dash = 'LineNr',
             code = 'ColorColumn',
             bullet = 'Normal',
             table = {

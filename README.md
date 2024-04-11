@@ -11,6 +11,7 @@ Plugin to improve viewing Markdown files in Neovim
 - Changes `conceallevel` between `rendered` and `raw` view based on configuration
 - Supports rendering `markdown` injected into other file types
 - Highlights headings with different groups depending on level and replaces `#`
+- Updates horizontal breaks with full-width lines
 - Highlights code blocks and inline code to better stand out
 - Replaces bullet points with provided character based on level
 - Replaces block quote leading `>` with provided character
@@ -58,6 +59,8 @@ require('render-markdown').setup({
             (atx_h6_marker)
         ] @heading)
 
+        (thematic_break) @dash
+
         (fenced_code_block) @code
 
         [
@@ -85,6 +88,8 @@ require('render-markdown').setup({
     render_modes = { 'n', 'c' },
     -- Characters that will replace the # at the start of headings
     headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
+    -- Character to use for the horizontal break
+    dash = '—',
     -- Character to use for the bullet points in lists
     bullets = { '●', '○', '◆', '◇' },
     -- Character that will replace the > at the start of block quotes
@@ -113,6 +118,8 @@ require('render-markdown').setup({
                 'markdownH6',
             },
         },
+        -- Horizontal break
+        dash = 'LineNr',
         -- Code blocks
         code = 'ColorColumn',
         -- Bullet points in list
