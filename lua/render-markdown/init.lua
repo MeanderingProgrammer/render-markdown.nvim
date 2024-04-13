@@ -11,15 +11,23 @@ local M = {}
 ---@field public backgrounds? string[]
 ---@field public foregrounds? string[]
 
+---@class UserCheckboxesHighlights
+---@field public unchecked? string
+---@field public checked? string
+
 ---@class UserHighlights
 ---@field public heading? UserHeadingHighlights
 ---@field public code? string
 ---@field public bullet? string
----@field public checkboxes? string[]
+---@field public checkboxes? UserCheckboxesHighlights
 ---@field public table? UserTableHighlights
 ---@field public latex? string
 ---@field public quote? string
 ---@field public dash? string
+
+---@class UserCheckboxes
+---@field public unchecked? string
+---@field public checked? string
 
 ---@class UserConceal
 ---@field public default? integer
@@ -32,7 +40,7 @@ local M = {}
 ---@field public render_modes? string[]
 ---@field public headings? string[]
 ---@field public bullets? string[]
----@field public checkboxes? string[]
+---@field public checkboxes? UserCheckboxes
 ---@field public quote? string
 ---@field public dash? string
 ---@field public conceal? UserConceal
@@ -72,11 +80,17 @@ function M.setup(opts)
                 (list_marker_minus)
                 (list_marker_star)
               ]
+              (task_list_marker_unchecked)
+            ) @checkbox_unchecked
+
+            (
               [
-                (task_list_marker_unchecked)
-                (task_list_marker_checked)
+                (list_marker_plus)
+                (list_marker_minus)
+                (list_marker_star)
               ]
-            ) @checkbox
+              (task_list_marker_checked)
+            ) @checkbox_checked
 
             (block_quote_marker) @quote_marker
             (block_continuation) @quote_marker
@@ -93,7 +107,10 @@ function M.setup(opts)
         render_modes = { 'n', 'c' },
         headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
         bullets = { '●', '○', '◆', '◇' },
-        checkboxes = { '', '' },
+        checkboxes = {
+          unchecked = '',
+          checked = ''
+        },
         quote = '┃',
         dash = '—',
         conceal = {
@@ -115,7 +132,10 @@ function M.setup(opts)
             },
             code = 'ColorColumn',
             bullet = 'Normal',
-            checkboxes = { 'Normal', 'Normal' },
+            checkboxes = {
+              unchecked = 'Normal',
+              checked = 'Normal'
+            },
             table = {
                 head = '@markup.heading',
                 row = 'Normal',

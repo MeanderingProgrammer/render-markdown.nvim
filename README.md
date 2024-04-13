@@ -79,11 +79,17 @@ require('render-markdown').setup({
             (list_marker_minus)
             (list_marker_star)
           ]
+          (task_list_marker_unchecked)
+        ) @checkbox_unchecked
+
+        (
           [
-            (task_list_marker_unchecked)
-            (task_list_marker_checked)
+            (list_marker_plus)
+            (list_marker_minus)
+            (list_marker_star)
           ]
-        ) @checkbox
+          (task_list_marker_checked)
+        ) @checkbox_checked
 
         (block_quote_marker) @quote_marker
         (block_continuation) @quote_marker
@@ -106,8 +112,11 @@ require('render-markdown').setup({
     headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
     -- Character to use for the bullet points in lists
     bullets = { '●', '○', '◆', '◇' },
-    -- Characters to the unticked/ticked checkboxes
-    checkboxes = { '', '' },
+    -- Characters to the unchecked/checked checkboxes
+    checkboxes = {
+        unchecked = '',
+        checked = ''
+    },
     -- Character that will replace the > at the start of block quotes
     quote = '┃',
     -- Character to use for the horizontal rule
@@ -141,7 +150,10 @@ require('render-markdown').setup({
         -- Bullet points in list
         bullet = 'Normal',
         -- Checkboxes
-        checkboxes = { 'Normal', 'Normal' },
+        checkboxes = {
+            unchecked = 'Normal',
+            checked = 'Normal'
+        },
         table = {
             -- Header of a markdown table
             head = '@markup.heading',

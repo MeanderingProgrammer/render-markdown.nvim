@@ -70,14 +70,16 @@ M.render = function(namespace, root)
                 virt_text = { virt_text },
                 virt_text_pos = 'overlay',
             })
-        elseif capture == 'checkbox' then
-            value = vim.treesitter.get_node_text(node:next_sibling(), 0)
-            local tmp, _ = value:find('[%s+]')
-            local level = (tmp == nil and 2 or 1)
-            local foreground = list.cycle(highlights.checkboxes, level)
-            local bullet = list.cycle(state.config.checkboxes, level)
-
-            local virt_text = { '  ' .. bullet .. '  ' , foreground }
+        elseif capture == 'checkbox_unchecked' then
+            local virt_text = { '  ' .. state.config.checkboxes.unchecked .. '  ' , highlights.checkboxes.unchecked }
+            vim.api.nvim_buf_set_extmark(0, namespace, start_row, start_col, {
+                end_row = end_row,
+                end_col = end_col,
+                virt_text = { virt_text },
+                virt_text_pos = 'overlay',
+            })
+        elseif capture == 'checkbox_checked' then
+            local virt_text = { '  ' .. state.config.checkboxes.checked .. '  ' , highlights.checkboxes.checked }
             vim.api.nvim_buf_set_extmark(0, namespace, start_row, start_col, {
                 end_row = end_row,
                 end_col = end_col,
