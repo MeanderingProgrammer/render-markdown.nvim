@@ -33,6 +33,9 @@ if __name__ == "__main__":
 2. Item 2
 3. Item 3
 
+- [ ] Unchecked Checkbox
+- [x] Checked Checkbox
+
 ---
 
   > Quote line 1

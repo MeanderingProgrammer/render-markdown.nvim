@@ -70,6 +70,24 @@ M.render = function(namespace, root)
                 virt_text = { virt_text },
                 virt_text_pos = 'overlay',
             })
+        elseif vim.tbl_contains({ 'checkbox_unchecked', 'checkbox_checked' }, capture) then
+            local checkbox = state.config.checkbox.unchecked
+            local highlight = highlights.checkbox.unchecked
+            if capture == 'checkbox_checked' then
+                checkbox = state.config.checkbox.checked
+                highlight = highlights.checkbox.checked
+            end
+            local padding = vim.fn.strdisplaywidth(value) - vim.fn.strdisplaywidth(checkbox)
+
+            if padding >= 0 then
+                local virt_text = { string.rep(' ', padding) .. checkbox, highlight }
+                vim.api.nvim_buf_set_extmark(0, namespace, start_row, start_col, {
+                    end_row = end_row,
+                    end_col = end_col,
+                    virt_text = { virt_text },
+                    virt_text_pos = 'overlay',
+                })
+            end
         elseif capture == 'table' then
             if state.config.fat_tables then
                 local lines = vim.api.nvim_buf_get_lines(0, start_row, end_row, false)

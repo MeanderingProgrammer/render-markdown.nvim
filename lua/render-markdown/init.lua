@@ -7,6 +7,10 @@ local M = {}
 ---@field public head? string
 ---@field public row? string
 
+---@class UserCheckboxHighlights
+---@field public unchecked? string
+---@field public checked? string
+
 ---@class UserHeadingHighlights
 ---@field public backgrounds? string[]
 ---@field public foregrounds? string[]
@@ -16,6 +20,7 @@ local M = {}
 ---@field public dash? string
 ---@field public code? string
 ---@field public bullet? string
+---@field public checkbox? UserCheckboxHighlights
 ---@field public table? UserTableHighlights
 ---@field public latex? string
 ---@field public quote? string
@@ -23,6 +28,10 @@ local M = {}
 ---@class UserConceal
 ---@field public default? integer
 ---@field public rendered? integer
+
+---@class UserCheckbox
+---@field public unchecked? string
+---@field public checked? string
 
 ---@class UserConfig
 ---@field public markdown_query? string
@@ -32,6 +41,7 @@ local M = {}
 ---@field public headings? string[]
 ---@field public dash? string
 ---@field public bullets? string[]
+---@field public checkbox? UserCheckbox
 ---@field public quote? string
 ---@field public conceal? UserConceal
 ---@field public fat_tables? boolean
@@ -61,6 +71,9 @@ function M.setup(opts)
                 (list_marker_star)
             ] @list_marker
 
+            (task_list_marker_unchecked) @checkbox_unchecked
+            (task_list_marker_checked) @checkbox_checked
+
             (block_quote (block_quote_marker) @quote_marker)
             (block_quote (paragraph (inline (block_continuation) @quote_marker)))
 
@@ -77,6 +90,10 @@ function M.setup(opts)
         headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
         dash = '—',
         bullets = { '●', '○', '◆', '◇' },
+        checkbox = {
+            unchecked = '󰄱 ',
+            checked = ' ',
+        },
         quote = '┃',
         conceal = {
             default = vim.opt.conceallevel:get(),
@@ -98,6 +115,10 @@ function M.setup(opts)
             dash = 'LineNr',
             code = 'ColorColumn',
             bullet = 'Normal',
+            checkbox = {
+                unchecked = '@markup.list.unchecked',
+                checked = '@markup.heading',
+            },
             table = {
                 head = '@markup.heading',
                 row = 'Normal',

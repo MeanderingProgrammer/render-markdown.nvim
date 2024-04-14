@@ -1,4 +1,4 @@
-default_zoom := '3'
+default_zoom := '2'
 
 demo zoom=default_zoom:
     rm -f demo/demo.gif
@@ -8,7 +8,7 @@ demo zoom=default_zoom:
       --cast demo.cast
     # https://docs.asciinema.org/manual/agg/usage/
     agg demo.cast demo/demo.gif \
-      --font-family "JetBrainsMono NFM" \
+      --font-family "Monaspace Neon,Hack Nerd Font" \
       --last-frame-duration 1
     rm demo.cast
 

@@ -14,6 +14,7 @@ Plugin to improve viewing Markdown files in Neovim
 - Updates horizontal breaks with full-width lines
 - Highlights code blocks and inline code to better stand out
 - Replaces bullet points with provided character based on level
+- Replaces checkboxes with provided characters based on whether they are checked
 - Replaces block quote leading `>` with provided character
 - Updates table borders with better border characters, does NOT automatically align
 - Basic support for `LaTeX` if `pylatexenc` is installed on system
@@ -69,6 +70,9 @@ require('render-markdown').setup({
             (list_marker_star)
         ] @list_marker
 
+        (task_list_marker_unchecked) @checkbox_unchecked
+        (task_list_marker_checked) @checkbox_checked
+
         (block_quote (block_quote_marker) @quote_marker)
         (block_quote (paragraph (inline (block_continuation) @quote_marker)))
 
@@ -92,6 +96,12 @@ require('render-markdown').setup({
     dash = '—',
     -- Character to use for the bullet points in lists
     bullets = { '●', '○', '◆', '◇' },
+    checkbox = {
+        -- Character that will replace the [ ] in unchecked checkboxes
+        unchecked = '󰄱 ',
+        -- Character that will replace the [x] in checked checkboxes
+        checked = ' ',
+    },
     -- Character that will replace the > at the start of block quotes
     quote = '┃',
     -- See :h 'conceallevel' for more information about meaning of values
@@ -124,6 +134,12 @@ require('render-markdown').setup({
         code = 'ColorColumn',
         -- Bullet points in list
         bullet = 'Normal',
+        checkbox = {
+            -- Unchecked checkboxes
+            unchecked = '@markup.list.unchecked',
+            -- Checked checkboxes
+            checked = '@markup.heading',
+        },
         table = {
             -- Header of a markdown table
             head = '@markup.heading',
