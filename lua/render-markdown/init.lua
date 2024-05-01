@@ -36,6 +36,7 @@ local M = {}
 ---@class UserConfig
 ---@field public markdown_query? string
 ---@field public inline_query? string
+---@field public log_level? 'debug'|'error'
 ---@field public file_types? string[]
 ---@field public render_modes? string[]
 ---@field public headings? string[]
@@ -47,7 +48,7 @@ local M = {}
 ---@field public fat_tables? boolean
 ---@field public highlights? UserHighlights
 
----@param opts UserConfig|nil
+---@param opts? UserConfig
 function M.setup(opts)
     ---@type Config
     local default_config = {
@@ -85,6 +86,7 @@ function M.setup(opts)
         inline_query = [[
             (code_span) @code
         ]],
+        log_level = 'error',
         file_types = { 'markdown' },
         render_modes = { 'n', 'c' },
         headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },

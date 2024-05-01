@@ -1,3 +1,4 @@
+local logger = require('render-markdown.logger')
 local state = require('render-markdown.state')
 
 local M = {}
@@ -10,6 +11,7 @@ M.render = function(namespace, root)
     for id, node in state.inline_query:iter_captures(root, 0) do
         local capture = state.inline_query.captures[id]
         local start_row, start_col, end_row, end_col = node:range()
+        logger.debug_node(capture, node)
 
         if capture == 'code' then
             vim.api.nvim_buf_set_extmark(0, namespace, start_row, start_col, {
@@ -19,7 +21,7 @@ M.render = function(namespace, root)
             })
         else
             -- Should only get here if user provides custom capture, currently unhandled
-            vim.print('Unhandled inline capture: ' .. capture)
+            logger.error('Unhandled inline capture: ' .. capture)
         end
     end
 end

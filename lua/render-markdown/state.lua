@@ -31,6 +31,7 @@
 ---@class Config
 ---@field public markdown_query string
 ---@field public inline_query string
+---@field public log_level 'debug'|'error'
 ---@field public file_types string[]
 ---@field public render_modes string[]
 ---@field public headings string[]

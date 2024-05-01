@@ -1,4 +1,4 @@
-*render-markdown.txt*           For 0.9.5           Last change: 2024 April 13
+*render-markdown.txt*            For 0.9.5            Last change: 2024 May 01
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -112,6 +112,9 @@ modified by the user.
         inline_query = [[
             (code_span) @code
         ]],
+        -- The level of logs to write to file: vim.fn.stdpath('state') .. '/render-markdown.log'
+        -- Only intended to be used for plugin development / debugging
+        log_level = 'error',
         -- Filetypes this plugin will run on
         file_types = { 'markdown' },
         -- Vim modes that will show a rendered view of the markdown file

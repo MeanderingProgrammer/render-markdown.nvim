@@ -1,4 +1,5 @@
 local list = require('render-markdown.list')
+local logger = require('render-markdown.logger')
 local state = require('render-markdown.state')
 
 local M = {}
@@ -12,6 +13,7 @@ M.render = function(namespace, root)
         local capture = state.markdown_query.captures[id]
         local value = vim.treesitter.get_node_text(node, 0)
         local start_row, start_col, end_row, end_col = node:range()
+        logger.debug_node(capture, node)
 
         if capture == 'heading' then
             local level = #value
@@ -137,7 +139,7 @@ M.render = function(namespace, root)
             })
         else
             -- Should only get here if user provides custom capture, currently unhandled
-            vim.print('Unhandled markdown capture: ' .. capture)
+            logger.error('Unhandled markdown capture: ' .. capture)
         end
     end
 end

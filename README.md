@@ -85,6 +85,9 @@ require('render-markdown').setup({
     inline_query = [[
         (code_span) @code
     ]],
+    -- The level of logs to write to file: vim.fn.stdpath('state') .. '/render-markdown.log'
+    -- Only intended to be used for plugin development / debugging
+    log_level = 'error',
     -- Filetypes this plugin will run on
     file_types = { 'markdown' },
     -- Vim modes that will show a rendered view of the markdown file

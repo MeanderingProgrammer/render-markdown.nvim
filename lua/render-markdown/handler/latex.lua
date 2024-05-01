@@ -1,3 +1,4 @@
+local logger = require('render-markdown.logger')
 local state = require('render-markdown.state')
 
 ---@class Cache
@@ -17,19 +18,21 @@ M.render = function(namespace, root)
         return
     end
 
-    local latex = vim.treesitter.get_node_text(root, 0)
-    local cached_expressions = cache.expressions[latex]
-    if cached_expressions == nil then
-        local raw_expression = vim.fn.system('latex2text', latex)
-        local expressions = vim.split(vim.trim(raw_expression), '\n', { plain = true })
-        cached_expressions = vim.tbl_map(vim.trim, expressions)
-        cache.expressions[latex] = cached_expressions
+    local value = vim.treesitter.get_node_text(root, 0)
+    local start_row, start_col, end_row, end_col = root:range()
+    logger.debug_node('latex', root)
+
+    local expressions = cache.expressions[value]
+    if expressions == nil then
+        local raw_expression = vim.fn.system('latex2text', value)
+        local parsed_expressions = vim.split(vim.trim(raw_expression), '\n', { plain = true })
+        expressions = vim.tbl_map(vim.trim, parsed_expressions)
+        cache.expressions[value] = expressions
     end
 
-    local start_row, start_col, end_row, end_col = root:range()
     local virt_lines = vim.tbl_map(function(expression)
         return { { expression, state.config.highlights.latex } }
-    end, cached_expressions)
+    end, expressions)
     vim.api.nvim_buf_set_extmark(0, namespace, start_row, start_col, {
         end_row = end_row,
         end_col = end_col,

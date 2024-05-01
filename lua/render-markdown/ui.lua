@@ -1,4 +1,5 @@
 local latex = require('render-markdown.handler.latex')
+local logger = require('render-markdown.logger')
 local markdown = require('render-markdown.handler.markdown')
 local markdown_inline = require('render-markdown.handler.markdown_inline')
 local state = require('render-markdown.state')
@@ -26,17 +27,22 @@ M.refresh = function()
         return
     end
 
+    logger.start()
     vim.opt_local.conceallevel = state.config.conceal.rendered
     vim.treesitter.get_parser():for_each_tree(function(tree, language_tree)
         local language = language_tree:lang()
+        logger.debug({ language = language })
         if language == 'markdown' then
             markdown.render(M.namespace, tree:root())
         elseif language == 'markdown_inline' then
             markdown_inline.render(M.namespace, tree:root())
         elseif language == 'latex' then
             latex.render(M.namespace, tree:root())
+        else
+            logger.debug('No handler found')
         end
     end)
+    logger.flush()
 end
 
 return M
