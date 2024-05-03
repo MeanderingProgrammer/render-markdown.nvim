@@ -47,6 +47,7 @@ local M = {}
 ---@field public conceal? UserConceal
 ---@field public fat_tables? boolean
 ---@field public highlights? UserHighlights
+---@field public enabled? boolean
 
 ---@param opts? UserConfig
 function M.setup(opts)
@@ -128,8 +129,9 @@ function M.setup(opts)
             latex = '@markup.math',
             quote = '@markup.quote',
         },
+        enabled = false,
     }
-    state.enabled = true
+    state.enabled = opts and opts.enabled or default_config.enabled
     state.config = vim.tbl_deep_extend('force', default_config, opts or {})
     state.markdown_query = vim.treesitter.query.parse('markdown', state.config.markdown_query)
     state.inline_query = vim.treesitter.query.parse('markdown_inline', state.config.inline_query)
@@ -169,3 +171,4 @@ M.toggle = function()
 end
 
 return M
+
