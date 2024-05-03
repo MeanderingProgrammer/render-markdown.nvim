@@ -154,6 +154,8 @@ require('render-markdown').setup({
         -- Quote character in a block quote
         quote = '@markup.quote',
     },
+    -- Configure whether Markdown should be rendered by default or not
+    enabled = false,
 })
 ```
 
