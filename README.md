@@ -49,6 +49,8 @@ by the user.
 
 ```lua
 require('render-markdown').setup({
+    -- Configure whether Markdown should be rendered by default or not
+    start_enabled = true,
     -- Capture groups that get pulled from markdown
     markdown_query = [[
         (atx_heading [
@@ -154,8 +156,6 @@ require('render-markdown').setup({
         -- Quote character in a block quote
         quote = '@markup.quote',
     },
-    -- Configure whether Markdown should be rendered by default or not
-    enabled = false,
 })
 ```
 
