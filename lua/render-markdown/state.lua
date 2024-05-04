@@ -45,8 +45,8 @@
 ---@field public highlights Highlights
 
 ---@class State
----@field enabled boolean
 ---@field config Config
+---@field enabled boolean
 ---@field markdown_query Query
 ---@field inline_query Query
 local state = {}
