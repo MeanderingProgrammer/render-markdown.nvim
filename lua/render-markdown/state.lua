@@ -29,6 +29,7 @@
 ---@field public checked string
 
 ---@class Config
+---@field public start_enabled boolean
 ---@field public markdown_query string
 ---@field public inline_query string
 ---@field public log_level 'debug'|'error'

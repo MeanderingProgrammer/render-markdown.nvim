@@ -34,6 +34,7 @@ local M = {}
 ---@field public checked? string
 
 ---@class UserConfig
+---@field public start_enabled? boolean
 ---@field public markdown_query? string
 ---@field public inline_query? string
 ---@field public log_level? 'debug'|'error'
@@ -52,6 +53,7 @@ local M = {}
 function M.setup(opts)
     ---@type Config
     local default_config = {
+        start_enabled = true,
         markdown_query = [[
             (atx_heading [
                 (atx_h1_marker)
@@ -128,9 +130,10 @@ function M.setup(opts)
             latex = '@markup.math',
             quote = '@markup.quote',
         },
+        enabled = true,
     }
-    state.enabled = true
     state.config = vim.tbl_deep_extend('force', default_config, opts or {})
+    state.enabled = state.config.start_enabled
     state.markdown_query = vim.treesitter.query.parse('markdown', state.config.markdown_query)
     state.inline_query = vim.treesitter.query.parse('markdown_inline', state.config.inline_query)
 
@@ -169,3 +172,4 @@ M.toggle = function()
 end
 
 return M
+
