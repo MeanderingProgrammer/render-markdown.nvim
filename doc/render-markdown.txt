@@ -1,4 +1,4 @@
-*render-markdown.txt*            For 0.9.5            Last change: 2024 May 01
+*render-markdown.txt*            For 0.9.5            Last change: 2024 May 03
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -76,6 +76,8 @@ modified by the user.
 
 >lua
     require('render-markdown').setup({
+        -- Configure whether Markdown should be rendered by default or not
+        start_enabled = true,
         -- Capture groups that get pulled from markdown
         markdown_query = [[
             (atx_heading [

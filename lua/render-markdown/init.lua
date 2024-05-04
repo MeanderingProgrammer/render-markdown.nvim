@@ -130,7 +130,6 @@ function M.setup(opts)
             latex = '@markup.math',
             quote = '@markup.quote',
         },
-        enabled = true,
     }
     state.config = vim.tbl_deep_extend('force', default_config, opts or {})
     state.enabled = state.config.start_enabled
@@ -172,4 +171,3 @@ M.toggle = function()
 end
 
 return M
-
