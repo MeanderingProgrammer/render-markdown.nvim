@@ -251,7 +251,6 @@ async_tests.describe('init', function()
                     { { 'f(x,y) = x + √(y)', '@markup.math' } },
                     { { 'f(x,y) = √(y) + x^2/4y', '@markup.math' } },
                 },
-
                 virt_lines_above = true,
             },
         }

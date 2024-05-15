@@ -29,7 +29,7 @@ Plugin to improve viewing Markdown files in Neovim
 
 # Install
 
-## Lazy.nvim
+## lazy.nvim
 
 ```lua
 {
@@ -40,6 +40,19 @@ Plugin to improve viewing Markdown files in Neovim
         require('render-markdown').setup({})
     end,
 }
+```
+
+## packer.nvim
+
+```lua
+use({
+    'MeanderingProgrammer/markdown.nvim',
+    as = 'render-markdown', -- Only needed if you have another plugin named markdown.nvim
+    after = { 'nvim-treesitter' },
+    config = function()
+        require('render-markdown').setup({})
+    end,
+})
 ```
 
 # Setup
