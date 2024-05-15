@@ -1,4 +1,9 @@
+init := "tests/minimal.lua"
 default_zoom := '2'
+
+test:
+    nvim --headless --noplugin -u {{init}} \
+      -c "PlenaryBustedDirectory tests { minimal_init = '{{init}}', sequential=true }"
 
 demo zoom=default_zoom:
     rm -f demo/demo.gif
