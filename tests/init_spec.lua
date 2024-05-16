@@ -17,7 +17,7 @@ async_tests.describe('init', function()
         local marks = vim.api.nvim_buf_get_extmarks(0, ui.namespace, 0, -1, { details = true })
         for _, mark in ipairs(marks) do
             local _, row, col, details = unpack(mark)
-            table.insert(actual, {
+            local mark_info = {
                 row = { row, details.end_row },
                 col = { col, details.end_col },
                 hl_eol = details.hl_eol,
@@ -26,17 +26,20 @@ async_tests.describe('init', function()
                 virt_text_pos = details.virt_text_pos,
                 virt_lines = details.virt_lines,
                 virt_lines_above = details.virt_lines_above,
-            })
+            }
+            table.insert(actual, mark_info)
         end
 
-        local expected = {
-            -- Headings 1 through 6 (minus 2)
+        local expected = {}
+
+        -- Headings 1 through 6 (minus 2)
+        vim.list_extend(expected, {
             {
                 row = { 0, 1 },
                 col = { 0, 0 },
                 hl_eol = true,
                 hl_group = 'DiffAdd',
-                virt_text = { { '', 'markdownH1' }, { '󰲡 ', 'DiffAdd' } },
+                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
                 virt_text_pos = 'overlay',
             },
             {
@@ -44,7 +47,7 @@ async_tests.describe('init', function()
                 col = { 0, 0 },
                 hl_eol = true,
                 hl_group = 'DiffDelete',
-                virt_text = { { '', 'markdownH3' }, { '  󰲥 ', 'DiffDelete' } },
+                virt_text = { { '  󰲥 ', { 'markdownH3', 'DiffDelete' } } },
                 virt_text_pos = 'overlay',
             },
             {
@@ -52,7 +55,7 @@ async_tests.describe('init', function()
                 col = { 0, 0 },
                 hl_eol = true,
                 hl_group = 'DiffDelete',
-                virt_text = { { '', 'markdownH4' }, { '   󰲧 ', 'DiffDelete' } },
+                virt_text = { { '   󰲧 ', { 'markdownH4', 'DiffDelete' } } },
                 virt_text_pos = 'overlay',
             },
             {
@@ -60,7 +63,7 @@ async_tests.describe('init', function()
                 col = { 0, 0 },
                 hl_eol = true,
                 hl_group = 'DiffDelete',
-                virt_text = { { '', 'markdownH5' }, { '    󰲩 ', 'DiffDelete' } },
+                virt_text = { { '    󰲩 ', { 'markdownH5', 'DiffDelete' } } },
                 virt_text_pos = 'overlay',
             },
             {
@@ -68,16 +71,23 @@ async_tests.describe('init', function()
                 col = { 0, 0 },
                 hl_eol = true,
                 hl_group = 'DiffDelete',
-                virt_text = { { '', 'markdownH6' }, { '     󰲫 ', 'DiffDelete' } },
+                virt_text = { { '     󰲫 ', { 'markdownH6', 'DiffDelete' } } },
                 virt_text_pos = 'overlay',
             },
-            -- Code block
+        })
+
+        -- Code block
+        vim.list_extend(expected, {
             {
                 row = { 10, 21 },
                 col = { 0, 0 },
                 hl_eol = true,
                 hl_group = 'ColorColumn',
             },
+        })
+
+        -- Unordered list
+        vim.list_extend(expected, {
             -- List Item 1, bullet point
             {
                 row = { 22, 22 },
@@ -141,42 +151,52 @@ async_tests.describe('init', function()
                 virt_text = { { '●', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
-            -- Unchecked checkbox, bullet point, not created intentionally, remove if fixed
+        })
+
+        -- Checkboxes
+        vim.list_extend(expected, {
+            -- Unchecked, bullet point, not created intentionally, remove if fixed
             {
                 row = { 35, 35 },
                 col = { 0, 2 },
                 virt_text = { { '●', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
-            -- Unchecked checkbox, checkbox
+            -- Unchecked, checkbox
             {
                 row = { 35, 35 },
                 col = { 2, 5 },
                 virt_text = { { ' 󰄱 ', '@markup.list.unchecked' } },
                 virt_text_pos = 'overlay',
             },
-            -- Checked checkbox, bullet point, not created intentionally, remove if fixed
+            -- Checked, bullet point, not created intentionally, remove if fixed
             {
                 row = { 36, 36 },
                 col = { 0, 2 },
                 virt_text = { { '●', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
-            -- Checked checkbox, checkbox
+            -- Checked, checkbox
             {
                 row = { 36, 36 },
                 col = { 2, 5 },
                 virt_text = { { '  ', '@markup.heading' } },
                 virt_text_pos = 'overlay',
             },
-            -- Line break, TODO: fragile need to determine width
+        })
+
+        -- Line break, TODO: fragile need to determine width
+        vim.list_extend(expected, {
             {
                 row = { 38 },
                 col = { 0 },
                 virt_text = { { string.rep('—', 80), 'LineNr' } },
                 virt_text_pos = 'overlay',
             },
-            -- Quote lines
+        })
+
+        -- Quote lines
+        vim.list_extend(expected, {
             {
                 row = { 40, 40 },
                 col = { 0, 4 },
@@ -189,61 +209,77 @@ async_tests.describe('init', function()
                 virt_text = { { '  ┃ ', '@markup.quote' } },
                 virt_text_pos = 'overlay',
             },
-            -- Table heading
-            {
-                row = { 43, 43 },
-                col = { 0, 31 },
-                virt_text = { { '│ Heading 1    │ Heading 2    │', '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Table above
+        })
+
+        local markdown_table = {
+            '┌──────────────┬──────────────┐',
+            '│ Heading 1    │ Heading 2    │',
+            '├──────────────┼──────────────┤',
+            '│ Row 1 Item 1 │ Row 1 Item 2 │',
+            '│ Row 2 Item 1 │ Row 2 Item 2 │',
+            '│ Row 3 Item 1 │ Row 3 Item 2 │',
+            '└──────────────┴──────────────┘',
+        }
+        vim.list_extend(expected, {
+            -- Above
             {
                 row = { 43 },
                 col = { 0 },
-                virt_lines = { { { '┌──────────────┬──────────────┐', '@markup.heading' } } },
+                virt_lines = { { { markdown_table[1], '@markup.heading' } } },
                 virt_lines_above = true,
             },
-            -- Table below heading
+            -- Heading
+            {
+                row = { 43, 43 },
+                col = { 0, 31 },
+                virt_text = { { markdown_table[2], '@markup.heading' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Below heading
             {
                 row = { 44, 44 },
                 col = { 0, 31 },
-                virt_text = { { '├──────────────┼──────────────┤', '@markup.heading' } },
+                virt_text = { { markdown_table[3], '@markup.heading' } },
                 virt_text_pos = 'overlay',
             },
-            -- Table rows
+            -- Rows
             {
                 row = { 45, 45 },
                 col = { 0, 31 },
-                virt_text = { { '│ Row 1 Item 1 │ Row 1 Item 2 │', 'Normal' } },
+                virt_text = { { markdown_table[4], 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             {
                 row = { 46, 46 },
                 col = { 0, 31 },
-                virt_text = { { '│ Row 2 Item 1 │ Row 2 Item 2 │', 'Normal' } },
+                virt_text = { { markdown_table[5], 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             {
                 row = { 47, 47 },
                 col = { 0, 31 },
-                virt_text = { { '│ Row 3 Item 1 │ Row 3 Item 2 │', 'Normal' } },
+                virt_text = { { markdown_table[6], 'Normal' } },
                 virt_text_pos = 'overlay',
             },
-            -- Table below
+            -- Below
             {
                 row = { 48 },
                 col = { 0 },
-                virt_lines = { { { '└──────────────┴──────────────┘', 'Normal' } } },
+                virt_lines = { { { markdown_table[7], 'Normal' } } },
                 virt_lines_above = true,
             },
-            -- LaTeX inline, TODO: mock interaction with latex2text
+        })
+
+        -- LaTeX, TODO: mock interaction with latex2text
+        vim.list_extend(expected, {
+            -- Inline
             {
                 row = { 49, 49 },
                 col = { 0, 21 },
                 virt_lines = { { { '√(3x-1)+(1+x)^2', '@markup.math' } } },
                 virt_lines_above = true,
             },
-            -- LaTeX block, TODO: mock interaction with latex2text
+            -- Block
             {
                 row = { 51, 54 },
                 col = { 0, 2 },
@@ -253,8 +289,11 @@ async_tests.describe('init', function()
                 },
                 virt_lines_above = true,
             },
-        }
+        })
 
-        eq(expected, actual)
+        eq(#expected, #actual)
+        for i, expected_mark_info in ipairs(expected) do
+            eq(expected_mark_info, actual[i], string.format('Marks at index %d mismatch', i))
+        end
     end)
 end)

@@ -29,6 +29,10 @@ M.refresh = function()
 
     logger.start()
     vim.opt_local.conceallevel = state.config.conceal.rendered
+
+    -- Make sure injections are processed
+    vim.treesitter.get_parser():parse(true)
+
     vim.treesitter.get_parser():for_each_tree(function(tree, language_tree)
         local language = language_tree:lang()
         logger.debug({ language = language })

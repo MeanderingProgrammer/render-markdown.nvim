@@ -47,7 +47,7 @@
 ---@class State
 ---@field config Config
 ---@field enabled boolean
----@field markdown_query Query
----@field inline_query Query
+---@field markdown_query vim.treesitter.Query
+---@field inline_query vim.treesitter.Query
 local state = {}
 return state

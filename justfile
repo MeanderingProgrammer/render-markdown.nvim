@@ -23,4 +23,4 @@ docgen:
     ../../open-source/panvimdoc/panvimdoc.sh \
       --project-name render-markdown \
       --input-file README.md \
-      --vim-version 0.9.5
+      --vim-version 0.10.0
