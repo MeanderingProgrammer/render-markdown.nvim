@@ -35,6 +35,7 @@ local M = {}
 
 ---@class UserConfig
 ---@field public start_enabled? boolean
+---@field public max_file_size? number
 ---@field public markdown_query? string
 ---@field public inline_query? string
 ---@field public log_level? 'debug'|'error'
@@ -54,6 +55,7 @@ function M.setup(opts)
     ---@type Config
     local default_config = {
         start_enabled = true,
+        max_file_size = 1.5,
         markdown_query = [[
             (atx_heading [
                 (atx_h1_marker)

@@ -26,6 +26,9 @@ M.refresh = function()
     if not vim.tbl_contains(state.config.render_modes, vim.fn.mode()) then
         return
     end
+    if M.file_size_mb() > state.config.max_file_size then
+        return
+    end
 
     logger.start()
     vim.opt_local.conceallevel = state.config.conceal.rendered
@@ -47,6 +50,17 @@ M.refresh = function()
         end
     end)
     logger.flush()
+end
+
+---@return number
+M.file_size_mb = function()
+    local ok, stats = pcall(function()
+        return vim.loop.fs_stat(vim.api.nvim_buf_get_name(0))
+    end)
+    if not (ok and stats) then
+        return 0
+    end
+    return stats.size / (1024 * 1024)
 end
 
 return M

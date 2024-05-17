@@ -18,6 +18,7 @@ Plugin to improve viewing Markdown files in Neovim
 - Replaces block quote leading `>` with provided character
 - Updates table borders with better border characters, does NOT automatically align
 - Basic support for `LaTeX` if `pylatexenc` is installed on system
+- Disable rendering when file is larger than provided value
 
 # Dependencies
 
@@ -64,6 +65,9 @@ by the user.
 require('render-markdown').setup({
     -- Configure whether Markdown should be rendered by default or not
     start_enabled = true,
+    -- Maximum file size (in MB) that this plugin will attempt to render
+    -- Any file larger than this will effectively be ignored
+    max_file_size = 1.5,
     -- Capture groups that get pulled from markdown
     markdown_query = [[
         (atx_heading [

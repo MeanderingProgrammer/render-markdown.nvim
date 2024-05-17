@@ -185,12 +185,12 @@ async_tests.describe('init', function()
             },
         })
 
-        -- Line break, TODO: fragile need to determine width
+        -- Line break
         vim.list_extend(expected, {
             {
                 row = { 38 },
                 col = { 0 },
-                virt_text = { { string.rep('—', 80), 'LineNr' } },
+                virt_text = { { string.rep('—', vim.opt.columns:get()), 'LineNr' } },
                 virt_text_pos = 'overlay',
             },
         })
