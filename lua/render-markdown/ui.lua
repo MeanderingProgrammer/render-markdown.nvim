@@ -55,7 +55,7 @@ end
 ---@return number
 M.file_size_mb = function()
     local ok, stats = pcall(function()
-        return vim.loop.fs_stat(vim.api.nvim_buf_get_name(0))
+        return vim.uv.fs_stat(vim.api.nvim_buf_get_name(0))
     end)
     if not (ok and stats) then
         return 0
