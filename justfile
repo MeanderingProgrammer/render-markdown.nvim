@@ -1,5 +1,5 @@
 init := "tests/minimal.lua"
-default_zoom := '2'
+default_zoom := "2"
 
 test:
   nvim --headless --noplugin -u {{init}} \
