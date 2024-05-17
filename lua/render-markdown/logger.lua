@@ -3,13 +3,13 @@ local state = require('render-markdown.state')
 -- Typically resolves to ~/.local/state/nvim/render-markdown.log
 local log_file = vim.fn.stdpath('state') .. '/render-markdown.log'
 
----@class LogEntry
+---@class render.md.LogEntry
 ---@field date string
 ---@field level string
 ---@field message string
 
----@class Log
----@field entries LogEntry[]
+---@class render.md.Log
+---@field entries render.md.LogEntry[]
 local log = {
     entries = {},
 }
@@ -21,7 +21,7 @@ end
 ---@param level string
 ---@param message any
 log.add = function(level, message)
-    ---@type LogEntry
+    ---@type render.md.LogEntry
     local entry = {
         ---@diagnostic disable-next-line: assign-type-mismatch
         date = os.date('%Y-%m-%d %H:%M:%S'),

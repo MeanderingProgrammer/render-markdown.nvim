@@ -3,37 +3,37 @@ local ui = require('render-markdown.ui')
 
 local M = {}
 
----@class UserTableHighlights
+---@class render.md.UserTableHighlights
 ---@field public head? string
 ---@field public row? string
 
----@class UserCheckboxHighlights
+---@class render.md.UserCheckboxHighlights
 ---@field public unchecked? string
 ---@field public checked? string
 
----@class UserHeadingHighlights
+---@class render.md.UserHeadingHighlights
 ---@field public backgrounds? string[]
 ---@field public foregrounds? string[]
 
----@class UserHighlights
----@field public heading? UserHeadingHighlights
+---@class render.md.UserHighlights
+---@field public heading? render.md.UserHeadingHighlights
 ---@field public dash? string
 ---@field public code? string
 ---@field public bullet? string
----@field public checkbox? UserCheckboxHighlights
----@field public table? UserTableHighlights
+---@field public checkbox? render.md.UserCheckboxHighlights
+---@field public table? render.md.UserTableHighlights
 ---@field public latex? string
 ---@field public quote? string
 
----@class UserConceal
+---@class render.md.UserConceal
 ---@field public default? integer
 ---@field public rendered? integer
 
----@class UserCheckbox
+---@class render.md.UserCheckbox
 ---@field public unchecked? string
 ---@field public checked? string
 
----@class UserConfig
+---@class render.md.UserConfig
 ---@field public start_enabled? boolean
 ---@field public max_file_size? number
 ---@field public markdown_query? string
@@ -44,15 +44,15 @@ local M = {}
 ---@field public headings? string[]
 ---@field public dash? string
 ---@field public bullets? string[]
----@field public checkbox? UserCheckbox
+---@field public checkbox? render.md.UserCheckbox
 ---@field public quote? string
----@field public conceal? UserConceal
+---@field public conceal? render.md.UserConceal
 ---@field public fat_tables? boolean
----@field public highlights? UserHighlights
+---@field public highlights? render.md.UserHighlights
 
----@param opts? UserConfig
+---@param opts? render.md.UserConfig
 function M.setup(opts)
-    ---@type Config
+    ---@type render.md.Config
     local default_config = {
         start_enabled = true,
         max_file_size = 1.5,
