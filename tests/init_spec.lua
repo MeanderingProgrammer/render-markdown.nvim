@@ -155,11 +155,11 @@ async_tests.describe('init', function()
 
         -- Checkboxes
         vim.list_extend(expected, {
-            -- Unchecked, bullet point, not created intentionally, remove if fixed
+            -- Unchecked, list marker
             {
                 row = { 35, 35 },
                 col = { 0, 2 },
-                virt_text = { { '●', 'Normal' } },
+                virt_text = { { '  ', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             -- Unchecked, checkbox
@@ -169,11 +169,11 @@ async_tests.describe('init', function()
                 virt_text = { { ' 󰄱 ', '@markup.list.unchecked' } },
                 virt_text_pos = 'overlay',
             },
-            -- Checked, bullet point, not created intentionally, remove if fixed
+            -- Checked, list marker
             {
                 row = { 36, 36 },
                 col = { 0, 2 },
-                virt_text = { { '●', 'Normal' } },
+                virt_text = { { '  ', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             -- Checked, checkbox
