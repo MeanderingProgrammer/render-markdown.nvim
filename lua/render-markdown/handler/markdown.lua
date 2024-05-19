@@ -81,7 +81,12 @@ M.render = function(namespace, root)
             end
             local prev_node = node:prev_named_sibling()
 
+            -- List markers from tree-sitter should have leading spaces removed, however there are known
+            -- edge cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
+            -- As a result we handle leading spaces here, can remove if this gets fixed upstream
+            local _, leading_spaces = vim.treesitter.get_node_text(prev_node, 0):find('^%s*')
             local start_row, start_col = prev_node:start()
+            start_col = start_col + leading_spaces
             local virt_text = { checkbox, highlight }
             vim.api.nvim_buf_set_extmark(0, namespace, start_row, start_col, {
                 end_row = end_row,
