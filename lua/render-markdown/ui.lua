@@ -53,6 +53,9 @@ M.clear_valid = function(buf)
     if not vim.api.nvim_buf_is_valid(buf) then
         return false
     end
+    if util.buf_to_win(buf) < 0 then
+        return false
+    end
     if not vim.tbl_contains(state.config.file_types, vim.bo[buf].filetype) then
         return false
     end
