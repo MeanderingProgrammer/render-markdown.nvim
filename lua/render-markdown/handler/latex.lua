@@ -13,14 +13,15 @@ local M = {}
 
 ---@param namespace number
 ---@param root TSNode
-M.render = function(namespace, root)
+---@param buf integer
+M.render = function(namespace, root, buf)
     if vim.fn.executable('latex2text') ~= 1 then
         return
     end
 
-    local value = vim.treesitter.get_node_text(root, 0)
+    local value = vim.treesitter.get_node_text(root, buf)
     local start_row, start_col, end_row, end_col = root:range()
-    logger.debug_node('latex', root)
+    logger.debug_node('latex', root, buf)
 
     local expressions = cache.expressions[value]
     if expressions == nil then
@@ -33,7 +34,7 @@ M.render = function(namespace, root)
     local virt_lines = vim.tbl_map(function(expression)
         return { { expression, state.config.highlights.latex } }
     end, expressions)
-    vim.api.nvim_buf_set_extmark(0, namespace, start_row, start_col, {
+    vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
         end_row = end_row,
         end_col = end_col,
         virt_lines = virt_lines,
