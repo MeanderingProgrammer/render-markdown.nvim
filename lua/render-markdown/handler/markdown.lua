@@ -99,7 +99,7 @@ M.render = function(namespace, root, buf)
                 })
             end
         elseif capture == 'table' then
-            if state.config.fat_tables then
+            if state.config.table_style == 'full' then
                 local lines = vim.api.nvim_buf_get_lines(buf, start_row, end_row, false)
                 local table_head = list.first(lines)
                 local table_tail = list.last(lines)
@@ -123,28 +123,30 @@ M.render = function(namespace, root, buf)
                 end
             end
         elseif vim.tbl_contains({ 'table_head', 'table_delim', 'table_row' }, capture) then
-            local row = value:gsub('|', '│')
-            if capture == 'table_delim' then
-                -- Order matters here, in particular handling inner intersections before left & right
-                row = row:gsub('-', '─')
-                    :gsub(' ', '─')
-                    :gsub('─│─', '─┼─')
-                    :gsub('│─', '├─')
-                    :gsub('─│', '─┤')
-            end
+            if vim.tbl_contains({ 'full', 'normal' }, state.config.table_style) then
+                local row = value:gsub('|', '│')
+                if capture == 'table_delim' then
+                    -- Order matters here, in particular handling inner intersections before left & right
+                    row = row:gsub('-', '─')
+                        :gsub(' ', '─')
+                        :gsub('─│─', '─┼─')
+                        :gsub('│─', '├─')
+                        :gsub('─│', '─┤')
+                end
 
-            local highlight = highlights.table.head
-            if capture == 'table_row' then
-                highlight = highlights.table.row
-            end
+                local highlight = highlights.table.head
+                if capture == 'table_row' then
+                    highlight = highlights.table.row
+                end
 
-            local virt_text = { row, highlight }
-            vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
-                end_row = end_row,
-                end_col = end_col,
-                virt_text = { virt_text },
-                virt_text_pos = 'overlay',
-            })
+                local virt_text = { row, highlight }
+                vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
+                    end_row = end_row,
+                    end_col = end_col,
+                    virt_text = { virt_text },
+                    virt_text_pos = 'overlay',
+                })
+            end
         else
             -- Should only get here if user provides custom capture, currently unhandled
             logger.error('Unhandled markdown capture: ' .. capture)

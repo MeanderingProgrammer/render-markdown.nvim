@@ -162,8 +162,11 @@ modified by the user.
             -- conceallevel used for buffer when being rendered
             rendered = 3,
         },
-        -- Add a line above and below tables to complete look, ends up like a window
-        fat_tables = true,
+        -- Determines how tables are rendered
+        --  full: adds a line above and below tables + normal behavior
+        --  normal: renders the rows of tables
+        --  none: disables rendering, use this if you prefer having cell highlights
+        table_style = 'full',
         -- Define the highlight groups to use when rendering various components
         highlights = {
             heading = {

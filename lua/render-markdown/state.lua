@@ -42,7 +42,7 @@
 ---@field public checkbox render.md.Checkbox
 ---@field public quote string
 ---@field public conceal render.md.Conceal
----@field public fat_tables boolean
+---@field public table_style 'full'|'normal'|'none'
 ---@field public highlights render.md.Highlights
 
 ---@class render.md.State

@@ -48,7 +48,7 @@ local M = {}
 ---@field public checkbox? render.md.UserCheckbox
 ---@field public quote? string
 ---@field public conceal? render.md.UserConceal
----@field public fat_tables? boolean
+---@field public table_style? 'full'|'normal'|'none'
 ---@field public highlights? render.md.UserHighlights
 
 ---@param opts? render.md.UserConfig
@@ -106,7 +106,7 @@ function M.setup(opts)
             default = vim.opt.conceallevel:get(),
             rendered = 3,
         },
-        fat_tables = true,
+        table_style = 'full',
         highlights = {
             heading = {
                 backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
