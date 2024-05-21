@@ -8,7 +8,6 @@ local M = {}
 ---@param buf integer
 M.render = function(namespace, root, buf)
     local highlights = state.config.highlights
-    ---@diagnostic disable-next-line: missing-parameter
     for id, node in state.inline_query:iter_captures(root, buf) do
         local capture = state.inline_query.captures[id]
         local start_row, start_col, end_row, end_col = node:range()

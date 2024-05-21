@@ -10,7 +10,6 @@ local M = {}
 ---@param buf integer
 M.render = function(namespace, root, buf)
     local highlights = state.config.highlights
-    ---@diagnostic disable-next-line: missing-parameter
     for id, node in state.markdown_query:iter_captures(root, buf) do
         local capture = state.markdown_query.captures[id]
         local value = vim.treesitter.get_node_text(node, buf)
