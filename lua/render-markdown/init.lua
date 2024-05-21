@@ -170,7 +170,7 @@ function M.setup(opts)
             end
         end,
     })
-    vim.api.nvim_create_autocmd({ 'FileChangedShellPost', 'Syntax', 'TextChanged' }, {
+    vim.api.nvim_create_autocmd({ 'FileChangedShellPost', 'FileType', 'TextChanged' }, {
         group = group,
         callback = function(event)
             vim.schedule(function()
@@ -179,11 +179,8 @@ function M.setup(opts)
         end,
     })
 
-    vim.api.nvim_create_user_command(
-        'RenderMarkdownToggle',
-        M.toggle,
-        { desc = 'Switch between enabling & disabling render markdown plugin' }
-    )
+    local description = 'Switch between enabling & disabling render markdown plugin'
+    vim.api.nvim_create_user_command('RenderMarkdownToggle', M.toggle, { desc = description })
 end
 
 M.toggle = function()

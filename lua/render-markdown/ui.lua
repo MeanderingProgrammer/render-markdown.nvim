@@ -28,9 +28,9 @@ M.refresh = function(buf)
     util.set_conceal(buf, state.config.conceal.rendered)
 
     -- Make sure injections are processed
-    vim.treesitter.get_parser(buf):parse(true)
-
-    vim.treesitter.get_parser(buf):for_each_tree(function(tree, language_tree)
+    local parser = vim.treesitter.get_parser(buf)
+    parser:parse(true)
+    parser:for_each_tree(function(tree, language_tree)
         local language = language_tree:lang()
         logger.debug({ language = language })
         if language == 'markdown' then
@@ -58,7 +58,7 @@ M.clear_valid = function(buf)
     end
     vim.api.nvim_buf_clear_namespace(buf, M.namespace, 0, -1)
     local win = util.buf_to_win(buf)
-    if win < 0 then
+    if not vim.api.nvim_win_is_valid(win) then
         return false
     end
     util.set_conceal(buf, state.config.conceal.default)
