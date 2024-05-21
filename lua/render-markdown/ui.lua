@@ -57,10 +57,17 @@ M.clear_valid = function(buf)
         return false
     end
     vim.api.nvim_buf_clear_namespace(buf, M.namespace, 0, -1)
-    if util.buf_to_win(buf) < 0 then
+    local win = util.buf_to_win(buf)
+    if win < 0 then
         return false
     end
     util.set_conceal(buf, state.config.conceal.default)
+    local leftcol = vim.api.nvim_win_call(win, function()
+        return vim.fn.winsaveview().leftcol
+    end)
+    if leftcol > 0 then
+        return false
+    end
     return true
 end
 
