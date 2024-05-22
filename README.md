@@ -19,6 +19,7 @@ Plugin to improve viewing Markdown files in Neovim
 - Updates table borders with better border characters, does NOT automatically align
 - Basic support for `LaTeX` if `pylatexenc` is installed on system
 - Disable rendering when file is larger than provided value
+- Support for [callouts](https://github.com/orgs/community/discussions/16925)
 
 # Dependencies
 
@@ -103,6 +104,8 @@ require('render-markdown').setup({
     -- Capture groups that get pulled from inline markdown
     inline_query = [[
         (code_span) @code
+
+        (shortcut_link) @callout
     ]],
     -- The level of logs to write to file: vim.fn.stdpath('state') .. '/render-markdown.log'
     -- Only intended to be used for plugin development / debugging
@@ -126,6 +129,14 @@ require('render-markdown').setup({
     },
     -- Character that will replace the > at the start of block quotes
     quote = '┃',
+    -- Symbol / text to use for different callouts
+    callout = {
+        note = '  Note',
+        tip = '  Tip',
+        important = '󰅾  Important',
+        warning = '  Warning',
+        caution = '󰳦  Caution',
+    },
     -- See :h 'conceallevel' for more information about meaning of values
     conceal = {
         -- conceallevel used for buffer when not being rendered, get user setting
@@ -175,6 +186,14 @@ require('render-markdown').setup({
         latex = '@markup.math',
         -- Quote character in a block quote
         quote = '@markup.quote',
+        -- Highlights to use for different callouts
+        callout = {
+            note = 'DiagnosticInfo',
+            tip = 'DiagnosticOk',
+            important = 'DiagnosticHint',
+            warning = 'DiagnosticWarn',
+            caution = 'DiagnosticError',
+        },
     },
 })
 ```

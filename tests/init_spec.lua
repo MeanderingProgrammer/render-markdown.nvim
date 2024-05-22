@@ -86,67 +86,141 @@ async_tests.describe('init', function()
             },
         })
 
+        -- Callouts
+        vim.list_extend(expected, {
+            -- Note, quote
+            {
+                row = { 22, 22 },
+                col = { 0, 2 },
+                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Note, text
+            {
+                row = { 22, 22 },
+                col = { 2, 9 },
+                virt_text = { { '  Note', 'DiagnosticInfo' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Tip, quote
+            {
+                row = { 23, 23 },
+                col = { 0, 2 },
+                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Tip, text
+            {
+                row = { 23, 23 },
+                col = { 2, 8 },
+                virt_text = { { '  Tip', 'DiagnosticOk' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Important, quote
+            {
+                row = { 24, 24 },
+                col = { 0, 2 },
+                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Important, text
+            {
+                row = { 24, 24 },
+                col = { 2, 14 },
+                virt_text = { { '󰅾  Important', 'DiagnosticHint' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Warning, quote
+            {
+                row = { 25, 25 },
+                col = { 0, 2 },
+                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Warning, text
+            {
+                row = { 25, 25 },
+                col = { 2, 12 },
+                virt_text = { { '  Warning', 'DiagnosticWarn' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Caution, quote
+            {
+                row = { 26, 26 },
+                col = { 0, 2 },
+                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Caution, text
+            {
+                row = { 26, 26 },
+                col = { 2, 12 },
+                virt_text = { { '󰳦  Caution', 'DiagnosticError' } },
+                virt_text_pos = 'overlay',
+            },
+        })
+
         -- Unordered list
         vim.list_extend(expected, {
             -- List Item 1, bullet point
             {
-                row = { 22, 22 },
+                row = { 28, 28 },
                 col = { 0, 2 },
                 virt_text = { { '●', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             -- List Item 2, bullet point
             {
-                row = { 23, 23 },
+                row = { 29, 29 },
                 col = { 0, 2 },
                 virt_text = { { '●', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             -- List Item 2, inline code
             {
-                row = { 23, 23 },
+                row = { 29, 29 },
                 col = { 20, 28 },
                 hl_eol = false,
                 hl_group = 'ColorColumn',
             },
             -- Nested List 1 Item 1, bullet point
             {
-                row = { 24, 24 },
+                row = { 30, 30 },
                 col = { 2, 6 },
                 virt_text = { { '  ○', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             -- Nested List 1 Item 2, bullet point
             {
-                row = { 25, 25 },
+                row = { 31, 31 },
                 col = { 4, 6 },
                 virt_text = { { '○', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             -- Nested List 2 Item 1, bullet point
             {
-                row = { 26, 26 },
+                row = { 32, 32 },
                 col = { 6, 8 },
                 virt_text = { { '◆', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             -- Nested List 3 Item 1, bullet point
             {
-                row = { 27, 27 },
+                row = { 33, 33 },
                 col = { 8, 10 },
                 virt_text = { { '◇', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             -- Nested List 4 Item 1, bullet point
             {
-                row = { 28, 28 },
+                row = { 34, 34 },
                 col = { 10, 12 },
                 virt_text = { { '●', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             -- List Item 3, bullet point
             {
-                row = { 29, 29 },
+                row = { 35, 35 },
                 col = { 0, 2 },
                 virt_text = { { '●', 'Normal' } },
                 virt_text_pos = 'overlay',
@@ -157,28 +231,28 @@ async_tests.describe('init', function()
         vim.list_extend(expected, {
             -- Unchecked, list marker
             {
-                row = { 35, 35 },
+                row = { 41, 41 },
                 col = { 0, 2 },
                 virt_text = { { '  ', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             -- Unchecked, checkbox
             {
-                row = { 35, 35 },
+                row = { 41, 41 },
                 col = { 2, 5 },
                 virt_text = { { ' 󰄱 ', '@markup.list.unchecked' } },
                 virt_text_pos = 'overlay',
             },
             -- Checked, list marker
             {
-                row = { 36, 36 },
+                row = { 42, 42 },
                 col = { 0, 2 },
                 virt_text = { { '  ', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             -- Checked, checkbox
             {
-                row = { 36, 36 },
+                row = { 42, 42 },
                 col = { 2, 5 },
                 virt_text = { { '  ', '@markup.heading' } },
                 virt_text_pos = 'overlay',
@@ -188,7 +262,7 @@ async_tests.describe('init', function()
         -- Line break
         vim.list_extend(expected, {
             {
-                row = { 38 },
+                row = { 44 },
                 col = { 0 },
                 virt_text = { { string.rep('—', vim.opt.columns:get()), 'LineNr' } },
                 virt_text_pos = 'overlay',
@@ -198,13 +272,13 @@ async_tests.describe('init', function()
         -- Quote lines
         vim.list_extend(expected, {
             {
-                row = { 40, 40 },
+                row = { 46, 46 },
                 col = { 0, 4 },
                 virt_text = { { '  ┃ ', '@markup.quote' } },
                 virt_text_pos = 'overlay',
             },
             {
-                row = { 41, 41 },
+                row = { 47, 47 },
                 col = { 0, 4 },
                 virt_text = { { '  ┃ ', '@markup.quote' } },
                 virt_text_pos = 'overlay',
@@ -223,47 +297,47 @@ async_tests.describe('init', function()
         vim.list_extend(expected, {
             -- Above
             {
-                row = { 43 },
+                row = { 49 },
                 col = { 0 },
                 virt_lines = { { { markdown_table[1], '@markup.heading' } } },
                 virt_lines_above = true,
             },
             -- Heading
             {
-                row = { 43, 43 },
+                row = { 49, 49 },
                 col = { 0, 31 },
                 virt_text = { { markdown_table[2], '@markup.heading' } },
                 virt_text_pos = 'overlay',
             },
             -- Below heading
             {
-                row = { 44, 44 },
+                row = { 50, 50 },
                 col = { 0, 31 },
                 virt_text = { { markdown_table[3], '@markup.heading' } },
                 virt_text_pos = 'overlay',
             },
             -- Rows
             {
-                row = { 45, 45 },
+                row = { 51, 51 },
                 col = { 0, 31 },
                 virt_text = { { markdown_table[4], 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             {
-                row = { 46, 46 },
+                row = { 52, 52 },
                 col = { 0, 31 },
                 virt_text = { { markdown_table[5], 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             {
-                row = { 47, 47 },
+                row = { 53, 53 },
                 col = { 0, 31 },
                 virt_text = { { markdown_table[6], 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             -- Below
             {
-                row = { 48 },
+                row = { 54 },
                 col = { 0 },
                 virt_lines = { { { markdown_table[7], 'Normal' } } },
                 virt_lines_above = true,
@@ -274,14 +348,14 @@ async_tests.describe('init', function()
         vim.list_extend(expected, {
             -- Inline
             {
-                row = { 49, 49 },
+                row = { 55, 55 },
                 col = { 0, 21 },
                 virt_lines = { { { '√(3x-1)+(1+x)^2', '@markup.math' } } },
                 virt_lines_above = true,
             },
             -- Block
             {
-                row = { 51, 54 },
+                row = { 57, 60 },
                 col = { 0, 2 },
                 virt_lines = {
                     { { 'f(x,y) = x + √(y)', '@markup.math' } },

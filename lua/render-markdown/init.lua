@@ -4,6 +4,13 @@ local util = require('render-markdown.util')
 
 local M = {}
 
+---@class render.md.UserCallout
+---@field public note? string
+---@field public tip? string
+---@field public important? string
+---@field public warning? string
+---@field public caution? string
+
 ---@class render.md.UserTableHighlights
 ---@field public head? string
 ---@field public row? string
@@ -25,6 +32,7 @@ local M = {}
 ---@field public table? render.md.UserTableHighlights
 ---@field public latex? string
 ---@field public quote? string
+---@field public callout? render.md.UserCallout
 
 ---@class render.md.UserConceal
 ---@field public default? integer
@@ -47,6 +55,7 @@ local M = {}
 ---@field public bullets? string[]
 ---@field public checkbox? render.md.UserCheckbox
 ---@field public quote? string
+---@field public callout? render.md.UserCallout
 ---@field public conceal? render.md.UserConceal
 ---@field public table_style? 'full'|'normal'|'none'
 ---@field public highlights? render.md.UserHighlights
@@ -90,6 +99,8 @@ function M.setup(opts)
         ]],
         inline_query = [[
             (code_span) @code
+
+            (shortcut_link) @callout
         ]],
         log_level = 'error',
         file_types = { 'markdown' },
@@ -102,6 +113,13 @@ function M.setup(opts)
             checked = ' ',
         },
         quote = '┃',
+        callout = {
+            note = '  Note',
+            tip = '  Tip',
+            important = '󰅾  Important',
+            warning = '  Warning',
+            caution = '󰳦  Caution',
+        },
         conceal = {
             default = vim.opt.conceallevel:get(),
             rendered = 3,
@@ -132,6 +150,13 @@ function M.setup(opts)
             },
             latex = '@markup.math',
             quote = '@markup.quote',
+            callout = {
+                note = 'DiagnosticInfo',
+                tip = 'DiagnosticOk',
+                important = 'DiagnosticHint',
+                warning = 'DiagnosticWarn',
+                caution = 'DiagnosticError',
+            },
         },
     }
     state.config = vim.tbl_deep_extend('force', default_config, opts or {})

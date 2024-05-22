@@ -20,6 +20,12 @@ if __name__ == "__main__":
     main()
 ```
 
+> [!NOTE]
+> [!TIP]
+> [!IMPORTANT]
+> [!WARNING]
+> [!CAUTION]
+
 - List Item 1: with [link](https://example.com)
 * List Item 2: with `inline` code
     * Nested List 1 Item 1

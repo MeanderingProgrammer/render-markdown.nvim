@@ -1,3 +1,10 @@
+---@class render.md.Callout
+---@field public note string
+---@field public tip string
+---@field public important string
+---@field public warning string
+---@field public caution string
+
 ---@class render.md.TableHighlights
 ---@field public head string
 ---@field public row string
@@ -19,6 +26,7 @@
 ---@field public table render.md.TableHighlights
 ---@field public latex string
 ---@field public quote string
+---@field public callout render.md.Callout
 
 ---@class render.md.Conceal
 ---@field public default integer
@@ -41,6 +49,7 @@
 ---@field public bullets string[]
 ---@field public checkbox render.md.Checkbox
 ---@field public quote string
+---@field public callout render.md.Callout
 ---@field public conceal render.md.Conceal
 ---@field public table_style 'full'|'normal'|'none'
 ---@field public highlights render.md.Highlights

@@ -9,9 +9,10 @@ def main(zoom: int, file: str, cast: str) -> None:
     pyautogui.hotkey("`", "c")
     time.sleep(1.0)
 
-    # Zoom in
-    for _ in range(zoom):
-        pyautogui.hotkey("command", "=")
+    # Zoom in / out
+    zoom_key = "=" if zoom >= 0 else "-"
+    for _ in range(abs(zoom)):
+        pyautogui.hotkey("command", zoom_key)
 
     # Start recording demo file
     # https://docs.asciinema.org/manual/cli/usage/
