@@ -17,7 +17,7 @@ M.render = function(namespace, root, buf)
         logger.debug_node(capture, node, buf)
 
         if capture == 'heading' then
-            local level = #value
+            local level = vim.fn.strdisplaywidth(value)
 
             local heading = list.cycle(state.config.headings, level)
             -- Available width is level + 1, where level = number of `#` characters and one is added
@@ -54,7 +54,7 @@ M.render = function(namespace, root, buf)
             local list_marker_overlay = ''
             if M.is_sibling_checkbox(node) then
                 -- Hide the list marker for checkboxes rather than replacing with a bullet point
-                list_marker_overlay = string.rep(' ', #value)
+                list_marker_overlay = string.rep(' ', vim.fn.strdisplaywidth(value))
             else
                 -- List markers from tree-sitter should have leading spaces removed, however there are known
                 -- edge cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
@@ -103,10 +103,10 @@ M.render = function(namespace, root, buf)
                 local lines = vim.api.nvim_buf_get_lines(buf, start_row, end_row, false)
                 local table_head = list.first(lines)
                 local table_tail = list.last(lines)
-                if #table_head == #table_tail then
+                if vim.fn.strdisplaywidth(table_head) == vim.fn.strdisplaywidth(table_tail) then
                     local headings = vim.split(table_head, '|', { plain = true, trimempty = true })
                     local sections = vim.tbl_map(function(part)
-                        return string.rep('─', #part)
+                        return string.rep('─', vim.fn.strdisplaywidth(part))
                     end, headings)
 
                     local line_above = { { '┌' .. table.concat(sections, '┬') .. '┐', highlights.table.head } }
