@@ -1,3 +1,5 @@
+local logger = require('render-markdown.logger')
+
 local M = {}
 
 ---@param win integer
@@ -15,8 +17,11 @@ end
 ---@param buf integer
 ---@param value integer
 M.set_conceal = function(buf, value)
-    local win = M.buf_to_win(buf)
-    vim.api.nvim_set_option_value('conceallevel', value, { scope = 'local', win = win })
+    local name = 'conceallevel'
+    local opts = { scope = 'local', win = M.buf_to_win(buf) }
+    local before = vim.api.nvim_get_option_value(name, opts)
+    vim.api.nvim_set_option_value(name, value, opts)
+    logger.debug({ option = name, opts = opts, before = before, after = value })
 end
 
 ---@param buf integer
