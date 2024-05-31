@@ -80,14 +80,33 @@ function M.setup(opts)
 
             (fenced_code_block) @code
 
-            [
-                (list_marker_plus)
-                (list_marker_minus)
-                (list_marker_star)
-            ] @list_marker
-
-            (task_list_marker_unchecked) @checkbox_unchecked
-            (task_list_marker_checked) @checkbox_checked
+            (
+              (([
+                  (list_marker_plus)
+                  (list_marker_minus)
+                  (list_marker_star)
+                ] @list_marker
+                .
+                (_) @sibling
+              ))
+              (#not-has-type? @sibling
+                "task_list_marker_unchecked"
+                "task_list_marker_checked"
+              )
+            )
+            (
+              (([
+                  (list_marker_plus)
+                  (list_marker_minus)
+                  (list_marker_star)
+                ]
+                .
+                [
+                  (task_list_marker_unchecked) @checkbox_unchecked
+                  (task_list_marker_checked) @checkbox_checked
+                ]
+              ))
+            )
 
             (block_quote (block_quote_marker) @quote_marker)
             (block_quote (paragraph (inline (block_continuation) @quote_marker)))
@@ -109,8 +128,8 @@ function M.setup(opts)
         dash = '—',
         bullets = { '●', '○', '◆', '◇' },
         checkbox = {
-            unchecked = '󰄱 ',
-            checked = ' ',
+            unchecked = '󰄱    ',
+            checked = '    ',
         },
         quote = '┃',
         callout = {

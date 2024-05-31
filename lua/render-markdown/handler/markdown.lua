@@ -51,19 +51,13 @@ M.render = function(namespace, root, buf)
                 hl_eol = true,
             })
         elseif capture == 'list_marker' then
-            local list_marker_overlay = ''
-            if M.is_sibling_checkbox(node) then
-                -- Hide the list marker for checkboxes rather than replacing with a bullet point
-                list_marker_overlay = string.rep(' ', vim.fn.strdisplaywidth(value))
-            else
-                -- List markers from tree-sitter should have leading spaces removed, however there are known
-                -- edge cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
-                -- As a result we handle leading spaces here, can remove if this gets fixed upstream
-                local _, leading_spaces = value:find('^%s*')
-                local level = M.calculate_list_level(node)
-                local bullet = list.cycle(state.config.bullets, level)
-                list_marker_overlay = string.rep(' ', leading_spaces or 0) .. bullet
-            end
+            -- List markers from tree-sitter should have leading spaces removed, however there are known
+            -- edge cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
+            -- As a result we handle leading spaces here, can remove if this gets fixed upstream
+            local _, leading_spaces = value:find('^%s*')
+            local level = M.calculate_list_level(node)
+            local bullet = list.cycle(state.config.bullets, level)
+            local list_marker_overlay = string.rep(' ', leading_spaces or 0) .. bullet
 
             local virt_text = { list_marker_overlay, highlights.bullet }
             vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
@@ -87,17 +81,23 @@ M.render = function(namespace, root, buf)
                 checkbox = state.config.checkbox.checked
                 highlight = highlights.checkbox.checked
             end
-            local padding = vim.fn.strdisplaywidth(value) - vim.fn.strdisplaywidth(checkbox)
 
-            if padding >= 0 then
-                local virt_text = { string.rep(' ', padding) .. checkbox, highlight }
-                vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
-                    end_row = end_row,
-                    end_col = end_col,
-                    virt_text = { virt_text },
-                    virt_text_pos = 'overlay',
-                })
+            local padding = vim.fn.strdisplaywidth(value) - vim.fn.strdisplaywidth(checkbox)
+            local sibling = node:prev_sibling()
+            if sibling ~= nil then
+                local _, prev_start_col = sibling:start()
+                local prev_value = vim.treesitter.get_node_text(sibling, buf)
+                padding = padding + vim.fn.strdisplaywidth(prev_value)
+                start_col = prev_start_col
             end
+
+            local virt_text = { string.rep(' ', padding > 0 and padding or 0) .. checkbox, highlight }
+            vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
+                end_row = end_row,
+                end_col = end_col,
+                virt_text = { virt_text },
+                virt_text_pos = 'overlay',
+            })
         elseif capture == 'table' then
             if state.config.table_style == 'full' then
                 local lines = vim.api.nvim_buf_get_lines(buf, start_row, end_row, false)
@@ -152,16 +152,6 @@ M.render = function(namespace, root, buf)
             logger.error('Unhandled markdown capture: ' .. capture)
         end
     end
-end
-
----@param node TSNode
----@return boolean
-M.is_sibling_checkbox = function(node)
-    local sibling = node:next_sibling()
-    if sibling == nil then
-        return false
-    end
-    return vim.startswith(sibling:type(), 'task_list_marker')
 end
 
 --- Walk through all parent nodes and count the number of nodes with type list
