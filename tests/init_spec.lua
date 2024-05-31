@@ -22,6 +22,7 @@ async_tests.describe('init', function()
                 col = { col, details.end_col },
                 hl_eol = details.hl_eol,
                 hl_group = details.hl_group,
+                conceal = details.conceal,
                 virt_text = details.virt_text,
                 virt_text_pos = details.virt_text_pos,
                 virt_lines = details.virt_lines,
@@ -229,12 +230,11 @@ async_tests.describe('init', function()
 
         -- Checkboxes
         vim.list_extend(expected, {
-            -- Unchecked, list marker
+            -- Unchecked, conceal list marker
             {
                 row = { 41, 41 },
                 col = { 0, 2 },
-                virt_text = { { '  ', 'Normal' } },
-                virt_text_pos = 'overlay',
+                conceal = '',
             },
             -- Unchecked, checkbox
             {
@@ -243,12 +243,11 @@ async_tests.describe('init', function()
                 virt_text = { { ' 󰄱 ', '@markup.list.unchecked' } },
                 virt_text_pos = 'overlay',
             },
-            -- Checked, list marker
+            -- Checked, conceal list marker
             {
                 row = { 42, 42 },
                 col = { 0, 2 },
-                virt_text = { { '  ', 'Normal' } },
-                virt_text_pos = 'overlay',
+                conceal = '',
             },
             -- Checked, checkbox
             {

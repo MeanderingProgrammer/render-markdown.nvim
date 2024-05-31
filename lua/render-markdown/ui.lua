@@ -25,8 +25,9 @@ M.refresh = function(buf)
     end
 
     logger.start()
-    util.set_conceal(buf, state.config.conceal.rendered)
-
+    for name, value in pairs(state.config.win_options) do
+        util.set_win_option(buf, name, value.rendered)
+    end
     -- Make sure injections are processed
     local parser = vim.treesitter.get_parser(buf)
     parser:parse(true)
@@ -67,7 +68,9 @@ M.clear_valid = function(buf)
     if not vim.api.nvim_win_is_valid(win) then
         return false
     end
-    util.set_conceal(buf, state.config.conceal.default)
+    for name, value in pairs(state.config.win_options) do
+        util.set_win_option(buf, name, value.default)
+    end
     local leftcol = vim.api.nvim_win_call(win, function()
         return vim.fn.winsaveview().leftcol
     end)

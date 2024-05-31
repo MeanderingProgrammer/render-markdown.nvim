@@ -15,9 +15,9 @@ M.buf_to_win = function(buf)
 end
 
 ---@param buf integer
----@param value integer
-M.set_conceal = function(buf, value)
-    local name = 'conceallevel'
+---@param name string
+---@param value any
+M.set_win_option = function(buf, name, value)
     local opts = { scope = 'local', win = M.buf_to_win(buf) }
     local before = vim.api.nvim_get_option_value(name, opts)
     vim.api.nvim_set_option_value(name, value, opts)

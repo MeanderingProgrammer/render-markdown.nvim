@@ -138,12 +138,22 @@ require('render-markdown').setup({
         warning = '  Warning',
         caution = '󰳦  Caution',
     },
-    -- See :h 'conceallevel' for more information about meaning of values
-    conceal = {
-        -- conceallevel used for buffer when not being rendered, get user setting
-        default = vim.opt.conceallevel:get(),
-        -- conceallevel used for buffer when being rendered
-        rendered = 3,
+    -- Window options to use that change between rendered and raw view
+    win_options = {
+        -- See :h 'conceallevel'
+        conceallevel = {
+            -- Used when not being rendered, get user setting
+            default = vim.api.nvim_get_option_value('conceallevel', {}),
+            -- Used when being rendered, concealed text is completely hidden
+            rendered = 3,
+        },
+        -- See :h 'concealcursor'
+        concealcursor = {
+            -- Used when not being rendered, get user setting
+            default = vim.api.nvim_get_option_value('concealcursor', {}),
+            -- Used when being rendered, conceal text in all modes
+            rendered = 'nvic',
+        },
     },
     -- Determines how tables are rendered
     --  full: adds a line above and below tables + normal behavior

@@ -37,9 +37,9 @@ local M = {}
 ---@class render.md.Handler
 ---@field public render fun(namespace: integer, root: TSNode, buf: integer)
 
----@class render.md.UserConceal
----@field public default? integer
----@field public rendered? integer
+---@class render.md.WindowOption
+---@field public default any
+---@field public rendered any
 
 ---@class render.md.UserCheckbox
 ---@field public unchecked? string
@@ -59,7 +59,7 @@ local M = {}
 ---@field public checkbox? render.md.UserCheckbox
 ---@field public quote? string
 ---@field public callout? render.md.UserCallout
----@field public conceal? render.md.UserConceal
+---@field public win_options? table<string, render.md.WindowOption>
 ---@field public table_style? 'full'|'normal'|'none'
 ---@field public custom_handlers? table<string, render.md.Handler>
 ---@field public highlights? render.md.UserHighlights
@@ -139,12 +139,22 @@ M.default_config = {
         warning = '  Warning',
         caution = '󰳦  Caution',
     },
-    -- See :h 'conceallevel' for more information about meaning of values
-    conceal = {
-        -- conceallevel used for buffer when not being rendered, get user setting
-        default = vim.opt.conceallevel:get(),
-        -- conceallevel used for buffer when being rendered
-        rendered = 3,
+    -- Window options to use that change between rendered and raw view
+    win_options = {
+        -- See :h 'conceallevel'
+        conceallevel = {
+            -- Used when not being rendered, get user setting
+            default = vim.api.nvim_get_option_value('conceallevel', {}),
+            -- Used when being rendered, concealed text is completely hidden
+            rendered = 3,
+        },
+        -- See :h 'concealcursor'
+        concealcursor = {
+            -- Used when not being rendered, get user setting
+            default = vim.api.nvim_get_option_value('concealcursor', {}),
+            -- Used when being rendered, conceal text in all modes
+            rendered = 'nvic',
+        },
     },
     -- Determines how tables are rendered
     --  full: adds a line above and below tables + normal behavior

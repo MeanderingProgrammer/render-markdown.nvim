@@ -51,10 +51,13 @@ M.render = function(namespace, root, buf)
                 hl_eol = true,
             })
         elseif capture == 'list_marker' then
-            local list_marker_overlay = ''
             if M.is_sibling_checkbox(node) then
                 -- Hide the list marker for checkboxes rather than replacing with a bullet point
-                list_marker_overlay = string.rep(' ', vim.fn.strdisplaywidth(value))
+                vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
+                    end_row = end_row,
+                    end_col = end_col,
+                    conceal = '',
+                })
             else
                 -- List markers from tree-sitter should have leading spaces removed, however there are known
                 -- edge cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
@@ -62,16 +65,15 @@ M.render = function(namespace, root, buf)
                 local _, leading_spaces = value:find('^%s*')
                 local level = M.calculate_list_level(node)
                 local bullet = list.cycle(state.config.bullets, level)
-                list_marker_overlay = string.rep(' ', leading_spaces or 0) .. bullet
-            end
 
-            local virt_text = { list_marker_overlay, highlights.bullet }
-            vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
-                end_row = end_row,
-                end_col = end_col,
-                virt_text = { virt_text },
-                virt_text_pos = 'overlay',
-            })
+                local virt_text = { string.rep(' ', leading_spaces or 0) .. bullet, highlights.bullet }
+                vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
+                    end_row = end_row,
+                    end_col = end_col,
+                    virt_text = { virt_text },
+                    virt_text_pos = 'overlay',
+                })
+            end
         elseif capture == 'quote_marker' then
             local virt_text = { value:gsub('>', state.config.quote), highlights.quote }
             vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {

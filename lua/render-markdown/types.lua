@@ -28,10 +28,6 @@
 ---@field public quote string
 ---@field public callout render.md.Callout
 
----@class render.md.Conceal
----@field public default integer
----@field public rendered integer
-
 ---@class render.md.Checkbox
 ---@field public unchecked string
 ---@field public checked string
@@ -50,7 +46,7 @@
 ---@field public checkbox render.md.Checkbox
 ---@field public quote string
 ---@field public callout render.md.Callout
----@field public conceal render.md.Conceal
+---@field public win_options table<string, render.md.WindowOption>
 ---@field public table_style 'full'|'normal'|'none'
 ---@field public custom_handlers table<string, render.md.Handler>
 ---@field public highlights render.md.Highlights
