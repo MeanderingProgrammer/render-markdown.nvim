@@ -34,6 +34,9 @@ local M = {}
 ---@field public quote? string
 ---@field public callout? render.md.UserCallout
 
+---@class render.md.Handler
+---@field public render fun(namespace: integer, root: TSNode, buf: integer)
+
 ---@class render.md.UserConceal
 ---@field public default? integer
 ---@field public rendered? integer
@@ -58,6 +61,7 @@ local M = {}
 ---@field public callout? render.md.UserCallout
 ---@field public conceal? render.md.UserConceal
 ---@field public table_style? 'full'|'normal'|'none'
+---@field public custom_handlers? table<string, render.md.Handler>
 ---@field public highlights? render.md.UserHighlights
 
 ---@type render.md.Config
@@ -147,6 +151,9 @@ M.default_config = {
     --  normal: renders the rows of tables
     --  none: disables rendering, use this if you prefer having cell highlights
     table_style = 'full',
+    -- Mapping from treesitter language to user defined handlers
+    -- See 'Custom Handlers' section for more info
+    custom_handlers = {},
     -- Define the highlight groups to use when rendering various components
     highlights = {
         heading = {

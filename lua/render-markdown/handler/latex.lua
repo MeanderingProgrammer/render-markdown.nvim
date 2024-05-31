@@ -11,7 +11,7 @@ local cache = {
 
 local M = {}
 
----@param namespace number
+---@param namespace integer
 ---@param root TSNode
 ---@param buf integer
 M.render = function(namespace, root, buf)

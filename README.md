@@ -20,6 +20,7 @@ Plugin to improve viewing Markdown files in Neovim
 - Basic support for `LaTeX` if `pylatexenc` is installed on system
 - Disable rendering when file is larger than provided value
 - Support for [callouts](https://github.com/orgs/community/discussions/16925)
+- Support custom handlers which are ran identically to native handlers
 
 # Dependencies
 
@@ -149,6 +150,9 @@ require('render-markdown').setup({
     --  normal: renders the rows of tables
     --  none: disables rendering, use this if you prefer having cell highlights
     table_style = 'full',
+    -- Mapping from treesitter language to user defined handlers
+    -- See 'Custom Handlers' section for more info
+    custom_handlers = {},
     -- Define the highlight groups to use when rendering various components
     highlights = {
         heading = {
@@ -203,6 +207,73 @@ require('render-markdown').setup({
 `:RenderMarkdownToggle` - Switch between enabling & disabling this plugin
 
 - Function can also be accessed directly through `require('render-markdown').toggle()`
+
+# Custom Handlers
+
+Custom handlers allow users to integrate custom rendering for either unsupported
+languages or to override the native implementations. This can also be used to
+disable a native language, as custom handlers have priority.
+
+For example disabling the `LaTeX` handler can be done with:
+
+```lua
+require('render-markdown').setup({
+    custom_handlers = {
+        latex = { render = function() end },
+    },
+}
+```
+
+Each handler must conform to the following interface:
+
+```lua
+---@class render.md.Handler
+---@field public render fun(namespace: integer, root: TSNode, buf: integer)
+```
+
+The `render` function parameters are:
+
+- `namespace`: The id that this plugin interacts with when setting and clearing `extmark`s
+- `root`: The root treesitter node for the specified language
+- `buf`: The buffer containing the root node
+
+Custom handlers are ran identically to native ones, so by writing custom `extmark`s
+(see :h nvim_buf_set_extmark()) to the provided `namespace` this plugin will handle
+clearing the `extmark`s on mode changes as well as re-calling the `render` function
+when needed.
+
+This is a high level interface, as such creating, parsing, and iterating through
+a treesitter query is entirely up to the user if the functionality they want needs
+this. We do not provide any convenience functions, but you are more than welcome
+to use patterns from the native handlers.
+
+## More Complex Example
+
+Lets say for `python` we want to highlight lines with function definitions.
+
+```lua
+-- Parse query outside of the render function to avoid doing it for each call
+local query = vim.treesitter.query.parse('python', '(function_definition) @def')
+local function render_python(namespace, root, buf)
+    for id, node in query:iter_captures(root, buf) do
+        local capture = query.captures[id]
+        local start_row, _, _, _ = node:range()
+        if capture == 'def' then
+            vim.api.nvim_buf_set_extmark(buf, namespace, start_row, 0, {
+                end_row = start_row + 1,
+                end_col = 0,
+                hl_group = 'DiffDelete',
+                hl_eol = true,
+            })
+        end
+    end
+end
+require('render-markdown').setup({
+    custom_handlers = {
+        python = { render = render_python },
+    },
+}
+```
 
 # Purpose
 

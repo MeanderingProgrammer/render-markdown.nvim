@@ -33,14 +33,20 @@ M.refresh = function(buf)
     parser:for_each_tree(function(tree, language_tree)
         local language = language_tree:lang()
         logger.debug({ language = language })
-        if language == 'markdown' then
-            markdown.render(M.namespace, tree:root(), buf)
-        elseif language == 'markdown_inline' then
-            markdown_inline.render(M.namespace, tree:root(), buf)
-        elseif language == 'latex' then
-            latex.render(M.namespace, tree:root(), buf)
+        local user_handler = state.config.custom_handlers[language]
+        if user_handler == nil then
+            if language == 'markdown' then
+                markdown.render(M.namespace, tree:root(), buf)
+            elseif language == 'markdown_inline' then
+                markdown_inline.render(M.namespace, tree:root(), buf)
+            elseif language == 'latex' then
+                latex.render(M.namespace, tree:root(), buf)
+            else
+                logger.debug('No handler found')
+            end
         else
-            logger.debug('No handler found')
+            logger.debug('Using user defined handler')
+            user_handler.render(M.namespace, tree:root(), buf)
         end
     end)
     logger.flush()

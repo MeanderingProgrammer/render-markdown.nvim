@@ -10,18 +10,34 @@ def main() -> None:
 
 
 def update_types(init_file: Path) -> None:
-    lines: list[str] = []
+    # Group comments into class + fields
+    lua_classes: list[list[str]] = []
+    current_class: list[str] = []
     for comment in get_comments(init_file):
         comment_type: str = comment.split()[0].split("@")[-1]
-        if comment_type in ["class", "field"]:
-            comment = comment.replace("User", "")
-            if comment_type == "field":
-                assert "?" in comment, f"All fields must be optional: {comment}"
-                comment = comment.replace("?", "")
-            if comment_type == "class" and len(lines) > 0:
-                lines.append("")
-            lines.append(comment)
-    lines.append("")
+        if comment_type == "class":
+            if len(current_class) > 0:
+                lua_classes.append(current_class)
+            current_class = [comment]
+        elif comment_type == "field":
+            current_class.append(comment)
+    lua_classes.append(current_class)
+
+    # Generate lines that get written to types.lua
+    lines: list[str] = []
+    for lua_class in lua_classes:
+        name, fields = lua_class[0], lua_class[1:]
+        if "User" in name:
+            # User classes are expected to have optional fields
+            lines.append(name.replace("User", ""))
+            for field in fields:
+                assert "?" in field, f"User fields must be optional: {field}"
+                lines.append(field.replace("User", "").replace("?", ""))
+            lines.append("")
+        else:
+            # Non user classes are expected to have mandatory fields
+            for field in fields:
+                assert "?" not in field, f"Non user fields must be mandatory: {field}"
 
     types_file: Path = Path("lua/render-markdown/types.lua")
     types_file.write_text("\n".join(lines))
@@ -62,9 +78,9 @@ def get_default_config(file: Path) -> str:
 def get_readme_config(file: Path) -> str:
     query = "(code_fence_content) @content"
     code_blocks = ts_query(file, query, "content")
-    query_code_blocks = [code for code in code_blocks if "query" in code]
-    assert len(query_code_blocks) == 1
-    return query_code_blocks[0]
+    code_blocks = [code for code in code_blocks if "enabled" in code]
+    assert len(code_blocks) == 1
+    return code_blocks[0]
 
 
 def ts_query(file: Path, query_string: str, target: str) -> list[str]:

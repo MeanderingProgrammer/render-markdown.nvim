@@ -52,4 +52,5 @@
 ---@field public callout render.md.Callout
 ---@field public conceal render.md.Conceal
 ---@field public table_style 'full'|'normal'|'none'
+---@field public custom_handlers table<string, render.md.Handler>
 ---@field public highlights render.md.Highlights
