@@ -56,7 +56,7 @@ function M.check()
     if #errors == 0 then
         vim.health.ok('Configuration is valid')
     end
-    for _, message in pairs(errors) do
+    for _, message in ipairs(errors) do
         vim.health.error(message)
     end
 end
