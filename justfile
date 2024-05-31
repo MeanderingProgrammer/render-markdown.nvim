@@ -17,6 +17,9 @@ demo zoom=default_zoom:
     --last-frame-duration 1
   rm demo.cast
 
+update:
+  python -Wignore scripts/update.py
+
 gen-doc:
   # https://github.com/kdheepak/panvimdoc
   # https://pandoc.org/
