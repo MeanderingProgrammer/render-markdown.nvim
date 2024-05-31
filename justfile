@@ -5,6 +5,9 @@ test:
   nvim --headless --noplugin -u {{init}} \
     -c "PlenaryBustedDirectory tests { minimal_init = '{{init}}', sequential=true }"
 
+health:
+  nvim -c "checkhealth render-markdown" -- .
+
 demo zoom=default_zoom:
   rm -f demo/demo.gif
   python demo/record.py \

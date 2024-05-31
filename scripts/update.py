@@ -1,5 +1,4 @@
 from pathlib import Path
-from textwrap import dedent
 
 from tree_sitter_languages import get_language, get_parser
 
@@ -30,8 +29,7 @@ def update_types(init_file: Path) -> None:
 
 def update_readme(init_file: Path) -> None:
     default_config = get_default_config(init_file)
-    new_config = "    require('render-markdown').setup(" + default_config + ")"
-    new_config = dedent(new_config)
+    new_config = "require('render-markdown').setup(" + default_config + ")"
 
     readme_file = Path("README.md")
     current_config = get_readme_config(readme_file)
@@ -48,9 +46,9 @@ def get_comments(file: Path) -> list[str]:
 
 def get_default_config(file: Path) -> str:
     query = """
-        (local_variable_declaration(
+        (variable_assignment(
             (variable_list(
-                variable name: (identifier) @name
+                variable field: (identifier) @name
                 (#eq? @name "default_config")
             ))
             (expression_list value: (table)) @value
