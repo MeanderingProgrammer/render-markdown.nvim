@@ -5,6 +5,9 @@ test:
   nvim --headless --noplugin -u {{init}} \
     -c "PlenaryBustedDirectory tests { minimal_init = '{{init}}', sequential=true }"
 
+health:
+  nvim -c "checkhealth render-markdown" -- .
+
 demo zoom=default_zoom:
   rm -f demo/demo.gif
   python demo/record.py \
@@ -16,6 +19,9 @@ demo zoom=default_zoom:
     --font-family "Monaspace Neon,Hack Nerd Font" \
     --last-frame-duration 1
   rm demo.cast
+
+update:
+  python -Wignore scripts/update.py
 
 gen-doc:
   # https://github.com/kdheepak/panvimdoc
