@@ -5,8 +5,8 @@
 ### ⚠ BREAKING CHANGES
 
 - Allow all window options to be configurable between rendered and non rendered view
-  (https://github.com/MeanderingProgrammer/markdown.nvim/pull/31)
-  (https://github.com/MeanderingProgrammer/markdown.nvim/commit/258da4bcdecdc83318a515fc4c6c3e18c0c65a61)
+  [#31](https://github.com/MeanderingProgrammer/markdown.nvim/pull/31)
+  [258da4b](https://github.com/MeanderingProgrammer/markdown.nvim/commit/258da4bcdecdc83318a515fc4c6c3e18c0c65a61)
 - In order to fix:
   - `conceal = { default = <value_1>, rendered = <value_2> }` ->
     `win_options = { conceallevel = { default = <value_1>, rendered = <value_2> } }`
@@ -19,26 +19,26 @@
 
 ### Features
 
-- Support github markdown callout syntax (https://github.com/MeanderingProgrammer/markdown.nvim/issues/20)
-  (https://github.com/MeanderingProgrammer/markdown.nvim/commit/43bbefd410333a04baf62ddfa8bb2a2d30a1bbc1)
-- Add health check on treesitter highlights being enabled (https://github.com/MeanderingProgrammer/markdown.nvim/issues/28)
-  (https://github.com/MeanderingProgrammer/markdown.nvim/commit/c1d9edc2f2690ef326bd8afbe7fc080412cbb224)
-- Script logic to update state config class and README from init.lua (https://github.com/MeanderingProgrammer/markdown.nvim/commit/d1cd8548dbe139657275e31bcc54f246e86c5ce3)
-- Validate user config in health check (https://github.com/MeanderingProgrammer/markdown.nvim/commit/6f33a30f73783bb10900cb2f9468f314cad482b4)
-- Support user defined handlers (https://github.com/MeanderingProgrammer/markdown.nvim/issues/30)
-  (https://github.com/MeanderingProgrammer/markdown.nvim/commit/473e48dd0913d2e83610c86c5143a07fd7e60d4e)
+- Support github markdown callout syntax [#20](https://github.com/MeanderingProgrammer/markdown.nvim/issues/20)
+  [43bbefd](https://github.com/MeanderingProgrammer/markdown.nvim/commit/43bbefd410333a04baf62ddfa8bb2a2d30a1bbc1)
+- Add health check on treesitter highlights being enabled [#28](https://github.com/MeanderingProgrammer/markdown.nvim/issues/28)
+  [c1d9edc](https://github.com/MeanderingProgrammer/markdown.nvim/commit/c1d9edc2f2690ef326bd8afbe7fc080412cbb224)
+- Script logic to update state config class and README from init.lua [d1cd854](https://github.com/MeanderingProgrammer/markdown.nvim/commit/d1cd8548dbe139657275e31bcc54f246e86c5ce3)
+- Validate user config in health check [6f33a30](https://github.com/MeanderingProgrammer/markdown.nvim/commit/6f33a30f73783bb10900cb2f9468f314cad482b4)
+- Support user defined handlers [#30](https://github.com/MeanderingProgrammer/markdown.nvim/issues/30)
+  [473e48d](https://github.com/MeanderingProgrammer/markdown.nvim/commit/473e48dd0913d2e83610c86c5143a07fd7e60d4e)
 
 ### Bug Fixes
 
-- Use strdisplaywidth in all string length calculations (https://github.com/MeanderingProgrammer/markdown.nvim/issues/26)
-  (https://github.com/MeanderingProgrammer/markdown.nvim/commit/7f90f522750111c32b0515814398514d58f66b23)
+- Use strdisplaywidth in all string length calculations [#26](https://github.com/MeanderingProgrammer/markdown.nvim/issues/26)
+  [7f90f52](https://github.com/MeanderingProgrammer/markdown.nvim/commit/7f90f522750111c32b0515814398514d58f66b23)
 
 ## 2.0.0 (2024-05-21)
 
 ### ⚠ BREAKING CHANGES
 
-- Allow multiple kinds of table highlight behaviors (https://github.com/MeanderingProgrammer/markdown.nvim/issues/21)
-  (https://github.com/MeanderingProgrammer/markdown.nvim/commit/49f45978fbb8fcf874f3b6967db4a6ea647df04b)
+- Allow multiple kinds of table highlight behaviors [#21](https://github.com/MeanderingProgrammer/markdown.nvim/issues/21)
+  [49f4597](https://github.com/MeanderingProgrammer/markdown.nvim/commit/49f45978fbb8fcf874f3b6967db4a6ea647df04b)
 - In order to fix:
   - `fat_tables = true` -> `table_style = 'full'`
   - `fat_tables = false` -> `table_style = 'normal'`
@@ -47,23 +47,23 @@
 
 ### Features
 
-- Add simple logging (https://github.com/MeanderingProgrammer/markdown.nvim/commit/467c13523153f9b918c86037d0b5f2a37094cb88)
-- Make start state configurable (https://github.com/MeanderingProgrammer/markdown.nvim/issues/16)
-  (https://github.com/MeanderingProgrammer/markdown.nvim/pull/17)
-- Add unit / kinda integ test (https://github.com/MeanderingProgrammer/markdown.nvim/commit/b6c4ac787b357493e75854354329a2442475fcc1)
-- Add packer.nvim setup to README (https://github.com/MeanderingProgrammer/markdown.nvim/issues/19)
-  (https://github.com/MeanderingProgrammer/markdown.nvim/commit/93769977e0821a74bed797c2a589a4956200d497)
-- Update for 0.10.0 (no user impact) (https://github.com/MeanderingProgrammer/markdown.nvim/commit/0581a9add614cddbc442d6b483139e43e46c1f0e)
-- Disable rendering on large files (https://github.com/MeanderingProgrammer/markdown.nvim/commit/e96f40d85be763427b00d8a541cf3389b110431f)
-- Operate at event buffer level rather than current buffer (https://github.com/MeanderingProgrammer/markdown.nvim/commit/41b955c45db3602169c567546744fafdd43c27b9)
+- Add simple logging [467c135](https://github.com/MeanderingProgrammer/markdown.nvim/commit/467c13523153f9b918c86037d0b5f2a37094cb88)
+- Make start state configurable [#16](https://github.com/MeanderingProgrammer/markdown.nvim/issues/16)
+  [#17](https://github.com/MeanderingProgrammer/markdown.nvim/pull/17)
+- Add unit / kinda integ test [b6c4ac7](https://github.com/MeanderingProgrammer/markdown.nvim/commit/b6c4ac787b357493e75854354329a2442475fcc1)
+- Add packer.nvim setup to README [#19](https://github.com/MeanderingProgrammer/markdown.nvim/issues/19)
+  [9376997](https://github.com/MeanderingProgrammer/markdown.nvim/commit/93769977e0821a74bed797c2a589a4956200d497)
+- Update for 0.10.0 (no user impact) [0581a9a](https://github.com/MeanderingProgrammer/markdown.nvim/commit/0581a9add614cddbc442d6b483139e43e46c1f0e)
+- Disable rendering on large files [e96f40d](https://github.com/MeanderingProgrammer/markdown.nvim/commit/e96f40d85be763427b00d8a541cf3389b110431f)
+- Operate at event buffer level rather than current buffer [41b955c](https://github.com/MeanderingProgrammer/markdown.nvim/commit/41b955c45db3602169c567546744fafdd43c27b9)
 
 ### Bug Fixes
 
-- Fix bullet point rendering with checkbox (https://github.com/MeanderingProgrammer/markdown.nvim/issues/18)
-  (https://github.com/MeanderingProgrammer/markdown.nvim/pull/22)
-  (https://github.com/MeanderingProgrammer/markdown.nvim/commit/e38795f3641ffb5702bf289f76df8a81f6163d32)
-- Disable plugin on horizontal scroll (https://github.com/MeanderingProgrammer/markdown.nvim/issues/23)
-  (https://github.com/MeanderingProgrammer/markdown.nvim/commit/966472e123195cb195e7af49d7db248ce104bee8)
+- Fix bullet point rendering with checkbox [#18](https://github.com/MeanderingProgrammer/markdown.nvim/issues/18)
+  [#22](https://github.com/MeanderingProgrammer/markdown.nvim/pull/22)
+  [e38795f](https://github.com/MeanderingProgrammer/markdown.nvim/commit/e38795f3641ffb5702bf289f76df8a81f6163d32)
+- Disable plugin on horizontal scroll [#23](https://github.com/MeanderingProgrammer/markdown.nvim/issues/23)
+  [966472e](https://github.com/MeanderingProgrammer/markdown.nvim/commit/966472e123195cb195e7af49d7db248ce104bee8)
 
 ### Contributor Shoutouts
 
@@ -74,39 +74,39 @@
 
 ### Features
 
-- Configurable file types (https://github.com/MeanderingProgrammer/markdown.nvim/commit/d7d793baf716db965e6f4f4cc0d14a640300cc26)
-- Add toggle command (https://github.com/MeanderingProgrammer/markdown.nvim/issues/4)
-  (https://github.com/MeanderingProgrammer/markdown.nvim/commit/fea6f3de62d864633ffe4e1e0fd92d1e746f77ed)
-- Use buffer parser to handle injections (https://github.com/MeanderingProgrammer/markdown.nvim/issues/3)
-  (https://github.com/MeanderingProgrammer/markdown.nvim/commit/e64255d52dcdf05eb37d9e93fbfd300648c4c4dd)
-- Add LaTeX support (https://github.com/MeanderingProgrammer/markdown.nvim/issues/6)
-  (https://github.com/MeanderingProgrammer/markdown.nvim/commit/138a7962fcbe9cddcb47cc40a58ec0f5ab99ddfe)
-  (https://github.com/MeanderingProgrammer/markdown.nvim/commit/da85a5e5885f1a11ab2b7a9059c16f3eede89bfe)
-- Support block quotes (https://github.com/MeanderingProgrammer/markdown.nvim/commit/106946ae924706c885bda14a9160398e79880f30)
-- Make icons bigger for certain font setups (https://github.com/MeanderingProgrammer/markdown.nvim/pull/9)
-  (https://github.com/MeanderingProgrammer/markdown.nvim/commit/38f7cbcc0024737901ba87ee8bf1a6d466f99774)
-- Support inline code (https://github.com/MeanderingProgrammer/markdown.nvim/commit/df5983612081397293c1e573c91de33639f2bbe6)
-- Dynamic conceal level (https://github.com/MeanderingProgrammer/markdown.nvim/issues/10)
-  (https://github.com/MeanderingProgrammer/markdown.nvim/commit/c2219984fa1ddc5d3f6a76c1c1ad0744aa9f9011)
-- Add Vimdoc (https://github.com/MeanderingProgrammer/markdown.nvim/commit/cdc58f576582ab524192eca5611f05dbe2b6b609)
-- Add fat tables option (https://github.com/MeanderingProgrammer/markdown.nvim/commit/fb00297774c6f44c0cc3346459ed85168ac93dce)
-- Support list icon based on level (https://github.com/MeanderingProgrammer/markdown.nvim/issues/1)
-  (https://github.com/MeanderingProgrammer/markdown.nvim/pull/11)
-- Refactor + LaTeX cache (https://github.com/MeanderingProgrammer/markdown.nvim/commit/2b98d16f938dc9cedaa5f1c0659081035655f781)
-- Support horizontal break (https://github.com/MeanderingProgrammer/markdown.nvim/commit/af819f39c63aeb09ff3801dbfd5188cea55e48e7)
-- Support checkboxes (https://github.com/MeanderingProgrammer/markdown.nvim/commit/90637a1120de47a3be57b00b7db4eee0d24834c8)
+- Configurable file types [d7d793b](https://github.com/MeanderingProgrammer/markdown.nvim/commit/d7d793baf716db965e6f4f4cc0d14a640300cc26)
+- Add toggle command [#4](https://github.com/MeanderingProgrammer/markdown.nvim/issues/4)
+  [fea6f3d](https://github.com/MeanderingProgrammer/markdown.nvim/commit/fea6f3de62d864633ffe4e1e0fd92d1e746f77ed)
+- Use buffer parser to handle injections [#3](https://github.com/MeanderingProgrammer/markdown.nvim/issues/3)
+  [e64255d](https://github.com/MeanderingProgrammer/markdown.nvim/commit/e64255d52dcdf05eb37d9e93fbfd300648c4c4dd)
+- Add LaTeX support [#6](https://github.com/MeanderingProgrammer/markdown.nvim/issues/6)
+  [138a796](https://github.com/MeanderingProgrammer/markdown.nvim/commit/138a7962fcbe9cddcb47cc40a58ec0f5ab99ddfe)
+  [da85a5e](https://github.com/MeanderingProgrammer/markdown.nvim/commit/da85a5e5885f1a11ab2b7a9059c16f3eede89bfe)
+- Support block quotes [106946a](https://github.com/MeanderingProgrammer/markdown.nvim/commit/106946ae924706c885bda14a9160398e79880f30)
+- Make icons bigger for certain font setups [#19](https://github.com/MeanderingProgrammer/markdown.nvim/pull/9)
+  [38f7cbc](https://github.com/MeanderingProgrammer/markdown.nvim/commit/38f7cbcc0024737901ba87ee8bf1a6d466f99774)
+- Support inline code [df59836](https://github.com/MeanderingProgrammer/markdown.nvim/commit/df5983612081397293c1e573c91de33639f2bbe6)
+- Dynamic conceal level [#10](https://github.com/MeanderingProgrammer/markdown.nvim/issues/10)
+  [c221998](https://github.com/MeanderingProgrammer/markdown.nvim/commit/c2219984fa1ddc5d3f6a76c1c1ad0744aa9f9011)
+- Add Vimdoc [cdc58f5](https://github.com/MeanderingProgrammer/markdown.nvim/commit/cdc58f576582ab524192eca5611f05dbe2b6b609)
+- Add fat tables option [fb00297](https://github.com/MeanderingProgrammer/markdown.nvim/commit/fb00297774c6f44c0cc3346459ed85168ac93dce)
+- Support list icon based on level [#1](https://github.com/MeanderingProgrammer/markdown.nvim/issues/1)
+  [#11](https://github.com/MeanderingProgrammer/markdown.nvim/pull/11)
+- Refactor + LaTeX cache [2b98d16](https://github.com/MeanderingProgrammer/markdown.nvim/commit/2b98d16f938dc9cedaa5f1c0659081035655f781)
+- Support horizontal break [af819f3](https://github.com/MeanderingProgrammer/markdown.nvim/commit/af819f39c63aeb09ff3801dbfd5188cea55e48e7)
+- Support checkboxes [90637a1](https://github.com/MeanderingProgrammer/markdown.nvim/commit/90637a1120de47a3be57b00b7db4eee0d24834c8)
 
 ### Bug Fixes
 
-- Leading spaces in list (https://github.com/MeanderingProgrammer/markdown.nvim/issues/2)
-  (https://github.com/MeanderingProgrammer/markdown.nvim/issues/5)
-  (https://github.com/MeanderingProgrammer/markdown.nvim/commit/df98da81375e5dc613c3b1eaa915a847059d48d9)
-- Passing custom query does not work (https://github.com/MeanderingProgrammer/markdown.nvim/issues/7)
-  (https://github.com/MeanderingProgrammer/markdown.nvim/commit/70f8f4f64d529d60730d6462af180bbec6f7ef18)
-- Ignore ordered lists for bullet points (https://github.com/MeanderingProgrammer/markdown.nvim/issues/7)
-  (https://github.com/MeanderingProgrammer/markdown.nvim/commit/f5917d2113ce2b0ce8ce5b24cfbd7f45e0ec5e67)
-- Dynamic heading padding (https://github.com/MeanderingProgrammer/markdown.nvim/issues/12)
-  (https://github.com/MeanderingProgrammer/markdown.nvim/commit/a0da7cfe61dd1a60d9ca6a57a72ae34edb64dbc9)
+- Leading spaces in list [#2](https://github.com/MeanderingProgrammer/markdown.nvim/issues/2)
+  [#5](https://github.com/MeanderingProgrammer/markdown.nvim/issues/5)
+  [df98da8](https://github.com/MeanderingProgrammer/markdown.nvim/commit/df98da81375e5dc613c3b1eaa915a847059d48d9)
+- Passing custom query does not work [#7](https://github.com/MeanderingProgrammer/markdown.nvim/issues/7)
+  [70f8f4f](https://github.com/MeanderingProgrammer/markdown.nvim/commit/70f8f4f64d529d60730d6462af180bbec6f7ef18)
+- Ignore ordered lists for bullet points [#7](https://github.com/MeanderingProgrammer/markdown.nvim/issues/7)
+  [f5917d2](https://github.com/MeanderingProgrammer/markdown.nvim/commit/f5917d2113ce2b0ce8ce5b24cfbd7f45e0ec5e67)
+- Dynamic heading padding [#12](https://github.com/MeanderingProgrammer/markdown.nvim/issues/12)
+  [a0da7cf](https://github.com/MeanderingProgrammer/markdown.nvim/commit/a0da7cfe61dd1a60d9ca6a57a72ae34edb64dbc9)
 
 ### Contributor Shoutouts
 
@@ -119,7 +119,7 @@
 ### ⚠ BREAKING CHANGES
 
 - Changes folder from `markdown` to `render-markdown` to reduce chances of name
-  collision in require statements (https://github.com/MeanderingProgrammer/markdown.nvim/commit/07685a1838ad3f4e653a021cde5c7ff67224869f)
+  collision in require statements [07685a1](https://github.com/MeanderingProgrammer/markdown.nvim/commit/07685a1838ad3f4e653a021cde5c7ff67224869f)
 - In order to fix:
   - `require('markdown')` -> `require('render-markdown')`
 
@@ -127,9 +127,9 @@
 
 ### Features
 
-- Support rendering headings & code blocks (https://github.com/MeanderingProgrammer/markdown.nvim/commit/4fb7ea2e380dd80085936e9072ab851d2174e1b0)
-- Mode based rendering (https://github.com/MeanderingProgrammer/markdown.nvim/commit/3fd818ccfbb57a560d8518e92496142bc644cb80)
-- Supprt rendering tables (https://github.com/MeanderingProgrammer/markdown.nvim/commit/fe2ebe78ffc3274e681bd3f2de6fec0ed233db52)
-- Add basic health check (https://github.com/MeanderingProgrammer/markdown.nvim/commit/b6ea30ef6b7ba6bfbe3c5ec55afe0769026ff386)
-- Customize icon based on heading level (https://github.com/MeanderingProgrammer/markdown.nvim/commit/208599b0ca2c3daac681cf777ff3be248c67965b)
-- Create auto demo script (https://github.com/MeanderingProgrammer/markdown.nvim/commit/03a7c0044b7e85903f3b0042d600568c37246120)
+- Support rendering headings & code blocks [4fb7ea2](https://github.com/MeanderingProgrammer/markdown.nvim/commit/4fb7ea2e380dd80085936e9072ab851d2174e1b0)
+- Mode based rendering [3fd818c](https://github.com/MeanderingProgrammer/markdown.nvim/commit/3fd818ccfbb57a560d8518e92496142bc644cb80)
+- Supprt rendering tables [fe2ebe7](https://github.com/MeanderingProgrammer/markdown.nvim/commit/fe2ebe78ffc3274e681bd3f2de6fec0ed233db52)
+- Add basic health check [b6ea30e](https://github.com/MeanderingProgrammer/markdown.nvim/commit/b6ea30ef6b7ba6bfbe3c5ec55afe0769026ff386)
+- Customize icon based on heading level [208599b](https://github.com/MeanderingProgrammer/markdown.nvim/commit/208599b0ca2c3daac681cf777ff3be248c67965b)
+- Create auto demo script [03a7c00](https://github.com/MeanderingProgrammer/markdown.nvim/commit/03a7c0044b7e85903f3b0042d600568c37246120)
