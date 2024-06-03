@@ -1,4 +1,4 @@
-*render-markdown.txt*            For 0.10.0           Last change: 2024 May 31
+*render-markdown.txt*           For 0.10.0           Last change: 2024 June 03
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -139,6 +139,8 @@ modified by the user.
     
             (shortcut_link) @callout
         ]],
+        -- Executable used to convert latex formula to rendered unicode
+        latex_converter = 'latex2text',
         -- The level of logs to write to file: vim.fn.stdpath('state') .. '/render-markdown.log'
         -- Only intended to be used for plugin development / debugging
         log_level = 'error',
