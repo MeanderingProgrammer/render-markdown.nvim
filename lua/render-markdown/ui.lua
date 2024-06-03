@@ -33,7 +33,7 @@ M.refresh = function(buf)
     parser:parse(true)
     parser:for_each_tree(function(tree, language_tree)
         local language = language_tree:lang()
-        logger.debug({ language = language })
+        logger.debug('language: ' .. language)
         local user_handler = state.config.custom_handlers[language]
         if user_handler == nil then
             if language == 'markdown' then

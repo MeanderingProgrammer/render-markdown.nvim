@@ -50,6 +50,7 @@ local M = {}
 ---@field public max_file_size? number
 ---@field public markdown_query? string
 ---@field public inline_query? string
+---@field public latex_converter? string
 ---@field public log_level? 'debug'|'error'
 ---@field public file_types? string[]
 ---@field public render_modes? string[]
@@ -109,6 +110,8 @@ M.default_config = {
 
         (shortcut_link) @callout
     ]],
+    -- Executable used to convert latex formula to rendered unicode
+    latex_converter = 'latex2text',
     -- The level of logs to write to file: vim.fn.stdpath('state') .. '/render-markdown.log'
     -- Only intended to be used for plugin development / debugging
     log_level = 'error',

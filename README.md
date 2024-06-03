@@ -108,6 +108,8 @@ require('render-markdown').setup({
 
         (shortcut_link) @callout
     ]],
+    -- Executable used to convert latex formula to rendered unicode
+    latex_converter = 'latex2text',
     -- The level of logs to write to file: vim.fn.stdpath('state') .. '/render-markdown.log'
     -- Only intended to be used for plugin development / debugging
     log_level = 'error',

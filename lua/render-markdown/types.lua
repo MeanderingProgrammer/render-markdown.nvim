@@ -37,6 +37,7 @@
 ---@field public max_file_size number
 ---@field public markdown_query string
 ---@field public inline_query string
+---@field public latex_converter string
 ---@field public log_level 'debug'|'error'
 ---@field public file_types string[]
 ---@field public render_modes string[]

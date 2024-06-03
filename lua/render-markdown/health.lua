@@ -18,7 +18,7 @@ local function validate_treesitter()
     end
 
     local highlight = require('nvim-treesitter.configs').get_module('highlight')
-    if highlight.enable then
+    if highlight ~= nil and highlight.enable then
         vim.health.ok('treesitter highlights enabled')
     else
         vim.health.error('treesitter highlights not enabled')
