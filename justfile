@@ -9,17 +9,17 @@ health:
   nvim -c "checkhealth render-markdown" -- .
 
 demo-all cols=default_cols:
-  just demo "40" {{cols}} "heading_code" "## Heading 2"
-  just demo "40" {{cols}} "list_table" ""
-  just demo "20" {{cols}} "box_dash_quote" ""
-  just demo "20" {{cols}} "latex" ""
-  just demo "40" {{cols}} "callout" ""
+  just demo {{cols}} "30" "heading_code" "## Heading 2"
+  just demo {{cols}} "30" "list_table" ""
+  just demo {{cols}} "15" "box_dash_quote" ""
+  just demo {{cols}} "15" "latex" ""
+  just demo {{cols}} "30" "callout" ""
 
-demo rows cols file content:
+demo cols rows file content:
   rm -f demo/{{file}}.gif
   python demo/record.py \
-    --rows {{rows}} \
     --cols {{cols}} \
+    --rows {{rows}} \
     --file demo/{{file}}.md \
     --cast {{file}}.cast \
     --content "{{content}}"
