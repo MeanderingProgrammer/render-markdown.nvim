@@ -4,32 +4,40 @@ local util = require('plenary.async.util')
 
 local eq = assert.are.same
 
+---@param expected any[]
+local function marks_are_equal(expected)
+    local actual = {}
+    local marks = vim.api.nvim_buf_get_extmarks(0, ui.namespace, 0, -1, { details = true })
+    for _, mark in ipairs(marks) do
+        local _, row, col, details = unpack(mark)
+        local mark_info = {
+            row = { row, details.end_row },
+            col = { col, details.end_col },
+            hl_eol = details.hl_eol,
+            hl_group = details.hl_group,
+            conceal = details.conceal,
+            virt_text = details.virt_text,
+            virt_text_pos = details.virt_text_pos,
+            virt_lines = details.virt_lines,
+            virt_lines_above = details.virt_lines_above,
+        }
+        table.insert(actual, mark_info)
+    end
+
+    eq(#expected, #actual)
+    for i, expected_mark_info in ipairs(expected) do
+        eq(expected_mark_info, actual[i], string.format('Marks at index %d mismatch', i))
+    end
+end
+
 async_tests.describe('init', function()
     async_tests.before_each(function()
         require('render-markdown').setup({})
     end)
 
-    async_tests.it('render demo', function()
-        vim.cmd('e demo/sample.md')
+    async_tests.it('render heading_code.md', function()
+        vim.cmd('e demo/heading_code.md')
         util.scheduler()
-
-        local actual = {}
-        local marks = vim.api.nvim_buf_get_extmarks(0, ui.namespace, 0, -1, { details = true })
-        for _, mark in ipairs(marks) do
-            local _, row, col, details = unpack(mark)
-            local mark_info = {
-                row = { row, details.end_row },
-                col = { col, details.end_col },
-                hl_eol = details.hl_eol,
-                hl_group = details.hl_group,
-                conceal = details.conceal,
-                virt_text = details.virt_text,
-                virt_text_pos = details.virt_text_pos,
-                virt_lines = details.virt_lines,
-                virt_lines_above = details.virt_lines_above,
-            }
-            table.insert(actual, mark_info)
-        end
 
         local expected = {}
 
@@ -87,76 +95,23 @@ async_tests.describe('init', function()
             },
         })
 
-        -- Callouts
+        marks_are_equal(expected)
+    end)
+
+    async_tests.it('render list_table.md', function()
+        vim.cmd('e demo/list_table.md')
+        util.scheduler()
+
+        local expected = {}
+
+        -- Unordered list heading
         vim.list_extend(expected, {
-            -- Note, quote
             {
-                row = { 22, 22 },
-                col = { 0, 2 },
-                virt_text = { { '┃ ', '@markup.quote' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Note, text
-            {
-                row = { 22, 22 },
-                col = { 2, 9 },
-                virt_text = { { '  Note', 'DiagnosticInfo' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Tip, quote
-            {
-                row = { 23, 23 },
-                col = { 0, 2 },
-                virt_text = { { '┃ ', '@markup.quote' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Tip, text
-            {
-                row = { 23, 23 },
-                col = { 2, 8 },
-                virt_text = { { '  Tip', 'DiagnosticOk' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Important, quote
-            {
-                row = { 24, 24 },
-                col = { 0, 2 },
-                virt_text = { { '┃ ', '@markup.quote' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Important, text
-            {
-                row = { 24, 24 },
-                col = { 2, 14 },
-                virt_text = { { '󰅾  Important', 'DiagnosticHint' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Warning, quote
-            {
-                row = { 25, 25 },
-                col = { 0, 2 },
-                virt_text = { { '┃ ', '@markup.quote' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Warning, text
-            {
-                row = { 25, 25 },
-                col = { 2, 12 },
-                virt_text = { { '  Warning', 'DiagnosticWarn' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Caution, quote
-            {
-                row = { 26, 26 },
-                col = { 0, 2 },
-                virt_text = { { '┃ ', '@markup.quote' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Caution, text
-            {
-                row = { 26, 26 },
-                col = { 2, 12 },
-                virt_text = { { '󰳦  Caution', 'DiagnosticError' } },
+                row = { 0, 1 },
+                col = { 0, 0 },
+                hl_eol = true,
+                hl_group = 'DiffAdd',
+                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
                 virt_text_pos = 'overlay',
             },
         })
@@ -165,121 +120,89 @@ async_tests.describe('init', function()
         vim.list_extend(expected, {
             -- List Item 1, bullet point
             {
-                row = { 28, 28 },
+                row = { 2, 2 },
                 col = { 0, 2 },
                 virt_text = { { '●', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             -- List Item 2, bullet point
             {
-                row = { 29, 29 },
+                row = { 3, 3 },
                 col = { 0, 2 },
                 virt_text = { { '●', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             -- List Item 2, inline code
             {
-                row = { 29, 29 },
+                row = { 3, 3 },
                 col = { 20, 28 },
                 hl_eol = false,
                 hl_group = 'ColorColumn',
             },
             -- Nested List 1 Item 1, bullet point
             {
-                row = { 30, 30 },
+                row = { 4, 4 },
                 col = { 2, 6 },
                 virt_text = { { '  ○', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             -- Nested List 1 Item 2, bullet point
             {
-                row = { 31, 31 },
+                row = { 5, 5 },
                 col = { 4, 6 },
                 virt_text = { { '○', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             -- Nested List 2 Item 1, bullet point
             {
-                row = { 32, 32 },
+                row = { 6, 6 },
                 col = { 6, 8 },
                 virt_text = { { '◆', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             -- Nested List 3 Item 1, bullet point
             {
-                row = { 33, 33 },
+                row = { 7, 7 },
                 col = { 8, 10 },
                 virt_text = { { '◇', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             -- Nested List 4 Item 1, bullet point
             {
-                row = { 34, 34 },
+                row = { 8, 8 },
                 col = { 10, 12 },
                 virt_text = { { '●', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             -- List Item 3, bullet point
             {
-                row = { 35, 35 },
+                row = { 9, 9 },
                 col = { 0, 2 },
                 virt_text = { { '●', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
         })
 
-        -- Checkboxes
+        -- Ordered list heading
         vim.list_extend(expected, {
-            -- Unchecked, conceal list marker
             {
-                row = { 41, 41 },
-                col = { 0, 2 },
-                conceal = '',
-            },
-            -- Unchecked, checkbox
-            {
-                row = { 41, 41 },
-                col = { 2, 5 },
-                virt_text = { { ' 󰄱 ', '@markup.list.unchecked' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Checked, conceal list marker
-            {
-                row = { 42, 42 },
-                col = { 0, 2 },
-                conceal = '',
-            },
-            -- Checked, checkbox
-            {
-                row = { 42, 42 },
-                col = { 2, 5 },
-                virt_text = { { '  ', '@markup.heading' } },
+                row = { 11, 12 },
+                col = { 0, 0 },
+                hl_eol = true,
+                hl_group = 'DiffAdd',
+                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
                 virt_text_pos = 'overlay',
             },
         })
 
-        -- Line break
+        -- Table heading
         vim.list_extend(expected, {
             {
-                row = { 44 },
-                col = { 0 },
-                virt_text = { { string.rep('—', vim.opt.columns:get()), 'LineNr' } },
-                virt_text_pos = 'overlay',
-            },
-        })
-
-        -- Quote lines
-        vim.list_extend(expected, {
-            {
-                row = { 46, 46 },
-                col = { 0, 4 },
-                virt_text = { { '  ┃ ', '@markup.quote' } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { 47, 47 },
-                col = { 0, 4 },
-                virt_text = { { '  ┃ ', '@markup.quote' } },
+                row = { 17, 18 },
+                col = { 0, 0 },
+                hl_eol = true,
+                hl_group = 'DiffAdd',
+                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
                 virt_text_pos = 'overlay',
             },
         })
@@ -296,65 +219,163 @@ async_tests.describe('init', function()
         vim.list_extend(expected, {
             -- Above
             {
-                row = { 49 },
+                row = { 19 },
                 col = { 0 },
                 virt_lines = { { { markdown_table[1], '@markup.heading' } } },
                 virt_lines_above = true,
             },
             -- Heading
             {
-                row = { 49, 49 },
+                row = { 19, 19 },
                 col = { 0, 31 },
                 virt_text = { { markdown_table[2], '@markup.heading' } },
                 virt_text_pos = 'overlay',
             },
             -- Below heading
             {
-                row = { 50, 50 },
+                row = { 20, 20 },
                 col = { 0, 31 },
                 virt_text = { { markdown_table[3], '@markup.heading' } },
                 virt_text_pos = 'overlay',
             },
             -- Rows
             {
-                row = { 51, 51 },
+                row = { 21, 21 },
                 col = { 0, 31 },
                 virt_text = { { markdown_table[4], 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             {
-                row = { 52, 52 },
+                row = { 22, 22 },
                 col = { 0, 31 },
                 virt_text = { { markdown_table[5], 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             {
-                row = { 53, 53 },
+                row = { 23, 23 },
                 col = { 0, 31 },
                 virt_text = { { markdown_table[6], 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             -- Below
             {
-                row = { 54 },
+                row = { 24 },
                 col = { 0 },
                 virt_lines = { { { markdown_table[7], 'Normal' } } },
                 virt_lines_above = true,
             },
         })
 
-        -- LaTeX, TODO: mock interaction with latex2text
+        marks_are_equal(expected)
+    end)
+
+    async_tests.it('render box_dash_quote.md', function()
+        vim.cmd('e demo/box_dash_quote.md')
+        util.scheduler()
+
+        local expected = {}
+
+        -- File heading
+        vim.list_extend(expected, {
+            {
+                row = { 0, 1 },
+                col = { 0, 0 },
+                hl_eol = true,
+                hl_group = 'DiffAdd',
+                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
+                virt_text_pos = 'overlay',
+            },
+        })
+
+        -- Checkboxes
+        vim.list_extend(expected, {
+            -- Unchecked, conceal list marker
+            {
+                row = { 2, 2 },
+                col = { 0, 2 },
+                conceal = '',
+            },
+            -- Unchecked, checkbox
+            {
+                row = { 2, 2 },
+                col = { 2, 5 },
+                virt_text = { { ' 󰄱 ', '@markup.list.unchecked' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Checked, conceal list marker
+            {
+                row = { 3, 3 },
+                col = { 0, 2 },
+                conceal = '',
+            },
+            -- Checked, checkbox
+            {
+                row = { 3, 3 },
+                col = { 2, 5 },
+                virt_text = { { '  ', '@markup.heading' } },
+                virt_text_pos = 'overlay',
+            },
+        })
+
+        -- Line break
+        vim.list_extend(expected, {
+            {
+                row = { 5 },
+                col = { 0 },
+                virt_text = { { string.rep('—', vim.opt.columns:get()), 'LineNr' } },
+                virt_text_pos = 'overlay',
+            },
+        })
+
+        -- Quote lines
+        vim.list_extend(expected, {
+            {
+                row = { 7, 7 },
+                col = { 0, 4 },
+                virt_text = { { '  ┃ ', '@markup.quote' } },
+                virt_text_pos = 'overlay',
+            },
+            {
+                row = { 8, 8 },
+                col = { 0, 4 },
+                virt_text = { { '  ┃ ', '@markup.quote' } },
+                virt_text_pos = 'overlay',
+            },
+        })
+
+        marks_are_equal(expected)
+    end)
+
+    async_tests.it('render latex.md', function()
+        -- TODO: mock interaction with latex2text
+        vim.cmd('e demo/latex.md')
+        util.scheduler()
+
+        local expected = {}
+
+        -- File heading
+        vim.list_extend(expected, {
+            {
+                row = { 0, 1 },
+                col = { 0, 0 },
+                hl_eol = true,
+                hl_group = 'DiffAdd',
+                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
+                virt_text_pos = 'overlay',
+            },
+        })
+
         vim.list_extend(expected, {
             -- Inline
             {
-                row = { 55, 55 },
+                row = { 2, 2 },
                 col = { 0, 21 },
                 virt_lines = { { { '√(3x-1)+(1+x)^2', '@markup.math' } } },
                 virt_lines_above = true,
             },
             -- Block
             {
-                row = { 57, 60 },
+                row = { 4, 7 },
                 col = { 0, 2 },
                 virt_lines = {
                     { { 'f(x,y) = x + √(y)', '@markup.math' } },
@@ -364,9 +385,185 @@ async_tests.describe('init', function()
             },
         })
 
-        eq(#expected, #actual)
-        for i, expected_mark_info in ipairs(expected) do
-            eq(expected_mark_info, actual[i], string.format('Marks at index %d mismatch', i))
-        end
+        marks_are_equal(expected)
+    end)
+
+    async_tests.it('render callout.md', function()
+        vim.cmd('e demo/callout.md')
+        util.scheduler()
+
+        local expected = {}
+
+        -- Note
+        vim.list_extend(expected, {
+            -- Heading
+            {
+                row = { 0, 1 },
+                col = { 0, 0 },
+                hl_eol = true,
+                hl_group = 'DiffAdd',
+                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
+                virt_text_pos = 'overlay',
+            },
+            -- Quote start
+            {
+                row = { 2, 2 },
+                col = { 0, 2 },
+                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Callout text
+            {
+                row = { 2, 2 },
+                col = { 2, 9 },
+                virt_text = { { '  Note', 'DiagnosticInfo' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Quote continued
+            {
+                row = { 3, 3 },
+                col = { 0, 2 },
+                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text_pos = 'overlay',
+            },
+        })
+
+        -- Tip
+        vim.list_extend(expected, {
+            -- Heading
+            {
+                row = { 5, 6 },
+                col = { 0, 0 },
+                hl_eol = true,
+                hl_group = 'DiffAdd',
+                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
+                virt_text_pos = 'overlay',
+            },
+            -- Quote start
+            {
+                row = { 7, 7 },
+                col = { 0, 2 },
+                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Callout text
+            {
+                row = { 7, 7 },
+                col = { 2, 8 },
+                virt_text = { { '  Tip', 'DiagnosticOk' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Quote continued
+            {
+                row = { 8, 8 },
+                col = { 0, 2 },
+                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text_pos = 'overlay',
+            },
+        })
+
+        -- Important
+        vim.list_extend(expected, {
+            -- Heading
+            {
+                row = { 10, 11 },
+                col = { 0, 0 },
+                hl_eol = true,
+                hl_group = 'DiffAdd',
+                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
+                virt_text_pos = 'overlay',
+            },
+            -- Quote start
+            {
+                row = { 12, 12 },
+                col = { 0, 2 },
+                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Callout text
+            {
+                row = { 12, 12 },
+                col = { 2, 14 },
+                virt_text = { { '󰅾  Important', 'DiagnosticHint' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Quote continued
+            {
+                row = { 13, 13 },
+                col = { 0, 2 },
+                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text_pos = 'overlay',
+            },
+        })
+
+        -- Warning
+        vim.list_extend(expected, {
+            -- Heading
+            {
+                row = { 15, 16 },
+                col = { 0, 0 },
+                hl_eol = true,
+                hl_group = 'DiffAdd',
+                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
+                virt_text_pos = 'overlay',
+            },
+            -- Quote start
+            {
+                row = { 17, 17 },
+                col = { 0, 2 },
+                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Callout text
+            {
+                row = { 17, 17 },
+                col = { 2, 12 },
+                virt_text = { { '  Warning', 'DiagnosticWarn' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Quote continued
+            {
+                row = { 18, 18 },
+                col = { 0, 2 },
+                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text_pos = 'overlay',
+            },
+        })
+
+        -- Caution
+        vim.list_extend(expected, {
+            -- Heading
+            {
+                row = { 20, 21 },
+                col = { 0, 0 },
+                hl_eol = true,
+                hl_group = 'DiffAdd',
+                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
+                virt_text_pos = 'overlay',
+            },
+            -- Quote start
+            {
+                row = { 22, 22 },
+                col = { 0, 2 },
+                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Callout text
+            {
+                row = { 22, 22 },
+                col = { 2, 12 },
+                virt_text = { { '󰳦  Caution', 'DiagnosticError' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Quote continued
+            {
+                row = { 23, 23 },
+                col = { 0, 2 },
+                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text_pos = 'overlay',
+            },
+        })
+
+        marks_are_equal(expected)
     end)
 end)

@@ -2,7 +2,11 @@
 
 Plugin to improve viewing Markdown files in Neovim
 
-![Demo](demo/demo.gif)
+|                                            |                                    |
+| ------------------------------------------ | ---------------------------------- |
+| ![Heading Code](demo/heading_code.gif)     | ![List Table](demo/list_table.gif) |
+| ![Box Dash Quote](demo/box_dash_quote.gif) | ![LaTeX](demo/latex.gif)           |
+| ![Callout](demo/callout.gif)               |                                    |
 
 # Features
 

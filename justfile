@@ -1,5 +1,5 @@
 init := "tests/minimal.lua"
-default_zoom := "0"
+default_cols := "55"
 
 test:
   nvim --headless --noplugin -u {{init}} \
@@ -8,17 +8,26 @@ test:
 health:
   nvim -c "checkhealth render-markdown" -- .
 
-demo zoom=default_zoom:
-  rm -f demo/demo.gif
+demo-all cols=default_cols:
+  just demo "40" {{cols}} "heading_code" "## Heading 2"
+  just demo "40" {{cols}} "list_table" ""
+  just demo "20" {{cols}} "box_dash_quote" ""
+  just demo "20" {{cols}} "latex" ""
+  just demo "40" {{cols}} "callout" ""
+
+demo rows cols file content:
+  rm -f demo/{{file}}.gif
   python demo/record.py \
-    --zoom {{zoom}} \
-    --file demo/sample.md \
-    --cast demo.cast
+    --rows {{rows}} \
+    --cols {{cols}} \
+    --file demo/{{file}}.md \
+    --cast {{file}}.cast \
+    --content "{{content}}"
   # https://docs.asciinema.org/manual/agg/usage/
-  agg demo.cast demo/demo.gif \
+  agg {{file}}.cast demo/{{file}}.gif \
     --font-family "Monaspace Neon,Hack Nerd Font" \
     --last-frame-duration 1
-  rm demo.cast
+  rm {{file}}.cast
 
 update:
   python -Wignore scripts/update.py
