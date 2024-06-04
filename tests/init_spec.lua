@@ -409,7 +409,7 @@ async_tests.describe('init', function()
             {
                 row = { 2, 2 },
                 col = { 0, 2 },
-                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text = { { '┃ ', 'DiagnosticInfo' } },
                 virt_text_pos = 'overlay',
             },
             -- Callout text
@@ -423,7 +423,7 @@ async_tests.describe('init', function()
             {
                 row = { 3, 3 },
                 col = { 0, 2 },
-                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text = { { '┃ ', 'DiagnosticInfo' } },
                 virt_text_pos = 'overlay',
             },
         })
@@ -443,7 +443,7 @@ async_tests.describe('init', function()
             {
                 row = { 7, 7 },
                 col = { 0, 2 },
-                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text = { { '┃ ', 'DiagnosticOk' } },
                 virt_text_pos = 'overlay',
             },
             -- Callout text
@@ -457,7 +457,7 @@ async_tests.describe('init', function()
             {
                 row = { 8, 8 },
                 col = { 0, 2 },
-                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text = { { '┃ ', 'DiagnosticOk' } },
                 virt_text_pos = 'overlay',
             },
         })
@@ -477,7 +477,7 @@ async_tests.describe('init', function()
             {
                 row = { 12, 12 },
                 col = { 0, 2 },
-                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text = { { '┃ ', 'DiagnosticHint' } },
                 virt_text_pos = 'overlay',
             },
             -- Callout text
@@ -491,7 +491,7 @@ async_tests.describe('init', function()
             {
                 row = { 13, 13 },
                 col = { 0, 2 },
-                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text = { { '┃ ', 'DiagnosticHint' } },
                 virt_text_pos = 'overlay',
             },
         })
@@ -511,7 +511,7 @@ async_tests.describe('init', function()
             {
                 row = { 17, 17 },
                 col = { 0, 2 },
-                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text = { { '┃ ', 'DiagnosticWarn' } },
                 virt_text_pos = 'overlay',
             },
             -- Callout text
@@ -525,7 +525,7 @@ async_tests.describe('init', function()
             {
                 row = { 18, 18 },
                 col = { 0, 2 },
-                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text = { { '┃ ', 'DiagnosticWarn' } },
                 virt_text_pos = 'overlay',
             },
         })
@@ -545,7 +545,7 @@ async_tests.describe('init', function()
             {
                 row = { 22, 22 },
                 col = { 0, 2 },
-                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text = { { '┃ ', 'DiagnosticError' } },
                 virt_text_pos = 'overlay',
             },
             -- Callout text
@@ -559,7 +559,7 @@ async_tests.describe('init', function()
             {
                 row = { 23, 23 },
                 col = { 0, 2 },
-                virt_text = { { '┃ ', '@markup.quote' } },
+                virt_text = { { '┃ ', 'DiagnosticError' } },
                 virt_text_pos = 'overlay',
             },
         })

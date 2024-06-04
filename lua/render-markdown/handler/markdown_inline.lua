@@ -1,3 +1,4 @@
+local callout = require('render-markdown.callout')
 local logger = require('render-markdown.logger')
 local state = require('render-markdown.state')
 
@@ -21,14 +22,7 @@ M.render = function(namespace, root, buf)
                 hl_group = highlights.code,
             })
         elseif capture == 'callout' then
-            local value_to_key = {
-                ['[!NOTE]'] = 'note',
-                ['[!TIP]'] = 'tip',
-                ['[!IMPORTANT]'] = 'important',
-                ['[!WARNING]'] = 'warning',
-                ['[!CAUTION]'] = 'caution',
-            }
-            local key = value_to_key[value]
+            local key = callout.get_key_exact(value)
             if key ~= nil then
                 local virt_text = { state.config.callout[key], highlights.callout[key] }
                 vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {

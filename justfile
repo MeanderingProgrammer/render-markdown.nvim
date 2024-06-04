@@ -1,5 +1,4 @@
 init := "tests/minimal.lua"
-default_cols := "55"
 
 test:
   nvim --headless --noplugin -u {{init}} \
@@ -8,17 +7,27 @@ test:
 health:
   nvim -c "checkhealth render-markdown" -- .
 
-demo-all cols=default_cols:
-  just demo {{cols}} "30" "heading_code" "## Heading 2"
-  just demo {{cols}} "30" "list_table" ""
-  just demo {{cols}} "15" "box_dash_quote" ""
-  just demo {{cols}} "15" "latex" ""
-  just demo {{cols}} "30" "callout" ""
+demo-all: demo-heading demo-list demo-box demo-latex demo-callout
 
-demo cols rows file content:
+demo-heading:
+  just demo "heading_code" "30" "## Heading 2"
+
+demo-list:
+  just demo "list_table" "30" ""
+
+demo-box:
+  just demo "box_dash_quote" "15" ""
+
+demo-latex:
+  just demo "latex" "15" ""
+
+demo-callout:
+  just demo "callout" "30" ""
+
+demo file rows content:
   rm -f demo/{{file}}.gif
   python demo/record.py \
-    --cols {{cols}} \
+    --cols "55" \
     --rows {{rows}} \
     --file demo/{{file}}.md \
     --cast {{file}}.cast \

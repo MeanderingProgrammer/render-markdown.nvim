@@ -1,3 +1,4 @@
+local callout = require('render-markdown.callout')
 local list = require('render-markdown.list')
 local logger = require('render-markdown.logger')
 local state = require('render-markdown.state')
@@ -75,7 +76,17 @@ M.render = function(namespace, root, buf)
                 })
             end
         elseif capture == 'quote_marker' then
-            local virt_text = { value:gsub('>', state.config.quote), highlights.quote }
+            local highlight = highlights.quote
+            local quote = M.get_quote(node)
+            if quote ~= nil then
+                local quote_value = vim.treesitter.get_node_text(quote, buf)
+                local key = callout.get_key_contains(quote_value)
+                if key ~= nil then
+                    highlight = highlights.callout[key]
+                end
+            end
+
+            local virt_text = { value:gsub('>', state.config.quote), highlight }
             vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
                 end_row = end_row,
                 end_col = end_col,
@@ -167,7 +178,6 @@ M.is_sibling_checkbox = function(node)
 end
 
 --- Walk through all parent nodes and count the number of nodes with type list
---- to calculate the level of the given node
 ---@param node TSNode
 ---@return integer
 M.calculate_list_level = function(node)
@@ -176,8 +186,7 @@ M.calculate_list_level = function(node)
     while parent ~= nil do
         local parent_type = parent:type()
         if vim.tbl_contains({ 'section', 'document' }, parent_type) then
-            -- when reaching a section or the document we are clearly at the
-            -- top of the list
+            -- reaching a section or document means we are clearly at the top of the list
             break
         elseif parent_type == 'list' then
             -- found a list increase the level and continue
@@ -186,6 +195,24 @@ M.calculate_list_level = function(node)
         parent = parent:parent()
     end
     return level
+end
+
+--- Walk through parent nodes until block_quote, return first found
+---@param node TSNode
+---@return TSNode?
+M.get_quote = function(node)
+    local parent = node:parent()
+    while parent ~= nil do
+        local parent_type = parent:type()
+        if vim.tbl_contains({ 'section', 'document' }, parent_type) then
+            -- reaching a section or document means we are clearly outside of a quote
+            break
+        elseif parent_type == 'block_quote' then
+            return parent
+        end
+        parent = parent:parent()
+    end
+    return nil
 end
 
 return M
