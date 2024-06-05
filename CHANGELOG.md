@@ -1,5 +1,16 @@
 # Change Log
 
+## 3.1.0 (2024-06-05)
+
+### Features
+
+- Add debug statements to `latex` handler, make converter configurable [7aedbde](https://github.com/MeanderingProgrammer/markdown.nvim/commit/7aedbde39ab236d27096a8f8846235af050dbd7f)
+- Split demo into separate files [ea465a6](https://github.com/MeanderingProgrammer/markdown.nvim/commit/ea465a6656e70beeeb6923e21a62f90643b4808f)
+- Support highlighting callout quote marker based on callout [#24](https://github.com/MeanderingProgrammer/markdown.nvim/issues/24)
+  [3c6a0e1](https://github.com/MeanderingProgrammer/markdown.nvim/commit/3c6a0e1914756809aa6ba6478cd60bda6a2c19ef)
+- Add health check for `latex` requirements [#32](https://github.com/MeanderingProgrammer/markdown.nvim/issues/32)
+  [a2788a8](https://github.com/MeanderingProgrammer/markdown.nvim/commit/a2788a8c711539d9425a96e413a26b67eba60131)
+
 ## 3.0.0 (2024-05-31)
 
 ### ⚠ BREAKING CHANGES
