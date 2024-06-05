@@ -34,6 +34,7 @@
 
 ---@class render.md.Config
 ---@field public start_enabled boolean
+---@field public latex_enabled boolean
 ---@field public max_file_size number
 ---@field public markdown_query string
 ---@field public inline_query string

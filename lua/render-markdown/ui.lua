@@ -40,7 +40,7 @@ M.refresh = function(buf)
                 markdown.render(M.namespace, tree:root(), buf)
             elseif language == 'markdown_inline' then
                 markdown_inline.render(M.namespace, tree:root(), buf)
-            elseif language == 'latex' then
+            elseif language == 'latex' and state.config.latex_enabled then
                 latex.render(M.namespace, tree:root(), buf)
             else
                 logger.debug('No handler found')

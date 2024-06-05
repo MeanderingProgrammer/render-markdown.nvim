@@ -47,6 +47,7 @@ local M = {}
 
 ---@class render.md.UserConfig
 ---@field public start_enabled? boolean
+---@field public latex_enabled? boolean
 ---@field public max_file_size? number
 ---@field public markdown_query? string
 ---@field public inline_query? string
@@ -67,8 +68,10 @@ local M = {}
 
 ---@type render.md.Config
 M.default_config = {
-    -- Configure whether Markdown should be rendered by default or not
+    -- Whether Markdown should be rendered by default or not
     start_enabled = true,
+    -- Whether LaTeX should be rendered, mainly used for health check
+    latex_enabled = true,
     -- Maximum file size (in MB) that this plugin will attempt to render
     -- Any file larger than this will effectively be ignored
     max_file_size = 1.5,

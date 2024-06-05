@@ -20,7 +20,6 @@ M.render = function(namespace, root, buf)
         logger.debug('Executable not found: ' .. converter)
         return
     end
-    logger.debug('Executable found: ' .. converter)
 
     local value = vim.treesitter.get_node_text(root, buf)
     local start_row, start_col, end_row, end_col = root:range()
