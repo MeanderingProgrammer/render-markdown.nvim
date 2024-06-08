@@ -33,13 +33,13 @@ M.render = function(namespace, root, buf)
         cache.expressions[value] = expressions
     end
 
-    local virt_lines = vim.tbl_map(function(expression)
+    local latex_lines = vim.tbl_map(function(expression)
         return { { expression, state.config.highlights.latex } }
     end, expressions)
     vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
         end_row = end_row,
         end_col = end_col,
-        virt_lines = virt_lines,
+        virt_lines = latex_lines,
         virt_lines_above = true,
     })
 end

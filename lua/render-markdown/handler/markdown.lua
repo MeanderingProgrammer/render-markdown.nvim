@@ -28,20 +28,20 @@ M.render = function(namespace, root, buf)
             local background = list.clamp_last(highlights.heading.backgrounds, level)
             local foreground = list.clamp_last(highlights.heading.foregrounds, level)
 
-            local virt_text = { string.rep(' ', padding) .. heading, { foreground, background } }
+            local heading_text = { string.rep(' ', padding) .. heading, { foreground, background } }
             vim.api.nvim_buf_set_extmark(buf, namespace, start_row, 0, {
                 end_row = end_row + 1,
                 end_col = 0,
                 hl_group = background,
-                virt_text = { virt_text },
+                virt_text = { heading_text },
                 virt_text_pos = 'overlay',
                 hl_eol = true,
             })
         elseif capture == 'dash' then
             local width = vim.api.nvim_win_get_width(util.buf_to_win(buf))
-            local virt_text = { state.config.dash:rep(width), highlights.dash }
+            local dash_text = { state.config.dash:rep(width), highlights.dash }
             vim.api.nvim_buf_set_extmark(buf, namespace, start_row, 0, {
-                virt_text = { virt_text },
+                virt_text = { dash_text },
                 virt_text_pos = 'overlay',
             })
         elseif capture == 'code' then
@@ -67,11 +67,11 @@ M.render = function(namespace, root, buf)
                 local level = M.calculate_list_level(node)
                 local bullet = list.cycle(state.config.bullets, level)
 
-                local virt_text = { string.rep(' ', leading_spaces or 0) .. bullet, highlights.bullet }
+                local list_marker_text = { string.rep(' ', leading_spaces or 0) .. bullet, highlights.bullet }
                 vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
                     end_row = end_row,
                     end_col = end_col,
-                    virt_text = { virt_text },
+                    virt_text = { list_marker_text },
                     virt_text_pos = 'overlay',
                 })
             end
@@ -86,11 +86,11 @@ M.render = function(namespace, root, buf)
                 end
             end
 
-            local virt_text = { value:gsub('>', state.config.quote), highlight }
+            local quote_marker_text = { value:gsub('>', state.config.quote), highlight }
             vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
                 end_row = end_row,
                 end_col = end_col,
-                virt_text = { virt_text },
+                virt_text = { quote_marker_text },
                 virt_text_pos = 'overlay',
             })
         elseif vim.tbl_contains({ 'checkbox_unchecked', 'checkbox_checked' }, capture) then
@@ -103,11 +103,11 @@ M.render = function(namespace, root, buf)
             local padding = vim.fn.strdisplaywidth(value) - vim.fn.strdisplaywidth(checkbox)
 
             if padding >= 0 then
-                local virt_text = { string.rep(' ', padding) .. checkbox, highlight }
+                local checkbox_text = { string.rep(' ', padding) .. checkbox, highlight }
                 vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
                     end_row = end_row,
                     end_col = end_col,
-                    virt_text = { virt_text },
+                    virt_text = { checkbox_text },
                     virt_text_pos = 'overlay',
                 })
             end
@@ -152,11 +152,11 @@ M.render = function(namespace, root, buf)
                     highlight = highlights.table.row
                 end
 
-                local virt_text = { row, highlight }
+                local table_row_text = { row, highlight }
                 vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
                     end_row = end_row,
                     end_col = end_col,
-                    virt_text = { virt_text },
+                    virt_text = { table_row_text },
                     virt_text_pos = 'overlay',
                 })
             end

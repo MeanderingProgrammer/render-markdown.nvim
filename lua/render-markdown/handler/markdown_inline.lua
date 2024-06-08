@@ -24,11 +24,11 @@ M.render = function(namespace, root, buf)
         elseif capture == 'callout' then
             local key = callout.get_key_exact(value)
             if key ~= nil then
-                local virt_text = { state.config.callout[key], highlights.callout[key] }
+                local callout_text = { state.config.callout[key], highlights.callout[key] }
                 vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
                     end_row = end_row,
                     end_col = end_col,
-                    virt_text = { virt_text },
+                    virt_text = { callout_text },
                     virt_text_pos = 'overlay',
                 })
             end
