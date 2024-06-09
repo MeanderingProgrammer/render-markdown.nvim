@@ -1,20 +1,21 @@
-*render-markdown.txt*           For 0.10.0           Last change: 2024 June 05
+*render-markdown.txt*           For 0.10.0           Last change: 2024 June 08
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
 
 1. markdown.nvim                               |render-markdown-markdown.nvim|
 2. Features                                         |render-markdown-features|
-3. Dependencies                                 |render-markdown-dependencies|
-4. Install                                           |render-markdown-install|
+3. Known Limitations                       |render-markdown-known-limitations|
+4. Dependencies                                 |render-markdown-dependencies|
+5. Install                                           |render-markdown-install|
   - lazy.nvim                              |render-markdown-install-lazy.nvim|
   - packer.nvim                          |render-markdown-install-packer.nvim|
-5. Setup                                               |render-markdown-setup|
-6. Commands                                         |render-markdown-commands|
-7. Custom Handlers                           |render-markdown-custom-handlers|
+6. Setup                                               |render-markdown-setup|
+7. Commands                                         |render-markdown-commands|
+8. Custom Handlers                           |render-markdown-custom-handlers|
   - More Complex Example|render-markdown-custom-handlers-more-complex-example|
-8. Purpose                                           |render-markdown-purpose|
-9. Markdown Ecosystem                     |render-markdown-markdown-ecosystem|
+9. Purpose                                           |render-markdown-purpose|
+10. Markdown Ecosystem                    |render-markdown-markdown-ecosystem|
   - Render in Neovim     |render-markdown-markdown-ecosystem-render-in-neovim|
   - Render in Browser   |render-markdown-markdown-ecosystem-render-in-browser|
   - Orthogonal                 |render-markdown-markdown-ecosystem-orthogonal|
@@ -53,7 +54,14 @@ Plugin to improve viewing Markdown files in Neovim
 
 
 ==============================================================================
-3. Dependencies                                 *render-markdown-dependencies*
+3. Known Limitations                       *render-markdown-known-limitations*
+
+- Text that extends beyond available space will overwrite content #35 <https://github.com/MeanderingProgrammer/markdown.nvim/issues/35>
+- `LaTeX` formula evaluations are placed above rather than overlayed #6 <https://github.com/MeanderingProgrammer/markdown.nvim/issues/6>
+
+
+==============================================================================
+4. Dependencies                                 *render-markdown-dependencies*
 
 - treesitter <https://github.com/nvim-treesitter/nvim-treesitter> parsers:
     - markdown & markdown_inline <https://github.com/tree-sitter-grammars/tree-sitter-markdown>:
@@ -66,7 +74,7 @@ Plugin to improve viewing Markdown files in Neovim
 
 
 ==============================================================================
-4. Install                                           *render-markdown-install*
+5. Install                                           *render-markdown-install*
 
 
 LAZY.NVIM                                  *render-markdown-install-lazy.nvim*
@@ -98,7 +106,7 @@ PACKER.NVIM                              *render-markdown-install-packer.nvim*
 
 
 ==============================================================================
-5. Setup                                               *render-markdown-setup*
+6. Setup                                               *render-markdown-setup*
 
 Below is the configuration that gets used by default, any part of it can be
 modified by the user.
@@ -258,7 +266,7 @@ modified by the user.
 
 
 ==============================================================================
-6. Commands                                         *render-markdown-commands*
+7. Commands                                         *render-markdown-commands*
 
 `:RenderMarkdownToggle` - Switch between enabling & disabling this plugin
 
@@ -266,7 +274,7 @@ modified by the user.
 
 
 ==============================================================================
-7. Custom Handlers                           *render-markdown-custom-handlers*
+8. Custom Handlers                           *render-markdown-custom-handlers*
 
 Custom handlers allow users to integrate custom rendering for either
 unsupported languages or to override the native implementations. This can also
@@ -336,7 +344,7 @@ Lets say for `python` we want to highlight lines with function definitions.
 
 
 ==============================================================================
-8. Purpose                                           *render-markdown-purpose*
+9. Purpose                                           *render-markdown-purpose*
 
 There are many existing markdown rendering plugins in the Neovim ecosystem.
 However, most of these rely on syncing a separate browser window with the
@@ -353,7 +361,7 @@ this plugin.
 
 
 ==============================================================================
-9. Markdown Ecosystem                     *render-markdown-markdown-ecosystem*
+10. Markdown Ecosystem                    *render-markdown-markdown-ecosystem*
 
 There are many `markdown` plugins that specialize in different aspects of
 interacting with `markdown` files. This plugin specializes in rendering the

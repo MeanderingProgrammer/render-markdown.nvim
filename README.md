@@ -26,6 +26,11 @@ Plugin to improve viewing Markdown files in Neovim
 - Support for [callouts](https://github.com/orgs/community/discussions/16925)
 - Support custom handlers which are ran identically to native handlers
 
+# Known Limitations
+
+- Text that extends beyond available space will overwrite content [#35](https://github.com/MeanderingProgrammer/markdown.nvim/issues/35)
+- `LaTeX` formula evaluations are placed above rather than overlayed [#6](https://github.com/MeanderingProgrammer/markdown.nvim/issues/6)
+
 # Dependencies
 
 - [treesitter](https://github.com/nvim-treesitter/nvim-treesitter) parsers:

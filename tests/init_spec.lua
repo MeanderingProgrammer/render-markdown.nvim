@@ -4,8 +4,16 @@ local util = require('plenary.async.util')
 
 local eq = assert.are.same
 
----@param expected any[]
-local function marks_are_equal(expected)
+---@param file string
+---@param opts? render.md.UserConfig
+local function setup(file, opts)
+    require('render-markdown').setup(opts)
+    vim.cmd('e ' .. file)
+    util.scheduler()
+end
+
+---@return any[]
+local function get_actual_marks()
     local actual = {}
     local marks = vim.api.nvim_buf_get_extmarks(0, ui.namespace, 0, -1, { details = true })
     for _, mark in ipairs(marks) do
@@ -23,7 +31,12 @@ local function marks_are_equal(expected)
         }
         table.insert(actual, mark_info)
     end
+    return actual
+end
 
+---@param expected any[]
+---@param actual any[]
+local function marks_are_equal(expected, actual)
     eq(#expected, #actual)
     for i, expected_mark_info in ipairs(expected) do
         eq(expected_mark_info, actual[i], string.format('Marks at index %d mismatch', i))
@@ -31,13 +44,8 @@ local function marks_are_equal(expected)
 end
 
 async_tests.describe('init', function()
-    async_tests.before_each(function()
-        require('render-markdown').setup({})
-    end)
-
     async_tests.it('render heading_code.md', function()
-        vim.cmd('e demo/heading_code.md')
-        util.scheduler()
+        setup('demo/heading_code.md')
 
         local expected = {}
 
@@ -95,12 +103,12 @@ async_tests.describe('init', function()
             },
         })
 
-        marks_are_equal(expected)
+        local actual = get_actual_marks()
+        marks_are_equal(expected, actual)
     end)
 
     async_tests.it('render list_table.md', function()
-        vim.cmd('e demo/list_table.md')
-        util.scheduler()
+        setup('demo/list_table.md')
 
         local expected = {}
 
@@ -266,12 +274,12 @@ async_tests.describe('init', function()
             },
         })
 
-        marks_are_equal(expected)
+        local actual = get_actual_marks()
+        marks_are_equal(expected, actual)
     end)
 
     async_tests.it('render box_dash_quote.md', function()
-        vim.cmd('e demo/box_dash_quote.md')
-        util.scheduler()
+        setup('demo/box_dash_quote.md')
 
         local expected = {}
 
@@ -343,13 +351,13 @@ async_tests.describe('init', function()
             },
         })
 
-        marks_are_equal(expected)
+        local actual = get_actual_marks()
+        marks_are_equal(expected, actual)
     end)
 
     async_tests.it('render latex.md', function()
         -- TODO: mock interaction with latex2text
-        vim.cmd('e demo/latex.md')
-        util.scheduler()
+        setup('demo/latex.md')
 
         local expected = {}
 
@@ -385,12 +393,12 @@ async_tests.describe('init', function()
             },
         })
 
-        marks_are_equal(expected)
+        local actual = get_actual_marks()
+        marks_are_equal(expected, actual)
     end)
 
     async_tests.it('render callout.md', function()
-        vim.cmd('e demo/callout.md')
-        util.scheduler()
+        setup('demo/callout.md')
 
         local expected = {}
 
@@ -564,6 +572,7 @@ async_tests.describe('init', function()
             },
         })
 
-        marks_are_equal(expected)
+        local actual = get_actual_marks()
+        marks_are_equal(expected, actual)
     end)
 end)
