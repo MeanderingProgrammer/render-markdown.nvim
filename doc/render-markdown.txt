@@ -1,4 +1,4 @@
-*render-markdown.txt*           For 0.10.0           Last change: 2024 June 08
+*render-markdown.txt*           For 0.10.0           Last change: 2024 June 10
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -184,11 +184,11 @@ modified by the user.
         quote = '┃',
         -- Symbol / text to use for different callouts
         callout = {
-            note = '  Note',
-            tip = '  Tip',
-            important = '󰅾  Important',
-            warning = '  Warning',
-            caution = '󰳦  Caution',
+            note = '󰋽 Note',
+            tip = '󰌶 Tip',
+            important = '󰅾 Important',
+            warning = '󰀪 Warning',
+            caution = '󰳦 Caution',
         },
         -- Window options to use that change between rendered and raw view
         win_options = {
