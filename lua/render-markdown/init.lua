@@ -139,11 +139,11 @@ M.default_config = {
     quote = '┃',
     -- Symbol / text to use for different callouts
     callout = {
-        note = '  Note',
-        tip = '  Tip',
-        important = '󰅾  Important',
-        warning = '  Warning',
-        caution = '󰳦  Caution',
+        note = '󰋽 Note',
+        tip = '󰌶 Tip',
+        important = '󰅾 Important',
+        warning = '󰀪 Warning',
+        caution = '󰳦 Caution',
     },
     -- Window options to use that change between rendered and raw view
     win_options = {

@@ -424,7 +424,7 @@ async_tests.describe('init', function()
             {
                 row = { 2, 2 },
                 col = { 2, 9 },
-                virt_text = { { '  Note', 'DiagnosticInfo' } },
+                virt_text = { { '󰋽 Note', 'DiagnosticInfo' } },
                 virt_text_pos = 'overlay',
             },
             -- Quote continued
@@ -458,7 +458,7 @@ async_tests.describe('init', function()
             {
                 row = { 7, 7 },
                 col = { 2, 8 },
-                virt_text = { { '  Tip', 'DiagnosticOk' } },
+                virt_text = { { '󰌶 Tip', 'DiagnosticOk' } },
                 virt_text_pos = 'overlay',
             },
             -- Quote continued
@@ -492,7 +492,7 @@ async_tests.describe('init', function()
             {
                 row = { 12, 12 },
                 col = { 2, 14 },
-                virt_text = { { '󰅾  Important', 'DiagnosticHint' } },
+                virt_text = { { '󰅾 Important', 'DiagnosticHint' } },
                 virt_text_pos = 'overlay',
             },
             -- Quote continued
@@ -526,7 +526,7 @@ async_tests.describe('init', function()
             {
                 row = { 17, 17 },
                 col = { 2, 12 },
-                virt_text = { { '  Warning', 'DiagnosticWarn' } },
+                virt_text = { { '󰀪 Warning', 'DiagnosticWarn' } },
                 virt_text_pos = 'overlay',
             },
             -- Quote continued
@@ -560,7 +560,7 @@ async_tests.describe('init', function()
             {
                 row = { 22, 22 },
                 col = { 2, 12 },
-                virt_text = { { '󰳦  Caution', 'DiagnosticError' } },
+                virt_text = { { '󰳦 Caution', 'DiagnosticError' } },
                 virt_text_pos = 'overlay',
             },
             -- Quote continued
