@@ -226,22 +226,19 @@ function M.setup(opts)
     state.inline_query = vim.treesitter.query.parse('markdown_inline', state.config.inline_query)
 
     -- Call immediately to re-render on LazyReload
-    vim.schedule(function()
-        ui.refresh(vim.api.nvim_get_current_buf())
-    end)
+    ui.schedule_refresh(vim.api.nvim_get_current_buf())
 
     local group = vim.api.nvim_create_augroup('RenderMarkdown', { clear = true })
     vim.api.nvim_create_autocmd({ 'ModeChanged' }, {
         group = group,
         callback = function(event)
-            local was_rendered = vim.tbl_contains(state.config.render_modes, vim.v.event.old_mode)
-            local should_render = vim.tbl_contains(state.config.render_modes, vim.v.event.new_mode)
+            local render_modes = state.config.render_modes
+            local prev_rendered = vim.tbl_contains(render_modes, string.sub(vim.v.event.old_mode, 1, 1))
+            local should_render = vim.tbl_contains(render_modes, string.sub(vim.v.event.new_mode, 1, 1))
             -- Only need to re-render if render state is changing. I.e. going from normal mode to
             -- command mode with the default config, both are rendered, so no point re-rendering
-            if was_rendered ~= should_render then
-                vim.schedule(function()
-                    ui.refresh(event.buf)
-                end)
+            if prev_rendered ~= should_render then
+                ui.schedule_refresh(event.buf)
             end
         end,
     })
@@ -250,18 +247,14 @@ function M.setup(opts)
         callback = function()
             for _, win in ipairs(vim.v.event.windows) do
                 local buf = util.win_to_buf(win)
-                vim.schedule(function()
-                    ui.refresh(buf)
-                end)
+                ui.schedule_refresh(buf)
             end
         end,
     })
     vim.api.nvim_create_autocmd({ 'FileChangedShellPost', 'FileType', 'TextChanged' }, {
         group = group,
         callback = function(event)
-            vim.schedule(function()
-                ui.refresh(event.buf)
-            end)
+            ui.schedule_refresh(event.buf)
         end,
     })
 
@@ -272,13 +265,11 @@ end
 M.toggle = function()
     state.enabled = not state.enabled
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-        vim.schedule(function()
-            if state.enabled then
-                ui.refresh(buf)
-            else
-                ui.clear_valid(buf)
-            end
-        end)
+        if state.enabled then
+            ui.schedule_refresh(buf)
+        else
+            ui.schedule_clear(buf)
+        end
     end
 end
 
