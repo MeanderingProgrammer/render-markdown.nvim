@@ -133,7 +133,7 @@ M.default_config = {
         -- Character that will replace the [ ] in unchecked checkboxes
         unchecked = '󰄱 ',
         -- Character that will replace the [x] in checked checkboxes
-        checked = ' ',
+        checked = '󰱒 ',
     },
     -- Character that will replace the > at the start of block quotes
     quote = '┃',

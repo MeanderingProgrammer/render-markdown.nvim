@@ -320,7 +320,7 @@ async_tests.describe('init', function()
             {
                 row = { 3, 3 },
                 col = { 2, 5 },
-                virt_text = { { '  ', '@markup.heading' } },
+                virt_text = { { ' 󰱒 ', '@markup.heading' } },
                 virt_text_pos = 'overlay',
             },
         })
