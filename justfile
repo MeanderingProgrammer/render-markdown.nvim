@@ -32,10 +32,8 @@ demo file rows content:
     --file demo/{{file}}.md \
     --cast {{file}}.cast \
     --content "{{content}}"
-  # https://docs.asciinema.org/manual/agg/usage/
-  agg {{file}}.cast demo/{{file}}.gif \
-    --font-family "Monaspace Neon,Hack Nerd Font" \
-    --last-frame-duration 1
+  # https://github.com/MeanderingProgrammer/cli/tree/main/agg
+  agg {{file}}.cast demo/{{file}}.gif
   rm {{file}}.cast
 
 update:
