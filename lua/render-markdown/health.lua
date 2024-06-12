@@ -85,7 +85,7 @@ function M.check_keys(t1, t2, path)
             table.insert(errors, string.format('Invalid type: %s, expected %s, found %s', key, type(v1), type(v2)))
         elseif type(v1) == 'table' and type(v2) == 'table' then
             -- Some tables are meant to have unrestricted keys
-            if not vim.list_contains({ 'win_options', 'custom_handlers' }, k) then
+            if not vim.tbl_contains({ 'win_options', 'custom_handlers' }, k) then
                 vim.list_extend(errors, M.check_keys(v1, v2, key_path))
             end
         end

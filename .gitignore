@@ -1,3 +1,4 @@
+*.cast
 large.md
 test.md
-*.cast
+test.log
