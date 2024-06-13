@@ -1,5 +1,25 @@
 # Change Log
 
+## Pre-release
+
+### Features
+
+- Make default icons consistent: [#37](https://github.com/MeanderingProgrammer/markdown.nvim/pull/37)
+  [7cfe1cf](https://github.com/MeanderingProgrammer/markdown.nvim/commit/7cfe1cfa3b77f6be955f10f0310d5148edc69688)
+- Document known limitations: [#34](https://github.com/MeanderingProgrammer/markdown.nvim/issues/34)
+  [#35](https://github.com/MeanderingProgrammer/markdown.nvim/issues/35)
+  [0adb35c](https://github.com/MeanderingProgrammer/markdown.nvim/commit/0adb35cc190d682d689a1a8415d5980c92708403)
+
+### Bug Fixes
+
+- Get mode at time of event instead of callback execution: [#36](https://github.com/MeanderingProgrammer/markdown.nvim/issues/36)
+  [b556210](https://github.com/MeanderingProgrammer/markdown.nvim/commit/b556210e6c8759b7d23d5bc74c84aaafe2304da4)
+- Update healthcheck to work with neovim 0.9.5: [64969bc](https://github.com/MeanderingProgrammer/markdown.nvim/commit/64969bc94a9d633dc23b59a382cab407c99fecb1)
+
+### Contributor Shoutouts
+
+- @AThePeanut4
+
 ## 3.1.0 (2024-06-05)
 
 ### Features
