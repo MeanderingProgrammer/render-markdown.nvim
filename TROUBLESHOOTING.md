@@ -3,7 +3,7 @@
 The following guide goes from easy to complex operations that can help when this
 plugin is not functioning how you expect. As such it is recommended to go in order.
 
-## Run healthcheck
+## Run checkhealth
 
 ```vim
 :checkhealth render-markdown
@@ -31,7 +31,17 @@ the `filetype` of the current buffer and make sure it is in that list:
 :lua vim.print(vim.bo.filetype)
 ```
 
-## Provide debug logs
+## Create an Issue
+
+Create an issue in this repo with the following information:
+
+- Description of your problem
+- Operating system
+- Version of neovim
+- Terminal emulator / GUI
+- Debug logs, steps to generate these are below
+
+### Generating debug logs
 
 If all else fails hopefully the logs can provide some insight. This plugin
 ships with logging, however it only includes errors by default.
@@ -43,7 +53,7 @@ To help debug your issue you'll need to go through the following steps:
 3. Generate logs from the test file
 4. Provide the logs in the issue
 
-### Update the log level to `debug`
+#### Update the log level to `debug`
 
 Change the plugin configuration to:
 
@@ -53,7 +63,7 @@ require('render-markdown').setup({
 })
 ```
 
-### Create a test file
+#### Create a test file
 
 Create a new `markdown` file locally with the following content:
 
@@ -70,13 +80,13 @@ Create a new `markdown` file locally with the following content:
 - [x] Checked
 ```
 
-### Generate logs from the test file
+#### Generate logs from the test file
 
 To do this restart Neovim and open the `markdown` file from the previous step.
 
 This should trigger the render function by default, then close Neovim.
 
-### Provide the logs in the issue
+#### Provide the logs in the issue
 
 Logs are written to a file typically located at: `~/.local/state/nvim/render-markdown.log`.
 

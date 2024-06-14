@@ -26,7 +26,7 @@ Plugin to improve viewing Markdown files in Neovim
 - Support for [callouts](https://github.com/orgs/community/discussions/16925)
 - Support custom handlers which are ran identically to native handlers
 
-# Known Limitations
+# Limitations
 
 - Text that extends beyond available space will overwrite content [#35](https://github.com/MeanderingProgrammer/markdown.nvim/issues/35)
 - `LaTeX` formula evaluations are placed above rather than overlayed [#6](https://github.com/MeanderingProgrammer/markdown.nvim/issues/6)
@@ -233,6 +233,25 @@ require('render-markdown').setup({
 `:RenderMarkdownToggle` - Switch between enabling & disabling this plugin
 
 - Function can also be accessed directly through `require('render-markdown').toggle()`
+
+# For `vimwiki` Users
+
+If you use [vimwiki](https://github.com/vimwiki/vimwiki), because it overrides the
+`filetype` of `markdown` files there are additional setup steps.
+
+- Add `vimwiki` to the `file_types` configuration of this plugin
+
+```lua
+require('render-markdown').setup({
+    file_types = { 'markdown', 'vimwiki' },
+})
+```
+
+- Register `markdown` as the parser for `vimwiki` files
+
+```lua
+vim.treesitter.language.register('markdown', 'vimwiki')
+```
 
 # Custom Handlers
 

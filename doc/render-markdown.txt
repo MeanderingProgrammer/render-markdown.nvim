@@ -1,21 +1,22 @@
-*render-markdown.txt*           For 0.10.0           Last change: 2024 June 10
+*render-markdown.txt*           For 0.10.0           Last change: 2024 June 13
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
 
 1. markdown.nvim                               |render-markdown-markdown.nvim|
 2. Features                                         |render-markdown-features|
-3. Known Limitations                       |render-markdown-known-limitations|
+3. Limitations                                   |render-markdown-limitations|
 4. Dependencies                                 |render-markdown-dependencies|
 5. Install                                           |render-markdown-install|
   - lazy.nvim                              |render-markdown-install-lazy.nvim|
   - packer.nvim                          |render-markdown-install-packer.nvim|
 6. Setup                                               |render-markdown-setup|
 7. Commands                                         |render-markdown-commands|
-8. Custom Handlers                           |render-markdown-custom-handlers|
+8. For vimwiki Users                       |render-markdown-for-vimwiki-users|
+9. Custom Handlers                           |render-markdown-custom-handlers|
   - More Complex Example|render-markdown-custom-handlers-more-complex-example|
-9. Purpose                                           |render-markdown-purpose|
-10. Markdown Ecosystem                    |render-markdown-markdown-ecosystem|
+10. Purpose                                          |render-markdown-purpose|
+11. Markdown Ecosystem                    |render-markdown-markdown-ecosystem|
   - Render in Neovim     |render-markdown-markdown-ecosystem-render-in-neovim|
   - Render in Browser   |render-markdown-markdown-ecosystem-render-in-browser|
   - Orthogonal                 |render-markdown-markdown-ecosystem-orthogonal|
@@ -54,7 +55,7 @@ Plugin to improve viewing Markdown files in Neovim
 
 
 ==============================================================================
-3. Known Limitations                       *render-markdown-known-limitations*
+3. Limitations                                   *render-markdown-limitations*
 
 - Text that extends beyond available space will overwrite content #35 <https://github.com/MeanderingProgrammer/markdown.nvim/issues/35>
 - `LaTeX` formula evaluations are placed above rather than overlayed #6 <https://github.com/MeanderingProgrammer/markdown.nvim/issues/6>
@@ -274,7 +275,28 @@ modified by the user.
 
 
 ==============================================================================
-8. Custom Handlers                           *render-markdown-custom-handlers*
+8. For vimwiki Users                       *render-markdown-for-vimwiki-users*
+
+If you use vimwiki <https://github.com/vimwiki/vimwiki>, because it overrides
+the `filetype` of `markdown` files there are additional setup steps.
+
+- Add `vimwiki` to the `file_types` configuration of this plugin
+
+>lua
+    require('render-markdown').setup({
+        file_types = { 'markdown', 'vimwiki' },
+    })
+<
+
+- Register `markdown` as the parser for `vimwiki` files
+
+>lua
+    vim.treesitter.language.register('markdown', 'vimwiki')
+<
+
+
+==============================================================================
+9. Custom Handlers                           *render-markdown-custom-handlers*
 
 Custom handlers allow users to integrate custom rendering for either
 unsupported languages or to override the native implementations. This can also
@@ -344,7 +366,7 @@ Lets say for `python` we want to highlight lines with function definitions.
 
 
 ==============================================================================
-9. Purpose                                           *render-markdown-purpose*
+10. Purpose                                          *render-markdown-purpose*
 
 There are many existing markdown rendering plugins in the Neovim ecosystem.
 However, most of these rely on syncing a separate browser window with the
@@ -361,7 +383,7 @@ this plugin.
 
 
 ==============================================================================
-10. Markdown Ecosystem                    *render-markdown-markdown-ecosystem*
+11. Markdown Ecosystem                    *render-markdown-markdown-ecosystem*
 
 There are many `markdown` plugins that specialize in different aspects of
 interacting with `markdown` files. This plugin specializes in rendering the
