@@ -1,0 +1,41 @@
+name: Bug Report
+description: File a bug / issue
+title: "bug: "
+labels: [bug]
+body:
+  - type: input
+    attributes:
+      label: "Neovim version (nvim -v)"
+      placeholder: "0.9.5"
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: "Operating system"
+      placeholder: "MacOS"
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: "Terminal emulator / GUI"
+      placeholder: "WezTerm"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Describe the bug
+      description: A description of what the bug is. Please include any related errors you see.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected behavior
+      description: A description of what you expected to happen.
+    validations:
+      required: true 
+  - type: textarea
+    attributes:
+      label: Additional information
+      description: Any additional information you would like to provide.
+    validations:
+      required: false
