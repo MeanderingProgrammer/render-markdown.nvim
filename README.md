@@ -176,6 +176,10 @@ require('render-markdown').setup({
     --  normal: renders the rows of tables
     --  none: disables rendering, use this if you prefer having cell highlights
     table_style = 'full',
+    -- Determines how table cells are rendered
+    --  overlay: writes over the top of cells removing conealing and highlighting
+    --  raw: will leave the cells as they and only replace table related symbols
+    cell_style = 'overlay',
     -- Mapping from treesitter language to user defined handlers
     -- See 'Custom Handlers' section for more info
     custom_handlers = {},

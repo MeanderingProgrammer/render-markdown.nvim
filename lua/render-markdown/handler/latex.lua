@@ -18,12 +18,20 @@ M.render = function(namespace, root, buf)
     local converter = state.config.latex_converter
     if vim.fn.executable(converter) ~= 1 then
         logger.debug('Executable not found: ' .. converter)
-        return
+    else
+        logger.debug_node('latex', root, buf)
+        M.render_node(namespace, buf, root, converter)
     end
+end
 
-    local value = vim.treesitter.get_node_text(root, buf)
-    local start_row, start_col, end_row, end_col = root:range()
-    logger.debug_node('latex', root, buf)
+---@param namespace integer
+---@param buf integer
+---@param node TSNode
+---@param converter string
+M.render_node = function(namespace, buf, node, converter)
+    local highlights = state.config.highlights
+    local value = vim.treesitter.get_node_text(node, buf)
+    local start_row, start_col, end_row, end_col = node:range()
 
     local expressions = cache.expressions[value]
     if expressions == nil then
@@ -34,7 +42,7 @@ M.render = function(namespace, root, buf)
     end
 
     local latex_lines = vim.tbl_map(function(expression)
-        return { { expression, state.config.highlights.latex } }
+        return { { expression, highlights.latex } }
     end, expressions)
     vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
         end_row = end_row,
