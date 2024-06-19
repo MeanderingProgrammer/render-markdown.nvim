@@ -15,6 +15,9 @@ local M = {}
 ---@param root TSNode
 ---@param buf integer
 M.render = function(namespace, root, buf)
+    if not state.config.latex_enabled then
+        return
+    end
     local converter = state.config.latex_converter
     if vim.fn.executable(converter) ~= 1 then
         logger.debug('Executable not found: ' .. converter)

@@ -1,6 +1,47 @@
+from dataclasses import dataclass
 from pathlib import Path
 
 from tree_sitter_languages import get_language, get_parser
+
+
+@dataclass(frozen=True)
+class LuaClass:
+    name: str
+    fields: list[str]
+
+    def validate(self) -> None:
+        optional_fields: list[str] = ["extends"] if "Handler" in self.name else []
+        if "User" in self.name:
+            # User classes are expected to have optional fields
+            for field in self.fields:
+                assert "?" in field, f"Field must be optional: {field}"
+        else:
+            # Non user classes are expected to have mandatory fields with some exceptions
+            for field in self.fields:
+                optional: bool = False
+                for optional_field in optional_fields:
+                    if optional_field in field:
+                        optional = True
+                if not optional:
+                    assert "?" not in field, f"Field must be mandatory: {field}"
+
+    def to_public_lines(self) -> list[str]:
+        if "User" not in self.name:
+            return []
+        lines: list[str] = [self.name.replace("User", "")]
+        for field in self.fields:
+            lines.append(field.replace("User", "").replace("?", ""))
+        lines.append("")
+        return lines
+
+    def to_str(self) -> str:
+        lines: list[str] = [self.name]
+        lines.extend(self.fields)
+        return "\n".join(lines)
+
+    @staticmethod
+    def from_lines(lines: list[str]) -> "LuaClass":
+        return LuaClass(name=lines[0], fields=lines[1:])
 
 
 def main() -> None:
@@ -10,49 +51,53 @@ def main() -> None:
 
 
 def update_types(init_file: Path) -> None:
-    # Group comments into class + fields
-    lua_classes: list[list[str]] = []
-    current_class: list[str] = []
-    for comment in get_comments(init_file):
-        comment_type: str = comment.split()[0].split("@")[-1]
-        if comment_type == "class":
-            if len(current_class) > 0:
-                lua_classes.append(current_class)
-            current_class = [comment]
-        elif comment_type == "field":
-            current_class.append(comment)
-    lua_classes.append(current_class)
-
-    # Generate lines that get written to types.lua
     lines: list[str] = []
-    for lua_class in lua_classes:
-        name, fields = lua_class[0], lua_class[1:]
-        if "User" in name:
-            # User classes are expected to have optional fields
-            lines.append(name.replace("User", ""))
-            for field in fields:
-                assert "?" in field, f"User fields must be optional: {field}"
-                lines.append(field.replace("User", "").replace("?", ""))
-            lines.append("")
-        else:
-            # Non user classes are expected to have mandatory fields
-            for field in fields:
-                assert "?" not in field, f"Non user fields must be mandatory: {field}"
+    for lua_class in get_classes(init_file):
+        lua_class.validate()
+        lines.extend(lua_class.to_public_lines())
 
     types_file: Path = Path("lua/render-markdown/types.lua")
     types_file.write_text("\n".join(lines))
 
 
 def update_readme(init_file: Path) -> None:
+    readme_file = Path("README.md")
+
     default_config = get_default_config(init_file)
     new_config = "require('render-markdown').setup(" + default_config + ")"
+    current_config = get_code_block_with(readme_file, "enabled")
 
-    readme_file = Path("README.md")
-    current_config = get_readme_config(readme_file)
+    handler_class_name: str = "render.md.Handler"
+    new_handler = get_class(init_file, handler_class_name).to_str()
+    current_handler = get_code_block_with(readme_file, handler_class_name)
 
     text = readme_file.read_text()
     text = text.replace(current_config, new_config)
+    text = text.replace(current_handler, new_handler)
     readme_file.write_text(text)
+
+
+def get_class(init_file: Path, name: str) -> LuaClass:
+    lua_classes = get_classes(init_file)
+    results = [lua_class for lua_class in lua_classes if name in lua_class.name]
+    assert len(results) == 1
+    return results[0]
+
+
+def get_classes(init_file: Path) -> list[LuaClass]:
+    # Group comments into class + fields
+    lua_classes: list[LuaClass] = []
+    current: list[str] = []
+    for comment in get_comments(init_file):
+        comment_type: str = comment.split()[0].split("@")[-1]
+        if comment_type == "class":
+            if len(current) > 0:
+                lua_classes.append(LuaClass.from_lines(current))
+            current = [comment]
+        elif comment_type == "field":
+            current.append(comment)
+    lua_classes.append(LuaClass.from_lines(current))
+    return lua_classes
 
 
 def get_comments(file: Path) -> list[str]:
@@ -75,10 +120,10 @@ def get_default_config(file: Path) -> str:
     return default_configs[0]
 
 
-def get_readme_config(file: Path) -> str:
+def get_code_block_with(file: Path, content: str) -> str:
     query = "(code_fence_content) @content"
     code_blocks = ts_query(file, query, "content")
-    code_blocks = [code for code in code_blocks if "enabled" in code]
+    code_blocks = [code for code in code_blocks if content in code]
     assert len(code_blocks) == 1
     return code_blocks[0]
 

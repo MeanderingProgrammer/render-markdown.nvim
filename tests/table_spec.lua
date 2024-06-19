@@ -1,9 +1,9 @@
 local async_tests = require('plenary.async.tests')
 local util = require('tests.util')
 
-async_tests.describe('table_test.md', function()
+async_tests.describe('table.md', function()
     async_tests.it('default', function()
-        util.setup('tests/data/table_test.md')
+        util.setup('tests/data/table.md')
 
         local expected = {}
 
@@ -124,7 +124,7 @@ async_tests.describe('table_test.md', function()
     end)
 
     async_tests.it('raw', function()
-        util.setup('tests/data/table_test.md', { cell_style = 'raw' })
+        util.setup('tests/data/table.md', { cell_style = 'raw' })
 
         local expected = {}
 

@@ -24,7 +24,7 @@ Plugin to improve viewing Markdown files in Neovim
 - Basic support for `LaTeX` if `latex` parser and `pylatexenc` are installed
 - Disable rendering when file is larger than provided value
 - Support for [callouts](https://github.com/orgs/community/discussions/16925)
-- Support custom handlers which are ran identically to native handlers
+- Support custom handlers which are ran identically to builtin handlers
 
 # Limitations
 
@@ -260,10 +260,14 @@ vim.treesitter.language.register('markdown', 'vimwiki')
 # Custom Handlers
 
 Custom handlers allow users to integrate custom rendering for either unsupported
-languages or to override the native implementations. This can also be used to
-disable a native language, as custom handlers have priority.
+languages or to override / extend the builtin implementations.
 
-For example disabling the `LaTeX` handler can be done with:
+This can also be used to disable a builtin handler, by not specifying the `extends`
+field and leaving the implementation blank. Though this has little benefit and
+can be accomplished in other ways such as setting `{ latex_enabled = false }`
+for `LaTeX`.
+
+Still as an example disabling the `LaTeX` handler can be done with:
 
 ```lua
 require('render-markdown').setup({
@@ -278,6 +282,7 @@ Each handler must conform to the following interface:
 ```lua
 ---@class render.md.Handler
 ---@field public render fun(namespace: integer, root: TSNode, buf: integer)
+---@field public extends? boolean
 ```
 
 The `render` function parameters are:
@@ -286,7 +291,10 @@ The `render` function parameters are:
 - `root`: The root treesitter node for the specified language
 - `buf`: The buffer containing the root node
 
-Custom handlers are ran identically to native ones, so by writing custom `extmark`s
+The `extends` parameter defines whether the builtin handler should still be run in
+conjunction with this one. Defaults to `false`.
+
+Custom handlers are ran identically to builtin ones, so by writing custom `extmark`s
 (see :h nvim_buf_set_extmark()) to the provided `namespace` this plugin will handle
 clearing the `extmark`s on mode changes as well as re-calling the `render` function
 when needed.
@@ -294,7 +302,7 @@ when needed.
 This is a high level interface, as such creating, parsing, and iterating through
 a treesitter query is entirely up to the user if the functionality they want needs
 this. We do not provide any convenience functions, but you are more than welcome
-to use patterns from the native handlers.
+to use patterns from the builtin handlers.
 
 ## More Complex Example
 

@@ -36,6 +36,7 @@ local M = {}
 
 ---@class render.md.Handler
 ---@field public render fun(namespace: integer, root: TSNode, buf: integer)
+---@field public extends? boolean
 
 ---@class render.md.WindowOption
 ---@field public default any

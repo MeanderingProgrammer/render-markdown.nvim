@@ -1,4 +1,4 @@
-*render-markdown.txt*           For 0.10.0           Last change: 2024 June 17
+*render-markdown.txt*           For 0.10.0           Last change: 2024 June 19
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -51,7 +51,7 @@ Plugin to improve viewing Markdown files in Neovim
 - Basic support for `LaTeX` if `latex` parser and `pylatexenc` are installed
 - Disable rendering when file is larger than provided value
 - Support for callouts <https://github.com/orgs/community/discussions/16925>
-- Support custom handlers which are ran identically to native handlers
+- Support custom handlers which are ran identically to builtin handlers
 
 
 ==============================================================================
@@ -303,10 +303,14 @@ the `filetype` of `markdown` files there are additional setup steps.
 9. Custom Handlers                           *render-markdown-custom-handlers*
 
 Custom handlers allow users to integrate custom rendering for either
-unsupported languages or to override the native implementations. This can also
-be used to disable a native language, as custom handlers have priority.
+unsupported languages or to override / extend the builtin implementations.
 
-For example disabling the `LaTeX` handler can be done with:
+This can also be used to disable a builtin handler, by not specifying the
+`extends` field and leaving the implementation blank. Though this has little
+benefit and can be accomplished in other ways such as setting `{ latex_enabled
+= false }` for `LaTeX`.
+
+Still as an example disabling the `LaTeX` handler can be done with:
 
 >lua
     require('render-markdown').setup({
@@ -321,6 +325,7 @@ Each handler must conform to the following interface:
 >lua
     ---@class render.md.Handler
     ---@field public render fun(namespace: integer, root: TSNode, buf: integer)
+    ---@field public extends? boolean
 <
 
 The `render` function parameters are:
@@ -329,7 +334,10 @@ The `render` function parameters are:
 - `root`: The root treesitter node for the specified language
 - `buf`: The buffer containing the root node
 
-Custom handlers are ran identically to native ones, so by writing custom
+The `extends` parameter defines whether the builtin handler should still be run
+in conjunction with this one. Defaults to `false`.
+
+Custom handlers are ran identically to builtin ones, so by writing custom
 `extmark`s (see :h nvim_buf_set_extmark()) to the provided `namespace` this
 plugin will handle clearing the `extmark`s on mode changes as well as
 re-calling the `render` function when needed.
@@ -337,7 +345,7 @@ re-calling the `render` function when needed.
 This is a high level interface, as such creating, parsing, and iterating
 through a treesitter query is entirely up to the user if the functionality they
 want needs this. We do not provide any convenience functions, but you are more
-than welcome to use patterns from the native handlers.
+than welcome to use patterns from the builtin handlers.
 
 
 MORE COMPLEX EXAMPLE    *render-markdown-custom-handlers-more-complex-example*

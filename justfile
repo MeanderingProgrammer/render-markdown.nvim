@@ -37,22 +37,21 @@ demo file rows content:
   rm {{file}}.cast
 
 update:
+  # Updates types.lua & README.md
   python -Wignore scripts/update.py
-
-gen-doc:
-  # https://github.com/kdheepak/panvimdoc
   # https://pandoc.org/
+  # https://github.com/kdheepak/panvimdoc
   ../../open-source/panvimdoc/panvimdoc.sh \
     --project-name render-markdown \
     --input-file README.md \
     --vim-version 0.10.0
 
 [private]
-gen-file-text:
+gen-large-file-text:
   #!/usr/bin/env python
   for i in range(100_000):
     level = "#" * ((i % 6) + 1)
     print(f"{level} Title {i}\n")
 
 gen-large-file:
-  just gen-file-text > large.md
+  just gen-large-file-text > large.md

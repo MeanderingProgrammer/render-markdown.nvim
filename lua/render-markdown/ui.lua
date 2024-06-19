@@ -1,9 +1,13 @@
-local latex = require('render-markdown.handler.latex')
 local logger = require('render-markdown.logger')
-local markdown = require('render-markdown.handler.markdown')
-local markdown_inline = require('render-markdown.handler.markdown_inline')
 local state = require('render-markdown.state')
 local util = require('render-markdown.util')
+
+---@type table<string, render.md.Handler>
+local builtin_handlers = {
+    markdown = require('render-markdown.handler.markdown'),
+    markdown_inline = require('render-markdown.handler.markdown_inline'),
+    latex = require('render-markdown.handler.latex'),
+}
 
 ---@class render.md.Ui
 local M = {}
@@ -51,24 +55,36 @@ M.refresh = function(buf, mode)
     parser:parse(true)
     parser:for_each_tree(function(tree, language_tree)
         local language = language_tree:lang()
-        logger.debug('language: ' .. language)
-        local user_handler = state.config.custom_handlers[language]
-        if user_handler == nil then
-            if language == 'markdown' then
-                markdown.render(M.namespace, tree:root(), buf)
-            elseif language == 'markdown_inline' then
-                markdown_inline.render(M.namespace, tree:root(), buf)
-            elseif language == 'latex' and state.config.latex_enabled then
-                latex.render(M.namespace, tree:root(), buf)
-            else
-                logger.debug('No handler found')
-            end
-        else
-            logger.debug('Using user defined handler')
-            user_handler.render(M.namespace, tree:root(), buf)
-        end
+        logger.debug('Language: ' .. language)
+        local executed = M.render(buf, language, tree:root())
+        logger.debug({ executed_handlers = executed })
     end)
     logger.flush()
+end
+
+---Run user & builtin handlers when available. User handler is always executed,
+---builtin handler is skipped if user handler does not specify extends.
+---@private
+---@param buf integer
+---@param language string
+---@param root TSNode
+---@return string[]
+M.render = function(buf, language, root)
+    local result = {}
+    local user_handler = state.config.custom_handlers[language]
+    if user_handler ~= nil then
+        user_handler.render(M.namespace, root, buf)
+        table.insert(result, 'user')
+        if user_handler.extends ~= true then
+            return result
+        end
+    end
+    local builtin_handler = builtin_handlers[language]
+    if builtin_handler ~= nil then
+        builtin_handler.render(M.namespace, root, buf)
+        table.insert(result, 'builtin')
+    end
+    return result
 end
 
 ---Remove existing highlights / virtual text for valid buffers
