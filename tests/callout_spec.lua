@@ -7,11 +7,11 @@ async_tests.describe('callout.md', function()
 
         local expected = {}
 
-        -- Note
+        local note_start = 0
         vim.list_extend(expected, {
             -- Heading
             {
-                row = { 0, 1 },
+                row = { note_start, note_start + 1 },
                 col = { 0, 0 },
                 hl_eol = true,
                 hl_group = 'DiffAdd',
@@ -20,32 +20,50 @@ async_tests.describe('callout.md', function()
             },
             -- Quote start
             {
-                row = { 2, 2 },
+                row = { note_start + 2, note_start + 2 },
                 col = { 0, 2 },
                 virt_text = { { '┃ ', 'DiagnosticInfo' } },
                 virt_text_pos = 'overlay',
             },
             -- Callout text
             {
-                row = { 2, 2 },
+                row = { note_start + 2, note_start + 2 },
                 col = { 2, 9 },
                 virt_text = { { '󰋽 Note', 'DiagnosticInfo' } },
                 virt_text_pos = 'overlay',
             },
             -- Quote continued
             {
-                row = { 3, 3 },
+                row = { note_start + 3, note_start + 3 },
+                col = { 0, 1 },
+                virt_text = { { '┃', 'DiagnosticInfo' } },
+                virt_text_pos = 'overlay',
+            },
+            {
+                row = { note_start + 4, note_start + 4 },
+                col = { 0, 2 },
+                virt_text = { { '┃ ', 'DiagnosticInfo' } },
+                virt_text_pos = 'overlay',
+            },
+            {
+                row = { note_start + 5, note_start + 5 },
+                col = { 0, 1 },
+                virt_text = { { '┃', 'DiagnosticInfo' } },
+                virt_text_pos = 'overlay',
+            },
+            {
+                row = { note_start + 6, note_start + 6 },
                 col = { 0, 2 },
                 virt_text = { { '┃ ', 'DiagnosticInfo' } },
                 virt_text_pos = 'overlay',
             },
         })
 
-        -- Tip
+        local tip_start = 8
         vim.list_extend(expected, {
             -- Heading
             {
-                row = { 5, 6 },
+                row = { tip_start, tip_start + 1 },
                 col = { 0, 0 },
                 hl_eol = true,
                 hl_group = 'DiffAdd',
@@ -54,32 +72,32 @@ async_tests.describe('callout.md', function()
             },
             -- Quote start
             {
-                row = { 7, 7 },
+                row = { tip_start + 2, tip_start + 2 },
                 col = { 0, 2 },
                 virt_text = { { '┃ ', 'DiagnosticOk' } },
                 virt_text_pos = 'overlay',
             },
             -- Callout text
             {
-                row = { 7, 7 },
+                row = { tip_start + 2, tip_start + 2 },
                 col = { 2, 8 },
                 virt_text = { { '󰌶 Tip', 'DiagnosticOk' } },
                 virt_text_pos = 'overlay',
             },
             -- Quote continued
             {
-                row = { 8, 8 },
+                row = { tip_start + 3, tip_start + 3 },
                 col = { 0, 2 },
                 virt_text = { { '┃ ', 'DiagnosticOk' } },
                 virt_text_pos = 'overlay',
             },
         })
 
-        -- Important
+        local important_start = 13
         vim.list_extend(expected, {
             -- Heading
             {
-                row = { 10, 11 },
+                row = { important_start, important_start + 1 },
                 col = { 0, 0 },
                 hl_eol = true,
                 hl_group = 'DiffAdd',
@@ -88,32 +106,32 @@ async_tests.describe('callout.md', function()
             },
             -- Quote start
             {
-                row = { 12, 12 },
+                row = { important_start + 2, important_start + 2 },
                 col = { 0, 2 },
                 virt_text = { { '┃ ', 'DiagnosticHint' } },
                 virt_text_pos = 'overlay',
             },
             -- Callout text
             {
-                row = { 12, 12 },
+                row = { important_start + 2, important_start + 2 },
                 col = { 2, 14 },
                 virt_text = { { '󰅾 Important', 'DiagnosticHint' } },
                 virt_text_pos = 'overlay',
             },
             -- Quote continued
             {
-                row = { 13, 13 },
+                row = { important_start + 3, important_start + 3 },
                 col = { 0, 2 },
                 virt_text = { { '┃ ', 'DiagnosticHint' } },
                 virt_text_pos = 'overlay',
             },
         })
 
-        -- Warning
+        local warning_start = 18
         vim.list_extend(expected, {
             -- Heading
             {
-                row = { 15, 16 },
+                row = { warning_start, warning_start + 1 },
                 col = { 0, 0 },
                 hl_eol = true,
                 hl_group = 'DiffAdd',
@@ -122,32 +140,32 @@ async_tests.describe('callout.md', function()
             },
             -- Quote start
             {
-                row = { 17, 17 },
+                row = { warning_start + 2, warning_start + 2 },
                 col = { 0, 2 },
                 virt_text = { { '┃ ', 'DiagnosticWarn' } },
                 virt_text_pos = 'overlay',
             },
             -- Callout text
             {
-                row = { 17, 17 },
+                row = { warning_start + 2, warning_start + 2 },
                 col = { 2, 12 },
                 virt_text = { { '󰀪 Warning', 'DiagnosticWarn' } },
                 virt_text_pos = 'overlay',
             },
             -- Quote continued
             {
-                row = { 18, 18 },
+                row = { warning_start + 3, warning_start + 3 },
                 col = { 0, 2 },
                 virt_text = { { '┃ ', 'DiagnosticWarn' } },
                 virt_text_pos = 'overlay',
             },
         })
 
-        -- Caution
+        local caution_start = 23
         vim.list_extend(expected, {
             -- Heading
             {
-                row = { 20, 21 },
+                row = { caution_start, caution_start + 1 },
                 col = { 0, 0 },
                 hl_eol = true,
                 hl_group = 'DiffAdd',
@@ -156,21 +174,21 @@ async_tests.describe('callout.md', function()
             },
             -- Quote start
             {
-                row = { 22, 22 },
+                row = { caution_start + 2, caution_start + 2 },
                 col = { 0, 2 },
                 virt_text = { { '┃ ', 'DiagnosticError' } },
                 virt_text_pos = 'overlay',
             },
             -- Callout text
             {
-                row = { 22, 22 },
+                row = { caution_start + 2, caution_start + 2 },
                 col = { 2, 12 },
                 virt_text = { { '󰳦 Caution', 'DiagnosticError' } },
                 virt_text_pos = 'overlay',
             },
             -- Quote continued
             {
-                row = { 23, 23 },
+                row = { caution_start + 3, caution_start + 3 },
                 col = { 0, 2 },
                 virt_text = { { '┃ ', 'DiagnosticError' } },
                 virt_text_pos = 'overlay',

@@ -102,6 +102,8 @@ M.default_config = {
         (task_list_marker_checked) @checkbox_checked
 
         (block_quote (block_quote_marker) @quote_marker)
+        (block_quote (block_continuation) @quote_marker)
+        (block_quote (paragraph (block_continuation) @quote_marker))
         (block_quote (paragraph (inline (block_continuation) @quote_marker)))
 
         (pipe_table) @table
