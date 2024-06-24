@@ -24,7 +24,7 @@ body:
   - type: textarea
     attributes:
       label: Describe the bug
-      description: A description of what the bug is. Please include any related errors you see.
+      description: A description of what the bug is. Please provide markdown as text in addition to screenshots & include any related errors you see.
     validations:
       required: true
   - type: textarea
