@@ -54,7 +54,7 @@ async_tests.describe('box_dash_quote.md', function()
             {
                 row = { 5 },
                 col = { 0 },
-                virt_text = { { string.rep('—', vim.opt.columns:get()), 'LineNr' } },
+                virt_text = { { string.rep('─', vim.opt.columns:get()), 'LineNr' } },
                 virt_text_pos = 'overlay',
             },
         })

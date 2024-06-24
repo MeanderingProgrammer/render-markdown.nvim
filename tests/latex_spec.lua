@@ -1,9 +1,24 @@
 local async_tests = require('plenary.async.tests')
+local stub = require('luassert.stub')
 local util = require('tests.util')
+
+local eq = assert.are.same
 
 async_tests.describe('latex.md', function()
     async_tests.it('default', function()
-        -- TODO: mock interaction with latex2text
+        stub.new(vim.fn, 'executable', function(expr)
+            eq('latex2text', expr)
+            return 1
+        end)
+        stub.new(vim.fn, 'system', function(cmd, input)
+            eq('latex2text', cmd)
+            local responses = {
+                ['$\\sqrt{3x-1}+(1+x)^2$'] = '√(3x-1)+(1+x)^2\n',
+                ['$$\nf(x,y) = x + \\sqrt{y}\nf(x,y) = \\sqrt{y} + \\frac{x^2}{4y}\n$$'] = '\n    f(x,y) = x + √(y)\n    f(x,y) = √(y) + x^2/4y\n\n',
+            }
+            return responses[input]
+        end)
+
         util.setup('demo/latex.md')
 
         local expected = {}
