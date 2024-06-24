@@ -1,29 +1,21 @@
-local M = {}
-
 ---@param node TSNode
----@param targets string[]
 ---@return boolean
-M.is_sibling = function(node, targets)
-    local sibling = node:next_sibling()
-    if sibling == nil then
-        return false
-    end
-    return vim.tbl_contains(targets, sibling:type())
+local function in_section(node)
+    -- reaching a section or document means we are outside section
+    return not vim.tbl_contains({ 'section', 'document' }, node:type())
 end
 
---- Walk through all parent nodes and count the number of list nodes
+local M = {}
+
+---Walk through parent nodes, count the number of target nodes
 ---@param node TSNode
+---@param target string
 ---@return integer
-M.get_list_level = function(node)
+M.level_in_section = function(node, target)
     local level = 0
     local parent = node:parent()
-    while parent ~= nil do
-        local parent_type = parent:type()
-        if vim.tbl_contains({ 'section', 'document' }, parent_type) then
-            -- reaching a section or document means we are clearly at the top of the list
-            break
-        elseif parent_type == 'list' then
-            -- found a list increase the level and continue
+    while parent ~= nil and in_section(parent) do
+        if parent:type() == target then
             level = level + 1
         end
         parent = parent:parent()
@@ -31,18 +23,14 @@ M.get_list_level = function(node)
     return level
 end
 
---- Walk through parent nodes until target, return first found
+---Walk through parent nodes, return first target node
 ---@param node TSNode
 ---@param target string
 ---@return TSNode?
-M.get_parent = function(node, target)
+M.parent_in_section = function(node, target)
     local parent = node:parent()
-    while parent ~= nil do
-        local parent_type = parent:type()
-        if vim.tbl_contains({ 'section', 'document' }, parent_type) then
-            -- reaching a section or document means we are clearly outside our target
-            break
-        elseif parent_type == target then
+    while parent ~= nil and in_section(parent) do
+        if parent:type() == target then
             return parent
         end
         parent = parent:parent()
@@ -51,9 +39,23 @@ M.get_parent = function(node, target)
 end
 
 ---@param node TSNode
+---@param targets string[]
+---@return TSNode?
+M.sibling = function(node, targets)
+    local sibling = node:next_sibling()
+    while sibling ~= nil do
+        if vim.tbl_contains(targets, sibling:type()) then
+            return sibling
+        end
+        sibling = sibling:next_sibling()
+    end
+    return nil
+end
+
+---@param node TSNode
 ---@param target string
 ---@return TSNode?
-M.get_child = function(node, target)
+M.child = function(node, target)
     for child in node:iter_children() do
         if child:type() == target then
             return child

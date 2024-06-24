@@ -62,7 +62,7 @@ M.render_node = function(namespace, buf, capture, node)
             hl_eol = true,
         })
     elseif capture == 'list_marker' then
-        if ts.is_sibling(node, { 'task_list_marker_unchecked', 'task_list_marker_checked' }) then
+        if ts.sibling(node, { 'task_list_marker_unchecked', 'task_list_marker_checked' }) ~= nil then
             -- Hide the list marker for checkboxes rather than replacing with a bullet point
             vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
                 end_row = end_row,
@@ -74,7 +74,7 @@ M.render_node = function(namespace, buf, capture, node)
             -- edge cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
             -- As a result we handle leading spaces here, can remove if this gets fixed upstream
             local _, leading_spaces = value:find('^%s*')
-            local level = ts.get_list_level(node)
+            local level = ts.level_in_section(node, 'list')
             local bullet = list.cycle(state.config.bullets, level)
 
             local list_marker_text = { string.rep(' ', leading_spaces or 0) .. bullet, highlights.bullet }
@@ -87,7 +87,7 @@ M.render_node = function(namespace, buf, capture, node)
         end
     elseif capture == 'quote_marker' then
         local highlight = highlights.quote
-        local quote = ts.get_parent(node, 'block_quote')
+        local quote = ts.parent_in_section(node, 'block_quote')
         if quote ~= nil then
             local quote_value = vim.treesitter.get_node_text(quote, buf)
             local key = callout.get_key_contains(quote_value)
@@ -137,7 +137,7 @@ M.render_node = function(namespace, buf, capture, node)
             return result
         end
 
-        local delim = ts.get_child(node, 'pipe_table_delimiter_row')
+        local delim = ts.child(node, 'pipe_table_delimiter_row')
         if delim == nil then
             return
         end

@@ -130,7 +130,7 @@ M.default_config = {
     -- Characters that will replace the # at the start of headings
     headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
     -- Character to use for the horizontal break
-    dash = '—',
+    dash = '─',
     -- Character to use for the bullet points in lists
     bullets = { '●', '○', '◆', '◇' },
     checkbox = {
