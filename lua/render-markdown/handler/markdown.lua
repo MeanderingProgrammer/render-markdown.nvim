@@ -1,4 +1,5 @@
 local callout = require('render-markdown.callout')
+local icons = require('render-markdown.icons')
 local list = require('render-markdown.list')
 local logger = require('render-markdown.logger')
 local state = require('render-markdown.state')
@@ -55,11 +56,38 @@ M.render_node = function(namespace, buf, capture, node)
             virt_text_pos = 'overlay',
         })
     elseif capture == 'code' then
+        if state.config.code_style == 'none' then
+            return
+        end
+
         vim.api.nvim_buf_set_extmark(buf, namespace, start_row, 0, {
             end_row = end_row,
             end_col = 0,
             hl_group = highlights.code,
             hl_eol = true,
+        })
+
+        if state.config.code_style ~= 'full' then
+            return
+        end
+
+        local info = ts.child(node, 'info_string')
+        if info == nil then
+            return
+        end
+        local language = vim.treesitter.get_node_text(info, buf)
+        local icon, icon_highlight = icons.get(language)
+        if icon == nil or icon_highlight == nil then
+            return
+        end
+        local icon_text = { icon .. ' ', { icon_highlight, highlights.code } }
+        -- language takes care of info_string so padding needs to take care of code block start, i.e. ```
+        -- subtract space taken up by icon and pad the remainder
+        local padding = string.rep(' ', 3 - vim.fn.strdisplaywidth(icon_text[1]))
+        local language_text = { language .. padding, { 'Normal', highlights.code } }
+        vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
+            virt_text = { icon_text, language_text },
+            virt_text_pos = 'overlay',
         })
     elseif capture == 'list_marker' then
         if ts.sibling(node, { 'task_list_marker_unchecked', 'task_list_marker_checked' }) ~= nil then
@@ -145,7 +173,7 @@ M.render_node = function(namespace, buf, capture, node)
         local delim_value = vim.treesitter.get_node_text(delim, buf)
         local delim_width = get_table_row_width(delim_row, delim_value)
 
-        local lines = vim.api.nvim_buf_get_lines(buf, start_row, end_row, false)
+        local lines = vim.api.nvim_buf_get_lines(buf, start_row, end_row, true)
         local start_width = get_table_row_width(start_row, list.first(lines))
         local end_width = get_table_row_width(end_row - 1, list.last(lines))
 

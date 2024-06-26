@@ -49,6 +49,7 @@
 ---@field public quote string
 ---@field public callout render.md.Callout
 ---@field public win_options table<string, render.md.WindowOption>
+---@field public code_style 'full'|'normal'|'none'
 ---@field public table_style 'full'|'normal'|'none'
 ---@field public cell_style 'overlay'|'raw'
 ---@field public custom_handlers table<string, render.md.Handler>

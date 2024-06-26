@@ -63,6 +63,7 @@ local M = {}
 ---@field public quote? string
 ---@field public callout? render.md.UserCallout
 ---@field public win_options? table<string, render.md.WindowOption>
+---@field public code_style? 'full'|'normal'|'none'
 ---@field public table_style? 'full'|'normal'|'none'
 ---@field public cell_style? 'overlay'|'raw'
 ---@field public custom_handlers? table<string, render.md.Handler>
@@ -166,10 +167,15 @@ M.default_config = {
             rendered = 'nvic',
         },
     },
+    -- Determines how code blocks are rendered
+    --  full: adds language icon above code block if possible + normal behavior
+    --  normal: renders a background
+    --  none: disables rendering
+    code_style = 'full',
     -- Determines how tables are rendered
     --  full: adds a line above and below tables + normal behavior
     --  normal: renders the rows of tables
-    --  none: disables rendering, use this if you prefer having cell highlights
+    --  none: disables rendering
     table_style = 'full',
     -- Determines how table cells are rendered
     --  overlay: writes over the top of cells removing conealing and highlighting

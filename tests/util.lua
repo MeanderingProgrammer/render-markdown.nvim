@@ -53,7 +53,7 @@ M.marks_are_equal = function(expected, actual)
     for i = 1, math.min(#expected, #actual) do
         eq(expected[i], actual[i], string.format('Marks at index %d mismatch', i))
     end
-    eq(#expected, #actual)
+    eq(#expected, #actual, 'Different number of marks found')
 end
 
 return M

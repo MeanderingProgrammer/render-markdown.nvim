@@ -22,6 +22,7 @@ end
 vim.opt.rtp:prepend('.')
 source_plugin('plenary.nvim', 'plenary.vim')
 source_plugin('nvim-treesitter', 'nvim-treesitter.lua')
+source_plugin('nvim-web-devicons', 'nvim-web-devicons.vim')
 
 -- https://github.com/ThePrimeagen/refactoring.nvim/blob/master/scripts/minimal.vim
 ensure_installed({ 'markdown', 'markdown_inline', 'latex' })

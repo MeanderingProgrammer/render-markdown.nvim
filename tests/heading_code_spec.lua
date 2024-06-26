@@ -59,6 +59,15 @@ async_tests.describe('heading_code.md', function()
                 hl_eol = true,
                 hl_group = 'ColorColumn',
             },
+            {
+                row = { 10 },
+                col = { 0 },
+                virt_text = {
+                    { ' ', { 'DevIconPy', 'ColorColumn' } },
+                    { 'python ', { 'Normal', 'ColorColumn' } },
+                },
+                virt_text_pos = 'overlay',
+            },
         })
 
         local actual = util.get_actual_marks()
