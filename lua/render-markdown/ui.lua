@@ -16,7 +16,7 @@ M.namespace = vim.api.nvim_create_namespace('render-markdown.nvim')
 
 ---@param buf integer
 M.schedule_refresh = function(buf)
-    local mode = vim.fn.mode()
+    local mode = vim.fn.mode(true)
     vim.schedule(function()
         M.refresh(buf, mode)
     end)

@@ -247,8 +247,8 @@ function M.setup(opts)
         group = group,
         callback = function(event)
             local render_modes = state.config.render_modes
-            local prev_rendered = vim.tbl_contains(render_modes, string.sub(vim.v.event.old_mode, 1, 1))
-            local should_render = vim.tbl_contains(render_modes, string.sub(vim.v.event.new_mode, 1, 1))
+            local prev_rendered = vim.tbl_contains(render_modes, vim.v.event.old_mode)
+            local should_render = vim.tbl_contains(render_modes, vim.v.event.new_mode)
             -- Only need to re-render if render state is changing. I.e. going from normal mode to
             -- command mode with the default config, both are rendered, so no point re-rendering
             if prev_rendered ~= should_render then
