@@ -1,6 +1,6 @@
 # Change Log
 
-## Pre-release
+## 3.2.0 (2024-06-28)
 
 ### Features
 
@@ -9,12 +9,25 @@
 - Document known limitations: [#34](https://github.com/MeanderingProgrammer/markdown.nvim/issues/34)
   [#35](https://github.com/MeanderingProgrammer/markdown.nvim/issues/35)
   [0adb35c](https://github.com/MeanderingProgrammer/markdown.nvim/commit/0adb35cc190d682d689a1a8415d5980c92708403)
+- Add troubleshooting guide: [#38](https://github.com/MeanderingProgrammer/markdown.nvim/issues/38)
+  [6208fc4](https://github.com/MeanderingProgrammer/markdown.nvim/commit/6208fc408d444024f5977ea02b83dea8fe177cfa)
+- Add note for `vimwiki` users [#39](https://github.com/MeanderingProgrammer/markdown.nvim/issues/39)
+  [56ba207](https://github.com/MeanderingProgrammer/markdown.nvim/commit/56ba207c860fd86250dcfb9d974a2cf67a5792d7)
+- Add issue templates: [e353f1f](https://github.com/MeanderingProgrammer/markdown.nvim/commit/e353f1f566195176b54e2af5b321b517ac240102)
+- Add `raw` cell style option: [#40](https://github.com/MeanderingProgrammer/markdown.nvim/issues/40)
+  [973a5ac](https://github.com/MeanderingProgrammer/markdown.nvim/commit/973a5ac8a0a7e8721576d144af8ba5f95c057689)
+- Allow custom handlers to extend builtins: [870426e](https://github.com/MeanderingProgrammer/markdown.nvim/commit/870426ea7efe3c0494f3673db7b3b4cb26135ded)
+- Add language icon above code blocks: [6eef62c](https://github.com/MeanderingProgrammer/markdown.nvim/commit/6eef62ca1ef373943ff812d4bece94477c3402f2)
+- Use full modes instead of truncated values, support pending operation: [#43](https://github.com/MeanderingProgrammer/markdown.nvim/issues/43)
+  [467ad24](https://github.com/MeanderingProgrammer/markdown.nvim/commit/467ad24c4d74c47f6ad346966a577f87f041f0e7)
 
 ### Bug Fixes
 
 - Get mode at time of event instead of callback execution: [#36](https://github.com/MeanderingProgrammer/markdown.nvim/issues/36)
   [b556210](https://github.com/MeanderingProgrammer/markdown.nvim/commit/b556210e6c8759b7d23d5bc74c84aaafe2304da4)
 - Update healthcheck to work with neovim 0.9.5: [64969bc](https://github.com/MeanderingProgrammer/markdown.nvim/commit/64969bc94a9d633dc23b59a382cab407c99fecb1)
+- Handle block quotes with empty lines: [#41](https://github.com/MeanderingProgrammer/markdown.nvim/issues/41)
+  [6f64bf6](https://github.com/MeanderingProgrammer/markdown.nvim/commit/6f64bf645b817ff493a28925b1872a69d07fc094)
 
 ### Contributor Shoutouts
 
