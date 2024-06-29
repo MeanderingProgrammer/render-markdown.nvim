@@ -26,11 +26,6 @@ Plugin to improve viewing Markdown files in Neovim
 - Support for [callouts](https://github.com/orgs/community/discussions/16925)
 - Support custom handlers which are ran identically to builtin handlers
 
-# Limitations
-
-- Text that extends beyond available space will overwrite content [#35](https://github.com/MeanderingProgrammer/markdown.nvim/issues/35)
-- `LaTeX` formula evaluations are placed above rather than overlayed [#6](https://github.com/MeanderingProgrammer/markdown.nvim/issues/6)
-
 # Dependencies
 
 - [treesitter](https://github.com/nvim-treesitter/nvim-treesitter) parsers:
@@ -251,7 +246,7 @@ require('render-markdown').setup({
 
 - Function can also be accessed directly through `require('render-markdown').toggle()`
 
-# For `vimwiki` Users
+# Note to `vimwiki` Users
 
 If you use [vimwiki](https://github.com/vimwiki/vimwiki), because it overrides the
 `filetype` of `markdown` files there are additional setup steps.
@@ -270,127 +265,12 @@ require('render-markdown').setup({
 vim.treesitter.language.register('markdown', 'vimwiki')
 ```
 
-# Custom Handlers
+# Additional Info
 
-Custom handlers allow users to integrate custom rendering for either unsupported
-languages or to override / extend the builtin implementations.
-
-This can also be used to disable a builtin handler, by not specifying the `extends`
-field and leaving the implementation blank. Though this has little benefit and
-can be accomplished in other ways such as setting `{ latex_enabled = false }`
-for `LaTeX`.
-
-Still as an example disabling the `LaTeX` handler can be done with:
-
-```lua
-require('render-markdown').setup({
-    custom_handlers = {
-        latex = { render = function() end },
-    },
-}
-```
-
-Each handler must conform to the following interface:
-
-```lua
----@class render.md.Handler
----@field public render fun(namespace: integer, root: TSNode, buf: integer)
----@field public extends? boolean
-```
-
-The `render` function parameters are:
-
-- `namespace`: The id that this plugin interacts with when setting and clearing `extmark`s
-- `root`: The root treesitter node for the specified language
-- `buf`: The buffer containing the root node
-
-The `extends` parameter defines whether the builtin handler should still be run in
-conjunction with this one. Defaults to `false`.
-
-Custom handlers are ran identically to builtin ones, so by writing custom `extmark`s
-(see :h nvim_buf_set_extmark()) to the provided `namespace` this plugin will handle
-clearing the `extmark`s on mode changes as well as re-calling the `render` function
-when needed.
-
-This is a high level interface, as such creating, parsing, and iterating through
-a treesitter query is entirely up to the user if the functionality they want needs
-this. We do not provide any convenience functions, but you are more than welcome
-to use patterns from the builtin handlers.
-
-## More Complex Example
-
-Lets say for `python` we want to highlight lines with function definitions.
-
-```lua
--- Parse query outside of the render function to avoid doing it for each call
-local query = vim.treesitter.query.parse('python', '(function_definition) @def')
-local function render_python(namespace, root, buf)
-    for id, node in query:iter_captures(root, buf) do
-        local capture = query.captures[id]
-        local start_row, _, _, _ = node:range()
-        if capture == 'def' then
-            vim.api.nvim_buf_set_extmark(buf, namespace, start_row, 0, {
-                end_row = start_row + 1,
-                end_col = 0,
-                hl_group = 'DiffDelete',
-                hl_eol = true,
-            })
-        end
-    end
-end
-require('render-markdown').setup({
-    custom_handlers = {
-        python = { render = render_python },
-    },
-}
-```
-
-# Purpose
-
-There are many existing markdown rendering plugins in the Neovim ecosystem. However,
-most of these rely on syncing a separate browser window with the buffer. This is
-the correct way to do things to get full feature support, however I wanted something
-that worked completely inside of Neovim and made things look slightly "nicer".
-
-The closest one I found to this was [headlines.nvim](https://github.com/lukas-reineke/headlines.nvim),
-which is an awesome plugin that I took several ideas from. However it just didn't
-have quite what I was looking for. In particular I wanted something that would
-disappear completely when editing a file and quickly render some style when viewing
-the file. Hence this plugin.
-
-# Markdown Ecosystem
-
-There are many `markdown` plugins that specialize in different aspects of interacting
-with `markdown` files. This plugin specializes in rendering the buffer inside of
-Neovim, for instance. As a result some plugins will clash with this one, whereas
-other plugins handle orthogonal concerns and can be used in addition to this one.
-Below is a categorized (incomplete) list of available plugins.
-
-## Render in Neovim
-
-Using any of these plugins with this one will likely lead to undesired behavior as
-different functionality will clash.
-
-- [headlines.nvim](https://github.com/lukas-reineke/headlines.nvim) - Same high
-  level idea and starting point of this plugin, but with different feature sets
-
-## Render in Browser
-
-These can be used as a second pass to get a real preview of the `markdown` file.
-Since they do not interact with the buffer directly there should be no issues.
-
-- [markdown-preview.nvim](https://github.com/iamcco/markdown-preview.nvim)
-- [vim-markdown-composer](https://github.com/euclio/vim-markdown-composer)
-
-## Orthogonal
-
-These plugins handle functions completely separate from rendering and should also
-have no issues running alongside this plugin.
-
-- Any LSP which provides standard LSP capabilities, such as:
-  - [marksman](https://github.com/artempyanykh/marksman) - General completion,
-    definition, and reference functionality
-  - [markdown-oxide](https://github.com/Feel-ix-343/markdown-oxide) - Adds Obsidian
-    PKM features to LSP
-- [markdown.nvim](https://github.com/tadmccorkle/markdown.nvim) - Adds `markdown`
-  specific keybindings for interacting with `markdown` files
+- [Limitations](doc/limitations.md): Known limitations of this plugin
+- [Custom Handlers](doc/custom-handlers.md): Allow users to integrate custom rendering
+  for either unsupported languages or to override / extend builtin implementations
+- [Troubleshooting Guide](doc/troubleshooting.md)
+- [Purpose](doc/purpose.md): Why this plugin exists
+- [Markdown Ecosystem](doc/markdown-ecosystem.md): Information about other `markdown`
+  related plugins and how they co-exist

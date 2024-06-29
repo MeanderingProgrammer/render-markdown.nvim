@@ -48,6 +48,7 @@ def main() -> None:
     init_file: Path = Path("lua/render-markdown/init.lua")
     update_types(init_file)
     update_readme(init_file)
+    update_custom_handlers(init_file)
 
 
 def update_types(init_file: Path) -> None:
@@ -61,20 +62,23 @@ def update_types(init_file: Path) -> None:
 
 
 def update_readme(init_file: Path) -> None:
-    readme_file = Path("README.md")
+    file = Path("README.md")
 
+    old = get_code_block(file, "enabled")
     default_config = get_default_config(init_file)
-    new_config = "require('render-markdown').setup(" + default_config + ")"
-    current_config = get_code_block_with(readme_file, "enabled")
+    new = "require('render-markdown').setup(" + default_config + ")"
 
-    handler_class_name: str = "render.md.Handler"
-    new_handler = get_class(init_file, handler_class_name).to_str()
-    current_handler = get_code_block_with(readme_file, handler_class_name)
+    file.write_text(file.read_text().replace(old, new))
 
-    text = readme_file.read_text()
-    text = text.replace(current_config, new_config)
-    text = text.replace(current_handler, new_handler)
-    readme_file.write_text(text)
+
+def update_custom_handlers(init_file: Path) -> None:
+    file = Path("doc/custom-handlers.md")
+
+    class_name: str = "render.md.Handler"
+    old = get_code_block(file, class_name)
+    new = get_class(init_file, class_name).to_str()
+
+    file.write_text(file.read_text().replace(old, new))
 
 
 def get_class(init_file: Path, name: str) -> LuaClass:
@@ -120,7 +124,7 @@ def get_default_config(file: Path) -> str:
     return default_configs[0]
 
 
-def get_code_block_with(file: Path, content: str) -> str:
+def get_code_block(file: Path, content: str) -> str:
     query = "(code_fence_content) @content"
     code_blocks = ts_query(file, query, "content")
     code_blocks = [code for code in code_blocks if content in code]
