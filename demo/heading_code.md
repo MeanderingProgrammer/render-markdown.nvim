@@ -8,7 +8,7 @@
 
 ###### Heading 6
 
-```python
+```python {filename="demo.py"}
 def main() -> None:
     sum = 0
     for i in range(10):

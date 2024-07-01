@@ -12,18 +12,22 @@ Plugin to improve viewing Markdown files in Neovim
 
 - Functions entirely inside of Neovim with no external windows
 - Changes between `rendered` view in normal mode and `raw` view in all other modes
-- Changes `conceallevel` between `rendered` and `raw` view based on configuration
+- Changes window options between `rendered` and `raw` view based on configuration
+  - Effects `conceallevel` & `concealcursor` by default
 - Supports rendering `markdown` injected into other file types
-- Highlights headings with different groups depending on level and replaces `#`
-- Updates horizontal breaks with full-width lines
-- Highlights code blocks and inline code to better stand out
-- Replaces bullet points with provided character based on level
-- Replaces checkboxes with provided characters based on whether they are checked
-- Replaces block quote leading `>` with provided character
-- Updates table borders with better border characters, does NOT automatically align
-- Basic support for `LaTeX` if `latex` parser and `pylatexenc` are installed
+- Renders the following `markdown` components:
+  - Headings: highlight depending on level and replaces `#` with icon
+  - Horizontal breaks: replace with full-width lines
+  - Code blocks: highlight to better stand out
+    - Adds language icon, requires `nvim-web-devicons` and neovim >= `0.10.0`
+  - Inline code: highlight to better stand out
+  - List bullet points: replace with provided icon based on level
+  - Checkboxes: replace with provided icon based on whether they are checked
+  - Block quotes: replace leading `>` with provided icon
+  - Tables: replace border characters, does NOT automatically align
+  - [Callouts](https://github.com/orgs/community/discussions/16925)
+  - `LaTeX` blocks: renders formulas if `latex` parser and `pylatexenc` are installed
 - Disable rendering when file is larger than provided value
-- Support for [callouts](https://github.com/orgs/community/discussions/16925)
 - Support custom handlers which are ran identically to builtin handlers
 
 # Dependencies
@@ -99,6 +103,7 @@ require('render-markdown').setup({
         (thematic_break) @dash
 
         (fenced_code_block) @code
+        (fenced_code_block (info_string (language) @language))
 
         [
             (list_marker_plus)

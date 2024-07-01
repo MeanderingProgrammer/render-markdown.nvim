@@ -66,28 +66,24 @@ M.render_node = function(namespace, buf, capture, node)
             hl_group = highlights.code,
             hl_eol = true,
         })
-
+    elseif capture == 'language' then
         if state.config.code_style ~= 'full' then
             return
         end
-
-        local info = ts.child(node, 'info_string')
-        if info == nil then
+        -- Requires inline extmarks
+        if vim.fn.has('nvim-0.10') == 0 then
             return
         end
-        local language = vim.treesitter.get_node_text(info, buf)
-        local icon, icon_highlight = icons.get(language)
+
+        local icon, icon_highlight = icons.get(value)
         if icon == nil or icon_highlight == nil then
             return
         end
-        local icon_text = { icon .. ' ', { icon_highlight, highlights.code } }
-        -- language takes care of info_string so padding needs to take care of code block start, i.e. ```
-        -- subtract space taken up by icon and pad the remainder
-        local padding = string.rep(' ', 3 - vim.fn.strdisplaywidth(icon_text[1]))
-        local language_text = { language .. padding, { 'Normal', highlights.code } }
+
+        local icon_text = { icon .. ' ' .. value, { icon_highlight, highlights.code } }
         vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
-            virt_text = { icon_text, language_text },
-            virt_text_pos = 'overlay',
+            virt_text = { icon_text },
+            virt_text_pos = 'inline',
         })
     elseif capture == 'list_marker' then
         if ts.sibling(node, { 'task_list_marker_unchecked', 'task_list_marker_checked' }) ~= nil then

@@ -61,12 +61,9 @@ async_tests.describe('heading_code.md', function()
             },
             {
                 row = { 10 },
-                col = { 0 },
-                virt_text = {
-                    { ' ', { 'DevIconPy', 'ColorColumn' } },
-                    { 'python ', { 'Normal', 'ColorColumn' } },
-                },
-                virt_text_pos = 'overlay',
+                col = { 3 },
+                virt_text = { { ' python', { 'DevIconPy', 'ColorColumn' } } },
+                virt_text_pos = 'inline',
             },
         })
 

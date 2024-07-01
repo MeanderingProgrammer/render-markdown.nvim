@@ -92,6 +92,7 @@ M.default_config = {
         (thematic_break) @dash
 
         (fenced_code_block) @code
+        (fenced_code_block (info_string (language) @language))
 
         [
             (list_marker_plus)
