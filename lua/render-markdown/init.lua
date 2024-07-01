@@ -236,11 +236,11 @@ M.default_config = {
 function M.setup(opts)
     state.config = vim.tbl_deep_extend('force', M.default_config, opts or {})
     state.enabled = state.config.start_enabled
-    state.markdown_query = vim.treesitter.query.parse('markdown', state.config.markdown_query)
-    state.inline_query = vim.treesitter.query.parse('markdown_inline', state.config.inline_query)
-
+    vim.schedule(function()
+        state.markdown_query = vim.treesitter.query.parse('markdown', state.config.markdown_query)
+        state.inline_query = vim.treesitter.query.parse('markdown_inline', state.config.inline_query)
+    end)
     manager.setup()
-
     vim.api.nvim_create_user_command(
         'RenderMarkdownToggle',
         M.toggle,
