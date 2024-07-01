@@ -153,7 +153,7 @@ require('render-markdown').setup({
         checked = '󰱒 ',
     },
     -- Character that will replace the > at the start of block quotes
-    quote = '┃',
+    quote = '▋',
     -- Symbol / text to use for different callouts
     callout = {
         note = '󰋽 Note',

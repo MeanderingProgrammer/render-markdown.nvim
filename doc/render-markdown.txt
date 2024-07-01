@@ -1,4 +1,4 @@
-*render-markdown.txt*           For 0.10.0           Last change: 2024 June 30
+*render-markdown.txt*           For 0.10.0           Last change: 2024 July 01
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -181,7 +181,7 @@ modified by the user.
             checked = '󰱒 ',
         },
         -- Character that will replace the > at the start of block quotes
-        quote = '┃',
+        quote = '▋',
         -- Symbol / text to use for different callouts
         callout = {
             note = '󰋽 Note',

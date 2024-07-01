@@ -6,6 +6,7 @@ async_tests.describe('callout.md', function()
         util.setup('demo/callout.md')
 
         local expected = {}
+        local quote = '▋'
 
         local note_start = 0
         vim.list_extend(expected, {
@@ -22,7 +23,7 @@ async_tests.describe('callout.md', function()
             {
                 row = { note_start + 2, note_start + 2 },
                 col = { 0, 2 },
-                virt_text = { { '┃ ', 'DiagnosticInfo' } },
+                virt_text = { { quote .. ' ', 'DiagnosticInfo' } },
                 virt_text_pos = 'overlay',
             },
             -- Callout text
@@ -36,25 +37,25 @@ async_tests.describe('callout.md', function()
             {
                 row = { note_start + 3, note_start + 3 },
                 col = { 0, 1 },
-                virt_text = { { '┃', 'DiagnosticInfo' } },
+                virt_text = { { quote, 'DiagnosticInfo' } },
                 virt_text_pos = 'overlay',
             },
             {
                 row = { note_start + 4, note_start + 4 },
                 col = { 0, 2 },
-                virt_text = { { '┃ ', 'DiagnosticInfo' } },
+                virt_text = { { quote .. ' ', 'DiagnosticInfo' } },
                 virt_text_pos = 'overlay',
             },
             {
                 row = { note_start + 5, note_start + 5 },
                 col = { 0, 1 },
-                virt_text = { { '┃', 'DiagnosticInfo' } },
+                virt_text = { { quote, 'DiagnosticInfo' } },
                 virt_text_pos = 'overlay',
             },
             {
                 row = { note_start + 6, note_start + 6 },
                 col = { 0, 2 },
-                virt_text = { { '┃ ', 'DiagnosticInfo' } },
+                virt_text = { { quote .. ' ', 'DiagnosticInfo' } },
                 virt_text_pos = 'overlay',
             },
         })
@@ -74,7 +75,7 @@ async_tests.describe('callout.md', function()
             {
                 row = { tip_start + 2, tip_start + 2 },
                 col = { 0, 2 },
-                virt_text = { { '┃ ', 'DiagnosticOk' } },
+                virt_text = { { quote .. ' ', 'DiagnosticOk' } },
                 virt_text_pos = 'overlay',
             },
             -- Callout text
@@ -88,7 +89,7 @@ async_tests.describe('callout.md', function()
             {
                 row = { tip_start + 3, tip_start + 3 },
                 col = { 0, 2 },
-                virt_text = { { '┃ ', 'DiagnosticOk' } },
+                virt_text = { { quote .. ' ', 'DiagnosticOk' } },
                 virt_text_pos = 'overlay',
             },
         })
@@ -108,7 +109,7 @@ async_tests.describe('callout.md', function()
             {
                 row = { important_start + 2, important_start + 2 },
                 col = { 0, 2 },
-                virt_text = { { '┃ ', 'DiagnosticHint' } },
+                virt_text = { { quote .. ' ', 'DiagnosticHint' } },
                 virt_text_pos = 'overlay',
             },
             -- Callout text
@@ -122,7 +123,7 @@ async_tests.describe('callout.md', function()
             {
                 row = { important_start + 3, important_start + 3 },
                 col = { 0, 2 },
-                virt_text = { { '┃ ', 'DiagnosticHint' } },
+                virt_text = { { quote .. ' ', 'DiagnosticHint' } },
                 virt_text_pos = 'overlay',
             },
         })
@@ -142,7 +143,7 @@ async_tests.describe('callout.md', function()
             {
                 row = { warning_start + 2, warning_start + 2 },
                 col = { 0, 2 },
-                virt_text = { { '┃ ', 'DiagnosticWarn' } },
+                virt_text = { { quote .. ' ', 'DiagnosticWarn' } },
                 virt_text_pos = 'overlay',
             },
             -- Callout text
@@ -156,7 +157,7 @@ async_tests.describe('callout.md', function()
             {
                 row = { warning_start + 3, warning_start + 3 },
                 col = { 0, 2 },
-                virt_text = { { '┃ ', 'DiagnosticWarn' } },
+                virt_text = { { quote .. ' ', 'DiagnosticWarn' } },
                 virt_text_pos = 'overlay',
             },
         })
@@ -176,7 +177,7 @@ async_tests.describe('callout.md', function()
             {
                 row = { caution_start + 2, caution_start + 2 },
                 col = { 0, 2 },
-                virt_text = { { '┃ ', 'DiagnosticError' } },
+                virt_text = { { quote .. ' ', 'DiagnosticError' } },
                 virt_text_pos = 'overlay',
             },
             -- Callout text
@@ -190,7 +191,7 @@ async_tests.describe('callout.md', function()
             {
                 row = { caution_start + 3, caution_start + 3 },
                 col = { 0, 2 },
-                virt_text = { { '┃ ', 'DiagnosticError' } },
+                virt_text = { { quote .. ' ', 'DiagnosticError' } },
                 virt_text_pos = 'overlay',
             },
         })

@@ -64,13 +64,13 @@ async_tests.describe('box_dash_quote.md', function()
             {
                 row = { 7, 7 },
                 col = { 0, 4 },
-                virt_text = { { '  ┃ ', '@markup.quote' } },
+                virt_text = { { '  ▋ ', '@markup.quote' } },
                 virt_text_pos = 'overlay',
             },
             {
                 row = { 8, 8 },
                 col = { 0, 4 },
-                virt_text = { { '  ┃ ', '@markup.quote' } },
+                virt_text = { { '  ▋ ', '@markup.quote' } },
                 virt_text_pos = 'overlay',
             },
         })

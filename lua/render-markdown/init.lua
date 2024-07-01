@@ -141,7 +141,7 @@ M.default_config = {
         checked = '󰱒 ',
     },
     -- Character that will replace the > at the start of block quotes
-    quote = '┃',
+    quote = '▋',
     -- Symbol / text to use for different callouts
     callout = {
         note = '󰋽 Note',
