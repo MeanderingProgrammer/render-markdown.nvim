@@ -1,6 +1,5 @@
+local manager = require('render-markdown.manager')
 local state = require('render-markdown.state')
-local ui = require('render-markdown.ui')
-local util = require('render-markdown.util')
 
 local M = {}
 
@@ -240,52 +239,17 @@ function M.setup(opts)
     state.markdown_query = vim.treesitter.query.parse('markdown', state.config.markdown_query)
     state.inline_query = vim.treesitter.query.parse('markdown_inline', state.config.inline_query)
 
-    -- Call immediately to re-render on LazyReload
-    ui.schedule_refresh(vim.api.nvim_get_current_buf())
+    manager.setup()
 
-    local group = vim.api.nvim_create_augroup('RenderMarkdown', { clear = true })
-    vim.api.nvim_create_autocmd({ 'ModeChanged' }, {
-        group = group,
-        callback = function(event)
-            local render_modes = state.config.render_modes
-            local prev_rendered = vim.tbl_contains(render_modes, vim.v.event.old_mode)
-            local should_render = vim.tbl_contains(render_modes, vim.v.event.new_mode)
-            -- Only need to re-render if render state is changing. I.e. going from normal mode to
-            -- command mode with the default config, both are rendered, so no point re-rendering
-            if prev_rendered ~= should_render then
-                ui.schedule_refresh(event.buf)
-            end
-        end,
-    })
-    vim.api.nvim_create_autocmd({ 'WinResized' }, {
-        group = group,
-        callback = function()
-            for _, win in ipairs(vim.v.event.windows) do
-                local buf = util.win_to_buf(win)
-                ui.schedule_refresh(buf)
-            end
-        end,
-    })
-    vim.api.nvim_create_autocmd({ 'FileChangedShellPost', 'FileType', 'TextChanged' }, {
-        group = group,
-        callback = function(event)
-            ui.schedule_refresh(event.buf)
-        end,
-    })
-
-    local description = 'Switch between enabling & disabling render markdown plugin'
-    vim.api.nvim_create_user_command('RenderMarkdownToggle', M.toggle, { desc = description })
+    vim.api.nvim_create_user_command(
+        'RenderMarkdownToggle',
+        M.toggle,
+        { desc = 'Switch between enabling & disabling render markdown plugin' }
+    )
 end
 
 M.toggle = function()
-    state.enabled = not state.enabled
-    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-        if state.enabled then
-            ui.schedule_refresh(buf)
-        else
-            ui.schedule_clear(buf)
-        end
-    end
+    manager.toggle()
 end
 
 return M

@@ -14,14 +14,22 @@ M.buf_to_win = function(buf)
     return vim.fn.bufwinid(buf)
 end
 
----@param buf integer
+---@param win integer
 ---@param name string
 ---@param value any
-M.set_win_option = function(buf, name, value)
-    local opts = { scope = 'local', win = M.buf_to_win(buf) }
+M.set_win_option = function(win, name, value)
+    local opts = { scope = 'local', win = win }
     local before = vim.api.nvim_get_option_value(name, opts)
     vim.api.nvim_set_option_value(name, value, opts)
     logger.debug({ option = name, opts = opts, before = before, after = value })
+end
+
+---@param win integer
+---@return integer
+M.get_leftcol = function(win)
+    return vim.api.nvim_win_call(win, function()
+        return vim.fn.winsaveview().leftcol
+    end)
 end
 
 ---@param buf integer
