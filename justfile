@@ -22,7 +22,7 @@ demo-latex:
   just demo "latex" "15" ""
 
 demo-callout:
-  just demo "callout" "35" ""
+  just demo "callout" "40" ""
 
 demo file rows content:
   rm -f demo/{{file}}.gif

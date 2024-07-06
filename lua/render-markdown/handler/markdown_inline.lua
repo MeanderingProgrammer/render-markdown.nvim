@@ -1,5 +1,4 @@
-local callout = require('render-markdown.callout')
-local custom_checkbox = require('render-markdown.custom_checkbox')
+local component = require('render-markdown.component')
 local logger = require('render-markdown.logger')
 local state = require('render-markdown.state')
 local str = require('render-markdown.str')
@@ -34,9 +33,9 @@ M.render_node = function(namespace, buf, capture, node)
             hl_group = highlights.code,
         })
     elseif capture == 'callout' then
-        local key = callout.get_key_exact(value)
-        if key ~= nil then
-            local callout_text = { state.config.callout[key], highlights.callout[key] }
+        local callout = component.callout(value, 'exact')
+        if callout ~= nil then
+            local callout_text = { callout.text, callout.highlight }
             vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
                 end_row = end_row,
                 end_col = end_col,
@@ -49,12 +48,12 @@ M.render_node = function(namespace, buf, capture, node)
                 return
             end
 
-            local checkbox = custom_checkbox.get_exact(value)
+            local checkbox = component.checkbox(value, 'exact')
             if checkbox == nil then
                 return
             end
 
-            local checkbox_text = { str.pad_to(value, checkbox.rendered), checkbox.highlight }
+            local checkbox_text = { str.pad_to(value, checkbox.text), checkbox.highlight }
             vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
                 end_row = end_row,
                 end_col = end_col,

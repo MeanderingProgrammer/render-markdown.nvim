@@ -194,6 +194,7 @@ async_tests.describe('callout.md', function()
 
         local caution_start = 26
         vim.list_extend(expected, {
+            -- Heading
             {
                 row = { caution_start, caution_start + 1 },
                 col = { 0, 0 },
@@ -219,6 +220,40 @@ async_tests.describe('callout.md', function()
             -- Quote continued
             {
                 row = { caution_start + 3, caution_start + 3 },
+                col = { 0, 2 },
+                virt_text = { { quote .. ' ', 'DiagnosticError' } },
+                virt_text_pos = 'overlay',
+            },
+        })
+
+        local bug_start = 31
+        vim.list_extend(expected, {
+            -- Heading
+            {
+                row = { bug_start, bug_start + 1 },
+                col = { 0, 0 },
+                hl_eol = true,
+                hl_group = 'DiffAdd',
+                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
+                virt_text_pos = 'overlay',
+            },
+            -- Quote start
+            {
+                row = { bug_start + 2, bug_start + 2 },
+                col = { 0, 2 },
+                virt_text = { { quote .. ' ', 'DiagnosticError' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Callout text
+            {
+                row = { bug_start + 2, bug_start + 2 },
+                col = { 2, 8 },
+                virt_text = { { '󰨰 Bug', 'DiagnosticError' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Quote continued
+            {
+                row = { bug_start + 3, bug_start + 3 },
                 col = { 0, 2 },
                 virt_text = { { quote .. ' ', 'DiagnosticError' } },
                 virt_text_pos = 'overlay',

@@ -1,5 +1,4 @@
-local callout = require('render-markdown.callout')
-local custom_checkbox = require('render-markdown.custom_checkbox')
+local component = require('render-markdown.component')
 local icons = require('render-markdown.icons')
 local list = require('render-markdown.list')
 local logger = require('render-markdown.logger')
@@ -120,9 +119,9 @@ M.render_node = function(namespace, buf, capture, node)
         local highlight = highlights.quote
         local quote = ts.parent_in_section(node, 'block_quote')
         if quote ~= nil then
-            local key = callout.get_key_contains(vim.treesitter.get_node_text(quote, buf))
-            if key ~= nil then
-                highlight = highlights.callout[key]
+            local callout = component.callout(vim.treesitter.get_node_text(quote, buf), 'contains')
+            if callout ~= nil then
+                highlight = callout.highlight
             end
         end
 
@@ -260,7 +259,7 @@ M.sibling_checkbox = function(buf, node)
     if paragraph == nil then
         return false
     end
-    if custom_checkbox.get_starts(vim.treesitter.get_node_text(paragraph, buf)) ~= nil then
+    if component.checkbox(vim.treesitter.get_node_text(paragraph, buf), 'starts') ~= nil then
         return true
     end
     return false

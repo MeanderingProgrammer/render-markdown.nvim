@@ -27,6 +27,7 @@ Plugin to improve viewing Markdown files in Neovim
   - Block quotes: replace leading `>` with provided icon
   - Tables: replace border characters, does NOT automatically align
   - [Callouts](https://github.com/orgs/community/discussions/16925)
+    - Base set as well as custom ones
   - Custom checkbox states, function similar to `callouts`
   - `LaTeX` blocks: renders formulas if `latex` parser and `pylatexenc` are installed
 - Disable rendering when file is larger than provided value
@@ -186,6 +187,9 @@ require('render-markdown').setup({
         important = '󰅾 Important',
         warning = '󰀪 Warning',
         caution = '󰳦 Caution',
+        custom = {
+            bug = { raw = '[!BUG]', rendered = '󰨰 Bug', highlight = 'DiagnosticError' },
+        },
     },
     -- Window options to use that change between rendered and raw view
     win_options = {
@@ -310,8 +314,8 @@ is used to hide the character.
 
 The checked `[ ]` & unchecked `[x]` are directly replaced with these values.
 
-Additionally `custom` states can be specified, an example of this is provided
-with: `todo = { raw = '[-]', rendered = '󰥔 ', highlight = '@markup.raw' }`.
+Additionally `custom` states can be specified, an example of this is provided with:
+`todo = { raw = '[-]', rendered = '󰥔 ', highlight = '@markup.raw' }`.
 
 This requires neovim >= `0.10.0` since it relies on `inline` extmarks.
 
@@ -331,6 +335,15 @@ This is a special instance of a `block_quote`.
 
 When the `callout` syntax is used the start, i.e. `[!NOTE]`, is replaced
 with this text.
+
+Additionally `custom` callouts can be specified, an example of this is provided with:
+`bug = { raw = '[!BUG]', rendered = '󰨰 Bug', highlight = 'DiagnosticError' }`.
+
+The key in the `custom` table is unused. The parts of the value are:
+
+- `raw`: matched against the raw text of a `shortcut_link`
+- `rendered`: replaces the `raw` value when rendering
+- `highlight`: color used for `rendered` text
 
 ## Highlight
 

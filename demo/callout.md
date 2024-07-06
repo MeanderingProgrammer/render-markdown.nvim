@@ -28,3 +28,8 @@
 
 > [!CAUTION]
 > Cautionary tale
+
+# Bug
+
+> [!BUG]
+> Custom bug

@@ -3,7 +3,7 @@ local state = require('render-markdown.state')
 
 local M = {}
 
----@class render.md.UserCallout
+---@class render.md.UserCalloutHighlights
 ---@field public note? string
 ---@field public tip? string
 ---@field public important? string
@@ -31,7 +31,7 @@ local M = {}
 ---@field public table? render.md.UserTableHighlights
 ---@field public latex? string
 ---@field public quote? string
----@field public callout? render.md.UserCallout
+---@field public callout? render.md.UserCalloutHighlights
 
 ---@class render.md.Handler
 ---@field public render fun(namespace: integer, root: TSNode, buf: integer)
@@ -41,15 +41,23 @@ local M = {}
 ---@field public default any
 ---@field public rendered any
 
----@class render.md.CustomCheckbox
+---@class render.md.CustomComponent
 ---@field public raw string
 ---@field public rendered string
 ---@field public highlight string
 
+---@class render.md.UserCallout
+---@field public note? string
+---@field public tip? string
+---@field public important? string
+---@field public warning? string
+---@field public caution? string
+---@field public custom? table<string, render.md.CustomComponent>
+
 ---@class render.md.UserCheckbox
 ---@field public unchecked? string
 ---@field public checked? string
----@field public custom? table<string, render.md.CustomCheckbox>
+---@field public custom? table<string, render.md.CustomComponent>
 
 ---@class render.md.UserConfig
 ---@field public start_enabled? boolean
@@ -164,6 +172,9 @@ M.default_config = {
         important = '󰅾 Important',
         warning = '󰀪 Warning',
         caution = '󰳦 Caution',
+        custom = {
+            bug = { raw = '[!BUG]', rendered = '󰨰 Bug', highlight = 'DiagnosticError' },
+        },
     },
     -- Window options to use that change between rendered and raw view
     win_options = {

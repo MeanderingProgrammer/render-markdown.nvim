@@ -1,4 +1,4 @@
----@class render.md.Callout
+---@class render.md.CalloutHighlights
 ---@field public note string
 ---@field public tip string
 ---@field public important string
@@ -26,12 +26,20 @@
 ---@field public table render.md.TableHighlights
 ---@field public latex string
 ---@field public quote string
----@field public callout render.md.Callout
+---@field public callout render.md.CalloutHighlights
+
+---@class render.md.Callout
+---@field public note string
+---@field public tip string
+---@field public important string
+---@field public warning string
+---@field public caution string
+---@field public custom table<string, render.md.CustomComponent>
 
 ---@class render.md.Checkbox
 ---@field public unchecked string
 ---@field public checked string
----@field public custom table<string, render.md.CustomCheckbox>
+---@field public custom table<string, render.md.CustomComponent>
 
 ---@class render.md.Config
 ---@field public start_enabled boolean
