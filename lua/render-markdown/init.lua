@@ -49,7 +49,7 @@ local M = {}
 ---@class render.md.UserCheckbox
 ---@field public unchecked? string
 ---@field public checked? string
----@field public custom? table<string, render.md.CustomCheckbox[]>
+---@field public custom? table<string, render.md.CustomCheckbox>
 
 ---@class render.md.UserConfig
 ---@field public start_enabled? boolean

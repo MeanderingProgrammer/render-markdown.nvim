@@ -6,7 +6,6 @@ local M = {}
 ---@return render.md.CustomCheckbox?
 M.get_exact = function(value)
     for _, checkbox in pairs(state.config.checkbox.custom) do
-        ---@diagnostic disable-next-line: undefined-field
         if checkbox.text == value then
             return checkbox
         end
@@ -18,7 +17,6 @@ end
 ---@return render.md.CustomCheckbox?
 M.get_starts = function(value)
     for _, checkbox in pairs(state.config.checkbox.custom) do
-        ---@diagnostic disable-next-line: undefined-field
         if vim.startswith(value, checkbox.text) then
             return checkbox
         end
