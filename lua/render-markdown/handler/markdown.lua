@@ -1,8 +1,10 @@
 local callout = require('render-markdown.callout')
+local custom_checkbox = require('render-markdown.custom_checkbox')
 local icons = require('render-markdown.icons')
 local list = require('render-markdown.list')
 local logger = require('render-markdown.logger')
 local state = require('render-markdown.state')
+local str = require('render-markdown.str')
 local ts = require('render-markdown.ts')
 local util = require('render-markdown.util')
 
@@ -39,7 +41,7 @@ M.render_node = function(namespace, buf, capture, node)
         local background = list.clamp_last(highlights.heading.backgrounds, level)
         local foreground = list.clamp_last(highlights.heading.foregrounds, level)
 
-        local heading_text = { string.rep(' ', padding) .. heading, { foreground, background } }
+        local heading_text = { str.pad(heading, padding), { foreground, background } }
         vim.api.nvim_buf_set_extmark(buf, namespace, start_row, 0, {
             end_row = end_row + 1,
             end_col = 0,
@@ -71,7 +73,7 @@ M.render_node = function(namespace, buf, capture, node)
             return
         end
         -- Requires inline extmarks
-        if vim.fn.has('nvim-0.10') == 0 then
+        if not util.has_10 then
             return
         end
 
@@ -86,7 +88,7 @@ M.render_node = function(namespace, buf, capture, node)
             virt_text_pos = 'inline',
         })
     elseif capture == 'list_marker' then
-        if ts.sibling(node, { 'task_list_marker_unchecked', 'task_list_marker_checked' }) ~= nil then
+        if M.sibling_checkbox(buf, node) then
             -- Hide the list marker for checkboxes rather than replacing with a bullet point
             vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
                 end_row = end_row,
@@ -101,7 +103,7 @@ M.render_node = function(namespace, buf, capture, node)
             local level = ts.level_in_section(node, 'list')
             local bullet = list.cycle(state.config.bullets, level)
 
-            local list_marker_text = { string.rep(' ', leading_spaces or 0) .. bullet, highlights.bullet }
+            local list_marker_text = { str.pad(bullet, leading_spaces), highlights.bullet }
             vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
                 end_row = end_row,
                 end_col = end_col,
@@ -118,8 +120,7 @@ M.render_node = function(namespace, buf, capture, node)
         local highlight = highlights.quote
         local quote = ts.parent_in_section(node, 'block_quote')
         if quote ~= nil then
-            local quote_value = vim.treesitter.get_node_text(quote, buf)
-            local key = callout.get_key_contains(quote_value)
+            local key = callout.get_key_contains(vim.treesitter.get_node_text(quote, buf))
             if key ~= nil then
                 highlight = highlights.callout[key]
             end
@@ -139,17 +140,14 @@ M.render_node = function(namespace, buf, capture, node)
             checkbox = state.config.checkbox.checked
             highlight = highlights.checkbox.checked
         end
-        local padding = vim.fn.strdisplaywidth(value) - vim.fn.strdisplaywidth(checkbox)
 
-        if padding >= 0 then
-            local checkbox_text = { string.rep(' ', padding) .. checkbox, highlight }
-            vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
-                end_row = end_row,
-                end_col = end_col,
-                virt_text = { checkbox_text },
-                virt_text_pos = 'overlay',
-            })
-        end
+        local checkbox_text = { str.pad_to(value, checkbox), highlight }
+        vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
+            end_row = end_row,
+            end_col = end_col,
+            virt_text = { checkbox_text },
+            virt_text_pos = 'overlay',
+        })
     elseif capture == 'table' then
         if state.config.table_style ~= 'full' then
             return
@@ -249,6 +247,23 @@ M.render_node = function(namespace, buf, capture, node)
         -- Should only get here if user provides custom capture, currently unhandled
         logger.error('Unhandled markdown capture: ' .. capture)
     end
+end
+
+---@param buf integer
+---@param node TSNode
+---@return boolean
+M.sibling_checkbox = function(buf, node)
+    if ts.sibling(node, { 'task_list_marker_unchecked', 'task_list_marker_checked' }) ~= nil then
+        return true
+    end
+    local paragraph = ts.sibling(node, { 'paragraph' })
+    if paragraph == nil then
+        return false
+    end
+    if custom_checkbox.get_starts(vim.treesitter.get_node_text(paragraph, buf)) ~= nil then
+        return true
+    end
+    return false
 end
 
 return M

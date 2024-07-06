@@ -2,6 +2,9 @@ local logger = require('render-markdown.logger')
 
 local M = {}
 
+---@type boolean
+M.has_10 = vim.fn.has('nvim-0.10') == 1
+
 ---@param win integer
 ---@return integer
 M.win_to_buf = function(win)

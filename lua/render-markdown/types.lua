@@ -31,6 +31,7 @@
 ---@class render.md.Checkbox
 ---@field public unchecked string
 ---@field public checked string
+---@field public custom table<string, render.md.CustomCheckbox[]>
 
 ---@class render.md.Config
 ---@field public start_enabled boolean

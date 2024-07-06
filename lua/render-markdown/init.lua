@@ -41,9 +41,15 @@ local M = {}
 ---@field public default any
 ---@field public rendered any
 
+---@class render.md.CustomCheckbox
+---@field public text string
+---@field public icon string
+---@field public highlight string
+
 ---@class render.md.UserCheckbox
 ---@field public unchecked? string
 ---@field public checked? string
+---@field public custom? table<string, render.md.CustomCheckbox[]>
 
 ---@class render.md.UserConfig
 ---@field public start_enabled? boolean
@@ -144,6 +150,10 @@ M.default_config = {
         unchecked = '󰄱 ',
         -- Character that will replace the [x] in checked checkboxes
         checked = '󰱒 ',
+        -- Specify custom checkboxes, must be surrounded in square brackets
+        custom = {
+            todo = { text = '[-]', icon = '󰥔 ', highlight = '@markup.raw' },
+        },
     },
     -- Character that will replace the > at the start of block quotes
     quote = '▋',

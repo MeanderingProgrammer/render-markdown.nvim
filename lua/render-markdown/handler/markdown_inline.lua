@@ -1,6 +1,9 @@
 local callout = require('render-markdown.callout')
+local custom_checkbox = require('render-markdown.custom_checkbox')
 local logger = require('render-markdown.logger')
 local state = require('render-markdown.state')
+local str = require('render-markdown.str')
+local util = require('render-markdown.util')
 
 local M = {}
 
@@ -39,6 +42,25 @@ M.render_node = function(namespace, buf, capture, node)
                 end_col = end_col,
                 virt_text = { callout_text },
                 virt_text_pos = 'overlay',
+            })
+        else
+            -- Requires inline extmarks
+            if not util.has_10 then
+                return
+            end
+
+            local checkbox = custom_checkbox.get_exact(value)
+            if checkbox == nil then
+                return
+            end
+
+            local checkbox_text = { str.pad_to(value, checkbox.icon), checkbox.highlight }
+            vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
+                end_row = end_row,
+                end_col = end_col,
+                virt_text = { checkbox_text },
+                virt_text_pos = 'inline',
+                conceal = '',
             })
         end
     else

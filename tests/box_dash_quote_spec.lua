@@ -47,12 +47,26 @@ async_tests.describe('box_dash_quote.md', function()
                 virt_text = { { ' 󰱒 ', '@markup.heading' } },
                 virt_text_pos = 'overlay',
             },
+            -- Custom todo, conceal list marker
+            {
+                row = { 4, 4 },
+                col = { 0, 2 },
+                conceal = '',
+            },
+            -- Custom todo, checkbox
+            {
+                row = { 4, 4 },
+                col = { 2, 5 },
+                virt_text = { { ' 󰥔 ', '@markup.raw' } },
+                virt_text_pos = 'inline',
+                conceal = '',
+            },
         })
 
         -- Line break
         vim.list_extend(expected, {
             {
-                row = { 5 },
+                row = { 6 },
                 col = { 0 },
                 virt_text = { { string.rep('─', vim.opt.columns:get()), 'LineNr' } },
                 virt_text_pos = 'overlay',
@@ -62,13 +76,13 @@ async_tests.describe('box_dash_quote.md', function()
         -- Quote lines
         vim.list_extend(expected, {
             {
-                row = { 7, 7 },
+                row = { 8, 8 },
                 col = { 0, 4 },
                 virt_text = { { '  ▋ ', '@markup.quote' } },
                 virt_text_pos = 'overlay',
             },
             {
-                row = { 8, 8 },
+                row = { 9, 9 },
                 col = { 0, 4 },
                 virt_text = { { '  ▋ ', '@markup.quote' } },
                 virt_text_pos = 'overlay',

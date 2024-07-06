@@ -27,6 +27,7 @@ Plugin to improve viewing Markdown files in Neovim
   - Block quotes: replace leading `>` with provided icon
   - Tables: replace border characters, does NOT automatically align
   - [Callouts](https://github.com/orgs/community/discussions/16925)
+  - Custom checkbox states, function similar to `callouts`
   - `LaTeX` blocks: renders formulas if `latex` parser and `pylatexenc` are installed
 - Disable rendering when file is larger than provided value
 - Support custom handlers which are ran identically to builtin handlers
@@ -171,6 +172,10 @@ require('render-markdown').setup({
         unchecked = '󰄱 ',
         -- Character that will replace the [x] in checked checkboxes
         checked = '󰱒 ',
+        -- Specify custom checkboxes, must be surrounded in square brackets
+        custom = {
+            todo = { text = '[-]', icon = '󰥔 ', highlight = '@markup.raw' },
+        },
     },
     -- Character that will replace the > at the start of block quotes
     quote = '▋',
@@ -304,6 +309,17 @@ is used to hide the character.
 ### checkbox
 
 The checked `[ ]` & unchecked `[x]` are directly replaced with these values.
+
+Additionally `custom` states can be specified, an example of this is provided
+with: `todo = { text = '[-]', icon = '󰥔 ', highlight = '@markup.raw' }`.
+
+This requires neovim >= `0.10.0` since it relies on `inline` extmarks.
+
+The key in the `custom` table is unused. The parts of the value are:
+
+- `text`: matched against the raw text of a `shortcut_link`, in the same way as `callouts`
+- `icon`: replaces the `text` value when rendering
+- `highlight`: color used for `icon`
 
 ### quote
 
