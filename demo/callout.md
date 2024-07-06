@@ -9,7 +9,10 @@
 # Tip
 
 > [!TIP]
-> Standard tip
+>
+> ```lua
+> print('Standard tip')
+> ```
 
 # Important
 

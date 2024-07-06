@@ -50,6 +50,7 @@ local M = {}
 ---@field public latex_enabled? boolean
 ---@field public max_file_size? number
 ---@field public markdown_query? string
+---@field public markdown_quote_query? string
 ---@field public inline_query? string
 ---@field public latex_converter? string
 ---@field public log_level? 'debug'|'error'
@@ -102,15 +103,19 @@ M.default_config = {
         (task_list_marker_unchecked) @checkbox_unchecked
         (task_list_marker_checked) @checkbox_checked
 
-        (block_quote (block_quote_marker) @quote_marker)
-        (block_quote (block_continuation) @quote_marker)
-        (block_quote (paragraph (block_continuation) @quote_marker))
-        (block_quote (paragraph (inline (block_continuation) @quote_marker)))
+        (block_quote) @quote
 
         (pipe_table) @table
         (pipe_table_header) @table_head
         (pipe_table_delimiter_row) @table_delim
         (pipe_table_row) @table_row
+    ]],
+    -- Capture groups that get pulled from quote nodes
+    markdown_quote_query = [[
+        [
+            (block_quote_marker)
+            (block_continuation)
+        ] @quote_marker
     ]],
     -- Capture groups that get pulled from inline markdown
     inline_query = [[
@@ -238,6 +243,7 @@ function M.setup(opts)
     state.enabled = state.config.start_enabled
     vim.schedule(function()
         state.markdown_query = vim.treesitter.query.parse('markdown', state.config.markdown_query)
+        state.markdown_quote_query = vim.treesitter.query.parse('markdown', state.config.markdown_quote_query)
         state.inline_query = vim.treesitter.query.parse('markdown_inline', state.config.inline_query)
     end)
     manager.setup()

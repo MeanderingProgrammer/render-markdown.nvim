@@ -22,7 +22,6 @@ M.render = function(namespace, root, buf)
     if vim.fn.executable(converter) ~= 1 then
         logger.debug('Executable not found: ' .. converter)
     else
-        logger.debug_node('latex', root, buf)
         M.render_node(namespace, buf, root, converter)
     end
 end
@@ -35,6 +34,7 @@ M.render_node = function(namespace, buf, node, converter)
     local highlights = state.config.highlights
     local value = vim.treesitter.get_node_text(node, buf)
     local start_row, start_col, end_row, end_col = node:range()
+    logger.debug_node('latex', node, buf)
 
     local expressions = cache.expressions[value]
     if expressions == nil then

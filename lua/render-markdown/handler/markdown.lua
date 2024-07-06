@@ -12,10 +12,9 @@ local M = {}
 ---@param root TSNode
 ---@param buf integer
 M.render = function(namespace, root, buf)
-    for id, node in state.markdown_query:iter_captures(root, buf) do
-        local capture = state.markdown_query.captures[id]
-        logger.debug_node(capture, node, buf)
-        M.render_node(namespace, buf, capture, node)
+    local query = state.markdown_query
+    for id, node in query:iter_captures(root, buf) do
+        M.render_node(namespace, buf, query.captures[id], node)
     end
 end
 
@@ -27,6 +26,7 @@ M.render_node = function(namespace, buf, capture, node)
     local highlights = state.config.highlights
     local value = vim.treesitter.get_node_text(node, buf)
     local start_row, start_col, end_row, end_col = node:range()
+    logger.debug_node(capture, node, buf)
 
     if capture == 'heading' then
         local level = vim.fn.strdisplaywidth(value)
@@ -108,6 +108,11 @@ M.render_node = function(namespace, buf, capture, node)
                 virt_text = { list_marker_text },
                 virt_text_pos = 'overlay',
             })
+        end
+    elseif capture == 'quote' then
+        local query = state.markdown_quote_query
+        for id, nested_node in query:iter_captures(node, buf) do
+            M.render_node(namespace, buf, query.captures[id], nested_node)
         end
     elseif capture == 'quote_marker' then
         local highlight = highlights.quote

@@ -1,9 +1,14 @@
-local callout_to_key = {
-    ['[!NOTE]'] = 'note',
-    ['[!TIP]'] = 'tip',
-    ['[!IMPORTANT]'] = 'important',
-    ['[!WARNING]'] = 'warning',
-    ['[!CAUTION]'] = 'caution',
+---@class render.md.CalloutInfo
+---@field text string
+---@field key string
+
+---@type render.md.CalloutInfo[]
+local callouts = {
+    { text = '[!NOTE]', key = 'note' },
+    { text = '[!TIP]', key = 'tip' },
+    { text = '[!IMPORTANT]', key = 'important' },
+    { text = '[!WARNING]', key = 'warning' },
+    { text = '[!CAUTION]', key = 'caution' },
 }
 
 local M = {}
@@ -11,15 +16,20 @@ local M = {}
 ---@param value string
 ---@return string?
 M.get_key_exact = function(value)
-    return callout_to_key[value]
+    for _, callout in ipairs(callouts) do
+        if value == callout.text then
+            return callout.key
+        end
+    end
+    return nil
 end
 
 ---@param value string
 ---@return string?
 M.get_key_contains = function(value)
-    for callout, key in pairs(callout_to_key) do
-        if value:find(callout, 1, true) then
-            return key
+    for _, callout in ipairs(callouts) do
+        if value:find(callout.text, 1, true) then
+            return callout.key
         end
     end
     return nil

@@ -88,13 +88,43 @@ async_tests.describe('callout.md', function()
             -- Quote continued
             {
                 row = { tip_start + 3, tip_start + 3 },
+                col = { 0, 1 },
+                virt_text = { { quote, 'DiagnosticOk' } },
+                virt_text_pos = 'overlay',
+            },
+            {
+                row = { tip_start + 4, tip_start + 4 },
+                col = { 0, 2 },
+                virt_text = { { quote .. ' ', 'DiagnosticOk' } },
+                virt_text_pos = 'overlay',
+            },
+            {
+                row = { tip_start + 4, tip_start + 7 },
+                col = { 0, 0 },
+                hl_eol = true,
+                hl_group = 'ColorColumn',
+            },
+            {
+                row = { tip_start + 4 },
+                col = { 5 },
+                virt_text = { { ' lua', { 'DevIconLua', 'ColorColumn' } } },
+                virt_text_pos = 'inline',
+            },
+            {
+                row = { tip_start + 5, tip_start + 5 },
+                col = { 0, 2 },
+                virt_text = { { quote .. ' ', 'DiagnosticOk' } },
+                virt_text_pos = 'overlay',
+            },
+            {
+                row = { tip_start + 6, tip_start + 6 },
                 col = { 0, 2 },
                 virt_text = { { quote .. ' ', 'DiagnosticOk' } },
                 virt_text_pos = 'overlay',
             },
         })
 
-        local important_start = 13
+        local important_start = 16
         vim.list_extend(expected, {
             -- Heading
             {
@@ -128,7 +158,7 @@ async_tests.describe('callout.md', function()
             },
         })
 
-        local warning_start = 18
+        local warning_start = 21
         vim.list_extend(expected, {
             -- Heading
             {
@@ -162,9 +192,8 @@ async_tests.describe('callout.md', function()
             },
         })
 
-        local caution_start = 23
+        local caution_start = 26
         vim.list_extend(expected, {
-            -- Heading
             {
                 row = { caution_start, caution_start + 1 },
                 col = { 0, 0 },

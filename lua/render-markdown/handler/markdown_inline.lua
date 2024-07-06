@@ -8,10 +8,9 @@ local M = {}
 ---@param root TSNode
 ---@param buf integer
 M.render = function(namespace, root, buf)
-    for id, node in state.inline_query:iter_captures(root, buf) do
-        local capture = state.inline_query.captures[id]
-        logger.debug_node(capture, node, buf)
-        M.render_node(namespace, buf, capture, node)
+    local query = state.inline_query
+    for id, node in query:iter_captures(root, buf) do
+        M.render_node(namespace, buf, query.captures[id], node)
     end
 end
 
@@ -23,6 +22,7 @@ M.render_node = function(namespace, buf, capture, node)
     local highlights = state.config.highlights
     local value = vim.treesitter.get_node_text(node, buf)
     local start_row, start_col, end_row, end_col = node:range()
+    logger.debug_node(capture, node, buf)
 
     if capture == 'code' then
         vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {

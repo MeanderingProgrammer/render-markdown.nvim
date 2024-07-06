@@ -75,6 +75,12 @@ use({
 })
 ```
 
+# Commands
+
+`:RenderMarkdownToggle` - Switch between enabling & disabling this plugin
+
+- Function can also be accessed directly through `require('render-markdown').toggle()`
+
 # Setup
 
 Below is the configuration that gets used by default, any part of it can be modified
@@ -114,15 +120,19 @@ require('render-markdown').setup({
         (task_list_marker_unchecked) @checkbox_unchecked
         (task_list_marker_checked) @checkbox_checked
 
-        (block_quote (block_quote_marker) @quote_marker)
-        (block_quote (block_continuation) @quote_marker)
-        (block_quote (paragraph (block_continuation) @quote_marker))
-        (block_quote (paragraph (inline (block_continuation) @quote_marker)))
+        (block_quote) @quote
 
         (pipe_table) @table
         (pipe_table_header) @table_head
         (pipe_table_delimiter_row) @table_delim
         (pipe_table_row) @table_row
+    ]],
+    -- Capture groups that get pulled from quote nodes
+    markdown_quote_query = [[
+        [
+            (block_quote_marker)
+            (block_continuation)
+        ] @quote_marker
     ]],
     -- Capture groups that get pulled from inline markdown
     inline_query = [[
@@ -245,31 +255,6 @@ require('render-markdown').setup({
 })
 ```
 
-# Commands
-
-`:RenderMarkdownToggle` - Switch between enabling & disabling this plugin
-
-- Function can also be accessed directly through `require('render-markdown').toggle()`
-
-# Note to `vimwiki` Users
-
-If you use [vimwiki](https://github.com/vimwiki/vimwiki), because it overrides the
-`filetype` of `markdown` files there are additional setup steps.
-
-- Add `vimwiki` to the `file_types` configuration of this plugin
-
-```lua
-require('render-markdown').setup({
-    file_types = { 'markdown', 'vimwiki' },
-})
-```
-
-- Register `markdown` as the parser for `vimwiki` files
-
-```lua
-vim.treesitter.language.register('markdown', 'vimwiki')
-```
-
 # Additional Info
 
 - [Limitations](doc/limitations.md): Known limitations of this plugin
@@ -279,3 +264,22 @@ vim.treesitter.language.register('markdown', 'vimwiki')
 - [Purpose](doc/purpose.md): Why this plugin exists
 - [Markdown Ecosystem](doc/markdown-ecosystem.md): Information about other `markdown`
   related plugins and how they co-exist
+
+> [!NOTE]
+>
+> If you use [vimwiki](https://github.com/vimwiki/vimwiki), because it overrides
+> the `filetype` of `markdown` files there are additional setup steps.
+>
+> - Add `vimwiki` to the `file_types` configuration of this plugin
+>
+> ```lua
+> require('render-markdown').setup({
+>     file_types = { 'markdown', 'vimwiki' },
+> })
+> ```
+>
+> - Register `markdown` as the parser for `vimwiki` files
+>
+> ```lua
+> vim.treesitter.language.register('markdown', 'vimwiki')
+> ```
