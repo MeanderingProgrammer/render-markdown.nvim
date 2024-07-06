@@ -107,7 +107,7 @@ async_tests.describe('callout.md', function()
             {
                 row = { tip_start + 4 },
                 col = { 5 },
-                virt_text = { { ' lua', { 'DevIconLua', 'ColorColumn' } } },
+                virt_text = { { '󰢱 lua', { 'MiniIconsAzure', 'ColorColumn' } } },
                 virt_text_pos = 'inline',
             },
             {

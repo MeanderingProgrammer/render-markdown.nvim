@@ -62,7 +62,7 @@ async_tests.describe('heading_code.md', function()
             {
                 row = { 10 },
                 col = { 3 },
-                virt_text = { { ' python', { 'DevIconPy', 'ColorColumn' } } },
+                virt_text = { { '󰌠 python', { 'MiniIconsYellow', 'ColorColumn' } } },
                 virt_text_pos = 'inline',
             },
         })

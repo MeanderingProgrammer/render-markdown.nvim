@@ -58,8 +58,9 @@ Plugin to improve viewing Markdown files in Neovim
         Used to parse `markdown` files
     - latex <https://github.com/latex-lsp/tree-sitter-latex> (Optional):
         Used to get `LaTeX` blocks from `markdown` files
-- nvim-web-devicons <https://github.com/nvim-tree/nvim-web-devicons> (Optional):
-    Used for icon above code blocks
+- Icon provider plugin (Optional): Used for icon above code blocks
+    - mini.icons <https://github.com/echasnovski/mini.nvim/blob/main/readmes/mini-icons.md>
+    - nvim-web-devicons <https://github.com/nvim-tree/nvim-web-devicons>
 - System dependencies:
     - pylatexenc <https://pypi.org/project/pylatexenc/> (Optional):
         Used to transform `LaTeX` strings to appropriate unicode using `latex2text`
@@ -75,10 +76,9 @@ LAZY.NVIM                                  *render-markdown-install-lazy.nvim*
     {
         'MeanderingProgrammer/markdown.nvim',
         name = 'render-markdown', -- Only needed if you have another plugin named markdown.nvim
-        dependencies = {
-            'nvim-treesitter/nvim-treesitter', -- Mandatory
-            'nvim-tree/nvim-web-devicons', -- Optional but recommended
-        },
+        dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
+        -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
+        -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
         config = function()
             require('render-markdown').setup({})
         end,
@@ -92,8 +92,10 @@ PACKER.NVIM                              *render-markdown-install-packer.nvim*
     use({
         'MeanderingProgrammer/markdown.nvim',
         as = 'render-markdown', -- Only needed if you have another plugin named markdown.nvim
-        after = { 'nvim-treesitter' }, -- Mandatory
-        requires = { 'nvim-tree/nvim-web-devicons', opt = true }, -- Optional but recommended
+        after = { 'nvim-treesitter' },
+        requires = { 'echasnovski/mini.nvim', opt = true }, -- if you use the mini.nvim suite
+        -- requires = { 'echasnovski/mini.icons', opt = true }, -- if you use standalone mini plugins
+        -- requires = { 'nvim-tree/nvim-web-devicons', opt = true }, -- if you prefer nvim-web-devicons
         config = function()
             require('render-markdown').setup({})
         end,
