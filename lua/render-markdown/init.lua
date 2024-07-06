@@ -195,14 +195,7 @@ M.default_config = {
             -- Background of heading line
             backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
             -- Foreground of heading character only
-            foregrounds = {
-                'markdownH1',
-                'markdownH2',
-                'markdownH3',
-                'markdownH4',
-                'markdownH5',
-                'markdownH6',
-            },
+            foregrounds = { 'markdownH1', 'markdownH2', 'markdownH3', 'markdownH4', 'markdownH5', 'markdownH6' },
         },
         -- Horizontal break
         dash = 'LineNr',

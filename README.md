@@ -19,7 +19,8 @@ Plugin to improve viewing Markdown files in Neovim
   - Headings: highlight depending on level and replaces `#` with icon
   - Horizontal breaks: replace with full-width lines
   - Code blocks: highlight to better stand out
-    - Adds language icon, requires `nvim-web-devicons` and neovim >= `0.10.0`
+    - Adds language icon, requires icon provider (`mini.icons` or `nvim-web-devicons`)
+      and neovim >= `0.10.0`
   - Inline code: highlight to better stand out
   - List bullet points: replace with provided icon based on level
   - Checkboxes: replace with provided icon based on whether they are checked
@@ -85,8 +86,15 @@ use({
 
 # Setup
 
-Below is the configuration that gets used by default, any part of it can be modified
-by the user.
+The full default configuration is provided below for reference.
+
+Any part of it can be modified however for many fields this does not make much sense.
+
+Some of the more useful fields are discussed further down.
+
+<details>
+
+<summary>Full Default Configuration</summary>
 
 ```lua
 require('render-markdown').setup({
@@ -214,14 +222,7 @@ require('render-markdown').setup({
             -- Background of heading line
             backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
             -- Foreground of heading character only
-            foregrounds = {
-                'markdownH1',
-                'markdownH2',
-                'markdownH3',
-                'markdownH4',
-                'markdownH5',
-                'markdownH6',
-            },
+            foregrounds = { 'markdownH1', 'markdownH2', 'markdownH3', 'markdownH4', 'markdownH5', 'markdownH6' },
         },
         -- Horizontal break
         dash = 'LineNr',
@@ -256,6 +257,117 @@ require('render-markdown').setup({
     },
 })
 ```
+
+</details>
+
+There are 4 main types of settings:
+
+1. Icon: the text that gets rendered
+2. Highlight: the color for text & backgrounds
+3. Style: how different components are rendered
+4. Window Options: handles conceal behavior
+
+There are 2 main ways array like values are accessed:
+
+1. Cycle: Indexed `mod` the length.
+   Example: `{ 1, 2, 3 }` @ 4 = 1.
+2. Clamp: Indexed normally but larger values use the last value in the array.
+   Example: `{ 1, 2, 3 }` @ 4 = 3.
+
+## Icon
+
+### headings
+
+Replace the `#` characters in front of headings.
+
+The number of `#` characters in the heading determines the level of the heading.
+
+The level is used to index into the table using a cycle.
+
+The icon is pre-pendeded with spaces to fill the gap and hide any additional `#`.
+
+### dash
+
+Gets repeated across the window's width when a `thematic_break` is found.
+
+### bullets
+
+Replace the `-`, `+`, and `*` characters in front of list items.
+
+A different bullet is used depending on the level of nesting for the list item.
+
+The nesting level is used to index into the table using a cycle.
+
+If the character is before a checkbox, rather than changing the icon a conceal
+is used to hide the character.
+
+### checkbox
+
+The checked `[ ]` & unchecked `[x]` are directly replaced with these values.
+
+### quote
+
+Replaces the `|` character in front of `block_quotes`.
+
+### callout
+
+This is a special instance of a `block_quote`.
+
+When the `callout` syntax is used the start, i.e. `[!NOTE]`, is replaced
+with this text.
+
+## Highlight
+
+Options are all contained in the `highlights` table.
+
+For the most part the highlight group is used directly when writing the
+associated icons. We'll cover some of the specific behaviors.
+
+### heading
+
+Both `backgrounds` and `foregrounds` are indexed by the level of the heading
+using a clamp.
+
+Both values are applied to the icon, however the background extends through
+the entire line.
+
+### table
+
+The `head` is used for the table heading, delimitter, and the line above.
+
+The `row` is used for everything else, so the main table rows and the line below.
+
+## Style
+
+### code_style
+
+Determines how `fenced_code_block`s are rendered.
+
+- `none`: disables all rendering
+- `normal`: adds background highlight group to the code block
+- `full`: `normal` + language icon & name above the code block
+
+### table_style
+
+Determines how `table`s are rendered.
+
+- `none`: disables all rendering
+- `normal`: applies the `cell_style` rendering to each row of the table
+- `full`: `normal` + a top & bottom line that fill out the table when lengths match
+
+### cell_style
+
+Determines how `table cell`s are rendered.
+
+- `overlay`: writes completely over the table, removing conceal behavior and highlights
+- `raw`: replaces only the `|` icons in each row, leaving the cell completely unmodified
+
+## Window Options
+
+Options are all contained in the `win_options` table.
+
+This changes the `conceallevel` & `concealcursor` when rendering. When not rendering
+the value is changed back to the users configured value.
 
 # Additional Info
 

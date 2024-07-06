@@ -45,40 +45,32 @@ class LuaClass:
 
 
 def main() -> None:
-    init_file: Path = Path("lua/render-markdown/init.lua")
-    update_types(init_file)
-    update_readme(init_file)
-    update_custom_handlers(init_file)
+    init_file = Path("lua/render-markdown/init.lua")
+    update_types(init_file, Path("lua/render-markdown/types.lua"))
+    update_readme(init_file, Path("README.md"))
+    update_custom_handlers(init_file, Path("doc/custom-handlers.md"))
 
 
-def update_types(init_file: Path) -> None:
+def update_types(init_file: Path, types_file: Path) -> None:
     lines: list[str] = []
     for lua_class in get_classes(init_file):
         lua_class.validate()
         lines.extend(lua_class.to_public_lines())
-
-    types_file: Path = Path("lua/render-markdown/types.lua")
     types_file.write_text("\n".join(lines))
 
 
-def update_readme(init_file: Path) -> None:
-    file = Path("README.md")
-
-    old = get_code_block(file, "enabled")
+def update_readme(init_file: Path, readme_file: Path) -> None:
+    old = get_code_block(readme_file, "enabled")
     default_config = get_default_config(init_file)
     new = "require('render-markdown').setup(" + default_config + ")"
+    readme_file.write_text(readme_file.read_text().replace(old, new))
 
-    file.write_text(file.read_text().replace(old, new))
 
-
-def update_custom_handlers(init_file: Path) -> None:
-    file = Path("doc/custom-handlers.md")
-
+def update_custom_handlers(init_file: Path, handler_file: Path) -> None:
     class_name: str = "render.md.Handler"
-    old = get_code_block(file, class_name)
+    old = get_code_block(handler_file, class_name)
     new = get_class(init_file, class_name).to_str()
-
-    file.write_text(file.read_text().replace(old, new))
+    handler_file.write_text(handler_file.read_text().replace(old, new))
 
 
 def get_class(init_file: Path, name: str) -> LuaClass:
@@ -132,7 +124,7 @@ def get_code_block(file: Path, content: str) -> str:
     return code_blocks[0]
 
 
-def ts_query(file: Path, query_string: str, target: str) -> list[str]:
+def ts_query(file: Path, query: str, target: str) -> list[str]:
     ts_language: str = {
         ".lua": "lua",
         ".md": "markdown",
@@ -140,9 +132,8 @@ def ts_query(file: Path, query_string: str, target: str) -> list[str]:
     parser = get_parser(ts_language)
     tree = parser.parse(file.read_text().encode())
 
-    language = get_language(ts_language)
-    query = language.query(query_string)
-    captures = query.captures(tree.root_node)
+    ts_query = get_language(ts_language).query(query)
+    captures = ts_query.captures(tree.root_node)
 
     values: list[str] = []
     for node, capture in captures:
