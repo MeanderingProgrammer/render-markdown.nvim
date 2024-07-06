@@ -54,7 +54,7 @@ M.render_node = function(namespace, buf, capture, node)
                 return
             end
 
-            local checkbox_text = { str.pad_to(value, checkbox.icon), checkbox.highlight }
+            local checkbox_text = { str.pad_to(value, checkbox.rendered), checkbox.highlight }
             vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
                 end_row = end_row,
                 end_col = end_col,

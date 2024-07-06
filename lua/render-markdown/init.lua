@@ -42,8 +42,8 @@ local M = {}
 ---@field public rendered any
 
 ---@class render.md.CustomCheckbox
----@field public text string
----@field public icon string
+---@field public raw string
+---@field public rendered string
 ---@field public highlight string
 
 ---@class render.md.UserCheckbox
@@ -152,7 +152,7 @@ M.default_config = {
         checked = '󰱒 ',
         -- Specify custom checkboxes, must be surrounded in square brackets
         custom = {
-            todo = { text = '[-]', icon = '󰥔 ', highlight = '@markup.raw' },
+            todo = { raw = '[-]', rendered = '󰥔 ', highlight = '@markup.raw' },
         },
     },
     -- Character that will replace the > at the start of block quotes
