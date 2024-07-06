@@ -1,5 +1,23 @@
 # Change Log
 
+## 3.3.0 (2024-07-06)
+
+### Features
+
+- Improve performance by attaching events at buffer level [#45](https://github.com/MeanderingProgrammer/markdown.nvim/issues/45)
+  [14b3a01](https://github.com/MeanderingProgrammer/markdown.nvim/commit/14b3a01fbd7de25b03dafad7398e4ce463a4d323)
+- Reduce startup time by scheduling treesitter parsing [6d153d7](https://github.com/MeanderingProgrammer/markdown.nvim/commit/6d153d749b9297c0e5cb74716f2a8aacc8df3d0e)
+- Support arbitrary nesting of block quotes & code blocks [770f7a1](https://github.com/MeanderingProgrammer/markdown.nvim/commit/770f7a13515b9fd8d4ed4d6a1d8a854b3fbeeb7e)
+- Prefer `mini.icons` for code blocks over `nvim-web-devicons` [353e445](https://github.com/MeanderingProgrammer/markdown.nvim/commit/353e4459938dd58873772e27a45c1d92bc83bafc)
+- Support custom checkbox states [#42](https://github.com/MeanderingProgrammer/markdown.nvim/issues/42)
+  [ff3e8e3](https://github.com/MeanderingProgrammer/markdown.nvim/commit/ff3e8e344004bd6acda48a59f6780b5326e8a453)
+- Support custom callouts [8f5bbbd](https://github.com/MeanderingProgrammer/markdown.nvim/commit/8f5bbbd9e29508e2fc15b6fa9228eada15fca08a)
+
+### Bug Fixes
+
+- Fix language selection logic for code blocks [#44](https://github.com/MeanderingProgrammer/markdown.nvim/issues/44)
+  [90072fd](https://github.com/MeanderingProgrammer/markdown.nvim/commit/90072fdbc28042add4cd08bef282df032bf6ac42)
+
 ## 3.2.0 (2024-06-28)
 
 ### Features
@@ -52,8 +70,8 @@
   [#31](https://github.com/MeanderingProgrammer/markdown.nvim/pull/31)
   [258da4b](https://github.com/MeanderingProgrammer/markdown.nvim/commit/258da4bcdecdc83318a515fc4c6c3e18c0c65a61)
 - In order to fix:
-  - `conceal = { default = <value_1>, rendered = <value_2> }` ->
-    `win_options = { conceallevel = { default = <value_1>, rendered = <value_2> } }`
+  - `conceal = { default = <v1>, rendered = <v2> }` ->
+    `win_options = { conceallevel = { default = <v1>, rendered = <v2> } }`
 
 ### Contributor Shoutouts
 

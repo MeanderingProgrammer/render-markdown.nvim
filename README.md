@@ -269,134 +269,118 @@ require('render-markdown').setup({
 
 </details>
 
-There are 4 main types of settings:
-
-1. Icon: the text that gets rendered
-2. Highlight: the color for text & backgrounds
-3. Style: how different components are rendered
-4. Window Options: handles conceal behavior
-
-There are 2 main ways array like values are accessed:
+We use the following definitions when discussing indexing into arrays:
 
 1. Cycle: Indexed `mod` the length.
    Example: `{ 1, 2, 3 }` @ 4 = 1.
 2. Clamp: Indexed normally but larger values use the last value in the array.
    Example: `{ 1, 2, 3 }` @ 4 = 3.
 
-## Icon
+## Headings
 
-### headings
+Icon: `headings`
+Highlight: `highlights.heading.backgrounds` & `highlights.heading.backgrounds`
+Style: N/A
 
-Replace the `#` characters in front of headings.
-
+The icons replace the `#` characters in front of headings.
 The number of `#` characters in the heading determines the level of the heading.
+The level is used to index into the icon table using a cycle.
+The icon is left padded with spaces to fill the gap and hide any additional `#`.
+The level is also used to index into both highlights tables using a clamp.
+Both are applied to the icon and the background extends through the entire line.
 
-The level is used to index into the table using a cycle.
+## Dashed Line
 
-The icon is pre-pendeded with spaces to fill the gap and hide any additional `#`.
-
-### dash
+Icon: `dash`
+Highlight: `highlights.dash`
+Style: N/A
 
 Gets repeated across the window's width when a `thematic_break` is found.
 
-### bullets
+## List Bullets
 
-Replace the `-`, `+`, and `*` characters in front of list items.
+Icon: `bullets`
+Highlight: `highlights.bullet`
+Style: N/A
 
-A different bullet is used depending on the level of nesting for the list item.
+The icons replace the `-`, `+`, and `*` characters in front of list items.
+How deeply nested the list is determines the level of the list.
+The level is used to index into the icon table using a cycle.
+If the item is a `checkbox` a conceal is instead used to hide the bullet.
 
-The nesting level is used to index into the table using a cycle.
+## Checkboxes
 
-If the character is before a checkbox, rather than changing the icon a conceal
-is used to hide the character.
+Icon: `checkbox.unchecked`, `checkbox.checkbox`, & `checkbox.custom.rendered`
+Highlight: `highlights.checkbox.unchecked`, `highlights.checkbox.checked`, & `checkbox.custom.highlight`
+Style: N/A
 
-### checkbox
+In the case of a standard checked `[x]` or unchecked `[ ]` checkbox state we simply
+overlay the appropriate icon and apply the appropriate highlight.
 
-The checked `[ ]` & unchecked `[x]` are directly replaced with these values.
-
-Additionally `custom` states can be specified, an example of this is provided with:
-`todo = { raw = '[-]', rendered = '󰥔 ', highlight = '@markup.raw' }`.
-
-This requires neovim >= `0.10.0` since it relies on `inline` extmarks.
-
-The key in the `custom` table is unused. The parts of the value are:
-
-- `raw`: matched against the raw text of a `shortcut_link`, in the same way as `callouts`
-- `rendered`: replaces the `raw` value when rendering
-- `highlight`: color used for `rendered` text
-
-### quote
-
-Replaces the `|` character in front of `block_quotes`.
-
-### callout
-
-This is a special instance of a `block_quote`.
-
-When the `callout` syntax is used the start, i.e. `[!NOTE]`, is replaced
-with this text.
-
-Additionally `custom` callouts can be specified, an example of this is provided with:
-`bug = { raw = '[!BUG]', rendered = '󰨰 Bug', highlight = 'DiagnosticError' }`.
-
-The key in the `custom` table is unused. The parts of the value are:
-
+Custom checkbox states setup through `checkbox.custom` are more involved as they
+are not part of the actual `markdown` grammar.
+As a result this requires neovim >= `0.10.0` since it relies on `inline` extmarks.
+An example comes with the default config:
+`todo = { raw = '[-]', rendered = '󰥔 ', highlight = '@markup.raw' }`
+The key part in this case `todo` is unused. The parts of the value are:
 - `raw`: matched against the raw text of a `shortcut_link`
 - `rendered`: replaces the `raw` value when rendering
 - `highlight`: color used for `rendered` text
 
-## Highlight
+## Standard Quotes
 
-Options are all contained in the `highlights` table.
+Icon: `quote`
+Highlight: `highlights.quote`
+Style: N/A
 
-For the most part the highlight group is used directly when writing the
-associated icons. We'll cover some of the specific behaviors.
+The icon replaces the `|` character in front of `block_quotes`.
 
-### heading
+## Callouts
 
-Both `backgrounds` and `foregrounds` are indexed by the level of the heading
-using a clamp.
+Icon: `callout` & `callout.custom.rendered`
+Highlight: `highlights.callout` & `callout.custom.highlight`
+Style: N/A
 
-Both values are applied to the icon, however the background extends through
-the entire line.
+Callouts are a special instance of a `block_quote` that start with a `shortcut_link`.
+When this pattern is seen the link text gets replaced by the icon.
+The highlight is then applied to the icon as well as the quote markers.
 
-### table
+Custom callouts setup through `callout.custom` behave in much the same way.
+An example comes with the default config:
+`bug = { raw = '[!BUG]', rendered = '󰨰 Bug', highlight = 'DiagnosticError' }`
+The key part in this case `bug` is unused. The parts of the value are:
+- `raw`: matched against the raw text of a `shortcut_link`
+- `rendered`: replaces the `raw` value when rendering
+- `highlight`: color used for `rendered` text
 
-The `head` is used for the table heading, delimitter, and the line above.
+## Code Blocks
 
-The `row` is used for everything else, so the main table rows and the line below.
+Icon: N/A
+Highlight: `highlights.code`
+Style: `code_style`
 
-## Style
-
-### code_style
-
-Determines how `fenced_code_block`s are rendered.
-
+`code_style` determines how code blocks are rendered:
 - `none`: disables all rendering
-- `normal`: adds background highlight group to the code block
+- `normal`: adds highlight group to the code block
 - `full`: `normal` + language icon & name above the code block
 
-### table_style
+## Tables
 
-Determines how `table`s are rendered.
+Icon: N/A
+Highlight: `highlights.table.head` & `highlights.table.row`
+Style: `table_style` & `cell_style`
 
+The `head` highlight is used for the table heading, delimitter, and the line above.
+The `row` highlight is used for everything else, main table rows and the line below.
+
+`table_style` determines how the table as a whole is rendered:
 - `none`: disables all rendering
 - `normal`: applies the `cell_style` rendering to each row of the table
 - `full`: `normal` + a top & bottom line that fill out the table when lengths match
 
-### cell_style
-
-Determines how `table cell`s are rendered.
-
+`cell_style` determines how individual cells of a table are rendered:
 - `overlay`: writes completely over the table, removing conceal behavior and highlights
 - `raw`: replaces only the `|` icons in each row, leaving the cell completely unmodified
-
-## Window Options
-
-Options are all contained in the `win_options` table.
-
-This changes the `conceallevel` & `concealcursor` when rendering. When not rendering
-the value is changed back to the users configured value.
 
 # Additional Info
 
