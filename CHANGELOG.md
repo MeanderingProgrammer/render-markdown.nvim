@@ -4,7 +4,8 @@
 
 ### Features
 
-- Improved health [7b8110b](https://github.com/MeanderingProgrammer/markdown.nvim/commit/7b8110b675766810edcbe665f53479893b02f989)
+- Improved health check [7b8110b](https://github.com/MeanderingProgrammer/markdown.nvim/commit/7b8110b675766810edcbe665f53479893b02f989)
+- Use lua to document components [d2a132e](https://github.com/MeanderingProgrammer/markdown.nvim/commit/d2a132e8ad152a3ab7a92012b0b8bf31dcb6344b)
 
 ## 3.3.0 (2024-07-06)
 
