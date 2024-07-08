@@ -4,19 +4,6 @@ local state = require('render-markdown.state')
 ---@field text string
 ---@field highlight string
 
----@class render.md.CalloutInfo
----@field text string
----@field key string
-
----@type render.md.CalloutInfo[]
-local callouts = {
-    { text = '[!NOTE]', key = 'note' },
-    { text = '[!TIP]', key = 'tip' },
-    { text = '[!IMPORTANT]', key = 'important' },
-    { text = '[!WARNING]', key = 'warning' },
-    { text = '[!CAUTION]', key = 'caution' },
-}
-
 local M = {}
 
 ---@param value string
@@ -34,15 +21,7 @@ M.callout = function(value, comparison)
             error(string.format('Unhandled comparison: %s', comparison))
         end
     end
-    for _, callout in ipairs(callouts) do
-        if matches(callout.text) then
-            return {
-                text = state.config.callout[callout.key],
-                highlight = state.config.highlights.callout[callout.key],
-            }
-        end
-    end
-    for _, callout in pairs(state.config.callout.custom) do
+    for _, callout in pairs(state.config.callout) do
         if matches(callout.raw) then
             return { text = callout.rendered, highlight = callout.highlight }
         end

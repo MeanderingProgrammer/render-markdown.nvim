@@ -124,7 +124,7 @@ async_tests.describe('table.md', function()
     end)
 
     async_tests.it('raw', function()
-        util.setup('tests/data/table.md', { cell_style = 'raw' })
+        util.setup('tests/data/table.md', { pipe_table = { cell = 'raw' } })
 
         local expected = {}
 

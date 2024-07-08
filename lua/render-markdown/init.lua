@@ -3,36 +3,6 @@ local state = require('render-markdown.state')
 
 local M = {}
 
----@class render.md.UserCalloutHighlights
----@field public note? string
----@field public tip? string
----@field public important? string
----@field public warning? string
----@field public caution? string
-
----@class render.md.UserTableHighlights
----@field public head? string
----@field public row? string
-
----@class render.md.UserCheckboxHighlights
----@field public unchecked? string
----@field public checked? string
-
----@class render.md.UserHeadingHighlights
----@field public backgrounds? string[]
----@field public foregrounds? string[]
-
----@class render.md.UserHighlights
----@field public heading? render.md.UserHeadingHighlights
----@field public dash? string
----@field public code? string
----@field public bullet? string
----@field public checkbox? render.md.UserCheckboxHighlights
----@field public table? render.md.UserTableHighlights
----@field public latex? string
----@field public quote? string
----@field public callout? render.md.UserCalloutHighlights
-
 ---@class render.md.Handler
 ---@field public render fun(namespace: integer, root: TSNode, buf: integer)
 ---@field public extends? boolean
@@ -41,54 +11,69 @@ local M = {}
 ---@field public default any
 ---@field public rendered any
 
----@class render.md.CustomComponent
----@field public raw string
----@field public rendered string
----@field public highlight string
+---@class render.md.UserPipeTable
+---@field public style? 'full'|'normal'|'none'
+---@field public cell? 'overlay'|'raw'
+---@field public head? string
+---@field public row? string
 
----@class render.md.UserCallout
----@field public note? string
----@field public tip? string
----@field public important? string
----@field public warning? string
----@field public caution? string
----@field public custom? table<string, render.md.CustomComponent>
+---@class render.md.UserCustomComponent
+---@field public raw? string
+---@field public rendered? string
+---@field public highlight? string
 
 ---@class render.md.UserCheckbox
----@field public unchecked? string
----@field public checked? string
+---@field public unchecked? render.md.UserBasicComponent
+---@field public checked? render.md.UserBasicComponent
 ---@field public custom? table<string, render.md.CustomComponent>
 
+---@class render.md.UserBullet
+---@field public icons? string[]
+---@field public highlight? string
+
+---@class render.md.UserBasicComponent
+---@field public icon? string
+---@field public highlight? string
+
+---@class render.md.UserCode
+---@field public style? 'full'|'normal'|'none'
+---@field public highlight? string
+
+---@class render.md.UserHeading
+---@field public icons? string[]
+---@field public backgrounds? string[]
+---@field public foregrounds? string[]
+
+---@class render.md.UserLatex
+---@field public enabled? boolean
+---@field public converter? string
+---@field public highlight? string
+
 ---@class render.md.UserConfig
----@field public start_enabled? boolean
----@field public latex_enabled? boolean
+---@field public enabled? boolean
 ---@field public max_file_size? number
 ---@field public markdown_query? string
 ---@field public markdown_quote_query? string
 ---@field public inline_query? string
----@field public latex_converter? string
 ---@field public log_level? 'debug'|'error'
 ---@field public file_types? string[]
 ---@field public render_modes? string[]
----@field public headings? string[]
----@field public dash? string
----@field public bullets? string[]
+---@field public latex? render.md.UserLatex
+---@field public heading? render.md.UserHeading
+---@field public code? render.md.UserCode
+---@field public dash? render.md.UserBasicComponent
+---@field public bullet? render.md.UserBullet
 ---@field public checkbox? render.md.UserCheckbox
----@field public quote? string
----@field public callout? render.md.UserCallout
+---@field public quote? render.md.UserBasicComponent
+---@field public pipe_table? render.md.UserPipeTable
+---@field public callout? table<string, render.md.UserCustomComponent>
 ---@field public win_options? table<string, render.md.WindowOption>
----@field public code_style? 'full'|'normal'|'none'
----@field public table_style? 'full'|'normal'|'none'
----@field public cell_style? 'overlay'|'raw'
 ---@field public custom_handlers? table<string, render.md.Handler>
----@field public highlights? render.md.UserHighlights
 
 ---@type render.md.Config
 M.default_config = {
     -- Whether Markdown should be rendered by default or not
-    start_enabled = true,
-    -- Whether LaTeX should be rendered, mainly used for health check
-    latex_enabled = true,
+    enabled = true,
     -- Maximum file size (in MB) that this plugin will attempt to render
     -- Any file larger than this will effectively be ignored
     max_file_size = 1.5,
@@ -137,8 +122,6 @@ M.default_config = {
 
         (shortcut_link) @callout
     ]],
-    -- Executable used to convert latex formula to rendered unicode
-    latex_converter = 'latex2text',
     -- The level of logs to write to file: vim.fn.stdpath('state') .. '/render-markdown.log'
     -- Only intended to be used for plugin development / debugging
     log_level = 'error',
@@ -147,34 +130,112 @@ M.default_config = {
     -- Vim modes that will show a rendered view of the markdown file
     -- All other modes will be uneffected by this plugin
     render_modes = { 'n', 'c' },
-    -- Characters that will replace the # at the start of headings
-    headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
-    -- Character to use for the horizontal break
-    dash = '─',
-    -- Character to use for the bullet points in lists
-    bullets = { '●', '○', '◆', '◇' },
+    latex = {
+        -- Whether LaTeX should be rendered, mainly used for health check
+        enabled = true,
+        -- Executable used to convert latex formula to rendered unicode
+        converter = 'latex2text',
+        -- Highlight for LaTeX blocks
+        highlight = '@markup.math',
+    },
+    heading = {
+        -- Replaces '#+' of 'atx_h._marker'
+        -- The number of '#' in the heading determines the 'level'
+        -- The 'level' is used to index into the array using a cycle
+        -- The result is left padded with spaces to hide any additional '#'
+        icons = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
+        -- The 'level' is used to index into the array using a clamp
+        -- Highlight for the heading icon and extends through the entire line
+        backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
+        -- The 'level' is used to index into the array using a clamp
+        -- Highlight for the heading icon only
+        foregrounds = { 'markdownH1', 'markdownH2', 'markdownH3', 'markdownH4', 'markdownH5', 'markdownH6' },
+    },
+    code = {
+        -- Determines how code blocks are rendered:
+        --  none: disables all rendering
+        --  normal: adds highlight group to the code block
+        --  full: normal + language icon & name above the code block
+        style = 'full',
+        -- Highlight for code blocks
+        highlight = 'ColorColumn',
+    },
+    dash = {
+        -- Replaces '---'|'***'|'___'|'* * *' of 'thematic_break'
+        -- The icon gets repeated across the window's width
+        icon = '─',
+        -- Highlight for the whole line generated from the icon
+        highlight = 'LineNr',
+    },
+    bullet = {
+        -- Replaces '-'|'+'|'*' of 'list_item'
+        -- How deeply nested the list is determines the 'level'
+        -- The 'level' is used to index into the array using a cycle
+        -- If the item is a 'checkbox' a conceal is used to hide the bullet instead
+        icons = { '●', '○', '◆', '◇' },
+        -- Highlight for the bullet icon
+        highlight = 'Normal',
+    },
+    -- Checkboxes are a special instance of a 'list_item' that start with a 'shortcut_link'
+    -- There are two special states for unchecked & checked defined in the markdown grammar
     checkbox = {
-        -- Character that will replace the [ ] in unchecked checkboxes
-        unchecked = '󰄱 ',
-        -- Character that will replace the [x] in checked checkboxes
-        checked = '󰱒 ',
-        -- Specify custom checkboxes, must be surrounded in square brackets
+        unchecked = {
+            -- Replaces '[ ]' of 'task_list_marker_unchecked'
+            icon = '󰄱 ',
+            -- Highlight for the unchecked icon
+            highlight = '@markup.list.unchecked',
+        },
+        checked = {
+            -- Replaces '[x]' of 'task_list_marker_checked'
+            icon = '󰱒 ',
+            -- Highligh for the checked icon
+            highlight = '@markup.heading',
+        },
+        -- Define custom checkbox states, more involved as they are not part of the markdown grammar
+        -- As a result this requires neovim >= 0.10.0 since it relies on 'inline' extmarks
+        -- Can specify as many additional states as you like following the 'todo' pattern below
+        --   The key in this case 'todo' is for healthcheck and to allow users to change its values
+        --   'raw': Matched against the raw text of a 'shortcut_link'
+        --   'rendered': Replaces the 'raw' value when rendering
+        --   'highlight': Highlight for the 'rendered' icon
         custom = {
             todo = { raw = '[-]', rendered = '󰥔 ', highlight = '@markup.raw' },
         },
     },
-    -- Character that will replace the > at the start of block quotes
-    quote = '▋',
-    -- Symbol / text to use for different callouts
+    quote = {
+        -- Replaces '>' of 'block_quote'
+        icon = '▋',
+        -- Highlight for the quote icon
+        highlight = '@markup.quote',
+    },
+    pipe_table = {
+        -- Determines how the table as a whole is rendered:
+        --  none: disables all rendering
+        --  normal: applies the 'cell' style rendering to each row of the table
+        --  full: normal + a top & bottom line that fill out the table when lengths match
+        style = 'full',
+        -- Determines how individual cells of a table are rendered:
+        --  overlay: writes completely over the table, removing conceal behavior and highlights
+        --  raw: replaces only the '|' characters in each row, leaving the cells completely unmodified
+        cell = 'overlay',
+        -- Highlight for table heading, delimitter, and the line above
+        head = '@markup.heading',
+        -- Highlight for everything else, main table rows and the line below
+        row = 'Normal',
+    },
+    -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'
+    -- Can specify as many additional values as you like following the pattern from any below, such as 'note'
+    --   The key in this case 'note' is for healthcheck and to allow users to change its values
+    --   'raw': Matched against the raw text of a 'shortcut_link'
+    --   'rendered': Replaces the 'raw' value when rendering
+    --   'highlight': Highlight for the 'rendered' text and quote markers
     callout = {
-        note = '󰋽 Note',
-        tip = '󰌶 Tip',
-        important = '󰅾 Important',
-        warning = '󰀪 Warning',
-        caution = '󰳦 Caution',
-        custom = {
-            bug = { raw = '[!BUG]', rendered = '󰨰 Bug', highlight = 'DiagnosticError' },
-        },
+        note = { raw = '[!NOTE]', rendered = '󰋽 Note', highlight = 'DiagnosticInfo' },
+        tip = { raw = '[!TIP]', rendered = '󰌶 Tip', highlight = 'DiagnosticOk' },
+        important = { raw = '[!IMPORTANT]', rendered = '󰅾 Important', highlight = 'DiagnosticHint' },
+        warning = { raw = '[!WARNING]', rendered = '󰀪 Warning', highlight = 'DiagnosticWarn' },
+        caution = { raw = '[!CAUTION]', rendered = '󰳦 Caution', highlight = 'DiagnosticError' },
+        bug = { raw = '[!BUG]', rendered = '󰨰 Bug', highlight = 'DiagnosticError' },
     },
     -- Window options to use that change between rendered and raw view
     win_options = {
@@ -193,68 +254,15 @@ M.default_config = {
             rendered = 'nvic',
         },
     },
-    -- Determines how code blocks are rendered
-    --  full: adds language icon above code block if possible + normal behavior
-    --  normal: renders a background
-    --  none: disables rendering
-    code_style = 'full',
-    -- Determines how tables are rendered
-    --  full: adds a line above and below tables + normal behavior
-    --  normal: renders the rows of tables
-    --  none: disables rendering
-    table_style = 'full',
-    -- Determines how table cells are rendered
-    --  overlay: writes over the top of cells removing conealing and highlighting
-    --  raw: will leave the cells as they and only replace table related symbols
-    cell_style = 'overlay',
     -- Mapping from treesitter language to user defined handlers
-    -- See 'Custom Handlers' section for more info
+    -- See 'Custom Handlers' document for more info
     custom_handlers = {},
-    -- Define the highlight groups to use when rendering various components
-    highlights = {
-        heading = {
-            -- Background of heading line
-            backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
-            -- Foreground of heading character only
-            foregrounds = { 'markdownH1', 'markdownH2', 'markdownH3', 'markdownH4', 'markdownH5', 'markdownH6' },
-        },
-        -- Horizontal break
-        dash = 'LineNr',
-        -- Code blocks
-        code = 'ColorColumn',
-        -- Bullet points in list
-        bullet = 'Normal',
-        checkbox = {
-            -- Unchecked checkboxes
-            unchecked = '@markup.list.unchecked',
-            -- Checked checkboxes
-            checked = '@markup.heading',
-        },
-        table = {
-            -- Header of a markdown table
-            head = '@markup.heading',
-            -- Non header rows in a markdown table
-            row = 'Normal',
-        },
-        -- LaTeX blocks
-        latex = '@markup.math',
-        -- Quote character in a block quote
-        quote = '@markup.quote',
-        -- Highlights to use for different callouts
-        callout = {
-            note = 'DiagnosticInfo',
-            tip = 'DiagnosticOk',
-            important = 'DiagnosticHint',
-            warning = 'DiagnosticWarn',
-            caution = 'DiagnosticError',
-        },
-    },
 }
 
 ---@param opts? render.md.UserConfig
 function M.setup(opts)
     state.config = vim.tbl_deep_extend('force', M.default_config, opts or {})
-    state.enabled = state.config.start_enabled
+    state.enabled = state.config.enabled
     vim.schedule(function()
         state.markdown_query = vim.treesitter.query.parse('markdown', state.config.markdown_query)
         state.markdown_quote_query = vim.treesitter.query.parse('markdown', state.config.markdown_quote_query)

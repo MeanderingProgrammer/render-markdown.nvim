@@ -101,9 +101,7 @@ Some of the more useful fields are discussed further down.
 ```lua
 require('render-markdown').setup({
     -- Whether Markdown should be rendered by default or not
-    start_enabled = true,
-    -- Whether LaTeX should be rendered, mainly used for health check
-    latex_enabled = true,
+    enabled = true,
     -- Maximum file size (in MB) that this plugin will attempt to render
     -- Any file larger than this will effectively be ignored
     max_file_size = 1.5,
@@ -152,8 +150,6 @@ require('render-markdown').setup({
 
         (shortcut_link) @callout
     ]],
-    -- Executable used to convert latex formula to rendered unicode
-    latex_converter = 'latex2text',
     -- The level of logs to write to file: vim.fn.stdpath('state') .. '/render-markdown.log'
     -- Only intended to be used for plugin development / debugging
     log_level = 'error',
@@ -162,34 +158,112 @@ require('render-markdown').setup({
     -- Vim modes that will show a rendered view of the markdown file
     -- All other modes will be uneffected by this plugin
     render_modes = { 'n', 'c' },
-    -- Characters that will replace the # at the start of headings
-    headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
-    -- Character to use for the horizontal break
-    dash = '─',
-    -- Character to use for the bullet points in lists
-    bullets = { '●', '○', '◆', '◇' },
+    latex = {
+        -- Whether LaTeX should be rendered, mainly used for health check
+        enabled = true,
+        -- Executable used to convert latex formula to rendered unicode
+        converter = 'latex2text',
+        -- Highlight for LaTeX blocks
+        highlight = '@markup.math',
+    },
+    heading = {
+        -- Replaces '#+' of 'atx_h._marker'
+        -- The number of '#' in the heading determines the 'level'
+        -- The 'level' is used to index into the array using a cycle
+        -- The result is left padded with spaces to hide any additional '#'
+        icons = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
+        -- The 'level' is used to index into the array using a clamp
+        -- Highlight for the heading icon and extends through the entire line
+        backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
+        -- The 'level' is used to index into the array using a clamp
+        -- Highlight for the heading icon only
+        foregrounds = { 'markdownH1', 'markdownH2', 'markdownH3', 'markdownH4', 'markdownH5', 'markdownH6' },
+    },
+    code = {
+        -- Determines how code blocks are rendered:
+        --  none: disables all rendering
+        --  normal: adds highlight group to the code block
+        --  full: normal + language icon & name above the code block
+        style = 'full',
+        -- Highlight for code blocks
+        highlight = 'ColorColumn',
+    },
+    dash = {
+        -- Replaces '---'|'***'|'___'|'* * *' of 'thematic_break'
+        -- The icon gets repeated across the window's width
+        icon = '─',
+        -- Highlight for the whole line generated from the icon
+        highlight = 'LineNr',
+    },
+    bullet = {
+        -- Replaces '-'|'+'|'*' of 'list_item'
+        -- How deeply nested the list is determines the 'level'
+        -- The 'level' is used to index into the array using a cycle
+        -- If the item is a 'checkbox' a conceal is used to hide the bullet instead
+        icons = { '●', '○', '◆', '◇' },
+        -- Highlight for the bullet icon
+        highlight = 'Normal',
+    },
+    -- Checkboxes are a special instance of a 'list_item' that start with a 'shortcut_link'
+    -- There are two special states for unchecked & checked defined in the markdown grammar
     checkbox = {
-        -- Character that will replace the [ ] in unchecked checkboxes
-        unchecked = '󰄱 ',
-        -- Character that will replace the [x] in checked checkboxes
-        checked = '󰱒 ',
-        -- Specify custom checkboxes, must be surrounded in square brackets
+        unchecked = {
+            -- Replaces '[ ]' of 'task_list_marker_unchecked'
+            icon = '󰄱 ',
+            -- Highlight for the unchecked icon
+            highlight = '@markup.list.unchecked',
+        },
+        checked = {
+            -- Replaces '[x]' of 'task_list_marker_checked'
+            icon = '󰱒 ',
+            -- Highligh for the checked icon
+            highlight = '@markup.heading',
+        },
+        -- Define custom checkbox states, more involved as they are not part of the markdown grammar
+        -- As a result this requires neovim >= 0.10.0 since it relies on 'inline' extmarks
+        -- Can specify as many additional states as you like following the 'todo' pattern below
+        --   The key in this case 'todo' is for healthcheck and to allow users to change its values
+        --   'raw': Matched against the raw text of a 'shortcut_link'
+        --   'rendered': Replaces the 'raw' value when rendering
+        --   'highlight': Highlight for the 'rendered' icon
         custom = {
             todo = { raw = '[-]', rendered = '󰥔 ', highlight = '@markup.raw' },
         },
     },
-    -- Character that will replace the > at the start of block quotes
-    quote = '▋',
-    -- Symbol / text to use for different callouts
+    quote = {
+        -- Replaces '>' of 'block_quote'
+        icon = '▋',
+        -- Highlight for the quote icon
+        highlight = '@markup.quote',
+    },
+    pipe_table = {
+        -- Determines how the table as a whole is rendered:
+        --  none: disables all rendering
+        --  normal: applies the 'cell' style rendering to each row of the table
+        --  full: normal + a top & bottom line that fill out the table when lengths match
+        style = 'full',
+        -- Determines how individual cells of a table are rendered:
+        --  overlay: writes completely over the table, removing conceal behavior and highlights
+        --  raw: replaces only the '|' characters in each row, leaving the cells completely unmodified
+        cell = 'overlay',
+        -- Highlight for table heading, delimitter, and the line above
+        head = '@markup.heading',
+        -- Highlight for everything else, main table rows and the line below
+        row = 'Normal',
+    },
+    -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'
+    -- Can specify as many additional values as you like following the pattern from any below, such as 'note'
+    --   The key in this case 'note' is for healthcheck and to allow users to change its values
+    --   'raw': Matched against the raw text of a 'shortcut_link'
+    --   'rendered': Replaces the 'raw' value when rendering
+    --   'highlight': Highlight for the 'rendered' text and quote markers
     callout = {
-        note = '󰋽 Note',
-        tip = '󰌶 Tip',
-        important = '󰅾 Important',
-        warning = '󰀪 Warning',
-        caution = '󰳦 Caution',
-        custom = {
-            bug = { raw = '[!BUG]', rendered = '󰨰 Bug', highlight = 'DiagnosticError' },
-        },
+        note = { raw = '[!NOTE]', rendered = '󰋽 Note', highlight = 'DiagnosticInfo' },
+        tip = { raw = '[!TIP]', rendered = '󰌶 Tip', highlight = 'DiagnosticOk' },
+        important = { raw = '[!IMPORTANT]', rendered = '󰅾 Important', highlight = 'DiagnosticHint' },
+        warning = { raw = '[!WARNING]', rendered = '󰀪 Warning', highlight = 'DiagnosticWarn' },
+        caution = { raw = '[!CAUTION]', rendered = '󰳦 Caution', highlight = 'DiagnosticError' },
+        bug = { raw = '[!BUG]', rendered = '󰨰 Bug', highlight = 'DiagnosticError' },
     },
     -- Window options to use that change between rendered and raw view
     win_options = {
@@ -208,62 +282,9 @@ require('render-markdown').setup({
             rendered = 'nvic',
         },
     },
-    -- Determines how code blocks are rendered
-    --  full: adds language icon above code block if possible + normal behavior
-    --  normal: renders a background
-    --  none: disables rendering
-    code_style = 'full',
-    -- Determines how tables are rendered
-    --  full: adds a line above and below tables + normal behavior
-    --  normal: renders the rows of tables
-    --  none: disables rendering
-    table_style = 'full',
-    -- Determines how table cells are rendered
-    --  overlay: writes over the top of cells removing conealing and highlighting
-    --  raw: will leave the cells as they and only replace table related symbols
-    cell_style = 'overlay',
     -- Mapping from treesitter language to user defined handlers
-    -- See 'Custom Handlers' section for more info
+    -- See 'Custom Handlers' document for more info
     custom_handlers = {},
-    -- Define the highlight groups to use when rendering various components
-    highlights = {
-        heading = {
-            -- Background of heading line
-            backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
-            -- Foreground of heading character only
-            foregrounds = { 'markdownH1', 'markdownH2', 'markdownH3', 'markdownH4', 'markdownH5', 'markdownH6' },
-        },
-        -- Horizontal break
-        dash = 'LineNr',
-        -- Code blocks
-        code = 'ColorColumn',
-        -- Bullet points in list
-        bullet = 'Normal',
-        checkbox = {
-            -- Unchecked checkboxes
-            unchecked = '@markup.list.unchecked',
-            -- Checked checkboxes
-            checked = '@markup.heading',
-        },
-        table = {
-            -- Header of a markdown table
-            head = '@markup.heading',
-            -- Non header rows in a markdown table
-            row = 'Normal',
-        },
-        -- LaTeX blocks
-        latex = '@markup.math',
-        -- Quote character in a block quote
-        quote = '@markup.quote',
-        -- Highlights to use for different callouts
-        callout = {
-            note = 'DiagnosticInfo',
-            tip = 'DiagnosticOk',
-            important = 'DiagnosticHint',
-            warning = 'DiagnosticWarn',
-            caution = 'DiagnosticError',
-        },
-    },
 })
 ```
 
@@ -280,20 +301,34 @@ We use the following definitions when discussing indexing into arrays:
 
 ```lua
 require('render-markdown').setup({
-    -- Replaces '#+' of 'atx_h._marker'
-    -- The number of '#' in the heading determines the 'level'
-    -- The 'level' is used to index into the array using a cycle
-    -- The result is left padded with spaces to hide any additional '#'
-    headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
-    highlights = {
-        heading = {
-            -- The 'level' is used to index into the array using a clamp
-            -- Applies to the heading icon and extends through the entire line
-            backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
-            -- The 'level' is used to index into the array using a clamp
-            -- Applies to the heading icon only
-            foregrounds = { 'markdownH1', 'markdownH2', 'markdownH3', 'markdownH4', 'markdownH5', 'markdownH6' },
-        },
+    heading = {
+        -- Replaces '#+' of 'atx_h._marker'
+        -- The number of '#' in the heading determines the 'level'
+        -- The 'level' is used to index into the array using a cycle
+        -- The result is left padded with spaces to hide any additional '#'
+        icons = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
+        -- The 'level' is used to index into the array using a clamp
+        -- Highlight for the heading icon and extends through the entire line
+        backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
+        -- The 'level' is used to index into the array using a clamp
+        -- Highlight for the heading icon only
+        foregrounds = { 'markdownH1', 'markdownH2', 'markdownH3', 'markdownH4', 'markdownH5', 'markdownH6' },
+    },
+})
+```
+
+## Code Blocks
+
+```lua
+require('render-markdown').setup({
+    code = {
+        -- Determines how code blocks are rendered:
+        --  none: disables all rendering
+        --  normal: adds highlight group to the code block
+        --  full: normal + language icon & name above the code block
+        style = 'full',
+        -- Highlight for code blocks
+        highlight = 'ColorColumn',
     },
 })
 ```
@@ -302,12 +337,12 @@ require('render-markdown').setup({
 
 ```lua
 require('render-markdown').setup({
-    -- Replaces '---'|'***'|'___'|'* * *' of 'thematic_break'
-    -- The icon gets repeated across the window's width
-    dash = '─',
-    highlights = {
-        -- Applies to the whole line generated from the icon
-        dash = 'LineNr',
+    dash = {
+        -- Replaces '---'|'***'|'___'|'* * *' of 'thematic_break'
+        -- The icon gets repeated across the window's width
+        icon = '─',
+        -- Highlight for the whole line generated from the icon
+        highlight = 'LineNr',
     },
 })
 ```
@@ -316,14 +351,14 @@ require('render-markdown').setup({
 
 ```lua
 require('render-markdown').setup({
-    -- Replaces '-'|'+'|'*' of 'list_item'
-    -- How deeply nested the list is determines the 'level'
-    -- The 'level' is used to index into the array using a cycle
-    -- If the item is a 'checkbox' a conceal is used to hide the bullet instead
-    bullets = { '●', '○', '◆', '◇' },
-    highlights = {
-        -- Applies the bullet icon
-        bullet = 'Normal',
+    bullet = {
+        -- Replaces '-'|'+'|'*' of 'list_item'
+        -- How deeply nested the list is determines the 'level'
+        -- The 'level' is used to index into the array using a cycle
+        -- If the item is a 'checkbox' a conceal is used to hide the bullet instead
+        icons = { '●', '○', '◆', '◇' },
+        -- Highlight for the bullet icon
+        highlight = 'Normal',
     },
 })
 ```
@@ -335,31 +370,27 @@ require('render-markdown').setup({
     -- Checkboxes are a special instance of a 'list_item' that start with a 'shortcut_link'
     -- There are two special states for unchecked & checked defined in the markdown grammar
     checkbox = {
-        -- Replaces '[ ]' of 'task_list_marker_unchecked'
-        unchecked = '󰄱 ',
-        -- Replaces '[x]' of 'task_list_marker_checked'
-        checked = '󰱒 ',
+        unchecked = {
+            -- Replaces '[ ]' of 'task_list_marker_unchecked'
+            icon = '󰄱 ',
+            -- Highlight for the unchecked icon
+            highlight = '@markup.list.unchecked',
+        },
+        checked = {
+            -- Replaces '[x]' of 'task_list_marker_checked'
+            icon = '󰱒 ',
+            -- Highligh for the checked icon
+            highlight = '@markup.heading',
+        },
         -- Define custom checkbox states, more involved as they are not part of the markdown grammar
         -- As a result this requires neovim >= 0.10.0 since it relies on 'inline' extmarks
         -- Can specify as many additional states as you like following the 'todo' pattern below
+        --   The key in this case 'todo' is for healthcheck and to allow users to change its values
+        --   'raw': Matched against the raw text of a 'shortcut_link'
+        --   'rendered': Replaces the 'raw' value when rendering
+        --   'highlight': Highlight for the 'rendered' icon
         custom = {
-            -- The key in this case `todo` is unused
-            todo = {
-                -- Matched against the raw text of a 'shortcut_link'
-                raw = '[-]',
-                -- Replaces the 'raw' value when rendering
-                rendered = '󰥔 ',
-                -- Applies to the 'rendered' icon
-                highlight = '@markup.raw'
-            },
-        },
-    },
-    highlights = {
-        checkbox = {
-            -- Applies to the unchecked icon
-            unchecked = '@markup.list.unchecked',
-            -- Applies to the checked icon
-            checked = '@markup.heading',
+            todo = { raw = '[-]', rendered = '󰥔 ', highlight = '@markup.raw' },
         },
     },
 })
@@ -369,11 +400,33 @@ require('render-markdown').setup({
 
 ```lua
 require('render-markdown').setup({
-    -- Replaces '>' of 'block_quote'
-    quote = '▋',
-    highlights = {
-        -- Applies to the quote icon
-        quote = '@markup.quote',
+    quote = {
+        -- Replaces '>' of 'block_quote'
+        icon = '▋',
+        -- Highlight for the quote icon
+        highlight = '@markup.quote',
+    },
+})
+```
+
+## Tables
+
+```lua
+require('render-markdown').setup({
+    pipe_table = {
+        -- Determines how the table as a whole is rendered:
+        --  none: disables all rendering
+        --  normal: applies the 'cell' style rendering to each row of the table
+        --  full: normal + a top & bottom line that fill out the table when lengths match
+        style = 'full',
+        -- Determines how individual cells of a table are rendered:
+        --  overlay: writes completely over the table, removing conceal behavior and highlights
+        --  raw: replaces only the '|' characters in each row, leaving the cells completely unmodified
+        cell = 'overlay',
+        -- Highlight for table heading, delimitter, and the line above
+        head = '@markup.heading',
+        -- Highlight for everything else, main table rows and the line below
+        row = 'Normal',
     },
 })
 ```
@@ -383,79 +436,18 @@ require('render-markdown').setup({
 ```lua
 require('render-markdown').setup({
     -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'
+    -- Can specify as many additional values as you like following the pattern from any below, such as 'note'
+    --   The key in this case 'note' is for healthcheck and to allow users to change its values
+    --   'raw': Matched against the raw text of a 'shortcut_link'
+    --   'rendered': Replaces the 'raw' value when rendering
+    --   'highlight': Highlight for the 'rendered' text and quote markers
     callout = {
-        -- Replaces '[!NOTE]'
-        note = '󰋽 Note',
-        -- Replaces '[!TIP]'
-        tip = '󰌶 Tip',
-        -- Replaces '[!IMPORTANT]'
-        important = '󰅾 Important',
-        -- Replaces '[!WARNING]'
-        warning = '󰀪 Warning',
-        -- Replaces '[!CAUTION]'
-        caution = '󰳦 Caution',
-        -- Define custom callouts, can specify as many as you like following the 'bug' pattern below
-        custom = {
-            -- The key in this case `bug` is unused
-            bug = {
-                -- Matched against the raw text of a 'shortcut_link'
-                raw = '[!BUG]',
-                -- Replaces the 'raw' value when rendering
-                rendered = '󰨰 Bug',
-                -- Applies to the 'rendered' text and quote markers
-                highlight = 'DiagnosticError',
-            },
-        },
-    },
-    highlights = {
-        -- Used for standard callouts, applies to both text and quote markers
-        callout = {
-            note = 'DiagnosticInfo',
-            tip = 'DiagnosticOk',
-            important = 'DiagnosticHint',
-            warning = 'DiagnosticWarn',
-            caution = 'DiagnosticError',
-        },
-    },
-})
-```
-
-## Code Blocks
-
-```lua
-require('render-markdown').setup({
-    -- Determines how code blocks are rendered:
-    --  none: disables all rendering
-    --  normal: adds highlight group to the code block
-    --  full: normal + language icon & name above the code block
-    code_style = 'full',
-    highlights = {
-        -- Applies to code blocks
-        code = 'ColorColumn',
-    },
-})
-```
-
-## Tables
-
-```lua
-require('render-markdown').setup({
-    -- Determines how the table as a whole is rendered:
-    --  none: disables all rendering
-    --  normal: applies the 'cell_style' rendering to each row of the table
-    --  full: normal + a top & bottom line that fill out the table when lengths match
-    table_style = 'full',
-    -- Determines how individual cells of a table are rendered:
-    --  overlay: writes completely over the table, removing conceal behavior and highlights
-    --  raw: replaces only the '|' characters in each row, leaving the cells completely unmodified
-    cell_style = 'overlay',
-    highlights = {
-        table = {
-            -- Applies to table heading, delimitter, and the line above
-            head = '@markup.heading',
-            -- Applies to everything else, main table rows and the line below
-            row = 'Normal',
-        },
+        note = { raw = '[!NOTE]', rendered = '󰋽 Note', highlight = 'DiagnosticInfo' },
+        tip = { raw = '[!TIP]', rendered = '󰌶 Tip', highlight = 'DiagnosticOk' },
+        important = { raw = '[!IMPORTANT]', rendered = '󰅾 Important', highlight = 'DiagnosticHint' },
+        warning = { raw = '[!WARNING]', rendered = '󰀪 Warning', highlight = 'DiagnosticWarn' },
+        caution = { raw = '[!CAUTION]', rendered = '󰳦 Caution', highlight = 'DiagnosticError' },
+        bug = { raw = '[!BUG]', rendered = '󰨰 Bug', highlight = 'DiagnosticError' },
     },
 })
 ```

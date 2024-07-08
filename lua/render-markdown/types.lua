@@ -1,66 +1,58 @@
----@class render.md.CalloutHighlights
----@field public note string
----@field public tip string
----@field public important string
----@field public warning string
----@field public caution string
-
----@class render.md.TableHighlights
+---@class render.md.PipeTable
+---@field public style 'full'|'normal'|'none'
+---@field public cell 'overlay'|'raw'
 ---@field public head string
 ---@field public row string
 
----@class render.md.CheckboxHighlights
----@field public unchecked string
----@field public checked string
+---@class render.md.CustomComponent
+---@field public raw string
+---@field public rendered string
+---@field public highlight string
 
----@class render.md.HeadingHighlights
+---@class render.md.Checkbox
+---@field public unchecked render.md.BasicComponent
+---@field public checked render.md.BasicComponent
+---@field public custom table<string, render.md.CustomComponent>
+
+---@class render.md.Bullet
+---@field public icons string[]
+---@field public highlight string
+
+---@class render.md.BasicComponent
+---@field public icon string
+---@field public highlight string
+
+---@class render.md.Code
+---@field public style 'full'|'normal'|'none'
+---@field public highlight string
+
+---@class render.md.Heading
+---@field public icons string[]
 ---@field public backgrounds string[]
 ---@field public foregrounds string[]
 
----@class render.md.Highlights
----@field public heading render.md.HeadingHighlights
----@field public dash string
----@field public code string
----@field public bullet string
----@field public checkbox render.md.CheckboxHighlights
----@field public table render.md.TableHighlights
----@field public latex string
----@field public quote string
----@field public callout render.md.CalloutHighlights
-
----@class render.md.Callout
----@field public note string
----@field public tip string
----@field public important string
----@field public warning string
----@field public caution string
----@field public custom table<string, render.md.CustomComponent>
-
----@class render.md.Checkbox
----@field public unchecked string
----@field public checked string
----@field public custom table<string, render.md.CustomComponent>
+---@class render.md.Latex
+---@field public enabled boolean
+---@field public converter string
+---@field public highlight string
 
 ---@class render.md.Config
----@field public start_enabled boolean
----@field public latex_enabled boolean
+---@field public enabled boolean
 ---@field public max_file_size number
 ---@field public markdown_query string
 ---@field public markdown_quote_query string
 ---@field public inline_query string
----@field public latex_converter string
 ---@field public log_level 'debug'|'error'
 ---@field public file_types string[]
 ---@field public render_modes string[]
----@field public headings string[]
----@field public dash string
----@field public bullets string[]
+---@field public latex render.md.Latex
+---@field public heading render.md.Heading
+---@field public code render.md.Code
+---@field public dash render.md.BasicComponent
+---@field public bullet render.md.Bullet
 ---@field public checkbox render.md.Checkbox
----@field public quote string
----@field public callout render.md.Callout
+---@field public quote render.md.BasicComponent
+---@field public pipe_table render.md.PipeTable
+---@field public callout table<string, render.md.CustomComponent>
 ---@field public win_options table<string, render.md.WindowOption>
----@field public code_style 'full'|'normal'|'none'
----@field public table_style 'full'|'normal'|'none'
----@field public cell_style 'overlay'|'raw'
 ---@field public custom_handlers table<string, render.md.Handler>
----@field public highlights render.md.Highlights

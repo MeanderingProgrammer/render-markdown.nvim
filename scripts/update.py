@@ -10,20 +10,25 @@ class LuaClass:
     fields: list[str]
 
     def validate(self) -> None:
+        for field in self.fields:
+            if "User" in self.name:
+                self.validate_user_field(field)
+            else:
+                self.validate_non_user_field(field)
+
+    def validate_user_field(self, field: str) -> None:
+        # User classes are expected to have optional fields
+        assert "?" in field, f"Field must be optional: {field}"
+
+    def validate_non_user_field(self, field: str) -> None:
+        # Non user classes are expected to have mandatory fields with some exceptions
+        optional: bool = False
         optional_fields: list[str] = ["extends"] if "Handler" in self.name else []
-        if "User" in self.name:
-            # User classes are expected to have optional fields
-            for field in self.fields:
-                assert "?" in field, f"Field must be optional: {field}"
-        else:
-            # Non user classes are expected to have mandatory fields with some exceptions
-            for field in self.fields:
-                optional: bool = False
-                for optional_field in optional_fields:
-                    if optional_field in field:
-                        optional = True
-                if not optional:
-                    assert "?" not in field, f"Field must be mandatory: {field}"
+        for optional_field in optional_fields:
+            if optional_field in field:
+                optional = True
+        if not optional:
+            assert "?" not in field, f"Field must be mandatory: {field}"
 
     def to_public_lines(self) -> list[str]:
         if "User" not in self.name:
@@ -60,17 +65,27 @@ def update_types(init_file: Path, types_file: Path) -> None:
 
 
 def update_readme(init_file: Path, readme_file: Path) -> None:
-    old = get_code_block(readme_file, "enabled")
-    default_config = get_default_config(init_file)
-    new = "require('render-markdown').setup(" + default_config + ")"
-    readme_file.write_text(readme_file.read_text().replace(old, new))
+    old_config = get_code_block(readme_file, "enabled", 1)
+    new_config = wrap_setup(get_default_config(init_file))
+    text = readme_file.read_text().replace(old_config, new_config)
+
+    parameters: list[str] = ["heading", "code", "dash", "bullet"]
+    parameters.extend(["checkbox", "quote", "pipe_table", "callout"])
+    for parameter in parameters:
+        parameter = f"{parameter} = "
+        old_param = get_code_block(readme_file, parameter, 2)
+        new_param = wrap_setup(get_config_for(new_config, parameter))
+        text = text.replace(old_param, new_param)
+
+    readme_file.write_text(text)
 
 
 def update_custom_handlers(init_file: Path, handler_file: Path) -> None:
     class_name: str = "render.md.Handler"
-    old = get_code_block(handler_file, class_name)
+    old = get_code_block(handler_file, class_name, 1)
     new = get_class(init_file, class_name).to_str()
-    handler_file.write_text(handler_file.read_text().replace(old, new))
+    text = handler_file.read_text().replace(old, new)
+    handler_file.write_text(text)
 
 
 def get_class(init_file: Path, name: str) -> LuaClass:
@@ -96,6 +111,36 @@ def get_classes(init_file: Path) -> list[LuaClass]:
     return lua_classes
 
 
+def wrap_setup(value: str) -> str:
+    return f"require('render-markdown').setup({value})"
+
+
+def get_config_for(config: str, parameter: str) -> str:
+    lines: list[str] = config.splitlines()
+    param_start: int | None = None
+    for i, line in enumerate(lines):
+        if parameter in line:
+            param_start = i
+            break
+    assert param_start is not None
+
+    start_line: int = param_start
+    for i in range(param_start - 1, 0, -1):
+        if "--" not in lines[i]:
+            start_line = i + 1
+            break
+
+    end_line: int = param_start
+    level: int = 0
+    for i in range(param_start, len(lines)):
+        level += lines[i].count("{") - lines[i].count("}")
+        if level == 0:
+            end_line = i
+            break
+
+    return "\n".join(["{"] + lines[start_line : end_line + 1] + ["}"])
+
+
 def get_comments(file: Path) -> list[str]:
     query = "(comment) @comment"
     return ts_query(file, query, "comment")
@@ -116,12 +161,12 @@ def get_default_config(file: Path) -> str:
     return default_configs[0]
 
 
-def get_code_block(file: Path, content: str) -> str:
+def get_code_block(file: Path, content: str, n: int) -> str:
     query = "(code_fence_content) @content"
     code_blocks = ts_query(file, query, "content")
     code_blocks = [code for code in code_blocks if content in code]
-    assert len(code_blocks) == 1
-    return code_blocks[0]
+    assert len(code_blocks) == n
+    return code_blocks[n - 1]
 
 
 def ts_query(file: Path, query: str, target: str) -> list[str]:

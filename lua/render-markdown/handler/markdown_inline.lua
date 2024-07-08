@@ -21,16 +21,16 @@ end
 ---@param capture string
 ---@param node TSNode
 M.render_node = function(namespace, buf, capture, node)
-    local highlights = state.config.highlights
     local value = vim.treesitter.get_node_text(node, buf)
     local start_row, start_col, end_row, end_col = node:range()
     logger.debug_node(capture, node, buf)
 
     if capture == 'code' then
+        local code = state.config.code
         vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
             end_row = end_row,
             end_col = end_col,
-            hl_group = highlights.code,
+            hl_group = code.highlight,
         })
     elseif capture == 'callout' then
         local callout = component.callout(value, 'exact')

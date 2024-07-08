@@ -10,7 +10,7 @@ end
 ---@param values string[]
 ---@param index integer
 ---@return string
-function M.clamp_last(values, index)
+function M.clamp(values, index)
     return values[math.min(index, #values)]
 end
 

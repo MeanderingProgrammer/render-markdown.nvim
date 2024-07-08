@@ -15,10 +15,10 @@ local M = {}
 ---@param root TSNode
 ---@param buf integer
 M.render = function(namespace, root, buf)
-    if not state.config.latex_enabled then
+    if not state.config.latex.enabled then
         return
     end
-    local converter = state.config.latex_converter
+    local converter = state.config.latex.converter
     if vim.fn.executable(converter) ~= 1 then
         logger.debug('Executable not found: ' .. converter)
     else
@@ -31,7 +31,6 @@ end
 ---@param node TSNode
 ---@param converter string
 M.render_node = function(namespace, buf, node, converter)
-    local highlights = state.config.highlights
     local value = vim.treesitter.get_node_text(node, buf)
     local start_row, start_col, end_row, end_col = node:range()
     logger.debug_node('latex', node, buf)
@@ -45,7 +44,7 @@ M.render_node = function(namespace, buf, node, converter)
     end
 
     local latex_lines = vim.tbl_map(function(expression)
-        return { { expression, highlights.latex } }
+        return { { expression, state.config.latex.highlight } }
     end, expressions)
     vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
         end_row = end_row,
