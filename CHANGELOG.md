@@ -1,5 +1,60 @@
 # Change Log
 
+## 4.0.0 (2024-07-08)
+
+### ⚠ BREAKING CHANGES
+
+- Group properties by component [a021d5b](https://github.com/MeanderingProgrammer/markdown.nvim/commit/a021d5b502dcccd28412102f01d0ecd8ef791bd4)
+- If you want to punt dealing with these changes feel free to use the `v3.3.1` tag
+- In order to fix:
+  - `start_enabled` -> `enabled`
+  - Latex
+    - `latex_enabled` -> `latex.enabled`
+    - `latex_converter` -> `latex.converter`
+    - `highlights.latex` -> `latex.highlight`
+  - Headings
+    - `headings` -> `heading.icons`
+    - `highlights.heading.backgrounds` -> `heading.backgrounds`
+    - `highlights.heading.foregrounds` -> `heading.foregrounds`
+  - Code
+    - `code_style` -> `code.style`
+    - `highlights.code` -> `code.highlight`
+  - Dash
+    - `dash` -> `dash.icon`
+    - `highlights.dash` -> `dash.highlight`
+  - Bullets
+    - `bullets` -> `bullet.icons`
+    - `highlights.bullet` -> `bullet.highlight`
+  - Checkbox
+    - `checkbox.unchecked` -> `checkbox.unchecked.icon`
+    - `highlights.checkbox.unchecked` -> `checkbox.unchecked.highlight`
+    - `checkbox.checked` -> `checkbox.checked.icon`
+    - `highlights.checkbox.checked` -> `checkbox.checked.highlight`
+  - Quote
+    - `quote` -> `quote.icon`
+    - `highlights.quote` -> `quote.highlight`
+  - Table
+    - `table_style` -> `pipe_table.style`
+    - `cell_style` -> `pipe_table.cell`
+    - `highlight.table.head` -> `pipe_table.head`
+    - `highlight.table.row` -> `pipe_table.row`
+  - Callouts
+    - `callout.note` -> `callout.note.rendered`
+    - `callout.tip` -> `callout.tip.rendered`
+    - `callout.important` -> `callout.important.rendered`
+    - `callout.warning` -> `callout.warning.rendered`
+    - `callout.caution` -> `callout.caution.rendered`
+    - `highlights.callout.note` -> `callout.note.highlight`
+    - `highlights.callout.tip` -> `callout.tip.highlight`
+    - `highlights.callout.important` -> `callout.important.highlight`
+    - `highlights.callout.warning` -> `callout.warning.highlight`
+    - `highlights.callout.caution` -> `callout.caution.highlight`
+    - `callout.custom.*` -> `callout.*` (i.e. unnest from custom block)
+  - Others
+    - Any remaing changes are covered within that component.
+    - I.e. `code_style` is covered in Code, `highlights.table` is covered in
+      Table, `highlights.callout.note` is covered in Callouts, etc.
+
 ## 3.3.1 (2024-07-08)
 
 ### Features
