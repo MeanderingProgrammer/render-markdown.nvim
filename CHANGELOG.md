@@ -1,5 +1,11 @@
 # Change Log
 
+## 3.3.1 (2024-07-08)
+
+### Features
+
+- Improved health [7b8110b](https://github.com/MeanderingProgrammer/markdown.nvim/commit/7b8110b675766810edcbe665f53479893b02f989)
+
 ## 3.3.0 (2024-07-06)
 
 ### Features
@@ -43,7 +49,7 @@
 
 - Get mode at time of event instead of callback execution: [#36](https://github.com/MeanderingProgrammer/markdown.nvim/issues/36)
   [b556210](https://github.com/MeanderingProgrammer/markdown.nvim/commit/b556210e6c8759b7d23d5bc74c84aaafe2304da4)
-- Update healthcheck to work with neovim 0.9.5: [64969bc](https://github.com/MeanderingProgrammer/markdown.nvim/commit/64969bc94a9d633dc23b59a382cab407c99fecb1)
+- Update health check to work with neovim 0.9.5: [64969bc](https://github.com/MeanderingProgrammer/markdown.nvim/commit/64969bc94a9d633dc23b59a382cab407c99fecb1)
 - Handle block quotes with empty lines: [#41](https://github.com/MeanderingProgrammer/markdown.nvim/issues/41)
   [6f64bf6](https://github.com/MeanderingProgrammer/markdown.nvim/commit/6f64bf645b817ff493a28925b1872a69d07fc094)
 
