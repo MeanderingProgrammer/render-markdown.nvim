@@ -60,7 +60,7 @@ M.render_node = function(namespace, buf, capture, node)
         })
     elseif capture == 'code' then
         local code = state.config.code
-        if code.style == 'none' then
+        if not vim.tbl_contains({ 'normal', 'full' }, code.style) then
             return
         end
 
@@ -72,7 +72,7 @@ M.render_node = function(namespace, buf, capture, node)
         })
     elseif capture == 'language' then
         local code = state.config.code
-        if code.style ~= 'full' then
+        if not vim.tbl_contains({ 'language', 'full' }, code.style) then
             return
         end
         -- Requires inline extmarks

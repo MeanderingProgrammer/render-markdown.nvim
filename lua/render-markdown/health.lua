@@ -153,7 +153,7 @@ function M.check_config(config)
 
     local code = config.code
     append_errors('code', {
-        style = one_of(code.style, { 'full', 'normal', 'none' }),
+        style = one_of(code.style, { 'full', 'language', 'normal', 'none' }),
         highlight = { code.highlight, 'string' },
     })
 

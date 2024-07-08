@@ -23,7 +23,7 @@
 ---@field public highlight string
 
 ---@class render.md.Code
----@field public style 'full'|'normal'|'none'
+---@field public style 'full'|'normal'|'language'|'none'
 ---@field public highlight string
 
 ---@class render.md.Heading

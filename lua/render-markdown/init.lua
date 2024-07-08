@@ -36,7 +36,7 @@ local M = {}
 ---@field public highlight? string
 
 ---@class render.md.UserCode
----@field public style? 'full'|'normal'|'none'
+---@field public style? 'full'|'normal'|'language'|'none'
 ---@field public highlight? string
 
 ---@class render.md.UserHeading
@@ -155,7 +155,8 @@ M.default_config = {
         -- Determines how code blocks are rendered:
         --  none: disables all rendering
         --  normal: adds highlight group to the code block
-        --  full: normal + language icon & name above the code block
+        --  language: adds language icon & name above the code block
+        --  full: normal + language
         style = 'full',
         -- Highlight for code blocks
         highlight = 'ColorColumn',
