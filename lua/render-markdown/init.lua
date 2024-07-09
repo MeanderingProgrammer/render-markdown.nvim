@@ -11,6 +11,12 @@ local M = {}
 ---@field public default any
 ---@field public rendered any
 
+---@class render.md.UserLink
+---@field public enabled? boolean
+---@field public image? string
+---@field public hyperlink? string
+---@field public highlight? string
+
 ---@class render.md.UserPipeTable
 ---@field public style? 'full'|'normal'|'none'
 ---@field public cell? 'overlay'|'raw'
@@ -69,6 +75,7 @@ local M = {}
 ---@field public quote? render.md.UserBasicComponent
 ---@field public pipe_table? render.md.UserPipeTable
 ---@field public callout? table<string, render.md.UserCustomComponent>
+---@field public link? render.md.UserLink
 ---@field public win_options? table<string, render.md.WindowOption>
 ---@field public custom_handlers? table<string, render.md.Handler>
 
@@ -123,6 +130,10 @@ M.default_config = {
         (code_span) @code
 
         (shortcut_link) @callout
+
+        (inline_link) @link
+
+        (image) @image
     ]],
     -- The level of logs to write to file: vim.fn.stdpath('state') .. '/render-markdown.log'
     -- Only intended to be used for plugin development / debugging
@@ -260,6 +271,16 @@ M.default_config = {
         bug = { raw = '[!BUG]', rendered = '󰨰 Bug', highlight = 'DiagnosticError' },
         example = { raw = '[!EXAMPLE]', rendered = '󰉹 Example', highlight = 'DiagnosticHint' },
         quote = { raw = '[!QUOTE]', rendered = '󱆨 Quote', highlight = '@markup.quote' },
+    },
+    link = {
+        -- Turn on / off inline link icon behavior
+        enabled = true,
+        -- Inlined with 'image' elements
+        image = '󰥶 ',
+        -- Inlined with 'inline_link' elements
+        hyperlink = '󰌹 ',
+        -- Applies to the inlined icon
+        highlight = '@markup.link.label.markdown_inline',
     },
     -- Window options to use that change between rendered and raw view
     win_options = {

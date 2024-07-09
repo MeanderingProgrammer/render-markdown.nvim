@@ -127,6 +127,7 @@ function M.check_config(config)
         checkbox = { config.checkbox, 'table' },
         quote = { config.quote, 'table' },
         callout = { config.callout, 'table' },
+        link = { config.link, 'table' },
         win_options = { config.win_options, 'table' },
         custom_handlers = { config.custom_handlers, 'table' },
     })
@@ -219,6 +220,14 @@ function M.check_config(config)
             highlight = { component.highlight, 'string' },
         })
     end
+
+    local link = config.link
+    append_errors('link', {
+        enabled = { link.enabled, 'boolean' },
+        image = { link.image, 'string' },
+        hyperlink = { link.hyperlink, 'string' },
+        highlight = { link.highlight, 'string' },
+    })
 
     for name, win_option in pairs(config.win_options) do
         append_errors('win_options.' .. name, {

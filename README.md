@@ -29,6 +29,7 @@ Plugin to improve viewing Markdown files in Neovim
   - [Callouts](https://github.com/orgs/community/discussions/16925)
     - Github & Obsidian out of the box, supports user defined as well
   - Custom checkbox states, function similar to `callouts`
+  - Adds icon before images / links, requires neovim >= `0.10.0`
   - `LaTeX` blocks: renders formulas if `latex` parser and `pylatexenc` are installed
 - Disable rendering when file is larger than provided value
 - Support custom handlers which are ran identically to builtin handlers
@@ -149,6 +150,10 @@ require('render-markdown').setup({
         (code_span) @code
 
         (shortcut_link) @callout
+
+        (inline_link) @link
+
+        (image) @image
     ]],
     -- The level of logs to write to file: vim.fn.stdpath('state') .. '/render-markdown.log'
     -- Only intended to be used for plugin development / debugging
@@ -287,6 +292,16 @@ require('render-markdown').setup({
         example = { raw = '[!EXAMPLE]', rendered = '󰉹 Example', highlight = 'DiagnosticHint' },
         quote = { raw = '[!QUOTE]', rendered = '󱆨 Quote', highlight = '@markup.quote' },
     },
+    link = {
+        -- Turn on / off inline link icon behavior
+        enabled = true,
+        -- Inlined with 'image' elements
+        image = '󰥶 ',
+        -- Inlined with 'inline_link' elements
+        hyperlink = '󰌹 ',
+        -- Applies to the inlined icon
+        highlight = '@markup.link.label.markdown_inline',
+    },
     -- Window options to use that change between rendered and raw view
     win_options = {
         -- See :h 'conceallevel'
@@ -422,7 +437,7 @@ require('render-markdown').setup({
 })
 ```
 
-## Standard Quotes
+## Block Quotes
 
 ```lua
 require('render-markdown').setup({
@@ -492,6 +507,23 @@ require('render-markdown').setup({
         bug = { raw = '[!BUG]', rendered = '󰨰 Bug', highlight = 'DiagnosticError' },
         example = { raw = '[!EXAMPLE]', rendered = '󰉹 Example', highlight = 'DiagnosticHint' },
         quote = { raw = '[!QUOTE]', rendered = '󱆨 Quote', highlight = '@markup.quote' },
+    },
+})
+```
+
+## Links
+
+```lua
+require('render-markdown').setup({
+    link = {
+        -- Turn on / off inline link icon behavior
+        enabled = true,
+        -- Inlined with 'image' elements
+        image = '󰥶 ',
+        -- Inlined with 'inline_link' elements
+        hyperlink = '󰌹 ',
+        -- Applies to the inlined icon
+        highlight = '@markup.link.label.markdown_inline',
     },
 })
 ```

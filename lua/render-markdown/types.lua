@@ -1,3 +1,9 @@
+---@class render.md.Link
+---@field public enabled boolean
+---@field public image string
+---@field public hyperlink string
+---@field public highlight string
+
 ---@class render.md.PipeTable
 ---@field public style 'full'|'normal'|'none'
 ---@field public cell 'overlay'|'raw'
@@ -56,5 +62,6 @@
 ---@field public quote render.md.BasicComponent
 ---@field public pipe_table render.md.PipeTable
 ---@field public callout table<string, render.md.CustomComponent>
+---@field public link render.md.Link
 ---@field public win_options table<string, render.md.WindowOption>
 ---@field public custom_handlers table<string, render.md.Handler>

@@ -81,22 +81,32 @@ async_tests.describe('heading_code.md', function()
             },
         })
 
+        -- Image link
+        vim.list_extend(expected, {
+            {
+                row = { 10, 10 },
+                col = { 0, 21 },
+                virt_text = { { '󰥶 ', '@markup.link.label.markdown_inline' } },
+                virt_text_pos = 'inline',
+            },
+        })
+
         -- Code block
         vim.list_extend(expected, {
             {
-                row = { 10, 21 },
+                row = { 12, 23 },
                 col = { 0, 0 },
                 hl_eol = true,
                 hl_group = 'ColorColumn',
             },
             {
-                row = { 10, 10 },
+                row = { 12, 12 },
                 col = { 3, 9 },
                 sign_text = '󰌠 ',
                 sign_hl_group = 'MiniIconsYellow',
             },
             {
-                row = { 10 },
+                row = { 12 },
                 col = { 3 },
                 virt_text = { { '󰌠 python', { 'MiniIconsYellow', 'ColorColumn' } } },
                 virt_text_pos = 'inline',

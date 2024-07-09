@@ -8,6 +8,8 @@
 
 ###### Heading 6
 
+![Image](example.png)
+
 ```python {filename="demo.py"}
 def main() -> None:
     sum = 0

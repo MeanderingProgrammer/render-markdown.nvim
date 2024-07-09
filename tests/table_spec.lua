@@ -66,6 +66,13 @@ async_tests.describe('table.md', function()
                 hl_eol = false,
                 hl_group = 'ColorColumn',
             },
+            -- Row link
+            {
+                row = { 4, 4 },
+                col = { 16, 47 },
+                virt_text = { { '󰌹 ', '@markup.link.label.markdown_inline' } },
+                virt_text_pos = 'inline',
+            },
         })
 
         -- Table no inline heading
@@ -229,6 +236,13 @@ async_tests.describe('table.md', function()
                 col = { 14, 14 },
                 virt_text = { { '│', 'Normal' } },
                 virt_text_pos = 'overlay',
+            },
+            -- Row link
+            {
+                row = { 4, 4 },
+                col = { 16, 47 },
+                virt_text = { { '󰌹 ', '@markup.link.label.markdown_inline' } },
+                virt_text_pos = 'inline',
             },
             -- Row pipe 3
             {

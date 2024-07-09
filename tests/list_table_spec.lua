@@ -34,6 +34,13 @@ async_tests.describe('list_table.md', function()
                 virt_text = { { '●', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
+            -- List Item 1, link
+            {
+                row = { 2, 2 },
+                col = { 20, 47 },
+                virt_text = { { '󰌹 ', '@markup.link.label.markdown_inline' } },
+                virt_text_pos = 'inline',
+            },
             -- List Item 2, bullet point
             {
                 row = { 3, 3 },

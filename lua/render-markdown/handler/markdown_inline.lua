@@ -61,6 +61,25 @@ M.render_node = function(namespace, buf, capture, node)
                 conceal = '',
             })
         end
+    elseif vim.tbl_contains({ 'link', 'image' }, capture) then
+        local link = state.config.link
+        if not link.enabled then
+            return
+        end
+        -- Requires inline extmarks
+        if not util.has_10 then
+            return
+        end
+        local icon = link.hyperlink
+        if capture == 'image' then
+            icon = link.image
+        end
+        vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
+            end_row = end_row,
+            end_col = end_col,
+            virt_text = { { icon, link.highlight } },
+            virt_text_pos = 'inline',
+        })
     else
         -- Should only get here if user provides custom capture, currently unhandled
         logger.error('Unhandled inline capture: ' .. capture)
