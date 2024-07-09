@@ -206,11 +206,11 @@ function M.check_config(config)
     append_errors('pipe_table', {
         style = one_of(pipe_table.style, { 'full', 'normal', 'none' }),
         cell = one_of(pipe_table.cell, { 'overlay', 'raw' }),
-        boarder = { pipe_table.boarder, 'table' },
+        border = { pipe_table.border, 'table' },
         head = { pipe_table.head, 'string' },
         row = { pipe_table.row, 'string' },
     })
-    all_strings('pipe_table.boarder', pipe_table.boarder)
+    all_strings('pipe_table.border', pipe_table.border)
 
     for name, component in pairs(config.callout) do
         append_errors('callout.' .. name, {

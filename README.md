@@ -250,10 +250,10 @@ require('render-markdown').setup({
         --  overlay: writes completely over the table, removing conceal behavior and highlights
         --  raw: replaces only the '|' characters in each row, leaving the cells completely unmodified
         cell = 'overlay',
-        -- Characters used to replace table boarder
+        -- Characters used to replace table border
         -- Correspond to top(3), delimiter(3), bottom(3), vertical, & horizontal
         -- stylua: ignore
-        boarder = {
+        border = {
             '┌', '┬', '┐',
             '├', '┼', '┤',
             '└', '┴', '┘',
@@ -449,10 +449,10 @@ require('render-markdown').setup({
         --  overlay: writes completely over the table, removing conceal behavior and highlights
         --  raw: replaces only the '|' characters in each row, leaving the cells completely unmodified
         cell = 'overlay',
-        -- Characters used to replace table boarder
+        -- Characters used to replace table border
         -- Correspond to top(3), delimiter(3), bottom(3), vertical, & horizontal
         -- stylua: ignore
-        boarder = {
+        border = {
             '┌', '┬', '┐',
             '├', '┼', '┤',
             '└', '┴', '┘',

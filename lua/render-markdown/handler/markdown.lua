@@ -162,7 +162,7 @@ M.render_node = function(namespace, buf, capture, node)
         if pipe_table.style ~= 'full' then
             return
         end
-        local boarder = pipe_table.boarder
+        local border = pipe_table.border
 
         ---@param row integer
         ---@param s string
@@ -190,16 +190,16 @@ M.render_node = function(namespace, buf, capture, node)
         if delim_width == start_width and start_width == end_width then
             local headings = vim.split(delim_value, '|', { plain = true, trimempty = true })
             local lengths = vim.tbl_map(function(part)
-                return boarder[11]:rep(vim.fn.strdisplaywidth(part))
+                return border[11]:rep(vim.fn.strdisplaywidth(part))
             end, headings)
 
-            local line_above = boarder[1] .. table.concat(lengths, boarder[2]) .. boarder[3]
+            local line_above = border[1] .. table.concat(lengths, border[2]) .. border[3]
             vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
                 virt_lines_above = true,
                 virt_lines = { { { line_above, pipe_table.head } } },
             })
 
-            local line_below = boarder[7] .. table.concat(lengths, boarder[8]) .. boarder[9]
+            local line_below = border[7] .. table.concat(lengths, border[8]) .. border[9]
             vim.api.nvim_buf_set_extmark(buf, namespace, end_row, start_col, {
                 virt_lines_above = true,
                 virt_lines = { { { line_below, pipe_table.row } } },
@@ -210,7 +210,7 @@ M.render_node = function(namespace, buf, capture, node)
         if pipe_table.style == 'none' then
             return
         end
-        local boarder = pipe_table.boarder
+        local border = pipe_table.border
 
         local highlight = pipe_table.head
         if capture == 'table_row' then
@@ -221,10 +221,10 @@ M.render_node = function(namespace, buf, capture, node)
             -- Order matters here, in particular handling inner intersections before left & right
             local row = value
                 :gsub(' ', '-')
-                :gsub('%-|%-', boarder[11] .. boarder[5] .. boarder[11])
-                :gsub('|%-', boarder[4] .. boarder[11])
-                :gsub('%-|', boarder[11] .. boarder[6])
-                :gsub('%-', boarder[11])
+                :gsub('%-|%-', border[11] .. border[5] .. border[11])
+                :gsub('|%-', border[4] .. border[11])
+                :gsub('%-|', border[11] .. border[6])
+                :gsub('%-', border[11])
 
             vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
                 end_row = end_row,
@@ -236,7 +236,7 @@ M.render_node = function(namespace, buf, capture, node)
             vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
                 end_row = end_row,
                 end_col = end_col,
-                virt_text = { { value:gsub('|', boarder[10]), highlight } },
+                virt_text = { { value:gsub('|', border[10]), highlight } },
                 virt_text_pos = 'overlay',
             })
         elseif pipe_table.cell == 'raw' then
@@ -245,7 +245,7 @@ M.render_node = function(namespace, buf, capture, node)
                     vim.api.nvim_buf_set_extmark(buf, namespace, start_row, i - 1, {
                         end_row = end_row,
                         end_col = i - 1,
-                        virt_text = { { boarder[10], highlight } },
+                        virt_text = { { border[10], highlight } },
                         virt_text_pos = 'overlay',
                     })
                 end

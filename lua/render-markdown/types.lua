@@ -1,7 +1,7 @@
 ---@class render.md.PipeTable
 ---@field public style 'full'|'normal'|'none'
 ---@field public cell 'overlay'|'raw'
----@field public boarder string[]
+---@field public border string[]
 ---@field public head string
 ---@field public row string
 
