@@ -144,10 +144,12 @@ function M.check_config(config)
     local heading = config.heading
     append_errors('heading', {
         icons = { heading.icons, 'table' },
+        signs = { heading.signs, 'table' },
         backgrounds = { heading.backgrounds, 'table' },
         foregrounds = { heading.foregrounds, 'table' },
     })
     all_strings('heading.icons', heading.icons)
+    all_strings('heading.signs', heading.signs)
     all_strings('heading.backgrounds', heading.backgrounds)
     all_strings('heading.foregrounds', heading.foregrounds)
 

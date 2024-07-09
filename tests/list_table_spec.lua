@@ -17,6 +17,12 @@ async_tests.describe('list_table.md', function()
                 virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
                 virt_text_pos = 'overlay',
             },
+            {
+                row = { 0, 0 },
+                col = { 0, 1 },
+                sign_text = '󰫎 ',
+                sign_hl_group = 'markdownH1',
+            },
         })
 
         -- Unordered list
@@ -96,6 +102,12 @@ async_tests.describe('list_table.md', function()
                 virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
                 virt_text_pos = 'overlay',
             },
+            {
+                row = { 11, 11 },
+                col = { 0, 1 },
+                sign_text = '󰫎 ',
+                sign_hl_group = 'markdownH1',
+            },
         })
 
         -- Table heading
@@ -107,6 +119,12 @@ async_tests.describe('list_table.md', function()
                 hl_group = 'DiffAdd',
                 virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
                 virt_text_pos = 'overlay',
+            },
+            {
+                row = { 17, 17 },
+                col = { 0, 1 },
+                sign_text = '󰫎 ',
+                sign_hl_group = 'markdownH1',
             },
         })
 

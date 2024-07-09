@@ -29,6 +29,7 @@
 
 ---@class render.md.Heading
 ---@field public icons string[]
+---@field public signs string[]
 ---@field public backgrounds string[]
 ---@field public foregrounds string[]
 

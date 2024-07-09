@@ -18,12 +18,24 @@ async_tests.describe('heading_code.md', function()
                 virt_text_pos = 'overlay',
             },
             {
+                row = { 0, 0 },
+                col = { 0, 1 },
+                sign_text = '󰫎 ',
+                sign_hl_group = 'markdownH1',
+            },
+            {
                 row = { 2, 3 },
                 col = { 0, 0 },
                 hl_eol = true,
                 hl_group = 'DiffDelete',
                 virt_text = { { '  󰲥 ', { 'markdownH3', 'DiffDelete' } } },
                 virt_text_pos = 'overlay',
+            },
+            {
+                row = { 2, 2 },
+                col = { 0, 3 },
+                sign_text = '󰫎 ',
+                sign_hl_group = 'markdownH3',
             },
             {
                 row = { 4, 5 },
@@ -34,6 +46,12 @@ async_tests.describe('heading_code.md', function()
                 virt_text_pos = 'overlay',
             },
             {
+                row = { 4, 4 },
+                col = { 0, 4 },
+                sign_text = '󰫎 ',
+                sign_hl_group = 'markdownH4',
+            },
+            {
                 row = { 6, 7 },
                 col = { 0, 0 },
                 hl_eol = true,
@@ -42,12 +60,24 @@ async_tests.describe('heading_code.md', function()
                 virt_text_pos = 'overlay',
             },
             {
+                row = { 6, 6 },
+                col = { 0, 5 },
+                sign_text = '󰫎 ',
+                sign_hl_group = 'markdownH5',
+            },
+            {
                 row = { 8, 9 },
                 col = { 0, 0 },
                 hl_eol = true,
                 hl_group = 'DiffDelete',
                 virt_text = { { '     󰲫 ', { 'markdownH6', 'DiffDelete' } } },
                 virt_text_pos = 'overlay',
+            },
+            {
+                row = { 8, 8 },
+                col = { 0, 6 },
+                sign_text = '󰫎 ',
+                sign_hl_group = 'markdownH6',
             },
         })
 
@@ -58,6 +88,12 @@ async_tests.describe('heading_code.md', function()
                 col = { 0, 0 },
                 hl_eol = true,
                 hl_group = 'ColorColumn',
+            },
+            {
+                row = { 10, 10 },
+                col = { 3, 9 },
+                sign_text = '󰌠 ',
+                sign_hl_group = 'MiniIconsYellow',
             },
             {
                 row = { 10 },

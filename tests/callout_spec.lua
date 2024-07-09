@@ -19,6 +19,12 @@ async_tests.describe('callout.md', function()
                 virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
                 virt_text_pos = 'overlay',
             },
+            {
+                row = { note_start, note_start },
+                col = { 0, 1 },
+                sign_text = '󰫎 ',
+                sign_hl_group = 'markdownH1',
+            },
             -- Quote start
             {
                 row = { note_start + 2, note_start + 2 },
@@ -71,6 +77,12 @@ async_tests.describe('callout.md', function()
                 virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
                 virt_text_pos = 'overlay',
             },
+            {
+                row = { tip_start, tip_start },
+                col = { 0, 1 },
+                sign_text = '󰫎 ',
+                sign_hl_group = 'markdownH1',
+            },
             -- Quote start
             {
                 row = { tip_start + 2, tip_start + 2 },
@@ -105,6 +117,12 @@ async_tests.describe('callout.md', function()
                 hl_group = 'ColorColumn',
             },
             {
+                row = { tip_start + 4, tip_start + 4 },
+                col = { 5, 8 },
+                sign_text = '󰢱 ',
+                sign_hl_group = 'MiniIconsAzure',
+            },
+            {
                 row = { tip_start + 4 },
                 col = { 5 },
                 virt_text = { { '󰢱 lua', { 'MiniIconsAzure', 'ColorColumn' } } },
@@ -134,6 +152,12 @@ async_tests.describe('callout.md', function()
                 hl_group = 'DiffAdd',
                 virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
                 virt_text_pos = 'overlay',
+            },
+            {
+                row = { important_start, important_start },
+                col = { 0, 1 },
+                sign_text = '󰫎 ',
+                sign_hl_group = 'markdownH1',
             },
             -- Quote start
             {
@@ -169,6 +193,12 @@ async_tests.describe('callout.md', function()
                 virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
                 virt_text_pos = 'overlay',
             },
+            {
+                row = { warning_start, warning_start },
+                col = { 0, 1 },
+                sign_text = '󰫎 ',
+                sign_hl_group = 'markdownH1',
+            },
             -- Quote start
             {
                 row = { warning_start + 2, warning_start + 2 },
@@ -203,6 +233,12 @@ async_tests.describe('callout.md', function()
                 virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
                 virt_text_pos = 'overlay',
             },
+            {
+                row = { caution_start, caution_start },
+                col = { 0, 1 },
+                sign_text = '󰫎 ',
+                sign_hl_group = 'markdownH1',
+            },
             -- Quote start
             {
                 row = { caution_start + 2, caution_start + 2 },
@@ -236,6 +272,12 @@ async_tests.describe('callout.md', function()
                 hl_group = 'DiffAdd',
                 virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
                 virt_text_pos = 'overlay',
+            },
+            {
+                row = { bug_start, bug_start },
+                col = { 0, 1 },
+                sign_text = '󰫎 ',
+                sign_hl_group = 'markdownH1',
             },
             -- Quote start
             {

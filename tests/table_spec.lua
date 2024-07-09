@@ -17,6 +17,12 @@ async_tests.describe('table.md', function()
                 virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
                 virt_text_pos = 'overlay',
             },
+            {
+                row = { 0, 0 },
+                col = { 0, 1 },
+                sign_text = '󰫎 ',
+                sign_hl_group = 'markdownH1',
+            },
         })
 
         local table_with_inline = {
@@ -71,6 +77,12 @@ async_tests.describe('table.md', function()
                 hl_group = 'DiffAdd',
                 virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
                 virt_text_pos = 'overlay',
+            },
+            {
+                row = { 6, 6 },
+                col = { 0, 1 },
+                sign_text = '󰫎 ',
+                sign_hl_group = 'markdownH1',
             },
         })
 
@@ -143,6 +155,12 @@ async_tests.describe('table.md', function()
                 hl_group = 'DiffAdd',
                 virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
                 virt_text_pos = 'overlay',
+            },
+            {
+                row = { 0, 0 },
+                col = { 0, 1 },
+                sign_text = '󰫎 ',
+                sign_hl_group = 'markdownH1',
             },
         })
 
@@ -237,6 +255,12 @@ async_tests.describe('table.md', function()
                 hl_group = 'DiffAdd',
                 virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
                 virt_text_pos = 'overlay',
+            },
+            {
+                row = { 6, 6 },
+                col = { 0, 1 },
+                sign_text = '󰫎 ',
+                sign_hl_group = 'markdownH1',
             },
         })
 

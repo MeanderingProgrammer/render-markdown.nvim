@@ -31,6 +31,12 @@ async_tests.describe('custom_handler.md', function()
             },
             {
                 row = { 0, 0 },
+                col = { 0, 1 },
+                sign_text = '󰫎 ',
+                sign_hl_group = 'markdownH1',
+            },
+            {
+                row = { 0, 0 },
                 col = { 9, 18 },
                 hl_eol = false,
                 hl_group = 'ColorColumn',
@@ -61,6 +67,12 @@ async_tests.describe('custom_handler.md', function()
                 hl_group = 'DiffAdd',
                 virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
                 virt_text_pos = 'overlay',
+            },
+            {
+                row = { 0, 0 },
+                col = { 0, 1 },
+                sign_text = '󰫎 ',
+                sign_hl_group = 'markdownH1',
             },
         })
 
@@ -103,6 +115,12 @@ async_tests.describe('custom_handler.md', function()
                 hl_group = 'DiffAdd',
                 virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
                 virt_text_pos = 'overlay',
+            },
+            {
+                row = { 0, 0 },
+                col = { 0, 1 },
+                sign_text = '󰫎 ',
+                sign_hl_group = 'markdownH1',
             },
             {
                 row = { 0, 0 },

@@ -72,9 +72,8 @@ def update_readme(init_file: Path, readme_file: Path) -> None:
     parameters: list[str] = ["heading", "code", "dash", "bullet"]
     parameters.extend(["checkbox", "quote", "pipe_table", "callout"])
     for parameter in parameters:
-        parameter = f"{parameter} = "
-        old_param = get_code_block(readme_file, parameter, 2)
-        new_param = wrap_setup(get_config_for(new_config, parameter))
+        old_param = get_code_block(readme_file, f"\n    {parameter} = ", 2)
+        new_param = wrap_setup(get_config_for(new_config, f"{parameter} = "))
         text = text.replace(old_param, new_param)
 
     readme_file.write_text(text)

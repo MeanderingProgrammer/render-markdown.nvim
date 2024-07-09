@@ -17,6 +17,12 @@ async_tests.describe('box_dash_quote.md', function()
                 virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
                 virt_text_pos = 'overlay',
             },
+            {
+                row = { 0, 0 },
+                col = { 0, 1 },
+                sign_text = '󰫎 ',
+                sign_hl_group = 'markdownH1',
+            },
         })
 
         -- Checkboxes

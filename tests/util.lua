@@ -13,6 +13,8 @@ local eq = assert.are.same
 ---@field virt_text_pos? string
 ---@field virt_lines? { [1]: string, [2]: string }[][]
 ---@field virt_lines_above? boolean
+---@field sign_text? string
+---@field sign_hl_group? string
 
 local M = {}
 
@@ -41,6 +43,8 @@ M.get_actual_marks = function()
             virt_text_pos = details.virt_text_pos,
             virt_lines = details.virt_lines,
             virt_lines_above = details.virt_lines_above,
+            sign_text = details.sign_text,
+            sign_hl_group = details.sign_hl_group,
         }
         table.insert(actual, mark_info)
     end

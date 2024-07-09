@@ -48,6 +48,13 @@ M.render_node = function(namespace, buf, capture, node)
             virt_text_pos = 'overlay',
             hl_eol = true,
         })
+
+        vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
+            end_row = end_row,
+            end_col = end_col,
+            sign_text = list.cycle(heading.signs, level),
+            sign_hl_group = foreground,
+        })
     elseif capture == 'dash' then
         local dash = state.config.dash
         local width = vim.api.nvim_win_get_width(util.buf_to_win(buf))
@@ -72,12 +79,18 @@ M.render_node = function(namespace, buf, capture, node)
         if not vim.tbl_contains({ 'language', 'full' }, code.style) then
             return
         end
-        -- Requires inline extmarks
-        if not util.has_10 then
-            return
-        end
         local icon, icon_highlight = icons.get(value)
         if icon == nil or icon_highlight == nil then
+            return
+        end
+        vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
+            end_row = end_row,
+            end_col = end_col,
+            sign_text = icon,
+            sign_hl_group = icon_highlight,
+        })
+        -- Requires inline extmarks
+        if not util.has_10 then
             return
         end
         local highlight = { icon_highlight }

@@ -27,7 +27,7 @@ Plugin to improve viewing Markdown files in Neovim
   - Block quotes: replace leading `>` with provided icon
   - Tables: replace border characters, does NOT automatically align
   - [Callouts](https://github.com/orgs/community/discussions/16925)
-    - Base set as well as custom ones
+    - Github & Obsidian out of the box, supports user defined as well
   - Custom checkbox states, function similar to `callouts`
   - `LaTeX` blocks: renders formulas if `latex` parser and `pylatexenc` are installed
 - Disable rendering when file is larger than provided value
@@ -172,18 +172,21 @@ require('render-markdown').setup({
         -- The 'level' is used to index into the array using a cycle
         -- The result is left padded with spaces to hide any additional '#'
         icons = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
+        -- Added to the sign column
+        -- The 'level' is used to index into the array using a cycle
+        signs = { '󰫎 ' },
         -- The 'level' is used to index into the array using a clamp
         -- Highlight for the heading icon and extends through the entire line
         backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
         -- The 'level' is used to index into the array using a clamp
-        -- Highlight for the heading icon only
+        -- Highlight for the heading and sign icons
         foregrounds = { 'markdownH1', 'markdownH2', 'markdownH3', 'markdownH4', 'markdownH5', 'markdownH6' },
     },
     code = {
         -- Determines how code blocks & inline code are rendered:
         --  none: disables all rendering
         --  normal: adds highlight group to code blocks & inline code
-        --  language: adds language icon & name above code blocks
+        --  language: adds language icon to sign column and icon + name above code blocks
         --  full: normal + language
         style = 'full',
         -- Highlight for code blocks & inline code
@@ -326,11 +329,14 @@ require('render-markdown').setup({
         -- The 'level' is used to index into the array using a cycle
         -- The result is left padded with spaces to hide any additional '#'
         icons = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
+        -- Added to the sign column
+        -- The 'level' is used to index into the array using a cycle
+        signs = { '󰫎 ' },
         -- The 'level' is used to index into the array using a clamp
         -- Highlight for the heading icon and extends through the entire line
         backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
         -- The 'level' is used to index into the array using a clamp
-        -- Highlight for the heading icon only
+        -- Highlight for the heading and sign icons
         foregrounds = { 'markdownH1', 'markdownH2', 'markdownH3', 'markdownH4', 'markdownH5', 'markdownH6' },
     },
 })
@@ -344,7 +350,7 @@ require('render-markdown').setup({
         -- Determines how code blocks & inline code are rendered:
         --  none: disables all rendering
         --  normal: adds highlight group to code blocks & inline code
-        --  language: adds language icon & name above code blocks
+        --  language: adds language icon to sign column and icon + name above code blocks
         --  full: normal + language
         style = 'full',
         -- Highlight for code blocks & inline code
