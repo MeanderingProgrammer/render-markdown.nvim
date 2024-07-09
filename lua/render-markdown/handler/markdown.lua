@@ -40,12 +40,11 @@ M.render_node = function(namespace, buf, capture, node)
         local background = list.clamp(heading.backgrounds, level)
         local foreground = list.clamp(heading.foregrounds, level)
 
-        local heading_text = { str.pad(icon, padding), { foreground, background } }
         vim.api.nvim_buf_set_extmark(buf, namespace, start_row, 0, {
             end_row = end_row + 1,
             end_col = 0,
             hl_group = background,
-            virt_text = { heading_text },
+            virt_text = { { str.pad(icon, padding), { foreground, background } } },
             virt_text_pos = 'overlay',
             hl_eol = true,
         })
@@ -53,9 +52,8 @@ M.render_node = function(namespace, buf, capture, node)
         local dash = state.config.dash
         local width = vim.api.nvim_win_get_width(util.buf_to_win(buf))
 
-        local dash_text = { dash.icon:rep(width), dash.highlight }
         vim.api.nvim_buf_set_extmark(buf, namespace, start_row, 0, {
-            virt_text = { dash_text },
+            virt_text = { { dash.icon:rep(width), dash.highlight } },
             virt_text_pos = 'overlay',
         })
     elseif capture == 'code' then
@@ -63,7 +61,6 @@ M.render_node = function(namespace, buf, capture, node)
         if not vim.tbl_contains({ 'normal', 'full' }, code.style) then
             return
         end
-
         vim.api.nvim_buf_set_extmark(buf, namespace, start_row, 0, {
             end_row = end_row,
             end_col = 0,
@@ -79,15 +76,12 @@ M.render_node = function(namespace, buf, capture, node)
         if not util.has_10 then
             return
         end
-
         local icon, icon_highlight = icons.get(value)
         if icon == nil or icon_highlight == nil then
             return
         end
-
-        local icon_text = { icon .. ' ' .. value, { icon_highlight, code.highlight } }
         vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
-            virt_text = { icon_text },
+            virt_text = { { icon .. ' ' .. value, { icon_highlight, code.highlight } } },
             virt_text_pos = 'inline',
         })
     elseif capture == 'list_marker' then
@@ -107,11 +101,10 @@ M.render_node = function(namespace, buf, capture, node)
             local level = ts.level_in_section(node, 'list')
             local icon = list.cycle(bullet.icons, level)
 
-            local list_marker_text = { str.pad(icon, leading_spaces), bullet.highlight }
             vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
                 end_row = end_row,
                 end_col = end_col,
-                virt_text = { list_marker_text },
+                virt_text = { { str.pad(icon, leading_spaces), bullet.highlight } },
                 virt_text_pos = 'overlay',
             })
         end
@@ -130,12 +123,10 @@ M.render_node = function(namespace, buf, capture, node)
                 highlight = callout.highlight
             end
         end
-
-        local quote_marker_text = { value:gsub('>', quote.icon), highlight }
         vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
             end_row = end_row,
             end_col = end_col,
-            virt_text = { quote_marker_text },
+            virt_text = { { value:gsub('>', quote.icon), highlight } },
             virt_text_pos = 'overlay',
         })
     elseif vim.tbl_contains({ 'checkbox_unchecked', 'checkbox_checked' }, capture) then
@@ -143,12 +134,10 @@ M.render_node = function(namespace, buf, capture, node)
         if capture == 'checkbox_checked' then
             checkbox = state.config.checkbox.checked
         end
-
-        local checkbox_text = { str.pad_to(value, checkbox.icon), checkbox.highlight }
         vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
             end_row = end_row,
             end_col = end_col,
-            virt_text = { checkbox_text },
+            virt_text = { { str.pad_to(value, checkbox.icon), checkbox.highlight } },
             virt_text_pos = 'overlay',
         })
     elseif capture == 'table' then
@@ -156,6 +145,7 @@ M.render_node = function(namespace, buf, capture, node)
         if pipe_table.style ~= 'full' then
             return
         end
+        local boarder = pipe_table.boarder
 
         ---@param row integer
         ---@param s string
@@ -183,19 +173,19 @@ M.render_node = function(namespace, buf, capture, node)
         if delim_width == start_width and start_width == end_width then
             local headings = vim.split(delim_value, '|', { plain = true, trimempty = true })
             local lengths = vim.tbl_map(function(part)
-                return string.rep('─', vim.fn.strdisplaywidth(part))
+                return boarder[11]:rep(vim.fn.strdisplaywidth(part))
             end, headings)
 
-            local line_above = { { '┌' .. table.concat(lengths, '┬') .. '┐', pipe_table.head } }
+            local line_above = boarder[1] .. table.concat(lengths, boarder[2]) .. boarder[3]
             vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
                 virt_lines_above = true,
-                virt_lines = { line_above },
+                virt_lines = { { { line_above, pipe_table.head } } },
             })
 
-            local line_below = { { '└' .. table.concat(lengths, '┴') .. '┘', pipe_table.row } }
+            local line_below = boarder[7] .. table.concat(lengths, boarder[8]) .. boarder[9]
             vim.api.nvim_buf_set_extmark(buf, namespace, end_row, start_col, {
                 virt_lines_above = true,
-                virt_lines = { line_below },
+                virt_lines = { { { line_below, pipe_table.row } } },
             })
         end
     elseif vim.tbl_contains({ 'table_head', 'table_delim', 'table_row' }, capture) then
@@ -203,6 +193,7 @@ M.render_node = function(namespace, buf, capture, node)
         if pipe_table.style == 'none' then
             return
         end
+        local boarder = pipe_table.boarder
 
         local highlight = pipe_table.head
         if capture == 'table_row' then
@@ -212,37 +203,32 @@ M.render_node = function(namespace, buf, capture, node)
         if capture == 'table_delim' then
             -- Order matters here, in particular handling inner intersections before left & right
             local row = value
-                :gsub('|', '│')
-                :gsub('-', '─')
-                :gsub(' ', '─')
-                :gsub('─│─', '─┼─')
-                :gsub('│─', '├─')
-                :gsub('─│', '─┤')
+                :gsub(' ', '-')
+                :gsub('%-|%-', boarder[11] .. boarder[5] .. boarder[11])
+                :gsub('|%-', boarder[4] .. boarder[11])
+                :gsub('%-|', boarder[11] .. boarder[6])
+                :gsub('%-', boarder[11])
 
-            local table_delim_text = { row, highlight }
             vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
                 end_row = end_row,
                 end_col = end_col,
-                virt_text = { table_delim_text },
+                virt_text = { { row, highlight } },
                 virt_text_pos = 'overlay',
             })
         elseif pipe_table.cell == 'overlay' then
-            local table_row_text = { value:gsub('|', '│'), highlight }
             vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
                 end_row = end_row,
                 end_col = end_col,
-                virt_text = { table_row_text },
+                virt_text = { { value:gsub('|', boarder[10]), highlight } },
                 virt_text_pos = 'overlay',
             })
         elseif pipe_table.cell == 'raw' then
             for i = 1, #value do
-                local ch = value:sub(i, i)
-                if ch == '|' then
-                    local table_pipe_text = { '│', highlight }
+                if value:sub(i, i) == '|' then
                     vim.api.nvim_buf_set_extmark(buf, namespace, start_row, i - 1, {
                         end_row = end_row,
                         end_col = i - 1,
-                        virt_text = { table_pipe_text },
+                        virt_text = { { boarder[10], highlight } },
                         virt_text_pos = 'overlay',
                     })
                 end

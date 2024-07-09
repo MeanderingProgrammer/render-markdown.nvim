@@ -14,6 +14,7 @@ local M = {}
 ---@class render.md.UserPipeTable
 ---@field public style? 'full'|'normal'|'none'
 ---@field public cell? 'overlay'|'raw'
+---@field public boarder? string[]
 ---@field public head? string
 ---@field public row? string
 
@@ -219,7 +220,16 @@ M.default_config = {
         --  overlay: writes completely over the table, removing conceal behavior and highlights
         --  raw: replaces only the '|' characters in each row, leaving the cells completely unmodified
         cell = 'overlay',
-        -- Highlight for table heading, delimitter, and the line above
+        -- Characters used to replace table boarder
+        -- Correspond to top(3), delimiter(3), bottom(3), vertical, & horizontal
+        -- stylua: ignore
+        boarder = {
+            '┌', '┬', '┐',
+            '├', '┼', '┤',
+            '└', '┴', '┘',
+            '│', '─',
+        },
+        -- Highlight for table heading, delimiter, and the line above
         head = '@markup.heading',
         -- Highlight for everything else, main table rows and the line below
         row = 'Normal',

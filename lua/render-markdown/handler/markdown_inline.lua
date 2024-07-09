@@ -26,20 +26,18 @@ M.render_node = function(namespace, buf, capture, node)
     logger.debug_node(capture, node, buf)
 
     if capture == 'code' then
-        local code = state.config.code
         vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
             end_row = end_row,
             end_col = end_col,
-            hl_group = code.highlight,
+            hl_group = state.config.code.highlight,
         })
     elseif capture == 'callout' then
         local callout = component.callout(value, 'exact')
         if callout ~= nil then
-            local callout_text = { callout.text, callout.highlight }
             vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
                 end_row = end_row,
                 end_col = end_col,
-                virt_text = { callout_text },
+                virt_text = { { callout.text, callout.highlight } },
                 virt_text_pos = 'overlay',
             })
         else
@@ -47,17 +45,14 @@ M.render_node = function(namespace, buf, capture, node)
             if not util.has_10 then
                 return
             end
-
             local checkbox = component.checkbox(value, 'exact')
             if checkbox == nil then
                 return
             end
-
-            local checkbox_text = { str.pad_to(value, checkbox.text), checkbox.highlight }
             vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
                 end_row = end_row,
                 end_col = end_col,
-                virt_text = { checkbox_text },
+                virt_text = { { str.pad_to(value, checkbox.text), checkbox.highlight } },
                 virt_text_pos = 'inline',
                 conceal = '',
             })
