@@ -144,6 +144,7 @@ function M.check_config(config)
 
     local heading = config.heading
     append_errors('heading', {
+        enabled = { heading.enabled, 'boolean' },
         icons = { heading.icons, 'table' },
         signs = { heading.signs, 'table' },
         backgrounds = { heading.backgrounds, 'table' },
@@ -156,18 +157,21 @@ function M.check_config(config)
 
     local code = config.code
     append_errors('code', {
+        enabled = { code.enabled, 'boolean' },
         style = one_of(code.style, { 'full', 'language', 'normal', 'none' }),
         highlight = { code.highlight, 'string' },
     })
 
     local dash = config.dash
     append_errors('dash', {
+        enabled = { dash.enabled, 'boolean' },
         icon = { dash.icon, 'string' },
         highlight = { dash.highlight, 'string' },
     })
 
     local bullet = config.bullet
     append_errors('bullet', {
+        enabled = { bullet.enabled, 'boolean' },
         icons = { bullet.icons, 'table' },
         highlight = { bullet.highlight, 'string' },
     })
@@ -175,6 +179,7 @@ function M.check_config(config)
 
     local checkbox = config.checkbox
     append_errors('checkbox', {
+        enabled = { checkbox.enabled, 'boolean' },
         unchecked = { checkbox.unchecked, 'table' },
         checked = { checkbox.checked, 'table' },
         custom = { checkbox.custom, 'table' },
@@ -199,12 +204,14 @@ function M.check_config(config)
 
     local quote = config.quote
     append_errors('quote', {
+        enabled = { quote.enabled, 'boolean' },
         icon = { quote.icon, 'string' },
         highlight = { quote.highlight, 'string' },
     })
 
     local pipe_table = config.pipe_table
     append_errors('pipe_table', {
+        enabled = { pipe_table.enabled, 'boolean' },
         style = one_of(pipe_table.style, { 'full', 'normal', 'none' }),
         cell = one_of(pipe_table.cell, { 'overlay', 'raw' }),
         border = { pipe_table.border, 'table' },

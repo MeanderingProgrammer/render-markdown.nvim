@@ -18,6 +18,7 @@ local M = {}
 ---@field public highlight? string
 
 ---@class render.md.UserPipeTable
+---@field public enabled? boolean
 ---@field public style? 'full'|'normal'|'none'
 ---@field public cell? 'overlay'|'raw'
 ---@field public border? string[]
@@ -29,24 +30,33 @@ local M = {}
 ---@field public rendered? string
 ---@field public highlight? string
 
+---@class render.md.UserCheckboxComponent
+---@field public icon? string
+---@field public highlight? string
+
 ---@class render.md.UserCheckbox
----@field public unchecked? render.md.UserBasicComponent
----@field public checked? render.md.UserBasicComponent
+---@field public enabled? boolean
+---@field public unchecked? render.md.UserCheckboxComponent
+---@field public checked? render.md.UserCheckboxComponent
 ---@field public custom? table<string, render.md.CustomComponent>
 
 ---@class render.md.UserBullet
+---@field public enabled? boolean
 ---@field public icons? string[]
 ---@field public highlight? string
 
 ---@class render.md.UserBasicComponent
+---@field public enabled? boolean
 ---@field public icon? string
 ---@field public highlight? string
 
 ---@class render.md.UserCode
+---@field public enabled? boolean
 ---@field public style? 'full'|'normal'|'language'|'none'
 ---@field public highlight? string
 
 ---@class render.md.UserHeading
+---@field public enabled? boolean
 ---@field public icons? string[]
 ---@field public signs? string[]
 ---@field public backgrounds? string[]
@@ -152,6 +162,8 @@ M.default_config = {
         highlight = '@markup.math',
     },
     heading = {
+        -- Turn on / off heading icon & background rendering
+        enabled = true,
         -- Replaces '#+' of 'atx_h._marker'
         -- The number of '#' in the heading determines the 'level'
         -- The 'level' is used to index into the array using a cycle
@@ -168,6 +180,8 @@ M.default_config = {
         foregrounds = { 'markdownH1', 'markdownH2', 'markdownH3', 'markdownH4', 'markdownH5', 'markdownH6' },
     },
     code = {
+        -- Turn on / off code block & inline code rendering
+        enabled = true,
         -- Determines how code blocks & inline code are rendered:
         --  none: disables all rendering
         --  normal: adds highlight group to code blocks & inline code
@@ -178,6 +192,8 @@ M.default_config = {
         highlight = 'ColorColumn',
     },
     dash = {
+        -- Turn on / off thematic break rendering
+        enabled = true,
         -- Replaces '---'|'***'|'___'|'* * *' of 'thematic_break'
         -- The icon gets repeated across the window's width
         icon = '─',
@@ -185,6 +201,8 @@ M.default_config = {
         highlight = 'LineNr',
     },
     bullet = {
+        -- Turn on / off list bullet rendering
+        enabled = true,
         -- Replaces '-'|'+'|'*' of 'list_item'
         -- How deeply nested the list is determines the 'level'
         -- The 'level' is used to index into the array using a cycle
@@ -196,6 +214,8 @@ M.default_config = {
     -- Checkboxes are a special instance of a 'list_item' that start with a 'shortcut_link'
     -- There are two special states for unchecked & checked defined in the markdown grammar
     checkbox = {
+        -- Turn on / off checkbox state rendering
+        enabled = true,
         unchecked = {
             -- Replaces '[ ]' of 'task_list_marker_unchecked'
             icon = '󰄱 ',
@@ -220,12 +240,16 @@ M.default_config = {
         },
     },
     quote = {
+        -- Turn on / off block quote & callout rendering
+        enabled = true,
         -- Replaces '>' of 'block_quote'
         icon = '▋',
         -- Highlight for the quote icon
         highlight = '@markup.quote',
     },
     pipe_table = {
+        -- Turn on / off pipe table rendering
+        enabled = true,
         -- Determines how the table as a whole is rendered:
         --  none: disables all rendering
         --  normal: applies the 'cell' style rendering to each row of the table
@@ -273,7 +297,7 @@ M.default_config = {
         quote = { raw = '[!QUOTE]', rendered = '󱆨 Quote', highlight = '@markup.quote' },
     },
     link = {
-        -- Turn on / off inline link icon behavior
+        -- Turn on / off inline link icon rendering
         enabled = true,
         -- Inlined with 'image' elements
         image = '󰥶 ',

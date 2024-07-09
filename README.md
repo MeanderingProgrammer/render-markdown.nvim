@@ -172,6 +172,8 @@ require('render-markdown').setup({
         highlight = '@markup.math',
     },
     heading = {
+        -- Turn on / off heading icon & background rendering
+        enabled = true,
         -- Replaces '#+' of 'atx_h._marker'
         -- The number of '#' in the heading determines the 'level'
         -- The 'level' is used to index into the array using a cycle
@@ -188,6 +190,8 @@ require('render-markdown').setup({
         foregrounds = { 'markdownH1', 'markdownH2', 'markdownH3', 'markdownH4', 'markdownH5', 'markdownH6' },
     },
     code = {
+        -- Turn on / off code block & inline code rendering
+        enabled = true,
         -- Determines how code blocks & inline code are rendered:
         --  none: disables all rendering
         --  normal: adds highlight group to code blocks & inline code
@@ -198,6 +202,8 @@ require('render-markdown').setup({
         highlight = 'ColorColumn',
     },
     dash = {
+        -- Turn on / off thematic break rendering
+        enabled = true,
         -- Replaces '---'|'***'|'___'|'* * *' of 'thematic_break'
         -- The icon gets repeated across the window's width
         icon = '─',
@@ -205,6 +211,8 @@ require('render-markdown').setup({
         highlight = 'LineNr',
     },
     bullet = {
+        -- Turn on / off list bullet rendering
+        enabled = true,
         -- Replaces '-'|'+'|'*' of 'list_item'
         -- How deeply nested the list is determines the 'level'
         -- The 'level' is used to index into the array using a cycle
@@ -216,6 +224,8 @@ require('render-markdown').setup({
     -- Checkboxes are a special instance of a 'list_item' that start with a 'shortcut_link'
     -- There are two special states for unchecked & checked defined in the markdown grammar
     checkbox = {
+        -- Turn on / off checkbox state rendering
+        enabled = true,
         unchecked = {
             -- Replaces '[ ]' of 'task_list_marker_unchecked'
             icon = '󰄱 ',
@@ -240,12 +250,16 @@ require('render-markdown').setup({
         },
     },
     quote = {
+        -- Turn on / off block quote & callout rendering
+        enabled = true,
         -- Replaces '>' of 'block_quote'
         icon = '▋',
         -- Highlight for the quote icon
         highlight = '@markup.quote',
     },
     pipe_table = {
+        -- Turn on / off pipe table rendering
+        enabled = true,
         -- Determines how the table as a whole is rendered:
         --  none: disables all rendering
         --  normal: applies the 'cell' style rendering to each row of the table
@@ -293,7 +307,7 @@ require('render-markdown').setup({
         quote = { raw = '[!QUOTE]', rendered = '󱆨 Quote', highlight = '@markup.quote' },
     },
     link = {
-        -- Turn on / off inline link icon behavior
+        -- Turn on / off inline link icon rendering
         enabled = true,
         -- Inlined with 'image' elements
         image = '󰥶 ',
@@ -339,6 +353,8 @@ We use the following definitions when discussing indexing into arrays:
 ```lua
 require('render-markdown').setup({
     heading = {
+        -- Turn on / off heading icon & background rendering
+        enabled = true,
         -- Replaces '#+' of 'atx_h._marker'
         -- The number of '#' in the heading determines the 'level'
         -- The 'level' is used to index into the array using a cycle
@@ -362,6 +378,8 @@ require('render-markdown').setup({
 ```lua
 require('render-markdown').setup({
     code = {
+        -- Turn on / off code block & inline code rendering
+        enabled = true,
         -- Determines how code blocks & inline code are rendered:
         --  none: disables all rendering
         --  normal: adds highlight group to code blocks & inline code
@@ -379,6 +397,8 @@ require('render-markdown').setup({
 ```lua
 require('render-markdown').setup({
     dash = {
+        -- Turn on / off thematic break rendering
+        enabled = true,
         -- Replaces '---'|'***'|'___'|'* * *' of 'thematic_break'
         -- The icon gets repeated across the window's width
         icon = '─',
@@ -393,6 +413,8 @@ require('render-markdown').setup({
 ```lua
 require('render-markdown').setup({
     bullet = {
+        -- Turn on / off list bullet rendering
+        enabled = true,
         -- Replaces '-'|'+'|'*' of 'list_item'
         -- How deeply nested the list is determines the 'level'
         -- The 'level' is used to index into the array using a cycle
@@ -411,6 +433,8 @@ require('render-markdown').setup({
     -- Checkboxes are a special instance of a 'list_item' that start with a 'shortcut_link'
     -- There are two special states for unchecked & checked defined in the markdown grammar
     checkbox = {
+        -- Turn on / off checkbox state rendering
+        enabled = true,
         unchecked = {
             -- Replaces '[ ]' of 'task_list_marker_unchecked'
             icon = '󰄱 ',
@@ -442,6 +466,8 @@ require('render-markdown').setup({
 ```lua
 require('render-markdown').setup({
     quote = {
+        -- Turn on / off block quote & callout rendering
+        enabled = true,
         -- Replaces '>' of 'block_quote'
         icon = '▋',
         -- Highlight for the quote icon
@@ -455,6 +481,8 @@ require('render-markdown').setup({
 ```lua
 require('render-markdown').setup({
     pipe_table = {
+        -- Turn on / off pipe table rendering
+        enabled = true,
         -- Determines how the table as a whole is rendered:
         --  none: disables all rendering
         --  normal: applies the 'cell' style rendering to each row of the table
@@ -516,7 +544,7 @@ require('render-markdown').setup({
 ```lua
 require('render-markdown').setup({
     link = {
-        -- Turn on / off inline link icon behavior
+        -- Turn on / off inline link icon rendering
         enabled = true,
         -- Inlined with 'image' elements
         image = '󰥶 ',

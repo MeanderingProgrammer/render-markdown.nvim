@@ -30,6 +30,9 @@ M.render_node = function(namespace, buf, capture, node)
 
     if capture == 'heading' then
         local heading = state.config.heading
+        if not heading.enabled then
+            return
+        end
         local level = vim.fn.strdisplaywidth(value)
 
         local icon = list.cycle(heading.icons, level)
@@ -57,14 +60,19 @@ M.render_node = function(namespace, buf, capture, node)
         })
     elseif capture == 'dash' then
         local dash = state.config.dash
+        if not dash.enabled then
+            return
+        end
         local width = vim.api.nvim_win_get_width(util.buf_to_win(buf))
-
         vim.api.nvim_buf_set_extmark(buf, namespace, start_row, 0, {
             virt_text = { { dash.icon:rep(width), dash.highlight } },
             virt_text_pos = 'overlay',
         })
     elseif capture == 'code' then
         local code = state.config.code
+        if not code.enabled then
+            return
+        end
         if not vim.tbl_contains({ 'normal', 'full' }, code.style) then
             return
         end
@@ -76,6 +84,9 @@ M.render_node = function(namespace, buf, capture, node)
         })
     elseif capture == 'language' then
         local code = state.config.code
+        if not code.enabled then
+            return
+        end
         if not vim.tbl_contains({ 'language', 'full' }, code.style) then
             return
         end
@@ -111,6 +122,9 @@ M.render_node = function(namespace, buf, capture, node)
             })
         else
             local bullet = state.config.bullet
+            if not bullet.enabled then
+                return
+            end
             -- List markers from tree-sitter should have leading spaces removed, however there are known
             -- edge cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
             -- As a result we handle leading spaces here, can remove if this gets fixed upstream
@@ -132,6 +146,9 @@ M.render_node = function(namespace, buf, capture, node)
         end
     elseif capture == 'quote_marker' then
         local quote = state.config.quote
+        if not quote.enabled then
+            return
+        end
         local highlight = quote.highlight
         local quote_node = ts.parent_in_section(node, 'block_quote')
         if quote_node ~= nil then
@@ -147,18 +164,25 @@ M.render_node = function(namespace, buf, capture, node)
             virt_text_pos = 'overlay',
         })
     elseif vim.tbl_contains({ 'checkbox_unchecked', 'checkbox_checked' }, capture) then
-        local checkbox = state.config.checkbox.unchecked
+        local checkbox = state.config.checkbox
+        if not checkbox.enabled then
+            return
+        end
+        local checkbox_state = checkbox.unchecked
         if capture == 'checkbox_checked' then
-            checkbox = state.config.checkbox.checked
+            checkbox_state = checkbox.checked
         end
         vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
             end_row = end_row,
             end_col = end_col,
-            virt_text = { { str.pad_to(value, checkbox.icon), checkbox.highlight } },
+            virt_text = { { str.pad_to(value, checkbox_state.icon), checkbox_state.highlight } },
             virt_text_pos = 'overlay',
         })
     elseif capture == 'table' then
         local pipe_table = state.config.pipe_table
+        if not pipe_table.enabled then
+            return
+        end
         if pipe_table.style ~= 'full' then
             return
         end
@@ -207,6 +231,9 @@ M.render_node = function(namespace, buf, capture, node)
         end
     elseif vim.tbl_contains({ 'table_head', 'table_delim', 'table_row' }, capture) then
         local pipe_table = state.config.pipe_table
+        if not pipe_table.enabled then
+            return
+        end
         if pipe_table.style == 'none' then
             return
         end
@@ -261,6 +288,9 @@ end
 ---@param node TSNode
 ---@return boolean
 M.sibling_checkbox = function(buf, node)
+    if not state.config.checkbox.enabled then
+        return false
+    end
     if ts.sibling(node, { 'task_list_marker_unchecked', 'task_list_marker_checked' }) ~= nil then
         return true
     end

@@ -27,6 +27,9 @@ M.render_node = function(namespace, buf, capture, node)
 
     if capture == 'code' then
         local code = state.config.code
+        if not code.enabled then
+            return
+        end
         if not vim.tbl_contains({ 'normal', 'full' }, code.style) then
             return
         end
@@ -38,6 +41,9 @@ M.render_node = function(namespace, buf, capture, node)
     elseif capture == 'callout' then
         local callout = component.callout(value, 'exact')
         if callout ~= nil then
+            if not state.config.quote.enabled then
+                return
+            end
             vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
                 end_row = end_row,
                 end_col = end_col,
@@ -45,6 +51,9 @@ M.render_node = function(namespace, buf, capture, node)
                 virt_text_pos = 'overlay',
             })
         else
+            if not state.config.checkbox.enabled then
+                return
+            end
             -- Requires inline extmarks
             if not util.has_10 then
                 return

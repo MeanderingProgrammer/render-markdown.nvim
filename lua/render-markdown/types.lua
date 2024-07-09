@@ -5,6 +5,7 @@
 ---@field public highlight string
 
 ---@class render.md.PipeTable
+---@field public enabled boolean
 ---@field public style 'full'|'normal'|'none'
 ---@field public cell 'overlay'|'raw'
 ---@field public border string[]
@@ -16,24 +17,33 @@
 ---@field public rendered string
 ---@field public highlight string
 
+---@class render.md.CheckboxComponent
+---@field public icon string
+---@field public highlight string
+
 ---@class render.md.Checkbox
----@field public unchecked render.md.BasicComponent
----@field public checked render.md.BasicComponent
+---@field public enabled boolean
+---@field public unchecked render.md.CheckboxComponent
+---@field public checked render.md.CheckboxComponent
 ---@field public custom table<string, render.md.CustomComponent>
 
 ---@class render.md.Bullet
+---@field public enabled boolean
 ---@field public icons string[]
 ---@field public highlight string
 
 ---@class render.md.BasicComponent
+---@field public enabled boolean
 ---@field public icon string
 ---@field public highlight string
 
 ---@class render.md.Code
+---@field public enabled boolean
 ---@field public style 'full'|'normal'|'language'|'none'
 ---@field public highlight string
 
 ---@class render.md.Heading
+---@field public enabled boolean
 ---@field public icons string[]
 ---@field public signs string[]
 ---@field public backgrounds string[]

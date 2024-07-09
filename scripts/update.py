@@ -65,7 +65,7 @@ def update_types(init_file: Path, types_file: Path) -> None:
 
 
 def update_readme(init_file: Path, readme_file: Path) -> None:
-    old_config = get_code_block(readme_file, "enabled", 1)
+    old_config = get_code_block(readme_file, "log_level", 1)
     new_config = wrap_setup(get_default_config(init_file))
     text = readme_file.read_text().replace(old_config, new_config)
 
