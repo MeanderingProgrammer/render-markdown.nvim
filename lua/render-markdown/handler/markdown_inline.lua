@@ -26,10 +26,14 @@ M.render_node = function(namespace, buf, capture, node)
     logger.debug_node(capture, node, buf)
 
     if capture == 'code' then
+        local code = state.config.code
+        if not vim.tbl_contains({ 'normal', 'full' }, code.style) then
+            return
+        end
         vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
             end_row = end_row,
             end_col = end_col,
-            hl_group = state.config.code.highlight,
+            hl_group = code.highlight,
         })
     elseif capture == 'callout' then
         local callout = component.callout(value, 'exact')

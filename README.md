@@ -180,13 +180,13 @@ require('render-markdown').setup({
         foregrounds = { 'markdownH1', 'markdownH2', 'markdownH3', 'markdownH4', 'markdownH5', 'markdownH6' },
     },
     code = {
-        -- Determines how code blocks are rendered:
+        -- Determines how code blocks & inline code are rendered:
         --  none: disables all rendering
-        --  normal: adds highlight group to the code block
-        --  language: adds language icon & name above the code block
+        --  normal: adds highlight group to code blocks & inline code
+        --  language: adds language icon & name above code blocks
         --  full: normal + language
         style = 'full',
-        -- Highlight for code blocks
+        -- Highlight for code blocks & inline code
         highlight = 'ColorColumn',
     },
     dash = {
@@ -332,13 +332,13 @@ require('render-markdown').setup({
 ```lua
 require('render-markdown').setup({
     code = {
-        -- Determines how code blocks are rendered:
+        -- Determines how code blocks & inline code are rendered:
         --  none: disables all rendering
-        --  normal: adds highlight group to the code block
-        --  language: adds language icon & name above the code block
+        --  normal: adds highlight group to code blocks & inline code
+        --  language: adds language icon & name above code blocks
         --  full: normal + language
         style = 'full',
-        -- Highlight for code blocks
+        -- Highlight for code blocks & inline code
         highlight = 'ColorColumn',
     },
 })

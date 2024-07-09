@@ -80,8 +80,12 @@ M.render_node = function(namespace, buf, capture, node)
         if icon == nil or icon_highlight == nil then
             return
         end
+        local highlight = { icon_highlight }
+        if code.style == 'full' then
+            highlight = { icon_highlight, code.highlight }
+        end
         vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
-            virt_text = { { icon .. ' ' .. value, { icon_highlight, code.highlight } } },
+            virt_text = { { icon .. ' ' .. value, highlight } },
             virt_text_pos = 'inline',
         })
     elseif capture == 'list_marker' then
