@@ -177,7 +177,14 @@ M.default_config = {
         backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
         -- The 'level' is used to index into the array using a clamp
         -- Highlight for the heading and sign icons
-        foregrounds = { 'markdownH1', 'markdownH2', 'markdownH3', 'markdownH4', 'markdownH5', 'markdownH6' },
+        foregrounds = {
+            '@markup.heading.1.markdown',
+            '@markup.heading.2.markdown',
+            '@markup.heading.3.markdown',
+            '@markup.heading.4.markdown',
+            '@markup.heading.5.markdown',
+            '@markup.heading.6.markdown',
+        },
     },
     code = {
         -- Turn on / off code block & inline code rendering

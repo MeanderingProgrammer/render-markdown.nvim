@@ -20,21 +20,8 @@ async_tests.describe('custom_handler.md', function()
         local expected = {}
 
         -- Heading / inline code
+        vim.list_extend(expected, util.heading(0, 1))
         vim.list_extend(expected, {
-            {
-                row = { 0, 1 },
-                col = { 0, 0 },
-                hl_eol = true,
-                hl_group = 'DiffAdd',
-                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { 0, 0 },
-                col = { 0, 1 },
-                sign_text = '󰫎 ',
-                sign_hl_group = 'markdownH1',
-            },
             {
                 row = { 0, 0 },
                 col = { 9, 18 },
@@ -59,22 +46,7 @@ async_tests.describe('custom_handler.md', function()
         local expected = {}
 
         -- Heading / no inline code
-        vim.list_extend(expected, {
-            {
-                row = { 0, 1 },
-                col = { 0, 0 },
-                hl_eol = true,
-                hl_group = 'DiffAdd',
-                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { 0, 0 },
-                col = { 0, 1 },
-                sign_text = '󰫎 ',
-                sign_hl_group = 'markdownH1',
-            },
-        })
+        vim.list_extend(expected, util.heading(0, 1))
 
         -- Backslash escapes
         vim.list_extend(expected, {
@@ -107,21 +79,8 @@ async_tests.describe('custom_handler.md', function()
         local expected = {}
 
         -- Heading / inline code
+        vim.list_extend(expected, util.heading(0, 1))
         vim.list_extend(expected, {
-            {
-                row = { 0, 1 },
-                col = { 0, 0 },
-                hl_eol = true,
-                hl_group = 'DiffAdd',
-                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { 0, 0 },
-                col = { 0, 1 },
-                sign_text = '󰫎 ',
-                sign_hl_group = 'markdownH1',
-            },
             {
                 row = { 0, 0 },
                 col = { 9, 18 },

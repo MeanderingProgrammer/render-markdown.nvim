@@ -8,22 +8,7 @@ async_tests.describe('table.md', function()
         local expected = {}
 
         -- Table with inline heading
-        vim.list_extend(expected, {
-            {
-                row = { 0, 1 },
-                col = { 0, 0 },
-                hl_eol = true,
-                hl_group = 'DiffAdd',
-                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { 0, 0 },
-                col = { 0, 1 },
-                sign_text = '󰫎 ',
-                sign_hl_group = 'markdownH1',
-            },
-        })
+        vim.list_extend(expected, util.heading(0, 1))
 
         local table_with_inline = {
             '│ Heading 1 │ `Heading 2` │',
@@ -76,22 +61,7 @@ async_tests.describe('table.md', function()
         })
 
         -- Table no inline heading
-        vim.list_extend(expected, {
-            {
-                row = { 6, 7 },
-                col = { 0, 0 },
-                hl_eol = true,
-                hl_group = 'DiffAdd',
-                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { 6, 6 },
-                col = { 0, 1 },
-                sign_text = '󰫎 ',
-                sign_hl_group = 'markdownH1',
-            },
-        })
+        vim.list_extend(expected, util.heading(6, 1))
 
         local table_no_inline = {
             '┌───────────┬───────────┐',
@@ -154,22 +124,7 @@ async_tests.describe('table.md', function()
         }
 
         -- Table with inline heading
-        vim.list_extend(expected, {
-            {
-                row = { 0, 1 },
-                col = { 0, 0 },
-                hl_eol = true,
-                hl_group = 'DiffAdd',
-                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { 0, 0 },
-                col = { 0, 1 },
-                sign_text = '󰫎 ',
-                sign_hl_group = 'markdownH1',
-            },
-        })
+        vim.list_extend(expected, util.heading(0, 1))
 
         -- Table with inline
         vim.list_extend(expected, {
@@ -261,22 +216,7 @@ async_tests.describe('table.md', function()
         })
 
         -- Table no inline heading
-        vim.list_extend(expected, {
-            {
-                row = { 6, 7 },
-                col = { 0, 0 },
-                hl_eol = true,
-                hl_group = 'DiffAdd',
-                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { 6, 6 },
-                col = { 0, 1 },
-                sign_text = '󰫎 ',
-                sign_hl_group = 'markdownH1',
-            },
-        })
+        vim.list_extend(expected, util.heading(6, 1))
 
         -- Table no inline
         vim.list_extend(expected, {

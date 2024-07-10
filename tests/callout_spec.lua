@@ -9,22 +9,8 @@ async_tests.describe('callout.md', function()
         local quote = '▋'
 
         local note_start = 0
+        vim.list_extend(expected, util.heading(note_start, 1))
         vim.list_extend(expected, {
-            -- Heading
-            {
-                row = { note_start, note_start + 1 },
-                col = { 0, 0 },
-                hl_eol = true,
-                hl_group = 'DiffAdd',
-                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { note_start, note_start },
-                col = { 0, 1 },
-                sign_text = '󰫎 ',
-                sign_hl_group = 'markdownH1',
-            },
             -- Quote start
             {
                 row = { note_start + 2, note_start + 2 },
@@ -67,22 +53,8 @@ async_tests.describe('callout.md', function()
         })
 
         local tip_start = 8
+        vim.list_extend(expected, util.heading(tip_start, 1))
         vim.list_extend(expected, {
-            -- Heading
-            {
-                row = { tip_start, tip_start + 1 },
-                col = { 0, 0 },
-                hl_eol = true,
-                hl_group = 'DiffAdd',
-                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { tip_start, tip_start },
-                col = { 0, 1 },
-                sign_text = '󰫎 ',
-                sign_hl_group = 'markdownH1',
-            },
             -- Quote start
             {
                 row = { tip_start + 2, tip_start + 2 },
@@ -143,22 +115,8 @@ async_tests.describe('callout.md', function()
         })
 
         local important_start = 16
+        vim.list_extend(expected, util.heading(important_start, 1))
         vim.list_extend(expected, {
-            -- Heading
-            {
-                row = { important_start, important_start + 1 },
-                col = { 0, 0 },
-                hl_eol = true,
-                hl_group = 'DiffAdd',
-                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { important_start, important_start },
-                col = { 0, 1 },
-                sign_text = '󰫎 ',
-                sign_hl_group = 'markdownH1',
-            },
             -- Quote start
             {
                 row = { important_start + 2, important_start + 2 },
@@ -183,22 +141,8 @@ async_tests.describe('callout.md', function()
         })
 
         local warning_start = 21
+        vim.list_extend(expected, util.heading(warning_start, 1))
         vim.list_extend(expected, {
-            -- Heading
-            {
-                row = { warning_start, warning_start + 1 },
-                col = { 0, 0 },
-                hl_eol = true,
-                hl_group = 'DiffAdd',
-                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { warning_start, warning_start },
-                col = { 0, 1 },
-                sign_text = '󰫎 ',
-                sign_hl_group = 'markdownH1',
-            },
             -- Quote start
             {
                 row = { warning_start + 2, warning_start + 2 },
@@ -223,22 +167,8 @@ async_tests.describe('callout.md', function()
         })
 
         local caution_start = 26
+        vim.list_extend(expected, util.heading(caution_start, 1))
         vim.list_extend(expected, {
-            -- Heading
-            {
-                row = { caution_start, caution_start + 1 },
-                col = { 0, 0 },
-                hl_eol = true,
-                hl_group = 'DiffAdd',
-                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { caution_start, caution_start },
-                col = { 0, 1 },
-                sign_text = '󰫎 ',
-                sign_hl_group = 'markdownH1',
-            },
             -- Quote start
             {
                 row = { caution_start + 2, caution_start + 2 },
@@ -263,22 +193,8 @@ async_tests.describe('callout.md', function()
         })
 
         local bug_start = 31
+        vim.list_extend(expected, util.heading(bug_start, 1))
         vim.list_extend(expected, {
-            -- Heading
-            {
-                row = { bug_start, bug_start + 1 },
-                col = { 0, 0 },
-                hl_eol = true,
-                hl_group = 'DiffAdd',
-                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { bug_start, bug_start },
-                col = { 0, 1 },
-                sign_text = '󰫎 ',
-                sign_hl_group = 'markdownH1',
-            },
             -- Quote start
             {
                 row = { bug_start + 2, bug_start + 2 },

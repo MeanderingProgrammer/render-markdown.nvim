@@ -8,22 +8,7 @@ async_tests.describe('list_table.md', function()
         local expected = {}
 
         -- Unordered list heading
-        vim.list_extend(expected, {
-            {
-                row = { 0, 1 },
-                col = { 0, 0 },
-                hl_eol = true,
-                hl_group = 'DiffAdd',
-                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { 0, 0 },
-                col = { 0, 1 },
-                sign_text = '󰫎 ',
-                sign_hl_group = 'markdownH1',
-            },
-        })
+        vim.list_extend(expected, util.heading(0, 1))
 
         -- Unordered list
         vim.list_extend(expected, {
@@ -100,40 +85,10 @@ async_tests.describe('list_table.md', function()
         })
 
         -- Ordered list heading
-        vim.list_extend(expected, {
-            {
-                row = { 11, 12 },
-                col = { 0, 0 },
-                hl_eol = true,
-                hl_group = 'DiffAdd',
-                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { 11, 11 },
-                col = { 0, 1 },
-                sign_text = '󰫎 ',
-                sign_hl_group = 'markdownH1',
-            },
-        })
+        vim.list_extend(expected, util.heading(11, 1))
 
         -- Table heading
-        vim.list_extend(expected, {
-            {
-                row = { 17, 18 },
-                col = { 0, 0 },
-                hl_eol = true,
-                hl_group = 'DiffAdd',
-                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { 17, 17 },
-                col = { 0, 1 },
-                sign_text = '󰫎 ',
-                sign_hl_group = 'markdownH1',
-            },
-        })
+        vim.list_extend(expected, util.heading(17, 1))
 
         local markdown_table = {
             '┌──────────────┬──────────────┐',

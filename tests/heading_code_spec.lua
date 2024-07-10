@@ -8,78 +8,11 @@ async_tests.describe('heading_code.md', function()
         local expected = {}
 
         -- Headings 1 through 6 (minus 2)
-        vim.list_extend(expected, {
-            {
-                row = { 0, 1 },
-                col = { 0, 0 },
-                hl_eol = true,
-                hl_group = 'DiffAdd',
-                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { 0, 0 },
-                col = { 0, 1 },
-                sign_text = '󰫎 ',
-                sign_hl_group = 'markdownH1',
-            },
-            {
-                row = { 2, 3 },
-                col = { 0, 0 },
-                hl_eol = true,
-                hl_group = 'DiffDelete',
-                virt_text = { { '  󰲥 ', { 'markdownH3', 'DiffDelete' } } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { 2, 2 },
-                col = { 0, 3 },
-                sign_text = '󰫎 ',
-                sign_hl_group = 'markdownH3',
-            },
-            {
-                row = { 4, 5 },
-                col = { 0, 0 },
-                hl_eol = true,
-                hl_group = 'DiffDelete',
-                virt_text = { { '   󰲧 ', { 'markdownH4', 'DiffDelete' } } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { 4, 4 },
-                col = { 0, 4 },
-                sign_text = '󰫎 ',
-                sign_hl_group = 'markdownH4',
-            },
-            {
-                row = { 6, 7 },
-                col = { 0, 0 },
-                hl_eol = true,
-                hl_group = 'DiffDelete',
-                virt_text = { { '    󰲩 ', { 'markdownH5', 'DiffDelete' } } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { 6, 6 },
-                col = { 0, 5 },
-                sign_text = '󰫎 ',
-                sign_hl_group = 'markdownH5',
-            },
-            {
-                row = { 8, 9 },
-                col = { 0, 0 },
-                hl_eol = true,
-                hl_group = 'DiffDelete',
-                virt_text = { { '     󰲫 ', { 'markdownH6', 'DiffDelete' } } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { 8, 8 },
-                col = { 0, 6 },
-                sign_text = '󰫎 ',
-                sign_hl_group = 'markdownH6',
-            },
-        })
+        vim.list_extend(expected, util.heading(0, 1))
+        vim.list_extend(expected, util.heading(2, 3))
+        vim.list_extend(expected, util.heading(4, 4))
+        vim.list_extend(expected, util.heading(6, 5))
+        vim.list_extend(expected, util.heading(8, 6))
 
         -- Image link
         vim.list_extend(expected, {

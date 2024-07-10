@@ -8,22 +8,7 @@ async_tests.describe('box_dash_quote.md', function()
         local expected = {}
 
         -- Heading
-        vim.list_extend(expected, {
-            {
-                row = { 0, 1 },
-                col = { 0, 0 },
-                hl_eol = true,
-                hl_group = 'DiffAdd',
-                virt_text = { { '󰲡 ', { 'markdownH1', 'DiffAdd' } } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { 0, 0 },
-                col = { 0, 1 },
-                sign_text = '󰫎 ',
-                sign_hl_group = 'markdownH1',
-            },
-        })
+        vim.list_extend(expected, util.heading(0, 1))
 
         -- Checkboxes
         vim.list_extend(expected, {

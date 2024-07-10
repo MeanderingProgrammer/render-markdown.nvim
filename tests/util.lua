@@ -26,6 +26,31 @@ M.setup = function(file, opts)
     util.scheduler()
 end
 
+---@param row integer
+---@param level integer
+---@return render.md.MarkInfo[]
+M.heading = function(row, level)
+    local icons = { '󰲡 ', ' 󰲣 ', '  󰲥 ', '   󰲧 ', '    󰲩 ', '     󰲫 ' }
+    local foreground = string.format('@markup.heading.%d.markdown', level)
+    local backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete', 'DiffDelete', 'DiffDelete', 'DiffDelete' }
+    return {
+        {
+            row = { row, row + 1 },
+            col = { 0, 0 },
+            hl_eol = true,
+            hl_group = backgrounds[level],
+            virt_text = { { icons[level], { foreground, backgrounds[level] } } },
+            virt_text_pos = 'overlay',
+        },
+        {
+            row = { row, row },
+            col = { 0, level },
+            sign_text = '󰫎 ',
+            sign_hl_group = foreground,
+        },
+    }
+end
+
 ---@return render.md.MarkInfo[]
 M.get_actual_marks = function()
     local actual = {}
