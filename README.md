@@ -162,7 +162,7 @@ require('render-markdown').setup({
     render_modes = { 'n', 'c' },
     exclude = {
         -- Buftypes ignored by this plugin, see :h 'buftype'
-        buftypes = { 'nofile' },
+        buftypes = {},
     },
     latex = {
         -- Whether LaTeX should be rendered, mainly used for health check
