@@ -103,12 +103,20 @@ M.render_node = function(namespace, buf, capture, node)
         if not util.has_10 then
             return
         end
+        -- Fenced code blocks will pick up varying amounts of leading white space depending on
+        -- the context they are in. This gets lumped into the delimiter node and as a result,
+        -- after concealing, the extmark will be left shifted. Logic below accounts for this.
+        local padding = 0
+        local code_block = ts.parent_in_section(info.node, 'fenced_code_block')
+        if code_block ~= nil then
+            padding = str.leading_spaces(ts.info(code_block, buf).text)
+        end
         local highlight = { icon_highlight }
         if code.style == 'full' then
             highlight = { icon_highlight, code.highlight }
         end
         vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-            virt_text = { { icon .. ' ' .. info.text, highlight } },
+            virt_text = { { str.pad(icon .. ' ' .. info.text, padding), highlight } },
             virt_text_pos = 'inline',
         })
     elseif capture == 'list_marker' then
@@ -146,7 +154,7 @@ M.render_node = function(namespace, buf, capture, node)
             -- List markers from tree-sitter should have leading spaces removed, however there are known
             -- edge cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
             -- As a result we handle leading spaces here, can remove if this gets fixed upstream
-            local _, leading_spaces = info.text:find('^%s*')
+            local leading_spaces = str.leading_spaces(info.text)
             local level = ts.level_in_section(info.node, 'list')
             local icon = list.cycle(bullet.icons, level)
 
