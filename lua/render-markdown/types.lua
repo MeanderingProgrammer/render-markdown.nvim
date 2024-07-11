@@ -7,10 +7,11 @@
 ---@class render.md.PipeTable
 ---@field public enabled boolean
 ---@field public style 'full'|'normal'|'none'
----@field public cell 'overlay'|'raw'
+---@field public cell 'padded'|'raw'|'overlay'
 ---@field public border string[]
 ---@field public head string
 ---@field public row string
+---@field public filler string
 
 ---@class render.md.CustomComponent
 ---@field public raw string
@@ -63,6 +64,7 @@
 ---@field public markdown_query string
 ---@field public markdown_quote_query string
 ---@field public inline_query string
+---@field public inline_link_query string
 ---@field public log_level 'debug'|'error'
 ---@field public file_types string[]
 ---@field public render_modes string[]

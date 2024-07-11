@@ -103,20 +103,27 @@ M.render_node = function(namespace, buf, capture, node)
         if not util.has_10 then
             return
         end
-        -- Fenced code blocks will pick up varying amounts of leading white space depending on
-        -- the context they are in. This gets lumped into the delimiter node and as a result,
-        -- after concealing, the extmark will be left shifted. Logic below accounts for this.
-        local padding = 0
-        local code_block = ts.parent_in_section(info.node, 'fenced_code_block')
-        if code_block ~= nil then
-            padding = str.leading_spaces(ts.info(code_block, buf).text)
+
+        local icon_text = icon .. ' '
+        if ts.concealed(buf, info) > 0 then
+            -- Fenced code blocks will pick up varying amounts of leading white space depending on
+            -- the context they are in. This gets lumped into the delimiter node and as a result,
+            -- after concealing, the extmark will be left shifted. Logic below accounts for this.
+            local padding = 0
+            local code_block = ts.parent_in_section(info.node, 'fenced_code_block')
+            if code_block ~= nil then
+                padding = str.leading_spaces(ts.info(code_block, buf).text)
+            end
+            icon_text = str.pad(icon_text .. info.text, padding)
         end
+
         local highlight = { icon_highlight }
         if code.style == 'full' then
             highlight = { icon_highlight, code.highlight }
         end
+
         vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-            virt_text = { { str.pad(icon .. ' ' .. info.text, padding), highlight } },
+            virt_text = { { icon_text, highlight } },
             virt_text_pos = 'inline',
         })
     elseif capture == 'list_marker' then
@@ -220,31 +227,19 @@ M.render_node = function(namespace, buf, capture, node)
                 return
             end
 
-            ---@param row integer
-            ---@param s string
-            ---@return integer
-            local function get_row_width(row, s)
-                local result = vim.fn.strdisplaywidth(s)
-                if pipe_table.cell == 'raw' then
-                    result = result - ts.concealed(buf, row, s)
-                end
-                return result
-            end
-
             local delim = ts.info(delim_node, buf)
-            local delim_width = get_row_width(delim.start_row, delim.text)
-
             local lines = vim.api.nvim_buf_get_lines(buf, info.start_row, info.end_row, true)
-            local start_width = get_row_width(info.start_row, list.first(lines))
-            local end_width = get_row_width(info.end_row - 1, list.last(lines))
 
+            local delim_width = vim.fn.strdisplaywidth(delim.text)
+            local start_width = vim.fn.strdisplaywidth(list.first(lines))
+            local end_width = vim.fn.strdisplaywidth(list.last(lines))
             if delim_width ~= start_width or start_width ~= end_width then
                 return
             end
 
             local headings = vim.split(delim.text, '|', { plain = true, trimempty = true })
-            local lengths = vim.tbl_map(function(part)
-                return border[11]:rep(vim.fn.strdisplaywidth(part))
+            local lengths = vim.tbl_map(function(cell)
+                return border[11]:rep(vim.fn.strdisplaywidth(cell))
             end, headings)
 
             local line_above = border[1] .. table.concat(lengths, border[2]) .. border[3]
@@ -278,30 +273,6 @@ M.render_node = function(namespace, buf, capture, node)
             })
         end
 
-        ---@param row_info render.md.NodeInfo
-        ---@param highlight string
-        local function render_table_row(row_info, highlight)
-            if pipe_table.cell == 'overlay' then
-                vim.api.nvim_buf_set_extmark(buf, namespace, row_info.start_row, row_info.start_col, {
-                    end_row = row_info.end_row,
-                    end_col = row_info.end_col,
-                    virt_text = { { row_info.text:gsub('|', border[10]), highlight } },
-                    virt_text_pos = 'overlay',
-                })
-            elseif pipe_table.cell == 'raw' then
-                for i = 1, #row_info.text do
-                    if row_info.text:sub(i, i) == '|' then
-                        vim.api.nvim_buf_set_extmark(buf, namespace, row_info.start_row, i - 1, {
-                            end_row = row_info.end_row,
-                            end_col = i - 1,
-                            virt_text = { { border[10], highlight } },
-                            virt_text_pos = 'overlay',
-                        })
-                    end
-                end
-            end
-        end
-
         if pipe_table.style == 'full' then
             render_table_full()
         end
@@ -312,9 +283,9 @@ M.render_node = function(namespace, buf, capture, node)
             if row_type == 'pipe_table_delimiter_row' then
                 render_table_delimiter(row_info)
             elseif row_type == 'pipe_table_header' then
-                render_table_row(row_info, pipe_table.head)
+                M.render_table_row(namespace, buf, row_info, pipe_table.head)
             elseif row_type == 'pipe_table_row' then
-                render_table_row(row_info, pipe_table.row)
+                M.render_table_row(namespace, buf, row_info, pipe_table.row)
             else
                 -- Should only get here if markdown introduces more row types, currently unhandled
                 logger.error('Unhandled markdown row type: ' .. row_type)
@@ -323,6 +294,67 @@ M.render_node = function(namespace, buf, capture, node)
     else
         -- Should only get here if user provides custom capture, currently unhandled
         logger.error('Unhandled markdown capture: ' .. capture)
+    end
+end
+
+---@param namespace integer
+---@param buf integer
+---@param info render.md.NodeInfo
+---@param highlight string
+M.render_table_row = function(namespace, buf, info, highlight)
+    ---@param text string
+    ---@return integer
+    local function inline_width(text)
+        local query = state.inline_link_query
+        local tree = vim.treesitter.get_string_parser(text, 'markdown_inline')
+        local result = 0
+        for id in query:iter_captures(tree:parse()[1]:root(), text) do
+            if query.captures[id] == 'link' then
+                result = result + vim.fn.strdisplaywidth(state.config.link.hyperlink)
+            end
+        end
+        return result
+    end
+
+    local pipe_table = state.config.pipe_table
+    local border = pipe_table.border
+
+    if vim.tbl_contains({ 'raw', 'padded' }, pipe_table.cell) then
+        for cell in info.node:iter_children() do
+            local cell_info = ts.info(cell, buf)
+            local cell_type = cell_info.node:type()
+            if cell_type == '|' then
+                vim.api.nvim_buf_set_extmark(buf, namespace, cell_info.start_row, cell_info.start_col, {
+                    end_row = cell_info.end_row,
+                    end_col = cell_info.end_col,
+                    virt_text = { { border[10], highlight } },
+                    virt_text_pos = 'overlay',
+                })
+            elseif cell_type == 'pipe_table_cell' then
+                if pipe_table.cell == 'padded' then
+                    -- Requires inline extmarks
+                    if util.has_10 then
+                        local concealed = ts.concealed(buf, cell_info) - inline_width(cell_info.text)
+                        if concealed > 0 then
+                            vim.api.nvim_buf_set_extmark(buf, namespace, cell_info.start_row, cell_info.end_col, {
+                                virt_text = { { str.pad('', concealed), pipe_table.filler } },
+                                virt_text_pos = 'inline',
+                            })
+                        end
+                    end
+                end
+            else
+                -- Should only get here if markdown introduces more cell types, currently unhandled
+                logger.error('Unhandled markdown cell type: ' .. cell_type)
+            end
+        end
+    elseif pipe_table.cell == 'overlay' then
+        vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
+            end_row = info.end_row,
+            end_col = info.end_col,
+            virt_text = { { info.text:gsub('|', border[10]), highlight } },
+            virt_text_pos = 'overlay',
+        })
     end
 end
 

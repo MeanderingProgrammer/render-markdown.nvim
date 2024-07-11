@@ -1,3 +1,5 @@
+local util = require('render-markdown.util')
+
 ---@param node TSNode
 ---@return boolean
 local function in_section(node)
@@ -89,15 +91,17 @@ M.child = function(node, target)
 end
 
 ---@param buf integer
----@param row integer
----@param s string
+---@param info render.md.NodeInfo
 ---@return integer
-M.concealed = function(buf, row, s)
+M.concealed = function(buf, info)
+    if util.get_win_option(util.buf_to_win(buf), 'conceallevel') == 0 then
+        return 0
+    end
     local result = 0
-    local col = 0
-    for _, index in ipairs(vim.fn.str2list(s)) do
+    local col = info.start_col
+    for _, index in ipairs(vim.fn.str2list(info.text)) do
         local ch = vim.fn.nr2char(index)
-        local captures = vim.treesitter.get_captures_at_pos(buf, row, col)
+        local captures = vim.treesitter.get_captures_at_pos(buf, info.start_row, col)
         for _, capture in ipairs(captures) do
             if capture.metadata.conceal ~= nil then
                 result = result + vim.fn.strdisplaywidth(ch)

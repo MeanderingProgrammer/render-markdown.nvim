@@ -90,63 +90,150 @@ async_tests.describe('list_table.md', function()
         -- Table heading
         vim.list_extend(expected, util.heading(17, 1))
 
-        local markdown_table = {
-            '┌──────────────┬──────────────┐',
-            '│ Heading 1    │ Heading 2    │',
-            '├──────────────┼──────────────┤',
-            '│ Row 1 Item 1 │ Row 1 Item 2 │',
-            '│ Row 2 Item 1 │ Row 2 Item 2 │',
-            '│ Row 3 Item 1 │ Row 3 Item 2 │',
-            '└──────────────┴──────────────┘',
+        local table_outline = {
+            '┌──────────────────┬────────────────────┐',
+            '├──────────────────┼────────────────────┤',
+            '└──────────────────┴────────────────────┘',
         }
         vim.list_extend(expected, {
             -- Above
             {
                 row = { 19 },
                 col = { 0 },
-                virt_lines = { { { markdown_table[1], '@markup.heading' } } },
+                virt_lines = { { { table_outline[1], '@markup.heading' } } },
                 virt_lines_above = true,
             },
-            -- Heading
+            -- Heading pipe 1
             {
                 row = { 19, 19 },
-                col = { 0, 31 },
-                virt_text = { { markdown_table[2], '@markup.heading' } },
+                col = { 0, 1 },
+                virt_text = { { '│', '@markup.heading' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Inline code in heading
+            {
+                row = { 19, 19 },
+                col = { 2, 18 },
+                hl_eol = false,
+                hl_group = 'ColorColumn',
+            },
+            -- Heading padding 1
+            {
+                row = { 19 },
+                col = { 19 },
+                virt_text = { { '  ', 'Conceal' } },
+                virt_text_pos = 'inline',
+            },
+            -- Heading pipe 2
+            {
+                row = { 19, 19 },
+                col = { 19, 20 },
+                virt_text = { { '│', '@markup.heading' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Heading padding 2
+            {
+                row = { 19 },
+                col = { 40 },
+                virt_text = { { '  ', 'Conceal' } },
+                virt_text_pos = 'inline',
+            },
+            -- Heading pipe 2
+            {
+                row = { 19, 19 },
+                col = { 40, 41 },
+                virt_text = { { '│', '@markup.heading' } },
                 virt_text_pos = 'overlay',
             },
             -- Delimiter
             {
                 row = { 20, 20 },
-                col = { 0, 31 },
-                virt_text = { { markdown_table[3], '@markup.heading' } },
+                col = { 0, 41 },
+                virt_text = { { table_outline[2], '@markup.heading' } },
                 virt_text_pos = 'overlay',
             },
-            -- Row 1
+            -- Row 1 pipe 1
             {
                 row = { 21, 21 },
-                col = { 0, 31 },
-                virt_text = { { markdown_table[4], 'Normal' } },
+                col = { 0, 1 },
+                virt_text = { { '│', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
-            -- Row 2
+            -- Row 1 pipe 2
+            {
+                row = { 21, 21 },
+                col = { 19, 20 },
+                virt_text = { { '│', 'Normal' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Row 1 padding 2
+            {
+                row = { 21 },
+                col = { 40 },
+                virt_text = { { '    ', 'Conceal' } },
+                virt_text_pos = 'inline',
+            },
+            -- Row 1 pipe 3
+            {
+                row = { 21, 21 },
+                col = { 40, 41 },
+                virt_text = { { '│', 'Normal' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Row 2 pipe 1
             {
                 row = { 22, 22 },
-                col = { 0, 31 },
-                virt_text = { { markdown_table[5], 'Normal' } },
+                col = { 0, 1 },
+                virt_text = { { '│', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
-            -- Row 3
+            -- Row 2 inline code
             {
-                row = { 23, 23 },
-                col = { 0, 31 },
-                virt_text = { { markdown_table[6], 'Normal' } },
+                row = { 22, 22 },
+                col = { 2, 15 },
+                hl_eol = false,
+                hl_group = 'ColorColumn',
+            },
+            -- Row 2 padding 1
+            {
+                row = { 22 },
+                col = { 19 },
+                virt_text = { { '  ', 'Conceal' } },
+                virt_text_pos = 'inline',
+            },
+            -- Row 2 pipe 2
+            {
+                row = { 22, 22 },
+                col = { 19, 20 },
+                virt_text = { { '│', 'Normal' } },
+                virt_text_pos = 'overlay',
+            },
+            -- Row 2 link
+            {
+                row = { 22, 22 },
+                col = { 21, 39 },
+                virt_text = { { '󰌹 ', '@markup.link.label.markdown_inline' } },
+                virt_text_pos = 'inline',
+            },
+            -- Row 2 padding 2
+            {
+                row = { 22 },
+                col = { 40 },
+                virt_text = { { '       ', 'Conceal' } },
+                virt_text_pos = 'inline',
+            },
+            -- Row 2 pipe 3
+            {
+                row = { 22, 22 },
+                col = { 40, 41 },
+                virt_text = { { '│', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
             -- Below
             {
-                row = { 24 },
+                row = { 23 },
                 col = { 0 },
-                virt_lines = { { { markdown_table[7], 'Normal' } } },
+                virt_lines = { { { table_outline[3], 'Normal' } } },
                 virt_lines_above = true,
             },
         })

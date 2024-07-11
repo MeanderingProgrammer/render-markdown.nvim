@@ -19,12 +19,18 @@ end
 
 ---@param win integer
 ---@param name string
+---@return any
+M.get_win_option = function(win, name)
+    return vim.api.nvim_get_option_value(name, { scope = 'local', win = win })
+end
+
+---@param win integer
+---@param name string
 ---@param value any
 M.set_win_option = function(win, name, value)
-    local opts = { scope = 'local', win = win }
-    local before = vim.api.nvim_get_option_value(name, opts)
-    vim.api.nvim_set_option_value(name, value, opts)
-    logger.debug({ option = name, opts = opts, before = before, after = value })
+    local before = M.get_win_option(win, name)
+    vim.api.nvim_set_option_value(name, value, { scope = 'local', win = win })
+    logger.debug({ option = name, win = win, before = before, after = value })
 end
 
 ---@param win integer

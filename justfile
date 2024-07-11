@@ -27,7 +27,7 @@ demo-callout:
 demo file rows content:
   rm -f demo/{{file}}.gif
   python demo/record.py \
-    --cols "55" \
+    --cols "60" \
     --rows {{rows}} \
     --file demo/{{file}}.md \
     --cast {{file}}.cast \

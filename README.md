@@ -152,6 +152,8 @@ require('render-markdown').setup({
 
         (image) @image
     ]],
+    -- Query to be able to identify links in nodes
+    inline_link_query = '[(inline_link) (image)] @link',
     -- The level of logs to write to file: vim.fn.stdpath('state') .. '/render-markdown.log'
     -- Only intended to be used for plugin development / debugging
     log_level = 'error',
@@ -275,8 +277,9 @@ require('render-markdown').setup({
         style = 'full',
         -- Determines how individual cells of a table are rendered:
         --  overlay: writes completely over the table, removing conceal behavior and highlights
-        --  raw: replaces only the '|' characters in each row, leaving the cells completely unmodified
-        cell = 'overlay',
+        --  raw: replaces only the '|' characters in each row, leaving the cells unmodified
+        --  padded: raw + cells are padded with inline extmarks to make up for any concealed text
+        cell = 'padded',
         -- Characters used to replace table border
         -- Correspond to top(3), delimiter(3), bottom(3), vertical, & horizontal
         -- stylua: ignore
@@ -290,6 +293,8 @@ require('render-markdown').setup({
         head = '@markup.heading',
         -- Highlight for everything else, main table rows and the line below
         row = 'Normal',
+        -- Highlight for inline padding used to add back concealed space
+        filler = 'Conceal',
     },
     -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'
     -- Can specify as many additional values as you like following the pattern from any below, such as 'note'
@@ -505,8 +510,9 @@ require('render-markdown').setup({
         style = 'full',
         -- Determines how individual cells of a table are rendered:
         --  overlay: writes completely over the table, removing conceal behavior and highlights
-        --  raw: replaces only the '|' characters in each row, leaving the cells completely unmodified
-        cell = 'overlay',
+        --  raw: replaces only the '|' characters in each row, leaving the cells unmodified
+        --  padded: raw + cells are padded with inline extmarks to make up for any concealed text
+        cell = 'padded',
         -- Characters used to replace table border
         -- Correspond to top(3), delimiter(3), bottom(3), vertical, & horizontal
         -- stylua: ignore
@@ -520,6 +526,8 @@ require('render-markdown').setup({
         head = '@markup.heading',
         -- Highlight for everything else, main table rows and the line below
         row = 'Normal',
+        -- Highlight for inline padding used to add back concealed space
+        filler = 'Conceal',
     },
 })
 ```

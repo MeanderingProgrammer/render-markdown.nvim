@@ -20,10 +20,11 @@ local M = {}
 ---@class render.md.UserPipeTable
 ---@field public enabled? boolean
 ---@field public style? 'full'|'normal'|'none'
----@field public cell? 'overlay'|'raw'
+---@field public cell? 'padded'|'raw'|'overlay'
 ---@field public border? string[]
 ---@field public head? string
 ---@field public row? string
+---@field public filler? string
 
 ---@class render.md.UserCustomComponent
 ---@field public raw? string
@@ -76,6 +77,7 @@ local M = {}
 ---@field public markdown_query? string
 ---@field public markdown_quote_query? string
 ---@field public inline_query? string
+---@field public inline_link_query? string
 ---@field public log_level? 'debug'|'error'
 ---@field public file_types? string[]
 ---@field public render_modes? string[]
@@ -146,6 +148,8 @@ M.default_config = {
 
         (image) @image
     ]],
+    -- Query to be able to identify links in nodes
+    inline_link_query = '[(inline_link) (image)] @link',
     -- The level of logs to write to file: vim.fn.stdpath('state') .. '/render-markdown.log'
     -- Only intended to be used for plugin development / debugging
     log_level = 'error',
@@ -269,8 +273,9 @@ M.default_config = {
         style = 'full',
         -- Determines how individual cells of a table are rendered:
         --  overlay: writes completely over the table, removing conceal behavior and highlights
-        --  raw: replaces only the '|' characters in each row, leaving the cells completely unmodified
-        cell = 'overlay',
+        --  raw: replaces only the '|' characters in each row, leaving the cells unmodified
+        --  padded: raw + cells are padded with inline extmarks to make up for any concealed text
+        cell = 'padded',
         -- Characters used to replace table border
         -- Correspond to top(3), delimiter(3), bottom(3), vertical, & horizontal
         -- stylua: ignore
@@ -284,6 +289,8 @@ M.default_config = {
         head = '@markup.heading',
         -- Highlight for everything else, main table rows and the line below
         row = 'Normal',
+        -- Highlight for inline padding used to add back concealed space
+        filler = 'Conceal',
     },
     -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'
     -- Can specify as many additional values as you like following the pattern from any below, such as 'note'
@@ -348,6 +355,7 @@ function M.setup(opts)
         state.markdown_query = vim.treesitter.query.parse('markdown', state.config.markdown_query)
         state.markdown_quote_query = vim.treesitter.query.parse('markdown', state.config.markdown_quote_query)
         state.inline_query = vim.treesitter.query.parse('markdown_inline', state.config.inline_query)
+        state.inline_link_query = vim.treesitter.query.parse('markdown_inline', state.config.inline_link_query)
     end)
     manager.setup()
     vim.api.nvim_create_user_command(

@@ -4,6 +4,7 @@
 ---@field markdown_query vim.treesitter.Query
 ---@field markdown_quote_query vim.treesitter.Query
 ---@field inline_query vim.treesitter.Query
+---@field inline_link_query vim.treesitter.Query
 local state = {}
 
 ---@return string[]
@@ -65,6 +66,7 @@ function state.validate()
         markdown_query = { config.markdown_query, 'string' },
         markdown_quote_query = { config.markdown_quote_query, 'string' },
         inline_query = { config.inline_query, 'string' },
+        inline_link_query = { config.inline_link_query, 'string' },
         log_level = one_of(config.log_level, { 'debug', 'error' }),
         file_types = string_array(config.file_types),
         render_modes = string_array(config.render_modes),
@@ -107,7 +109,7 @@ function state.validate()
     local code = config.code
     append_errors('render-markdown.code', code, {
         enabled = { code.enabled, 'boolean' },
-        style = one_of(code.style, { 'full', 'language', 'normal', 'none' }),
+        style = one_of(code.style, { 'full', 'normal', 'language', 'none' }),
         highlight = { code.highlight, 'string' },
     })
 
@@ -161,10 +163,11 @@ function state.validate()
     append_errors('render-markdown.pipe_table', pipe_table, {
         enabled = { pipe_table.enabled, 'boolean' },
         style = one_of(pipe_table.style, { 'full', 'normal', 'none' }),
-        cell = one_of(pipe_table.cell, { 'overlay', 'raw' }),
+        cell = one_of(pipe_table.cell, { 'padded', 'raw', 'overlay' }),
         border = string_array(pipe_table.border),
         head = { pipe_table.head, 'string' },
         row = { pipe_table.row, 'string' },
+        filler = { pipe_table.filler, 'string' },
     })
 
     for name, component in pairs(config.callout) do
