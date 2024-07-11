@@ -18,10 +18,15 @@ local eq = assert.are.same
 
 local M = {}
 
+---@param opts? render.md.UserConfig
+M.setup_only = function(opts)
+    require('render-markdown').setup(opts)
+end
+
 ---@param file string
 ---@param opts? render.md.UserConfig
 M.setup = function(file, opts)
-    require('render-markdown').setup(opts)
+    M.setup_only(opts)
     vim.cmd('e ' .. file)
     util.scheduler()
 end

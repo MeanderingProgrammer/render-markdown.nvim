@@ -160,6 +160,10 @@ require('render-markdown').setup({
     -- Vim modes that will show a rendered view of the markdown file
     -- All other modes will be uneffected by this plugin
     render_modes = { 'n', 'c' },
+    exclude = {
+        -- Buftypes ignored by this plugin, see :h 'buftype'
+        buftypes = { 'nofile' },
+    },
     latex = {
         -- Whether LaTeX should be rendered, mainly used for health check
         enabled = true,

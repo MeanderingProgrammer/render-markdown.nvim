@@ -20,7 +20,10 @@ function M.setup()
         group = group,
         pattern = state.config.file_types,
         callback = function(event)
-            M.attach(group, event.buf)
+            local buftype = vim.api.nvim_get_option_value('buftype', { buf = event.buf })
+            if not vim.tbl_contains(state.config.exclude.buftypes, buftype) then
+                M.attach(group, event.buf)
+            end
         end,
     })
     -- Window resizing is not buffer specific so is managed more globablly

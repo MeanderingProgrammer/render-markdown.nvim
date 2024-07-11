@@ -54,6 +54,9 @@
 ---@field public converter string
 ---@field public highlight string
 
+---@class render.md.Exclude
+---@field public buftypes string[]
+
 ---@class render.md.Config
 ---@field public enabled boolean
 ---@field public max_file_size number
@@ -63,6 +66,7 @@
 ---@field public log_level 'debug'|'error'
 ---@field public file_types string[]
 ---@field public render_modes string[]
+---@field public exclude render.md.Exclude
 ---@field public latex render.md.Latex
 ---@field public heading render.md.Heading
 ---@field public code render.md.Code

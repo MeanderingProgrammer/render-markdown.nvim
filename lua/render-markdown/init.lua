@@ -67,6 +67,9 @@ local M = {}
 ---@field public converter? string
 ---@field public highlight? string
 
+---@class render.md.UserExclude
+---@field public buftypes? string[]
+
 ---@class render.md.UserConfig
 ---@field public enabled? boolean
 ---@field public max_file_size? number
@@ -76,6 +79,7 @@ local M = {}
 ---@field public log_level? 'debug'|'error'
 ---@field public file_types? string[]
 ---@field public render_modes? string[]
+---@field public exclude? render.md.UserExclude
 ---@field public latex? render.md.UserLatex
 ---@field public heading? render.md.UserHeading
 ---@field public code? render.md.UserCode
@@ -150,6 +154,10 @@ M.default_config = {
     -- Vim modes that will show a rendered view of the markdown file
     -- All other modes will be uneffected by this plugin
     render_modes = { 'n', 'c' },
+    exclude = {
+        -- Buftypes ignored by this plugin, see :h 'buftype'
+        buftypes = { 'nofile' },
+    },
     latex = {
         -- Whether LaTeX should be rendered, mainly used for health check
         enabled = true,
