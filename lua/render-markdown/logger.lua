@@ -68,17 +68,14 @@ M.debug = function(message)
 end
 
 ---@param capture string
----@param node TSNode
----@param buf integer
-M.debug_node = function(capture, node, buf)
+---@param info render.md.NodeInfo
+M.debug_node_info = function(capture, info)
     if vim.tbl_contains({ 'debug' }, state.config.log_level) then
-        local value = vim.treesitter.get_node_text(node, buf)
-        local start_row, start_col, end_row, end_col = node:range()
         log.add('debug', {
             capture = capture,
-            value = value,
-            rows = { start_row, end_row },
-            cols = { start_col, end_col },
+            text = info.text,
+            rows = { info.start_row, info.end_row },
+            cols = { info.start_col, info.end_col },
         })
     end
 end

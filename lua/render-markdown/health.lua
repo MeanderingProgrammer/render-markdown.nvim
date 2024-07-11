@@ -3,6 +3,16 @@ local state = require('render-markdown.state')
 local M = {}
 
 function M.check()
+    vim.health.start('markdown.nvim [configuration]')
+    local errors = M.check_config(state.config)
+    if #errors == 0 then
+        vim.health.ok('valid')
+    end
+    for _, message in ipairs(errors) do
+        vim.health.error(message)
+    end
+
+    local latex = state.config.latex
     local latex_advice = 'Disable LaTeX support to avoid this warning by setting { latex = { enabled = false } }'
 
     vim.health.start('markdown.nvim [nvim-treesitter]')
@@ -12,7 +22,7 @@ function M.check()
 
         M.check_parser('markdown')
         M.check_parser('markdown_inline')
-        if state.config.latex.enabled then
+        if latex.enabled then
             M.check_parser('latex', latex_advice)
         end
 
@@ -27,44 +37,10 @@ function M.check()
     end
 
     vim.health.start('markdown.nvim [executables]')
-    if state.config.latex.enabled then
-        M.check_executable(state.config.latex.converter, latex_advice)
+    if latex.enabled then
+        M.check_executable(latex.converter, latex_advice)
     else
         vim.health.ok('none to check')
-    end
-
-    vim.health.start('markdown.nvim [configuration]')
-    local errors = M.check_config(state.config)
-    if #errors == 0 then
-        vim.health.ok('valid')
-    end
-    for _, message in ipairs(errors) do
-        vim.health.error(message)
-    end
-end
-
----@param name string
----@param advice string?
-function M.check_parser(name, advice)
-    local parsers = require('nvim-treesitter.parsers')
-    if parsers.has_parser(name) then
-        vim.health.ok(name .. ': parser installed')
-    elseif advice == nil then
-        vim.health.error(name .. ': parser not installed')
-    else
-        vim.health.warn(name .. ': parser not installed', advice)
-    end
-end
-
----@param name string
----@param advice string?
-function M.check_executable(name, advice)
-    if vim.fn.executable(name) == 1 then
-        vim.health.ok(name .. ': installed')
-    elseif advice == nil then
-        vim.health.error(name .. ': not installed')
-    else
-        vim.health.warn(name .. ': not installed', advice)
     end
 end
 
@@ -251,6 +227,31 @@ function M.check_config(config)
     end
 
     return errors
+end
+
+---@param name string
+---@param advice string?
+function M.check_parser(name, advice)
+    local parsers = require('nvim-treesitter.parsers')
+    if parsers.has_parser(name) then
+        vim.health.ok(name .. ': parser installed')
+    elseif advice == nil then
+        vim.health.error(name .. ': parser not installed')
+    else
+        vim.health.warn(name .. ': parser not installed', advice)
+    end
+end
+
+---@param name string
+---@param advice string?
+function M.check_executable(name, advice)
+    if vim.fn.executable(name) == 1 then
+        vim.health.ok(name .. ': installed')
+    elseif advice == nil then
+        vim.health.error(name .. ': not installed')
+    else
+        vim.health.warn(name .. ': not installed', advice)
+    end
 end
 
 return M

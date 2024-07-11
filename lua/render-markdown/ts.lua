@@ -7,6 +7,30 @@ end
 
 local M = {}
 
+---@class render.md.NodeInfo
+---@field node TSNode
+---@field text string
+---@field start_row integer
+---@field start_col integer
+---@field end_row integer
+---@field end_col integer
+
+---@param node TSNode
+---@param buf integer
+---@return render.md.NodeInfo
+M.info = function(node, buf)
+    local start_row, start_col, end_row, end_col = node:range()
+    ---@type render.md.NodeInfo
+    return {
+        node = node,
+        text = vim.treesitter.get_node_text(node, buf),
+        start_row = start_row,
+        start_col = start_col,
+        end_row = end_row,
+        end_col = end_col,
+    }
+end
+
 ---Walk through parent nodes, count the number of target nodes
 ---@param node TSNode
 ---@param target string
@@ -39,12 +63,12 @@ M.parent_in_section = function(node, target)
 end
 
 ---@param node TSNode
----@param targets string[]
+---@param target string
 ---@return TSNode?
-M.sibling = function(node, targets)
+M.sibling = function(node, target)
     local sibling = node:next_sibling()
     while sibling ~= nil do
-        if vim.tbl_contains(targets, sibling:type()) then
+        if sibling:type() == target then
             return sibling
         end
         sibling = sibling:next_sibling()

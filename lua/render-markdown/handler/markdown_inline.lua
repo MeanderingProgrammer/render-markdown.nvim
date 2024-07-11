@@ -2,6 +2,7 @@ local component = require('render-markdown.component')
 local logger = require('render-markdown.logger')
 local state = require('render-markdown.state')
 local str = require('render-markdown.str')
+local ts = require('render-markdown.ts')
 local util = require('render-markdown.util')
 
 local M = {}
@@ -21,9 +22,8 @@ end
 ---@param capture string
 ---@param node TSNode
 M.render_node = function(namespace, buf, capture, node)
-    local value = vim.treesitter.get_node_text(node, buf)
-    local start_row, start_col, end_row, end_col = node:range()
-    logger.debug_node(capture, node, buf)
+    local info = ts.info(node, buf)
+    logger.debug_node_info(capture, info)
 
     if capture == 'code' then
         local code = state.config.code
@@ -33,20 +33,20 @@ M.render_node = function(namespace, buf, capture, node)
         if not vim.tbl_contains({ 'normal', 'full' }, code.style) then
             return
         end
-        vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
-            end_row = end_row,
-            end_col = end_col,
+        vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
+            end_row = info.end_row,
+            end_col = info.end_col,
             hl_group = code.highlight,
         })
     elseif capture == 'callout' then
-        local callout = component.callout(value, 'exact')
+        local callout = component.callout(info.text, 'exact')
         if callout ~= nil then
             if not state.config.quote.enabled then
                 return
             end
-            vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
-                end_row = end_row,
-                end_col = end_col,
+            vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
+                end_row = info.end_row,
+                end_col = info.end_col,
                 virt_text = { { callout.text, callout.highlight } },
                 virt_text_pos = 'overlay',
             })
@@ -58,14 +58,14 @@ M.render_node = function(namespace, buf, capture, node)
             if not util.has_10 then
                 return
             end
-            local checkbox = component.checkbox(value, 'exact')
+            local checkbox = component.checkbox(info.text, 'exact')
             if checkbox == nil then
                 return
             end
-            vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
-                end_row = end_row,
-                end_col = end_col,
-                virt_text = { { str.pad_to(value, checkbox.text), checkbox.highlight } },
+            vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
+                end_row = info.end_row,
+                end_col = info.end_col,
+                virt_text = { { str.pad_to(info.text, checkbox.text), checkbox.highlight } },
                 virt_text_pos = 'inline',
                 conceal = '',
             })
@@ -83,9 +83,9 @@ M.render_node = function(namespace, buf, capture, node)
         if capture == 'image' then
             icon = link.image
         end
-        vim.api.nvim_buf_set_extmark(buf, namespace, start_row, start_col, {
-            end_row = end_row,
-            end_col = end_col,
+        vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
+            end_row = info.end_row,
+            end_col = info.end_col,
             virt_text = { { icon, link.highlight } },
             virt_text_pos = 'inline',
         })
