@@ -16,111 +16,21 @@ async_tests.describe('table.md', function()
             '└───────────┴────────────────────────┘',
         }
         vim.list_extend(expected, {
-            -- Heading pipe 1
-            {
-                row = { 2, 2 },
-                col = { 0, 1 },
-                virt_text = { { '│', '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Above
-            {
-                row = { 2 },
-                col = { 0 },
-                virt_lines = { { { table_with_inline[1], '@markup.heading' } } },
-                virt_lines_above = true,
-            },
-            -- Heading pipe 2
-            {
-                row = { 2, 2 },
-                col = { 12, 13 },
-                virt_text = { { '│', '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Inline code in heading
-            {
-                row = { 2, 2 },
-                col = { 14, 25 },
-                hl_eol = false,
-                hl_group = 'ColorColumn',
-            },
-            -- Heading padding 2
-            {
-                row = { 2 },
-                col = { 37 },
-                virt_text = { { '  ', 'Conceal' } },
-                virt_text_pos = 'inline',
-            },
-            -- Heading pipe 3
-            {
-                row = { 2, 2 },
-                col = { 37, 38 },
-                virt_text = { { '│', '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Delimiter
-            {
-                row = { 3, 3 },
-                col = { 0, 38 },
-                virt_text = { { table_with_inline[2], '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Row pipe 1
-            {
-                row = { 4, 4 },
-                col = { 0, 1 },
-                virt_text = { { '│', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Below
-            {
-                row = { 4 },
-                col = { 0 },
-                virt_lines = { { { table_with_inline[3], 'Normal' } } },
-                virt_lines_above = false,
-            },
-            -- Row inline code
-            {
-                row = { 4, 4 },
-                col = { 2, 12 },
-                hl_eol = false,
-                hl_group = 'ColorColumn',
-            },
-            -- Row padding 1
-            {
-                row = { 4 },
-                col = { 13 },
-                virt_text = { { '  ', 'Conceal' } },
-                virt_text_pos = 'inline',
-            },
-            -- Row pipe 2
-            {
-                row = { 4, 4 },
-                col = { 13, 14 },
-                virt_text = { { '│', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Row link
-            {
-                row = { 4, 4 },
-                col = { 15, 38 },
-                virt_text = { { '󰌹 ', '@markup.link.label.markdown_inline' } },
-                virt_text_pos = 'inline',
-            },
-            -- Row padding 2
-            {
-                row = { 4 },
-                col = { 39 },
-                virt_text = { { '                ', 'Conceal' } },
-                virt_text_pos = 'inline',
-            },
-            -- Row pipe 3
-            {
-                row = { 4, 4 },
-                col = { 39, 40 },
-                virt_text = { { '│', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
+            util.table_pipe(2, 0, true), -- Heading pipe 1
+            util.table_border(2, table_with_inline[1], true), -- Above
+            util.table_pipe(2, 12, true), -- Heading pipe 2
+            util.inline_code(2, 14, 25), -- Inline code in heading
+            util.table_padding(2, 37, 2), -- Heading padding 2
+            util.table_pipe(2, 37, true), -- Heading pipe 3
+            util.table_row(3, 38, table_with_inline[2], true), -- Delimiter
+            util.table_pipe(4, 0, false), -- Row pipe 1
+            util.table_border(4, table_with_inline[3], false), -- Below
+            util.inline_code(4, 2, 12), -- Row inline code
+            util.table_padding(4, 13, 2), -- Row padding 1
+            util.table_pipe(4, 13, false), -- Row pipe 2
+            util.link(4, 15, 38, false), -- Row link
+            util.table_padding(4, 39, 16), -- Row padding 2
+            util.table_pipe(4, 39, false), -- Row pipe 3
         })
 
         -- Table no inline heading
@@ -132,69 +42,15 @@ async_tests.describe('table.md', function()
             '└───────────┴───────────┘',
         }
         vim.list_extend(expected, {
-            -- Heading pipe 1
-            {
-                row = { 8, 8 },
-                col = { 0, 1 },
-                virt_text = { { '│', '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Above
-            {
-                row = { 8 },
-                col = { 0 },
-                virt_lines = { { { table_no_inline[1], '@markup.heading' } } },
-                virt_lines_above = true,
-            },
-            -- Heading pipe 2
-            {
-                row = { 8, 8 },
-                col = { 12, 13 },
-                virt_text = { { '│', '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Heading pipe 3
-            {
-                row = { 8, 8 },
-                col = { 24, 25 },
-                virt_text = { { '│', '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Delimiter
-            {
-                row = { 9, 9 },
-                col = { 0, 25 },
-                virt_text = { { table_no_inline[2], '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Row pipe 1
-            {
-                row = { 10, 10 },
-                col = { 0, 1 },
-                virt_text = { { '│', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Below
-            {
-                row = { 10 },
-                col = { 0 },
-                virt_lines = { { { table_no_inline[3], 'Normal' } } },
-                virt_lines_above = false,
-            },
-            -- Row pipe 2
-            {
-                row = { 10, 10 },
-                col = { 12, 13 },
-                virt_text = { { '│', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Row pipe 3
-            {
-                row = { 10, 10 },
-                col = { 24, 25 },
-                virt_text = { { '│', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
+            util.table_pipe(8, 0, true), -- Heading pipe 1
+            util.table_border(8, table_no_inline[1], true), -- Above
+            util.table_pipe(8, 12, true), -- Heading pipe 2
+            util.table_pipe(8, 24, true), -- Heading pipe 3
+            util.table_row(9, 25, table_no_inline[2], true), -- Delimiter
+            util.table_pipe(10, 0, false), -- Row pipe 1
+            util.table_border(10, table_no_inline[3], false), -- Below
+            util.table_pipe(10, 12, false), -- Row pipe 2
+            util.table_pipe(10, 24, false), -- Row pipe 3
         })
 
         local actual = util.get_actual_marks()
@@ -213,76 +69,16 @@ async_tests.describe('table.md', function()
             '├───────────┼────────────────────────┤',
         }
         vim.list_extend(expected, {
-            -- Heading pipe 1
-            {
-                row = { 2, 2 },
-                col = { 0, 1 },
-                virt_text = { { '│', '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Heading pipe 2
-            {
-                row = { 2, 2 },
-                col = { 12, 13 },
-                virt_text = { { '│', '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Inline code in heading
-            {
-                row = { 2, 2 },
-                col = { 14, 25 },
-                hl_eol = false,
-                hl_group = 'ColorColumn',
-            },
-            -- Heading pipe 3
-            {
-                row = { 2, 2 },
-                col = { 37, 38 },
-                virt_text = { { '│', '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Delimiter
-            {
-                row = { 3, 3 },
-                col = { 0, 38 },
-                virt_text = { { table_with_inline[1], '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Row pipe 1
-            {
-                row = { 4, 4 },
-                col = { 0, 1 },
-                virt_text = { { '│', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Row inline code
-            {
-                row = { 4, 4 },
-                col = { 2, 12 },
-                hl_eol = false,
-                hl_group = 'ColorColumn',
-            },
-            -- Row pipe 2
-            {
-                row = { 4, 4 },
-                col = { 13, 14 },
-                virt_text = { { '│', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Row link
-            {
-                row = { 4, 4 },
-                col = { 15, 38 },
-                virt_text = { { '󰌹 ', '@markup.link.label.markdown_inline' } },
-                virt_text_pos = 'inline',
-            },
-            -- Row pipe 3
-            {
-                row = { 4, 4 },
-                col = { 39, 40 },
-                virt_text = { { '│', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
+            util.table_pipe(2, 0, true), -- Heading pipe 1
+            util.table_pipe(2, 12, true), -- Heading pipe 2
+            util.inline_code(2, 14, 25), -- Inline code in heading
+            util.table_pipe(2, 37, true), -- Heading pipe 3
+            util.table_row(3, 38, table_with_inline[1], true), -- Delimiter
+            util.table_pipe(4, 0, false), -- Row pipe 1
+            util.inline_code(4, 2, 12), -- Row inline code
+            util.table_pipe(4, 13, false), -- Row pipe 2
+            util.link(4, 15, 38, false), -- Row link
+            util.table_pipe(4, 39, false), -- Row pipe 3
         })
 
         -- Table no inline heading
@@ -294,69 +90,15 @@ async_tests.describe('table.md', function()
             '└───────────┴───────────┘',
         }
         vim.list_extend(expected, {
-            -- Heading pipe 1
-            {
-                row = { 8, 8 },
-                col = { 0, 1 },
-                virt_text = { { '│', '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Above
-            {
-                row = { 8 },
-                col = { 0 },
-                virt_lines = { { { table_no_inline[1], '@markup.heading' } } },
-                virt_lines_above = true,
-            },
-            -- Heading pipe 2
-            {
-                row = { 8, 8 },
-                col = { 12, 13 },
-                virt_text = { { '│', '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Heading pipe 3
-            {
-                row = { 8, 8 },
-                col = { 24, 25 },
-                virt_text = { { '│', '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Delimiter
-            {
-                row = { 9, 9 },
-                col = { 0, 25 },
-                virt_text = { { table_no_inline[2], '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Row pipe 1
-            {
-                row = { 10, 10 },
-                col = { 0, 1 },
-                virt_text = { { '│', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Below
-            {
-                row = { 10 },
-                col = { 0 },
-                virt_lines = { { { table_no_inline[3], 'Normal' } } },
-                virt_lines_above = false,
-            },
-            -- Row pipe 2
-            {
-                row = { 10, 10 },
-                col = { 12, 13 },
-                virt_text = { { '│', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Row pipe 3
-            {
-                row = { 10, 10 },
-                col = { 24, 25 },
-                virt_text = { { '│', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
+            util.table_pipe(8, 0, true), -- Heading pipe 1
+            util.table_border(8, table_no_inline[1], true), -- Above
+            util.table_pipe(8, 12, true), -- Heading pipe 2
+            util.table_pipe(8, 24, true), -- Heading pipe 3
+            util.table_row(9, 25, table_no_inline[2], true), -- Delimiter
+            util.table_pipe(10, 0, false), -- Row pipe 1
+            util.table_border(10, table_no_inline[3], false), -- Below
+            util.table_pipe(10, 12, false), -- Row pipe 2
+            util.table_pipe(10, 24, false), -- Row pipe 3
         })
 
         local actual = util.get_actual_marks()
@@ -379,62 +121,14 @@ async_tests.describe('table.md', function()
             '└───────────┴────────────────────────┘',
         }
         vim.list_extend(expected, {
-            -- Heading
-            {
-                row = { 2, 2 },
-                col = { 0, 38 },
-                virt_text = { { table_with_inline[2], '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Above
-            {
-                row = { 2 },
-                col = { 0 },
-                virt_lines = { { { table_with_inline[1], '@markup.heading' } } },
-                virt_lines_above = true,
-            },
-            -- Inline code in heading
-            {
-                row = { 2, 2 },
-                col = { 14, 25 },
-                hl_eol = false,
-                hl_group = 'ColorColumn',
-            },
-            -- Delimiter
-            {
-                row = { 3, 3 },
-                col = { 0, 38 },
-                virt_text = { { table_with_inline[3], '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Row
-            {
-                row = { 4, 4 },
-                col = { 0, 40 },
-                virt_text = { { table_with_inline[4], 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Below
-            {
-                row = { 4 },
-                col = { 0 },
-                virt_lines = { { { table_with_inline[5], 'Normal' } } },
-                virt_lines_above = false,
-            },
-            -- Row inline code
-            {
-                row = { 4, 4 },
-                col = { 2, 12 },
-                hl_eol = false,
-                hl_group = 'ColorColumn',
-            },
-            -- Row link
-            {
-                row = { 4, 4 },
-                col = { 15, 38 },
-                virt_text = { { '󰌹 ', '@markup.link.label.markdown_inline' } },
-                virt_text_pos = 'inline',
-            },
+            util.table_row(2, 38, table_with_inline[2], true), -- Heading
+            util.table_border(2, table_with_inline[1], true), -- Above
+            util.inline_code(2, 14, 25), -- Inline code in heading
+            util.table_row(3, 38, table_with_inline[3], true), -- Delimiter
+            util.table_row(4, 40, table_with_inline[4], false), -- Row
+            util.table_border(4, table_with_inline[5], false), -- Below
+            util.inline_code(4, 2, 12), -- Row inline code
+            util.link(4, 15, 38, false), -- Row link
         })
 
         -- Table no inline heading
@@ -448,41 +142,11 @@ async_tests.describe('table.md', function()
             '└───────────┴───────────┘',
         }
         vim.list_extend(expected, {
-            -- Heading
-            {
-                row = { 8, 8 },
-                col = { 0, 25 },
-                virt_text = { { table_no_inline[2], '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Above
-            {
-                row = { 8 },
-                col = { 0 },
-                virt_lines = { { { table_no_inline[1], '@markup.heading' } } },
-                virt_lines_above = true,
-            },
-            -- Delimiter
-            {
-                row = { 9, 9 },
-                col = { 0, 25 },
-                virt_text = { { table_no_inline[3], '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Row
-            {
-                row = { 10, 10 },
-                col = { 0, 25 },
-                virt_text = { { table_no_inline[4], 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Below
-            {
-                row = { 10 },
-                col = { 0 },
-                virt_lines = { { { table_no_inline[5], 'Normal' } } },
-                virt_lines_above = false,
-            },
+            util.table_row(8, 25, table_no_inline[2], true), -- Heading
+            util.table_border(8, table_no_inline[1], true), -- Above
+            util.table_row(9, 25, table_no_inline[3], true), -- Delimiter
+            util.table_row(10, 25, table_no_inline[4], false), -- Row
+            util.table_border(10, table_no_inline[5], false), -- Below
         })
 
         local actual = util.get_actual_marks()

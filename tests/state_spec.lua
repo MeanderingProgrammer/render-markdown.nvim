@@ -1,47 +1,45 @@
-local state = require('render-markdown.state')
 local util = require('tests.util')
 
 local eq = assert.are.same
 
 describe('state', function()
     it('validate', function()
-        util.setup_only()
-        eq(0, #state.validate())
+        eq(0, #util.validate())
 
-        util.setup_only({ additional = true })
-        eq({ 'render-markdown.additional: is not a valid key' }, state.validate())
+        eq({ 'render-markdown.additional: is not a valid key' }, util.validate({ additional = true }))
 
         ---@diagnostic disable-next-line: assign-type-mismatch
-        util.setup_only({ enabled = 'invalid' })
-        eq({ 'render-markdown.enabled: expected boolean, got string' }, state.validate())
+        eq({ 'render-markdown.enabled: expected boolean, got string' }, util.validate({ enabled = 'invalid' }))
+
+        eq(
+            { 'render-markdown.log_level: expected one of { "debug", "error" }, got invalid' },
+            ---@diagnostic disable-next-line: assign-type-mismatch
+            util.validate({ log_level = 'invalid' })
+        )
 
         ---@diagnostic disable-next-line: assign-type-mismatch
-        util.setup_only({ log_level = 'invalid' })
-        eq({ 'render-markdown.log_level: expected one of { "debug", "error" }, got invalid' }, state.validate())
+        eq({ 'render-markdown.render_modes: expected string array, got true' }, util.validate({ render_modes = true }))
 
         ---@diagnostic disable-next-line: assign-type-mismatch
-        util.setup_only({ render_modes = true })
-        eq({ 'render-markdown.render_modes: expected string array, got true' }, state.validate())
+        local errors = util.validate({ render_modes = { 1, 2 } })
+        eq(1, #errors)
+        eq(true, vim.startswith(errors[1], 'render-markdown.render_modes: expected string array, got '))
+        eq(true, vim.endswith(errors[1], 'Info: Index 1 is number'))
 
-        ---@diagnostic disable-next-line: assign-type-mismatch
-        util.setup_only({ render_modes = { 1, 2 } })
-        eq(1, #state.validate())
-        eq(true, vim.startswith(state.validate()[1], 'render-markdown.render_modes: expected string array, got '))
-        eq(true, vim.endswith(state.validate()[1], 'Info: Index 1 is number'))
+        eq(0, #util.validate({ callout = { note = { raw = 'value' } } }))
 
-        util.setup_only({ callout = { note = { raw = 'value' } } })
-        eq(0, #state.validate())
+        eq(
+            { 'render-markdown.callout.note.additional: is not a valid key' },
+            util.validate({ callout = { note = { additional = true } } })
+        )
 
-        util.setup_only({ callout = { note = { additional = true } } })
-        eq({ 'render-markdown.callout.note.additional: is not a valid key' }, state.validate())
+        eq(0, #util.validate({ callout = { new = { raw = 'value', rendered = 'value', highlight = 'value' } } }))
 
-        util.setup_only({ callout = { new = { raw = 'value', rendered = 'value', highlight = 'value' } } })
-        eq(0, #state.validate())
+        eq(
+            { 'render-markdown.callout.new.highlight: expected string, got nil' },
+            util.validate({ callout = { new = { raw = 'value', rendered = 'value' } } })
+        )
 
-        util.setup_only({ callout = { new = { raw = 'value', rendered = 'value' } } })
-        eq({ 'render-markdown.callout.new.highlight: expected string, got nil' }, state.validate())
-
-        util.setup_only({ latex = { additional = true } })
-        eq({ 'render-markdown.latex.additional: is not a valid key' }, state.validate())
+        eq({ 'render-markdown.latex.additional: is not a valid key' }, util.validate({ latex = { additional = true } }))
     end)
 end)

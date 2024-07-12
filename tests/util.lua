@@ -1,3 +1,4 @@
+local state = require('render-markdown.state')
 local ui = require('render-markdown.ui')
 local util = require('plenary.async.util')
 
@@ -20,14 +21,16 @@ local eq = assert.are.same
 local M = {}
 
 ---@param opts? render.md.UserConfig
-M.setup_only = function(opts)
+---@return string[]
+M.validate = function(opts)
     require('render-markdown').setup(opts)
+    return state.validate()
 end
 
 ---@param file string
 ---@param opts? render.md.UserConfig
 M.setup = function(file, opts)
-    M.setup_only(opts)
+    require('render-markdown').setup(opts)
     vim.cmd('e ' .. file)
     util.scheduler()
 end
@@ -54,6 +57,196 @@ M.heading = function(row, level)
             sign_text = '󰫎 ',
             sign_hl_group = string.format('RenderMd_%s_SignColumn', foreground),
         },
+    }
+end
+
+---@param row integer
+---@param col integer
+---@param level integer
+---@param spaces? integer
+---@return render.md.MarkInfo
+M.bullet = function(row, col, level, spaces)
+    local icons = { '●', '○', '◆', '◇' }
+    spaces = spaces or 0
+    return {
+        row = { row, row },
+        col = { col, col + spaces + 2 },
+        virt_text = { { string.rep(' ', spaces) .. icons[level], 'Normal' } },
+        virt_text_pos = 'overlay',
+    }
+end
+
+---@param row integer
+---@param icon string
+---@param highlight string
+---@param custom boolean
+---@return render.md.MarkInfo[]
+M.checkbox = function(row, icon, highlight, custom)
+    local virt_text_pos = 'overlay'
+    local conceal = nil
+    if custom then
+        virt_text_pos = 'inline'
+        conceal = ''
+    end
+    return {
+        {
+            row = { row, row },
+            col = { 0, 2 },
+            conceal = '',
+        },
+        {
+            row = { row, row },
+            col = { 2, 5 },
+            virt_text = { { icon, highlight } },
+            virt_text_pos = virt_text_pos,
+            conceal = conceal,
+        },
+    }
+end
+
+---@param row integer
+---@param start_col integer
+---@param end_col integer
+---@return render.md.MarkInfo
+M.inline_code = function(row, start_col, end_col)
+    return {
+        row = { row, row },
+        col = { start_col, end_col },
+        hl_eol = false,
+        hl_group = 'ColorColumn',
+    }
+end
+
+---@param start_row integer
+---@param end_row integer
+---@return render.md.MarkInfo
+M.code_block = function(start_row, end_row)
+    return {
+        row = { start_row, end_row },
+        col = { 0, 0 },
+        hl_eol = true,
+        hl_group = 'ColorColumn',
+    }
+end
+
+---@param row integer
+---@param start_col integer
+---@param end_col integer
+---@param icon string
+---@param name string
+---@param highlight string
+---@return render.md.MarkInfo[]
+M.code_language = function(row, start_col, end_col, icon, name, highlight)
+    return {
+        {
+            row = { row, row },
+            col = { start_col, end_col },
+            sign_text = icon,
+            sign_hl_group = string.format('RenderMd_%s_SignColumn', highlight),
+        },
+        {
+            row = { row },
+            col = { start_col },
+            virt_text = { { icon .. name, { highlight, 'ColorColumn' } } },
+            virt_text_pos = 'inline',
+        },
+    }
+end
+
+---@param row integer
+---@param start_col integer
+---@param end_col integer
+---@param image boolean
+---@return render.md.MarkInfo
+M.link = function(row, start_col, end_col, image)
+    local icon = '󰌹 '
+    if image then
+        icon = '󰥶 '
+    end
+    return {
+        row = { row, row },
+        col = { start_col, end_col },
+        virt_text = { { icon, '@markup.link.label.markdown_inline' } },
+        virt_text_pos = 'inline',
+    }
+end
+
+---@param row integer
+---@param format string
+---@param highlight string
+---@return render.md.MarkInfo
+M.quote = function(row, format, highlight)
+    local quote = string.format(format, '▋')
+    return {
+        row = { row, row },
+        col = { 0, vim.fn.strdisplaywidth(quote) },
+        virt_text = { { quote, highlight } },
+        virt_text_pos = 'overlay',
+    }
+end
+
+---@param row integer
+---@param col integer
+---@param head boolean
+---@return render.md.MarkInfo
+M.table_pipe = function(row, col, head)
+    local highlight = 'Normal'
+    if head then
+        highlight = '@markup.heading'
+    end
+    return {
+        row = { row, row },
+        col = { col, col + 1 },
+        virt_text = { { '│', highlight } },
+        virt_text_pos = 'overlay',
+    }
+end
+
+---@param row integer
+---@param col integer
+---@param spaces integer
+---@return render.md.MarkInfo
+M.table_padding = function(row, col, spaces)
+    return {
+        row = { row },
+        col = { col },
+        virt_text = { { string.rep(' ', spaces), 'Conceal' } },
+        virt_text_pos = 'inline',
+    }
+end
+
+---@param row integer
+---@param value string
+---@param head boolean
+---@return render.md.MarkInfo
+M.table_border = function(row, value, head)
+    local highlight = 'Normal'
+    if head then
+        highlight = '@markup.heading'
+    end
+    return {
+        row = { row },
+        col = { 0 },
+        virt_lines = { { { value, highlight } } },
+        virt_lines_above = head,
+    }
+end
+
+---@param row integer
+---@param col integer
+---@param value string
+---@param head boolean
+---@return render.md.MarkInfo
+M.table_row = function(row, col, value, head)
+    local highlight = 'Normal'
+    if head then
+        highlight = '@markup.heading'
+    end
+    return {
+        row = { row, row },
+        col = { 0, col },
+        virt_text = { { value, highlight } },
+        virt_text_pos = 'overlay',
     }
 end
 

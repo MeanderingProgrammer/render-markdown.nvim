@@ -12,76 +12,16 @@ async_tests.describe('list_table.md', function()
 
         -- Unordered list
         vim.list_extend(expected, {
-            -- List Item 1, bullet point
-            {
-                row = { 2, 2 },
-                col = { 0, 2 },
-                virt_text = { { '●', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
-            -- List Item 1, link
-            {
-                row = { 2, 2 },
-                col = { 20, 47 },
-                virt_text = { { '󰌹 ', '@markup.link.label.markdown_inline' } },
-                virt_text_pos = 'inline',
-            },
-            -- List Item 2, bullet point
-            {
-                row = { 3, 3 },
-                col = { 0, 2 },
-                virt_text = { { '●', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
-            -- List Item 2, inline code
-            {
-                row = { 3, 3 },
-                col = { 20, 28 },
-                hl_eol = false,
-                hl_group = 'ColorColumn',
-            },
-            -- Nested List 1 Item 1, bullet point
-            {
-                row = { 4, 4 },
-                col = { 2, 6 },
-                virt_text = { { '  ○', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Nested List 1 Item 2, bullet point
-            {
-                row = { 5, 5 },
-                col = { 4, 6 },
-                virt_text = { { '○', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Nested List 2 Item 1, bullet point
-            {
-                row = { 6, 6 },
-                col = { 6, 8 },
-                virt_text = { { '◆', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Nested List 3 Item 1, bullet point
-            {
-                row = { 7, 7 },
-                col = { 8, 10 },
-                virt_text = { { '◇', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Nested List 4 Item 1, bullet point
-            {
-                row = { 8, 8 },
-                col = { 10, 12 },
-                virt_text = { { '●', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
-            -- List Item 3, bullet point
-            {
-                row = { 9, 9 },
-                col = { 0, 2 },
-                virt_text = { { '●', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
+            util.bullet(2, 0, 1), -- List Item 1
+            util.link(2, 20, 47, false), -- List Item 1, link
+            util.bullet(3, 0, 1), -- List Item 2
+            util.inline_code(3, 20, 28), -- List Item 2, code
+            util.bullet(4, 2, 2, 2), -- Nested List 1 Item 1
+            util.bullet(5, 4, 2), -- Nested List 1 Item 2
+            util.bullet(6, 6, 3), -- Nested List 2 Item 1
+            util.bullet(7, 8, 4), -- Nested List 3 Item 1
+            util.bullet(8, 10, 1), -- Nested List 4 Item 1
+            util.bullet(9, 0, 1), -- List Item 3
         })
 
         -- Ordered list heading
@@ -96,146 +36,26 @@ async_tests.describe('list_table.md', function()
             '└──────────────────┴────────────────────┘',
         }
         vim.list_extend(expected, {
-            -- Heading pipe 1
-            {
-                row = { 19, 19 },
-                col = { 0, 1 },
-                virt_text = { { '│', '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Above
-            {
-                row = { 19 },
-                col = { 0 },
-                virt_lines = { { { table_outline[1], '@markup.heading' } } },
-                virt_lines_above = true,
-            },
-            -- Inline code in heading
-            {
-                row = { 19, 19 },
-                col = { 2, 18 },
-                hl_eol = false,
-                hl_group = 'ColorColumn',
-            },
-            -- Heading padding 1
-            {
-                row = { 19 },
-                col = { 19 },
-                virt_text = { { '  ', 'Conceal' } },
-                virt_text_pos = 'inline',
-            },
-            -- Heading pipe 2
-            {
-                row = { 19, 19 },
-                col = { 19, 20 },
-                virt_text = { { '│', '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Heading padding 2
-            {
-                row = { 19 },
-                col = { 40 },
-                virt_text = { { '  ', 'Conceal' } },
-                virt_text_pos = 'inline',
-            },
-            -- Heading pipe 2
-            {
-                row = { 19, 19 },
-                col = { 40, 41 },
-                virt_text = { { '│', '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Delimiter
-            {
-                row = { 20, 20 },
-                col = { 0, 41 },
-                virt_text = { { table_outline[2], '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Row 1 pipe 1
-            {
-                row = { 21, 21 },
-                col = { 0, 1 },
-                virt_text = { { '│', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Row 1 pipe 2
-            {
-                row = { 21, 21 },
-                col = { 19, 20 },
-                virt_text = { { '│', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Row 1 padding 2
-            {
-                row = { 21 },
-                col = { 40 },
-                virt_text = { { '    ', 'Conceal' } },
-                virt_text_pos = 'inline',
-            },
-            -- Row 1 pipe 3
-            {
-                row = { 21, 21 },
-                col = { 40, 41 },
-                virt_text = { { '│', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Row 2 pipe 1
-            {
-                row = { 22, 22 },
-                col = { 0, 1 },
-                virt_text = { { '│', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Below
-            {
-                row = { 22 },
-                col = { 0 },
-                virt_lines = { { { table_outline[3], 'Normal' } } },
-                virt_lines_above = false,
-            },
-            -- Row 2 inline code
-            {
-                row = { 22, 22 },
-                col = { 2, 15 },
-                hl_eol = false,
-                hl_group = 'ColorColumn',
-            },
-            -- Row 2 padding 1
-            {
-                row = { 22 },
-                col = { 19 },
-                virt_text = { { '  ', 'Conceal' } },
-                virt_text_pos = 'inline',
-            },
-            -- Row 2 pipe 2
-            {
-                row = { 22, 22 },
-                col = { 19, 20 },
-                virt_text = { { '│', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Row 2 link
-            {
-                row = { 22, 22 },
-                col = { 21, 39 },
-                virt_text = { { '󰌹 ', '@markup.link.label.markdown_inline' } },
-                virt_text_pos = 'inline',
-            },
-            -- Row 2 padding 2
-            {
-                row = { 22 },
-                col = { 40 },
-                virt_text = { { '       ', 'Conceal' } },
-                virt_text_pos = 'inline',
-            },
-            -- Row 2 pipe 3
-            {
-                row = { 22, 22 },
-                col = { 40, 41 },
-                virt_text = { { '│', 'Normal' } },
-                virt_text_pos = 'overlay',
-            },
+            util.table_pipe(19, 0, true), -- Heading pipe 1
+            util.table_border(19, table_outline[1], true), -- Above
+            util.inline_code(19, 2, 18), -- Inline code in heading
+            util.table_padding(19, 19, 2), -- Heading padding 1
+            util.table_pipe(19, 19, true), -- Heading pipe 2
+            util.table_padding(19, 40, 2), -- Heading padding 2
+            util.table_pipe(19, 40, true), -- Heading pipe 2
+            util.table_row(20, 41, table_outline[2], true), -- Delimiter
+            util.table_pipe(21, 0, false), -- Row 1 pipe 1
+            util.table_pipe(21, 19, false), -- Row 1 pipe 2
+            util.table_padding(21, 40, 4), -- Row 1 padding 2
+            util.table_pipe(21, 40, false), -- Row 1 pipe 3
+            util.table_pipe(22, 0, false), -- Row 2 pipe 1
+            util.table_border(22, table_outline[3], false), -- Below
+            util.inline_code(22, 2, 15), -- Row 2 inline code
+            util.table_padding(22, 19, 2), -- Row 2 padding 1
+            util.table_pipe(22, 19, false), -- Row 2 pipe 2
+            util.link(22, 21, 39, false), -- Row 2 link
+            util.table_padding(22, 40, 7), -- Row 2 padding 2
+            util.table_pipe(22, 40, false), -- Row 2 pipe 3
         })
 
         local actual = util.get_actual_marks()

@@ -14,37 +14,11 @@ async_tests.describe('heading_code.md', function()
         vim.list_extend(expected, util.heading(6, 5))
         vim.list_extend(expected, util.heading(8, 6))
 
-        -- Image link
         vim.list_extend(expected, {
-            {
-                row = { 10, 10 },
-                col = { 0, 21 },
-                virt_text = { { '󰥶 ', '@markup.link.label.markdown_inline' } },
-                virt_text_pos = 'inline',
-            },
+            util.link(10, 0, 21, true), -- Image link
+            util.code_block(12, 23), -- Code block
         })
-
-        -- Code block
-        vim.list_extend(expected, {
-            {
-                row = { 12, 23 },
-                col = { 0, 0 },
-                hl_eol = true,
-                hl_group = 'ColorColumn',
-            },
-            {
-                row = { 12, 12 },
-                col = { 3, 9 },
-                sign_text = '󰌠 ',
-                sign_hl_group = 'RenderMd_MiniIconsYellow_SignColumn',
-            },
-            {
-                row = { 12 },
-                col = { 3 },
-                virt_text = { { '󰌠 python', { 'MiniIconsYellow', 'ColorColumn' } } },
-                virt_text_pos = 'inline',
-            },
-        })
+        vim.list_extend(expected, util.code_language(12, 3, 9, '󰌠 ', 'python', 'MiniIconsYellow'))
 
         local actual = util.get_actual_marks()
         util.marks_are_equal(expected, actual)

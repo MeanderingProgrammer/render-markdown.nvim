@@ -4,7 +4,9 @@
 
 [ISSUE #35](https://github.com/MeanderingProgrammer/markdown.nvim/issues/35)
 
-Text that extends beyond available space will overwrite content.
+Text that extends beyond available space will can overwrite content.
+
+This has been fixed for headings when using neovim >= `0.10.0`.
 
 ## `LaTeX` Formula Positioning
 

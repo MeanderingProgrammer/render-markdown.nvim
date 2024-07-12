@@ -13,6 +13,17 @@ local function conceal_escape(namespace, root, buf)
     end
 end
 
+---@param row integer
+---@param col integer
+---@return render.md.MarkInfo
+local function backslash(row, col)
+    return {
+        row = { row, row },
+        col = { col, col + 1 },
+        conceal = '',
+    }
+end
+
 async_tests.describe('custom_handler.md', function()
     async_tests.it('default', function()
         util.setup('tests/data/custom_handler.md')
@@ -21,14 +32,7 @@ async_tests.describe('custom_handler.md', function()
 
         -- Heading / inline code
         vim.list_extend(expected, util.heading(0, 1))
-        vim.list_extend(expected, {
-            {
-                row = { 0, 0 },
-                col = { 9, 18 },
-                hl_eol = false,
-                hl_group = 'ColorColumn',
-            },
-        })
+        vim.list_extend(expected, { util.inline_code(0, 9, 18) })
 
         local actual = util.get_actual_marks()
         util.marks_are_equal(expected, actual)
@@ -49,18 +53,7 @@ async_tests.describe('custom_handler.md', function()
         vim.list_extend(expected, util.heading(0, 1))
 
         -- Backslash escapes
-        vim.list_extend(expected, {
-            {
-                row = { 2, 2 },
-                col = { 0, 1 },
-                conceal = '',
-            },
-            {
-                row = { 2, 2 },
-                col = { 7, 8 },
-                conceal = '',
-            },
-        })
+        vim.list_extend(expected, { backslash(2, 0), backslash(2, 7) })
 
         local actual = util.get_actual_marks()
         util.marks_are_equal(expected, actual)
@@ -80,28 +73,10 @@ async_tests.describe('custom_handler.md', function()
 
         -- Heading / inline code
         vim.list_extend(expected, util.heading(0, 1))
-        vim.list_extend(expected, {
-            {
-                row = { 0, 0 },
-                col = { 9, 18 },
-                hl_eol = false,
-                hl_group = 'ColorColumn',
-            },
-        })
+        vim.list_extend(expected, { util.inline_code(0, 9, 18) })
 
         -- Backslash escapes
-        vim.list_extend(expected, {
-            {
-                row = { 2, 2 },
-                col = { 0, 1 },
-                conceal = '',
-            },
-            {
-                row = { 2, 2 },
-                col = { 7, 8 },
-                conceal = '',
-            },
-        })
+        vim.list_extend(expected, { backslash(2, 0), backslash(2, 7) })
 
         local actual = util.get_actual_marks()
         util.marks_are_equal(expected, actual)

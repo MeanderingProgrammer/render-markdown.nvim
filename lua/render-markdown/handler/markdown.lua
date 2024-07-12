@@ -41,18 +41,38 @@ M.render_node = function(namespace, buf, capture, node)
         local background = list.clamp(heading.backgrounds, level)
         local foreground = list.clamp(heading.foregrounds, level)
 
-        -- Available width is level + 1, where level = number of `#` characters and one is
-        -- added to account for the space after the last `#` but before the heading title
-        local padding = level + 1 - str.width(icon)
+        -- Available width is level + 1 - concealed, where level = number of `#` characters, one
+        -- is added to account for the space after the last `#` but before the heading title,
+        -- and concealed text is subtracted since that space is not usable
+        local padding = level + 1 - ts.concealed(buf, info) - str.width(icon)
 
-        vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, 0, {
-            end_row = info.end_row + 1,
-            end_col = 0,
-            hl_group = background,
-            virt_text = { { str.pad(icon, padding), { foreground, background } } },
-            virt_text_pos = 'overlay',
-            hl_eol = true,
-        })
+        if padding < 0 then
+            -- Requires inline extmarks to place when there is not enough space available
+            if util.has_10 then
+                vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
+                    end_row = info.end_row,
+                    end_col = info.end_col,
+                    virt_text = { { icon, { foreground, background } } },
+                    virt_text_pos = 'inline',
+                    conceal = '',
+                })
+                vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, 0, {
+                    end_row = info.end_row + 1,
+                    end_col = 0,
+                    hl_group = background,
+                    hl_eol = true,
+                })
+            end
+        else
+            vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, 0, {
+                end_row = info.end_row + 1,
+                end_col = 0,
+                hl_group = background,
+                virt_text = { { str.pad(icon, padding), { foreground, background } } },
+                virt_text_pos = 'overlay',
+                hl_eol = true,
+            })
+        end
 
         M.render_sign(namespace, buf, info, list.cycle(heading.signs, level), foreground)
     elseif capture == 'dash' then

@@ -11,48 +11,9 @@ async_tests.describe('box_dash_quote.md', function()
         vim.list_extend(expected, util.heading(0, 1))
 
         -- Checkboxes
-        vim.list_extend(expected, {
-            -- Unchecked, conceal list marker
-            {
-                row = { 2, 2 },
-                col = { 0, 2 },
-                conceal = '',
-            },
-            -- Unchecked, checkbox
-            {
-                row = { 2, 2 },
-                col = { 2, 5 },
-                virt_text = { { ' 󰄱 ', '@markup.list.unchecked' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Checked, conceal list marker
-            {
-                row = { 3, 3 },
-                col = { 0, 2 },
-                conceal = '',
-            },
-            -- Checked, checkbox
-            {
-                row = { 3, 3 },
-                col = { 2, 5 },
-                virt_text = { { ' 󰱒 ', '@markup.heading' } },
-                virt_text_pos = 'overlay',
-            },
-            -- Custom todo, conceal list marker
-            {
-                row = { 4, 4 },
-                col = { 0, 2 },
-                conceal = '',
-            },
-            -- Custom todo, checkbox
-            {
-                row = { 4, 4 },
-                col = { 2, 5 },
-                virt_text = { { ' 󰥔 ', '@markup.raw' } },
-                virt_text_pos = 'inline',
-                conceal = '',
-            },
-        })
+        vim.list_extend(expected, util.checkbox(2, ' 󰄱 ', '@markup.list.unchecked', false))
+        vim.list_extend(expected, util.checkbox(3, ' 󰱒 ', '@markup.heading', false))
+        vim.list_extend(expected, util.checkbox(4, ' 󰥔 ', '@markup.raw', true))
 
         -- Line break
         vim.list_extend(expected, {
@@ -66,18 +27,8 @@ async_tests.describe('box_dash_quote.md', function()
 
         -- Quote lines
         vim.list_extend(expected, {
-            {
-                row = { 8, 8 },
-                col = { 0, 4 },
-                virt_text = { { '  ▋ ', '@markup.quote' } },
-                virt_text_pos = 'overlay',
-            },
-            {
-                row = { 9, 9 },
-                col = { 0, 4 },
-                virt_text = { { '  ▋ ', '@markup.quote' } },
-                virt_text_pos = 'overlay',
-            },
+            util.quote(8, '  %s ', '@markup.quote'),
+            util.quote(9, '  %s ', '@markup.quote'),
         })
 
         local actual = util.get_actual_marks()
