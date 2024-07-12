@@ -1,4 +1,4 @@
-*render-markdown.txt*           For 0.10.0           Last change: 2024 July 11
+*render-markdown.txt*           For 0.10.0           Last change: 2024 July 12
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -185,9 +185,7 @@ Full Default Configuration ~
     
             (shortcut_link) @callout
     
-            (inline_link) @link
-    
-            (image) @image
+            [(inline_link) (image)] @link
         ]],
         -- Query to be able to identify links in nodes
         inline_link_query = '[(inline_link) (image)] @link',

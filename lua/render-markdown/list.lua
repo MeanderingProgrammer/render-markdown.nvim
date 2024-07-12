@@ -1,3 +1,4 @@
+---@class render.md.ListHelper
 local M = {}
 
 ---@param values string[]

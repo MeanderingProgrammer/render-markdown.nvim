@@ -96,19 +96,19 @@ async_tests.describe('list_table.md', function()
             '└──────────────────┴────────────────────┘',
         }
         vim.list_extend(expected, {
-            -- Above
-            {
-                row = { 19 },
-                col = { 0 },
-                virt_lines = { { { table_outline[1], '@markup.heading' } } },
-                virt_lines_above = true,
-            },
             -- Heading pipe 1
             {
                 row = { 19, 19 },
                 col = { 0, 1 },
                 virt_text = { { '│', '@markup.heading' } },
                 virt_text_pos = 'overlay',
+            },
+            -- Above
+            {
+                row = { 19 },
+                col = { 0 },
+                virt_lines = { { { table_outline[1], '@markup.heading' } } },
+                virt_lines_above = true,
             },
             -- Inline code in heading
             {
@@ -187,6 +187,13 @@ async_tests.describe('list_table.md', function()
                 virt_text = { { '│', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
+            -- Below
+            {
+                row = { 22 },
+                col = { 0 },
+                virt_lines = { { { table_outline[3], 'Normal' } } },
+                virt_lines_above = false,
+            },
             -- Row 2 inline code
             {
                 row = { 22, 22 },
@@ -228,13 +235,6 @@ async_tests.describe('list_table.md', function()
                 col = { 40, 41 },
                 virt_text = { { '│', 'Normal' } },
                 virt_text_pos = 'overlay',
-            },
-            -- Below
-            {
-                row = { 23 },
-                col = { 0 },
-                virt_lines = { { { table_outline[3], 'Normal' } } },
-                virt_lines_above = true,
             },
         })
 

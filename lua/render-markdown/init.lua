@@ -144,9 +144,7 @@ M.default_config = {
 
         (shortcut_link) @callout
 
-        (inline_link) @link
-
-        (image) @image
+        [(inline_link) (image)] @link
     ]],
     -- Query to be able to identify links in nodes
     inline_link_query = '[(inline_link) (image)] @link',

@@ -1,4 +1,14 @@
+---@class render.md.StringHelper
 local M = {}
+
+---@param s string?
+---@return integer
+M.width = function(s)
+    if s == nil then
+        return 0
+    end
+    return vim.fn.strdisplaywidth(s)
+end
 
 ---@param s string
 ---@return integer
@@ -11,7 +21,7 @@ end
 ---@param s string
 ---@return string
 M.pad_to = function(value, s)
-    local padding = vim.fn.strdisplaywidth(value) - vim.fn.strdisplaywidth(s)
+    local padding = M.width(value) - M.width(s)
     return M.pad(s, padding)
 end
 

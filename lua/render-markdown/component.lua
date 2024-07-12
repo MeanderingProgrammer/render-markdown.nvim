@@ -4,6 +4,7 @@ local state = require('render-markdown.state')
 ---@field text string
 ---@field highlight string
 
+---@class render.md.ComponentHelper
 local M = {}
 
 ---@param text string

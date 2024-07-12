@@ -4,8 +4,11 @@ local util = require('render-markdown.util')
 
 ---@type table<string, render.md.Handler>
 local builtin_handlers = {
+    ---@diagnostic disable-next-line: assign-type-mismatch
     markdown = require('render-markdown.handler.markdown'),
+    ---@diagnostic disable-next-line: assign-type-mismatch
     markdown_inline = require('render-markdown.handler.markdown_inline'),
+    ---@diagnostic disable-next-line: assign-type-mismatch
     latex = require('render-markdown.handler.latex'),
 }
 

@@ -1,10 +1,12 @@
 local component = require('render-markdown.component')
 local logger = require('render-markdown.logger')
+local shared = require('render-markdown.handler.shared')
 local state = require('render-markdown.state')
 local str = require('render-markdown.str')
 local ts = require('render-markdown.ts')
 local util = require('render-markdown.util')
 
+---@class render.md.handler.MarkdownInline
 local M = {}
 
 ---@param namespace integer
@@ -70,23 +72,15 @@ M.render_node = function(namespace, buf, capture, node)
                 conceal = '',
             })
         end
-    elseif vim.tbl_contains({ 'link', 'image' }, capture) then
-        local link = state.config.link
-        if not link.enabled then
+    elseif capture == 'link' then
+        local icon = shared.link_icon(info)
+        if icon == nil then
             return
-        end
-        -- Requires inline extmarks
-        if not util.has_10 then
-            return
-        end
-        local icon = link.hyperlink
-        if capture == 'image' then
-            icon = link.image
         end
         vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
             end_row = info.end_row,
             end_col = info.end_col,
-            virt_text = { { icon, link.highlight } },
+            virt_text = { { icon, state.config.link.highlight } },
             virt_text_pos = 'inline',
         })
     else

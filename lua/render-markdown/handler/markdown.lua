@@ -2,11 +2,13 @@ local component = require('render-markdown.component')
 local icons = require('render-markdown.icons')
 local list = require('render-markdown.list')
 local logger = require('render-markdown.logger')
+local shared = require('render-markdown.handler.shared')
 local state = require('render-markdown.state')
 local str = require('render-markdown.str')
 local ts = require('render-markdown.ts')
 local util = require('render-markdown.util')
 
+---@class render.md.handler.Markdown
 local M = {}
 
 ---@param namespace integer
@@ -32,7 +34,7 @@ M.render_node = function(namespace, buf, capture, node)
         if not heading.enabled then
             return
         end
-        local level = vim.fn.strdisplaywidth(info.text)
+        local level = str.width(info.text)
 
         local icon = list.cycle(heading.icons, level)
         local background = list.clamp(heading.backgrounds, level)
@@ -40,7 +42,7 @@ M.render_node = function(namespace, buf, capture, node)
 
         -- Available width is level + 1, where level = number of `#` characters and one is
         -- added to account for the space after the last `#` but before the heading title
-        local padding = level + 1 - vim.fn.strdisplaywidth(icon)
+        local padding = level + 1 - str.width(icon)
 
         vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, 0, {
             end_row = info.end_row + 1,
@@ -212,85 +214,7 @@ M.render_node = function(namespace, buf, capture, node)
             virt_text_pos = 'overlay',
         })
     elseif capture == 'table' then
-        local pipe_table = state.config.pipe_table
-        if not pipe_table.enabled then
-            return
-        end
-        if pipe_table.style == 'none' then
-            return
-        end
-        local border = pipe_table.border
-
-        local function render_table_full()
-            local delim_node = ts.child(info.node, 'pipe_table_delimiter_row')
-            if delim_node == nil then
-                return
-            end
-
-            local delim = ts.info(delim_node, buf)
-            local lines = vim.api.nvim_buf_get_lines(buf, info.start_row, info.end_row, true)
-
-            local delim_width = vim.fn.strdisplaywidth(delim.text)
-            local start_width = vim.fn.strdisplaywidth(list.first(lines))
-            local end_width = vim.fn.strdisplaywidth(list.last(lines))
-            if delim_width ~= start_width or start_width ~= end_width then
-                return
-            end
-
-            local headings = vim.split(delim.text, '|', { plain = true, trimempty = true })
-            local lengths = vim.tbl_map(function(cell)
-                return border[11]:rep(vim.fn.strdisplaywidth(cell))
-            end, headings)
-
-            local line_above = border[1] .. table.concat(lengths, border[2]) .. border[3]
-            vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-                virt_lines_above = true,
-                virt_lines = { { { line_above, pipe_table.head } } },
-            })
-
-            local line_below = border[7] .. table.concat(lengths, border[8]) .. border[9]
-            vim.api.nvim_buf_set_extmark(buf, namespace, info.end_row, info.start_col, {
-                virt_lines_above = true,
-                virt_lines = { { { line_below, pipe_table.row } } },
-            })
-        end
-
-        ---@param row_info render.md.NodeInfo
-        local function render_table_delimiter(row_info)
-            -- Order matters here, in particular handling inner intersections before left & right
-            local row = row_info.text
-                :gsub(' ', '-')
-                :gsub('%-|%-', border[11] .. border[5] .. border[11])
-                :gsub('|%-', border[4] .. border[11])
-                :gsub('%-|', border[11] .. border[6])
-                :gsub('%-', border[11])
-
-            vim.api.nvim_buf_set_extmark(buf, namespace, row_info.start_row, row_info.start_col, {
-                end_row = row_info.end_row,
-                end_col = row_info.end_col,
-                virt_text = { { row, pipe_table.head } },
-                virt_text_pos = 'overlay',
-            })
-        end
-
-        if pipe_table.style == 'full' then
-            render_table_full()
-        end
-
-        for row in info.node:iter_children() do
-            local row_info = ts.info(row, buf)
-            local row_type = row_info.node:type()
-            if row_type == 'pipe_table_delimiter_row' then
-                render_table_delimiter(row_info)
-            elseif row_type == 'pipe_table_header' then
-                M.render_table_row(namespace, buf, row_info, pipe_table.head)
-            elseif row_type == 'pipe_table_row' then
-                M.render_table_row(namespace, buf, row_info, pipe_table.row)
-            else
-                -- Should only get here if markdown introduces more row types, currently unhandled
-                logger.error('Unhandled markdown row type: ' .. row_type)
-            end
-        end
+        M.render_table(namespace, buf, info)
     else
         -- Should only get here if user provides custom capture, currently unhandled
         logger.error('Unhandled markdown capture: ' .. capture)
@@ -300,62 +224,166 @@ end
 ---@param namespace integer
 ---@param buf integer
 ---@param info render.md.NodeInfo
----@param highlight string
-M.render_table_row = function(namespace, buf, info, highlight)
-    ---@param text string
-    ---@return integer
-    local function inline_width(text)
-        local query = state.inline_link_query
-        local tree = vim.treesitter.get_string_parser(text, 'markdown_inline')
-        local result = 0
-        for id in query:iter_captures(tree:parse()[1]:root(), text) do
-            if query.captures[id] == 'link' then
-                result = result + vim.fn.strdisplaywidth(state.config.link.hyperlink)
-            end
-        end
-        return result
+M.render_table = function(namespace, buf, info)
+    local pipe_table = state.config.pipe_table
+    if not pipe_table.enabled then
+        return
     end
+    if pipe_table.style == 'none' then
+        return
+    end
+    local delim = nil
+    local first = nil
+    local last = nil
+    for row_node in info.node:iter_children() do
+        local row = ts.info(row_node, buf)
+        if row.type == 'pipe_table_delimiter_row' then
+            delim = row
+            M.render_table_delimiter(namespace, buf, row)
+        elseif row.type == 'pipe_table_header' then
+            first = row
+            M.render_table_row(namespace, buf, row, pipe_table.head)
+        elseif row.type == 'pipe_table_row' then
+            if last == nil or row.start_row > last.start_row then
+                last = row
+            end
+            M.render_table_row(namespace, buf, row, pipe_table.row)
+        else
+            -- Should only get here if markdown introduces more row types, currently unhandled
+            logger.error('Unhandled markdown row type: ' .. row.type)
+        end
+    end
+    if pipe_table.style == 'full' then
+        M.render_table_full(namespace, buf, delim, first, last)
+    end
+end
 
+---@param namespace integer
+---@param buf integer
+---@param row render.md.NodeInfo
+M.render_table_delimiter = function(namespace, buf, row)
     local pipe_table = state.config.pipe_table
     local border = pipe_table.border
+    -- Order matters here, in particular handling inner intersections before left & right
+    local delimiter = row.text
+        :gsub(' ', '-')
+        :gsub('%-|%-', border[11] .. border[5] .. border[11])
+        :gsub('|%-', border[4] .. border[11])
+        :gsub('%-|', border[11] .. border[6])
+        :gsub('%-', border[11])
 
+    vim.api.nvim_buf_set_extmark(buf, namespace, row.start_row, row.start_col, {
+        end_row = row.end_row,
+        end_col = row.end_col,
+        virt_text = { { delimiter, pipe_table.head } },
+        virt_text_pos = 'overlay',
+    })
+end
+
+---@param namespace integer
+---@param buf integer
+---@param row render.md.NodeInfo
+---@param highlight string
+M.render_table_row = function(namespace, buf, row, highlight)
+    local pipe_table = state.config.pipe_table
     if vim.tbl_contains({ 'raw', 'padded' }, pipe_table.cell) then
-        for cell in info.node:iter_children() do
-            local cell_info = ts.info(cell, buf)
-            local cell_type = cell_info.node:type()
-            if cell_type == '|' then
-                vim.api.nvim_buf_set_extmark(buf, namespace, cell_info.start_row, cell_info.start_col, {
-                    end_row = cell_info.end_row,
-                    end_col = cell_info.end_col,
-                    virt_text = { { border[10], highlight } },
+        for cell_node in row.node:iter_children() do
+            local cell = ts.info(cell_node, buf)
+            if cell.type == '|' then
+                vim.api.nvim_buf_set_extmark(buf, namespace, cell.start_row, cell.start_col, {
+                    end_row = cell.end_row,
+                    end_col = cell.end_col,
+                    virt_text = { { pipe_table.border[10], highlight } },
                     virt_text_pos = 'overlay',
                 })
-            elseif cell_type == 'pipe_table_cell' then
-                if pipe_table.cell == 'padded' then
-                    -- Requires inline extmarks
-                    if util.has_10 then
-                        local concealed = ts.concealed(buf, cell_info) - inline_width(cell_info.text)
-                        if concealed > 0 then
-                            vim.api.nvim_buf_set_extmark(buf, namespace, cell_info.start_row, cell_info.end_col, {
-                                virt_text = { { str.pad('', concealed), pipe_table.filler } },
-                                virt_text_pos = 'inline',
-                            })
-                        end
+            elseif cell.type == 'pipe_table_cell' then
+                -- Requires inline extmarks
+                if pipe_table.cell == 'padded' and util.has_10 then
+                    local offset = M.table_visual_offset(buf, cell)
+                    if offset > 0 then
+                        vim.api.nvim_buf_set_extmark(buf, namespace, cell.start_row, cell.end_col, {
+                            virt_text = { { str.pad('', offset), pipe_table.filler } },
+                            virt_text_pos = 'inline',
+                        })
                     end
                 end
             else
                 -- Should only get here if markdown introduces more cell types, currently unhandled
-                logger.error('Unhandled markdown cell type: ' .. cell_type)
+                logger.error('Unhandled markdown cell type: ' .. cell.type)
             end
         end
     elseif pipe_table.cell == 'overlay' then
-        vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-            end_row = info.end_row,
-            end_col = info.end_col,
-            virt_text = { { info.text:gsub('|', border[10]), highlight } },
+        vim.api.nvim_buf_set_extmark(buf, namespace, row.start_row, row.start_col, {
+            end_row = row.end_row,
+            end_col = row.end_col,
+            virt_text = { { row.text:gsub('|', pipe_table.border[10]), highlight } },
             virt_text_pos = 'overlay',
         })
     end
+end
+
+---@param namespace integer
+---@param buf integer
+---@param delim? render.md.NodeInfo
+---@param first? render.md.NodeInfo
+---@param last? render.md.NodeInfo
+M.render_table_full = function(namespace, buf, delim, first, last)
+    local pipe_table = state.config.pipe_table
+    local border = pipe_table.border
+    if delim == nil or first == nil or last == nil then
+        return
+    end
+
+    ---@param info render.md.NodeInfo
+    ---@return integer
+    local function width(info)
+        local result = str.width(info.text)
+        if pipe_table.cell == 'raw' then
+            -- For the raw cell style we want the lengths to match after
+            -- concealing & inlined elements
+            result = result - M.table_visual_offset(buf, info)
+        end
+        return result
+    end
+
+    -- Do not need to account for concealed / inlined text on delimiter row
+    local delim_width = str.width(delim.text)
+    if delim_width ~= width(first) or delim_width ~= width(last) then
+        return
+    end
+
+    local headings = vim.split(delim.text, '|', { plain = true, trimempty = true })
+    local lengths = vim.tbl_map(function(cell)
+        return border[11]:rep(str.width(cell))
+    end, headings)
+
+    local line_above = border[1] .. table.concat(lengths, border[2]) .. border[3]
+    vim.api.nvim_buf_set_extmark(buf, namespace, first.start_row, first.start_col, {
+        virt_lines_above = true,
+        virt_lines = { { { line_above, pipe_table.head } } },
+    })
+
+    local line_below = border[7] .. table.concat(lengths, border[8]) .. border[9]
+    vim.api.nvim_buf_set_extmark(buf, namespace, last.start_row, last.start_col, {
+        virt_lines_above = false,
+        virt_lines = { { { line_below, pipe_table.row } } },
+    })
+end
+
+---@param buf integer
+---@param info render.md.NodeInfo
+---@return integer
+M.table_visual_offset = function(buf, info)
+    local result = ts.concealed(buf, info)
+    local query = state.inline_link_query
+    local tree = vim.treesitter.get_string_parser(info.text, 'markdown_inline')
+    for id, node in query:iter_captures(tree:parse()[1]:root(), info.text) do
+        if query.captures[id] == 'link' then
+            local link_info = ts.info(node, info.text)
+            result = result - str.width(shared.link_icon(link_info))
+        end
+    end
+    return result
 end
 
 return M

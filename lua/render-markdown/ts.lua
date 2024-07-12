@@ -1,3 +1,4 @@
+local str = require('render-markdown.str')
 local util = require('render-markdown.util')
 
 ---@param node TSNode
@@ -7,10 +8,12 @@ local function in_section(node)
     return not vim.tbl_contains({ 'section', 'document' }, node:type())
 end
 
+---@class render.md.TSHelper
 local M = {}
 
 ---@class render.md.NodeInfo
 ---@field node TSNode
+---@field type string
 ---@field text string
 ---@field start_row integer
 ---@field start_col integer
@@ -18,14 +21,15 @@ local M = {}
 ---@field end_col integer
 
 ---@param node TSNode
----@param buf integer
+---@param source integer|string
 ---@return render.md.NodeInfo
-M.info = function(node, buf)
+M.info = function(node, source)
     local start_row, start_col, end_row, end_col = node:range()
     ---@type render.md.NodeInfo
     return {
         node = node,
-        text = vim.treesitter.get_node_text(node, buf),
+        type = node:type(),
+        text = vim.treesitter.get_node_text(node, source),
         start_row = start_row,
         start_col = start_col,
         end_row = end_row,
@@ -78,18 +82,6 @@ M.sibling = function(node, target)
     return nil
 end
 
----@param node TSNode
----@param target string
----@return TSNode?
-M.child = function(node, target)
-    for child in node:iter_children() do
-        if child:type() == target then
-            return child
-        end
-    end
-    return nil
-end
-
 ---@param buf integer
 ---@param info render.md.NodeInfo
 ---@return integer
@@ -104,7 +96,7 @@ M.concealed = function(buf, info)
         local captures = vim.treesitter.get_captures_at_pos(buf, info.start_row, col)
         for _, capture in ipairs(captures) do
             if capture.metadata.conceal ~= nil then
-                result = result + vim.fn.strdisplaywidth(ch)
+                result = result + str.width(ch)
             end
         end
         col = col + #ch

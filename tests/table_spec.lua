@@ -16,19 +16,19 @@ async_tests.describe('table.md', function()
             '└───────────┴────────────────────────┘',
         }
         vim.list_extend(expected, {
-            -- Above
-            {
-                row = { 2 },
-                col = { 0 },
-                virt_lines = { { { table_with_inline[1], '@markup.heading' } } },
-                virt_lines_above = true,
-            },
             -- Heading pipe 1
             {
                 row = { 2, 2 },
                 col = { 0, 1 },
                 virt_text = { { '│', '@markup.heading' } },
                 virt_text_pos = 'overlay',
+            },
+            -- Above
+            {
+                row = { 2 },
+                col = { 0 },
+                virt_lines = { { { table_with_inline[1], '@markup.heading' } } },
+                virt_lines_above = true,
             },
             -- Heading pipe 2
             {
@@ -72,6 +72,13 @@ async_tests.describe('table.md', function()
                 virt_text = { { '│', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
+            -- Below
+            {
+                row = { 4 },
+                col = { 0 },
+                virt_lines = { { { table_with_inline[3], 'Normal' } } },
+                virt_lines_above = false,
+            },
             -- Row inline code
             {
                 row = { 4, 4 },
@@ -114,13 +121,6 @@ async_tests.describe('table.md', function()
                 virt_text = { { '│', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
-            -- Below
-            {
-                row = { 5 },
-                col = { 0 },
-                virt_lines = { { { table_with_inline[3], 'Normal' } } },
-                virt_lines_above = true,
-            },
         })
 
         -- Table no inline heading
@@ -132,19 +132,19 @@ async_tests.describe('table.md', function()
             '└───────────┴───────────┘',
         }
         vim.list_extend(expected, {
-            -- Above
-            {
-                row = { 8 },
-                col = { 0 },
-                virt_lines = { { { table_no_inline[1], '@markup.heading' } } },
-                virt_lines_above = true,
-            },
             -- Heading pipe 1
             {
                 row = { 8, 8 },
                 col = { 0, 1 },
                 virt_text = { { '│', '@markup.heading' } },
                 virt_text_pos = 'overlay',
+            },
+            -- Above
+            {
+                row = { 8 },
+                col = { 0 },
+                virt_lines = { { { table_no_inline[1], '@markup.heading' } } },
+                virt_lines_above = true,
             },
             -- Heading pipe 2
             {
@@ -174,6 +174,13 @@ async_tests.describe('table.md', function()
                 virt_text = { { '│', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
+            -- Below
+            {
+                row = { 10 },
+                col = { 0 },
+                virt_lines = { { { table_no_inline[3], 'Normal' } } },
+                virt_lines_above = false,
+            },
             -- Row pipe 2
             {
                 row = { 10, 10 },
@@ -187,13 +194,6 @@ async_tests.describe('table.md', function()
                 col = { 24, 25 },
                 virt_text = { { '│', 'Normal' } },
                 virt_text_pos = 'overlay',
-            },
-            -- Below
-            {
-                row = { 11 },
-                col = { 0 },
-                virt_lines = { { { table_no_inline[3], 'Normal' } } },
-                virt_lines_above = true,
             },
         })
 
@@ -210,18 +210,9 @@ async_tests.describe('table.md', function()
         vim.list_extend(expected, util.heading(0, 1))
 
         local table_with_inline = {
-            '┌───────────┬────────────────────────┐',
             '├───────────┼────────────────────────┤',
-            '└───────────┴────────────────────────┘',
         }
         vim.list_extend(expected, {
-            -- Above
-            {
-                row = { 2 },
-                col = { 0 },
-                virt_lines = { { { table_with_inline[1], '@markup.heading' } } },
-                virt_lines_above = true,
-            },
             -- Heading pipe 1
             {
                 row = { 2, 2 },
@@ -254,7 +245,7 @@ async_tests.describe('table.md', function()
             {
                 row = { 3, 3 },
                 col = { 0, 38 },
-                virt_text = { { table_with_inline[2], '@markup.heading' } },
+                virt_text = { { table_with_inline[1], '@markup.heading' } },
                 virt_text_pos = 'overlay',
             },
             -- Row pipe 1
@@ -292,13 +283,6 @@ async_tests.describe('table.md', function()
                 virt_text = { { '│', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
-            -- Below
-            {
-                row = { 5 },
-                col = { 0 },
-                virt_lines = { { { table_with_inline[3], 'Normal' } } },
-                virt_lines_above = true,
-            },
         })
 
         -- Table no inline heading
@@ -310,19 +294,19 @@ async_tests.describe('table.md', function()
             '└───────────┴───────────┘',
         }
         vim.list_extend(expected, {
-            -- Above
-            {
-                row = { 8 },
-                col = { 0 },
-                virt_lines = { { { table_no_inline[1], '@markup.heading' } } },
-                virt_lines_above = true,
-            },
             -- Heading pipe 1
             {
                 row = { 8, 8 },
                 col = { 0, 1 },
                 virt_text = { { '│', '@markup.heading' } },
                 virt_text_pos = 'overlay',
+            },
+            -- Above
+            {
+                row = { 8 },
+                col = { 0 },
+                virt_lines = { { { table_no_inline[1], '@markup.heading' } } },
+                virt_lines_above = true,
             },
             -- Heading pipe 2
             {
@@ -352,6 +336,13 @@ async_tests.describe('table.md', function()
                 virt_text = { { '│', 'Normal' } },
                 virt_text_pos = 'overlay',
             },
+            -- Below
+            {
+                row = { 10 },
+                col = { 0 },
+                virt_lines = { { { table_no_inline[3], 'Normal' } } },
+                virt_lines_above = false,
+            },
             -- Row pipe 2
             {
                 row = { 10, 10 },
@@ -365,13 +356,6 @@ async_tests.describe('table.md', function()
                 col = { 24, 25 },
                 virt_text = { { '│', 'Normal' } },
                 virt_text_pos = 'overlay',
-            },
-            -- Below
-            {
-                row = { 11 },
-                col = { 0 },
-                virt_lines = { { { table_no_inline[3], 'Normal' } } },
-                virt_lines_above = true,
             },
         })
 
@@ -395,19 +379,19 @@ async_tests.describe('table.md', function()
             '└───────────┴────────────────────────┘',
         }
         vim.list_extend(expected, {
-            -- Above
-            {
-                row = { 2 },
-                col = { 0 },
-                virt_lines = { { { table_with_inline[1], '@markup.heading' } } },
-                virt_lines_above = true,
-            },
             -- Heading
             {
                 row = { 2, 2 },
                 col = { 0, 38 },
                 virt_text = { { table_with_inline[2], '@markup.heading' } },
                 virt_text_pos = 'overlay',
+            },
+            -- Above
+            {
+                row = { 2 },
+                col = { 0 },
+                virt_lines = { { { table_with_inline[1], '@markup.heading' } } },
+                virt_lines_above = true,
             },
             -- Inline code in heading
             {
@@ -430,6 +414,13 @@ async_tests.describe('table.md', function()
                 virt_text = { { table_with_inline[4], 'Normal' } },
                 virt_text_pos = 'overlay',
             },
+            -- Below
+            {
+                row = { 4 },
+                col = { 0 },
+                virt_lines = { { { table_with_inline[5], 'Normal' } } },
+                virt_lines_above = false,
+            },
             -- Row inline code
             {
                 row = { 4, 4 },
@@ -444,13 +435,6 @@ async_tests.describe('table.md', function()
                 virt_text = { { '󰌹 ', '@markup.link.label.markdown_inline' } },
                 virt_text_pos = 'inline',
             },
-            -- Below
-            {
-                row = { 5 },
-                col = { 0 },
-                virt_lines = { { { table_with_inline[5], 'Normal' } } },
-                virt_lines_above = true,
-            },
         })
 
         -- Table no inline heading
@@ -464,19 +448,19 @@ async_tests.describe('table.md', function()
             '└───────────┴───────────┘',
         }
         vim.list_extend(expected, {
-            -- Above
-            {
-                row = { 8 },
-                col = { 0 },
-                virt_lines = { { { table_no_inline[1], '@markup.heading' } } },
-                virt_lines_above = true,
-            },
             -- Heading
             {
                 row = { 8, 8 },
                 col = { 0, 25 },
                 virt_text = { { table_no_inline[2], '@markup.heading' } },
                 virt_text_pos = 'overlay',
+            },
+            -- Above
+            {
+                row = { 8 },
+                col = { 0 },
+                virt_lines = { { { table_no_inline[1], '@markup.heading' } } },
+                virt_lines_above = true,
             },
             -- Delimiter
             {
@@ -494,10 +478,10 @@ async_tests.describe('table.md', function()
             },
             -- Below
             {
-                row = { 11 },
+                row = { 10 },
                 col = { 0 },
                 virt_lines = { { { table_no_inline[5], 'Normal' } } },
-                virt_lines_above = true,
+                virt_lines_above = false,
             },
         })
 

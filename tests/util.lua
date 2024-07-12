@@ -16,6 +16,7 @@ local eq = assert.are.same
 ---@field sign_text? string
 ---@field sign_hl_group? string
 
+---@class render.md.TestUtil
 local M = {}
 
 ---@param opts? render.md.UserConfig

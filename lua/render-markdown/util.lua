@@ -1,5 +1,6 @@
 local logger = require('render-markdown.logger')
 
+---@class render.md.Util
 local M = {}
 
 ---@type boolean

@@ -1,5 +1,6 @@
 local state = require('render-markdown.state')
 
+---@class render.md.Health
 local M = {}
 
 function M.check()

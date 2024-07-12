@@ -1,6 +1,7 @@
 local has_mini_icons, mini_icons = pcall(require, 'mini.icons')
 local has_devicons, devicons = pcall(require, 'nvim-web-devicons')
 
+---@class render.md.IconProvider
 local M = {}
 
 ---@param language string
