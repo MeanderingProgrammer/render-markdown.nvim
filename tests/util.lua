@@ -52,7 +52,7 @@ M.heading = function(row, level)
             row = { row, row },
             col = { 0, level },
             sign_text = '󰫎 ',
-            sign_hl_group = foreground,
+            sign_hl_group = string.format('RenderMd_%s_SignColumn', foreground),
         },
     }
 end

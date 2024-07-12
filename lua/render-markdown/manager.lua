@@ -20,8 +20,7 @@ function M.setup()
         group = group,
         pattern = state.config.file_types,
         callback = function(event)
-            local buftype = vim.api.nvim_get_option_value('buftype', { buf = event.buf })
-            if not vim.tbl_contains(state.config.exclude.buftypes, buftype) then
+            if not vim.tbl_contains(state.config.exclude.buftypes, util.get_buftype(event.buf)) then
                 M.attach(group, event.buf)
             end
         end,

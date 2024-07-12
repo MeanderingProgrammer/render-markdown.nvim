@@ -364,6 +364,16 @@ Full Default Configuration ~
             -- Applies to the inlined icon
             highlight = '@markup.link.label.markdown_inline',
         },
+        sign = {
+            -- Turn on / off sign rendering
+            enabled = true,
+            -- More granular mechanism, disable signs within specific buftypes
+            exclude = {
+                buftypes = { 'nofile' },
+            },
+            -- Applies to background of sign text
+            highlight = 'SignColumn',
+        },
         -- Window options to use that change between rendered and raw view
         win_options = {
             -- See :h 'conceallevel'

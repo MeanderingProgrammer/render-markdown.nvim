@@ -1,3 +1,8 @@
+---@class render.md.Sign
+---@field public enabled boolean
+---@field public exclude render.md.Exclude
+---@field public highlight string
+
 ---@class render.md.Link
 ---@field public enabled boolean
 ---@field public image string
@@ -79,5 +84,6 @@
 ---@field public pipe_table render.md.PipeTable
 ---@field public callout table<string, render.md.CustomComponent>
 ---@field public link render.md.Link
+---@field public sign render.md.Sign
 ---@field public win_options table<string, render.md.WindowOption>
 ---@field public custom_handlers table<string, render.md.Handler>

@@ -2,10 +2,10 @@ local logger = require('render-markdown.logger')
 local state = require('render-markdown.state')
 local ts = require('render-markdown.ts')
 
----@class render.md.Cache
+---@class render.md.LatexCache
 ---@field expressions table<string, string[]>
 
----@type render.md.Cache
+---@type render.md.LatexCache
 local cache = {
     expressions = {},
 }

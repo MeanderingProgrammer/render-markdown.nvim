@@ -36,7 +36,7 @@ async_tests.describe('heading_code.md', function()
                 row = { 12, 12 },
                 col = { 3, 9 },
                 sign_text = '󰌠 ',
-                sign_hl_group = 'MiniIconsYellow',
+                sign_hl_group = 'RenderMd_MiniIconsYellow_SignColumn',
             },
             {
                 row = { 12 },

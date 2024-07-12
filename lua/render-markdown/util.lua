@@ -34,6 +34,12 @@ M.set_win_option = function(win, name, value)
     logger.debug({ option = name, win = win, before = before, after = value })
 end
 
+---@param buf integer
+---@return any
+M.get_buftype = function(buf)
+    return vim.api.nvim_get_option_value('buftype', { buf = buf })
+end
+
 ---@param win integer
 ---@return integer
 M.get_leftcol = function(win)

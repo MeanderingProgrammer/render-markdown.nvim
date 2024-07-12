@@ -92,7 +92,7 @@ async_tests.describe('callout.md', function()
                 row = { tip_start + 4, tip_start + 4 },
                 col = { 5, 8 },
                 sign_text = '󰢱 ',
-                sign_hl_group = 'MiniIconsAzure',
+                sign_hl_group = 'RenderMd_MiniIconsAzure_SignColumn',
             },
             {
                 row = { tip_start + 4 },

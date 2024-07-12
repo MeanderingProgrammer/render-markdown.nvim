@@ -1,3 +1,4 @@
+local colors = require('render-markdown.colors')
 local component = require('render-markdown.component')
 local icons = require('render-markdown.icons')
 local list = require('render-markdown.list')
@@ -53,12 +54,7 @@ M.render_node = function(namespace, buf, capture, node)
             hl_eol = true,
         })
 
-        vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-            end_row = info.end_row,
-            end_col = info.end_col,
-            sign_text = list.cycle(heading.signs, level),
-            sign_hl_group = foreground,
-        })
+        M.render_sign(namespace, buf, info, list.cycle(heading.signs, level), foreground)
     elseif capture == 'dash' then
         local dash = state.config.dash
         if not dash.enabled then
@@ -95,12 +91,7 @@ M.render_node = function(namespace, buf, capture, node)
         if icon == nil or icon_highlight == nil then
             return
         end
-        vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-            end_row = info.end_row,
-            end_col = info.end_col,
-            sign_text = icon,
-            sign_hl_group = icon_highlight,
-        })
+        M.render_sign(namespace, buf, info, icon, icon_highlight)
         -- Requires inline extmarks
         if not util.has_10 then
             return
@@ -219,6 +210,27 @@ M.render_node = function(namespace, buf, capture, node)
         -- Should only get here if user provides custom capture, currently unhandled
         logger.error('Unhandled markdown capture: ' .. capture)
     end
+end
+
+---@param namespace integer
+---@param buf integer
+---@param info render.md.NodeInfo
+---@param text string
+---@param highlight string
+M.render_sign = function(namespace, buf, info, text, highlight)
+    local sign = state.config.sign
+    if not sign.enabled then
+        return
+    end
+    if vim.tbl_contains(sign.exclude.buftypes, util.get_buftype(buf)) then
+        return
+    end
+    vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
+        end_row = info.end_row,
+        end_col = info.end_col,
+        sign_text = text,
+        sign_hl_group = colors.combine(highlight, sign.highlight),
+    })
 end
 
 ---@param namespace integer

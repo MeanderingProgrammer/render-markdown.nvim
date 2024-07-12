@@ -11,6 +11,11 @@ local M = {}
 ---@field public default any
 ---@field public rendered any
 
+---@class render.md.UserSign
+---@field public enabled? boolean
+---@field public exclude? render.md.UserExclude
+---@field public highlight? string
+
 ---@class render.md.UserLink
 ---@field public enabled? boolean
 ---@field public image? string
@@ -92,6 +97,7 @@ local M = {}
 ---@field public pipe_table? render.md.UserPipeTable
 ---@field public callout? table<string, render.md.UserCustomComponent>
 ---@field public link? render.md.UserLink
+---@field public sign? render.md.UserSign
 ---@field public win_options? table<string, render.md.WindowOption>
 ---@field public custom_handlers? table<string, render.md.Handler>
 
@@ -322,6 +328,16 @@ M.default_config = {
         hyperlink = '󰌹 ',
         -- Applies to the inlined icon
         highlight = '@markup.link.label.markdown_inline',
+    },
+    sign = {
+        -- Turn on / off sign rendering
+        enabled = true,
+        -- More granular mechanism, disable signs within specific buftypes
+        exclude = {
+            buftypes = { 'nofile' },
+        },
+        -- Applies to background of sign text
+        highlight = 'SignColumn',
     },
     -- Window options to use that change between rendered and raw view
     win_options = {

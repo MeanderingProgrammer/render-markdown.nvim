@@ -81,6 +81,7 @@ function state.validate()
         quote = { config.quote, 'table' },
         callout = { config.callout, 'table' },
         link = { config.link, 'table' },
+        sign = { config.sign, 'table' },
         win_options = { config.win_options, 'table' },
         custom_handlers = { config.custom_handlers, 'table' },
     })
@@ -184,6 +185,17 @@ function state.validate()
         image = { link.image, 'string' },
         hyperlink = { link.hyperlink, 'string' },
         highlight = { link.highlight, 'string' },
+    })
+
+    local sign = config.sign
+    append_errors('render-markdown.sign', sign, {
+        enabled = { sign.enabled, 'boolean' },
+        exclude = { sign.exclude, 'table' },
+        highlight = { sign.highlight, 'string' },
+    })
+    local sign_exclude = sign.exclude
+    append_errors('render-markdown.sign.exclude', sign_exclude, {
+        buftypes = string_array(sign_exclude.buftypes),
     })
 
     for name, win_option in pairs(config.win_options) do
