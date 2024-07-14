@@ -1,32 +1,10 @@
 # Limitations
 
-## Text Boundaries
-
-[ISSUE #35](https://github.com/MeanderingProgrammer/markdown.nvim/issues/35)
-
-Text that extends beyond available space will can overwrite content.
-
-This has been fixed for headings when using neovim >= `0.10.0`.
-
 ## `LaTeX` Formula Positioning
 
 [ISSUE #6](https://github.com/MeanderingProgrammer/markdown.nvim/issues/6)
 
 `LaTeX` formula evaluations are placed above text rather than overlayed.
-
-## Which Key Limiting Modes
-
-[ISSUE #43](https://github.com/MeanderingProgrammer/markdown.nvim/issues/43)
-
-Since `which-key` interjects when writing commands it can effectively limit the
-number of modes available to the user.
-
-This varies by configuration. An example is having the `operators` preset enabled
-will prevent the user from entering the operator pending mode. Since this mode cannot
-be reached this plugin cannot not do anything special in the operator pending state,
-since it effectively does not exist.
-
-This is expected behavior by `which-key`: [ISSUE #534](https://github.com/folke/which-key.nvim/issues/534)
 
 ## Telescope Opening File
 
@@ -44,3 +22,31 @@ of opening a file. At the time of writing these are:
 Something about the way these are done causes the file to appear be opened in `insert`
 mode despite being in `normal` mode. Additionally there is no `ModeChanged` event
 that occurs after this to go back to `normal` mode.
+
+# Resolved Limitations
+
+## Text Boundaries
+
+[FIX 5ce3566](https://github.com/MeanderingProgrammer/markdown.nvim/commit/5ce35662725b1024c6dddc8d0bc03befc5abc878)
+
+Should no longer be an issue when using neovim >= `0.10.0`.
+
+[ISSUE #35](https://github.com/MeanderingProgrammer/markdown.nvim/issues/35)
+
+Text that extends beyond available space will can overwrite content.
+
+## Which Key Limiting Modes
+
+This is no longer the case as of `which-key` v3 release.
+
+[ISSUE #43](https://github.com/MeanderingProgrammer/markdown.nvim/issues/43)
+
+Since `which-key` interjects when writing commands it can effectively limit the
+number of modes available to the user.
+
+This varies by configuration. An example is having the `operators` preset enabled
+will prevent the user from entering the operator pending mode. Since this mode cannot
+be reached this plugin cannot not do anything special in the operator pending state,
+since it effectively does not exist.
+
+This is expected behavior by `which-key`: [ISSUE #534](https://github.com/folke/which-key.nvim/issues/534)

@@ -15,78 +15,94 @@ local M = {}
 M.render = function(namespace, root, buf)
     local query = state.inline_query
     for id, node in query:iter_captures(root, buf) do
-        M.render_node(namespace, buf, query.captures[id], node)
+        local capture = query.captures[id]
+        local info = ts.info(node, buf)
+        logger.debug_node_info(capture, info)
+        if capture == 'code' then
+            M.render_code(namespace, buf, info)
+        elseif capture == 'callout' then
+            M.render_callout(namespace, buf, info)
+        elseif capture == 'link' then
+            M.render_link(namespace, buf, info)
+        else
+            -- Should only get here if user provides custom capture, currently unhandled
+            logger.error('Unhandled inline capture: ' .. capture)
+        end
     end
 end
 
+---@private
 ---@param namespace integer
 ---@param buf integer
----@param capture string
----@param node TSNode
-M.render_node = function(namespace, buf, capture, node)
-    local info = ts.info(node, buf)
-    logger.debug_node_info(capture, info)
+---@param info render.md.NodeInfo
+M.render_code = function(namespace, buf, info)
+    local code = state.config.code
+    if not code.enabled then
+        return
+    end
+    if not vim.tbl_contains({ 'normal', 'full' }, code.style) then
+        return
+    end
+    vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
+        end_row = info.end_row,
+        end_col = info.end_col,
+        hl_group = code.highlight,
+    })
+end
 
-    if capture == 'code' then
-        local code = state.config.code
-        if not code.enabled then
-            return
-        end
-        if not vim.tbl_contains({ 'normal', 'full' }, code.style) then
-            return
-        end
-        vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-            end_row = info.end_row,
-            end_col = info.end_col,
-            hl_group = code.highlight,
-        })
-    elseif capture == 'callout' then
-        local callout = component.callout(info.text, 'exact')
-        if callout ~= nil then
-            if not state.config.quote.enabled then
-                return
-            end
-            vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-                end_row = info.end_row,
-                end_col = info.end_col,
-                virt_text = { { callout.text, callout.highlight } },
-                virt_text_pos = 'overlay',
-            })
-        else
-            if not state.config.checkbox.enabled then
-                return
-            end
-            -- Requires inline extmarks
-            if not util.has_10 then
-                return
-            end
-            local checkbox = component.checkbox(info.text, 'exact')
-            if checkbox == nil then
-                return
-            end
-            vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-                end_row = info.end_row,
-                end_col = info.end_col,
-                virt_text = { { str.pad_to(info.text, checkbox.text), checkbox.highlight } },
-                virt_text_pos = 'inline',
-                conceal = '',
-            })
-        end
-    elseif capture == 'link' then
-        local icon = shared.link_icon(info)
-        if icon == nil then
+---@private
+---@param namespace integer
+---@param buf integer
+---@param info render.md.NodeInfo
+M.render_callout = function(namespace, buf, info)
+    local callout = component.callout(info.text, 'exact')
+    if callout ~= nil then
+        if not state.config.quote.enabled then
             return
         end
         vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
             end_row = info.end_row,
             end_col = info.end_col,
-            virt_text = { { icon, state.config.link.highlight } },
-            virt_text_pos = 'inline',
+            virt_text = { { callout.text, callout.highlight } },
+            virt_text_pos = 'overlay',
         })
     else
-        -- Should only get here if user provides custom capture, currently unhandled
-        logger.error('Unhandled inline capture: ' .. capture)
+        if not state.config.checkbox.enabled then
+            return
+        end
+        -- Requires inline extmarks
+        if not util.has_10 then
+            return
+        end
+        local checkbox = component.checkbox(info.text, 'exact')
+        if checkbox == nil then
+            return
+        end
+        vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
+            end_row = info.end_row,
+            end_col = info.end_col,
+            virt_text = { { str.pad_to(info.text, checkbox.text), checkbox.highlight } },
+            virt_text_pos = 'inline',
+            conceal = '',
+        })
     end
+end
+
+---@private
+---@param namespace integer
+---@param buf integer
+---@param info render.md.NodeInfo
+M.render_link = function(namespace, buf, info)
+    local icon = shared.link_icon(info)
+    if icon == nil then
+        return
+    end
+    vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
+        end_row = info.end_row,
+        end_col = info.end_col,
+        virt_text = { { icon, state.config.link.highlight } },
+        virt_text_pos = 'inline',
+    })
 end
 
 return M

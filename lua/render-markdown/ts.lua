@@ -53,22 +53,6 @@ M.level_in_section = function(info, target)
     return level
 end
 
----Walk through parent nodes, return first target node
----@param buf integer
----@param info render.md.NodeInfo
----@param target string
----@return render.md.NodeInfo?
-M.parent_in_section = function(buf, info, target)
-    local parent = info.node:parent()
-    while parent ~= nil and in_section(parent) do
-        if parent:type() == target then
-            return M.info(parent, buf)
-        end
-        parent = parent:parent()
-    end
-    return nil
-end
-
 ---@param buf integer
 ---@param info render.md.NodeInfo
 ---@param target string

@@ -18,175 +18,116 @@ local M = {}
 M.render = function(namespace, root, buf)
     local query = state.markdown_query
     for id, node in query:iter_captures(root, buf) do
-        M.render_node(namespace, buf, query.captures[id], node)
+        local capture = query.captures[id]
+        local info = ts.info(node, buf)
+        logger.debug_node_info(capture, info)
+        if capture == 'heading' then
+            M.render_heading(namespace, buf, info)
+        elseif capture == 'dash' then
+            M.render_dash(namespace, buf, info)
+        elseif capture == 'code' then
+            M.render_code(namespace, buf, info)
+        elseif capture == 'list_marker' then
+            M.render_list_marker(namespace, buf, info)
+        elseif capture == 'checkbox_unchecked' then
+            M.render_checkbox(namespace, buf, info, state.config.checkbox.unchecked)
+        elseif capture == 'checkbox_checked' then
+            M.render_checkbox(namespace, buf, info, state.config.checkbox.checked)
+        elseif capture == 'quote' then
+            local quote_query = state.markdown_quote_query
+            for nested_id, nested_node in quote_query:iter_captures(info.node, buf) do
+                local nested_capture = quote_query.captures[nested_id]
+                local nested_info = ts.info(nested_node, buf)
+                logger.debug_node_info(nested_capture, nested_info)
+                if nested_capture == 'quote_marker' then
+                    M.render_quote_marker(namespace, buf, nested_info, info)
+                else
+                    -- Should only get here if user provides custom capture, currently unhandled
+                    logger.error('Unhandled markdown quote capture: ' .. nested_capture)
+                end
+            end
+        elseif capture == 'table' then
+            M.render_table(namespace, buf, info)
+        else
+            -- Should only get here if user provides custom capture, currently unhandled
+            logger.error('Unhandled markdown capture: ' .. capture)
+        end
     end
 end
 
+---@private
 ---@param namespace integer
 ---@param buf integer
----@param capture string
----@param node TSNode
-M.render_node = function(namespace, buf, capture, node)
-    local info = ts.info(node, buf)
-    logger.debug_node_info(capture, info)
+---@param info render.md.NodeInfo
+M.render_heading = function(namespace, buf, info)
+    local heading = state.config.heading
+    if not heading.enabled then
+        return
+    end
+    local level = str.width(info.text)
 
-    if capture == 'heading' then
-        local heading = state.config.heading
-        if not heading.enabled then
-            return
-        end
-        local level = str.width(info.text)
+    local icon = list.cycle(heading.icons, level)
+    local background = list.clamp(heading.backgrounds, level)
+    local foreground = list.clamp(heading.foregrounds, level)
 
-        local icon = list.cycle(heading.icons, level)
-        local background = list.clamp(heading.backgrounds, level)
-        local foreground = list.clamp(heading.foregrounds, level)
+    -- Available width is level + 1 - concealed, where level = number of `#` characters, one
+    -- is added to account for the space after the last `#` but before the heading title,
+    -- and concealed text is subtracted since that space is not usable
+    local padding = level + 1 - ts.concealed(buf, info) - str.width(icon)
 
-        -- Available width is level + 1 - concealed, where level = number of `#` characters, one
-        -- is added to account for the space after the last `#` but before the heading title,
-        -- and concealed text is subtracted since that space is not usable
-        local padding = level + 1 - ts.concealed(buf, info) - str.width(icon)
-
-        if padding < 0 then
-            -- Requires inline extmarks to place when there is not enough space available
-            if util.has_10 then
-                vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-                    end_row = info.end_row,
-                    end_col = info.end_col,
-                    virt_text = { { icon, { foreground, background } } },
-                    virt_text_pos = 'inline',
-                    conceal = '',
-                })
-                vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, 0, {
-                    end_row = info.end_row + 1,
-                    end_col = 0,
-                    hl_group = background,
-                    hl_eol = true,
-                })
-            end
-        else
+    if padding < 0 then
+        -- Requires inline extmarks to place when there is not enough space available
+        if util.has_10 then
+            vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
+                end_row = info.end_row,
+                end_col = info.end_col,
+                virt_text = { { icon, { foreground, background } } },
+                virt_text_pos = 'inline',
+                conceal = '',
+            })
             vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, 0, {
                 end_row = info.end_row + 1,
                 end_col = 0,
                 hl_group = background,
-                virt_text = { { str.pad(icon, padding), { foreground, background } } },
-                virt_text_pos = 'overlay',
                 hl_eol = true,
             })
         end
-
-        M.render_sign(namespace, buf, info, list.cycle(heading.signs, level), foreground)
-    elseif capture == 'dash' then
-        local dash = state.config.dash
-        if not dash.enabled then
-            return
-        end
-        vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, 0, {
-            virt_text = { { dash.icon:rep(util.get_width(buf)), dash.highlight } },
-            virt_text_pos = 'overlay',
-        })
-    elseif capture == 'code' then
-        M.render_code(namespace, buf, info)
-    elseif capture == 'list_marker' then
-        ---@return boolean
-        local function sibling_checkbox()
-            if not state.config.checkbox.enabled then
-                return false
-            end
-            if ts.sibling(buf, info, 'task_list_marker_unchecked') ~= nil then
-                return true
-            end
-            if ts.sibling(buf, info, 'task_list_marker_checked') ~= nil then
-                return true
-            end
-            local paragraph = ts.sibling(buf, info, 'paragraph')
-            if paragraph == nil then
-                return false
-            end
-            return component.checkbox(paragraph.text, 'starts') ~= nil
-        end
-
-        if sibling_checkbox() then
-            -- Hide the list marker for checkboxes rather than replacing with a bullet point
-            vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-                end_row = info.end_row,
-                end_col = info.end_col,
-                conceal = '',
-            })
-        else
-            local bullet = state.config.bullet
-            if not bullet.enabled then
-                return
-            end
-            -- List markers from tree-sitter should have leading spaces removed, however there are known
-            -- edge cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
-            -- As a result we handle leading spaces here, can remove if this gets fixed upstream
-            local leading_spaces = str.leading_spaces(info.text)
-            local level = ts.level_in_section(info, 'list')
-            local icon = list.cycle(bullet.icons, level)
-
-            vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-                end_row = info.end_row,
-                end_col = info.end_col,
-                virt_text = { { str.pad(icon, leading_spaces), bullet.highlight } },
-                virt_text_pos = 'overlay',
-            })
-        end
-    elseif capture == 'quote' then
-        local query = state.markdown_quote_query
-        for id, nested_node in query:iter_captures(info.node, buf) do
-            M.render_node(namespace, buf, query.captures[id], nested_node)
-        end
-    elseif capture == 'quote_marker' then
-        local quote = state.config.quote
-        if not quote.enabled then
-            return
-        end
-        local highlight = quote.highlight
-        local block_quote = ts.parent_in_section(buf, info, 'block_quote')
-        if block_quote ~= nil then
-            local callout = component.callout(block_quote.text, 'contains')
-            if callout ~= nil then
-                highlight = callout.highlight
-            end
-        end
-        vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-            end_row = info.end_row,
-            end_col = info.end_col,
-            virt_text = { { info.text:gsub('>', quote.icon), highlight } },
-            virt_text_pos = 'overlay',
-        })
-    elseif vim.tbl_contains({ 'checkbox_unchecked', 'checkbox_checked' }, capture) then
-        local checkbox = state.config.checkbox
-        if not checkbox.enabled then
-            return
-        end
-        local checkbox_state = checkbox.unchecked
-        if capture == 'checkbox_checked' then
-            checkbox_state = checkbox.checked
-        end
-        vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-            end_row = info.end_row,
-            end_col = info.end_col,
-            virt_text = { { str.pad_to(info.text, checkbox_state.icon), checkbox_state.highlight } },
-            virt_text_pos = 'overlay',
-        })
-    elseif capture == 'table' then
-        M.render_table(namespace, buf, info)
     else
-        -- Should only get here if user provides custom capture, currently unhandled
-        logger.error('Unhandled markdown capture: ' .. capture)
+        vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, 0, {
+            end_row = info.end_row + 1,
+            end_col = 0,
+            hl_group = background,
+            virt_text = { { str.pad(icon, padding), { foreground, background } } },
+            virt_text_pos = 'overlay',
+            hl_eol = true,
+        })
     end
+
+    M.render_sign(namespace, buf, info, list.cycle(heading.signs, level), foreground)
 end
 
+---@private
+---@param namespace integer
+---@param buf integer
+---@param info render.md.NodeInfo
+M.render_dash = function(namespace, buf, info)
+    local dash = state.config.dash
+    if not dash.enabled then
+        return
+    end
+    vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, 0, {
+        virt_text = { { dash.icon:rep(util.get_width(buf)), dash.highlight } },
+        virt_text_pos = 'overlay',
+    })
+end
+
+---@private
 ---@param namespace integer
 ---@param buf integer
 ---@param info render.md.NodeInfo
 M.render_code = function(namespace, buf, info)
     local code = state.config.code
-    if not code.enabled then
-        return
-    end
-    if code.style == 'none' then
+    if not code.enabled or code.style == 'none' then
         return
     end
     local did_render_language = false
@@ -232,6 +173,7 @@ M.render_code = function(namespace, buf, info)
     })
 end
 
+---@private
 ---@param namespace integer
 ---@param buf integer
 ---@param info render.md.NodeInfo
@@ -270,6 +212,98 @@ M.render_language = function(namespace, buf, info, code_block)
     return true
 end
 
+---@private
+---@param namespace integer
+---@param buf integer
+---@param info render.md.NodeInfo
+M.render_list_marker = function(namespace, buf, info)
+    ---@return boolean
+    local function sibling_checkbox()
+        if not state.config.checkbox.enabled then
+            return false
+        end
+        if ts.sibling(buf, info, 'task_list_marker_unchecked') ~= nil then
+            return true
+        end
+        if ts.sibling(buf, info, 'task_list_marker_checked') ~= nil then
+            return true
+        end
+        local paragraph = ts.sibling(buf, info, 'paragraph')
+        if paragraph == nil then
+            return false
+        end
+        return component.checkbox(paragraph.text, 'starts') ~= nil
+    end
+
+    if sibling_checkbox() then
+        -- Hide the list marker for checkboxes rather than replacing with a bullet point
+        vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
+            end_row = info.end_row,
+            end_col = info.end_col,
+            conceal = '',
+        })
+    else
+        local bullet = state.config.bullet
+        if not bullet.enabled then
+            return
+        end
+        -- List markers from tree-sitter should have leading spaces removed, however there are known
+        -- edge cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
+        -- As a result we handle leading spaces here, can remove if this gets fixed upstream
+        local leading_spaces = str.leading_spaces(info.text)
+        local level = ts.level_in_section(info, 'list')
+        local icon = list.cycle(bullet.icons, level)
+        vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
+            end_row = info.end_row,
+            end_col = info.end_col,
+            virt_text = { { str.pad(icon, leading_spaces), bullet.highlight } },
+            virt_text_pos = 'overlay',
+        })
+    end
+end
+
+---@private
+---@param namespace integer
+---@param buf integer
+---@param info render.md.NodeInfo
+---@param checkbox_state render.md.CheckboxComponent
+M.render_checkbox = function(namespace, buf, info, checkbox_state)
+    local checkbox = state.config.checkbox
+    if not checkbox.enabled then
+        return
+    end
+    vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
+        end_row = info.end_row,
+        end_col = info.end_col,
+        virt_text = { { str.pad_to(info.text, checkbox_state.icon), checkbox_state.highlight } },
+        virt_text_pos = 'overlay',
+    })
+end
+
+---@private
+---@param namespace integer
+---@param buf integer
+---@param info render.md.NodeInfo
+---@param block_quote render.md.NodeInfo
+M.render_quote_marker = function(namespace, buf, info, block_quote)
+    local quote = state.config.quote
+    if not quote.enabled then
+        return
+    end
+    local highlight = quote.highlight
+    local callout = component.callout(block_quote.text, 'contains')
+    if callout ~= nil then
+        highlight = callout.highlight
+    end
+    vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
+        end_row = info.end_row,
+        end_col = info.end_col,
+        virt_text = { { info.text:gsub('>', quote.icon), highlight } },
+        virt_text_pos = 'overlay',
+    })
+end
+
+---@private
 ---@param namespace integer
 ---@param buf integer
 ---@param info render.md.NodeInfo
@@ -291,15 +325,13 @@ M.render_sign = function(namespace, buf, info, text, highlight)
     })
 end
 
+---@private
 ---@param namespace integer
 ---@param buf integer
 ---@param info render.md.NodeInfo
 M.render_table = function(namespace, buf, info)
     local pipe_table = state.config.pipe_table
-    if not pipe_table.enabled then
-        return
-    end
-    if pipe_table.style == 'none' then
+    if not pipe_table.enabled or pipe_table.style == 'none' then
         return
     end
     local delim = nil
@@ -328,6 +360,7 @@ M.render_table = function(namespace, buf, info)
     end
 end
 
+---@private
 ---@param namespace integer
 ---@param buf integer
 ---@param row render.md.NodeInfo
@@ -341,7 +374,6 @@ M.render_table_delimiter = function(namespace, buf, row)
         :gsub('|%-', border[4] .. border[11])
         :gsub('%-|', border[11] .. border[6])
         :gsub('%-', border[11])
-
     vim.api.nvim_buf_set_extmark(buf, namespace, row.start_row, row.start_col, {
         end_row = row.end_row,
         end_col = row.end_col,
@@ -350,6 +382,7 @@ M.render_table_delimiter = function(namespace, buf, row)
     })
 end
 
+---@private
 ---@param namespace integer
 ---@param buf integer
 ---@param row render.md.NodeInfo
@@ -392,6 +425,7 @@ M.render_table_row = function(namespace, buf, row, highlight)
     end
 end
 
+---@private
 ---@param namespace integer
 ---@param buf integer
 ---@param delim? render.md.NodeInfo
@@ -440,6 +474,7 @@ M.render_table_full = function(namespace, buf, delim, first, last)
     })
 end
 
+---@private
 ---@param buf integer
 ---@param info render.md.NodeInfo
 ---@return integer
