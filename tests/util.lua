@@ -154,6 +154,17 @@ M.code_language = function(row, start_col, end_col, icon, name, highlight)
 end
 
 ---@param row integer
+---@param col integer
+M.code_below = function(row, col)
+    return {
+        row = { row },
+        col = { col },
+        virt_text = { { string.rep('▀', vim.opt.columns:get()), 'RenderMd_Inverse_ColorColumn' } },
+        virt_text_pos = 'overlay',
+    }
+end
+
+---@param row integer
 ---@param start_col integer
 ---@param end_col integer
 ---@param image boolean

@@ -38,12 +38,12 @@ M.info = function(node, source)
 end
 
 ---Walk through parent nodes, count the number of target nodes
----@param node TSNode
+---@param info render.md.NodeInfo
 ---@param target string
 ---@return integer
-M.level_in_section = function(node, target)
+M.level_in_section = function(info, target)
     local level = 0
-    local parent = node:parent()
+    local parent = info.node:parent()
     while parent ~= nil and in_section(parent) do
         if parent:type() == target then
             level = level + 1
@@ -54,32 +54,61 @@ M.level_in_section = function(node, target)
 end
 
 ---Walk through parent nodes, return first target node
----@param node TSNode
+---@param buf integer
+---@param info render.md.NodeInfo
 ---@param target string
----@return TSNode?
-M.parent_in_section = function(node, target)
-    local parent = node:parent()
+---@return render.md.NodeInfo?
+M.parent_in_section = function(buf, info, target)
+    local parent = info.node:parent()
     while parent ~= nil and in_section(parent) do
         if parent:type() == target then
-            return parent
+            return M.info(parent, buf)
         end
         parent = parent:parent()
     end
     return nil
 end
 
----@param node TSNode
+---@param buf integer
+---@param info render.md.NodeInfo
 ---@param target string
----@return TSNode?
-M.sibling = function(node, target)
-    local sibling = node:next_sibling()
+---@return render.md.NodeInfo?
+M.sibling = function(buf, info, target)
+    local sibling = info.node:next_sibling()
     while sibling ~= nil do
         if sibling:type() == target then
-            return sibling
+            return M.info(sibling, buf)
         end
         sibling = sibling:next_sibling()
     end
     return nil
+end
+
+---@param buf integer
+---@param info render.md.NodeInfo
+---@param target_type string
+---@param target_row integer
+---@return render.md.NodeInfo?
+M.child = function(buf, info, target_type, target_row)
+    for child in info.node:iter_children() do
+        if child:type() == target_type then
+            if child:range() == target_row then
+                return M.info(child, buf)
+            end
+        end
+    end
+    return nil
+end
+
+---@param buf integer
+---@param info? render.md.NodeInfo
+---@return boolean
+M.hidden = function(buf, info)
+    -- Missing nodes are considered hidden
+    if info == nil then
+        return true
+    end
+    return str.width(info.text) == M.concealed(buf, info)
 end
 
 ---@param buf integer

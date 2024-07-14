@@ -16,9 +16,10 @@ async_tests.describe('heading_code.md', function()
 
         vim.list_extend(expected, {
             util.link(10, 0, 21, true), -- Image link
-            util.code_block(12, 23), -- Code block
+            util.code_block(12, 22), -- Code block
         })
         vim.list_extend(expected, util.code_language(12, 3, 9, '󰌠 ', 'python', 'MiniIconsYellow'))
+        vim.list_extend(expected, { util.code_below(22, 0) })
 
         local actual = util.get_actual_marks()
         util.marks_are_equal(expected, actual)

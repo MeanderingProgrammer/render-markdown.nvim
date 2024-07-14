@@ -111,6 +111,9 @@ function state.validate()
     append_errors('render-markdown.code', code, {
         enabled = { code.enabled, 'boolean' },
         style = one_of(code.style, { 'full', 'normal', 'language', 'none' }),
+        border = one_of(code.border, { 'thin', 'thick' }),
+        above = { code.above, 'string' },
+        below = { code.below, 'string' },
         highlight = { code.highlight, 'string' },
     })
 

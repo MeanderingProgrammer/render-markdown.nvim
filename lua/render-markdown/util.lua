@@ -18,6 +18,12 @@ M.buf_to_win = function(buf)
     return vim.fn.bufwinid(buf)
 end
 
+---@param buf integer
+---@return integer
+M.get_width = function(buf)
+    return vim.api.nvim_win_get_width(M.buf_to_win(buf))
+end
+
 ---@param win integer
 ---@param name string
 ---@return any

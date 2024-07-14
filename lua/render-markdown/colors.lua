@@ -23,6 +23,18 @@ M.combine = function(foreground, background)
     return name
 end
 
+---@param highlight string
+---@return string
+M.inverse = function(highlight)
+    local name = string.format('RenderMd_Inverse_%s', highlight)
+    if not vim.tbl_contains(cache.highlights, name) then
+        local hl = M.get_hl(highlight)
+        vim.api.nvim_set_hl(0, name, { fg = hl.bg, bg = hl.fg })
+        table.insert(cache.highlights, name)
+    end
+    return name
+end
+
 ---@private
 ---@param name string
 ---@return vim.api.keyset.hl_info

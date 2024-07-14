@@ -80,82 +80,28 @@ M.render_node = function(namespace, buf, capture, node)
         if not dash.enabled then
             return
         end
-        local width = vim.api.nvim_win_get_width(util.buf_to_win(buf))
         vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, 0, {
-            virt_text = { { dash.icon:rep(width), dash.highlight } },
+            virt_text = { { dash.icon:rep(util.get_width(buf)), dash.highlight } },
             virt_text_pos = 'overlay',
         })
     elseif capture == 'code' then
-        local code = state.config.code
-        if not code.enabled then
-            return
-        end
-        if not vim.tbl_contains({ 'normal', 'full' }, code.style) then
-            return
-        end
-        vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, 0, {
-            end_row = info.end_row,
-            end_col = 0,
-            hl_group = code.highlight,
-            hl_eol = true,
-        })
-    elseif capture == 'language' then
-        local code = state.config.code
-        if not code.enabled then
-            return
-        end
-        if not vim.tbl_contains({ 'language', 'full' }, code.style) then
-            return
-        end
-        local icon, icon_highlight = icons.get(info.text)
-        if icon == nil or icon_highlight == nil then
-            return
-        end
-        M.render_sign(namespace, buf, info, icon, icon_highlight)
-        -- Requires inline extmarks
-        if not util.has_10 then
-            return
-        end
-
-        local icon_text = icon .. ' '
-        if ts.concealed(buf, info) > 0 then
-            -- Fenced code blocks will pick up varying amounts of leading white space depending on
-            -- the context they are in. This gets lumped into the delimiter node and as a result,
-            -- after concealing, the extmark will be left shifted. Logic below accounts for this.
-            local padding = 0
-            local code_block = ts.parent_in_section(info.node, 'fenced_code_block')
-            if code_block ~= nil then
-                padding = str.leading_spaces(ts.info(code_block, buf).text)
-            end
-            icon_text = str.pad(icon_text .. info.text, padding)
-        end
-
-        local highlight = { icon_highlight }
-        if code.style == 'full' then
-            highlight = { icon_highlight, code.highlight }
-        end
-
-        vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-            virt_text = { { icon_text, highlight } },
-            virt_text_pos = 'inline',
-        })
+        M.render_code(namespace, buf, info)
     elseif capture == 'list_marker' then
         ---@return boolean
         local function sibling_checkbox()
             if not state.config.checkbox.enabled then
                 return false
             end
-            if ts.sibling(info.node, 'task_list_marker_unchecked') ~= nil then
+            if ts.sibling(buf, info, 'task_list_marker_unchecked') ~= nil then
                 return true
             end
-            if ts.sibling(info.node, 'task_list_marker_checked') ~= nil then
+            if ts.sibling(buf, info, 'task_list_marker_checked') ~= nil then
                 return true
             end
-            local paragraph_node = ts.sibling(info.node, 'paragraph')
-            if paragraph_node == nil then
+            local paragraph = ts.sibling(buf, info, 'paragraph')
+            if paragraph == nil then
                 return false
             end
-            local paragraph = ts.info(paragraph_node, buf)
             return component.checkbox(paragraph.text, 'starts') ~= nil
         end
 
@@ -175,7 +121,7 @@ M.render_node = function(namespace, buf, capture, node)
             -- edge cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
             -- As a result we handle leading spaces here, can remove if this gets fixed upstream
             local leading_spaces = str.leading_spaces(info.text)
-            local level = ts.level_in_section(info.node, 'list')
+            local level = ts.level_in_section(info, 'list')
             local icon = list.cycle(bullet.icons, level)
 
             vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
@@ -196,9 +142,9 @@ M.render_node = function(namespace, buf, capture, node)
             return
         end
         local highlight = quote.highlight
-        local quote_node = ts.parent_in_section(info.node, 'block_quote')
-        if quote_node ~= nil then
-            local callout = component.callout(ts.info(quote_node, buf).text, 'contains')
+        local block_quote = ts.parent_in_section(buf, info, 'block_quote')
+        if block_quote ~= nil then
+            local callout = component.callout(block_quote.text, 'contains')
             if callout ~= nil then
                 highlight = callout.highlight
             end
@@ -230,6 +176,98 @@ M.render_node = function(namespace, buf, capture, node)
         -- Should only get here if user provides custom capture, currently unhandled
         logger.error('Unhandled markdown capture: ' .. capture)
     end
+end
+
+---@param namespace integer
+---@param buf integer
+---@param info render.md.NodeInfo
+M.render_code = function(namespace, buf, info)
+    local code = state.config.code
+    if not code.enabled then
+        return
+    end
+    if code.style == 'none' then
+        return
+    end
+    local did_render_language = false
+    local code_info = ts.child(buf, info, 'info_string', info.start_row)
+    if code_info ~= nil then
+        local language_info = ts.child(buf, code_info, 'language', code_info.start_row)
+        if language_info ~= nil then
+            did_render_language = M.render_language(namespace, buf, language_info, info)
+        end
+    end
+    if not vim.tbl_contains({ 'normal', 'full' }, code.style) then
+        return
+    end
+    local start_row = info.start_row
+    local end_row = info.end_row
+    -- Do not attempt to render single line code block
+    if start_row == end_row - 1 then
+        return
+    end
+    if code.border == 'thin' then
+        local code_start = ts.child(buf, info, 'fenced_code_block_delimiter', info.start_row)
+        local code_end = ts.child(buf, info, 'fenced_code_block_delimiter', info.end_row - 1)
+        if not did_render_language and ts.hidden(buf, code_info) and ts.hidden(buf, code_start) then
+            start_row = start_row + 1
+            vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
+                virt_text = { { code.above:rep(util.get_width(buf)), colors.inverse(code.highlight) } },
+                virt_text_pos = 'overlay',
+            })
+        end
+        if ts.hidden(buf, code_end) then
+            end_row = end_row - 1
+            vim.api.nvim_buf_set_extmark(buf, namespace, info.end_row - 1, info.start_col, {
+                virt_text = { { code.below:rep(util.get_width(buf)), colors.inverse(code.highlight) } },
+                virt_text_pos = 'overlay',
+            })
+        end
+    end
+    vim.api.nvim_buf_set_extmark(buf, namespace, start_row, 0, {
+        end_row = end_row,
+        end_col = 0,
+        hl_group = code.highlight,
+        hl_eol = true,
+    })
+end
+
+---@param namespace integer
+---@param buf integer
+---@param info render.md.NodeInfo
+---@param code_block render.md.NodeInfo
+---@return boolean
+M.render_language = function(namespace, buf, info, code_block)
+    local code = state.config.code
+    if not vim.tbl_contains({ 'language', 'full' }, code.style) then
+        return false
+    end
+    local icon, icon_highlight = icons.get(info.text)
+    if icon == nil or icon_highlight == nil then
+        return false
+    end
+    M.render_sign(namespace, buf, info, icon, icon_highlight)
+    -- Requires inline extmarks
+    if not util.has_10 then
+        return false
+    end
+    local icon_text = icon .. ' '
+    if ts.hidden(buf, info) then
+        -- Code blocks will pick up varying amounts of leading white space depending on the
+        -- context they are in. This gets lumped into the delimiter node and as a result,
+        -- after concealing, the extmark will be left shifted. Logic below accounts for this.
+        local padding = str.leading_spaces(code_block.text)
+        icon_text = str.pad(icon_text .. info.text, padding)
+    end
+    local highlight = { icon_highlight }
+    if code.style == 'full' then
+        highlight = { icon_highlight, code.highlight }
+    end
+    vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
+        virt_text = { { icon_text, highlight } },
+        virt_text_pos = 'inline',
+    })
+    return true
 end
 
 ---@param namespace integer

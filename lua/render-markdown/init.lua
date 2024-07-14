@@ -59,6 +59,9 @@ local M = {}
 ---@class render.md.UserCode
 ---@field public enabled? boolean
 ---@field public style? 'full'|'normal'|'language'|'none'
+---@field public border? 'thin'|'thick'
+---@field public above? string
+---@field public below? string
 ---@field public highlight? string
 
 ---@class render.md.UserHeading
@@ -122,7 +125,6 @@ M.default_config = {
         (thematic_break) @dash
 
         (fenced_code_block) @code
-        (fenced_code_block (info_string (language) @language))
 
         [
             (list_marker_plus)
@@ -208,6 +210,14 @@ M.default_config = {
         --  language: adds language icon to sign column and icon + name above code blocks
         --  full: normal + language
         style = 'full',
+        -- Determins how the top / bottom of code block are rendered:
+        --  thick: use the same highlight as the code body
+        --  thin: when lines are empty overlay the above & below icons
+        border = 'thin',
+        -- Used above code blocks for thin border
+        above = '▄',
+        -- Used below code blocks for thin border
+        below = '▀',
         -- Highlight for code blocks & inline code
         highlight = 'ColorColumn',
     },

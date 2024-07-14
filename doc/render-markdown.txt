@@ -1,4 +1,4 @@
-*render-markdown.txt*           For 0.10.0           Last change: 2024 July 12
+*render-markdown.txt*           For 0.10.0           Last change: 2024 July 13
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -20,6 +20,7 @@ Table of Contents                          *render-markdown-table-of-contents*
   - Tables                                      |render-markdown-setup-tables|
   - Callouts                                  |render-markdown-setup-callouts|
   - Links                                        |render-markdown-setup-links|
+  - Signs                                        |render-markdown-setup-signs|
 7. Additional Info                           |render-markdown-additional-info|
 
 ==============================================================================
@@ -157,7 +158,6 @@ Full Default Configuration ~
             (thematic_break) @dash
     
             (fenced_code_block) @code
-            (fenced_code_block (info_string (language) @language))
     
             [
                 (list_marker_plus)
@@ -243,6 +243,14 @@ Full Default Configuration ~
             --  language: adds language icon to sign column and icon + name above code blocks
             --  full: normal + language
             style = 'full',
+            -- Determins how the top / bottom of code block are rendered:
+            --  thick: use the same highlight as the code body
+            --  thin: when lines are empty overlay the above & below icons
+            border = 'thin',
+            -- Used above code blocks for thin border
+            above = '▄',
+            -- Used below code blocks for thin border
+            below = '▀',
             -- Highlight for code blocks & inline code
             highlight = 'ColorColumn',
         },
@@ -451,6 +459,14 @@ CODE BLOCKS                                *render-markdown-setup-code-blocks*
             --  language: adds language icon to sign column and icon + name above code blocks
             --  full: normal + language
             style = 'full',
+            -- Determins how the top / bottom of code block are rendered:
+            --  thick: use the same highlight as the code body
+            --  thin: when lines are empty overlay the above & below icons
+            border = 'thin',
+            -- Used above code blocks for thin border
+            above = '▄',
+            -- Used below code blocks for thin border
+            below = '▀',
             -- Highlight for code blocks & inline code
             highlight = 'ColorColumn',
         },
@@ -627,6 +643,24 @@ LINKS                                            *render-markdown-setup-links*
             hyperlink = '󰌹 ',
             -- Applies to the inlined icon
             highlight = '@markup.link.label.markdown_inline',
+        },
+    })
+<
+
+
+SIGNS                                            *render-markdown-setup-signs*
+
+>lua
+    require('render-markdown').setup({
+        sign = {
+            -- Turn on / off sign rendering
+            enabled = true,
+            -- More granular mechanism, disable signs within specific buftypes
+            exclude = {
+                buftypes = { 'nofile' },
+            },
+            -- Applies to background of sign text
+            highlight = 'SignColumn',
         },
     })
 <

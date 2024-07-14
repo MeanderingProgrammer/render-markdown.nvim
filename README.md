@@ -120,7 +120,6 @@ require('render-markdown').setup({
         (thematic_break) @dash
 
         (fenced_code_block) @code
-        (fenced_code_block (info_string (language) @language))
 
         [
             (list_marker_plus)
@@ -206,6 +205,14 @@ require('render-markdown').setup({
         --  language: adds language icon to sign column and icon + name above code blocks
         --  full: normal + language
         style = 'full',
+        -- Determins how the top / bottom of code block are rendered:
+        --  thick: use the same highlight as the code body
+        --  thin: when lines are empty overlay the above & below icons
+        border = 'thin',
+        -- Used above code blocks for thin border
+        above = '▄',
+        -- Used below code blocks for thin border
+        below = '▀',
         -- Highlight for code blocks & inline code
         highlight = 'ColorColumn',
     },
@@ -414,6 +421,14 @@ require('render-markdown').setup({
         --  language: adds language icon to sign column and icon + name above code blocks
         --  full: normal + language
         style = 'full',
+        -- Determins how the top / bottom of code block are rendered:
+        --  thick: use the same highlight as the code body
+        --  thin: when lines are empty overlay the above & below icons
+        border = 'thin',
+        -- Used above code blocks for thin border
+        above = '▄',
+        -- Used below code blocks for thin border
+        below = '▀',
         -- Highlight for code blocks & inline code
         highlight = 'ColorColumn',
     },
@@ -583,6 +598,23 @@ require('render-markdown').setup({
         hyperlink = '󰌹 ',
         -- Applies to the inlined icon
         highlight = '@markup.link.label.markdown_inline',
+    },
+})
+```
+
+## Signs
+
+```lua
+require('render-markdown').setup({
+    sign = {
+        -- Turn on / off sign rendering
+        enabled = true,
+        -- More granular mechanism, disable signs within specific buftypes
+        exclude = {
+            buftypes = { 'nofile' },
+        },
+        -- Applies to background of sign text
+        highlight = 'SignColumn',
     },
 })
 ```

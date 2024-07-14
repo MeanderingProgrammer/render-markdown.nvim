@@ -46,12 +46,13 @@ async_tests.describe('callout.md', function()
             callout(tip_start + 2, 2, 8, '󰌶 Tip', ok), -- Callout text
             util.quote(tip_start + 3, '%s', ok), -- Quote continued
             util.quote(tip_start + 4, '%s ', ok),
-            util.code_block(tip_start + 4, tip_start + 7),
+            util.code_block(tip_start + 4, tip_start + 6),
         })
         vim.list_extend(expected, util.code_language(tip_start + 4, 5, 8, '󰢱 ', 'lua', 'MiniIconsAzure'))
         vim.list_extend(expected, {
             util.quote(tip_start + 5, '%s ', ok),
             util.quote(tip_start + 6, '%s ', ok),
+            util.code_below(tip_start + 6, 2),
         })
 
         local important_start = 16

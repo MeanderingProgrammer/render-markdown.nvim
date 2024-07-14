@@ -57,7 +57,7 @@ def main() -> None:
 
 
 def update_types(init_file: Path, types_file: Path) -> None:
-    lines: list[str] = []
+    lines: list[str] = ["---@meta", ""]
     for lua_class in get_classes(init_file):
         lua_class.validate()
         lines.extend(lua_class.to_public_lines())
@@ -69,8 +69,8 @@ def update_readme(init_file: Path, readme_file: Path) -> None:
     new_config = wrap_setup(get_default_config(init_file))
     text = readme_file.read_text().replace(old_config, new_config)
 
-    parameters: list[str] = ["heading", "code", "dash", "bullet"]
-    parameters.extend(["checkbox", "quote", "pipe_table", "callout", "link"])
+    parameters: list[str] = ["heading", "code", "dash", "bullet", "checkbox"]
+    parameters.extend(["quote", "pipe_table", "callout", "link", "sign"])
     for parameter in parameters:
         old_param = get_code_block(readme_file, f"\n    {parameter} = ", 2)
         new_param = wrap_setup(get_config_for(new_config, f"{parameter} = "))

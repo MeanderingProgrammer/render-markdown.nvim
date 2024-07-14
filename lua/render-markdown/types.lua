@@ -1,3 +1,5 @@
+---@meta
+
 ---@class render.md.Sign
 ---@field public enabled boolean
 ---@field public exclude render.md.Exclude
@@ -46,6 +48,9 @@
 ---@class render.md.Code
 ---@field public enabled boolean
 ---@field public style 'full'|'normal'|'language'|'none'
+---@field public border 'thin'|'thick'
+---@field public above string
+---@field public below string
 ---@field public highlight string
 
 ---@class render.md.Heading
