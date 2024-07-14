@@ -1,5 +1,36 @@
 # Change Log
 
+## 4.1.0 (2024-07-14)
+
+### Features
+
+- Improve handling conealed text for tables, code blocks, and headings. Add 'padded'
+  cell style which fills in concealled width. Inline headings when there is no space.
+  [#49](https://github.com/MeanderingProgrammer/markdown.nvim/issues/49) [#50](https://github.com/MeanderingProgrammer/markdown.nvim/issues/50)
+  [9b7fdea](https://github.com/MeanderingProgrammer/markdown.nvim/commit/9b7fdea8058d48285585c5d82df16f0c829b2384)
+  [5ce3566](https://github.com/MeanderingProgrammer/markdown.nvim/commit/5ce35662725b1024c6dddc8d0bc03befc5abc878)
+- Add thin border style for code blocks [#62](https://github.com/MeanderingProgrammer/markdown.nvim/issues/62)
+  [3114d70](https://github.com/MeanderingProgrammer/markdown.nvim/commit/3114d708283002b50a55be0498668ef838b6c4cf)
+- Add icons to images and links [#55](https://github.com/MeanderingProgrammer/markdown.nvim/issues/55)
+  [501e5e0](https://github.com/MeanderingProgrammer/markdown.nvim/commit/501e5e01493204926aa4e2a12f97b7289636b136)
+- Add signs for headings and code blocks [7acc1bf](https://github.com/MeanderingProgrammer/markdown.nvim/commit/7acc1bf0ecc207411ad6dcf8ecf02f76fe8cbe13)
+- Allow signs to be disabled based on buftype, improve highlight color [#58](https://github.com/MeanderingProgrammer/markdown.nvim/issues/58)
+  [#61](https://github.com/MeanderingProgrammer/markdown.nvim/issues/61) [d398f3e](https://github.com/MeanderingProgrammer/markdown.nvim/commit/d398f3e9f21d88e1de51594cd4a78f56a3a3eb9e)
+- Add defaults for all Obsidian callouts [be3f6e3](https://github.com/MeanderingProgrammer/markdown.nvim/commit/be3f6e3c6ce38399464a9c3e98309901c06ca80e)
+- Add code style 'language', adds icon without background [#52](https://github.com/MeanderingProgrammer/markdown.nvim/issues/52)
+  [308f9a8](https://github.com/MeanderingProgrammer/markdown.nvim/commit/308f9a826e371e33512234e4604cf581fe1d4ef8)
+  [e19ed93](https://github.com/MeanderingProgrammer/markdown.nvim/commit/e19ed93d75216f8535ede4d401e56ef478856861)
+- Allow table border to be configured [b2da013](https://github.com/MeanderingProgrammer/markdown.nvim/commit/b2da01328e8c99fc290c296886f2653315b73618)
+- Improved health check configurable buftype exclude [1d72b63](https://github.com/MeanderingProgrammer/markdown.nvim/commit/1d72b6356dbb48731b02bce0bc48774f08a47179)
+- Use more common heading highlights [e099bd8](https://github.com/MeanderingProgrammer/markdown.nvim/commit/e099bd80ee286f491c9767cda7614233295aced0)
+- Allow each component to be individually disabled [b84a788](https://github.com/MeanderingProgrammer/markdown.nvim/commit/b84a788f51af7f0905e2351061b3429fa72254b6)
+
+### Bug Fixes
+
+- Account for leading spaces in code blocks [#60](https://github.com/MeanderingProgrammer/markdown.nvim/issues/60)
+  [48083f8](https://github.com/MeanderingProgrammer/markdown.nvim/commit/48083f81aa1100293b92755a081764f61dce2f1f)
+- Use concealled text width for 'raw' table cell style [8c71558](https://github.com/MeanderingProgrammer/markdown.nvim/commit/8c71558a1cf959c198bb0540a16ae09e93cead62)
+
 ## 4.0.0 (2024-07-08)
 
 ### ⚠ BREAKING CHANGES
