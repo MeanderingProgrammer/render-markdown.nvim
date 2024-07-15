@@ -10,7 +10,7 @@ local cache = {
     expressions = {},
 }
 
----@class render.md.handler.Latex
+---@class render.md.handler.Latex: render.md.Handler
 local M = {}
 
 ---@param namespace integer

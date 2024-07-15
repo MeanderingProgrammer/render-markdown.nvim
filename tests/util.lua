@@ -44,10 +44,8 @@ M.heading = function(row, level)
     local backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete', 'DiffDelete', 'DiffDelete', 'DiffDelete' }
     return {
         {
-            row = { row, row + 1 },
-            col = { 0, 0 },
-            hl_eol = true,
-            hl_group = backgrounds[level],
+            row = { row, row },
+            col = { 0, level },
             virt_text = { { icons[level], { foreground, backgrounds[level] } } },
             virt_text_pos = 'overlay',
         },
@@ -56,6 +54,12 @@ M.heading = function(row, level)
             col = { 0, level },
             sign_text = '󰫎 ',
             sign_hl_group = string.format('RenderMd_%s_SignColumn', foreground),
+        },
+        {
+            row = { row, row + 1 },
+            col = { 0, 0 },
+            hl_group = backgrounds[level],
+            hl_eol = true,
         },
     }
 end

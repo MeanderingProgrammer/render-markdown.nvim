@@ -9,7 +9,7 @@ local str = require('render-markdown.str')
 local ts = require('render-markdown.ts')
 local util = require('render-markdown.util')
 
----@class render.md.handler.Markdown
+---@class render.md.handler.Markdown: render.md.Handler
 local M = {}
 
 ---@param namespace integer
@@ -42,15 +42,13 @@ M.render = function(namespace, root, buf)
                 if nested_capture == 'quote_marker' then
                     M.render_quote_marker(namespace, buf, nested_info, info)
                 else
-                    -- Should only get here if user provides custom capture, currently unhandled
-                    logger.error('Unhandled markdown quote capture: ' .. nested_capture)
+                    logger.unhandled_capture('markdown quote', nested_capture)
                 end
             end
         elseif capture == 'table' then
             M.render_table(namespace, buf, info)
         else
-            -- Should only get here if user provides custom capture, currently unhandled
-            logger.error('Unhandled markdown capture: ' .. capture)
+            logger.unhandled_capture('markdown', capture)
         end
     end
 end
@@ -74,7 +72,6 @@ M.render_heading = function(namespace, buf, info)
     -- is added to account for the space after the last `#` but before the heading title,
     -- and concealed text is subtracted since that space is not usable
     local padding = level + 1 - ts.concealed(buf, info) - str.width(icon)
-
     if padding < 0 then
         -- Requires inline extmarks to place when there is not enough space available
         if util.has_10 then
@@ -85,25 +82,25 @@ M.render_heading = function(namespace, buf, info)
                 virt_text_pos = 'inline',
                 conceal = '',
             })
-            vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, 0, {
-                end_row = info.end_row + 1,
-                end_col = 0,
-                hl_group = background,
-                hl_eol = true,
-            })
         end
     else
-        vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, 0, {
-            end_row = info.end_row + 1,
-            end_col = 0,
-            hl_group = background,
+        vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
+            end_row = info.end_row,
+            end_col = info.end_col,
             virt_text = { { str.pad(icon, padding), { foreground, background } } },
             virt_text_pos = 'overlay',
-            hl_eol = true,
         })
     end
+    vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, 0, {
+        end_row = info.end_row + 1,
+        end_col = 0,
+        hl_group = background,
+        hl_eol = true,
+    })
 
-    M.render_sign(namespace, buf, info, list.cycle(heading.signs, level), foreground)
+    if heading.sign then
+        M.render_sign(namespace, buf, info, list.cycle(heading.signs, level), foreground)
+    end
 end
 
 ---@private
@@ -188,7 +185,9 @@ M.render_language = function(namespace, buf, info, code_block)
     if icon == nil or icon_highlight == nil then
         return false
     end
-    M.render_sign(namespace, buf, info, icon, icon_highlight)
+    if code.sign then
+        M.render_sign(namespace, buf, info, icon, icon_highlight)
+    end
     -- Requires inline extmarks
     if not util.has_10 then
         return false
@@ -351,8 +350,7 @@ M.render_table = function(namespace, buf, info)
             end
             M.render_table_row(namespace, buf, row, pipe_table.row)
         else
-            -- Should only get here if markdown introduces more row types, currently unhandled
-            logger.error('Unhandled markdown row type: ' .. row.type)
+            logger.unhandled_type('markdown', 'row', row.type)
         end
     end
     if pipe_table.style == 'full' then
@@ -411,8 +409,7 @@ M.render_table_row = function(namespace, buf, row, highlight)
                     end
                 end
             else
-                -- Should only get here if markdown introduces more cell types, currently unhandled
-                logger.error('Unhandled markdown cell type: ' .. cell.type)
+                logger.unhandled_type('markdown', 'cell', cell.type)
             end
         end
     elseif pipe_table.cell == 'overlay' then

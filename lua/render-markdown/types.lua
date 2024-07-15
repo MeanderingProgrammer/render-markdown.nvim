@@ -1,5 +1,9 @@
 ---@meta
 
+---@class render.md.WindowOption
+---@field public default number|string
+---@field public rendered number|string
+
 ---@class render.md.Sign
 ---@field public enabled boolean
 ---@field public exclude render.md.Exclude
@@ -47,6 +51,7 @@
 
 ---@class render.md.Code
 ---@field public enabled boolean
+---@field public sign boolean
 ---@field public style 'full'|'normal'|'language'|'none'
 ---@field public border 'thin'|'thick'
 ---@field public above string
@@ -55,6 +60,7 @@
 
 ---@class render.md.Heading
 ---@field public enabled boolean
+---@field public sign boolean
 ---@field public icons string[]
 ---@field public signs string[]
 ---@field public backgrounds string[]

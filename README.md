@@ -174,12 +174,14 @@ require('render-markdown').setup({
     heading = {
         -- Turn on / off heading icon & background rendering
         enabled = true,
+        -- Turn on / off any sign column related rendering
+        sign = true,
         -- Replaces '#+' of 'atx_h._marker'
         -- The number of '#' in the heading determines the 'level'
         -- The 'level' is used to index into the array using a cycle
         -- The result is left padded with spaces to hide any additional '#'
         icons = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
-        -- Added to the sign column
+        -- Added to the sign column if enabled
         -- The 'level' is used to index into the array using a cycle
         signs = { '󰫎 ' },
         -- The 'level' is used to index into the array using a clamp
@@ -199,10 +201,12 @@ require('render-markdown').setup({
     code = {
         -- Turn on / off code block & inline code rendering
         enabled = true,
+        -- Turn on / off any sign column related rendering
+        sign = true,
         -- Determines how code blocks & inline code are rendered:
         --  none: disables all rendering
         --  normal: adds highlight group to code blocks & inline code
-        --  language: adds language icon to sign column and icon + name above code blocks
+        --  language: adds language icon to sign column if enabled and icon + name above code blocks
         --  full: normal + language
         style = 'full',
         -- Determins how the top / bottom of code block are rendered:
@@ -383,12 +387,14 @@ require('render-markdown').setup({
     heading = {
         -- Turn on / off heading icon & background rendering
         enabled = true,
+        -- Turn on / off any sign column related rendering
+        sign = true,
         -- Replaces '#+' of 'atx_h._marker'
         -- The number of '#' in the heading determines the 'level'
         -- The 'level' is used to index into the array using a cycle
         -- The result is left padded with spaces to hide any additional '#'
         icons = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
-        -- Added to the sign column
+        -- Added to the sign column if enabled
         -- The 'level' is used to index into the array using a cycle
         signs = { '󰫎 ' },
         -- The 'level' is used to index into the array using a clamp
@@ -415,10 +421,12 @@ require('render-markdown').setup({
     code = {
         -- Turn on / off code block & inline code rendering
         enabled = true,
+        -- Turn on / off any sign column related rendering
+        sign = true,
         -- Determines how code blocks & inline code are rendered:
         --  none: disables all rendering
         --  normal: adds highlight group to code blocks & inline code
-        --  language: adds language icon to sign column and icon + name above code blocks
+        --  language: adds language icon to sign column if enabled and icon + name above code blocks
         --  full: normal + language
         style = 'full',
         -- Determins how the top / bottom of code block are rendered:

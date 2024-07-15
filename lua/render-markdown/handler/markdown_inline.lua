@@ -6,7 +6,7 @@ local str = require('render-markdown.str')
 local ts = require('render-markdown.ts')
 local util = require('render-markdown.util')
 
----@class render.md.handler.MarkdownInline
+---@class render.md.handler.MarkdownInline: render.md.Handler
 local M = {}
 
 ---@param namespace integer
@@ -25,8 +25,7 @@ M.render = function(namespace, root, buf)
         elseif capture == 'link' then
             M.render_link(namespace, buf, info)
         else
-            -- Should only get here if user provides custom capture, currently unhandled
-            logger.error('Unhandled inline capture: ' .. capture)
+            logger.unhandled_capture('inline', capture)
         end
     end
 end

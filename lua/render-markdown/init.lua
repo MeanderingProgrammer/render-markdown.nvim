@@ -7,9 +7,9 @@ local M = {}
 ---@field public render fun(namespace: integer, root: TSNode, buf: integer)
 ---@field public extends? boolean
 
----@class render.md.WindowOption
----@field public default any
----@field public rendered any
+---@class render.md.UserWindowOption
+---@field public default? number|string
+---@field public rendered? number|string
 
 ---@class render.md.UserSign
 ---@field public enabled? boolean
@@ -58,6 +58,7 @@ local M = {}
 
 ---@class render.md.UserCode
 ---@field public enabled? boolean
+---@field public sign? boolean
 ---@field public style? 'full'|'normal'|'language'|'none'
 ---@field public border? 'thin'|'thick'
 ---@field public above? string
@@ -66,6 +67,7 @@ local M = {}
 
 ---@class render.md.UserHeading
 ---@field public enabled? boolean
+---@field public sign? boolean
 ---@field public icons? string[]
 ---@field public signs? string[]
 ---@field public backgrounds? string[]
@@ -101,7 +103,7 @@ local M = {}
 ---@field public callout? table<string, render.md.UserCustomComponent>
 ---@field public link? render.md.UserLink
 ---@field public sign? render.md.UserSign
----@field public win_options? table<string, render.md.WindowOption>
+---@field public win_options? table<string, render.md.UserWindowOption>
 ---@field public custom_handlers? table<string, render.md.Handler>
 
 ---@type render.md.Config
@@ -179,12 +181,14 @@ M.default_config = {
     heading = {
         -- Turn on / off heading icon & background rendering
         enabled = true,
+        -- Turn on / off any sign column related rendering
+        sign = true,
         -- Replaces '#+' of 'atx_h._marker'
         -- The number of '#' in the heading determines the 'level'
         -- The 'level' is used to index into the array using a cycle
         -- The result is left padded with spaces to hide any additional '#'
         icons = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
-        -- Added to the sign column
+        -- Added to the sign column if enabled
         -- The 'level' is used to index into the array using a cycle
         signs = { '󰫎 ' },
         -- The 'level' is used to index into the array using a clamp
@@ -204,10 +208,12 @@ M.default_config = {
     code = {
         -- Turn on / off code block & inline code rendering
         enabled = true,
+        -- Turn on / off any sign column related rendering
+        sign = true,
         -- Determines how code blocks & inline code are rendered:
         --  none: disables all rendering
         --  normal: adds highlight group to code blocks & inline code
-        --  language: adds language icon to sign column and icon + name above code blocks
+        --  language: adds language icon to sign column if enabled and icon + name above code blocks
         --  full: normal + language
         style = 'full',
         -- Determins how the top / bottom of code block are rendered:

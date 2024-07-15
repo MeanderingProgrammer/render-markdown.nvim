@@ -54,6 +54,7 @@ log.flush = function()
     log.reset()
 end
 
+---@class render.md.Logger
 local M = {}
 
 M.start = function()
@@ -67,24 +68,37 @@ M.debug = function(message)
     end
 end
 
----@param capture string
----@param info render.md.NodeInfo
-M.debug_node_info = function(capture, info)
-    if vim.tbl_contains({ 'debug' }, state.config.log_level) then
-        log.add('debug', {
-            capture = capture,
-            text = info.text,
-            rows = { info.start_row, info.end_row },
-            cols = { info.start_col, info.end_col },
-        })
-    end
-end
-
 ---@param message any
 M.error = function(message)
     if vim.tbl_contains({ 'debug', 'error' }, state.config.log_level) then
         log.add('error', message)
     end
+end
+
+---@param capture string
+---@param info render.md.NodeInfo
+M.debug_node_info = function(capture, info)
+    M.debug({
+        capture = capture,
+        text = info.text,
+        rows = { info.start_row, info.end_row },
+        cols = { info.start_col, info.end_col },
+    })
+end
+
+---Encountered if user provides custom capture
+---@param group string
+---@param capture string
+M.unhandled_capture = function(group, capture)
+    M.error(string.format('Unhandled %s capture: %s', group, capture))
+end
+
+---Encountered if new type is seen for a particular group
+---@param language string
+---@param group string
+---@param value string
+M.unhandled_type = function(language, group, value)
+    M.error(string.format('Unhandled %s %s type: %s', language, group, value))
 end
 
 M.flush = function()

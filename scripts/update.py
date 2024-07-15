@@ -72,8 +72,8 @@ def update_readme(init_file: Path, readme_file: Path) -> None:
     parameters: list[str] = ["heading", "code", "dash", "bullet", "checkbox"]
     parameters.extend(["quote", "pipe_table", "callout", "link", "sign"])
     for parameter in parameters:
-        old_param = get_code_block(readme_file, f"\n    {parameter} = ", 2)
-        new_param = wrap_setup(get_config_for(new_config, f"{parameter} = "))
+        old_param = get_code_block(readme_file, f"\n    {parameter} = {{", 2)
+        new_param = wrap_setup(get_config_for(new_config, f"{parameter} = {{"))
         text = text.replace(old_param, new_param)
 
     readme_file.write_text(text)
@@ -164,7 +164,7 @@ def get_code_block(file: Path, content: str, n: int) -> str:
     query = "(code_fence_content) @content"
     code_blocks = ts_query(file, query, "content")
     code_blocks = [code for code in code_blocks if content in code]
-    assert len(code_blocks) == n
+    assert len(code_blocks) == n, f"Expected {n}, Found {len(code_blocks)}"
     return code_blocks[n - 1]
 
 

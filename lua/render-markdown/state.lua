@@ -101,6 +101,7 @@ function state.validate()
     local heading = config.heading
     append_errors('render-markdown.heading', heading, {
         enabled = { heading.enabled, 'boolean' },
+        sign = { heading.sign, 'boolean' },
         icons = string_array(heading.icons),
         signs = string_array(heading.signs),
         backgrounds = string_array(heading.backgrounds),
@@ -110,6 +111,7 @@ function state.validate()
     local code = config.code
     append_errors('render-markdown.code', code, {
         enabled = { code.enabled, 'boolean' },
+        sign = { code.sign, 'boolean' },
         style = one_of(code.style, { 'full', 'normal', 'language', 'none' }),
         border = one_of(code.border, { 'thin', 'thick' }),
         above = { code.above, 'string' },
