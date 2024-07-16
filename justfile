@@ -46,12 +46,15 @@ update:
     --input-file README.md \
     --vim-version 0.10.0
 
+gen-medium:
+  just gen-file "1000" > medium.md
+
+gen-large:
+  just gen-file "100000" > large.md
+
 [private]
-gen-large-file-text:
+gen-file lines:
   #!/usr/bin/env python
-  for i in range(100_000):
+  for i in range({{lines}}):
     level = "#" * ((i % 6) + 1)
     print(f"{level} Title {i}\n")
-
-gen-large-file:
-  just gen-large-file-text > large.md

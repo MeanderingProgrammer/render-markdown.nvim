@@ -72,6 +72,9 @@
 ---@field public converter string
 ---@field public highlight string
 
+---@class render.md.AntiConceal
+---@field public enabled boolean
+
 ---@class render.md.Exclude
 ---@field public buftypes string[]
 
@@ -86,6 +89,7 @@
 ---@field public file_types string[]
 ---@field public render_modes string[]
 ---@field public exclude render.md.Exclude
+---@field public anti_conceal render.md.AntiConceal
 ---@field public latex render.md.Latex
 ---@field public heading render.md.Heading
 ---@field public code render.md.Code

@@ -12,6 +12,8 @@ Plugin to improve viewing Markdown files in Neovim
 
 - Functions entirely inside of Neovim with no external windows
 - Changes between `rendered` view in normal mode and `raw` view in all other modes
+- Supports anti-conceal behavior, removing any virtual text added by this plugin
+  on the line the cursor is on, this does have a performance penalty and can be disabled
 - Changes window options between `rendered` and `raw` view based on configuration
   - Effects `conceallevel` & `concealcursor` by default
 - Supports rendering `markdown` injected into other file types
@@ -165,6 +167,11 @@ require('render-markdown').setup({
     exclude = {
         -- Buftypes ignored by this plugin, see :h 'buftype'
         buftypes = {},
+    },
+    anti_conceal = {
+        -- This enables hiding any added text on the line the cursor is on
+        -- This does have a performance penalty as we must listen to the 'CursorMoved' event
+        enabled = true,
     },
     latex = {
         -- Whether LaTeX should be rendered, mainly used for health check
@@ -366,8 +373,8 @@ require('render-markdown').setup({
         concealcursor = {
             -- Used when not being rendered, get user setting
             default = vim.api.nvim_get_option_value('concealcursor', {}),
-            -- Used when being rendered, conceal text in all modes
-            rendered = 'nvic',
+            -- Used when being rendered, disable concealing text in all modes
+            rendered = '',
         },
     },
     -- Mapping from treesitter language to user defined handlers

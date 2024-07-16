@@ -9,6 +9,14 @@ local builtin_handlers = {
     latex = require('render-markdown.handler.latex'),
 }
 
+---@class render.md.UiCache
+---@field marks table<integer, render.md.Mark[]>
+
+---@type render.md.UiCache
+local cache = {
+    marks = {},
+}
+
 ---@class render.md.Ui
 local M = {}
 
@@ -16,11 +24,12 @@ local M = {}
 M.namespace = vim.api.nvim_create_namespace('render-markdown.nvim')
 
 ---@param buf integer
-M.schedule_refresh = function(buf)
+---@param parse boolean
+M.schedule_refresh = function(buf, parse)
     local mode = vim.fn.mode(true)
     vim.schedule(function()
         logger.start()
-        M.refresh(buf, mode)
+        M.refresh(buf, mode, parse)
         logger.flush()
     end)
 end
@@ -28,7 +37,8 @@ end
 ---@private
 ---@param buf integer
 ---@param mode string
-M.refresh = function(buf, mode)
+---@param parse boolean
+M.refresh = function(buf, mode, parse)
     -- Remove any existing marks if buffer is valid
     if not vim.api.nvim_buf_is_valid(buf) then
         return
@@ -46,17 +56,36 @@ M.refresh = function(buf, mode)
         for name, value in pairs(state.config.win_options) do
             util.set_win_option(win, name, value.default)
         end
-    else
-        -- Set window options to rendered & perform render
-        for name, value in pairs(state.config.win_options) do
-            util.set_win_option(win, name, value.rendered)
-        end
+        return
+    end
+
+    -- Set window options to rendered & perform render
+    for name, value in pairs(state.config.win_options) do
+        util.set_win_option(win, name, value.rendered)
+    end
+
+    -- Re compute marks, needed in-between text changes
+    local parser = vim.treesitter.get_parser(buf)
+    if parse then
         -- Make sure injections are processed
-        local parser = vim.treesitter.get_parser(buf)
         parser:parse(true)
+        -- Parse and cache marks
+        local marks = {}
         parser:for_each_tree(function(tree, language_tree)
-            M.render(buf, language_tree:lang(), tree:root())
+            vim.list_extend(marks, M.parse(buf, language_tree:lang(), tree:root()))
         end)
+        cache.marks[buf] = marks
+    end
+
+    -- Render marks based on anti-conceal behavior and current row
+    local row = vim.api.nvim_win_get_cursor(util.buf_to_win(buf))[1] - 1
+    for _, mark in ipairs(cache.marks[buf]) do
+        if not state.config.anti_conceal.enabled or not mark.conceal or mark.start_row ~= row then
+            -- Only ensure strictness if the buffer was parsed this request
+            -- The order of events can cause our cache to be stale
+            mark.opts.strict = parse
+            vim.api.nvim_buf_set_extmark(buf, M.namespace, mark.start_row, mark.start_col, mark.opts)
+        end
     end
 end
 
@@ -87,21 +116,34 @@ end
 ---@param buf integer
 ---@param language string
 ---@param root TSNode
-M.render = function(buf, language, root)
+---@return render.md.Mark[]
+M.parse = function(buf, language, root)
     logger.debug('Language: ' .. language)
+
+    local marks = {}
     local user_handler = state.config.custom_handlers[language]
     if user_handler ~= nil then
         logger.debug('Running user handler')
-        user_handler.render(M.namespace, root, buf)
+        -- TODO: remove call to render & parse nil check
+        if user_handler.render ~= nil then
+            local message = 'markdown.nvim: custom_handlers render is deprecated use parse instead'
+            message = message .. ', will be fully removed on 2024-08-19'
+            vim.notify_once(message, vim.log.levels.ERROR)
+            user_handler.render(M.namespace, root, buf)
+        end
+        if user_handler.parse ~= nil then
+            vim.list_extend(marks, user_handler.parse(root, buf))
+        end
         if not user_handler.extends then
-            return
+            return marks
         end
     end
     local builtin_handler = builtin_handlers[language]
     if builtin_handler ~= nil then
         logger.debug('Running builtin handler')
-        builtin_handler.render(M.namespace, root, buf)
+        vim.list_extend(marks, builtin_handler.parse(root, buf))
     end
+    return marks
 end
 
 return M

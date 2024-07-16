@@ -42,26 +42,31 @@ M.heading = function(row, level)
     local icons = { '󰲡 ', ' 󰲣 ', '  󰲥 ', '   󰲧 ', '    󰲩 ', '     󰲫 ' }
     local foreground = string.format('@markup.heading.%d.markdown', level)
     local backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete', 'DiffDelete', 'DiffDelete', 'DiffDelete' }
-    return {
-        {
-            row = { row, row },
-            col = { 0, level },
-            virt_text = { { icons[level], { foreground, backgrounds[level] } } },
-            virt_text_pos = 'overlay',
-        },
-        {
-            row = { row, row },
-            col = { 0, level },
-            sign_text = '󰫎 ',
-            sign_hl_group = string.format('RenderMd_%s_SignColumn', foreground),
-        },
-        {
-            row = { row, row + 1 },
-            col = { 0, 0 },
-            hl_group = backgrounds[level],
-            hl_eol = true,
-        },
+    local sign_mark = {
+        row = { row, row },
+        col = { 0, level },
+        sign_text = '󰫎 ',
+        sign_hl_group = string.format('RenderMd_%s_SignColumn', foreground),
     }
+    if row == 0 then
+        return { sign_mark }
+    else
+        return {
+            {
+                row = { row, row },
+                col = { 0, level },
+                virt_text = { { icons[level], { foreground, backgrounds[level] } } },
+                virt_text_pos = 'overlay',
+            },
+            sign_mark,
+            {
+                row = { row, row + 1 },
+                col = { 0, 0 },
+                hl_group = backgrounds[level],
+                hl_eol = true,
+            },
+        }
+    end
 end
 
 ---@param row integer

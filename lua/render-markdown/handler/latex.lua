@@ -13,17 +13,17 @@ local cache = {
 ---@class render.md.handler.Latex: render.md.Handler
 local M = {}
 
----@param namespace integer
 ---@param root TSNode
 ---@param buf integer
-M.render = function(namespace, root, buf)
+---@return render.md.Mark[]
+M.parse = function(root, buf)
     local latex = state.config.latex
     if not latex.enabled then
-        return
+        return {}
     end
     if vim.fn.executable(latex.converter) ~= 1 then
         logger.debug('Executable not found: ' .. latex.converter)
-        return
+        return {}
     end
 
     local info = ts.info(root, buf)
@@ -40,12 +40,20 @@ M.render = function(namespace, root, buf)
     local latex_lines = vim.tbl_map(function(expression)
         return { { expression, latex.highlight } }
     end, expressions)
-    vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-        end_row = info.end_row,
-        end_col = info.end_col,
-        virt_lines = latex_lines,
-        virt_lines_above = true,
-    })
+
+    ---@type render.md.Mark
+    local latex_mark = {
+        conceal = false,
+        start_row = info.start_row,
+        start_col = info.start_col,
+        opts = {
+            end_row = info.end_row,
+            end_col = info.end_col,
+            virt_lines = latex_lines,
+            virt_lines_above = true,
+        },
+    }
+    return { latex_mark }
 end
 
 return M

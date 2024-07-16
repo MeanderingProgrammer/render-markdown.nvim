@@ -3,8 +3,14 @@ local state = require('render-markdown.state')
 
 local M = {}
 
+---@class render.md.Mark
+---@field public conceal boolean
+---@field public start_row integer
+---@field public start_col integer
+---@field public opts vim.api.keyset.set_extmark
+
 ---@class render.md.Handler
----@field public render fun(namespace: integer, root: TSNode, buf: integer)
+---@field public parse fun(root: TSNode, buf: integer): render.md.Mark[]
 ---@field public extends? boolean
 
 ---@class render.md.UserWindowOption
@@ -79,6 +85,9 @@ local M = {}
 ---@field public converter? string
 ---@field public highlight? string
 
+---@class render.md.UserAntiConceal
+---@field public enabled? boolean
+
 ---@class render.md.UserExclude
 ---@field public buftypes? string[]
 
@@ -93,6 +102,7 @@ local M = {}
 ---@field public file_types? string[]
 ---@field public render_modes? string[]
 ---@field public exclude? render.md.UserExclude
+---@field public anti_conceal? render.md.UserAntiConceal
 ---@field public latex? render.md.UserLatex
 ---@field public heading? render.md.UserHeading
 ---@field public code? render.md.UserCode
@@ -170,6 +180,11 @@ M.default_config = {
     exclude = {
         -- Buftypes ignored by this plugin, see :h 'buftype'
         buftypes = {},
+    },
+    anti_conceal = {
+        -- This enables hiding any added text on the line the cursor is on
+        -- This does have a performance penalty as we must listen to the 'CursorMoved' event
+        enabled = true,
     },
     latex = {
         -- Whether LaTeX should be rendered, mainly used for health check
@@ -371,8 +386,8 @@ M.default_config = {
         concealcursor = {
             -- Used when not being rendered, get user setting
             default = vim.api.nvim_get_option_value('concealcursor', {}),
-            -- Used when being rendered, conceal text in all modes
-            rendered = 'nvic',
+            -- Used when being rendered, disable concealing text in all modes
+            rendered = '',
         },
     },
     -- Mapping from treesitter language to user defined handlers

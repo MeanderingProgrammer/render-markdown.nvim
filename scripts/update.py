@@ -82,7 +82,13 @@ def update_readme(init_file: Path, readme_file: Path) -> None:
 def update_custom_handlers(init_file: Path, handler_file: Path) -> None:
     class_name: str = "render.md.Handler"
     old = get_code_block(handler_file, class_name, 1)
-    new = get_class(init_file, class_name).to_str()
+    new = "\n".join(
+        [
+            get_class(init_file, "render.md.Mark").to_str(),
+            "",
+            get_class(init_file, class_name).to_str(),
+        ]
+    )
     text = handler_file.read_text().replace(old, new)
     handler_file.write_text(text)
 

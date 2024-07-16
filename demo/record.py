@@ -1,5 +1,6 @@
 import time
 from argparse import ArgumentParser
+from pathlib import Path
 
 import pyautogui
 
@@ -8,6 +9,9 @@ def main(cols: int, rows: int, file: str, cast: str, content: str) -> None:
     # Open new tmux window
     pyautogui.hotkey("`", "c")
     time.sleep(1.0)
+
+    # Get length of file so we can scroll down it
+    num_lines = len(Path(file).read_text().splitlines())
 
     # Start recording demo file
     # https://docs.asciinema.org/manual/cli/usage/
@@ -30,12 +34,14 @@ def main(cols: int, rows: int, file: str, cast: str, content: str) -> None:
         pyautogui.press("esc")
         time.sleep(2.0)
 
-    # Swith between insert and normal mode a few times
-    for i in range(2):
-        pyautogui.press("i")
-        time.sleep(i + 1)
-        pyautogui.press("esc")
-        time.sleep((i + 1) * 2)
+    insert_normal(1)
+
+    # Slowly scroll down
+    for _ in range(num_lines):
+        pyautogui.press("j")
+        time.sleep(0.1)
+
+    insert_normal(1)
 
     # Close demo file
     pyautogui.write(":q!")
@@ -45,6 +51,13 @@ def main(cols: int, rows: int, file: str, cast: str, content: str) -> None:
     # Close tmux window
     pyautogui.write("exit")
     pyautogui.press("enter")
+
+
+def insert_normal(seconds: float) -> None:
+    pyautogui.press("i")
+    time.sleep(seconds)
+    pyautogui.press("esc")
+    time.sleep(seconds)
 
 
 if __name__ == "__main__":

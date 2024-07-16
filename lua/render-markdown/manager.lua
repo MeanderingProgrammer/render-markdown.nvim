@@ -32,7 +32,7 @@ function M.setup()
             for _, win in ipairs(vim.v.event.windows) do
                 local buf = util.win_to_buf(win)
                 if vim.tbl_contains(data.buffers, buf) then
-                    ui.schedule_refresh(buf)
+                    ui.schedule_refresh(buf, true)
                 end
             end
         end,
@@ -50,7 +50,7 @@ M.attach = function(group, buf)
         group = group,
         buffer = buf,
         callback = function()
-            ui.schedule_refresh(buf)
+            ui.schedule_refresh(buf, true)
         end,
     })
     vim.api.nvim_create_autocmd({ 'ModeChanged' }, {
@@ -63,16 +63,26 @@ M.attach = function(group, buf)
             -- Only need to re-render if render state is changing. I.e. going from normal mode to
             -- command mode with the default config, both are rendered, so no point re-rendering
             if prev_rendered ~= should_render then
-                ui.schedule_refresh(buf)
+                ui.schedule_refresh(buf, true)
             end
         end,
     })
+    if state.config.anti_conceal.enabled then
+        vim.api.nvim_create_autocmd({ 'CursorMoved' }, {
+            group = group,
+            buffer = buf,
+            callback = function()
+                -- Moving cursor should not result in text change, skip parsing
+                ui.schedule_refresh(buf, false)
+            end,
+        })
+    end
 end
 
 M.toggle = function()
     state.enabled = not state.enabled
     for _, buf in ipairs(data.buffers) do
-        ui.schedule_refresh(buf)
+        ui.schedule_refresh(buf, true)
     end
 end
 

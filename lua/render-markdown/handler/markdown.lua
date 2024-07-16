@@ -12,27 +12,28 @@ local util = require('render-markdown.util')
 ---@class render.md.handler.Markdown: render.md.Handler
 local M = {}
 
----@param namespace integer
 ---@param root TSNode
 ---@param buf integer
-M.render = function(namespace, root, buf)
+---@return render.md.Mark[]
+M.parse = function(root, buf)
+    local marks = {}
     local query = state.markdown_query
     for id, node in query:iter_captures(root, buf) do
         local capture = query.captures[id]
         local info = ts.info(node, buf)
         logger.debug_node_info(capture, info)
         if capture == 'heading' then
-            M.render_heading(namespace, buf, info)
+            vim.list_extend(marks, M.render_heading(buf, info))
         elseif capture == 'dash' then
-            M.render_dash(namespace, buf, info)
+            list.add(marks, M.render_dash(buf, info))
         elseif capture == 'code' then
-            M.render_code(namespace, buf, info)
+            vim.list_extend(marks, M.render_code(buf, info))
         elseif capture == 'list_marker' then
-            M.render_list_marker(namespace, buf, info)
+            list.add(marks, M.render_list_marker(buf, info))
         elseif capture == 'checkbox_unchecked' then
-            M.render_checkbox(namespace, buf, info, state.config.checkbox.unchecked)
+            list.add(marks, M.render_checkbox(info, state.config.checkbox.unchecked))
         elseif capture == 'checkbox_checked' then
-            M.render_checkbox(namespace, buf, info, state.config.checkbox.checked)
+            list.add(marks, M.render_checkbox(info, state.config.checkbox.checked))
         elseif capture == 'quote' then
             local quote_query = state.markdown_quote_query
             for nested_id, nested_node in quote_query:iter_captures(info.node, buf) do
@@ -40,33 +41,35 @@ M.render = function(namespace, root, buf)
                 local nested_info = ts.info(nested_node, buf)
                 logger.debug_node_info(nested_capture, nested_info)
                 if nested_capture == 'quote_marker' then
-                    M.render_quote_marker(namespace, buf, nested_info, info)
+                    list.add(marks, M.render_quote_marker(nested_info, info))
                 else
                     logger.unhandled_capture('markdown quote', nested_capture)
                 end
             end
         elseif capture == 'table' then
-            M.render_table(namespace, buf, info)
+            vim.list_extend(marks, M.render_table(buf, info))
         else
             logger.unhandled_capture('markdown', capture)
         end
     end
+    return marks
 end
 
 ---@private
----@param namespace integer
 ---@param buf integer
 ---@param info render.md.NodeInfo
-M.render_heading = function(namespace, buf, info)
+---@return render.md.Mark[]
+M.render_heading = function(buf, info)
     local heading = state.config.heading
     if not heading.enabled then
-        return
+        return {}
     end
-    local level = str.width(info.text)
+    local marks = {}
 
+    local level = str.width(info.text)
+    local foreground = list.clamp(heading.foregrounds, level)
     local icon = list.cycle(heading.icons, level)
     local background = list.clamp(heading.backgrounds, level)
-    local foreground = list.clamp(heading.foregrounds, level)
 
     -- Available width is level + 1 - concealed, where level = number of `#` characters, one
     -- is added to account for the space after the last `#` but before the heading title,
@@ -75,135 +78,192 @@ M.render_heading = function(namespace, buf, info)
     if padding < 0 then
         -- Requires inline extmarks to place when there is not enough space available
         if util.has_10 then
-            vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-                end_row = info.end_row,
-                end_col = info.end_col,
-                virt_text = { { icon, { foreground, background } } },
-                virt_text_pos = 'inline',
-                conceal = '',
-            })
+            ---@type render.md.Mark
+            local icon_mark = {
+                conceal = true,
+                start_row = info.start_row,
+                start_col = info.start_col,
+                opts = {
+                    end_row = info.end_row,
+                    end_col = info.end_col,
+                    virt_text = { { icon, { foreground, background } } },
+                    virt_text_pos = 'inline',
+                    conceal = '',
+                },
+            }
+            list.add(marks, icon_mark)
         end
     else
-        vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-            end_row = info.end_row,
-            end_col = info.end_col,
-            virt_text = { { str.pad(icon, padding), { foreground, background } } },
-            virt_text_pos = 'overlay',
-        })
+        ---@type render.md.Mark
+        local icon_mark = {
+            conceal = true,
+            start_row = info.start_row,
+            start_col = info.start_col,
+            opts = {
+                end_row = info.end_row,
+                end_col = info.end_col,
+                virt_text = { { str.pad(icon, padding), { foreground, background } } },
+                virt_text_pos = 'overlay',
+            },
+        }
+        list.add(marks, icon_mark)
     end
-    vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, 0, {
-        end_row = info.end_row + 1,
-        end_col = 0,
-        hl_group = background,
-        hl_eol = true,
-    })
-
+    ---@type render.md.Mark
+    local background_mark = {
+        conceal = true,
+        start_row = info.start_row,
+        start_col = 0,
+        opts = {
+            end_row = info.end_row + 1,
+            end_col = 0,
+            hl_group = background,
+            hl_eol = true,
+        },
+    }
+    list.add(marks, background_mark)
     if heading.sign then
-        M.render_sign(namespace, buf, info, list.cycle(heading.signs, level), foreground)
+        list.add(marks, M.render_sign(buf, info, list.cycle(heading.signs, level), foreground))
     end
+
+    return marks
 end
 
 ---@private
----@param namespace integer
 ---@param buf integer
 ---@param info render.md.NodeInfo
-M.render_dash = function(namespace, buf, info)
+---@return render.md.Mark?
+M.render_dash = function(buf, info)
     local dash = state.config.dash
     if not dash.enabled then
-        return
+        return nil
     end
-    vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, 0, {
-        virt_text = { { dash.icon:rep(util.get_width(buf)), dash.highlight } },
-        virt_text_pos = 'overlay',
-    })
+    ---@type render.md.Mark
+    return {
+        conceal = true,
+        start_row = info.start_row,
+        start_col = 0,
+        opts = {
+            virt_text = { { dash.icon:rep(util.get_width(buf)), dash.highlight } },
+            virt_text_pos = 'overlay',
+        },
+    }
 end
 
 ---@private
----@param namespace integer
 ---@param buf integer
 ---@param info render.md.NodeInfo
-M.render_code = function(namespace, buf, info)
+---@return render.md.Mark[]
+M.render_code = function(buf, info)
     local code = state.config.code
     if not code.enabled or code.style == 'none' then
-        return
+        return {}
     end
-    local did_render_language = false
+    local marks = {}
     local code_info = ts.child(buf, info, 'info_string', info.start_row)
     if code_info ~= nil then
         local language_info = ts.child(buf, code_info, 'language', code_info.start_row)
         if language_info ~= nil then
-            did_render_language = M.render_language(namespace, buf, language_info, info)
+            vim.list_extend(marks, M.render_language(buf, language_info, info))
         end
     end
     if not vim.tbl_contains({ 'normal', 'full' }, code.style) then
-        return
+        return marks
     end
     local start_row = info.start_row
     local end_row = info.end_row
     -- Do not attempt to render single line code block
     if start_row == end_row - 1 then
-        return
+        return marks
     end
     if code.border == 'thin' then
         local code_start = ts.child(buf, info, 'fenced_code_block_delimiter', info.start_row)
-        local code_end = ts.child(buf, info, 'fenced_code_block_delimiter', info.end_row - 1)
-        if not did_render_language and ts.hidden(buf, code_info) and ts.hidden(buf, code_start) then
+        if #marks == 0 and ts.hidden(buf, code_info) and ts.hidden(buf, code_start) then
             start_row = start_row + 1
-            vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-                virt_text = { { code.above:rep(util.get_width(buf)), colors.inverse(code.highlight) } },
-                virt_text_pos = 'overlay',
-            })
+            ---@type render.md.Mark
+            local start_mark = {
+                conceal = true,
+                start_row = info.start_row,
+                start_col = info.start_col,
+                opts = {
+                    virt_text = { { code.above:rep(util.get_width(buf)), colors.inverse(code.highlight) } },
+                    virt_text_pos = 'overlay',
+                },
+            }
+            list.add(marks, start_mark)
         end
+        local code_end = ts.child(buf, info, 'fenced_code_block_delimiter', info.end_row - 1)
         if ts.hidden(buf, code_end) then
             end_row = end_row - 1
-            vim.api.nvim_buf_set_extmark(buf, namespace, info.end_row - 1, info.start_col, {
-                virt_text = { { code.below:rep(util.get_width(buf)), colors.inverse(code.highlight) } },
-                virt_text_pos = 'overlay',
-            })
+            ---@type render.md.Mark
+            local end_mark = {
+                conceal = true,
+                start_row = info.end_row - 1,
+                start_col = info.start_col,
+                opts = {
+                    virt_text = { { code.below:rep(util.get_width(buf)), colors.inverse(code.highlight) } },
+                    virt_text_pos = 'overlay',
+                },
+            }
+            list.add(marks, end_mark)
         end
     end
-    vim.api.nvim_buf_set_extmark(buf, namespace, start_row, 0, {
-        end_row = end_row,
-        end_col = 0,
-        hl_group = code.highlight,
-        hl_eol = true,
-    })
+    ---@type render.md.Mark
+    local background_mark = {
+        conceal = false,
+        start_row = start_row,
+        start_col = 0,
+        opts = {
+            end_row = end_row,
+            end_col = 0,
+            hl_group = code.highlight,
+            hl_eol = true,
+        },
+    }
+    list.add(marks, background_mark)
     -- Requires inline extmarks
     if not util.has_10 or code.left_pad <= 0 then
-        return
+        return marks
     end
     for row = start_row, end_row - 1 do
         -- Uses a low priority so other marks are loaded first and included in padding
-        vim.api.nvim_buf_set_extmark(buf, namespace, row, info.start_col, {
-            end_row = row + 1,
-            priority = 0,
-            virt_text = { { str.pad('', code.left_pad), code.highlight } },
-            virt_text_pos = 'inline',
-        })
+        ---@type render.md.Mark
+        local row_padding_mark = {
+            conceal = false,
+            start_row = row,
+            start_col = info.start_col,
+            opts = {
+                end_row = row + 1,
+                priority = 0,
+                virt_text = { { str.pad('', code.left_pad), code.highlight } },
+                virt_text_pos = 'inline',
+            },
+        }
+        list.add(marks, row_padding_mark)
     end
+    return marks
 end
 
 ---@private
----@param namespace integer
 ---@param buf integer
 ---@param info render.md.NodeInfo
 ---@param code_block render.md.NodeInfo
----@return boolean
-M.render_language = function(namespace, buf, info, code_block)
+---@return render.md.Mark[]
+M.render_language = function(buf, info, code_block)
     local code = state.config.code
     if not vim.tbl_contains({ 'language', 'full' }, code.style) then
-        return false
+        return {}
     end
     local icon, icon_highlight = icons.get(info.text)
     if icon == nil or icon_highlight == nil then
-        return false
+        return {}
     end
+    local marks = {}
     if code.sign then
-        M.render_sign(namespace, buf, info, icon, icon_highlight)
+        list.add(marks, M.render_sign(buf, info, icon, icon_highlight))
     end
     -- Requires inline extmarks
     if not util.has_10 then
-        return false
+        return marks
     end
     local icon_text = icon .. ' '
     if ts.hidden(buf, info) then
@@ -217,18 +277,25 @@ M.render_language = function(namespace, buf, info, code_block)
     if code.style == 'full' then
         highlight = { icon_highlight, code.highlight }
     end
-    vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-        virt_text = { { icon_text, highlight } },
-        virt_text_pos = 'inline',
-    })
-    return true
+    ---@type render.md.Mark
+    local language_marker = {
+        conceal = true,
+        start_row = info.start_row,
+        start_col = info.start_col,
+        opts = {
+            virt_text = { { icon_text, highlight } },
+            virt_text_pos = 'inline',
+        },
+    }
+    list.add(marks, language_marker)
+    return marks
 end
 
 ---@private
----@param namespace integer
 ---@param buf integer
 ---@param info render.md.NodeInfo
-M.render_list_marker = function(namespace, buf, info)
+---@return render.md.Mark?
+M.render_list_marker = function(buf, info)
     ---@return boolean
     local function sibling_checkbox()
         if not state.config.checkbox.enabled then
@@ -246,18 +313,23 @@ M.render_list_marker = function(namespace, buf, info)
         end
         return component.checkbox(paragraph.text, 'starts') ~= nil
     end
-
     if sibling_checkbox() then
         -- Hide the list marker for checkboxes rather than replacing with a bullet point
-        vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-            end_row = info.end_row,
-            end_col = info.end_col,
-            conceal = '',
-        })
+        ---@type render.md.Mark
+        return {
+            conceal = true,
+            start_row = info.start_row,
+            start_col = info.start_col,
+            opts = {
+                end_row = info.end_row,
+                end_col = info.end_col,
+                conceal = '',
+            },
+        }
     else
         local bullet = state.config.bullet
         if not bullet.enabled then
-            return
+            return nil
         end
         -- List markers from tree-sitter should have leading spaces removed, however there are known
         -- edge cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
@@ -265,87 +337,111 @@ M.render_list_marker = function(namespace, buf, info)
         local leading_spaces = str.leading_spaces(info.text)
         local level = ts.level_in_section(info, 'list')
         local icon = list.cycle(bullet.icons, level)
-        vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-            end_row = info.end_row,
-            end_col = info.end_col,
-            virt_text = { { str.pad(icon, leading_spaces), bullet.highlight } },
-            virt_text_pos = 'overlay',
-        })
+        ---@type render.md.Mark
+        return {
+            conceal = true,
+            start_row = info.start_row,
+            start_col = info.start_col,
+            opts = {
+                end_row = info.end_row,
+                end_col = info.end_col,
+                virt_text = { { str.pad(icon, leading_spaces), bullet.highlight } },
+                virt_text_pos = 'overlay',
+            },
+        }
     end
 end
 
 ---@private
----@param namespace integer
----@param buf integer
 ---@param info render.md.NodeInfo
 ---@param checkbox_state render.md.CheckboxComponent
-M.render_checkbox = function(namespace, buf, info, checkbox_state)
+---@return render.md.Mark?
+M.render_checkbox = function(info, checkbox_state)
     local checkbox = state.config.checkbox
     if not checkbox.enabled then
-        return
+        return nil
     end
-    vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-        end_row = info.end_row,
-        end_col = info.end_col,
-        virt_text = { { str.pad_to(info.text, checkbox_state.icon), checkbox_state.highlight } },
-        virt_text_pos = 'overlay',
-    })
+    ---@type render.md.Mark
+    return {
+        conceal = true,
+        start_row = info.start_row,
+        start_col = info.start_col,
+        opts = {
+            end_row = info.end_row,
+            end_col = info.end_col,
+            virt_text = { { str.pad_to(info.text, checkbox_state.icon), checkbox_state.highlight } },
+            virt_text_pos = 'overlay',
+        },
+    }
 end
 
 ---@private
----@param namespace integer
----@param buf integer
 ---@param info render.md.NodeInfo
 ---@param block_quote render.md.NodeInfo
-M.render_quote_marker = function(namespace, buf, info, block_quote)
+---@return render.md.Mark?
+M.render_quote_marker = function(info, block_quote)
     local quote = state.config.quote
     if not quote.enabled then
-        return
+        return nil
     end
     local highlight = quote.highlight
     local callout = component.callout(block_quote.text, 'contains')
     if callout ~= nil then
         highlight = callout.highlight
     end
-    vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-        end_row = info.end_row,
-        end_col = info.end_col,
-        virt_text = { { info.text:gsub('>', quote.icon), highlight } },
-        virt_text_pos = 'overlay',
-    })
+    ---@type render.md.Mark
+    return {
+        conceal = true,
+        start_row = info.start_row,
+        start_col = info.start_col,
+        opts = {
+            end_row = info.end_row,
+            end_col = info.end_col,
+            virt_text = { { info.text:gsub('>', quote.icon), highlight } },
+            virt_text_pos = 'overlay',
+        },
+    }
 end
 
 ---@private
----@param namespace integer
 ---@param buf integer
 ---@param info render.md.NodeInfo
 ---@param text string
 ---@param highlight string
-M.render_sign = function(namespace, buf, info, text, highlight)
+---@return render.md.Mark?
+M.render_sign = function(buf, info, text, highlight)
     local sign = state.config.sign
     if not sign.enabled then
-        return
+        return nil
     end
     if vim.tbl_contains(sign.exclude.buftypes, util.get_buftype(buf)) then
-        return
+        return nil
     end
-    vim.api.nvim_buf_set_extmark(buf, namespace, info.start_row, info.start_col, {
-        end_row = info.end_row,
-        end_col = info.end_col,
-        sign_text = text,
-        sign_hl_group = colors.combine(highlight, sign.highlight),
-    })
+    ---@type render.md.Mark
+    return {
+        conceal = false,
+        start_row = info.start_row,
+        start_col = info.start_col,
+        opts = {
+            end_row = info.end_row,
+            end_col = info.end_col,
+            sign_text = text,
+            sign_hl_group = colors.combine(highlight, sign.highlight),
+        },
+    }
 end
 
 ---@private
----@param namespace integer
 ---@param buf integer
 ---@param info render.md.NodeInfo
-M.render_table = function(namespace, buf, info)
+---@return render.md.Mark[]
+M.render_table = function(buf, info)
     local pipe_table = state.config.pipe_table
     if not pipe_table.enabled or pipe_table.style == 'none' then
-        return
+        return {}
     end
+    local marks = {}
+
     local delim = nil
     local first = nil
     local last = nil
@@ -353,29 +449,30 @@ M.render_table = function(namespace, buf, info)
         local row = ts.info(row_node, buf)
         if row.type == 'pipe_table_delimiter_row' then
             delim = row
-            M.render_table_delimiter(namespace, buf, row)
+            list.add(marks, M.render_table_delimiter(row))
         elseif row.type == 'pipe_table_header' then
             first = row
-            M.render_table_row(namespace, buf, row, pipe_table.head)
+            vim.list_extend(marks, M.render_table_row(buf, row, pipe_table.head))
         elseif row.type == 'pipe_table_row' then
             if last == nil or row.start_row > last.start_row then
                 last = row
             end
-            M.render_table_row(namespace, buf, row, pipe_table.row)
+            vim.list_extend(marks, M.render_table_row(buf, row, pipe_table.row))
         else
             logger.unhandled_type('markdown', 'row', row.type)
         end
     end
     if pipe_table.style == 'full' then
-        M.render_table_full(namespace, buf, delim, first, last)
+        vim.list_extend(marks, M.render_table_full(buf, delim, first, last))
     end
+
+    return marks
 end
 
 ---@private
----@param namespace integer
----@param buf integer
 ---@param row render.md.NodeInfo
-M.render_table_delimiter = function(namespace, buf, row)
+---@return render.md.Mark
+M.render_table_delimiter = function(row)
     local pipe_table = state.config.pipe_table
     local border = pipe_table.border
     -- Order matters here, in particular handling inner intersections before left & right
@@ -385,40 +482,61 @@ M.render_table_delimiter = function(namespace, buf, row)
         :gsub('|%-', border[4] .. border[11])
         :gsub('%-|', border[11] .. border[6])
         :gsub('%-', border[11])
-    vim.api.nvim_buf_set_extmark(buf, namespace, row.start_row, row.start_col, {
-        end_row = row.end_row,
-        end_col = row.end_col,
-        virt_text = { { delimiter, pipe_table.head } },
-        virt_text_pos = 'overlay',
-    })
+    ---@type render.md.Mark
+    return {
+        conceal = true,
+        start_row = row.start_row,
+        start_col = row.start_col,
+        opts = {
+            end_row = row.end_row,
+            end_col = row.end_col,
+            virt_text = { { delimiter, pipe_table.head } },
+            virt_text_pos = 'overlay',
+        },
+    }
 end
 
 ---@private
----@param namespace integer
 ---@param buf integer
 ---@param row render.md.NodeInfo
 ---@param highlight string
-M.render_table_row = function(namespace, buf, row, highlight)
+---@return render.md.Mark
+M.render_table_row = function(buf, row, highlight)
     local pipe_table = state.config.pipe_table
+    local marks = {}
     if vim.tbl_contains({ 'raw', 'padded' }, pipe_table.cell) then
         for cell_node in row.node:iter_children() do
             local cell = ts.info(cell_node, buf)
             if cell.type == '|' then
-                vim.api.nvim_buf_set_extmark(buf, namespace, cell.start_row, cell.start_col, {
-                    end_row = cell.end_row,
-                    end_col = cell.end_col,
-                    virt_text = { { pipe_table.border[10], highlight } },
-                    virt_text_pos = 'overlay',
-                })
+                ---@type render.md.Mark
+                local pipe_mark = {
+                    conceal = true,
+                    start_row = cell.start_row,
+                    start_col = cell.start_col,
+                    opts = {
+                        end_row = cell.end_row,
+                        end_col = cell.end_col,
+                        virt_text = { { pipe_table.border[10], highlight } },
+                        virt_text_pos = 'overlay',
+                    },
+                }
+                list.add(marks, pipe_mark)
             elseif cell.type == 'pipe_table_cell' then
                 -- Requires inline extmarks
                 if pipe_table.cell == 'padded' and util.has_10 then
                     local offset = M.table_visual_offset(buf, cell)
                     if offset > 0 then
-                        vim.api.nvim_buf_set_extmark(buf, namespace, cell.start_row, cell.end_col - 1, {
-                            virt_text = { { str.pad('', offset), pipe_table.filler } },
-                            virt_text_pos = 'inline',
-                        })
+                        ---@type render.md.Mark
+                        local padding_mark = {
+                            conceal = true,
+                            start_row = cell.start_row,
+                            start_col = cell.end_col - 1,
+                            opts = {
+                                virt_text = { { str.pad('', offset), pipe_table.filler } },
+                                virt_text_pos = 'inline',
+                            },
+                        }
+                        list.add(marks, padding_mark)
                     end
                 end
             else
@@ -426,26 +544,34 @@ M.render_table_row = function(namespace, buf, row, highlight)
             end
         end
     elseif pipe_table.cell == 'overlay' then
-        vim.api.nvim_buf_set_extmark(buf, namespace, row.start_row, row.start_col, {
-            end_row = row.end_row,
-            end_col = row.end_col,
-            virt_text = { { row.text:gsub('|', pipe_table.border[10]), highlight } },
-            virt_text_pos = 'overlay',
-        })
+        ---@type render.md.Mark
+        local overlay_mark = {
+            conceal = true,
+            start_row = row.start_row,
+            start_col = row.start_col,
+            opts = {
+                end_row = row.end_row,
+                end_col = row.end_col,
+                virt_text = { { row.text:gsub('|', pipe_table.border[10]), highlight } },
+                virt_text_pos = 'overlay',
+            },
+        }
+        list.add(marks, overlay_mark)
     end
+    return marks
 end
 
 ---@private
----@param namespace integer
 ---@param buf integer
 ---@param delim? render.md.NodeInfo
 ---@param first? render.md.NodeInfo
 ---@param last? render.md.NodeInfo
-M.render_table_full = function(namespace, buf, delim, first, last)
+---@return render.md.Mark[]
+M.render_table_full = function(buf, delim, first, last)
     local pipe_table = state.config.pipe_table
     local border = pipe_table.border
     if delim == nil or first == nil or last == nil then
-        return
+        return {}
     end
 
     ---@param info render.md.NodeInfo
@@ -463,7 +589,7 @@ M.render_table_full = function(namespace, buf, delim, first, last)
     -- Do not need to account for concealed / inlined text on delimiter row
     local delim_width = str.width(delim.text)
     if delim_width ~= width(first) or delim_width ~= width(last) then
-        return
+        return {}
     end
 
     local headings = vim.split(delim.text, '|', { plain = true, trimempty = true })
@@ -472,16 +598,30 @@ M.render_table_full = function(namespace, buf, delim, first, last)
     end, headings)
 
     local line_above = border[1] .. table.concat(lengths, border[2]) .. border[3]
-    vim.api.nvim_buf_set_extmark(buf, namespace, first.start_row, first.start_col, {
-        virt_lines_above = true,
-        virt_lines = { { { line_above, pipe_table.head } } },
-    })
+    ---@type render.md.Mark
+    local above_mark = {
+        conceal = false,
+        start_row = first.start_row,
+        start_col = first.start_col,
+        opts = {
+            virt_lines_above = true,
+            virt_lines = { { { line_above, pipe_table.head } } },
+        },
+    }
 
     local line_below = border[7] .. table.concat(lengths, border[8]) .. border[9]
-    vim.api.nvim_buf_set_extmark(buf, namespace, last.start_row, last.start_col, {
-        virt_lines_above = false,
-        virt_lines = { { { line_below, pipe_table.row } } },
-    })
+    ---@type render.md.Mark
+    local below_mark = {
+        conceal = false,
+        start_row = last.start_row,
+        start_col = last.start_col,
+        opts = {
+            virt_lines_above = false,
+            virt_lines = { { { line_below, pipe_table.row } } },
+        },
+    }
+
+    return { above_mark, below_mark }
 end
 
 ---@private

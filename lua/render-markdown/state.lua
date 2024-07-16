@@ -71,6 +71,7 @@ function state.validate()
         file_types = string_array(config.file_types),
         render_modes = string_array(config.render_modes),
         exclude = { config.exclude, 'table' },
+        anti_conceal = { config.anti_conceal, 'table' },
         latex = { config.latex, 'table' },
         heading = { config.heading, 'table' },
         code = { config.code, 'table' },
@@ -89,6 +90,11 @@ function state.validate()
     local exclude = config.exclude
     append_errors('render-markdown.exclude', exclude, {
         buftypes = string_array(exclude.buftypes),
+    })
+
+    local anti_conceal = config.anti_conceal
+    append_errors('render-markdown.anti_conceal', anti_conceal, {
+        enabled = { anti_conceal.enabled, 'boolean' },
     })
 
     local latex = config.latex
@@ -213,7 +219,7 @@ function state.validate()
 
     for name, handler in pairs(config.custom_handlers) do
         append_errors('render-markdown.custom_handlers.' .. name, handler, {
-            render = { handler.render, 'function' },
+            parse = { handler.parse, 'function' },
             extends = { handler.extends, 'boolean', true },
         })
     end
