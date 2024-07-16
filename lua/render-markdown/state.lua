@@ -113,6 +113,7 @@ function state.validate()
         enabled = { code.enabled, 'boolean' },
         sign = { code.sign, 'boolean' },
         style = one_of(code.style, { 'full', 'normal', 'language', 'none' }),
+        left_pad = { code.left_pad, 'number' },
         border = one_of(code.border, { 'thin', 'thick' }),
         above = { code.above, 'string' },
         below = { code.below, 'string' },

@@ -14,16 +14,16 @@ async_tests.describe('table.md', function()
             util.table_border(2, 'above', { 11, 24 }),
             util.table_pipe(2, 12, true), -- Heading pipe 2
             util.inline_code(2, 14, 25), -- Inline code in heading
-            util.table_padding(2, 37, 2), -- Heading padding 2
+            util.table_padding(2, 36, 2), -- Heading padding 2
             util.table_pipe(2, 37, true), -- Heading pipe 3
             util.table_border(3, 'delimiter', { 11, 24 }),
             util.table_pipe(4, 0, false), -- Row pipe 1
             util.table_border(4, 'below', { 11, 24 }),
             util.inline_code(4, 2, 12), -- Row inline code
-            util.table_padding(4, 13, 2), -- Row padding 1
+            util.table_padding(4, 12, 2), -- Row padding 1
             util.table_pipe(4, 13, false), -- Row pipe 2
             util.link(4, 15, 38, false), -- Row link
-            util.table_padding(4, 39, 16), -- Row padding 2
+            util.table_padding(4, 38, 16), -- Row padding 2
             util.table_pipe(4, 39, false), -- Row pipe 3
         })
 

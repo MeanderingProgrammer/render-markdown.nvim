@@ -60,6 +60,7 @@ local M = {}
 ---@field public enabled? boolean
 ---@field public sign? boolean
 ---@field public style? 'full'|'normal'|'language'|'none'
+---@field public left_pad? integer
 ---@field public border? 'thin'|'thick'
 ---@field public above? string
 ---@field public below? string
@@ -212,10 +213,12 @@ M.default_config = {
         sign = true,
         -- Determines how code blocks & inline code are rendered:
         --  none: disables all rendering
-        --  normal: adds highlight group to code blocks & inline code
+        --  normal: adds highlight group to code blocks & inline code, adds padding to code blocks
         --  language: adds language icon to sign column if enabled and icon + name above code blocks
         --  full: normal + language
         style = 'full',
+        -- Amount of padding to add to the left of code blocks
+        left_pad = 0,
         -- Determins how the top / bottom of code block are rendered:
         --  thick: use the same highlight as the code body
         --  thin: when lines are empty overlay the above & below icons

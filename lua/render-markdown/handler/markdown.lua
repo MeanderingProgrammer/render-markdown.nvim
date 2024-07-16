@@ -168,6 +168,19 @@ M.render_code = function(namespace, buf, info)
         hl_group = code.highlight,
         hl_eol = true,
     })
+    -- Requires inline extmarks
+    if not util.has_10 or code.left_pad <= 0 then
+        return
+    end
+    for row = start_row, end_row - 1 do
+        -- Uses a low priority so other marks are loaded first and included in padding
+        vim.api.nvim_buf_set_extmark(buf, namespace, row, info.start_col, {
+            end_row = row + 1,
+            priority = 0,
+            virt_text = { { str.pad('', code.left_pad), code.highlight } },
+            virt_text_pos = 'inline',
+        })
+    end
 end
 
 ---@private
@@ -402,7 +415,7 @@ M.render_table_row = function(namespace, buf, row, highlight)
                 if pipe_table.cell == 'padded' and util.has_10 then
                     local offset = M.table_visual_offset(buf, cell)
                     if offset > 0 then
-                        vim.api.nvim_buf_set_extmark(buf, namespace, cell.start_row, cell.end_col, {
+                        vim.api.nvim_buf_set_extmark(buf, namespace, cell.start_row, cell.end_col - 1, {
                             virt_text = { { str.pad('', offset), pipe_table.filler } },
                             virt_text_pos = 'inline',
                         })

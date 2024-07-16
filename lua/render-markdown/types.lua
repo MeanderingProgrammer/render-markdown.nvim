@@ -53,6 +53,7 @@
 ---@field public enabled boolean
 ---@field public sign boolean
 ---@field public style 'full'|'normal'|'language'|'none'
+---@field public left_pad integer
 ---@field public border 'thin'|'thick'
 ---@field public above string
 ---@field public below string

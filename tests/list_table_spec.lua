@@ -31,22 +31,22 @@ async_tests.describe('list_table.md', function()
             util.table_pipe(19, 0, true), -- Heading pipe 1
             util.table_border(19, 'above', { 18, 20 }),
             util.inline_code(19, 2, 18), -- Inline code in heading
-            util.table_padding(19, 19, 2), -- Heading padding 1
+            util.table_padding(19, 18, 2), -- Heading padding 1
             util.table_pipe(19, 19, true), -- Heading pipe 2
-            util.table_padding(19, 40, 2), -- Heading padding 2
+            util.table_padding(19, 39, 2), -- Heading padding 2
             util.table_pipe(19, 40, true), -- Heading pipe 2
             util.table_border(20, 'delimiter', { 18, 20 }),
             util.table_pipe(21, 0, false), -- Row 1 pipe 1
             util.table_pipe(21, 19, false), -- Row 1 pipe 2
-            util.table_padding(21, 40, 4), -- Row 1 padding 2
+            util.table_padding(21, 39, 4), -- Row 1 padding 2
             util.table_pipe(21, 40, false), -- Row 1 pipe 3
             util.table_pipe(22, 0, false), -- Row 2 pipe 1
             util.table_border(22, 'below', { 18, 20 }),
             util.inline_code(22, 2, 15), -- Row 2 inline code
-            util.table_padding(22, 19, 2), -- Row 2 padding 1
+            util.table_padding(22, 18, 2), -- Row 2 padding 1
             util.table_pipe(22, 19, false), -- Row 2 pipe 2
             util.link(22, 21, 39, false), -- Row 2 link
-            util.table_padding(22, 40, 7), -- Row 2 padding 2
+            util.table_padding(22, 39, 7), -- Row 2 padding 2
             util.table_pipe(22, 40, false), -- Row 2 pipe 3
         })
 

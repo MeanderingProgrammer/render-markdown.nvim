@@ -19,8 +19,8 @@ Plugin to improve viewing Markdown files in Neovim
   - Headings: highlight depending on level and replaces `#` with icon
   - Horizontal breaks: replace with full-width lines
   - Code blocks: highlight to better stand out
-    - Adds language icon, requires icon provider (`mini.icons` or `nvim-web-devicons`)
-      and neovim >= `0.10.0`
+    - Adds language icon [^1], requires icon provider (`mini.icons` or `nvim-web-devicons`)
+    - Left pad lines within block [^1]
   - Inline code: highlight to better stand out
   - List bullet points: replace with provided icon based on level
   - Checkboxes: replace with provided icon based on whether they are checked
@@ -28,11 +28,13 @@ Plugin to improve viewing Markdown files in Neovim
   - Tables: replace border characters, does NOT automatically align
   - [Callouts](https://github.com/orgs/community/discussions/16925)
     - Github & Obsidian out of the box, supports user defined as well
-  - Custom checkbox states, function similar to `callouts`
-  - Adds icon before images / links, requires neovim >= `0.10.0`
+  - Custom checkbox states [^1], function similar to `callouts`
+  - Adds icon before images / links [^1]
   - `LaTeX` blocks: renders formulas if `latex` parser and `pylatexenc` are installed
 - Disable rendering when file is larger than provided value
 - Support custom handlers which are ran identically to builtin handlers
+
+[^1]: Requires neovim >= `0.10.0`
 
 # Requirements
 
@@ -206,10 +208,12 @@ require('render-markdown').setup({
         sign = true,
         -- Determines how code blocks & inline code are rendered:
         --  none: disables all rendering
-        --  normal: adds highlight group to code blocks & inline code
+        --  normal: adds highlight group to code blocks & inline code, adds padding to code blocks
         --  language: adds language icon to sign column if enabled and icon + name above code blocks
         --  full: normal + language
         style = 'full',
+        -- Amount of padding to add to the left of code blocks
+        left_pad = 0,
         -- Determins how the top / bottom of code block are rendered:
         --  thick: use the same highlight as the code body
         --  thin: when lines are empty overlay the above & below icons
@@ -426,10 +430,12 @@ require('render-markdown').setup({
         sign = true,
         -- Determines how code blocks & inline code are rendered:
         --  none: disables all rendering
-        --  normal: adds highlight group to code blocks & inline code
+        --  normal: adds highlight group to code blocks & inline code, adds padding to code blocks
         --  language: adds language icon to sign column if enabled and icon + name above code blocks
         --  full: normal + language
         style = 'full',
+        -- Amount of padding to add to the left of code blocks
+        left_pad = 0,
         -- Determins how the top / bottom of code block are rendered:
         --  thick: use the same highlight as the code body
         --  thin: when lines are empty overlay the above & below icons
