@@ -4,6 +4,9 @@ local state = require('render-markdown.state')
 local M = {}
 
 function M.check()
+    vim.health.start('markdown.nvim [neovim version]')
+    M.version('0.9', '0.10')
+
     vim.health.start('markdown.nvim [configuration]')
     local errors = state.validate()
     if #errors == 0 then
@@ -42,6 +45,18 @@ function M.check()
         M.check_executable(latex.converter, latex_advice)
     else
         vim.health.ok('none to check')
+    end
+end
+
+---@param minimum string
+---@param recommended string
+function M.version(minimum, recommended)
+    if vim.fn.has('nvim-' .. minimum) == 0 then
+        vim.health.error('Version < ' .. minimum)
+    elseif vim.fn.has('nvim-' .. recommended) == 0 then
+        vim.health.warn('Version < ' .. recommended .. ' some features will not work')
+    else
+        vim.health.ok('Version >= ' .. recommended)
     end
 end
 

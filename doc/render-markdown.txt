@@ -5,7 +5,7 @@ Table of Contents                          *render-markdown-table-of-contents*
 
 1. markdown.nvim                               |render-markdown-markdown.nvim|
 2. Features                                         |render-markdown-features|
-3. Dependencies                                 |render-markdown-dependencies|
+3. Requirements                                 |render-markdown-requirements|
 4. Install                                           |render-markdown-install|
   - lazy.nvim                              |render-markdown-install-lazy.nvim|
   - packer.nvim                          |render-markdown-install-packer.nvim|
@@ -65,8 +65,9 @@ Plugin to improve viewing Markdown files in Neovim
 
 
 ==============================================================================
-3. Dependencies                                 *render-markdown-dependencies*
+3. Requirements                                 *render-markdown-requirements*
 
+- neovim `>= 0.9.0` (minimum) `>= 0.10.0` (recommended)
 - treesitter <https://github.com/nvim-treesitter/nvim-treesitter> parsers:
     - markdown & markdown_inline <https://github.com/tree-sitter-grammars/tree-sitter-markdown>:
         Used to parse `markdown` files

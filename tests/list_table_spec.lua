@@ -7,10 +7,8 @@ async_tests.describe('list_table.md', function()
 
         local expected = {}
 
-        -- Unordered list heading
-        vim.list_extend(expected, util.heading(0, 1))
-
         -- Unordered list
+        vim.list_extend(expected, util.heading(0, 1))
         vim.list_extend(expected, {
             util.bullet(2, 0, 1), -- List Item 1
             util.link(2, 20, 47, false), -- List Item 1, link
@@ -24,32 +22,26 @@ async_tests.describe('list_table.md', function()
             util.bullet(9, 0, 1), -- List Item 3
         })
 
-        -- Ordered list heading
+        -- Ordered list
         vim.list_extend(expected, util.heading(11, 1))
 
-        -- Table heading
+        -- Table
         vim.list_extend(expected, util.heading(17, 1))
-
-        local table_outline = {
-            '┌──────────────────┬────────────────────┐',
-            '├──────────────────┼────────────────────┤',
-            '└──────────────────┴────────────────────┘',
-        }
         vim.list_extend(expected, {
             util.table_pipe(19, 0, true), -- Heading pipe 1
-            util.table_border(19, table_outline[1], true), -- Above
+            util.table_border(19, 'above', { 18, 20 }),
             util.inline_code(19, 2, 18), -- Inline code in heading
             util.table_padding(19, 19, 2), -- Heading padding 1
             util.table_pipe(19, 19, true), -- Heading pipe 2
             util.table_padding(19, 40, 2), -- Heading padding 2
             util.table_pipe(19, 40, true), -- Heading pipe 2
-            util.table_row(20, 41, table_outline[2], true), -- Delimiter
+            util.table_border(20, 'delimiter', { 18, 20 }),
             util.table_pipe(21, 0, false), -- Row 1 pipe 1
             util.table_pipe(21, 19, false), -- Row 1 pipe 2
             util.table_padding(21, 40, 4), -- Row 1 padding 2
             util.table_pipe(21, 40, false), -- Row 1 pipe 3
             util.table_pipe(22, 0, false), -- Row 2 pipe 1
-            util.table_border(22, table_outline[3], false), -- Below
+            util.table_border(22, 'below', { 18, 20 }),
             util.inline_code(22, 2, 15), -- Row 2 inline code
             util.table_padding(22, 19, 2), -- Row 2 padding 1
             util.table_pipe(22, 19, false), -- Row 2 pipe 2

@@ -231,20 +231,43 @@ M.table_padding = function(row, col, spaces)
 end
 
 ---@param row integer
----@param value string
----@param head boolean
+---@param section 'above'|'delimiter'|'below'
+---@param lengths integer[]
 ---@return render.md.MarkInfo
-M.table_border = function(row, value, head)
-    local highlight = 'Normal'
-    if head then
+M.table_border = function(row, section, lengths)
+    local border
+    local highlight
+    if section == 'above' then
+        border = { '┌', '┬', '┐' }
         highlight = '@markup.heading'
+    elseif section == 'delimiter' then
+        border = { '├', '┼', '┤' }
+        highlight = '@markup.heading'
+    elseif section == 'below' then
+        border = { '└', '┴', '┘' }
+        highlight = 'Normal'
     end
-    return {
-        row = { row },
-        col = { 0 },
-        virt_lines = { { { value, highlight } } },
-        virt_lines_above = head,
-    }
+
+    local parts = vim.tbl_map(function(length)
+        return string.rep('─', length)
+    end, lengths)
+    local value = border[1] .. table.concat(parts, border[2]) .. border[3]
+
+    if vim.tbl_contains({ 'above', 'below' }, section) then
+        return {
+            row = { row },
+            col = { 0 },
+            virt_lines = { { { value, highlight } } },
+            virt_lines_above = section == 'above',
+        }
+    else
+        return {
+            row = { row, row },
+            col = { 0, vim.fn.strdisplaywidth(value) },
+            virt_text = { { value, highlight } },
+            virt_text_pos = 'overlay',
+        }
+    end
 end
 
 ---@param row integer

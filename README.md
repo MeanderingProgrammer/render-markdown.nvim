@@ -34,8 +34,9 @@ Plugin to improve viewing Markdown files in Neovim
 - Disable rendering when file is larger than provided value
 - Support custom handlers which are ran identically to builtin handlers
 
-# Dependencies
+# Requirements
 
+- neovim `>= 0.9.0` (minimum) `>= 0.10.0` (recommended)
 - [treesitter](https://github.com/nvim-treesitter/nvim-treesitter) parsers:
   - [markdown & markdown_inline](https://github.com/tree-sitter-grammars/tree-sitter-markdown):
     Used to parse `markdown` files
