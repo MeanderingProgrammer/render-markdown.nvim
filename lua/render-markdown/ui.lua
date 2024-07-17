@@ -79,12 +79,15 @@ M.refresh = function(buf, mode, parse)
 
     -- Render marks based on anti-conceal behavior and current row
     local row = vim.api.nvim_win_get_cursor(util.buf_to_win(buf))[1] - 1
-    for _, mark in ipairs(cache.marks[buf]) do
-        if not state.config.anti_conceal.enabled or not mark.conceal or mark.start_row ~= row then
-            -- Only ensure strictness if the buffer was parsed this request
-            -- The order of events can cause our cache to be stale
-            mark.opts.strict = parse
-            vim.api.nvim_buf_set_extmark(buf, M.namespace, mark.start_row, mark.start_col, mark.opts)
+    local marks = cache.marks[buf]
+    if marks then
+        for _, mark in ipairs(cache.marks[buf]) do
+            if not state.config.anti_conceal.enabled or not mark.conceal or mark.start_row ~= row then
+                -- Only ensure strictness if the buffer was parsed this request
+                -- The order of events can cause our cache to be stale
+                mark.opts.strict = parse
+                vim.api.nvim_buf_set_extmark(buf, M.namespace, mark.start_row, mark.start_col, mark.opts)
+            end
         end
     end
 end
