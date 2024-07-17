@@ -65,8 +65,8 @@ M.refresh = function(buf, mode, parse)
     end
 
     -- Re compute marks, needed in-between text changes
-    local parser = vim.treesitter.get_parser(buf)
     if parse then
+        local parser = vim.treesitter.get_parser(buf)
         -- Make sure injections are processed
         parser:parse(true)
         -- Parse and cache marks
@@ -125,10 +125,12 @@ M.parse = function(buf, language, root)
     if user_handler ~= nil then
         logger.debug('Running user handler')
         -- TODO: remove call to render & parse nil check
+        ---@diagnostic disable-next-line: undefined-field
         if user_handler.render ~= nil then
             local message = 'markdown.nvim: custom_handlers render is deprecated use parse instead'
             message = message .. ', will be fully removed on 2024-08-19'
             vim.notify_once(message, vim.log.levels.ERROR)
+            ---@diagnostic disable-next-line: undefined-field
             user_handler.render(M.namespace, root, buf)
         end
         if user_handler.parse ~= nil then
