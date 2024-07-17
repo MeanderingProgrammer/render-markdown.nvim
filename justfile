@@ -1,5 +1,7 @@
 init := "tests/minimal.lua"
 
+default: update test health
+
 test:
   nvim --headless --noplugin -u {{init}} \
     -c "PlenaryBustedDirectory tests { minimal_init = '{{init}}', sequential=true }"

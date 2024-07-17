@@ -64,13 +64,14 @@ M.refresh = function(buf, mode, parse)
         util.set_win_option(win, name, value.rendered)
     end
 
-    -- Re compute marks, needed in-between text changes
-    if parse then
-        local parser = vim.treesitter.get_parser(buf)
+    -- Re-compute marks, needed if missing or between text changes
+    local marks = cache.marks[buf]
+    if marks == nil or parse then
+        marks = {}
         -- Make sure injections are processed
+        local parser = vim.treesitter.get_parser(buf)
         parser:parse(true)
         -- Parse and cache marks
-        local marks = {}
         parser:for_each_tree(function(tree, language_tree)
             vim.list_extend(marks, M.parse(buf, language_tree:lang(), tree:root()))
         end)
@@ -79,15 +80,12 @@ M.refresh = function(buf, mode, parse)
 
     -- Render marks based on anti-conceal behavior and current row
     local row = vim.api.nvim_win_get_cursor(util.buf_to_win(buf))[1] - 1
-    local marks = cache.marks[buf]
-    if marks then
-        for _, mark in ipairs(cache.marks[buf]) do
-            if not state.config.anti_conceal.enabled or not mark.conceal or mark.start_row ~= row then
-                -- Only ensure strictness if the buffer was parsed this request
-                -- The order of events can cause our cache to be stale
-                mark.opts.strict = parse
-                vim.api.nvim_buf_set_extmark(buf, M.namespace, mark.start_row, mark.start_col, mark.opts)
-            end
+    for _, mark in ipairs(marks) do
+        if not state.config.anti_conceal.enabled or not mark.conceal or mark.start_row ~= row then
+            -- Only ensure strictness if the buffer was parsed this request
+            -- The order of events can cause our cache to be stale
+            mark.opts.strict = parse
+            vim.api.nvim_buf_set_extmark(buf, M.namespace, mark.start_row, mark.start_col, mark.opts)
         end
     end
 end
