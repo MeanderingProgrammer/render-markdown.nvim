@@ -678,20 +678,14 @@ The table below shows all the highlight groups with their default link
 | RenderMarkdownWarn      | DiagnosticWarn                     | Warning related callouts  |
 | RenderMarkdownError     | DiagnosticError                    | Error related callouts    |
 
-# Additional Info
+# Info
 
-- [Limitations](doc/limitations.md): Known limitations of this plugin
-- [Custom Handlers](doc/custom-handlers.md): Allow users to integrate custom rendering
-  for either unsupported languages or to override / extend builtin implementations
-- [Troubleshooting Guide](doc/troubleshooting.md)
-- [Purpose](doc/purpose.md): Why this plugin exists
-- [Markdown Ecosystem](doc/markdown-ecosystem.md): Information about other `markdown`
-  related plugins and how they co-exist
+## vimwiki
 
 > [!NOTE]
 >
-> If you use [vimwiki](https://github.com/vimwiki/vimwiki), because it overrides
-> the `filetype` of `markdown` files there are additional setup steps.
+> [vimwiki](https://github.com/vimwiki/vimwiki) overrides the `filetype` of
+> `markdown` files, as such there are additional setup steps.
 >
 > - Add `vimwiki` to the `file_types` configuration of this plugin
 >
@@ -706,3 +700,22 @@ The table below shows all the highlight groups with their default link
 > ```lua
 > vim.treesitter.language.register('markdown', 'vimwiki')
 > ```
+
+## Images
+
+> [!NOTE]
+>
+> Images are only supported so far as this plugin will not interfere with others
+> like [image.nvim](https://github.com/3rd/image.nvim), however nothing is done
+> natively by this plugin.
+> It is recommended to enable the `only_render_image_at_cursor` option.
+
+## Additional
+
+- [Limitations](doc/limitations.md): Known limitations of this plugin
+- [Custom Handlers](doc/custom-handlers.md): Allow users to integrate custom rendering
+  for either unsupported languages or to override / extend builtin implementations
+- [Troubleshooting Guide](doc/troubleshooting.md)
+- [Purpose](doc/purpose.md): Why this plugin exists
+- [Markdown Ecosystem](doc/markdown-ecosystem.md): Information about other `markdown`
+  related plugins and how they co-exist
