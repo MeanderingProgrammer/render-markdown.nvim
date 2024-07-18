@@ -54,14 +54,14 @@ M.refresh = function(buf, mode, parse)
     if not M.should_render(buf, win, mode) then
         -- Set window options back to default
         for name, value in pairs(state.config.win_options) do
-            util.set_win_option(win, name, value.default)
+            util.set_win(win, name, value.default)
         end
         return
     end
 
     -- Set window options to rendered & perform render
     for name, value in pairs(state.config.win_options) do
-        util.set_win_option(win, name, value.rendered)
+        util.set_win(win, name, value.rendered)
     end
 
     -- Re-compute marks, needed if missing or between text changes

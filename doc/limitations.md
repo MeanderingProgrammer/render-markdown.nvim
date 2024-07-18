@@ -6,7 +6,13 @@
 
 `LaTeX` formula evaluations are placed above text rather than overlayed.
 
+# Resolved Limitations
+
 ## Telescope Opening File
+
+[FIX 4ab8359](https://github.com/MeanderingProgrammer/markdown.nvim/commit/4ab835985de62b46b6785ae160f5f709b77a0f92)
+
+Should no longer be an issue on any version of neovim if up to date.
 
 Since `telescope` performs several mode change operations to enable previewing and
 other nice things like setting `marks` when changing buffers there are scenarios
@@ -22,8 +28,6 @@ of opening a file. At the time of writing these are:
 Something about the way these are done causes the file to appear be opened in `insert`
 mode despite being in `normal` mode. Additionally there is no `ModeChanged` event
 that occurs after this to go back to `normal` mode.
-
-# Resolved Limitations
 
 ## Text Boundaries
 

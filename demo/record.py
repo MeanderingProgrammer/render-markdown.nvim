@@ -10,8 +10,8 @@ def main(cols: int, rows: int, file: str, cast: str, content: str) -> None:
     pyautogui.hotkey("`", "c")
     time.sleep(1.0)
 
-    # Get length of file so we can scroll down it
-    num_lines = len(Path(file).read_text().splitlines())
+    # Get lines so we know how to scroll down, account for starting on first line
+    lines: list[str] = Path(file).read_text().splitlines()[1:]
 
     # Start recording demo file
     # https://docs.asciinema.org/manual/cli/usage/
@@ -29,17 +29,18 @@ def main(cols: int, rows: int, file: str, cast: str, content: str) -> None:
         pyautogui.press("o")
         pyautogui.press("enter")
         pyautogui.write(content, interval=0.1)
-
         # Enter normal mode
         pyautogui.press("esc")
         time.sleep(2.0)
 
     insert_normal(1)
 
-    # Slowly scroll down
-    for _ in range(num_lines):
+    # Scroll down
+    for line in lines:
         pyautogui.press("j")
-        time.sleep(0.1)
+        skip = ("    ", "def", "if")
+        duration = 0 if len(line) == 0 or line.startswith(skip) else 0.75
+        time.sleep(duration)
 
     insert_normal(1)
 
@@ -53,11 +54,11 @@ def main(cols: int, rows: int, file: str, cast: str, content: str) -> None:
     pyautogui.press("enter")
 
 
-def insert_normal(seconds: float) -> None:
+def insert_normal(duration: float) -> None:
     pyautogui.press("i")
-    time.sleep(seconds)
+    time.sleep(duration)
     pyautogui.press("esc")
-    time.sleep(seconds)
+    time.sleep(duration)
 
 
 if __name__ == "__main__":

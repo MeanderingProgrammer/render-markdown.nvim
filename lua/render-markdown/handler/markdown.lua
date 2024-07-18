@@ -414,7 +414,7 @@ M.render_sign = function(buf, info, text, highlight)
     if not sign.enabled then
         return nil
     end
-    if vim.tbl_contains(sign.exclude.buftypes, util.get_buftype(buf)) then
+    if vim.tbl_contains(sign.exclude.buftypes, util.get_buf(buf, 'buftype')) then
         return nil
     end
     ---@type render.md.Mark

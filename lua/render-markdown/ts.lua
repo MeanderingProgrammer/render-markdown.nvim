@@ -99,7 +99,7 @@ end
 ---@param info render.md.NodeInfo
 ---@return integer
 M.concealed = function(buf, info)
-    if util.get_win_option(util.buf_to_win(buf), 'conceallevel') == 0 then
+    if util.get_win(util.buf_to_win(buf), 'conceallevel') == 0 then
         return 0
     end
     local result = 0

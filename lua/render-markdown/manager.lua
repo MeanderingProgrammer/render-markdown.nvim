@@ -13,21 +13,22 @@ local data = {
 ---@class render.md.Manager
 local M = {}
 
+---@private
+---@type integer
+M.group = vim.api.nvim_create_augroup('RenderMarkdown', { clear = true })
+
 function M.setup()
-    local group = vim.api.nvim_create_augroup('RenderMarkdown', { clear = true })
     -- Attach to buffers based on matching filetype, this will add additional events
     vim.api.nvim_create_autocmd({ 'FileType' }, {
-        group = group,
+        group = M.group,
         pattern = state.config.file_types,
         callback = function(event)
-            if not vim.tbl_contains(state.config.exclude.buftypes, util.get_buftype(event.buf)) then
-                M.attach(group, event.buf)
-            end
+            M.attach(event.buf)
         end,
     })
     -- Window resizing is not buffer specific so is managed more globablly
     vim.api.nvim_create_autocmd({ 'WinResized' }, {
-        group = group,
+        group = M.group,
         callback = function()
             for _, win in ipairs(vim.v.event.windows) do
                 local buf = util.win_to_buf(win)
@@ -39,22 +40,38 @@ function M.setup()
     })
 end
 
----@private
----@param group integer
----@param buf integer
-M.attach = function(group, buf)
-    if not vim.tbl_contains(data.buffers, buf) then
-        table.insert(data.buffers, buf)
+---@param enabled boolean
+M.set_all = function(enabled)
+    -- Attempt to attach current buffer in case this is from a lazy load
+    M.attach(vim.api.nvim_get_current_buf())
+    state.enabled = enabled
+    for _, buf in ipairs(data.buffers) do
+        ui.schedule_refresh(buf, true)
     end
+end
+
+---@private
+---@param buf integer
+M.attach = function(buf)
+    if not vim.tbl_contains(state.config.file_types, util.get_buf(buf, 'filetype')) then
+        return
+    end
+    if vim.tbl_contains(state.config.exclude.buftypes, util.get_buf(buf, 'buftype')) then
+        return
+    end
+    if vim.tbl_contains(data.buffers, buf) then
+        return
+    end
+    table.insert(data.buffers, buf)
     vim.api.nvim_create_autocmd({ 'BufWinEnter', 'TextChanged' }, {
-        group = group,
+        group = M.group,
         buffer = buf,
         callback = function()
             ui.schedule_refresh(buf, true)
         end,
     })
     vim.api.nvim_create_autocmd({ 'ModeChanged' }, {
-        group = group,
+        group = M.group,
         buffer = buf,
         callback = function()
             local render_modes = state.config.render_modes
@@ -69,20 +86,13 @@ M.attach = function(group, buf)
     })
     if state.config.anti_conceal.enabled then
         vim.api.nvim_create_autocmd({ 'CursorMoved' }, {
-            group = group,
+            group = M.group,
             buffer = buf,
             callback = function()
                 -- Moving cursor should not result in text change, skip parsing
                 ui.schedule_refresh(buf, false)
             end,
         })
-    end
-end
-
-M.toggle = function()
-    state.enabled = not state.enabled
-    for _, buf in ipairs(data.buffers) do
-        ui.schedule_refresh(buf, true)
     end
 end
 

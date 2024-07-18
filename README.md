@@ -88,9 +88,12 @@ use({
 
 # Commands
 
-`:RenderMarkdownToggle` - Switch between enabling & disabling this plugin
-
-- Function can also be accessed directly through `require('render-markdown').toggle()`
+- `:RenderMarkdown` | `:RenderMarkdown enable` - Enable this plugin
+  - Can also be accessed directly through `require('render-markdown').enable()`
+- `:RenderMarkdown disable` - Disable this plugin
+  - Can also be accessed directly through `require('render-markdown').disable()`
+- `:RenderMarkdown toggle` - Switch between enabling & disabling this plugin
+  - Can also be accessed directly through `require('render-markdown').toggle()`
 
 # Setup
 

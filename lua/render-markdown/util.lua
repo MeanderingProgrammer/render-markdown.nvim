@@ -27,23 +27,24 @@ end
 ---@param win integer
 ---@param name string
 ---@return number|string
-M.get_win_option = function(win, name)
+M.get_win = function(win, name)
     return vim.api.nvim_get_option_value(name, { scope = 'local', win = win })
 end
 
 ---@param win integer
 ---@param name string
 ---@param value number|string
-M.set_win_option = function(win, name, value)
-    local before = M.get_win_option(win, name)
+M.set_win = function(win, name, value)
+    local before = M.get_win(win, name)
     vim.api.nvim_set_option_value(name, value, { scope = 'local', win = win })
     logger.debug({ option = name, win = win, before = before, after = value })
 end
 
 ---@param buf integer
----@return any
-M.get_buftype = function(buf)
-    return vim.api.nvim_get_option_value('buftype', { buf = buf })
+---@param name string
+---@return number|string
+M.get_buf = function(buf, name)
+    return vim.api.nvim_get_option_value(name, { buf = buf })
 end
 
 ---@param win integer

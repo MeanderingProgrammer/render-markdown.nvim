@@ -9,24 +9,24 @@ test:
 health:
   nvim -c "checkhealth render-markdown" -- .
 
-demo-all: demo-heading demo-list demo-box demo-latex demo-callout
+demo: demo-heading demo-list demo-box demo-latex demo-callout
 
 demo-heading:
-  just demo "heading_code" "30" "## Heading 2"
+  just demo-file "heading_code" "30" "## Heading 2"
 
 demo-list:
-  just demo "list_table" "30" ""
+  just demo-file "list_table" "30" ""
 
 demo-box:
-  just demo "box_dash_quote" "15" ""
+  just demo-file "box_dash_quote" "15" ""
 
 demo-latex:
-  just demo "latex" "15" ""
+  just demo-file "latex" "15" ""
 
 demo-callout:
-  just demo "callout" "40" ""
+  just demo-file "callout" "40" ""
 
-demo file rows content:
+demo-file file rows content:
   rm -f demo/{{file}}.gif
   python demo/record.py \
     --cols "60" \
