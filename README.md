@@ -182,7 +182,7 @@ require('render-markdown').setup({
         -- Executable used to convert latex formula to rendered unicode
         converter = 'latex2text',
         -- Highlight for LaTeX blocks
-        highlight = '@markup.math',
+        highlight = 'RenderMarkdownMath',
     },
     heading = {
         -- Turn on / off heading icon & background rendering
@@ -199,16 +199,16 @@ require('render-markdown').setup({
         signs = { '󰫎 ' },
         -- The 'level' is used to index into the array using a clamp
         -- Highlight for the heading icon and extends through the entire line
-        backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
+        backgrounds = { 'RenderMarkdownH1Bg', 'RenderMarkdownH2Bg', 'RenderMarkdownH3Bg' },
         -- The 'level' is used to index into the array using a clamp
         -- Highlight for the heading and sign icons
         foregrounds = {
-            '@markup.heading.1.markdown',
-            '@markup.heading.2.markdown',
-            '@markup.heading.3.markdown',
-            '@markup.heading.4.markdown',
-            '@markup.heading.5.markdown',
-            '@markup.heading.6.markdown',
+            'RenderMarkdownH1',
+            'RenderMarkdownH2',
+            'RenderMarkdownH3',
+            'RenderMarkdownH4',
+            'RenderMarkdownH5',
+            'RenderMarkdownH6',
         },
     },
     code = {
@@ -233,7 +233,7 @@ require('render-markdown').setup({
         -- Used below code blocks for thin border
         below = '▀',
         -- Highlight for code blocks & inline code
-        highlight = 'ColorColumn',
+        highlight = 'RenderMarkdownCode',
     },
     dash = {
         -- Turn on / off thematic break rendering
@@ -242,7 +242,7 @@ require('render-markdown').setup({
         -- The icon gets repeated across the window's width
         icon = '─',
         -- Highlight for the whole line generated from the icon
-        highlight = 'LineNr',
+        highlight = 'RenderMarkdownDash',
     },
     bullet = {
         -- Turn on / off list bullet rendering
@@ -253,7 +253,7 @@ require('render-markdown').setup({
         -- If the item is a 'checkbox' a conceal is used to hide the bullet instead
         icons = { '●', '○', '◆', '◇' },
         -- Highlight for the bullet icon
-        highlight = 'Normal',
+        highlight = 'RenderMarkdownBullet',
     },
     -- Checkboxes are a special instance of a 'list_item' that start with a 'shortcut_link'
     -- There are two special states for unchecked & checked defined in the markdown grammar
@@ -264,13 +264,13 @@ require('render-markdown').setup({
             -- Replaces '[ ]' of 'task_list_marker_unchecked'
             icon = '󰄱 ',
             -- Highlight for the unchecked icon
-            highlight = '@markup.list.unchecked',
+            highlight = 'RenderMarkdownUnchecked',
         },
         checked = {
             -- Replaces '[x]' of 'task_list_marker_checked'
             icon = '󰱒 ',
             -- Highligh for the checked icon
-            highlight = '@markup.heading',
+            highlight = 'RenderMarkdownChecked',
         },
         -- Define custom checkbox states, more involved as they are not part of the markdown grammar
         -- As a result this requires neovim >= 0.10.0 since it relies on 'inline' extmarks
@@ -280,7 +280,7 @@ require('render-markdown').setup({
         --   'rendered': Replaces the 'raw' value when rendering
         --   'highlight': Highlight for the 'rendered' icon
         custom = {
-            todo = { raw = '[-]', rendered = '󰥔 ', highlight = '@markup.raw' },
+            todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownTodo' },
         },
     },
     quote = {
@@ -289,7 +289,7 @@ require('render-markdown').setup({
         -- Replaces '>' of 'block_quote'
         icon = '▋',
         -- Highlight for the quote icon
-        highlight = '@markup.quote',
+        highlight = 'RenderMarkdownQuote',
     },
     pipe_table = {
         -- Turn on / off pipe table rendering
@@ -314,11 +314,11 @@ require('render-markdown').setup({
             '│', '─',
         },
         -- Highlight for table heading, delimiter, and the line above
-        head = '@markup.heading',
+        head = 'RenderMarkdownTableHead',
         -- Highlight for everything else, main table rows and the line below
-        row = 'Normal',
+        row = 'RenderMarkdownTableRow',
         -- Highlight for inline padding used to add back concealed space
-        filler = 'Conceal',
+        filler = 'RenderMarkdownTableFill',
     },
     -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'
     -- Can specify as many additional values as you like following the pattern from any below, such as 'note'
@@ -327,21 +327,21 @@ require('render-markdown').setup({
     --   'rendered': Replaces the 'raw' value when rendering
     --   'highlight': Highlight for the 'rendered' text and quote markers
     callout = {
-        note = { raw = '[!NOTE]', rendered = '󰋽 Note', highlight = 'DiagnosticInfo' },
-        tip = { raw = '[!TIP]', rendered = '󰌶 Tip', highlight = 'DiagnosticOk' },
-        important = { raw = '[!IMPORTANT]', rendered = '󰅾 Important', highlight = 'DiagnosticHint' },
-        warning = { raw = '[!WARNING]', rendered = '󰀪 Warning', highlight = 'DiagnosticWarn' },
-        caution = { raw = '[!CAUTION]', rendered = '󰳦 Caution', highlight = 'DiagnosticError' },
+        note = { raw = '[!NOTE]', rendered = '󰋽 Note', highlight = 'RenderMarkdownInfo' },
+        tip = { raw = '[!TIP]', rendered = '󰌶 Tip', highlight = 'RenderMarkdownSuccess' },
+        important = { raw = '[!IMPORTANT]', rendered = '󰅾 Important', highlight = 'RenderMarkdownHint' },
+        warning = { raw = '[!WARNING]', rendered = '󰀪 Warning', highlight = 'RenderMarkdownWarn' },
+        caution = { raw = '[!CAUTION]', rendered = '󰳦 Caution', highlight = 'RenderMarkdownError' },
         -- Obsidian: https://help.a.md/Editing+and+formatting/Callouts
-        abstract = { raw = '[!ABSTRACT]', rendered = '󰨸 Abstract', highlight = 'DiagnosticInfo' },
-        todo = { raw = '[!TODO]', rendered = '󰗡 Todo', highlight = 'DiagnosticInfo' },
-        success = { raw = '[!SUCCESS]', rendered = '󰄬 Success', highlight = 'DiagnosticOk' },
-        question = { raw = '[!QUESTION]', rendered = '󰘥 Question', highlight = 'DiagnosticWarn' },
-        failure = { raw = '[!FAILURE]', rendered = '󰅖 Failure', highlight = 'DiagnosticError' },
-        danger = { raw = '[!DANGER]', rendered = '󱐌 Danger', highlight = 'DiagnosticError' },
-        bug = { raw = '[!BUG]', rendered = '󰨰 Bug', highlight = 'DiagnosticError' },
-        example = { raw = '[!EXAMPLE]', rendered = '󰉹 Example', highlight = 'DiagnosticHint' },
-        quote = { raw = '[!QUOTE]', rendered = '󱆨 Quote', highlight = '@markup.quote' },
+        abstract = { raw = '[!ABSTRACT]', rendered = '󰨸 Abstract', highlight = 'RenderMarkdownInfo' },
+        todo = { raw = '[!TODO]', rendered = '󰗡 Todo', highlight = 'RenderMarkdownInfo' },
+        success = { raw = '[!SUCCESS]', rendered = '󰄬 Success', highlight = 'RenderMarkdownSuccess' },
+        question = { raw = '[!QUESTION]', rendered = '󰘥 Question', highlight = 'RenderMarkdownWarn' },
+        failure = { raw = '[!FAILURE]', rendered = '󰅖 Failure', highlight = 'RenderMarkdownError' },
+        danger = { raw = '[!DANGER]', rendered = '󱐌 Danger', highlight = 'RenderMarkdownError' },
+        bug = { raw = '[!BUG]', rendered = '󰨰 Bug', highlight = 'RenderMarkdownError' },
+        example = { raw = '[!EXAMPLE]', rendered = '󰉹 Example', highlight = 'RenderMarkdownHint' },
+        quote = { raw = '[!QUOTE]', rendered = '󱆨 Quote', highlight = 'RenderMarkdownQuote' },
     },
     link = {
         -- Turn on / off inline link icon rendering
@@ -351,7 +351,7 @@ require('render-markdown').setup({
         -- Inlined with 'inline_link' elements
         hyperlink = '󰌹 ',
         -- Applies to the inlined icon
-        highlight = '@markup.link.label.markdown_inline',
+        highlight = 'RenderMarkdownLink',
     },
     sign = {
         -- Turn on / off sign rendering
@@ -361,7 +361,7 @@ require('render-markdown').setup({
             buftypes = { 'nofile' },
         },
         -- Applies to background of sign text
-        highlight = 'SignColumn',
+        highlight = 'RenderMarkdownSign',
     },
     -- Window options to use that change between rendered and raw view
     win_options = {
@@ -414,16 +414,16 @@ require('render-markdown').setup({
         signs = { '󰫎 ' },
         -- The 'level' is used to index into the array using a clamp
         -- Highlight for the heading icon and extends through the entire line
-        backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
+        backgrounds = { 'RenderMarkdownH1Bg', 'RenderMarkdownH2Bg', 'RenderMarkdownH3Bg' },
         -- The 'level' is used to index into the array using a clamp
         -- Highlight for the heading and sign icons
         foregrounds = {
-            '@markup.heading.1.markdown',
-            '@markup.heading.2.markdown',
-            '@markup.heading.3.markdown',
-            '@markup.heading.4.markdown',
-            '@markup.heading.5.markdown',
-            '@markup.heading.6.markdown',
+            'RenderMarkdownH1',
+            'RenderMarkdownH2',
+            'RenderMarkdownH3',
+            'RenderMarkdownH4',
+            'RenderMarkdownH5',
+            'RenderMarkdownH6',
         },
     },
 })
@@ -455,7 +455,7 @@ require('render-markdown').setup({
         -- Used below code blocks for thin border
         below = '▀',
         -- Highlight for code blocks & inline code
-        highlight = 'ColorColumn',
+        highlight = 'RenderMarkdownCode',
     },
 })
 ```
@@ -471,7 +471,7 @@ require('render-markdown').setup({
         -- The icon gets repeated across the window's width
         icon = '─',
         -- Highlight for the whole line generated from the icon
-        highlight = 'LineNr',
+        highlight = 'RenderMarkdownDash',
     },
 })
 ```
@@ -489,7 +489,7 @@ require('render-markdown').setup({
         -- If the item is a 'checkbox' a conceal is used to hide the bullet instead
         icons = { '●', '○', '◆', '◇' },
         -- Highlight for the bullet icon
-        highlight = 'Normal',
+        highlight = 'RenderMarkdownBullet',
     },
 })
 ```
@@ -507,13 +507,13 @@ require('render-markdown').setup({
             -- Replaces '[ ]' of 'task_list_marker_unchecked'
             icon = '󰄱 ',
             -- Highlight for the unchecked icon
-            highlight = '@markup.list.unchecked',
+            highlight = 'RenderMarkdownUnchecked',
         },
         checked = {
             -- Replaces '[x]' of 'task_list_marker_checked'
             icon = '󰱒 ',
             -- Highligh for the checked icon
-            highlight = '@markup.heading',
+            highlight = 'RenderMarkdownChecked',
         },
         -- Define custom checkbox states, more involved as they are not part of the markdown grammar
         -- As a result this requires neovim >= 0.10.0 since it relies on 'inline' extmarks
@@ -523,7 +523,7 @@ require('render-markdown').setup({
         --   'rendered': Replaces the 'raw' value when rendering
         --   'highlight': Highlight for the 'rendered' icon
         custom = {
-            todo = { raw = '[-]', rendered = '󰥔 ', highlight = '@markup.raw' },
+            todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownTodo' },
         },
     },
 })
@@ -539,7 +539,7 @@ require('render-markdown').setup({
         -- Replaces '>' of 'block_quote'
         icon = '▋',
         -- Highlight for the quote icon
-        highlight = '@markup.quote',
+        highlight = 'RenderMarkdownQuote',
     },
 })
 ```
@@ -571,11 +571,11 @@ require('render-markdown').setup({
             '│', '─',
         },
         -- Highlight for table heading, delimiter, and the line above
-        head = '@markup.heading',
+        head = 'RenderMarkdownTableHead',
         -- Highlight for everything else, main table rows and the line below
-        row = 'Normal',
+        row = 'RenderMarkdownTableRow',
         -- Highlight for inline padding used to add back concealed space
-        filler = 'Conceal',
+        filler = 'RenderMarkdownTableFill',
     },
 })
 ```
@@ -591,21 +591,21 @@ require('render-markdown').setup({
     --   'rendered': Replaces the 'raw' value when rendering
     --   'highlight': Highlight for the 'rendered' text and quote markers
     callout = {
-        note = { raw = '[!NOTE]', rendered = '󰋽 Note', highlight = 'DiagnosticInfo' },
-        tip = { raw = '[!TIP]', rendered = '󰌶 Tip', highlight = 'DiagnosticOk' },
-        important = { raw = '[!IMPORTANT]', rendered = '󰅾 Important', highlight = 'DiagnosticHint' },
-        warning = { raw = '[!WARNING]', rendered = '󰀪 Warning', highlight = 'DiagnosticWarn' },
-        caution = { raw = '[!CAUTION]', rendered = '󰳦 Caution', highlight = 'DiagnosticError' },
+        note = { raw = '[!NOTE]', rendered = '󰋽 Note', highlight = 'RenderMarkdownInfo' },
+        tip = { raw = '[!TIP]', rendered = '󰌶 Tip', highlight = 'RenderMarkdownSuccess' },
+        important = { raw = '[!IMPORTANT]', rendered = '󰅾 Important', highlight = 'RenderMarkdownHint' },
+        warning = { raw = '[!WARNING]', rendered = '󰀪 Warning', highlight = 'RenderMarkdownWarn' },
+        caution = { raw = '[!CAUTION]', rendered = '󰳦 Caution', highlight = 'RenderMarkdownError' },
         -- Obsidian: https://help.a.md/Editing+and+formatting/Callouts
-        abstract = { raw = '[!ABSTRACT]', rendered = '󰨸 Abstract', highlight = 'DiagnosticInfo' },
-        todo = { raw = '[!TODO]', rendered = '󰗡 Todo', highlight = 'DiagnosticInfo' },
-        success = { raw = '[!SUCCESS]', rendered = '󰄬 Success', highlight = 'DiagnosticOk' },
-        question = { raw = '[!QUESTION]', rendered = '󰘥 Question', highlight = 'DiagnosticWarn' },
-        failure = { raw = '[!FAILURE]', rendered = '󰅖 Failure', highlight = 'DiagnosticError' },
-        danger = { raw = '[!DANGER]', rendered = '󱐌 Danger', highlight = 'DiagnosticError' },
-        bug = { raw = '[!BUG]', rendered = '󰨰 Bug', highlight = 'DiagnosticError' },
-        example = { raw = '[!EXAMPLE]', rendered = '󰉹 Example', highlight = 'DiagnosticHint' },
-        quote = { raw = '[!QUOTE]', rendered = '󱆨 Quote', highlight = '@markup.quote' },
+        abstract = { raw = '[!ABSTRACT]', rendered = '󰨸 Abstract', highlight = 'RenderMarkdownInfo' },
+        todo = { raw = '[!TODO]', rendered = '󰗡 Todo', highlight = 'RenderMarkdownInfo' },
+        success = { raw = '[!SUCCESS]', rendered = '󰄬 Success', highlight = 'RenderMarkdownSuccess' },
+        question = { raw = '[!QUESTION]', rendered = '󰘥 Question', highlight = 'RenderMarkdownWarn' },
+        failure = { raw = '[!FAILURE]', rendered = '󰅖 Failure', highlight = 'RenderMarkdownError' },
+        danger = { raw = '[!DANGER]', rendered = '󱐌 Danger', highlight = 'RenderMarkdownError' },
+        bug = { raw = '[!BUG]', rendered = '󰨰 Bug', highlight = 'RenderMarkdownError' },
+        example = { raw = '[!EXAMPLE]', rendered = '󰉹 Example', highlight = 'RenderMarkdownHint' },
+        quote = { raw = '[!QUOTE]', rendered = '󱆨 Quote', highlight = 'RenderMarkdownQuote' },
     },
 })
 ```
@@ -622,7 +622,7 @@ require('render-markdown').setup({
         -- Inlined with 'inline_link' elements
         hyperlink = '󰌹 ',
         -- Applies to the inlined icon
-        highlight = '@markup.link.label.markdown_inline',
+        highlight = 'RenderMarkdownLink',
     },
 })
 ```
@@ -639,10 +639,44 @@ require('render-markdown').setup({
             buftypes = { 'nofile' },
         },
         -- Applies to background of sign text
-        highlight = 'SignColumn',
+        highlight = 'RenderMarkdownSign',
     },
 })
 ```
+
+# Colors
+
+The table below shows all the highlight groups with their default link
+
+| Highlight Group         | Default Group                      | Description               |
+| ----------------------- | ---------------------------------- | ------------------------- |
+| RenderMarkdownH1        | @markup.heading.1.markdown         | H1 icons                  |
+| RenderMarkdownH2        | @markup.heading.2.markdown         | H2 icons                  |
+| RenderMarkdownH3        | @markup.heading.3.markdown         | H3 icons                  |
+| RenderMarkdownH4        | @markup.heading.4.markdown         | H4 icons                  |
+| RenderMarkdownH5        | @markup.heading.5.markdown         | H5 icons                  |
+| RenderMarkdownH6        | @markup.heading.6.markdown         | H6 icons                  |
+| RenderMarkdownH1Bg      | DiffAdd                            | H1 background line        |
+| RenderMarkdownH2Bg      | DiffChange                         | H2 background line        |
+| RenderMarkdownH3Bg      | DiffDelete                         | H3-H6 background line     |
+| RenderMarkdownCode      | ColorColumn                        | Code block background     |
+| RenderMarkdownBullet    | Normal                             | List item bullet points   |
+| RenderMarkdownQuote     | @markup.quote                      | Block quote marker        |
+| RenderMarkdownDash      | LineNr                             | Thematic break line       |
+| RenderMarkdownLink      | @markup.link.label.markdown_inline | Image & hyperlink icons   |
+| RenderMarkdownSign      | SignColumn                         | Sign column background    |
+| RenderMarkdownMath      | @markup.math                       | LaTeX lines               |
+| RenderMarkdownUnchecked | @markup.list.unchecked             | Unchecked checkbox        |
+| RenderMarkdownChecked   | @markup.list.checked               | Checked checkbox          |
+| RenderMarkdownTodo      | @markup.raw                        | Todo custom checkbox      |
+| RenderMarkdownTableHead | @markup.heading                    | Pipe table heading rows   |
+| RenderMarkdownTableRow  | Normal                             | Pipe table body rows      |
+| RenderMarkdownTableFill | Conceal                            | Pipe table inline padding |
+| RenderMarkdownSuccess   | DiagnosticOk                       | Success related callouts  |
+| RenderMarkdownInfo      | DiagnosticInfo                     | Info related callouts     |
+| RenderMarkdownHint      | DiagnosticHint                     | Hint related callouts     |
+| RenderMarkdownWarn      | DiagnosticWarn                     | Warning related callouts  |
+| RenderMarkdownError     | DiagnosticError                    | Error related callouts    |
 
 # Additional Info
 

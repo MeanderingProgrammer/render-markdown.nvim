@@ -1,3 +1,4 @@
+local colors = require('render-markdown.colors')
 local manager = require('render-markdown.manager')
 local state = require('render-markdown.state')
 
@@ -193,7 +194,7 @@ M.default_config = {
         -- Executable used to convert latex formula to rendered unicode
         converter = 'latex2text',
         -- Highlight for LaTeX blocks
-        highlight = '@markup.math',
+        highlight = 'RenderMarkdownMath',
     },
     heading = {
         -- Turn on / off heading icon & background rendering
@@ -210,16 +211,16 @@ M.default_config = {
         signs = { '󰫎 ' },
         -- The 'level' is used to index into the array using a clamp
         -- Highlight for the heading icon and extends through the entire line
-        backgrounds = { 'DiffAdd', 'DiffChange', 'DiffDelete' },
+        backgrounds = { 'RenderMarkdownH1Bg', 'RenderMarkdownH2Bg', 'RenderMarkdownH3Bg' },
         -- The 'level' is used to index into the array using a clamp
         -- Highlight for the heading and sign icons
         foregrounds = {
-            '@markup.heading.1.markdown',
-            '@markup.heading.2.markdown',
-            '@markup.heading.3.markdown',
-            '@markup.heading.4.markdown',
-            '@markup.heading.5.markdown',
-            '@markup.heading.6.markdown',
+            'RenderMarkdownH1',
+            'RenderMarkdownH2',
+            'RenderMarkdownH3',
+            'RenderMarkdownH4',
+            'RenderMarkdownH5',
+            'RenderMarkdownH6',
         },
     },
     code = {
@@ -244,7 +245,7 @@ M.default_config = {
         -- Used below code blocks for thin border
         below = '▀',
         -- Highlight for code blocks & inline code
-        highlight = 'ColorColumn',
+        highlight = 'RenderMarkdownCode',
     },
     dash = {
         -- Turn on / off thematic break rendering
@@ -253,7 +254,7 @@ M.default_config = {
         -- The icon gets repeated across the window's width
         icon = '─',
         -- Highlight for the whole line generated from the icon
-        highlight = 'LineNr',
+        highlight = 'RenderMarkdownDash',
     },
     bullet = {
         -- Turn on / off list bullet rendering
@@ -264,7 +265,7 @@ M.default_config = {
         -- If the item is a 'checkbox' a conceal is used to hide the bullet instead
         icons = { '●', '○', '◆', '◇' },
         -- Highlight for the bullet icon
-        highlight = 'Normal',
+        highlight = 'RenderMarkdownBullet',
     },
     -- Checkboxes are a special instance of a 'list_item' that start with a 'shortcut_link'
     -- There are two special states for unchecked & checked defined in the markdown grammar
@@ -275,13 +276,13 @@ M.default_config = {
             -- Replaces '[ ]' of 'task_list_marker_unchecked'
             icon = '󰄱 ',
             -- Highlight for the unchecked icon
-            highlight = '@markup.list.unchecked',
+            highlight = 'RenderMarkdownUnchecked',
         },
         checked = {
             -- Replaces '[x]' of 'task_list_marker_checked'
             icon = '󰱒 ',
             -- Highligh for the checked icon
-            highlight = '@markup.heading',
+            highlight = 'RenderMarkdownChecked',
         },
         -- Define custom checkbox states, more involved as they are not part of the markdown grammar
         -- As a result this requires neovim >= 0.10.0 since it relies on 'inline' extmarks
@@ -291,7 +292,7 @@ M.default_config = {
         --   'rendered': Replaces the 'raw' value when rendering
         --   'highlight': Highlight for the 'rendered' icon
         custom = {
-            todo = { raw = '[-]', rendered = '󰥔 ', highlight = '@markup.raw' },
+            todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownTodo' },
         },
     },
     quote = {
@@ -300,7 +301,7 @@ M.default_config = {
         -- Replaces '>' of 'block_quote'
         icon = '▋',
         -- Highlight for the quote icon
-        highlight = '@markup.quote',
+        highlight = 'RenderMarkdownQuote',
     },
     pipe_table = {
         -- Turn on / off pipe table rendering
@@ -325,11 +326,11 @@ M.default_config = {
             '│', '─',
         },
         -- Highlight for table heading, delimiter, and the line above
-        head = '@markup.heading',
+        head = 'RenderMarkdownTableHead',
         -- Highlight for everything else, main table rows and the line below
-        row = 'Normal',
+        row = 'RenderMarkdownTableRow',
         -- Highlight for inline padding used to add back concealed space
-        filler = 'Conceal',
+        filler = 'RenderMarkdownTableFill',
     },
     -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'
     -- Can specify as many additional values as you like following the pattern from any below, such as 'note'
@@ -338,21 +339,21 @@ M.default_config = {
     --   'rendered': Replaces the 'raw' value when rendering
     --   'highlight': Highlight for the 'rendered' text and quote markers
     callout = {
-        note = { raw = '[!NOTE]', rendered = '󰋽 Note', highlight = 'DiagnosticInfo' },
-        tip = { raw = '[!TIP]', rendered = '󰌶 Tip', highlight = 'DiagnosticOk' },
-        important = { raw = '[!IMPORTANT]', rendered = '󰅾 Important', highlight = 'DiagnosticHint' },
-        warning = { raw = '[!WARNING]', rendered = '󰀪 Warning', highlight = 'DiagnosticWarn' },
-        caution = { raw = '[!CAUTION]', rendered = '󰳦 Caution', highlight = 'DiagnosticError' },
+        note = { raw = '[!NOTE]', rendered = '󰋽 Note', highlight = 'RenderMarkdownInfo' },
+        tip = { raw = '[!TIP]', rendered = '󰌶 Tip', highlight = 'RenderMarkdownSuccess' },
+        important = { raw = '[!IMPORTANT]', rendered = '󰅾 Important', highlight = 'RenderMarkdownHint' },
+        warning = { raw = '[!WARNING]', rendered = '󰀪 Warning', highlight = 'RenderMarkdownWarn' },
+        caution = { raw = '[!CAUTION]', rendered = '󰳦 Caution', highlight = 'RenderMarkdownError' },
         -- Obsidian: https://help.a.md/Editing+and+formatting/Callouts
-        abstract = { raw = '[!ABSTRACT]', rendered = '󰨸 Abstract', highlight = 'DiagnosticInfo' },
-        todo = { raw = '[!TODO]', rendered = '󰗡 Todo', highlight = 'DiagnosticInfo' },
-        success = { raw = '[!SUCCESS]', rendered = '󰄬 Success', highlight = 'DiagnosticOk' },
-        question = { raw = '[!QUESTION]', rendered = '󰘥 Question', highlight = 'DiagnosticWarn' },
-        failure = { raw = '[!FAILURE]', rendered = '󰅖 Failure', highlight = 'DiagnosticError' },
-        danger = { raw = '[!DANGER]', rendered = '󱐌 Danger', highlight = 'DiagnosticError' },
-        bug = { raw = '[!BUG]', rendered = '󰨰 Bug', highlight = 'DiagnosticError' },
-        example = { raw = '[!EXAMPLE]', rendered = '󰉹 Example', highlight = 'DiagnosticHint' },
-        quote = { raw = '[!QUOTE]', rendered = '󱆨 Quote', highlight = '@markup.quote' },
+        abstract = { raw = '[!ABSTRACT]', rendered = '󰨸 Abstract', highlight = 'RenderMarkdownInfo' },
+        todo = { raw = '[!TODO]', rendered = '󰗡 Todo', highlight = 'RenderMarkdownInfo' },
+        success = { raw = '[!SUCCESS]', rendered = '󰄬 Success', highlight = 'RenderMarkdownSuccess' },
+        question = { raw = '[!QUESTION]', rendered = '󰘥 Question', highlight = 'RenderMarkdownWarn' },
+        failure = { raw = '[!FAILURE]', rendered = '󰅖 Failure', highlight = 'RenderMarkdownError' },
+        danger = { raw = '[!DANGER]', rendered = '󱐌 Danger', highlight = 'RenderMarkdownError' },
+        bug = { raw = '[!BUG]', rendered = '󰨰 Bug', highlight = 'RenderMarkdownError' },
+        example = { raw = '[!EXAMPLE]', rendered = '󰉹 Example', highlight = 'RenderMarkdownHint' },
+        quote = { raw = '[!QUOTE]', rendered = '󱆨 Quote', highlight = 'RenderMarkdownQuote' },
     },
     link = {
         -- Turn on / off inline link icon rendering
@@ -362,7 +363,7 @@ M.default_config = {
         -- Inlined with 'inline_link' elements
         hyperlink = '󰌹 ',
         -- Applies to the inlined icon
-        highlight = '@markup.link.label.markdown_inline',
+        highlight = 'RenderMarkdownLink',
     },
     sign = {
         -- Turn on / off sign rendering
@@ -372,7 +373,7 @@ M.default_config = {
             buftypes = { 'nofile' },
         },
         -- Applies to background of sign text
-        highlight = 'SignColumn',
+        highlight = 'RenderMarkdownSign',
     },
     -- Window options to use that change between rendered and raw view
     win_options = {
@@ -407,6 +408,7 @@ function M.setup(opts)
         state.inline_link_query = vim.treesitter.query.parse('markdown_inline', state.config.inline_link_query)
     end)
 
+    colors.setup()
     manager.setup()
 
     vim.api.nvim_create_user_command('RenderMarkdown', M.command, {

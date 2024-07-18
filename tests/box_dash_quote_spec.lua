@@ -11,24 +11,24 @@ async_tests.describe('box_dash_quote.md', function()
         vim.list_extend(expected, util.heading(0, 1))
 
         -- Checkboxes
-        vim.list_extend(expected, util.checkbox(2, ' 󰄱 ', '@markup.list.unchecked', false))
-        vim.list_extend(expected, util.checkbox(3, ' 󰱒 ', '@markup.heading', false))
-        vim.list_extend(expected, util.checkbox(4, ' 󰥔 ', '@markup.raw', true))
+        vim.list_extend(expected, util.checkbox(2, ' 󰄱 ', 'RenderMarkdownUnchecked', false))
+        vim.list_extend(expected, util.checkbox(3, ' 󰱒 ', 'RenderMarkdownChecked', false))
+        vim.list_extend(expected, util.checkbox(4, ' 󰥔 ', 'RenderMarkdownTodo', true))
 
         -- Line break
         vim.list_extend(expected, {
             {
                 row = { 6 },
                 col = { 0 },
-                virt_text = { { string.rep('─', vim.opt.columns:get()), 'LineNr' } },
+                virt_text = { { string.rep('─', vim.opt.columns:get()), 'RenderMarkdownDash' } },
                 virt_text_pos = 'overlay',
             },
         })
 
         -- Quote lines
         vim.list_extend(expected, {
-            util.quote(8, '  %s ', '@markup.quote'),
-            util.quote(9, '  %s ', '@markup.quote'),
+            util.quote(8, '  %s ', 'Quote'),
+            util.quote(9, '  %s ', 'Quote'),
         })
 
         local actual = util.get_actual_marks()

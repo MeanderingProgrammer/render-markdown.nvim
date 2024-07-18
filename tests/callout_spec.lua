@@ -11,7 +11,7 @@ local function callout(row, start_col, end_col, text, highlight)
     return {
         row = { row, row },
         col = { start_col, end_col },
-        virt_text = { { text, highlight } },
+        virt_text = { { text, 'RenderMarkdown' .. highlight } },
         virt_text_pos = 'overlay',
     }
 end
@@ -20,11 +20,11 @@ async_tests.describe('callout.md', function()
     async_tests.it('default', function()
         util.setup('demo/callout.md')
 
-        local info = 'DiagnosticInfo'
-        local ok = 'DiagnosticOk'
-        local hint = 'DiagnosticHint'
-        local warn = 'DiagnosticWarn'
-        local error = 'DiagnosticError'
+        local info = 'Info'
+        local ok = 'Success'
+        local hint = 'Hint'
+        local warn = 'Warn'
+        local error = 'Error'
 
         local expected = {}
 
