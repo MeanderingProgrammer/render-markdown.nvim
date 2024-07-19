@@ -27,6 +27,9 @@ M.colors = {
     H1Bg      = 'DiffAdd',
     H2Bg      = 'DiffChange',
     H3Bg      = 'DiffDelete',
+    H4Bg      = 'DiffDelete',
+    H5Bg      = 'DiffDelete',
+    H6Bg      = 'DiffDelete',
     -- General
     Code      = 'ColorColumn',
     Bullet    = 'Normal',

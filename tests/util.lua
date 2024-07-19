@@ -45,12 +45,7 @@ M.prefix = 'RenderMarkdown'
 M.heading = function(row, level)
     local icons = { '󰲡 ', ' 󰲣 ', '  󰲥 ', '   󰲧 ', '    󰲩 ', '     󰲫 ' }
     local foreground = string.format('%sH%d', M.prefix, level)
-    local background
-    if level < 3 then
-        background = string.format('%sH%dBg', M.prefix, level)
-    else
-        background = string.format('%sH3Bg', M.prefix)
-    end
+    local background = string.format('%sH%dBg', M.prefix, level)
     local sign_mark = {
         row = { row, row },
         col = { 0, level },

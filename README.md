@@ -199,7 +199,14 @@ require('render-markdown').setup({
         signs = { '󰫎 ' },
         -- The 'level' is used to index into the array using a clamp
         -- Highlight for the heading icon and extends through the entire line
-        backgrounds = { 'RenderMarkdownH1Bg', 'RenderMarkdownH2Bg', 'RenderMarkdownH3Bg' },
+        backgrounds = {
+            'RenderMarkdownH1Bg',
+            'RenderMarkdownH2Bg',
+            'RenderMarkdownH3Bg',
+            'RenderMarkdownH4Bg',
+            'RenderMarkdownH5Bg',
+            'RenderMarkdownH6Bg',
+        },
         -- The 'level' is used to index into the array using a clamp
         -- Highlight for the heading and sign icons
         foregrounds = {
@@ -414,7 +421,14 @@ require('render-markdown').setup({
         signs = { '󰫎 ' },
         -- The 'level' is used to index into the array using a clamp
         -- Highlight for the heading icon and extends through the entire line
-        backgrounds = { 'RenderMarkdownH1Bg', 'RenderMarkdownH2Bg', 'RenderMarkdownH3Bg' },
+        backgrounds = {
+            'RenderMarkdownH1Bg',
+            'RenderMarkdownH2Bg',
+            'RenderMarkdownH3Bg',
+            'RenderMarkdownH4Bg',
+            'RenderMarkdownH5Bg',
+            'RenderMarkdownH6Bg',
+        },
         -- The 'level' is used to index into the array using a clamp
         -- Highlight for the heading and sign icons
         foregrounds = {
@@ -658,7 +672,10 @@ The table below shows all the highlight groups with their default link
 | RenderMarkdownH6        | @markup.heading.6.markdown         | H6 icons                  |
 | RenderMarkdownH1Bg      | DiffAdd                            | H1 background line        |
 | RenderMarkdownH2Bg      | DiffChange                         | H2 background line        |
-| RenderMarkdownH3Bg      | DiffDelete                         | H3-H6 background line     |
+| RenderMarkdownH3Bg      | DiffDelete                         | H3 background line        |
+| RenderMarkdownH4Bg      | DiffDelete                         | H4 background line        |
+| RenderMarkdownH5Bg      | DiffDelete                         | H5 background line        |
+| RenderMarkdownH6Bg      | DiffDelete                         | H6 background line        |
 | RenderMarkdownCode      | ColorColumn                        | Code block background     |
 | RenderMarkdownBullet    | Normal                             | List item bullet points   |
 | RenderMarkdownQuote     | @markup.quote                      | Block quote marker        |
