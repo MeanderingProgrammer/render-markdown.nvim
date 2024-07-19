@@ -26,10 +26,10 @@
 
 # Caution
 
-> [!CAUTION]
+> [!caution]
 > Cautionary tale
 
 # Bug
 
-> [!BUG]
+> [!bUg]
 > Custom bug

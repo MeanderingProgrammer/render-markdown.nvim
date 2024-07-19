@@ -330,7 +330,7 @@ require('render-markdown').setup({
     -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'
     -- Can specify as many additional values as you like following the pattern from any below, such as 'note'
     --   The key in this case 'note' is for healthcheck and to allow users to change its values
-    --   'raw': Matched against the raw text of a 'shortcut_link'
+    --   'raw': Matched against the raw text of a 'shortcut_link', case insensitive
     --   'rendered': Replaces the 'raw' value when rendering
     --   'highlight': Highlight for the 'rendered' text and quote markers
     callout = {
@@ -601,7 +601,7 @@ require('render-markdown').setup({
     -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'
     -- Can specify as many additional values as you like following the pattern from any below, such as 'note'
     --   The key in this case 'note' is for healthcheck and to allow users to change its values
-    --   'raw': Matched against the raw text of a 'shortcut_link'
+    --   'raw': Matched against the raw text of a 'shortcut_link', case insensitive
     --   'rendered': Replaces the 'raw' value when rendering
     --   'highlight': Highlight for the 'rendered' text and quote markers
     callout = {

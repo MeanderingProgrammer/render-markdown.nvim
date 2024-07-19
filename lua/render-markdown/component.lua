@@ -15,9 +15,9 @@ M.callout = function(text, comparison)
     ---@return boolean
     local function matches(callout)
         if comparison == 'exact' then
-            return text == callout.raw
+            return text:lower() == callout.raw:lower()
         elseif comparison == 'contains' then
-            return text:find(callout.raw, 1, true) ~= nil
+            return text:lower():find(callout.raw:lower(), 1, true) ~= nil
         else
             error(string.format('Unhandled comparison: %s', comparison))
         end
