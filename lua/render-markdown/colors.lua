@@ -66,9 +66,14 @@ end
 M.combine = function(foreground, background)
     local name = string.format('%s_%s_%s', M.prefix, foreground, background)
     if not vim.tbl_contains(cache.highlights, name) then
-        local fg = M.get_hl(foreground).fg
-        local bg = M.get_hl(background).bg
-        vim.api.nvim_set_hl(0, name, { fg = fg, bg = bg })
+        local fg = M.get_hl(foreground)
+        local bg = M.get_hl(background)
+        vim.api.nvim_set_hl(0, name, {
+            fg = fg.fg,
+            bg = bg.bg,
+            ctermfg = fg.ctermfg,
+            ctermbg = bg.ctermbg,
+        })
         table.insert(cache.highlights, name)
     end
     return name
@@ -80,7 +85,12 @@ M.inverse = function(highlight)
     local name = string.format('%s_Inverse_%s', M.prefix, highlight)
     if not vim.tbl_contains(cache.highlights, name) then
         local hl = M.get_hl(highlight)
-        vim.api.nvim_set_hl(0, name, { fg = hl.bg, bg = hl.fg })
+        vim.api.nvim_set_hl(0, name, {
+            fg = hl.bg,
+            bg = hl.fg,
+            ctermbg = hl.ctermfg,
+            ctermfg = hl.ctermbg,
+        })
         table.insert(cache.highlights, name)
     end
     return name
