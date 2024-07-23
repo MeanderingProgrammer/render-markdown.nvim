@@ -32,6 +32,7 @@ M.colors = {
     H6Bg      = 'DiffDelete',
     -- General
     Code      = 'ColorColumn',
+    CodeInline= 'RenderMarkdownCode',
     Bullet    = 'Normal',
     Quote     = '@markup.quote',
     Dash      = 'LineNr',

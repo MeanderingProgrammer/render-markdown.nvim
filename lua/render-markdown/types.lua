@@ -58,6 +58,7 @@
 ---@field public above string
 ---@field public below string
 ---@field public highlight string
+---@field public highlight_inline string
 
 ---@class render.md.Heading
 ---@field public enabled boolean
