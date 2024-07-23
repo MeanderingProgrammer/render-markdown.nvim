@@ -52,7 +52,7 @@ M.render_code = function(info)
         opts = {
             end_row = info.end_row,
             end_col = info.end_col,
-            hl_group = code.highlight,
+            hl_group = code.highlight_inline,
         },
     }
 end
