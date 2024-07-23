@@ -126,7 +126,7 @@ M.inline_code = function(row, start_col, end_col)
         row = { row, row },
         col = { start_col, end_col },
         hl_eol = false,
-        hl_group = M.prefix .. 'Code',
+        hl_group = M.prefix .. 'CodeInline',
     }
 end
 

@@ -1,4 +1,4 @@
-*render-markdown.txt*           For 0.10.0           Last change: 2024 July 22
+*render-markdown.txt*           For 0.10.0           Last change: 2024 July 23
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -280,6 +280,7 @@ Full Default Configuration ~
             below = '▀',
             -- Highlight for code blocks & inline code
             highlight = 'RenderMarkdownCode',
+            highlight_inline = 'RenderMarkdownCodeInline',
         },
         dash = {
             -- Turn on / off thematic break rendering
@@ -509,6 +510,7 @@ CODE BLOCKS                                *render-markdown-setup-code-blocks*
             below = '▀',
             -- Highlight for code blocks & inline code
             highlight = 'RenderMarkdownCode',
+            highlight_inline = 'RenderMarkdownCodeInline',
         },
     })
 <
@@ -711,77 +713,80 @@ SIGNS                                            *render-markdown-setup-signs*
 
 The table below shows all the highlight groups with their default link
 
-  ------------------------------------------------------------------------------------
-  Highlight Group           Default Group                        Description
-  ------------------------- ------------------------------------ ---------------------
-  RenderMarkdownH1          @markup.heading.1.markdown           H1 icons
+  -------------------------------------------------------------------------------------
+  Highlight Group            Default Group                        Description
+  -------------------------- ------------------------------------ ---------------------
+  RenderMarkdownH1           @markup.heading.1.markdown           H1 icons
 
-  RenderMarkdownH2          @markup.heading.2.markdown           H2 icons
+  RenderMarkdownH2           @markup.heading.2.markdown           H2 icons
 
-  RenderMarkdownH3          @markup.heading.3.markdown           H3 icons
+  RenderMarkdownH3           @markup.heading.3.markdown           H3 icons
 
-  RenderMarkdownH4          @markup.heading.4.markdown           H4 icons
+  RenderMarkdownH4           @markup.heading.4.markdown           H4 icons
 
-  RenderMarkdownH5          @markup.heading.5.markdown           H5 icons
+  RenderMarkdownH5           @markup.heading.5.markdown           H5 icons
 
-  RenderMarkdownH6          @markup.heading.6.markdown           H6 icons
+  RenderMarkdownH6           @markup.heading.6.markdown           H6 icons
 
-  RenderMarkdownH1Bg        DiffAdd                              H1 background line
+  RenderMarkdownH1Bg         DiffAdd                              H1 background line
 
-  RenderMarkdownH2Bg        DiffChange                           H2 background line
+  RenderMarkdownH2Bg         DiffChange                           H2 background line
 
-  RenderMarkdownH3Bg        DiffDelete                           H3 background line
+  RenderMarkdownH3Bg         DiffDelete                           H3 background line
 
-  RenderMarkdownH4Bg        DiffDelete                           H4 background line
+  RenderMarkdownH4Bg         DiffDelete                           H4 background line
 
-  RenderMarkdownH5Bg        DiffDelete                           H5 background line
+  RenderMarkdownH5Bg         DiffDelete                           H5 background line
 
-  RenderMarkdownH6Bg        DiffDelete                           H6 background line
+  RenderMarkdownH6Bg         DiffDelete                           H6 background line
 
-  RenderMarkdownCode        ColorColumn                          Code block background
+  RenderMarkdownCode         ColorColumn                          Code block background
 
-  RenderMarkdownBullet      Normal                               List item bullet
-                                                                 points
+  RenderMarkdownCodeInline   RenderMarkdownCode                   Inline code
+                                                                  background
 
-  RenderMarkdownQuote       @markup.quote                        Block quote marker
+  RenderMarkdownBullet       Normal                               List item bullet
+                                                                  points
 
-  RenderMarkdownDash        LineNr                               Thematic break line
+  RenderMarkdownQuote        @markup.quote                        Block quote marker
 
-  RenderMarkdownLink        @markup.link.label.markdown_inline   Image & hyperlink
-                                                                 icons
+  RenderMarkdownDash         LineNr                               Thematic break line
 
-  RenderMarkdownSign        SignColumn                           Sign column
-                                                                 background
+  RenderMarkdownLink         @markup.link.label.markdown_inline   Image & hyperlink
+                                                                  icons
 
-  RenderMarkdownMath        @markup.math                         LaTeX lines
+  RenderMarkdownSign         SignColumn                           Sign column
+                                                                  background
 
-  RenderMarkdownUnchecked   @markup.list.unchecked               Unchecked checkbox
+  RenderMarkdownMath         @markup.math                         LaTeX lines
 
-  RenderMarkdownChecked     @markup.list.checked                 Checked checkbox
+  RenderMarkdownUnchecked    @markup.list.unchecked               Unchecked checkbox
 
-  RenderMarkdownTodo        @markup.raw                          Todo custom checkbox
+  RenderMarkdownChecked      @markup.list.checked                 Checked checkbox
 
-  RenderMarkdownTableHead   @markup.heading                      Pipe table heading
-                                                                 rows
+  RenderMarkdownTodo         @markup.raw                          Todo custom checkbox
 
-  RenderMarkdownTableRow    Normal                               Pipe table body rows
+  RenderMarkdownTableHead    @markup.heading                      Pipe table heading
+                                                                  rows
 
-  RenderMarkdownTableFill   Conceal                              Pipe table inline
-                                                                 padding
+  RenderMarkdownTableRow     Normal                               Pipe table body rows
 
-  RenderMarkdownSuccess     DiagnosticOk                         Success related
-                                                                 callouts
+  RenderMarkdownTableFill    Conceal                              Pipe table inline
+                                                                  padding
 
-  RenderMarkdownInfo        DiagnosticInfo                       Info related callouts
+  RenderMarkdownSuccess      DiagnosticOk                         Success related
+                                                                  callouts
 
-  RenderMarkdownHint        DiagnosticHint                       Hint related callouts
+  RenderMarkdownInfo         DiagnosticInfo                       Info related callouts
 
-  RenderMarkdownWarn        DiagnosticWarn                       Warning related
-                                                                 callouts
+  RenderMarkdownHint         DiagnosticHint                       Hint related callouts
 
-  RenderMarkdownError       DiagnosticError                      Error related
-                                                                 callouts
-  ------------------------------------------------------------------------------------
+  RenderMarkdownWarn         DiagnosticWarn                       Warning related
+                                                                  callouts
+
+  RenderMarkdownError        DiagnosticError                      Error related
+                                                                  callouts
+  -------------------------------------------------------------------------------------
 
 ==============================================================================
 8. Info                                                 *render-markdown-info*

@@ -240,6 +240,7 @@ require('render-markdown').setup({
         below = '▀',
         -- Highlight for code blocks & inline code
         highlight = 'RenderMarkdownCode',
+        highlight_inline = 'RenderMarkdownCodeInline',
     },
     dash = {
         -- Turn on / off thematic break rendering
@@ -469,6 +470,7 @@ require('render-markdown').setup({
         below = '▀',
         -- Highlight for code blocks & inline code
         highlight = 'RenderMarkdownCode',
+        highlight_inline = 'RenderMarkdownCodeInline',
     },
 })
 ```
@@ -661,38 +663,39 @@ require('render-markdown').setup({
 
 The table below shows all the highlight groups with their default link
 
-| Highlight Group         | Default Group                      | Description               |
-| ----------------------- | ---------------------------------- | ------------------------- |
-| RenderMarkdownH1        | @markup.heading.1.markdown         | H1 icons                  |
-| RenderMarkdownH2        | @markup.heading.2.markdown         | H2 icons                  |
-| RenderMarkdownH3        | @markup.heading.3.markdown         | H3 icons                  |
-| RenderMarkdownH4        | @markup.heading.4.markdown         | H4 icons                  |
-| RenderMarkdownH5        | @markup.heading.5.markdown         | H5 icons                  |
-| RenderMarkdownH6        | @markup.heading.6.markdown         | H6 icons                  |
-| RenderMarkdownH1Bg      | DiffAdd                            | H1 background line        |
-| RenderMarkdownH2Bg      | DiffChange                         | H2 background line        |
-| RenderMarkdownH3Bg      | DiffDelete                         | H3 background line        |
-| RenderMarkdownH4Bg      | DiffDelete                         | H4 background line        |
-| RenderMarkdownH5Bg      | DiffDelete                         | H5 background line        |
-| RenderMarkdownH6Bg      | DiffDelete                         | H6 background line        |
-| RenderMarkdownCode      | ColorColumn                        | Code block background     |
-| RenderMarkdownBullet    | Normal                             | List item bullet points   |
-| RenderMarkdownQuote     | @markup.quote                      | Block quote marker        |
-| RenderMarkdownDash      | LineNr                             | Thematic break line       |
-| RenderMarkdownLink      | @markup.link.label.markdown_inline | Image & hyperlink icons   |
-| RenderMarkdownSign      | SignColumn                         | Sign column background    |
-| RenderMarkdownMath      | @markup.math                       | LaTeX lines               |
-| RenderMarkdownUnchecked | @markup.list.unchecked             | Unchecked checkbox        |
-| RenderMarkdownChecked   | @markup.list.checked               | Checked checkbox          |
-| RenderMarkdownTodo      | @markup.raw                        | Todo custom checkbox      |
-| RenderMarkdownTableHead | @markup.heading                    | Pipe table heading rows   |
-| RenderMarkdownTableRow  | Normal                             | Pipe table body rows      |
-| RenderMarkdownTableFill | Conceal                            | Pipe table inline padding |
-| RenderMarkdownSuccess   | DiagnosticOk                       | Success related callouts  |
-| RenderMarkdownInfo      | DiagnosticInfo                     | Info related callouts     |
-| RenderMarkdownHint      | DiagnosticHint                     | Hint related callouts     |
-| RenderMarkdownWarn      | DiagnosticWarn                     | Warning related callouts  |
-| RenderMarkdownError     | DiagnosticError                    | Error related callouts    |
+| Highlight Group          | Default Group                      | Description               |
+| ------------------------ | ---------------------------------- | ------------------------- |
+| RenderMarkdownH1         | @markup.heading.1.markdown         | H1 icons                  |
+| RenderMarkdownH2         | @markup.heading.2.markdown         | H2 icons                  |
+| RenderMarkdownH3         | @markup.heading.3.markdown         | H3 icons                  |
+| RenderMarkdownH4         | @markup.heading.4.markdown         | H4 icons                  |
+| RenderMarkdownH5         | @markup.heading.5.markdown         | H5 icons                  |
+| RenderMarkdownH6         | @markup.heading.6.markdown         | H6 icons                  |
+| RenderMarkdownH1Bg       | DiffAdd                            | H1 background line        |
+| RenderMarkdownH2Bg       | DiffChange                         | H2 background line        |
+| RenderMarkdownH3Bg       | DiffDelete                         | H3 background line        |
+| RenderMarkdownH4Bg       | DiffDelete                         | H4 background line        |
+| RenderMarkdownH5Bg       | DiffDelete                         | H5 background line        |
+| RenderMarkdownH6Bg       | DiffDelete                         | H6 background line        |
+| RenderMarkdownCode       | ColorColumn                        | Code block background     |
+| RenderMarkdownCodeInline | RenderMarkdownCode                 | Inline code background    |
+| RenderMarkdownBullet     | Normal                             | List item bullet points   |
+| RenderMarkdownQuote      | @markup.quote                      | Block quote marker        |
+| RenderMarkdownDash       | LineNr                             | Thematic break line       |
+| RenderMarkdownLink       | @markup.link.label.markdown_inline | Image & hyperlink icons   |
+| RenderMarkdownSign       | SignColumn                         | Sign column background    |
+| RenderMarkdownMath       | @markup.math                       | LaTeX lines               |
+| RenderMarkdownUnchecked  | @markup.list.unchecked             | Unchecked checkbox        |
+| RenderMarkdownChecked    | @markup.list.checked               | Checked checkbox          |
+| RenderMarkdownTodo       | @markup.raw                        | Todo custom checkbox      |
+| RenderMarkdownTableHead  | @markup.heading                    | Pipe table heading rows   |
+| RenderMarkdownTableRow   | Normal                             | Pipe table body rows      |
+| RenderMarkdownTableFill  | Conceal                            | Pipe table inline padding |
+| RenderMarkdownSuccess    | DiagnosticOk                       | Success related callouts  |
+| RenderMarkdownInfo       | DiagnosticInfo                     | Info related callouts     |
+| RenderMarkdownHint       | DiagnosticHint                     | Hint related callouts     |
+| RenderMarkdownWarn       | DiagnosticWarn                     | Warning related callouts  |
+| RenderMarkdownError      | DiagnosticError                    | Error related callouts    |
 
 # Info
 

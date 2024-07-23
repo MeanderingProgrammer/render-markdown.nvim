@@ -124,6 +124,7 @@ function state.validate()
         above = { code.above, 'string' },
         below = { code.below, 'string' },
         highlight = { code.highlight, 'string' },
+        highlight_inline = { code.highlight_inline, 'string' },
     })
 
     local dash = config.dash
