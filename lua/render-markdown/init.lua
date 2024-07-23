@@ -73,6 +73,7 @@ local M = {}
 ---@field public above? string
 ---@field public below? string
 ---@field public highlight? string
+---@field public highlight_inline? string
 
 ---@class render.md.UserHeading
 ---@field public enabled? boolean
@@ -253,6 +254,7 @@ M.default_config = {
         below = '▀',
         -- Highlight for code blocks & inline code
         highlight = 'RenderMarkdownCode',
+        highlight_inline = 'RenderMarkdownCodeInline',
     },
     dash = {
         -- Turn on / off thematic break rendering
