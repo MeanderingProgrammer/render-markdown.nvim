@@ -71,13 +71,30 @@ M.render_heading = function(buf, info)
     local icon = list.cycle(heading.icons, level)
     local background = list.clamp(heading.backgrounds, level)
 
-    -- Available width is level + 1 - concealed, where level = number of `#` characters, one
-    -- is added to account for the space after the last `#` but before the heading title,
-    -- and concealed text is subtracted since that space is not usable
-    local padding = level + 1 - ts.concealed(buf, info) - str.width(icon)
-    if padding < 0 then
-        -- Requires inline extmarks to place when there is not enough space available
-        if util.has_10 then
+    if icon then
+        -- Available width is level + 1 - concealed, where level = number of `#` characters, one
+        -- is added to account for the space after the last `#` but before the heading title,
+        -- and concealed text is subtracted since that space is not usable
+        local padding = level + 1 - ts.concealed(buf, info) - str.width(icon)
+        if padding < 0 then
+            -- Requires inline extmarks to place when there is not enough space available
+            if util.has_10 then
+                ---@type render.md.Mark
+                local icon_mark = {
+                    conceal = true,
+                    start_row = info.start_row,
+                    start_col = info.start_col,
+                    opts = {
+                        end_row = info.end_row,
+                        end_col = info.end_col,
+                        virt_text = { { icon, { foreground, background } } },
+                        virt_text_pos = 'inline',
+                        conceal = '',
+                    },
+                }
+                list.add(marks, icon_mark)
+            end
+        else
             ---@type render.md.Mark
             local icon_mark = {
                 conceal = true,
@@ -86,27 +103,12 @@ M.render_heading = function(buf, info)
                 opts = {
                     end_row = info.end_row,
                     end_col = info.end_col,
-                    virt_text = { { icon, { foreground, background } } },
-                    virt_text_pos = 'inline',
-                    conceal = '',
+                    virt_text = { { str.pad(icon, padding), { foreground, background } } },
+                    virt_text_pos = 'overlay',
                 },
             }
             list.add(marks, icon_mark)
         end
-    else
-        ---@type render.md.Mark
-        local icon_mark = {
-            conceal = true,
-            start_row = info.start_row,
-            start_col = info.start_col,
-            opts = {
-                end_row = info.end_row,
-                end_col = info.end_col,
-                virt_text = { { str.pad(icon, padding), { foreground, background } } },
-                virt_text_pos = 'overlay',
-            },
-        }
-        list.add(marks, icon_mark)
     end
     ---@type render.md.Mark
     local background_mark = {
