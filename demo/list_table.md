@@ -7,7 +7,7 @@
       - Nested List 2 Item 1
         - Nested List 3 Item 1
           - Nested List 4 Item 1
-+ List Item 3
++ List Item 3: with [reference link][example]
 
 # Ordered List
 
@@ -21,3 +21,5 @@
 | ---------------- | ------------------ |
 | Regular Item     | **Bold Item**      |
 | `Item Inline`    | [Link Item](/test) |
+
+[example]: https://example.com

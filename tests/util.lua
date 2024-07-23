@@ -183,9 +183,11 @@ end
 ---@param image boolean
 ---@return render.md.MarkInfo
 M.link = function(row, start_col, end_col, image)
-    local icon = '󰌹 '
+    local icon
     if image then
         icon = '󰥶 '
+    else
+        icon = '󰌹 '
     end
     return {
         row = { row, row },

@@ -20,6 +20,7 @@ async_tests.describe('list_table.md', function()
             util.bullet(7, 8, 4), -- Nested List 3 Item 1
             util.bullet(8, 10, 1), -- Nested List 4 Item 1
             util.bullet(9, 0, 1), -- List Item 3
+            util.link(9, 20, 45, false), -- List Item 3, link
         })
 
         -- Ordered list

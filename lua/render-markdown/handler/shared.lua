@@ -17,7 +17,7 @@ M.link_icon = function(info)
     if not util.has_10 then
         return nil
     end
-    if info.type == 'inline_link' then
+    if vim.tbl_contains({ 'inline_link', 'full_reference_link' }, info.type) then
         return link.hyperlink
     elseif info.type == 'image' then
         return link.image
