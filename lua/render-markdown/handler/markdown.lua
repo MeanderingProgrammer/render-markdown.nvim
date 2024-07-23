@@ -67,49 +67,10 @@ M.render_heading = function(buf, info)
     local marks = {}
 
     local level = str.width(info.text)
-    local foreground = list.clamp(heading.foregrounds, level)
     local icon = list.cycle(heading.icons, level)
+    local foreground = list.clamp(heading.foregrounds, level)
     local background = list.clamp(heading.backgrounds, level)
 
-    if icon then
-        -- Available width is level + 1 - concealed, where level = number of `#` characters, one
-        -- is added to account for the space after the last `#` but before the heading title,
-        -- and concealed text is subtracted since that space is not usable
-        local padding = level + 1 - ts.concealed(buf, info) - str.width(icon)
-        if padding < 0 then
-            -- Requires inline extmarks to place when there is not enough space available
-            if util.has_10 then
-                ---@type render.md.Mark
-                local icon_mark = {
-                    conceal = true,
-                    start_row = info.start_row,
-                    start_col = info.start_col,
-                    opts = {
-                        end_row = info.end_row,
-                        end_col = info.end_col,
-                        virt_text = { { icon, { foreground, background } } },
-                        virt_text_pos = 'inline',
-                        conceal = '',
-                    },
-                }
-                list.add(marks, icon_mark)
-            end
-        else
-            ---@type render.md.Mark
-            local icon_mark = {
-                conceal = true,
-                start_row = info.start_row,
-                start_col = info.start_col,
-                opts = {
-                    end_row = info.end_row,
-                    end_col = info.end_col,
-                    virt_text = { { str.pad(icon, padding), { foreground, background } } },
-                    virt_text_pos = 'overlay',
-                },
-            }
-            list.add(marks, icon_mark)
-        end
-    end
     ---@type render.md.Mark
     local background_mark = {
         conceal = true,
@@ -126,7 +87,46 @@ M.render_heading = function(buf, info)
     if heading.sign then
         list.add(marks, M.render_sign(buf, info, list.cycle(heading.signs, level), foreground))
     end
-
+    if icon == nil then
+        return marks
+    end
+    -- Available width is level + 1 - concealed, where level = number of `#` characters, one
+    -- is added to account for the space after the last `#` but before the heading title,
+    -- and concealed text is subtracted since that space is not usable
+    local padding = level + 1 - ts.concealed(buf, info) - str.width(icon)
+    if padding < 0 then
+        -- Requires inline extmarks to place when there is not enough space available
+        if util.has_10 then
+            ---@type render.md.Mark
+            local icon_mark = {
+                conceal = true,
+                start_row = info.start_row,
+                start_col = info.start_col,
+                opts = {
+                    end_row = info.end_row,
+                    end_col = info.end_col,
+                    virt_text = { { icon, { foreground, background } } },
+                    virt_text_pos = 'inline',
+                    conceal = '',
+                },
+            }
+            list.add(marks, icon_mark)
+        end
+    else
+        ---@type render.md.Mark
+        local icon_mark = {
+            conceal = true,
+            start_row = info.start_row,
+            start_col = info.start_col,
+            opts = {
+                end_row = info.end_row,
+                end_col = info.end_col,
+                virt_text = { { str.pad(icon, padding), { foreground, background } } },
+                virt_text_pos = 'overlay',
+            },
+        }
+        list.add(marks, icon_mark)
+    end
     return marks
 end
 
@@ -333,12 +333,15 @@ M.render_list_marker = function(buf, info)
         if not bullet.enabled then
             return nil
         end
+        local level = ts.level_in_section(info, 'list')
+        local icon = list.cycle(bullet.icons, level)
+        if icon == nil then
+            return nil
+        end
         -- List markers from tree-sitter should have leading spaces removed, however there are known
         -- edge cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
         -- As a result we handle leading spaces here, can remove if this gets fixed upstream
         local leading_spaces = str.leading_spaces(info.text)
-        local level = ts.level_in_section(info, 'list')
-        local icon = list.cycle(bullet.icons, level)
         ---@type render.md.Mark
         return {
             conceal = true,
@@ -408,12 +411,12 @@ end
 ---@private
 ---@param buf integer
 ---@param info render.md.NodeInfo
----@param text string
+---@param text string?
 ---@param highlight string
 ---@return render.md.Mark?
 M.render_sign = function(buf, info, text, highlight)
     local sign = state.config.sign
-    if not sign.enabled then
+    if not sign.enabled or text == nil then
         return nil
     end
     if vim.tbl_contains(sign.exclude.buftypes, util.get_buf(buf, 'buftype')) then

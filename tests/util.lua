@@ -57,18 +57,18 @@ M.heading = function(row, level)
     else
         return {
             {
+                row = { row, row + 1 },
+                col = { 0, 0 },
+                hl_group = background,
+                hl_eol = true,
+            },
+            {
                 row = { row, row },
                 col = { 0, level },
                 virt_text = { { icons[level], { foreground, background } } },
                 virt_text_pos = 'overlay',
             },
             sign_mark,
-            {
-                row = { row, row + 1 },
-                col = { 0, 0 },
-                hl_group = background,
-                hl_eol = true,
-            },
         }
     end
 end
