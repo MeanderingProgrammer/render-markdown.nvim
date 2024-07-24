@@ -72,6 +72,8 @@
 ---@field public enabled boolean
 ---@field public converter string
 ---@field public highlight string
+---@field public lines_above integer
+---@field public lines_below integer
 
 ---@class render.md.AntiConceal
 ---@field public enabled boolean

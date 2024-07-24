@@ -25,6 +25,14 @@ M.parse = function(root, buf)
         logger.debug('Executable not found: ' .. latex.converter)
         return {}
     end
+    if latex.lines_above < 0 then
+        logger.debug('lines_above must be greater than or equal to 0')
+        return {}
+    end
+    if latex.lines_below < 0 then
+        logger.debug('lines_below must be greater than or equal to 0')
+        return {}
+    end
 
     local info = ts.info(root, buf)
     logger.debug_node_info('latex', info)
@@ -34,6 +42,15 @@ M.parse = function(root, buf)
         local raw_expression = vim.fn.system(latex.converter, info.text)
         expressions = vim.split(raw_expression, '\n')
         table.remove(expressions, nil)
+
+        for i=1, latex.lines_above do
+            table.insert(expressions, 1, '')
+        end
+
+        for i=1, latex.lines_below do
+            table.insert(expressions, '')
+        end
+
         cache.expressions[info.text] = expressions
     end
 

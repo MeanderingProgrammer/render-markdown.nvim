@@ -102,6 +102,8 @@ function state.validate()
         enabled = { latex.enabled, 'boolean' },
         converter = { latex.converter, 'string' },
         highlight = { latex.highlight, 'string' },
+        lines_above = { latex.lines_above, 'integer' },
+        lines_below = { latex.lines_below, 'integer' },
     })
 
     local heading = config.heading
