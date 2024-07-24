@@ -180,13 +180,10 @@ M.render_code = function(buf, info)
 
     local width = util.get_width(buf)
     if code.width == 'block' then
-        width = 0
         local lines = vim.api.nvim_buf_get_lines(buf, start_row, end_row, false)
-        for _, line in ipairs(lines) do
-            width = math.max(width, str.width(line))
-        end
+        local code_width = vim.fn.max(vim.tbl_map(str.width, lines))
+        width = code.left_pad + code_width + code.right_pad
     end
-    width = width + code.right_pad + code.left_pad
 
     if code.border == 'thin' then
         local code_start = ts.child(buf, info, 'fenced_code_block_delimiter', info.start_row)
@@ -220,6 +217,7 @@ M.render_code = function(buf, info)
             list.add(marks, end_mark)
         end
     end
+
     ---@type render.md.Mark
     local background_mark = {
         conceal = false,

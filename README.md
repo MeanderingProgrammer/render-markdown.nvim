@@ -230,6 +230,12 @@ require('render-markdown').setup({
         style = 'full',
         -- Amount of padding to add to the left of code blocks
         left_pad = 0,
+        -- Amount of padding to add to the right of code blocks when width is 'block'
+        right_pad = 0,
+        -- Width of the code block background:
+        --  block: width of the code block
+        --  full: full width of the window
+        width = 'full',
         -- Determins how the top / bottom of code block are rendered:
         --  thick: use the same highlight as the code body
         --  thin: when lines are empty overlay the above & below icons
@@ -460,6 +466,12 @@ require('render-markdown').setup({
         style = 'full',
         -- Amount of padding to add to the left of code blocks
         left_pad = 0,
+        -- Amount of padding to add to the right of code blocks when width is 'block'
+        right_pad = 0,
+        -- Width of the code block background:
+        --  block: width of the code block
+        --  full: full width of the window
+        width = 'full',
         -- Determins how the top / bottom of code block are rendered:
         --  thick: use the same highlight as the code body
         --  thin: when lines are empty overlay the above & below icons

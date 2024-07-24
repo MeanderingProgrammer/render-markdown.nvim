@@ -120,6 +120,8 @@ function state.validate()
         sign = { code.sign, 'boolean' },
         style = one_of(code.style, { 'full', 'normal', 'language', 'none' }),
         left_pad = { code.left_pad, 'number' },
+        right_pad = { code.right_pad, 'number' },
+        width = one_of(code.width, { 'full', 'block' }),
         border = one_of(code.border, { 'thin', 'thick' }),
         above = { code.above, 'string' },
         below = { code.below, 'string' },
