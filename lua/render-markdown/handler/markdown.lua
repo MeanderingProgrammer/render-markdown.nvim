@@ -230,7 +230,7 @@ M.render_code = function(buf, info)
         for _, line in ipairs(lines) do
             width = math.max(width, str.width(line))
         end
-        local pad = str.pad('', vim.o.columns * 2 - width)
+        local pad = str.pad('', vim.o.columns * 2)
         for row = start_row, code.border == 'thin' and end_row or end_row - 1 do
             ---@type render.md.Mark
             local block_background_mark = {
