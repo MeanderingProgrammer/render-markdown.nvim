@@ -69,6 +69,8 @@ local M = {}
 ---@field public sign? boolean
 ---@field public style? 'full'|'normal'|'language'|'none'
 ---@field public left_pad? integer
+---@field public right_pad? integer
+---@field public width? 'full'|'block'
 ---@field public border? 'thin'|'thick'
 ---@field public above? string
 ---@field public below? string
@@ -244,6 +246,9 @@ M.default_config = {
         style = 'full',
         -- Amount of padding to add to the left of code blocks
         left_pad = 0,
+        -- Amount of padding to add to the right of code blocks
+        -- when width is 'block'
+        right_pad = 0,
         -- Determins how the top / bottom of code block are rendered:
         --  thick: use the same highlight as the code body
         --  thin: when lines are empty overlay the above & below icons
@@ -255,6 +260,10 @@ M.default_config = {
         -- Highlight for code blocks & inline code
         highlight = 'RenderMarkdownCode',
         highlight_inline = 'RenderMarkdownCodeInline',
+        -- Width of the code block background:
+        -- * full: full width of the window
+        -- * block: width of the code block
+        width = 'full',
     },
     dash = {
         -- Turn on / off thematic break rendering

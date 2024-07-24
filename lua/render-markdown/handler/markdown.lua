@@ -177,6 +177,17 @@ M.render_code = function(buf, info)
     if start_row == end_row - 1 then
         return marks
     end
+
+    local width = util.get_width(buf)
+    if code.width == 'block' then
+        width = 0
+        local lines = vim.api.nvim_buf_get_lines(buf, start_row, end_row, false)
+        for _, line in ipairs(lines) do
+            width = math.max(width, str.width(line))
+        end
+    end
+    width = width + code.right_pad + code.left_pad
+
     if code.border == 'thin' then
         local code_start = ts.child(buf, info, 'fenced_code_block_delimiter', info.start_row)
         if #marks == 0 and ts.hidden(buf, code_info) and ts.hidden(buf, code_start) then
@@ -187,7 +198,7 @@ M.render_code = function(buf, info)
                 start_row = info.start_row,
                 start_col = info.start_col,
                 opts = {
-                    virt_text = { { code.above:rep(util.get_width(buf)), colors.inverse(code.highlight) } },
+                    virt_text = { { code.above:rep(width), colors.inverse(code.highlight) } },
                     virt_text_pos = 'overlay',
                 },
             }
@@ -202,7 +213,7 @@ M.render_code = function(buf, info)
                 start_row = info.end_row - 1,
                 start_col = info.start_col,
                 opts = {
-                    virt_text = { { code.below:rep(util.get_width(buf)), colors.inverse(code.highlight) } },
+                    virt_text = { { code.below:rep(width), colors.inverse(code.highlight) } },
                     virt_text_pos = 'overlay',
                 },
             }
@@ -222,6 +233,27 @@ M.render_code = function(buf, info)
         },
     }
     list.add(marks, background_mark)
+
+    if code.width == 'block' then
+        -- overwrite anything beyond block width + right_pad with Normal
+        local pad = str.pad('', vim.o.columns * 2)
+        for row = start_row, code.border == 'thin' and end_row or end_row - 1 do
+            ---@type render.md.Mark
+            local block_background_mark = {
+                conceal = false,
+                start_row = row,
+                start_col = 0,
+                opts = {
+                    priority = 0,
+                    hl_mode = 'combine',
+                    virt_text = { { pad, 'Normal' } },
+                    virt_text_win_col = width,
+                },
+            }
+            list.add(marks, block_background_mark)
+        end
+    end
+
     -- Requires inline extmarks
     if not util.has_10 or code.left_pad <= 0 then
         return marks
