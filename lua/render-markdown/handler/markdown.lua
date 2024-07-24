@@ -239,7 +239,7 @@ M.render_code = function(buf, info)
                 start_col = 0,
                 opts = {
                     virt_text = { { pad, 'Normal' } },
-                    virt_text_win_col = width + code.right_pad,
+                    virt_text_win_col = width + code.right_pad + code.left_pad,
                 },
             }
             list.add(marks, block_background_mark)
