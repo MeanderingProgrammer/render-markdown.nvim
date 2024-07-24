@@ -182,6 +182,9 @@ require('render-markdown').setup({
         converter = 'latex2text',
         -- Highlight for LaTeX blocks
         highlight = 'RenderMarkdownMath',
+        -- Amount of empty lines above and below LaTeX blocks
+        lines_above = 0,
+        lines_below = 0,
     },
     heading = {
         -- Turn on / off heading icon & background rendering
