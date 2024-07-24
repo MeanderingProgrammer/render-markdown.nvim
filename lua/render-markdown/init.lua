@@ -248,7 +248,7 @@ M.default_config = {
         left_pad = 0,
         -- Amount of padding to add to the right of code blocks
         -- when width is 'block'
-        right_pad = 1,
+        right_pad = 0,
         -- Determins how the top / bottom of code block are rendered:
         --  thick: use the same highlight as the code body
         --  thin: when lines are empty overlay the above & below icons
