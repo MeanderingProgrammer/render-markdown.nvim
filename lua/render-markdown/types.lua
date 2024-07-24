@@ -47,6 +47,7 @@
 ---@class render.md.BasicComponent
 ---@field public enabled boolean
 ---@field public icon string
+---@field public width number
 ---@field public highlight string
 
 ---@class render.md.Code

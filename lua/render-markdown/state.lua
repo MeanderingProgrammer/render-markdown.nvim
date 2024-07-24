@@ -134,6 +134,7 @@ function state.validate()
         enabled = { dash.enabled, 'boolean' },
         icon = { dash.icon, 'string' },
         highlight = { dash.highlight, 'string' },
+        width = { dash.width, 'number' },
     })
 
     local bullet = config.bullet

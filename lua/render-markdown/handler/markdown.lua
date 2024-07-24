@@ -145,7 +145,7 @@ M.render_dash = function(buf, info)
         start_row = info.start_row,
         start_col = 0,
         opts = {
-            virt_text = { { dash.icon:rep(util.get_width(buf)), dash.highlight } },
+            virt_text = { { dash.icon:rep(dash.width), dash.highlight } },
             virt_text_pos = 'overlay',
         },
     }

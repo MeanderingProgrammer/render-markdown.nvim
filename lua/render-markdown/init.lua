@@ -1,6 +1,7 @@
 local colors = require('render-markdown.colors')
 local manager = require('render-markdown.manager')
 local state = require('render-markdown.state')
+local util = require('render-markdown.util')
 
 ---@class render.md.Init
 local M = {}
@@ -270,8 +271,11 @@ M.default_config = {
         -- Replaces '---'|'***'|'___'|'* * *' of 'thematic_break'
         -- The icon gets repeated across the window's width
         icon = '─',
+        -- Number of times to repeat 'icon'.
+        width = util.get_width(vim.api.nvim_get_current_buf()),
         -- Highlight for the whole line generated from the icon
         highlight = 'RenderMarkdownDash',
+
     },
     bullet = {
         -- Turn on / off list bullet rendering
