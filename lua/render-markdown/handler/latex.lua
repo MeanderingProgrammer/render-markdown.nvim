@@ -33,6 +33,7 @@ M.parse = function(root, buf)
     if expressions == nil then
         local raw_expression = vim.fn.system(latex.converter, info.text)
         expressions = vim.split(raw_expression, '\n')
+        table.remove(expressions, nil)
         cache.expressions[info.text] = expressions
     end
 
