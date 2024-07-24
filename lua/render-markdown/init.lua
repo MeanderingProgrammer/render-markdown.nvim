@@ -82,6 +82,7 @@ local M = {}
 ---@field public sign? boolean
 ---@field public icons? string[]
 ---@field public signs? string[]
+---@field public background_eol? boolean
 ---@field public backgrounds? string[]
 ---@field public foregrounds? string[]
 
@@ -212,6 +213,9 @@ M.default_config = {
         -- Added to the sign column if enabled
         -- The 'level' is used to index into the array using a cycle
         signs = { '󰫎 ' },
+        -- Background highlights render until the end of the line if true.
+        -- Or until the end of the text if false.
+        background_eol = true,
         -- The 'level' is used to index into the array using a clamp
         -- Highlight for the heading icon and extends through the entire line
         backgrounds = {

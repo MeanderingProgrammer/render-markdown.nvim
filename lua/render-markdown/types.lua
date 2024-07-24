@@ -67,6 +67,7 @@
 ---@field public sign boolean
 ---@field public icons string[]
 ---@field public signs string[]
+---@field public background_eol boolean
 ---@field public backgrounds string[]
 ---@field public foregrounds string[]
 

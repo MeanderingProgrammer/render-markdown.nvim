@@ -80,7 +80,7 @@ M.render_heading = function(buf, info)
             end_row = info.end_row + 1,
             end_col = 0,
             hl_group = background,
-            hl_eol = true,
+            hl_eol = heading.background_eol,
         },
     }
     list.add(marks, background_mark)
