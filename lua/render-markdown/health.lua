@@ -23,18 +23,12 @@ function M.check()
     local has_treesitter = pcall(require, 'nvim-treesitter')
     if has_treesitter then
         vim.health.ok('installed')
-
-        M.check_parser('markdown')
-        M.check_parser('markdown_inline')
+        for _, language in ipairs({ 'markdown', 'markdown_inline' }) do
+            M.check_parser(language)
+            M.check_highlight(language)
+        end
         if latex.enabled then
             M.check_parser('latex', latex_advice)
-        end
-
-        local highlight = require('nvim-treesitter.configs').get_module('highlight')
-        if highlight ~= nil and highlight.enable then
-            vim.health.ok('highlights enabled')
-        else
-            vim.health.error('highlights not enabled')
         end
     else
         vim.health.error('not installed')
@@ -71,16 +65,26 @@ function M.version(minimum, recommended)
     end
 end
 
----@param name string
+---@param language string
 ---@param advice string?
-function M.check_parser(name, advice)
+function M.check_parser(language, advice)
     local parsers = require('nvim-treesitter.parsers')
-    if parsers.has_parser(name) then
-        vim.health.ok(name .. ': parser installed')
+    if parsers.has_parser(language) then
+        vim.health.ok(language .. ': parser installed')
     elseif advice == nil then
-        vim.health.error(name .. ': parser not installed')
+        vim.health.error(language .. ': parser not installed')
     else
-        vim.health.warn(name .. ': parser not installed', advice)
+        vim.health.warn(language .. ': parser not installed', advice)
+    end
+end
+
+---@param language string
+function M.check_highlight(language)
+    local configs = require('nvim-treesitter.configs')
+    if configs.is_enabled('highlight', language, 0) then
+        vim.health.ok(language .. ': highlight enabled')
+    else
+        vim.health.error(language .. ': highlight not enabled')
     end
 end
 

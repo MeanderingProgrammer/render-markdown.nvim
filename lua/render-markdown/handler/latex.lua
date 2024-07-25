@@ -16,7 +16,7 @@ local M = {}
 ---@param root TSNode
 ---@param buf integer
 ---@return render.md.Mark[]
-M.parse = function(root, buf)
+function M.parse(root, buf)
     local latex = state.config.latex
     if not latex.enabled then
         return {}

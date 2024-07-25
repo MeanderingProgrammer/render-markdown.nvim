@@ -13,7 +13,7 @@ local M = {}
 ---@param root TSNode
 ---@param buf integer
 ---@return render.md.Mark[]
-M.parse = function(root, buf)
+function M.parse(root, buf)
     local marks = {}
     local query = state.inline_query
     for id, node in query:iter_captures(root, buf) do
@@ -36,7 +36,7 @@ end
 ---@private
 ---@param info render.md.NodeInfo
 ---@return render.md.Mark?
-M.render_code = function(info)
+function M.render_code(info)
     local code = state.config.code
     if not code.enabled then
         return nil
@@ -60,7 +60,7 @@ end
 ---@private
 ---@param info render.md.NodeInfo
 ---@return render.md.Mark?
-M.render_callout = function(info)
+function M.render_callout(info)
     local callout = component.callout(info.text, 'exact')
     if callout ~= nil then
         if not state.config.quote.enabled then
@@ -109,7 +109,7 @@ end
 ---@private
 ---@param info render.md.NodeInfo
 ---@return render.md.Mark?
-M.render_link = function(info)
+function M.render_link(info)
     local icon = shared.link_icon(info)
     if icon == nil then
         return nil

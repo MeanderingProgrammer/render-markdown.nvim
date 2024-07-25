@@ -64,7 +64,7 @@ end
 ---@param foreground string
 ---@param background string
 ---@return string
-M.combine = function(foreground, background)
+function M.combine(foreground, background)
     local name = string.format('%s_%s_%s', M.prefix, foreground, background)
     if not vim.tbl_contains(cache.highlights, name) then
         local fg = M.get_hl(foreground)
@@ -72,7 +72,9 @@ M.combine = function(foreground, background)
         vim.api.nvim_set_hl(0, name, {
             fg = fg.fg,
             bg = bg.bg,
+            ---@diagnostic disable-next-line: undefined-field
             ctermfg = fg.ctermfg,
+            ---@diagnostic disable-next-line: undefined-field
             ctermbg = bg.ctermbg,
         })
         table.insert(cache.highlights, name)
@@ -82,14 +84,16 @@ end
 
 ---@param highlight string
 ---@return string
-M.inverse = function(highlight)
+function M.inverse(highlight)
     local name = string.format('%s_Inverse_%s', M.prefix, highlight)
     if not vim.tbl_contains(cache.highlights, name) then
         local hl = M.get_hl(highlight)
         vim.api.nvim_set_hl(0, name, {
             fg = hl.bg,
             bg = hl.fg,
+            ---@diagnostic disable-next-line: undefined-field
             ctermbg = hl.ctermfg,
+            ---@diagnostic disable-next-line: undefined-field
             ctermfg = hl.ctermbg,
         })
         table.insert(cache.highlights, name)
@@ -100,7 +104,7 @@ end
 ---@private
 ---@param name string
 ---@return vim.api.keyset.hl_info
-M.get_hl = function(name)
+function M.get_hl(name)
     return vim.api.nvim_get_hl(0, { name = name, link = false })
 end
 

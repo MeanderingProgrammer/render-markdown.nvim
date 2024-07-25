@@ -15,7 +15,7 @@ local M = {}
 ---@param root TSNode
 ---@param buf integer
 ---@return render.md.Mark[]
-M.parse = function(root, buf)
+function M.parse(root, buf)
     local marks = {}
     local query = state.markdown_query
     for id, node in query:iter_captures(root, buf) do
@@ -59,7 +59,7 @@ end
 ---@param buf integer
 ---@param info render.md.NodeInfo
 ---@return render.md.Mark[]
-M.render_heading = function(buf, info)
+function M.render_heading(buf, info)
     local heading = state.config.heading
     if not heading.enabled then
         return {}
@@ -134,7 +134,7 @@ end
 ---@param buf integer
 ---@param info render.md.NodeInfo
 ---@return render.md.Mark?
-M.render_dash = function(buf, info)
+function M.render_dash(buf, info)
     local dash = state.config.dash
     if not dash.enabled then
         return nil
@@ -164,7 +164,7 @@ end
 ---@param buf integer
 ---@param info render.md.NodeInfo
 ---@return render.md.Mark[]
-M.render_code = function(buf, info)
+function M.render_code(buf, info)
     local code = state.config.code
     if not code.enabled or code.style == 'none' then
         return {}
@@ -289,7 +289,7 @@ end
 ---@param info render.md.NodeInfo
 ---@param code_block render.md.NodeInfo
 ---@return render.md.Mark[]
-M.render_language = function(buf, info, code_block)
+function M.render_language(buf, info, code_block)
     local code = state.config.code
     if not vim.tbl_contains({ 'language', 'full' }, code.style) then
         return {}
@@ -336,7 +336,7 @@ end
 ---@param buf integer
 ---@param info render.md.NodeInfo
 ---@return render.md.Mark[]
-M.render_list_marker = function(buf, info)
+function M.render_list_marker(buf, info)
     ---@return boolean
     local function sibling_checkbox()
         if not state.config.checkbox.enabled then
@@ -418,7 +418,7 @@ end
 ---@param info render.md.NodeInfo
 ---@param checkbox_state render.md.CheckboxComponent
 ---@return render.md.Mark?
-M.render_checkbox = function(info, checkbox_state)
+function M.render_checkbox(info, checkbox_state)
     local checkbox = state.config.checkbox
     if not checkbox.enabled then
         return nil
@@ -441,7 +441,7 @@ end
 ---@param info render.md.NodeInfo
 ---@param block_quote render.md.NodeInfo
 ---@return render.md.Mark?
-M.render_quote_marker = function(info, block_quote)
+function M.render_quote_marker(info, block_quote)
     local quote = state.config.quote
     if not quote.enabled then
         return nil
@@ -471,7 +471,7 @@ end
 ---@param text string?
 ---@param highlight string
 ---@return render.md.Mark?
-M.render_sign = function(buf, info, text, highlight)
+function M.render_sign(buf, info, text, highlight)
     local sign = state.config.sign
     if not sign.enabled or text == nil then
         return nil
@@ -497,7 +497,7 @@ end
 ---@param buf integer
 ---@param info render.md.NodeInfo
 ---@return render.md.Mark[]
-M.render_table = function(buf, info)
+function M.render_table(buf, info)
     local pipe_table = state.config.pipe_table
     if not pipe_table.enabled or pipe_table.style == 'none' then
         return {}
@@ -534,7 +534,7 @@ end
 ---@private
 ---@param row render.md.NodeInfo
 ---@return render.md.Mark
-M.render_table_delimiter = function(row)
+function M.render_table_delimiter(row)
     local pipe_table = state.config.pipe_table
     local border = pipe_table.border
     -- Order matters here, in particular handling inner intersections before left & right
@@ -563,7 +563,7 @@ end
 ---@param row render.md.NodeInfo
 ---@param highlight string
 ---@return render.md.Mark
-M.render_table_row = function(buf, row, highlight)
+function M.render_table_row(buf, row, highlight)
     local pipe_table = state.config.pipe_table
     local marks = {}
     if vim.tbl_contains({ 'raw', 'padded' }, pipe_table.cell) then
@@ -629,7 +629,7 @@ end
 ---@param first? render.md.NodeInfo
 ---@param last? render.md.NodeInfo
 ---@return render.md.Mark[]
-M.render_table_full = function(buf, delim, first, last)
+function M.render_table_full(buf, delim, first, last)
     local pipe_table = state.config.pipe_table
     local border = pipe_table.border
     if delim == nil or first == nil or last == nil then
@@ -690,7 +690,7 @@ end
 ---@param buf integer
 ---@param info render.md.NodeInfo
 ---@return integer
-M.table_visual_offset = function(buf, info)
+function M.table_visual_offset(buf, info)
     local result = ts.concealed(buf, info)
     local query = state.inline_link_query
     local tree = vim.treesitter.get_string_parser(info.text, 'markdown_inline')

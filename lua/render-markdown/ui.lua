@@ -25,7 +25,7 @@ M.namespace = vim.api.nvim_create_namespace('render-markdown.nvim')
 
 ---@param buf integer
 ---@param parse boolean
-M.schedule_refresh = function(buf, parse)
+function M.schedule_refresh(buf, parse)
     local mode = vim.fn.mode(true)
     vim.schedule(function()
         logger.start()
@@ -38,7 +38,7 @@ end
 ---@param buf integer
 ---@param mode string
 ---@param parse boolean
-M.refresh = function(buf, mode, parse)
+function M.refresh(buf, mode, parse)
     -- Remove any existing marks if buffer is valid
     if not vim.api.nvim_buf_is_valid(buf) then
         return
@@ -115,7 +115,7 @@ end
 ---@param win integer
 ---@param mode string
 ---@return boolean
-M.should_render = function(buf, win, mode)
+function M.should_render(buf, win, mode)
     if not state.enabled then
         return false
     end
@@ -138,7 +138,7 @@ end
 ---@param language string
 ---@param root TSNode
 ---@return render.md.Mark[]
-M.parse = function(buf, language, root)
+function M.parse(buf, language, root)
     logger.debug('Language: ' .. language)
 
     local marks = {}

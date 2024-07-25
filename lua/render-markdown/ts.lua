@@ -23,7 +23,7 @@ local M = {}
 ---@param node TSNode
 ---@param source integer|string
 ---@return render.md.NodeInfo
-M.info = function(node, source)
+function M.info(node, source)
     local start_row, start_col, end_row, end_col = node:range()
     ---@type render.md.NodeInfo
     return {
@@ -41,7 +41,7 @@ end
 ---@param info render.md.NodeInfo
 ---@param target string
 ---@return integer
-M.level_in_section = function(info, target)
+function M.level_in_section(info, target)
     local level = 0
     local parent = info.node:parent()
     while parent ~= nil and in_section(parent) do
@@ -57,7 +57,7 @@ end
 ---@param info render.md.NodeInfo
 ---@param target string
 ---@return render.md.NodeInfo?
-M.sibling = function(buf, info, target)
+function M.sibling(buf, info, target)
     local sibling = info.node:next_sibling()
     while sibling ~= nil do
         if sibling:type() == target then
@@ -73,7 +73,7 @@ end
 ---@param target_type string
 ---@param target_row integer
 ---@return render.md.NodeInfo?
-M.child = function(buf, info, target_type, target_row)
+function M.child(buf, info, target_type, target_row)
     for child in info.node:iter_children() do
         if child:type() == target_type then
             if child:range() == target_row then
@@ -87,7 +87,7 @@ end
 ---@param buf integer
 ---@param info? render.md.NodeInfo
 ---@return boolean
-M.hidden = function(buf, info)
+function M.hidden(buf, info)
     -- Missing nodes are considered hidden
     if info == nil then
         return true
@@ -98,7 +98,7 @@ end
 ---@param buf integer
 ---@param info render.md.NodeInfo
 ---@return integer
-M.concealed = function(buf, info)
+function M.concealed(buf, info)
     if util.get_win(util.buf_to_win(buf), 'conceallevel') == 0 then
         return 0
     end

@@ -8,19 +8,19 @@ M.has_10 = vim.fn.has('nvim-0.10') == 1
 
 ---@param win integer
 ---@return integer
-M.win_to_buf = function(win)
+function M.win_to_buf(win)
     return vim.fn.winbufnr(win)
 end
 
 ---@param buf integer
 ---@return integer
-M.buf_to_win = function(buf)
+function M.buf_to_win(buf)
     return vim.fn.bufwinid(buf)
 end
 
 ---@param buf integer
 ---@return integer?
-M.cursor_row = function(buf)
+function M.cursor_row(buf)
     if vim.api.nvim_get_current_buf() ~= buf then
         return nil
     end
@@ -29,21 +29,21 @@ end
 
 ---@param buf integer
 ---@return integer
-M.get_width = function(buf)
+function M.get_width(buf)
     return vim.api.nvim_win_get_width(M.buf_to_win(buf))
 end
 
 ---@param win integer
 ---@param name string
 ---@return number|string
-M.get_win = function(win, name)
+function M.get_win(win, name)
     return vim.api.nvim_get_option_value(name, { scope = 'local', win = win })
 end
 
 ---@param win integer
 ---@param name string
 ---@param value number|string
-M.set_win = function(win, name, value)
+function M.set_win(win, name, value)
     local before = M.get_win(win, name)
     vim.api.nvim_set_option_value(name, value, { scope = 'local', win = win })
     logger.debug({ option = name, win = win, before = before, after = value })
@@ -52,13 +52,13 @@ end
 ---@param buf integer
 ---@param name string
 ---@return number|string
-M.get_buf = function(buf, name)
+function M.get_buf(buf, name)
     return vim.api.nvim_get_option_value(name, { buf = buf })
 end
 
 ---@param win integer
 ---@return integer
-M.get_leftcol = function(win)
+function M.get_leftcol(win)
     return vim.api.nvim_win_call(win, function()
         return vim.fn.winsaveview().leftcol
     end)
@@ -66,7 +66,7 @@ end
 
 ---@param buf integer
 ---@return number
-M.file_size_mb = function(buf)
+function M.file_size_mb(buf)
     local ok, stats = pcall(function()
         return vim.uv.fs_stat(vim.api.nvim_buf_get_name(buf))
     end)

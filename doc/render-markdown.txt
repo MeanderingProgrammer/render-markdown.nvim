@@ -1,4 +1,4 @@
-*render-markdown.txt*           For 0.10.0           Last change: 2024 July 24
+*render-markdown.txt*           For 0.10.0           Last change: 2024 July 25
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*

@@ -3,7 +3,7 @@ local M = {}
 
 ---@param s string?
 ---@return integer
-M.width = function(s)
+function M.width(s)
     if s == nil then
         return 0
     end
@@ -12,7 +12,7 @@ end
 
 ---@param s string
 ---@return integer
-M.leading_spaces = function(s)
+function M.leading_spaces(s)
     local _, leading_spaces = s:find('^%s*')
     return leading_spaces or 0
 end
@@ -20,7 +20,7 @@ end
 ---@param value string
 ---@param s string
 ---@return string
-M.pad_to = function(value, s)
+function M.pad_to(value, s)
     local padding = M.width(value) - M.width(s)
     return M.pad(s, padding)
 end
@@ -28,7 +28,7 @@ end
 ---@param s string
 ---@param padding integer
 ---@return string
-M.pad = function(s, padding)
+function M.pad(s, padding)
     return string.rep(' ', padding) .. s
 end
 

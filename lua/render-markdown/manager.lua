@@ -41,7 +41,7 @@ function M.setup()
 end
 
 ---@param enabled boolean
-M.set_all = function(enabled)
+function M.set_all(enabled)
     -- Attempt to attach current buffer in case this is from a lazy load
     M.attach(vim.api.nvim_get_current_buf())
     state.enabled = enabled
@@ -52,7 +52,7 @@ end
 
 ---@private
 ---@param buf integer
-M.attach = function(buf)
+function M.attach(buf)
     if not vim.tbl_contains(state.config.file_types, util.get_buf(buf, 'filetype')) then
         return
     end

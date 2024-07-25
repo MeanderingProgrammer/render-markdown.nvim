@@ -458,7 +458,7 @@ function M.setup(opts)
 end
 
 ---@param opts any
-M.command = function(opts)
+function M.command(opts)
     local args = opts.fargs
     if #args == 0 then
         M.enable()
@@ -477,15 +477,15 @@ M.command = function(opts)
     end
 end
 
-M.enable = function()
+function M.enable()
     manager.set_all(true)
 end
 
-M.disable = function()
+function M.disable()
     manager.set_all(false)
 end
 
-M.toggle = function()
+function M.toggle()
     manager.set_all(not state.enabled)
 end
 

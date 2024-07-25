@@ -7,7 +7,7 @@ local M = {}
 ---@param language string
 ---@return string?
 ---@return string?
-M.get = function(language)
+function M.get(language)
     if has_mini_icons then
         ---@diagnostic disable-next-line: return-type-mismatch
         return mini_icons.get('filetype', language)

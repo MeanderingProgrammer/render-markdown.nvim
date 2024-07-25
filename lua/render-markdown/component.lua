@@ -10,7 +10,7 @@ local M = {}
 ---@param text string
 ---@param comparison 'exact'|'contains'
 ---@return render.md.Component?
-M.callout = function(text, comparison)
+function M.callout(text, comparison)
     ---@param callout render.md.CustomComponent
     ---@return boolean
     local function matches(callout)
@@ -33,7 +33,7 @@ end
 ---@param text string
 ---@param comparison 'exact'|'starts'
 ---@return render.md.Component?
-M.checkbox = function(text, comparison)
+function M.checkbox(text, comparison)
     ---@param checkbox render.md.CustomComponent
     ---@return boolean
     local function matches(checkbox)

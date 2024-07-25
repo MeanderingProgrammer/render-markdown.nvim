@@ -22,14 +22,14 @@ local M = {}
 
 ---@param opts? render.md.UserConfig
 ---@return string[]
-M.validate = function(opts)
+function M.validate(opts)
     require('render-markdown').setup(opts)
     return state.validate()
 end
 
 ---@param file string
 ---@param opts? render.md.UserConfig
-M.setup = function(file, opts)
+function M.setup(file, opts)
     require('render-markdown').setup(opts)
     vim.cmd('e ' .. file)
     util.scheduler()
@@ -42,7 +42,7 @@ M.prefix = 'RenderMarkdown'
 ---@param row integer
 ---@param level integer
 ---@return render.md.MarkInfo[]
-M.heading = function(row, level)
+function M.heading(row, level)
     local icons = { '󰲡 ', ' 󰲣 ', '  󰲥 ', '   󰲧 ', '    󰲩 ', '     󰲫 ' }
     local foreground = string.format('%sH%d', M.prefix, level)
     local background = string.format('%sH%dBg', M.prefix, level)
@@ -78,7 +78,7 @@ end
 ---@param level integer
 ---@param spaces? integer
 ---@return render.md.MarkInfo
-M.bullet = function(row, col, level, spaces)
+function M.bullet(row, col, level, spaces)
     local icons = { '●', '○', '◆', '◇' }
     spaces = spaces or 0
     return {
@@ -94,7 +94,7 @@ end
 ---@param highlight string
 ---@param custom boolean
 ---@return render.md.MarkInfo[]
-M.checkbox = function(row, icon, highlight, custom)
+function M.checkbox(row, icon, highlight, custom)
     local virt_text_pos = 'overlay'
     local conceal = nil
     if custom then
@@ -121,7 +121,7 @@ end
 ---@param start_col integer
 ---@param end_col integer
 ---@return render.md.MarkInfo
-M.inline_code = function(row, start_col, end_col)
+function M.inline_code(row, start_col, end_col)
     return {
         row = { row, row },
         col = { start_col, end_col },
@@ -133,7 +133,7 @@ end
 ---@param start_row integer
 ---@param end_row integer
 ---@return render.md.MarkInfo
-M.code_block = function(start_row, end_row)
+function M.code_block(start_row, end_row)
     return {
         row = { start_row, end_row },
         col = { 0, 0 },
@@ -149,7 +149,7 @@ end
 ---@param name string
 ---@param highlight string
 ---@return render.md.MarkInfo[]
-M.code_language = function(row, start_col, end_col, icon, name, highlight)
+function M.code_language(row, start_col, end_col, icon, name, highlight)
     return {
         {
             row = { row, row },
@@ -168,7 +168,7 @@ end
 
 ---@param row integer
 ---@param col integer
-M.code_below = function(row, col)
+function M.code_below(row, col)
     return {
         row = { row },
         col = { col },
@@ -182,7 +182,7 @@ end
 ---@param end_col integer
 ---@param image boolean
 ---@return render.md.MarkInfo
-M.link = function(row, start_col, end_col, image)
+function M.link(row, start_col, end_col, image)
     local icon
     if image then
         icon = '󰥶 '
@@ -201,7 +201,7 @@ end
 ---@param format string
 ---@param highlight string
 ---@return render.md.MarkInfo
-M.quote = function(row, format, highlight)
+function M.quote(row, format, highlight)
     local quote = string.format(format, '▋')
     return {
         row = { row, row },
@@ -215,7 +215,7 @@ end
 ---@param col integer
 ---@param head boolean
 ---@return render.md.MarkInfo
-M.table_pipe = function(row, col, head)
+function M.table_pipe(row, col, head)
     local highlight
     if head then
         highlight = 'TableHead'
@@ -234,7 +234,7 @@ end
 ---@param col integer
 ---@param spaces integer
 ---@return render.md.MarkInfo
-M.table_padding = function(row, col, spaces)
+function M.table_padding(row, col, spaces)
     return {
         row = { row },
         col = { col },
@@ -247,7 +247,7 @@ end
 ---@param section 'above'|'delimiter'|'below'
 ---@param lengths integer[]
 ---@return render.md.MarkInfo
-M.table_border = function(row, section, lengths)
+function M.table_border(row, section, lengths)
     local border
     local highlight
     if section == 'above' then
@@ -288,7 +288,7 @@ end
 ---@param value string
 ---@param head boolean
 ---@return render.md.MarkInfo
-M.table_row = function(row, col, value, head)
+function M.table_row(row, col, value, head)
     local highlight
     if head then
         highlight = 'TableHead'
@@ -304,7 +304,7 @@ M.table_row = function(row, col, value, head)
 end
 
 ---@return render.md.MarkInfo[]
-M.get_actual_marks = function()
+function M.get_actual_marks()
     local actual = {}
     local marks = vim.api.nvim_buf_get_extmarks(0, ui.namespace, 0, -1, { details = true })
     for _, mark in ipairs(marks) do
@@ -330,7 +330,7 @@ end
 
 ---@param expected render.md.MarkInfo[]
 ---@param actual render.md.MarkInfo[]
-M.marks_are_equal = function(expected, actual)
+function M.marks_are_equal(expected, actual)
     for i = 1, math.min(#expected, #actual) do
         eq(expected[i], actual[i], string.format('Marks at index %d mismatch', i))
     end

@@ -8,7 +8,7 @@ local M = {}
 ---As a result table rendering needs to be painfully aware of this logic
 ---@param info render.md.NodeInfo
 ---@return string?
-M.link_icon = function(info)
+function M.link_icon(info)
     local link = state.config.link
     if not link.enabled then
         return nil

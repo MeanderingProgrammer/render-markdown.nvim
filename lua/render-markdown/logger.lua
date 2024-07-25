@@ -24,13 +24,13 @@ local log = {
     entries = {},
 }
 
-log.reset = function()
+function log.reset()
     log.entries = {}
 end
 
 ---@param level string
 ---@param message any
-log.add = function(level, message)
+function log.add(level, message)
     ---@type render.md.LogEntry
     local entry = {
         ---@diagnostic disable-next-line: assign-type-mismatch
@@ -41,7 +41,7 @@ log.add = function(level, message)
     table.insert(log.entries, entry)
 end
 
-log.flush = function()
+function log.flush()
     if #log.entries == 0 then
         return
     end
@@ -57,19 +57,19 @@ end
 ---@class render.md.Logger
 local M = {}
 
-M.start = function()
+function M.start()
     log.reset()
 end
 
 ---@param message any
-M.debug = function(message)
+function M.debug(message)
     if vim.tbl_contains({ 'debug' }, state.config.log_level) then
         log.add('debug', message)
     end
 end
 
 ---@param message any
-M.error = function(message)
+function M.error(message)
     if vim.tbl_contains({ 'debug', 'error' }, state.config.log_level) then
         log.add('error', message)
     end
@@ -77,7 +77,7 @@ end
 
 ---@param capture string
 ---@param info render.md.NodeInfo
-M.debug_node_info = function(capture, info)
+function M.debug_node_info(capture, info)
     M.debug({
         capture = capture,
         text = info.text,
@@ -89,7 +89,7 @@ end
 ---Encountered if user provides custom capture
 ---@param group string
 ---@param capture string
-M.unhandled_capture = function(group, capture)
+function M.unhandled_capture(group, capture)
     M.error(string.format('Unhandled %s capture: %s', group, capture))
 end
 
@@ -97,11 +97,11 @@ end
 ---@param language string
 ---@param group string
 ---@param value string
-M.unhandled_type = function(language, group, value)
+function M.unhandled_type(language, group, value)
     M.error(string.format('Unhandled %s %s type: %s', language, group, value))
 end
 
-M.flush = function()
+function M.flush()
     log.flush()
 end
 
