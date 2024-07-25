@@ -1,4 +1,4 @@
-*render-markdown.txt*           For 0.10.0           Last change: 2024 July 23
+*render-markdown.txt*           For 0.10.0           Last change: 2024 July 24
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -294,6 +294,8 @@ Full Default Configuration ~
             -- Replaces '---'|'***'|'___'|'* * *' of 'thematic_break'
             -- The icon gets repeated across the window's width
             icon = '─',
+            -- Width of the generated line, either the 'full' window width or a hard coded value
+            width = 'full',
             -- Highlight for the whole line generated from the icon
             highlight = 'RenderMarkdownDash',
         },
@@ -538,6 +540,8 @@ DASHED LINE                                *render-markdown-setup-dashed-line*
             -- Replaces '---'|'***'|'___'|'* * *' of 'thematic_break'
             -- The icon gets repeated across the window's width
             icon = '─',
+            -- Width of the generated line, either the 'full' window width or a hard coded value
+            width = 'full',
             -- Highlight for the whole line generated from the icon
             highlight = 'RenderMarkdownDash',
         },

@@ -24,6 +24,20 @@ function state.validate()
         }
     end
 
+    ---@param value any
+    ---@param valid_values string[]
+    ---@param valid_type type
+    ---@return vim.validate.Spec
+    local function one_of_or(value, valid_values, valid_type)
+        return {
+            value,
+            function(v)
+                return vim.tbl_contains(valid_values, v) or type(v) == valid_type
+            end,
+            'one of ' .. vim.inspect(valid_values) .. ' or ' .. valid_type,
+        }
+    end
+
     ---@param value string[]
     ---@return vim.validate.Spec
     local function string_array(value)
@@ -133,6 +147,7 @@ function state.validate()
     append_errors('render-markdown.dash', dash, {
         enabled = { dash.enabled, 'boolean' },
         icon = { dash.icon, 'string' },
+        width = one_of_or(dash.width, { 'full' }, 'number'),
         highlight = { dash.highlight, 'string' },
     })
 

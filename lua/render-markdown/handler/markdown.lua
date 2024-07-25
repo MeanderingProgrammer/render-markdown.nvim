@@ -139,13 +139,22 @@ M.render_dash = function(buf, info)
     if not dash.enabled then
         return nil
     end
+
+    local width
+    if dash.width == 'full' then
+        width = util.get_width(buf)
+    else
+        ---@type integer
+        width = dash.width
+    end
+
     ---@type render.md.Mark
     return {
         conceal = true,
         start_row = info.start_row,
         start_col = 0,
         opts = {
-            virt_text = { { dash.icon:rep(util.get_width(buf)), dash.highlight } },
+            virt_text = { { dash.icon:rep(width), dash.highlight } },
             virt_text_pos = 'overlay',
         },
     }

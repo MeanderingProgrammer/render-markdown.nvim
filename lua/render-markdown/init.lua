@@ -44,6 +44,11 @@ local M = {}
 ---@field public rendered? string
 ---@field public highlight? string
 
+---@class render.md.UserQuote
+---@field public enabled? boolean
+---@field public icon? string
+---@field public highlight? string
+
 ---@class render.md.UserCheckboxComponent
 ---@field public icon? string
 ---@field public highlight? string
@@ -59,9 +64,10 @@ local M = {}
 ---@field public icons? string[]
 ---@field public highlight? string
 
----@class render.md.UserBasicComponent
+---@class render.md.UserDash
 ---@field public enabled? boolean
 ---@field public icon? string
+---@field public width? 'full'|integer
 ---@field public highlight? string
 
 ---@class render.md.UserCode
@@ -111,10 +117,10 @@ local M = {}
 ---@field public latex? render.md.UserLatex
 ---@field public heading? render.md.UserHeading
 ---@field public code? render.md.UserCode
----@field public dash? render.md.UserBasicComponent
+---@field public dash? render.md.UserDash
 ---@field public bullet? render.md.UserBullet
 ---@field public checkbox? render.md.UserCheckbox
----@field public quote? render.md.UserBasicComponent
+---@field public quote? render.md.UserQuote
 ---@field public pipe_table? render.md.UserPipeTable
 ---@field public callout? table<string, render.md.UserCustomComponent>
 ---@field public link? render.md.UserLink
@@ -270,6 +276,8 @@ M.default_config = {
         -- Replaces '---'|'***'|'___'|'* * *' of 'thematic_break'
         -- The icon gets repeated across the window's width
         icon = '─',
+        -- Width of the generated line, either the 'full' window width or a hard coded value
+        width = 'full',
         -- Highlight for the whole line generated from the icon
         highlight = 'RenderMarkdownDash',
     },

@@ -254,6 +254,8 @@ require('render-markdown').setup({
         -- Replaces '---'|'***'|'___'|'* * *' of 'thematic_break'
         -- The icon gets repeated across the window's width
         icon = '─',
+        -- Width of the generated line, either the 'full' window width or a hard coded value
+        width = 'full',
         -- Highlight for the whole line generated from the icon
         highlight = 'RenderMarkdownDash',
     },
@@ -497,6 +499,8 @@ require('render-markdown').setup({
         -- Replaces '---'|'***'|'___'|'* * *' of 'thematic_break'
         -- The icon gets repeated across the window's width
         icon = '─',
+        -- Width of the generated line, either the 'full' window width or a hard coded value
+        width = 'full',
         -- Highlight for the whole line generated from the icon
         highlight = 'RenderMarkdownDash',
     },

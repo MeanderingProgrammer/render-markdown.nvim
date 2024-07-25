@@ -29,6 +29,11 @@
 ---@field public rendered string
 ---@field public highlight string
 
+---@class render.md.Quote
+---@field public enabled boolean
+---@field public icon string
+---@field public highlight string
+
 ---@class render.md.CheckboxComponent
 ---@field public icon string
 ---@field public highlight string
@@ -44,9 +49,10 @@
 ---@field public icons string[]
 ---@field public highlight string
 
----@class render.md.BasicComponent
+---@class render.md.Dash
 ---@field public enabled boolean
 ---@field public icon string
+---@field public width 'full'|integer
 ---@field public highlight string
 
 ---@class render.md.Code
@@ -96,10 +102,10 @@
 ---@field public latex render.md.Latex
 ---@field public heading render.md.Heading
 ---@field public code render.md.Code
----@field public dash render.md.BasicComponent
+---@field public dash render.md.Dash
 ---@field public bullet render.md.Bullet
 ---@field public checkbox render.md.Checkbox
----@field public quote render.md.BasicComponent
+---@field public quote render.md.Quote
 ---@field public pipe_table render.md.PipeTable
 ---@field public callout table<string, render.md.CustomComponent>
 ---@field public link render.md.Link
