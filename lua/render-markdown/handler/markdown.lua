@@ -660,7 +660,7 @@ function M.render_table_full(buf, parsed_table)
 
     -- Do not need to account for concealed / inlined text on delimiter row
     local delim_width = str.width(parsed_table.delim.text)
-    if delim_width ~= width(parsed_table.head) or delim_width ~= width(last) then
+    if delim_width ~= width(first) or delim_width ~= width(last) then
         return {}
     end
 
