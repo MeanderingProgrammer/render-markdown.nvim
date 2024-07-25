@@ -47,6 +47,7 @@
 ---@class render.md.Bullet
 ---@field public enabled boolean
 ---@field public icons string[]
+---@field public right_pad integer
 ---@field public highlight string
 
 ---@class render.md.Dash

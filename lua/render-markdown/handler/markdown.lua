@@ -29,7 +29,7 @@ M.parse = function(root, buf)
         elseif capture == 'code' then
             vim.list_extend(marks, M.render_code(buf, info))
         elseif capture == 'list_marker' then
-            list.add(marks, M.render_list_marker(buf, info))
+            vim.list_extend(marks, M.render_list_marker(buf, info))
         elseif capture == 'checkbox_unchecked' then
             list.add(marks, M.render_checkbox(info, state.config.checkbox.unchecked))
         elseif capture == 'checkbox_checked' then
@@ -335,7 +335,7 @@ end
 ---@private
 ---@param buf integer
 ---@param info render.md.NodeInfo
----@return render.md.Mark?
+---@return render.md.Mark[]
 M.render_list_marker = function(buf, info)
     ---@return boolean
     local function sibling_checkbox()
@@ -357,7 +357,7 @@ M.render_list_marker = function(buf, info)
     if sibling_checkbox() then
         -- Hide the list marker for checkboxes rather than replacing with a bullet point
         ---@type render.md.Mark
-        return {
+        local checkbox_mark = {
             conceal = true,
             start_row = info.start_row,
             start_col = info.start_col,
@@ -367,22 +367,24 @@ M.render_list_marker = function(buf, info)
                 conceal = '',
             },
         }
+        return { checkbox_mark }
     else
         local bullet = state.config.bullet
         if not bullet.enabled then
-            return nil
+            return {}
         end
         local level = ts.level_in_section(info, 'list')
         local icon = list.cycle(bullet.icons, level)
         if icon == nil then
-            return nil
+            return {}
         end
+        local marks = {}
         -- List markers from tree-sitter should have leading spaces removed, however there are known
         -- edge cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
         -- As a result we handle leading spaces here, can remove if this gets fixed upstream
         local leading_spaces = str.leading_spaces(info.text)
         ---@type render.md.Mark
-        return {
+        local bullet_mark = {
             conceal = true,
             start_row = info.start_row,
             start_col = info.start_col,
@@ -393,6 +395,22 @@ M.render_list_marker = function(buf, info)
                 virt_text_pos = 'overlay',
             },
         }
+        list.add(marks, bullet_mark)
+        -- Requires inline extmarks
+        if util.has_10 and bullet.right_pad > 0 then
+            ---@type render.md.Mark
+            local padding_mark = {
+                conceal = true,
+                start_row = info.start_row,
+                start_col = info.end_col - 1,
+                opts = {
+                    virt_text = { { str.pad('', bullet.right_pad), 'Normal' } },
+                    virt_text_pos = 'inline',
+                },
+            }
+            list.add(marks, padding_mark)
+        end
+        return marks
     end
 end
 

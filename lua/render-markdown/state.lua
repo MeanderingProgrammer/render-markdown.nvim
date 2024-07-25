@@ -155,6 +155,7 @@ function state.validate()
     append_errors('render-markdown.bullet', bullet, {
         enabled = { bullet.enabled, 'boolean' },
         icons = string_array(bullet.icons),
+        right_pad = { bullet.right_pad, 'number' },
         highlight = { bullet.highlight, 'string' },
     })
 
