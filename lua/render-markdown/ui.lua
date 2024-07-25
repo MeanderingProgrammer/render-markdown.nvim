@@ -78,10 +78,30 @@ M.refresh = function(buf, mode, parse)
         cache.marks[buf] = marks
     end
 
-    -- Render marks based on anti-conceal behavior and current row
-    local row = vim.api.nvim_win_get_cursor(util.buf_to_win(buf))[1] - 1
+    ---Render marks based on anti-conceal behavior and current row
+    ---@param mark render.md.Mark
+    ---@param row? integer
+    ---@return boolean
+    local function should_show_mark(mark, row)
+        -- Anti-conceal is not enabled -> all marks should be shown
+        if not state.config.anti_conceal.enabled then
+            return true
+        end
+        -- Row is not known means buffer is not active -> all marks should be shown
+        if row == nil then
+            return true
+        end
+        -- Mark is not concealable -> mark should always be shown
+        if not mark.conceal then
+            return true
+        end
+        -- Show mark if it is not on the current row
+        return mark.start_row ~= row
+    end
+
+    local row = util.cursor_row(buf)
     for _, mark in ipairs(marks) do
-        if not state.config.anti_conceal.enabled or not mark.conceal or mark.start_row ~= row then
+        if should_show_mark(mark, row) then
             -- Only ensure strictness if the buffer was parsed this request
             -- The order of events can cause our cache to be stale
             mark.opts.strict = parse

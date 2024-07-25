@@ -35,9 +35,22 @@ body:
       required: true
   - type: textarea
     attributes:
-      label: Healthcheck output (:checkhealth render-markdown)
+      label: Healthcheck output
+      description: Output of :checkhealth render-markdown
     validations:
       required: true
+  - type: textarea
+    attributes:
+      label: Plugin configuration
+      description: Your configuration for this plugin.
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Confirmations
+      options:
+      - label: I have provided markdown text for any screenshots used in my description & understand that my issue will be closed if I have not
+        required: true
   - type: textarea
     attributes:
       label: Additional information

@@ -19,6 +19,15 @@ M.buf_to_win = function(buf)
 end
 
 ---@param buf integer
+---@return integer?
+M.cursor_row = function(buf)
+    if vim.api.nvim_get_current_buf() ~= buf then
+        return nil
+    end
+    return vim.api.nvim_win_get_cursor(M.buf_to_win(buf))[1] - 1
+end
+
+---@param buf integer
 ---@return integer
 M.get_width = function(buf)
     return vim.api.nvim_win_get_width(M.buf_to_win(buf))
