@@ -28,9 +28,7 @@ M.namespace = vim.api.nvim_create_namespace('render-markdown.nvim')
 function M.schedule_refresh(buf, parse)
     local mode = vim.fn.mode(true)
     vim.schedule(function()
-        logger.start()
         M.refresh(buf, mode, parse)
-        logger.flush()
     end)
 end
 
@@ -56,56 +54,29 @@ function M.refresh(buf, mode, parse)
         for name, value in pairs(state.config.win_options) do
             util.set_win(win, name, value.default)
         end
-        return
-    end
-
-    -- Set window options to rendered & perform render
-    for name, value in pairs(state.config.win_options) do
-        util.set_win(win, name, value.rendered)
-    end
-
-    -- Re-compute marks, needed if missing or between text changes
-    local marks = cache.marks[buf]
-    if marks == nil or parse then
-        marks = {}
-        -- Make sure injections are processed
-        local parser = vim.treesitter.get_parser(buf)
-        parser:parse(true)
-        -- Parse and cache marks
-        parser:for_each_tree(function(tree, language_tree)
-            vim.list_extend(marks, M.parse(buf, language_tree:lang(), tree:root()))
-        end)
-        cache.marks[buf] = marks
-    end
-
-    ---Render marks based on anti-conceal behavior and current row
-    ---@param mark render.md.Mark
-    ---@param row? integer
-    ---@return boolean
-    local function should_show_mark(mark, row)
-        -- Anti-conceal is not enabled -> all marks should be shown
-        if not state.config.anti_conceal.enabled then
-            return true
+    else
+        -- Set window options to rendered & perform render
+        for name, value in pairs(state.config.win_options) do
+            util.set_win(win, name, value.rendered)
         end
-        -- Row is not known means buffer is not active -> all marks should be shown
-        if row == nil then
-            return true
-        end
-        -- Mark is not concealable -> mark should always be shown
-        if not mark.conceal then
-            return true
-        end
-        -- Show mark if it is not on the current row
-        return mark.start_row ~= row
-    end
 
-    local row = util.cursor_row(buf)
-    for _, mark in ipairs(marks) do
-        if should_show_mark(mark, row) then
-            -- Only ensure strictness if the buffer was parsed this request
-            -- The order of events can cause our cache to be stale
-            mark.opts.strict = parse
-            vim.api.nvim_buf_set_extmark(buf, M.namespace, mark.start_row, mark.start_col, mark.opts)
+        -- Re-compute marks, needed if missing or between text changes
+        local marks = cache.marks[buf]
+        if marks == nil or parse then
+            logger.start()
+            marks = M.parse_buffer(buf)
+            logger.flush()
+            cache.marks[buf] = marks
+        end
+
+        local row = util.cursor_row(buf)
+        for _, mark in ipairs(marks) do
+            if M.should_show_mark(mark, row) then
+                -- Only ensure strictness if the buffer was parsed this request
+                -- The order of events can cause our cache to be stale
+                mark.opts.strict = parse
+                vim.api.nvim_buf_set_extmark(buf, M.namespace, mark.start_row, mark.start_col, mark.opts)
+            end
         end
     end
 end
@@ -131,6 +102,21 @@ function M.should_render(buf, win, mode)
     return true
 end
 
+---@private
+---@param buf integer
+---@return render.md.Mark[]
+function M.parse_buffer(buf)
+    local marks = {}
+    -- Make sure injections are processed
+    local parser = vim.treesitter.get_parser(buf)
+    parser:parse(true)
+    -- Parse and cache marks
+    parser:for_each_tree(function(tree, language_tree)
+        vim.list_extend(marks, M.parse(buf, language_tree:lang(), tree:root()))
+    end)
+    return marks
+end
+
 ---Run user & builtin handlers when available. User handler is always executed,
 ---builtin handler is skipped if user handler does not specify extends.
 ---@private
@@ -139,12 +125,12 @@ end
 ---@param root TSNode
 ---@return render.md.Mark[]
 function M.parse(buf, language, root)
-    logger.debug('Language: ' .. language)
+    logger.debug('language', language)
 
     local marks = {}
     local user_handler = state.config.custom_handlers[language]
     if user_handler ~= nil then
-        logger.debug('Running user handler')
+        logger.debug('running handler', 'user')
         -- TODO: remove call to render & parse nil check
         ---@diagnostic disable-next-line: undefined-field
         if user_handler.render ~= nil then
@@ -163,10 +149,32 @@ function M.parse(buf, language, root)
     end
     local builtin_handler = builtin_handlers[language]
     if builtin_handler ~= nil then
-        logger.debug('Running builtin handler')
+        logger.debug('running handler', 'builtin')
         vim.list_extend(marks, builtin_handler.parse(root, buf))
     end
     return marks
+end
+
+---Render marks based on anti-conceal behavior and current row
+---@private
+---@param mark render.md.Mark
+---@param row? integer
+---@return boolean
+function M.should_show_mark(mark, row)
+    -- Anti-conceal is not enabled -> all marks should be shown
+    if not state.config.anti_conceal.enabled then
+        return true
+    end
+    -- Row is not known means buffer is not active -> all marks should be shown
+    if row == nil then
+        return true
+    end
+    -- Mark is not concealable -> mark should always be shown
+    if not mark.conceal then
+        return true
+    end
+    -- Show mark if it is not on the current row
+    return mark.start_row ~= row
 end
 
 return M

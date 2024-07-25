@@ -48,6 +48,9 @@ update:
     --input-file README.md \
     --vim-version 0.10.0
 
+cat-log:
+  cat ~/.local/state/nvim/render-markdown.log
+
 gen-medium:
   just gen-file "1000" > medium.md
 

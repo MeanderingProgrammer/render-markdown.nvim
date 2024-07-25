@@ -1,5 +1,3 @@
-local logger = require('render-markdown.logger')
-
 ---@class render.md.Util
 local M = {}
 
@@ -44,9 +42,7 @@ end
 ---@param name string
 ---@param value number|string
 function M.set_win(win, name, value)
-    local before = M.get_win(win, name)
     vim.api.nvim_set_option_value(name, value, { scope = 'local', win = win })
-    logger.debug({ option = name, win = win, before = before, after = value })
 end
 
 ---@param buf integer

@@ -25,15 +25,15 @@ function M.parse(root, buf)
         if capture == 'heading' then
             vim.list_extend(marks, M.render_heading(buf, info))
         elseif capture == 'dash' then
-            list.add(marks, M.render_dash(buf, info))
+            list.add_mark(marks, M.render_dash(buf, info))
         elseif capture == 'code' then
             vim.list_extend(marks, M.render_code(buf, info))
         elseif capture == 'list_marker' then
             vim.list_extend(marks, M.render_list_marker(buf, info))
         elseif capture == 'checkbox_unchecked' then
-            list.add(marks, M.render_checkbox(info, state.config.checkbox.unchecked))
+            list.add_mark(marks, M.render_checkbox(info, state.config.checkbox.unchecked))
         elseif capture == 'checkbox_checked' then
-            list.add(marks, M.render_checkbox(info, state.config.checkbox.checked))
+            list.add_mark(marks, M.render_checkbox(info, state.config.checkbox.checked))
         elseif capture == 'quote' then
             local quote_query = state.markdown_quote_query
             for nested_id, nested_node in quote_query:iter_captures(info.node, buf) do
@@ -41,7 +41,7 @@ function M.parse(root, buf)
                 local nested_info = ts.info(nested_node, buf)
                 logger.debug_node_info(nested_capture, nested_info)
                 if nested_capture == 'quote_marker' then
-                    list.add(marks, M.render_quote_marker(nested_info, info))
+                    list.add_mark(marks, M.render_quote_marker(nested_info, info))
                 else
                     logger.unhandled_capture('markdown quote', nested_capture)
                 end
@@ -83,10 +83,10 @@ function M.render_heading(buf, info)
             hl_eol = heading.width == 'full',
         },
     }
-    list.add(marks, background_mark)
+    list.add_mark(marks, background_mark)
 
     if heading.sign then
-        list.add(marks, M.render_sign(buf, info, list.cycle(heading.signs, level), foreground))
+        list.add_mark(marks, M.render_sign(buf, info, list.cycle(heading.signs, level), foreground))
     end
 
     if icon == nil then
@@ -112,7 +112,7 @@ function M.render_heading(buf, info)
                     conceal = '',
                 },
             }
-            list.add(marks, icon_mark)
+            list.add_mark(marks, icon_mark)
         end
     else
         ---@type render.md.Mark
@@ -127,7 +127,7 @@ function M.render_heading(buf, info)
                 virt_text_pos = 'overlay',
             },
         }
-        list.add(marks, icon_mark)
+        list.add_mark(marks, icon_mark)
     end
     return marks
 end
@@ -212,7 +212,7 @@ function M.render_code(buf, info)
                     virt_text_pos = 'overlay',
                 },
             }
-            list.add(marks, start_mark)
+            list.add_mark(marks, start_mark)
         end
         local code_end = ts.child(buf, info, 'fenced_code_block_delimiter', info.end_row - 1)
         if ts.hidden(buf, code_end) then
@@ -227,7 +227,7 @@ function M.render_code(buf, info)
                     virt_text_pos = 'overlay',
                 },
             }
-            list.add(marks, end_mark)
+            list.add_mark(marks, end_mark)
         end
     end
 
@@ -243,7 +243,7 @@ function M.render_code(buf, info)
             hl_eol = true,
         },
     }
-    list.add(marks, background_mark)
+    list.add_mark(marks, background_mark)
 
     if code.width == 'block' then
         -- Overwrite anything beyond left_pad + block width + right_pad with Normal
@@ -261,7 +261,7 @@ function M.render_code(buf, info)
                     virt_text_win_col = width,
                 },
             }
-            list.add(marks, block_background_mark)
+            list.add_mark(marks, block_background_mark)
         end
     end
 
@@ -283,7 +283,7 @@ function M.render_code(buf, info)
                 virt_text_pos = 'inline',
             },
         }
-        list.add(marks, row_padding_mark)
+        list.add_mark(marks, row_padding_mark)
     end
     return marks
 end
@@ -304,7 +304,7 @@ function M.render_language(buf, info, code_block)
     end
     local marks = {}
     if code.sign then
-        list.add(marks, M.render_sign(buf, info, icon, icon_highlight))
+        list.add_mark(marks, M.render_sign(buf, info, icon, icon_highlight))
     end
     -- Requires inline extmarks
     if not util.has_10 then
@@ -332,7 +332,7 @@ function M.render_language(buf, info, code_block)
             virt_text_pos = 'inline',
         },
     }
-    list.add(marks, language_marker)
+    list.add_mark(marks, language_marker)
     return marks
 end
 
@@ -399,7 +399,7 @@ function M.render_list_marker(buf, info)
                 virt_text_pos = 'overlay',
             },
         }
-        list.add(marks, bullet_mark)
+        list.add_mark(marks, bullet_mark)
         -- Requires inline extmarks
         if util.has_10 and bullet.right_pad > 0 then
             ---@type render.md.Mark
@@ -412,7 +412,7 @@ function M.render_list_marker(buf, info)
                     virt_text_pos = 'inline',
                 },
             }
-            list.add(marks, padding_mark)
+            list.add_mark(marks, padding_mark)
         end
         return marks
     end
@@ -472,7 +472,7 @@ end
 ---@private
 ---@param buf integer
 ---@param info render.md.NodeInfo
----@param text string?
+---@param text? string
 ---@param highlight string
 ---@return render.md.Mark?
 function M.render_sign(buf, info, text, highlight)
@@ -515,7 +515,7 @@ function M.render_table(buf, info)
         local row = ts.info(row_node, buf)
         if row.type == 'pipe_table_delimiter_row' then
             delim = row
-            list.add(marks, M.render_table_delimiter(row))
+            list.add_mark(marks, M.render_table_delimiter(row))
         elseif row.type == 'pipe_table_header' then
             first = row
             vim.list_extend(marks, M.render_table_row(buf, row, pipe_table.head))
@@ -586,7 +586,7 @@ function M.render_table_row(buf, row, highlight)
                         virt_text_pos = 'overlay',
                     },
                 }
-                list.add(marks, pipe_mark)
+                list.add_mark(marks, pipe_mark)
             elseif cell.type == 'pipe_table_cell' then
                 -- Requires inline extmarks
                 if pipe_table.cell == 'padded' and util.has_10 then
@@ -602,7 +602,7 @@ function M.render_table_row(buf, row, highlight)
                                 virt_text_pos = 'inline',
                             },
                         }
-                        list.add(marks, padding_mark)
+                        list.add_mark(marks, padding_mark)
                     end
                 end
             else
@@ -622,7 +622,7 @@ function M.render_table_row(buf, row, highlight)
                 virt_text_pos = 'overlay',
             },
         }
-        list.add(marks, overlay_mark)
+        list.add_mark(marks, overlay_mark)
     end
     return marks
 end

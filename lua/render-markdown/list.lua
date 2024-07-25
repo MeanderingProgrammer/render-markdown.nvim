@@ -1,11 +1,14 @@
+local logger = require('render-markdown.logger')
+
 ---@class render.md.ListHelper
 local M = {}
 
----@param values render.md.Mark[]
----@param value? render.md.Mark
-function M.add(values, value)
-    if value ~= nil then
-        table.insert(values, value)
+---@param marks render.md.Mark[]
+---@param new_mark? render.md.Mark
+function M.add_mark(marks, new_mark)
+    if new_mark ~= nil then
+        logger.debug('mark', new_mark)
+        table.insert(marks, new_mark)
     end
 end
 

@@ -40,6 +40,8 @@
 - Improve lazy.nvim instructions [#80](https://github.com/MeanderingProgrammer/markdown.nvim/pull/80)
 - Improve LaTeX compatibility [#90](https://github.com/MeanderingProgrammer/markdown.nvim/pull/90)
   [695501b](https://github.com/MeanderingProgrammer/markdown.nvim/commit/695501bd98b1f2ec052889fc4faef24dedd7091b)
+- Heading block width: [#94](https://github.com/MeanderingProgrammer/markdown.nvim/pull/94)
+  [426b135](https://github.com/MeanderingProgrammer/markdown.nvim/commit/426b13574c8264636e5660e5f5a3b4f5e3d5a937)
 
 ### Bug Fixes
 

@@ -1,7 +1,7 @@
 ---@class render.md.StringHelper
 local M = {}
 
----@param s string?
+---@param s? string
 ---@return integer
 function M.width(s)
     if s == nil then
@@ -26,7 +26,7 @@ function M.pad_to(value, s)
 end
 
 ---@param padding integer
----@param s string?
+---@param s? string
 ---@return string
 function M.pad(padding, s)
     local result = string.rep(' ', padding)

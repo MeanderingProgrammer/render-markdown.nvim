@@ -22,7 +22,7 @@ function M.parse(root, buf)
         return {}
     end
     if vim.fn.executable(latex.converter) ~= 1 then
-        logger.debug('Executable not found: ' .. latex.converter)
+        logger.debug('executable not found', latex.converter)
         return {}
     end
 
@@ -58,6 +58,7 @@ function M.parse(root, buf)
             virt_lines_above = true,
         },
     }
+    logger.debug('mark', latex_mark)
     return { latex_mark }
 end
 

@@ -21,11 +21,11 @@ function M.parse(root, buf)
         local info = ts.info(node, buf)
         logger.debug_node_info(capture, info)
         if capture == 'code' then
-            list.add(marks, M.render_code(info))
+            list.add_mark(marks, M.render_code(info))
         elseif capture == 'callout' then
-            list.add(marks, M.render_callout(info))
+            list.add_mark(marks, M.render_callout(info))
         elseif capture == 'link' then
-            list.add(marks, M.render_link(info))
+            list.add_mark(marks, M.render_link(info))
         else
             logger.unhandled_capture('inline', capture)
         end

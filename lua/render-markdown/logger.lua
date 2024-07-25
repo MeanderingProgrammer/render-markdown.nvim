@@ -16,6 +16,7 @@ end
 ---@class render.md.LogEntry
 ---@field date string
 ---@field level string
+---@field name string
 ---@field message string
 
 ---@class render.md.Log
@@ -29,13 +30,15 @@ function log.reset()
 end
 
 ---@param level string
+---@param name string
 ---@param message any
-function log.add(level, message)
+function log.add(level, name, message)
     ---@type render.md.LogEntry
     local entry = {
         ---@diagnostic disable-next-line: assign-type-mismatch
         date = os.date('%Y-%m-%d %H:%M:%S'),
         level = string.upper(level),
+        name = name,
         message = convert_message(message),
     }
     table.insert(log.entries, entry)
@@ -47,7 +50,7 @@ function log.flush()
     end
     local file = assert(io.open(log_file, 'w'))
     for _, entry in ipairs(log.entries) do
-        local line = string.format('%s - %s - %s', entry.date, entry.level, entry.message)
+        local line = string.format('%s [%s] %s: %s', entry.date, entry.level, entry.name, entry.message)
         file:write(line .. '\n')
     end
     file:close()
@@ -61,24 +64,27 @@ function M.start()
     log.reset()
 end
 
+---@param name string
 ---@param message any
-function M.debug(message)
+function M.debug(name, message)
     if vim.tbl_contains({ 'debug' }, state.config.log_level) then
-        log.add('debug', message)
+        log.add('debug', name, message)
     end
 end
 
+---@private
+---@param name string
 ---@param message any
-function M.error(message)
+function M.error(name, message)
     if vim.tbl_contains({ 'debug', 'error' }, state.config.log_level) then
-        log.add('error', message)
+        log.add('error', name, message)
     end
 end
 
 ---@param capture string
 ---@param info render.md.NodeInfo
 function M.debug_node_info(capture, info)
-    M.debug({
+    M.debug('node info', {
         capture = capture,
         text = info.text,
         rows = { info.start_row, info.end_row },
@@ -90,7 +96,7 @@ end
 ---@param group string
 ---@param capture string
 function M.unhandled_capture(group, capture)
-    M.error(string.format('Unhandled %s capture: %s', group, capture))
+    M.error('unhandled capture', string.format('%s -> %s', group, capture))
 end
 
 ---Encountered if new type is seen for a particular group
@@ -98,7 +104,7 @@ end
 ---@param group string
 ---@param value string
 function M.unhandled_type(language, group, value)
-    M.error(string.format('Unhandled %s %s type: %s', language, group, value))
+    M.error('unhandled type', string.format('%s -> %s -> %s', language, group, value))
 end
 
 function M.flush()

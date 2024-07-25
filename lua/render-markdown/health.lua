@@ -66,7 +66,7 @@ function M.version(minimum, recommended)
 end
 
 ---@param language string
----@param advice string?
+---@param advice? string
 function M.check_parser(language, advice)
     local parsers = require('nvim-treesitter.parsers')
     if parsers.has_parser(language) then
@@ -89,7 +89,7 @@ function M.check_highlight(language)
 end
 
 ---@param name string
----@param advice string?
+---@param advice? string
 function M.check_executable(name, advice)
     if vim.fn.executable(name) == 1 then
         vim.health.ok(name .. ': installed')
@@ -101,7 +101,7 @@ function M.check_executable(name, advice)
 end
 
 ---@param name string
----@param advice string[]?
+---@param advice? string[]
 function M.check_plugin(name, advice)
     local has_plugin = pcall(require, name)
     if not has_plugin then
