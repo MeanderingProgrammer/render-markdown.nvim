@@ -117,6 +117,8 @@ function state.validate()
         enabled = { latex.enabled, 'boolean' },
         converter = { latex.converter, 'string' },
         highlight = { latex.highlight, 'string' },
+        top_pad = { latex.top_pad, 'number' },
+        bottom_pad = { latex.bottom_pad, 'number' },
     })
 
     local heading = config.heading

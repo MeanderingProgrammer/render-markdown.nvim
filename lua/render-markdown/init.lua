@@ -96,6 +96,8 @@ local M = {}
 ---@field public enabled? boolean
 ---@field public converter? string
 ---@field public highlight? string
+---@field public top_pad? integer
+---@field public bottom_pad? integer
 
 ---@class render.md.UserAntiConceal
 ---@field public enabled? boolean
@@ -208,6 +210,10 @@ M.default_config = {
         converter = 'latex2text',
         -- Highlight for LaTeX blocks
         highlight = 'RenderMarkdownMath',
+        -- Amount of empty lines above LaTeX blocks
+        top_pad = 0,
+        -- Amount of empty lines below LaTeX blocks
+        bottom_pad = 0,
     },
     heading = {
         -- Turn on / off heading icon & background rendering

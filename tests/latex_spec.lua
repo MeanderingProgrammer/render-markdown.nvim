@@ -46,7 +46,7 @@ async_tests.describe('latex.md', function()
             -- Inline
             latex(2, 2, 0, 21, { '√(3x-1)+(1+x)^2' }),
             -- Block
-            latex(4, 7, 0, 2, { 'f(x,y) = x + √(y)', 'f(x,y) = √(y) + x^2/4y' }),
+            latex(4, 7, 0, 2, { '    f(x,y) = x + √(y)', '    f(x,y) = √(y) + x^2/4y' }),
         })
 
         local actual = util.get_actual_marks()

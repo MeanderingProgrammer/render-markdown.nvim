@@ -81,6 +81,8 @@
 ---@field public enabled boolean
 ---@field public converter string
 ---@field public highlight string
+---@field public top_pad integer
+---@field public bottom_pad integer
 
 ---@class render.md.AntiConceal
 ---@field public enabled boolean
