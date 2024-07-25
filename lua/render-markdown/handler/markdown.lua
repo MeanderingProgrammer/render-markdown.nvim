@@ -3,6 +3,7 @@ local component = require('render-markdown.component')
 local icons = require('render-markdown.icons')
 local list = require('render-markdown.list')
 local logger = require('render-markdown.logger')
+local pipe_table_parser = require('render-markdown.parser.pipe_table')
 local shared = require('render-markdown.handler.shared')
 local state = require('render-markdown.state')
 local str = require('render-markdown.str')
@@ -506,48 +507,55 @@ function M.render_table(buf, info)
     if not pipe_table.enabled or pipe_table.style == 'none' then
         return {}
     end
-    local marks = {}
+    local parsed_table = pipe_table_parser.parse(buf, info)
+    if parsed_table == nil then
+        return {}
+    end
 
-    local delim = nil
-    local first = nil
-    local last = nil
-    for row_node in info.node:iter_children() do
-        local row = ts.info(row_node, buf)
-        if row.type == 'pipe_table_delimiter_row' then
-            delim = row
-            list.add_mark(marks, M.render_table_delimiter(row))
-        elseif row.type == 'pipe_table_header' then
-            first = row
-            vim.list_extend(marks, M.render_table_row(buf, row, pipe_table.head))
-        elseif row.type == 'pipe_table_row' then
-            if last == nil or row.start_row > last.start_row then
-                last = row
-            end
-            vim.list_extend(marks, M.render_table_row(buf, row, pipe_table.row))
-        else
-            logger.unhandled_type('markdown', 'row', row.type)
-        end
+    local marks = {}
+    vim.list_extend(marks, M.render_table_row(buf, parsed_table.head, pipe_table.head))
+    list.add_mark(marks, M.render_table_delimiter(parsed_table.delim, parsed_table.columns))
+    for _, row in ipairs(parsed_table.rows) do
+        vim.list_extend(marks, M.render_table_row(buf, row, pipe_table.row))
     end
     if pipe_table.style == 'full' then
-        vim.list_extend(marks, M.render_table_full(buf, delim, first, last))
+        vim.list_extend(marks, M.render_table_full(buf, parsed_table))
     end
-
     return marks
 end
 
 ---@private
 ---@param row render.md.NodeInfo
+---@param columns render.md.parsed.TableColumn[]
 ---@return render.md.Mark
-function M.render_table_delimiter(row)
+function M.render_table_delimiter(row, columns)
     local pipe_table = state.config.pipe_table
+    local indicator = pipe_table.alignment_indicator
     local border = pipe_table.border
-    -- Order matters here, in particular handling inner intersections before left & right
-    local delimiter = row.text
-        :gsub(' ', '-')
-        :gsub('%-|%-', border[11] .. border[5] .. border[11])
-        :gsub('|%-', border[4] .. border[11])
-        :gsub('%-|', border[11] .. border[6])
-        :gsub('%-', border[11])
+    local sections = vim.tbl_map(
+        ---@param column render.md.parsed.TableColumn
+        ---@return string
+        function(column)
+            -- If column is small there's no good place to put the alignment indicator
+            -- Alignment indicator must be exactly one character wide
+            -- We do not put an indicator for default alignment
+            if column.width < 4 or str.width(indicator) ~= 1 or column.alignment == 'default' then
+                return border[11]:rep(column.width)
+            end
+            -- Handle the various alignmnet possibilities
+            local left = border[11]:rep(math.floor(column.width / 2))
+            local right = border[11]:rep(math.ceil(column.width / 2) - 1)
+            if column.alignment == 'left' then
+                return indicator .. left .. right
+            elseif column.alignment == 'right' then
+                return left .. right .. indicator
+            else
+                return left .. indicator .. right
+            end
+        end,
+        columns
+    )
+    local delimiter = border[4] .. table.concat(sections, border[5]) .. border[6]
     ---@type render.md.Mark
     return {
         conceal = true,
@@ -629,16 +637,11 @@ end
 
 ---@private
 ---@param buf integer
----@param delim? render.md.NodeInfo
----@param first? render.md.NodeInfo
----@param last? render.md.NodeInfo
+---@param parsed_table render.md.parsed.Table
 ---@return render.md.Mark[]
-function M.render_table_full(buf, delim, first, last)
+function M.render_table_full(buf, parsed_table)
     local pipe_table = state.config.pipe_table
     local border = pipe_table.border
-    if delim == nil or first == nil or last == nil then
-        return {}
-    end
 
     ---@param info render.md.NodeInfo
     ---@return integer
@@ -652,18 +655,25 @@ function M.render_table_full(buf, delim, first, last)
         return result
     end
 
+    local first = parsed_table.head
+    local last = parsed_table.rows[#parsed_table.rows]
+
     -- Do not need to account for concealed / inlined text on delimiter row
-    local delim_width = str.width(delim.text)
-    if delim_width ~= width(first) or delim_width ~= width(last) then
+    local delim_width = str.width(parsed_table.delim.text)
+    if delim_width ~= width(parsed_table.head) or delim_width ~= width(last) then
         return {}
     end
 
-    local headings = vim.split(delim.text, '|', { plain = true, trimempty = true })
-    local lengths = vim.tbl_map(function(cell)
-        return border[11]:rep(str.width(cell))
-    end, headings)
+    local sections = vim.tbl_map(
+        ---@param column render.md.parsed.TableColumn
+        ---@return string
+        function(column)
+            return border[11]:rep(column.width)
+        end,
+        parsed_table.columns
+    )
 
-    local line_above = border[1] .. table.concat(lengths, border[2]) .. border[3]
+    local line_above = border[1] .. table.concat(sections, border[2]) .. border[3]
     ---@type render.md.Mark
     local above_mark = {
         conceal = false,
@@ -675,7 +685,7 @@ function M.render_table_full(buf, delim, first, last)
         },
     }
 
-    local line_below = border[7] .. table.concat(lengths, border[8]) .. border[9]
+    local line_below = border[7] .. table.concat(sections, border[8]) .. border[9]
     ---@type render.md.Mark
     local below_mark = {
         conceal = false,

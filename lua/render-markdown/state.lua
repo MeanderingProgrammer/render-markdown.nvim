@@ -201,6 +201,7 @@ function state.validate()
         style = one_of(pipe_table.style, { 'full', 'normal', 'none' }),
         cell = one_of(pipe_table.cell, { 'padded', 'raw', 'overlay' }),
         border = string_array(pipe_table.border),
+        alignment_indicator = { pipe_table.alignment_indicator, 'string' },
         head = { pipe_table.head, 'string' },
         row = { pipe_table.row, 'string' },
         filler = { pipe_table.filler, 'string' },

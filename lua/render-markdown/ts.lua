@@ -37,6 +37,17 @@ function M.info(node, source)
     }
 end
 
+---@param infos render.md.NodeInfo[]
+function M.sort_inplace(infos)
+    table.sort(infos, function(info1, info2)
+        if info1.start_row ~= info2.start_row then
+            return info1.start_row < info2.start_row
+        else
+            return info1.start_col < info2.start_col
+        end
+    end)
+end
+
 ---Walk through parent nodes, count the number of target nodes
 ---@param info render.md.NodeInfo
 ---@param target string
@@ -71,12 +82,12 @@ end
 ---@param buf integer
 ---@param info render.md.NodeInfo
 ---@param target_type string
----@param target_row integer
+---@param target_row? integer
 ---@return render.md.NodeInfo?
 function M.child(buf, info, target_type, target_row)
     for child in info.node:iter_children() do
         if child:type() == target_type then
-            if child:range() == target_row then
+            if target_row == nil or child:range() == target_row then
                 return M.info(child, buf)
             end
         end

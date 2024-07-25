@@ -333,6 +333,8 @@ require('render-markdown').setup({
         --  raw: replaces only the '|' characters in each row, leaving the cells unmodified
         --  padded: raw + cells are padded with inline extmarks to make up for any concealed text
         cell = 'padded',
+        -- Gets placed in delimiter row for each column, position is based on alignmnet
+        alignment_indicator = '━',
         -- Characters used to replace table border
         -- Correspond to top(3), delimiter(3), bottom(3), vertical, & horizontal
         -- stylua: ignore
@@ -614,6 +616,8 @@ require('render-markdown').setup({
         --  raw: replaces only the '|' characters in each row, leaving the cells unmodified
         --  padded: raw + cells are padded with inline extmarks to make up for any concealed text
         cell = 'padded',
+        -- Gets placed in delimiter row for each column, position is based on alignmnet
+        alignment_indicator = '━',
         -- Characters used to replace table border
         -- Correspond to top(3), delimiter(3), bottom(3), vertical, & horizontal
         -- stylua: ignore

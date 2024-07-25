@@ -27,28 +27,48 @@ async_tests.describe('list_table.md', function()
         vim.list_extend(expected, util.heading(11, 1))
 
         -- Table
-        vim.list_extend(expected, util.heading(17, 1))
+        vim.list_extend(expected, util.heading(16, 1))
         vim.list_extend(expected, {
-            util.table_pipe(19, 0, true), -- Heading pipe 1
-            util.table_border(19, 'above', { 18, 20 }),
-            util.inline_code(19, 2, 18), -- Inline code in heading
-            util.table_padding(19, 18, 2), -- Heading padding 1
-            util.table_pipe(19, 19, true), -- Heading pipe 2
-            util.table_padding(19, 39, 2), -- Heading padding 2
-            util.table_pipe(19, 40, true), -- Heading pipe 2
-            util.table_border(20, 'delimiter', { 18, 20 }),
-            util.table_pipe(21, 0, false), -- Row 1 pipe 1
-            util.table_pipe(21, 19, false), -- Row 1 pipe 2
-            util.table_padding(21, 39, 4), -- Row 1 padding 2
-            util.table_pipe(21, 40, false), -- Row 1 pipe 3
-            util.table_pipe(22, 0, false), -- Row 2 pipe 1
-            util.table_border(22, 'below', { 18, 20 }),
-            util.inline_code(22, 2, 15), -- Row 2 inline code
-            util.table_padding(22, 18, 2), -- Row 2 padding 1
-            util.table_pipe(22, 19, false), -- Row 2 pipe 2
-            util.link(22, 21, 39, false), -- Row 2 link
-            util.table_padding(22, 39, 7), -- Row 2 padding 2
-            util.table_pipe(22, 40, false), -- Row 2 pipe 3
+            -- Heading
+            util.table_pipe(18, 0, true), -- Pipe 1
+            util.table_border(18, 'above', { 8, 15, 7, 6 }),
+            util.inline_code(18, 2, 8), -- Inline code
+            util.table_padding(18, 8, 2), -- Padding 1
+            util.table_pipe(18, 9, true), -- Pipe 2
+            util.table_padding(18, 24, 2), -- Padding 2
+            util.table_pipe(18, 25, true), -- Pipe 3
+            util.table_pipe(18, 33, true), -- Pipe 4
+            util.table_pipe(18, 40, true), -- Pipe 5
+            -- Delimiter
+            {
+                row = { 19, 19 },
+                col = { 0, 41 },
+                virt_text = {
+                    {
+                        '├━───────┼───────━───────┼──────━┼──────┤',
+                        'RenderMarkdownTableHead',
+                    },
+                },
+                virt_text_pos = 'overlay',
+            },
+            -- Row 1
+            util.table_pipe(20, 0, false), -- Pipe 1
+            util.inline_code(20, 2, 8), -- Inline code
+            util.table_padding(20, 8, 2), -- Padding 1
+            util.table_pipe(20, 9, false), -- Pipe 2
+            util.table_padding(20, 24, 4), -- Padding 2
+            util.table_pipe(20, 25, false), -- Pipe 3
+            util.table_pipe(20, 33, false), -- Pipe 4
+            util.table_pipe(20, 40, false), -- Pipe 5
+            -- Row 2
+            util.table_pipe(21, 0, false), -- Pipe 1
+            util.table_border(21, 'below', { 8, 15, 7, 6 }),
+            util.table_pipe(21, 9, false), -- Pipe 2
+            util.link(21, 11, 24, false), -- Link
+            util.table_padding(21, 24, 7), -- Padding 1
+            util.table_pipe(21, 25, false), -- Pipe 3
+            util.table_pipe(21, 33, false), -- Pipe 4
+            util.table_pipe(21, 40, false), -- Pipe 5
         })
 
         local actual = util.get_actual_marks()

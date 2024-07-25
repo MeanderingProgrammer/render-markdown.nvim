@@ -13,13 +13,12 @@
 
 1. Item 1
 2. Item 2
-3. Item 3
 
 # Table
 
-| `Inline Heading` | *Italic Heading*   |
-| ---------------- | ------------------ |
-| Regular Item     | **Bold Item**      |
-| `Item Inline`    | [Link Item](/test) |
+| `Left` | *Center*      | Right | None |
+|  :---  | :----:        |------:| -----|
+| `Code` | **Bold**      | Plain | Item |
+| Item   | [link](/test) | Item  | Item |
 
 [example]: https://example.com

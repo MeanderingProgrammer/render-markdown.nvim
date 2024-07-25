@@ -20,6 +20,7 @@
 ---@field public style 'full'|'normal'|'none'
 ---@field public cell 'padded'|'raw'|'overlay'
 ---@field public border string[]
+---@field public alignment_indicator string
 ---@field public head string
 ---@field public row string
 ---@field public filler string
