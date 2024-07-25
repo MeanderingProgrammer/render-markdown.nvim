@@ -38,6 +38,8 @@
 - Case insensitive callout matching [#74](https://github.com/MeanderingProgrammer/markdown.nvim/issues/74)
   [123048b](https://github.com/MeanderingProgrammer/markdown.nvim/commit/123048b428eb85618780fcef9ea9f4d68b5d2508)
 - Improve lazy.nvim instructions [#80](https://github.com/MeanderingProgrammer/markdown.nvim/pull/80)
+- Improve LaTeX compatibility [#90](https://github.com/MeanderingProgrammer/markdown.nvim/pull/90)
+  [695501b](https://github.com/MeanderingProgrammer/markdown.nvim/commit/695501bd98b1f2ec052889fc4faef24dedd7091b)
 
 ### Bug Fixes
 
@@ -55,6 +57,7 @@
 - @jeremija
 - @chrisgrieser
 - @Zeioth
+- @joshuarayton
 
 ### Awesome Things
 
