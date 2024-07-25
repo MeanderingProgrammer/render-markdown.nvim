@@ -20,8 +20,8 @@ function M.check()
     local latex_advice = 'Disable LaTeX support to avoid this warning by setting { latex = { enabled = false } }'
 
     vim.health.start('markdown.nvim [nvim-treesitter]')
-    local ok = pcall(require, 'nvim-treesitter')
-    if ok then
+    local has_treesitter = pcall(require, 'nvim-treesitter')
+    if has_treesitter then
         vim.health.ok('installed')
 
         M.check_parser('markdown')
@@ -45,6 +45,17 @@ function M.check()
         M.check_executable(latex.converter, latex_advice)
     else
         vim.health.ok('none to check')
+    end
+
+    vim.health.start('markdown.nvim [conflicts]')
+    if state.config.acknowledge_conflicts then
+        vim.health.ok('conflicts acknowledged')
+    else
+        M.check_plugin('headlines')
+        M.check_plugin('obsidian', {
+            'Ensure UI is disabled by setting ui = { enable = false } in obsidian.nvim config',
+            'Acknowledge conflicts to avoid this warning by setting { acknowledge_conflicts = true }',
+        })
     end
 end
 
@@ -82,6 +93,19 @@ function M.check_executable(name, advice)
         vim.health.error(name .. ': not installed')
     else
         vim.health.warn(name .. ': not installed', advice)
+    end
+end
+
+---@param name string
+---@param advice string[]?
+function M.check_plugin(name, advice)
+    local has_plugin = pcall(require, name)
+    if not has_plugin then
+        vim.health.ok(name .. ': not installed')
+    elseif advice == nil then
+        vim.health.error(name .. ': installed')
+    else
+        vim.health.warn(name .. ': installed', advice)
     end
 end
 

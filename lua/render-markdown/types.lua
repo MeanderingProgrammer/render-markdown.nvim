@@ -98,6 +98,7 @@
 ---@field public log_level 'debug'|'error'
 ---@field public file_types string[]
 ---@field public render_modes string[]
+---@field public acknowledge_conflicts boolean
 ---@field public exclude render.md.Exclude
 ---@field public anti_conceal render.md.AntiConceal
 ---@field public latex render.md.Latex

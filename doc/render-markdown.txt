@@ -24,6 +24,7 @@ Table of Contents                          *render-markdown-table-of-contents*
 7. Colors                                             |render-markdown-colors|
 8. Info                                                 |render-markdown-info|
   - vimwiki                                     |render-markdown-info-vimwiki|
+  - obsidian.nvim                         |render-markdown-info-obsidian.nvim|
   - Images                                       |render-markdown-info-images|
   - Additional                               |render-markdown-info-additional|
 
@@ -206,6 +207,8 @@ Full Default Configuration ~
         -- Vim modes that will show a rendered view of the markdown file
         -- All other modes will be uneffected by this plugin
         render_modes = { 'n', 'c' },
+        -- Set to avoid seeing warnings for conflicts in health check
+        acknowledge_conflicts = false,
         exclude = {
             -- Buftypes ignored by this plugin, see :h 'buftype'
             buftypes = {},
@@ -827,6 +830,20 @@ VIMWIKI                                         *render-markdown-info-vimwiki*
   - Register `markdown` as the parser for `vimwiki` files
   >lua
       vim.treesitter.language.register('markdown', 'vimwiki')
+  <
+
+OBSIDIAN.NVIM                             *render-markdown-info-obsidian.nvim*
+
+
+  [!NOTE]
+  obsidian.nvim <https://github.com/epwalsh/obsidian.nvim> provides UI
+  functionality that is enabled by default. While there may be a way to have the
+  2 work together, for the foreseeable future only one of these plugins should be
+  used for the UI. If you choose this plugin disable the `obsidian.nvim` UI with:
+  >lua
+      require('obsidian').setup({
+          ui = { enable = false },
+      })
   <
 
 IMAGES                                           *render-markdown-info-images*

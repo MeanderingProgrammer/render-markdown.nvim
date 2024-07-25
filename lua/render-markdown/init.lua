@@ -113,6 +113,7 @@ local M = {}
 ---@field public log_level? 'debug'|'error'
 ---@field public file_types? string[]
 ---@field public render_modes? string[]
+---@field public acknowledge_conflicts? boolean
 ---@field public exclude? render.md.UserExclude
 ---@field public anti_conceal? render.md.UserAntiConceal
 ---@field public latex? render.md.UserLatex
@@ -189,6 +190,8 @@ M.default_config = {
     -- Vim modes that will show a rendered view of the markdown file
     -- All other modes will be uneffected by this plugin
     render_modes = { 'n', 'c' },
+    -- Set to avoid seeing warnings for conflicts in health check
+    acknowledge_conflicts = false,
     exclude = {
         -- Buftypes ignored by this plugin, see :h 'buftype'
         buftypes = {},

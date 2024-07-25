@@ -13,6 +13,9 @@ different functionality will clash.
 
 - [headlines.nvim](https://github.com/lukas-reineke/headlines.nvim) - Same high
   level idea and starting point of this plugin, but with different feature sets
+- [obsidian.nvim](https://github.com/epwalsh/obsidian.nvim) - While this plugin
+  has many more `obsidian` related features it also provides a UI enabled by
+  default that clashes with this plugin
 
 ## Render in Browser
 

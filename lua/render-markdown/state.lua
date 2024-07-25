@@ -84,6 +84,7 @@ function state.validate()
         log_level = one_of(config.log_level, { 'debug', 'error' }),
         file_types = string_array(config.file_types),
         render_modes = string_array(config.render_modes),
+        acknowledge_conflicts = { config.acknowledge_conflicts, 'boolean' },
         exclude = { config.exclude, 'table' },
         anti_conceal = { config.anti_conceal, 'table' },
         latex = { config.latex, 'table' },
