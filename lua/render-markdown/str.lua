@@ -22,14 +22,18 @@ end
 ---@return string
 function M.pad_to(value, s)
     local padding = M.width(value) - M.width(s)
-    return M.pad(s, padding)
+    return M.pad(padding, s)
 end
 
----@param s string
 ---@param padding integer
+---@param s string?
 ---@return string
-function M.pad(s, padding)
-    return string.rep(' ', padding) .. s
+function M.pad(padding, s)
+    local result = string.rep(' ', padding)
+    if s ~= nil then
+        result = result .. s
+    end
+    return result
 end
 
 return M

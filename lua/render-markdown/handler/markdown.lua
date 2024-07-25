@@ -80,13 +80,15 @@ function M.render_heading(buf, info)
             end_row = info.end_row + 1,
             end_col = 0,
             hl_group = background,
-            hl_eol = true,
+            hl_eol = heading.width == 'full',
         },
     }
     list.add(marks, background_mark)
+
     if heading.sign then
         list.add(marks, M.render_sign(buf, info, list.cycle(heading.signs, level), foreground))
     end
+
     if icon == nil then
         return marks
     end
@@ -121,7 +123,7 @@ function M.render_heading(buf, info)
             opts = {
                 end_row = info.end_row,
                 end_col = info.end_col,
-                virt_text = { { str.pad(icon, padding), { foreground, background } } },
+                virt_text = { { str.pad(padding, icon), { foreground, background } } },
                 virt_text_pos = 'overlay',
             },
         }
@@ -187,9 +189,11 @@ function M.render_code(buf, info)
         return marks
     end
 
-    local width = util.get_width(buf)
-    if code.width == 'block' then
-        local lines = vim.api.nvim_buf_get_lines(buf, start_row, end_row, false)
+    local width
+    if code.width == 'full' then
+        width = util.get_width(buf)
+    elseif code.width == 'block' then
+        local lines = vim.api.nvim_buf_get_lines(buf, start_row, end_row, true)
         local code_width = vim.fn.max(vim.tbl_map(str.width, lines))
         width = code.left_pad + code_width + code.right_pad
     end
@@ -242,8 +246,8 @@ function M.render_code(buf, info)
     list.add(marks, background_mark)
 
     if code.width == 'block' then
-        -- overwrite anything beyond block width + right_pad with Normal
-        local pad = str.pad('', vim.o.columns * 2)
+        -- Overwrite anything beyond left_pad + block width + right_pad with Normal
+        local pad = str.pad(vim.o.columns * 2)
         for row = start_row, code.border == 'thin' and end_row or end_row - 1 do
             ---@type render.md.Mark
             local block_background_mark = {
@@ -275,7 +279,7 @@ function M.render_code(buf, info)
             opts = {
                 end_row = row + 1,
                 priority = 0,
-                virt_text = { { str.pad('', code.left_pad), code.highlight } },
+                virt_text = { { str.pad(code.left_pad), code.highlight } },
                 virt_text_pos = 'inline',
             },
         }
@@ -312,7 +316,7 @@ function M.render_language(buf, info, code_block)
         -- context they are in. This gets lumped into the delimiter node and as a result,
         -- after concealing, the extmark will be left shifted. Logic below accounts for this.
         local padding = str.leading_spaces(code_block.text)
-        icon_text = str.pad(icon_text .. info.text, padding)
+        icon_text = str.pad(padding, icon_text .. info.text)
     end
     local highlight = { icon_highlight }
     if code.style == 'full' then
@@ -391,7 +395,7 @@ function M.render_list_marker(buf, info)
             opts = {
                 end_row = info.end_row,
                 end_col = info.end_col,
-                virt_text = { { str.pad(icon, leading_spaces), bullet.highlight } },
+                virt_text = { { str.pad(leading_spaces, icon), bullet.highlight } },
                 virt_text_pos = 'overlay',
             },
         }
@@ -404,7 +408,7 @@ function M.render_list_marker(buf, info)
                 start_row = info.start_row,
                 start_col = info.end_col - 1,
                 opts = {
-                    virt_text = { { str.pad('', bullet.right_pad), 'Normal' } },
+                    virt_text = { { str.pad(bullet.right_pad), 'Normal' } },
                     virt_text_pos = 'inline',
                 },
             }
@@ -594,7 +598,7 @@ function M.render_table_row(buf, row, highlight)
                             start_row = cell.start_row,
                             start_col = cell.end_col - 1,
                             opts = {
-                                virt_text = { { str.pad('', offset), pipe_table.filler } },
+                                virt_text = { { str.pad(offset), pipe_table.filler } },
                                 virt_text_pos = 'inline',
                             },
                         }

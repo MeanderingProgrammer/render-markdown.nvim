@@ -74,6 +74,7 @@
 ---@field public sign boolean
 ---@field public icons string[]
 ---@field public signs string[]
+---@field public width 'full'|'block'
 ---@field public backgrounds string[]
 ---@field public foregrounds string[]
 

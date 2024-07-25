@@ -89,6 +89,7 @@ local M = {}
 ---@field public sign? boolean
 ---@field public icons? string[]
 ---@field public signs? string[]
+---@field public width? 'full'|'block'
 ---@field public backgrounds? string[]
 ---@field public foregrounds? string[]
 
@@ -228,6 +229,10 @@ M.default_config = {
         -- Added to the sign column if enabled
         -- The 'level' is used to index into the array using a cycle
         signs = { '󰫎 ' },
+        -- Width of the heading background:
+        --  block: width of the heading text
+        --  full: full width of the window
+        width = 'full',
         -- The 'level' is used to index into the array using a clamp
         -- Highlight for the heading icon and extends through the entire line
         backgrounds = {
@@ -286,7 +291,9 @@ M.default_config = {
         -- Replaces '---'|'***'|'___'|'* * *' of 'thematic_break'
         -- The icon gets repeated across the window's width
         icon = '─',
-        -- Width of the generated line, either the 'full' window width or a hard coded value
+        -- Width of the generated line:
+        --  <integer>: a hard coded width value
+        --  full: full width of the window
         width = 'full',
         -- Highlight for the whole line generated from the icon
         highlight = 'RenderMarkdownDash',

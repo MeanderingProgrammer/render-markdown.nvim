@@ -127,6 +127,7 @@ function state.validate()
         sign = { heading.sign, 'boolean' },
         icons = string_array(heading.icons),
         signs = string_array(heading.signs),
+        width = one_of(heading.width, { 'full', 'block' }),
         backgrounds = string_array(heading.backgrounds),
         foregrounds = string_array(heading.foregrounds),
     })

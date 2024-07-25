@@ -64,6 +64,7 @@
 - Added to LazyVim distribution [#4139](https://github.com/LazyVim/LazyVim/pull/4139)
 - Supported by tokyonight.nvim colorscheme [71429c9](https://github.com/folke/tokyonight.nvim/commit/71429c97b7aeafecf333fa825a85eadb21426146)
 - Supported by cyberdream.nvim colorscheme [ba25d43](https://github.com/scottmckendry/cyberdream.nvim/commit/ba25d43d68dd34d31bee88286fb6179df2763c31)
+- Supported by rose-pine colorscheme [#303](https://github.com/rose-pine/neovim/pull/303)
 
 ## 4.1.0 (2024-07-14)
 
