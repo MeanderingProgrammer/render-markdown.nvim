@@ -4,3 +4,4 @@
   alignment info.
 - Add a performance test suite to measure improvements, relative value on
   same hardware should still be useful.
+- Look into showing marks when switching buffers, currently remains hidden

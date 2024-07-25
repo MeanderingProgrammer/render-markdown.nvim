@@ -1,5 +1,67 @@
 # Change Log
 
+## Pre-release (slated for 2024-08-19)
+
+### ⚠ BREAKING CHANGES
+
+- `custom_handlers` render method deleted and replaced with parse method. The
+  former assumed rendering inside, the latter gets marks back so they are not
+  interchangeable. Notice of deprecation has been available for a month since
+  [726c85c](https://github.com/MeanderingProgrammer/markdown.nvim/commit/726c85cb9cc6d7d9c85af6ab093e1ee53b5e3c82).
+    - Ultimately removed in TODO
+- Add additional user command controls to allow lazy loading on command [#72](https://github.com/MeanderingProgrammer/markdown.nvim/issues/72)
+  [3c36a25](https://github.com/MeanderingProgrammer/markdown.nvim/commit/3c36a257e2a5684b274c1a44fddd64183c7a7507)
+- In order to fix:
+  - `RenderMarkdownToggle` -> `RenderMarkdown toggle`
+
+### Features
+
+- Full anti-conceal support [726c85c](https://github.com/MeanderingProgrammer/markdown.nvim/commit/726c85cb9cc6d7d9c85af6ab093e1ee53b5e3c82)
+- Link custom highlight groups to better support color schemes [#70](https://github.com/MeanderingProgrammer/markdown.nvim/issues/70)
+  [0f32655](https://github.com/MeanderingProgrammer/markdown.nvim/commit/0f3265556abf4076170ac0b6a456c67d814ece94)
+  [6aa19e9](https://github.com/MeanderingProgrammer/markdown.nvim/commit/6aa19e9bf36938049e36cd97aafedfe938de8d79)
+- Code blocks support block / fixed width [#88](https://github.com/MeanderingProgrammer/markdown.nvim/pull/88)
+- Separate highlight group for inline code blocks [#87](https://github.com/MeanderingProgrammer/markdown.nvim/pull/87)
+- Disable heading icons by setting an empty list [#86](https://github.com/MeanderingProgrammer/markdown.nvim/pull/86)
+- Support full_reference_link nodes [#75](https://github.com/MeanderingProgrammer/markdown.nvim/issues/75)
+  [5879827](https://github.com/MeanderingProgrammer/markdown.nvim/commit/5879827bc36830dc5516d09e7df1f365ca615047)
+- Disable signs per component [#64](https://github.com/MeanderingProgrammer/markdown.nvim/issues/64)
+  [9b771cc](https://github.com/MeanderingProgrammer/markdown.nvim/commit/9b771cc485677f1aa5873642e33a3522b270225d)
+- Improve health check, plugin conflicts, treesitter highlights [#89](https://github.com/MeanderingProgrammer/markdown.nvim/issues/89)
+  [a8a3577](https://github.com/MeanderingProgrammer/markdown.nvim/commit/a8a35779437e63d930cf69312fe80c3993c80b5b)
+  [8d14528](https://github.com/MeanderingProgrammer/markdown.nvim/commit/8d1452860e1c6b03d814af10024c7edc88e44963)
+- Left padding for code blocks [0bbc03c](https://github.com/MeanderingProgrammer/markdown.nvim/commit/0bbc03c5a208274c89f15c625a0ee3700c9adda8)
+- Right padding for list bullets [#93](https://github.com/MeanderingProgrammer/markdown.nvim/issues/93)
+  [2c8be07](https://github.com/MeanderingProgrammer/markdown.nvim/commit/2c8be07c7760dc7e05b78f88b6ddf8a9f50e410b)
+- Fixed width dash [#92](https://github.com/MeanderingProgrammer/markdown.nvim/pull/92)
+  [ff1b449](https://github.com/MeanderingProgrammer/markdown.nvim/commit/ff1b449bd02ab1a72a4ac9e621c033e335c47863)
+- Case insensitive callout matching [#74](https://github.com/MeanderingProgrammer/markdown.nvim/issues/74)
+  [123048b](https://github.com/MeanderingProgrammer/markdown.nvim/commit/123048b428eb85618780fcef9ea9f4d68b5d2508)
+- Improve lazy.nvim instructions [#80](https://github.com/MeanderingProgrammer/markdown.nvim/pull/80)
+
+### Bug Fixes
+
+- Rendering for buffers with no cached marks [#65](https://github.com/MeanderingProgrammer/markdown.nvim/issues/65)
+  [#66](https://github.com/MeanderingProgrammer/markdown.nvim/pull/66) [4ab8359](https://github.com/MeanderingProgrammer/markdown.nvim/commit/4ab835985de62b46b6785ae160f5f709b77a0f92)
+- Code highlight border with notermguicolors [#77](https://github.com/MeanderingProgrammer/markdown.nvim/issues/77)
+  [#81](https://github.com/MeanderingProgrammer/markdown.nvim/pull/81)
+- Hide cursor row in active buffer only [56d92af](https://github.com/MeanderingProgrammer/markdown.nvim/commit/56d92af432141346f2d414213726f7a45e82b2b3)
+
+### Collaborator Shoutouts
+
+- @folke
+- @scottmckendry
+- @akthe-at
+- @jeremija
+- @chrisgrieser
+- @Zeioth
+
+### Awesome Things
+
+- Added to LazyVim distribution [#4139](https://github.com/LazyVim/LazyVim/pull/4139)
+- Supported by tokyonight.nvim colorscheme [71429c9](https://github.com/folke/tokyonight.nvim/commit/71429c97b7aeafecf333fa825a85eadb21426146)
+- Supported by cyberdream.nvim colorscheme [ba25d43](https://github.com/scottmckendry/cyberdream.nvim/commit/ba25d43d68dd34d31bee88286fb6179df2763c31)
+
 ## 4.1.0 (2024-07-14)
 
 ### Features
