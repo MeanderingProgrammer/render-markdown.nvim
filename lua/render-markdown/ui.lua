@@ -23,6 +23,10 @@ local M = {}
 ---@type integer
 M.namespace = vim.api.nvim_create_namespace('render-markdown.nvim')
 
+function M.invalidate_cache()
+    cache.marks = {}
+end
+
 ---@param buf integer
 ---@param parse boolean
 function M.schedule_refresh(buf, parse)
@@ -62,7 +66,8 @@ function M.refresh(buf, mode, parse)
 
         -- Re-compute marks, needed if missing or between text changes
         local marks = cache.marks[buf]
-        if marks == nil or parse then
+        parse = marks == nil or parse
+        if parse then
             logger.start()
             marks = M.parse_buffer(buf)
             logger.flush()

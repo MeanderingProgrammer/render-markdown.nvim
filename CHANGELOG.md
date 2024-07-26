@@ -44,6 +44,8 @@
   [426b135](https://github.com/MeanderingProgrammer/markdown.nvim/commit/426b13574c8264636e5660e5f5a3b4f5e3d5a937)
 - Alignment indicator for pipe tables [#91](https://github.com/MeanderingProgrammer/markdown.nvim/issues/91)
   [a273033](https://github.com/MeanderingProgrammer/markdown.nvim/commit/a27303384570b85ee4538fa5f30eb418fef01ec7)
+- Auto-setup using plugin directory [#79](https://github.com/MeanderingProgrammer/markdown.nvim/issues/79)
+  [67bdd9b](https://github.com/MeanderingProgrammer/markdown.nvim/commit/67bdd9b68c6519bf1d5365f10c96107032bb4532)
 
 ### Bug Fixes
 

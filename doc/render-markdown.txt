@@ -33,13 +33,6 @@ Table of Contents                          *render-markdown-table-of-contents*
 
 Plugin to improve viewing Markdown files in Neovim
 
-  --------------------------------------- -------------------------------
-  [Heading Code]                          [List Table]
-
-  [Box Dash Quote]                        [LaTeX]
-
-  [Callout]                               
-  --------------------------------------- -------------------------------
 
 ==============================================================================
 2. Features                                         *render-markdown-features*

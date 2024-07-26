@@ -452,6 +452,7 @@ function M.setup(opts)
         state.inline_query = vim.treesitter.query.parse('markdown_inline', state.config.inline_query)
         state.inline_link_query = vim.treesitter.query.parse('markdown_inline', state.config.inline_link_query)
     end)
+    require('render-markdown.ui').invalidate_cache()
 end
 
 return setmetatable(M, {

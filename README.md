@@ -2,11 +2,15 @@
 
 Plugin to improve viewing Markdown files in Neovim
 
-|                                            |                                    |
-| ------------------------------------------ | ---------------------------------- |
-| ![Heading Code](demo/heading_code.gif)     | ![List Table](demo/list_table.gif) |
-| ![Box Dash Quote](demo/box_dash_quote.gif) | ![LaTeX](demo/latex.gif)           |
-| ![Callout](demo/callout.gif)               |                                    |
+<!-- panvimdoc-ignore-start -->
+
+|                                                                                                    |                                                                                                |
+| -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| ![Heading Code](https://github.com/user-attachments/assets/663a34c5-0438-4688-8204-332065f65835)   | ![List Table](https://github.com/user-attachments/assets/106739a4-506f-4177-93e0-fd749e5ded5c) |
+| ![Box Dash Quote](https://github.com/user-attachments/assets/3f76e73e-b3a0-4cd8-90c1-208c5070659c) | ![LaTeX](https://github.com/user-attachments/assets/9e8909e4-7256-45fc-b481-4aba8850ebc3)      |
+| ![Callout](https://github.com/user-attachments/assets/089b0b45-c8ff-4b18-bf5b-d5380696fb20)        |                                                                                                |
+
+<!-- panvimdoc-ignore-end -->
 
 # Features
 

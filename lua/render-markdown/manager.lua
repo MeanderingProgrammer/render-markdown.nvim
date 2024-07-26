@@ -63,7 +63,17 @@ function M.attach(buf)
         return
     end
     table.insert(data.buffers, buf)
-    vim.api.nvim_create_autocmd({ 'BufWinEnter', 'TextChanged' }, {
+    -- Events that do not imply modifications to buffer so can avoid re-parsing
+    -- This relies on the ui parsing the buffer anyway if it is the first refresh
+    vim.api.nvim_create_autocmd({ 'BufWinEnter', 'BufLeave' }, {
+        group = M.group,
+        buffer = buf,
+        callback = function()
+            ui.schedule_refresh(buf, false)
+        end,
+    })
+    -- Events that imply modifications to buffer so require re-parsing
+    vim.api.nvim_create_autocmd({ 'TextChanged' }, {
         group = M.group,
         buffer = buf,
         callback = function()
