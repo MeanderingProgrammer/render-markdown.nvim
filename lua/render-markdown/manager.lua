@@ -17,11 +17,11 @@ local M = {}
 ---@type integer
 M.group = vim.api.nvim_create_augroup('RenderMarkdown', { clear = true })
 
+---Should only be called from plugin directory
 function M.setup()
-    -- Attach to buffers based on matching filetype, this will add additional events
+    -- Attempt to attach to all buffers, cannot use pattern to support plugin directory
     vim.api.nvim_create_autocmd({ 'FileType' }, {
         group = M.group,
-        pattern = state.config.file_types,
         callback = function(event)
             M.attach(event.buf)
         end,
@@ -70,6 +70,7 @@ function M.attach(buf)
             ui.schedule_refresh(buf, true)
         end,
     })
+    -- Use information specific to this event to determine whether to render or not
     vim.api.nvim_create_autocmd({ 'ModeChanged' }, {
         group = M.group,
         buffer = buf,
@@ -80,6 +81,8 @@ function M.attach(buf)
             -- Only need to re-render if render state is changing. I.e. going from normal mode to
             -- command mode with the default config, both are rendered, so no point re-rendering
             if prev_rendered ~= should_render then
+                -- Since we do not listen to changes that happen while the user is in insert mode
+                -- we must assume changes were made and re-parse the buffer
                 ui.schedule_refresh(buf, true)
             end
         end,
@@ -89,7 +92,7 @@ function M.attach(buf)
             group = M.group,
             buffer = buf,
             callback = function()
-                -- Moving cursor should not result in text change, skip parsing
+                -- Moving cursor should not result in modifications to buffer so can avoid re-parsing
                 ui.schedule_refresh(buf, false)
             end,
         })

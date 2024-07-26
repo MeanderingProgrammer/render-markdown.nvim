@@ -1,13 +1,14 @@
 ---@param path_name string
----@param plugin_name string?
-local function source_plugin(path_name, plugin_name)
+local function source_plugin(path_name)
     local data_path = vim.fn.stdpath('data')
     assert(type(data_path) == 'string')
     local plugin_path = vim.fs.find(path_name, { path = data_path })
     vim.opt.rtp:prepend(unpack(plugin_path))
-    if plugin_name ~= nil then
-        vim.cmd.runtime('plugin/' .. plugin_name)
-    end
+end
+
+---@param plugin_name string
+local function add_runtime(plugin_name)
+    vim.cmd.runtime('plugin/' .. plugin_name)
 end
 
 ---@param required_parsers string[]
@@ -21,10 +22,16 @@ local function ensure_installed(required_parsers)
     end
 end
 
+-- Source dependencies first
+source_plugin('nvim-treesitter')
+add_runtime('nvim-treesitter.lua')
+source_plugin('mini.nvim')
+-- Now we can safely source this plugin
 vim.opt.rtp:prepend('.')
-source_plugin('plenary.nvim', 'plenary.vim')
-source_plugin('nvim-treesitter', 'nvim-treesitter.lua')
-source_plugin('mini.nvim', nil)
+add_runtime('render-markdown.lua')
+-- Used for unit testing, not an actual dependency of this plugin
+source_plugin('plenary.nvim')
+add_runtime('plenary.vim')
 
 -- https://github.com/ThePrimeagen/refactoring.nvim/blob/master/scripts/minimal.vim
 ensure_installed({ 'markdown', 'markdown_inline', 'latex' })

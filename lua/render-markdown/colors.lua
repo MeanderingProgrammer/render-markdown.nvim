@@ -55,6 +55,7 @@ M.colors = {
     Error      = 'DiagnosticError',
 }
 
+---Should only be called from plugin directory
 function M.setup()
     for name, link in pairs(M.colors) do
         vim.api.nvim_set_hl(0, M.prefix .. name, { link = link, default = true })

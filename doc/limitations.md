@@ -6,6 +6,16 @@
 
 `LaTeX` formula evaluations are placed above text rather than overlayed.
 
+## Does Not Run in Telescope Preview
+
+[ISSUE #98](https://github.com/MeanderingProgrammer/markdown.nvim/issues/98)
+
+Telescope has a special way of previewing files that does not work like a
+standard buffer: [info](https://github.com/nvim-telescope/telescope.nvim?tab=readme-ov-file#previewers)
+
+Due to this the events this plugin relies on to attach to and render buffers
+do not get triggered.
+
 # Resolved Limitations
 
 ## Telescope Opening File

@@ -6,3 +6,4 @@
   same hardware should still be useful.
 - Look into showing marks when switching buffers, currently remains hidden
 - Figure out how to display the many configuration options & impact
+- Remove demos from repository, store elsewhere

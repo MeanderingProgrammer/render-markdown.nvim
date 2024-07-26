@@ -1,8 +1,6 @@
-local colors = require('render-markdown.colors')
-local manager = require('render-markdown.manager')
 local state = require('render-markdown.state')
 
----@class render.md.Init
+---@class render.md.Init: render.md.Api
 local M = {}
 
 ---@class render.md.Mark
@@ -454,55 +452,11 @@ function M.setup(opts)
         state.inline_query = vim.treesitter.query.parse('markdown_inline', state.config.inline_query)
         state.inline_link_query = vim.treesitter.query.parse('markdown_inline', state.config.inline_link_query)
     end)
-
-    colors.setup()
-    manager.setup()
-
-    vim.api.nvim_create_user_command('RenderMarkdown', M.command, {
-        nargs = '*',
-        desc = 'markdown.nvim commands',
-        complete = function(_, cmdline)
-            if cmdline:find('RenderMarkdown%s+%S+%s+.*') then
-                return {}
-            elseif cmdline:find('RenderMarkdown%s+') then
-                return { 'enable', 'disable', 'toggle' }
-            else
-                return {}
-            end
-        end,
-    })
 end
 
----@param opts any
-function M.command(opts)
-    local args = opts.fargs
-    if #args == 0 then
-        M.enable()
-    elseif #args == 1 then
-        if args[1] == 'enable' then
-            M.enable()
-        elseif args[1] == 'disable' then
-            M.disable()
-        elseif args[1] == 'toggle' then
-            M.toggle()
-        else
-            vim.notify('markdown.nvim: unexpected command: ' .. args[1], vim.log.levels.ERROR)
-        end
-    else
-        vim.notify('markdown.nvim: unexpected # arguments: ' .. #args, vim.log.levels.ERROR)
-    end
-end
-
-function M.enable()
-    manager.set_all(true)
-end
-
-function M.disable()
-    manager.set_all(false)
-end
-
-function M.toggle()
-    manager.set_all(not state.enabled)
-end
-
-return M
+return setmetatable(M, {
+    __index = function(_, key)
+        -- Allows API methods to be accessed from top level
+        return require('render-markdown.api')[key]
+    end,
+})
