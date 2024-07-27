@@ -6,6 +6,36 @@
 
 `LaTeX` formula evaluations are placed above text rather than overlayed.
 
+A way around this is to use a separate plugin for `LaTeX` and disable that feature
+in this plugin.
+
+As an example you can use [latex.nvim](https://github.com/ryleelyman/latex.nvim):
+
+```lua
+{
+    'ryleelyman/latex.nvim',
+    config = function()
+        require('latex').setup({})
+    end,
+}
+```
+
+Then disable `LaTeX` from this plugin:
+
+```lua
+require('render-markdown').setup({
+    latex = { enabled = false },
+    win_options = {
+        conceallevel = { rendered = 2 },
+    },
+})
+```
+
+> [!NOTE]
+>
+> These plugins can rely on a specific `conceallevel` to work properly, which
+> you will need to configure in this plugin like in the example above.
+
 ## Does Not Run in Telescope Preview
 
 [ISSUE #98](https://github.com/MeanderingProgrammer/markdown.nvim/issues/98)

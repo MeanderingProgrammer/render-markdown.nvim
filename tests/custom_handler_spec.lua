@@ -1,6 +1,9 @@
-local async_tests = require('plenary.async.tests')
+---@module 'luassert'
 local util = require('tests.util')
 
+---@param namespace integer
+---@param root TSNode
+---@param buf integer
 local function render_conceal_escape(namespace, root, buf)
     local query = vim.treesitter.query.parse('markdown_inline', '(backslash_escape) @escape')
     for _, node in query:iter_captures(root, buf) do
@@ -13,12 +16,16 @@ local function render_conceal_escape(namespace, root, buf)
     end
 end
 
+---@param root TSNode
+---@param buf integer
+---@return render.md.Mark[]
 local function parse_conceal_escape(root, buf)
-    local query = vim.treesitter.query.parse('markdown_inline', '(backslash_escape) @escape')
     local marks = {}
+    local query = vim.treesitter.query.parse('markdown_inline', '(backslash_escape) @escape')
     for _, node in query:iter_captures(root, buf) do
         local start_row, start_col, end_row, _ = node:range()
-        table.insert(marks, {
+        ---@type render.md.Mark
+        local mark = {
             conceal = true,
             start_row = start_row,
             start_col = start_col,
@@ -27,7 +34,8 @@ local function parse_conceal_escape(root, buf)
                 end_col = start_col + 1,
                 conceal = '',
             },
-        })
+        }
+        table.insert(marks, mark)
     end
     return marks
 end
@@ -36,6 +44,7 @@ end
 ---@param col integer
 ---@return render.md.MarkInfo
 local function backslash(row, col)
+    ---@type render.md.MarkInfo
     return {
         row = { row, row },
         col = { col, col + 1 },
@@ -43,8 +52,8 @@ local function backslash(row, col)
     }
 end
 
-async_tests.describe('custom_handler.md', function()
-    async_tests.it('default', function()
+describe('custom_handler.md', function()
+    it('default', function()
         util.setup('tests/data/custom_handler.md')
 
         local expected = {}
@@ -57,7 +66,7 @@ async_tests.describe('custom_handler.md', function()
         util.marks_are_equal(expected, actual)
     end)
 
-    async_tests.it('custom override deprecated render', function()
+    it('custom override deprecated render', function()
         util.setup('tests/data/custom_handler.md', {
             custom_handlers = {
                 ---@diagnostic disable-next-line: missing-fields
@@ -79,7 +88,7 @@ async_tests.describe('custom_handler.md', function()
         util.marks_are_equal(expected, actual)
     end)
 
-    async_tests.it('custom override parse', function()
+    it('custom override parse', function()
         util.setup('tests/data/custom_handler.md', {
             custom_handlers = {
                 markdown_inline = {
@@ -100,7 +109,7 @@ async_tests.describe('custom_handler.md', function()
         util.marks_are_equal(expected, actual)
     end)
 
-    async_tests.it('custom extends', function()
+    it('custom extends', function()
         util.setup('tests/data/custom_handler.md', {
             custom_handlers = {
                 markdown_inline = {

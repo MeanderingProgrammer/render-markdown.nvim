@@ -1,7 +1,6 @@
+---@module 'luassert'
 local state = require('render-markdown.state')
 local ui = require('render-markdown.ui')
-local util = require('plenary.async.util')
-
 local eq = assert.are.same
 
 ---@class render.md.MarkInfo
@@ -10,7 +9,7 @@ local eq = assert.are.same
 ---@field hl_eol? boolean
 ---@field hl_group? string
 ---@field conceal? string
----@field virt_text? { [1]: string, [2]: string }[]
+---@field virt_text? { [1]: string, [2]: string|string[] }[]
 ---@field virt_text_pos? string
 ---@field virt_lines? { [1]: string, [2]: string }[][]
 ---@field virt_lines_above? boolean
@@ -32,7 +31,7 @@ end
 function M.setup(file, opts)
     require('render-markdown').setup(opts)
     vim.cmd('e ' .. file)
-    util.scheduler()
+    vim.wait(0)
 end
 
 ---@private
@@ -46,6 +45,7 @@ function M.heading(row, level)
     local icons = { '󰲡 ', ' 󰲣 ', '  󰲥 ', '   󰲧 ', '    󰲩 ', '     󰲫 ' }
     local foreground = string.format('%sH%d', M.prefix, level)
     local background = string.format('%sH%dBg', M.prefix, level)
+    ---@type render.md.MarkInfo
     local sign_mark = {
         row = { row, row },
         col = { 0, level },
@@ -55,21 +55,21 @@ function M.heading(row, level)
     if row == 0 then
         return { sign_mark }
     else
-        return {
-            {
-                row = { row, row + 1 },
-                col = { 0, 0 },
-                hl_group = background,
-                hl_eol = true,
-            },
-            {
-                row = { row, row },
-                col = { 0, level },
-                virt_text = { { icons[level], { foreground, background } } },
-                virt_text_pos = 'overlay',
-            },
-            sign_mark,
+        ---@type render.md.MarkInfo
+        local background_mark = {
+            row = { row, row + 1 },
+            col = { 0, 0 },
+            hl_group = background,
+            hl_eol = true,
         }
+        ---@type render.md.MarkInfo
+        local icon_mark = {
+            row = { row, row },
+            col = { 0, level },
+            virt_text = { { icons[level], { foreground, background } } },
+            virt_text_pos = 'overlay',
+        }
+        return { background_mark, icon_mark, sign_mark }
     end
 end
 
@@ -81,6 +81,7 @@ end
 function M.bullet(row, col, level, spaces)
     local icons = { '●', '○', '◆', '◇' }
     spaces = spaces or 0
+    ---@type render.md.MarkInfo
     return {
         row = { row, row },
         col = { col, col + spaces + 2 },
@@ -101,20 +102,21 @@ function M.checkbox(row, icon, highlight, custom)
         virt_text_pos = 'inline'
         conceal = ''
     end
-    return {
-        {
-            row = { row, row },
-            col = { 0, 2 },
-            conceal = '',
-        },
-        {
-            row = { row, row },
-            col = { 2, 5 },
-            virt_text = { { icon, highlight } },
-            virt_text_pos = virt_text_pos,
-            conceal = conceal,
-        },
+    ---@type render.md.MarkInfo
+    local conceal_mark = {
+        row = { row, row },
+        col = { 0, 2 },
+        conceal = '',
     }
+    ---@type render.md.MarkInfo
+    local checkbox_mark = {
+        row = { row, row },
+        col = { 2, 5 },
+        virt_text = { { icon, highlight } },
+        virt_text_pos = virt_text_pos,
+        conceal = conceal,
+    }
+    return { conceal_mark, checkbox_mark }
 end
 
 ---@param row integer
@@ -122,6 +124,7 @@ end
 ---@param end_col integer
 ---@return render.md.MarkInfo
 function M.inline_code(row, start_col, end_col)
+    ---@type render.md.MarkInfo
     return {
         row = { row, row },
         col = { start_col, end_col },
@@ -134,6 +137,7 @@ end
 ---@param end_row integer
 ---@return render.md.MarkInfo
 function M.code_block(start_row, end_row)
+    ---@type render.md.MarkInfo
     return {
         row = { start_row, end_row },
         col = { 0, 0 },
@@ -150,25 +154,27 @@ end
 ---@param highlight string
 ---@return render.md.MarkInfo[]
 function M.code_language(row, start_col, end_col, icon, name, highlight)
-    return {
-        {
-            row = { row, row },
-            col = { start_col, end_col },
-            sign_text = icon,
-            sign_hl_group = string.format('%s_%s_%sSign', M.prefix, highlight, M.prefix),
-        },
-        {
-            row = { row },
-            col = { start_col },
-            virt_text = { { icon .. name, { highlight, M.prefix .. 'Code' } } },
-            virt_text_pos = 'inline',
-        },
+    ---@type render.md.MarkInfo
+    local sign_mark = {
+        row = { row, row },
+        col = { start_col, end_col },
+        sign_text = icon,
+        sign_hl_group = string.format('%s_%s_%sSign', M.prefix, highlight, M.prefix),
     }
+    ---@type render.md.MarkInfo
+    local language_mark = {
+        row = { row },
+        col = { start_col },
+        virt_text = { { icon .. name, { highlight, M.prefix .. 'Code' } } },
+        virt_text_pos = 'inline',
+    }
+    return { sign_mark, language_mark }
 end
 
 ---@param row integer
 ---@param col integer
 function M.code_below(row, col)
+    ---@type render.md.MarkInfo
     return {
         row = { row },
         col = { col },
@@ -189,6 +195,7 @@ function M.link(row, start_col, end_col, image)
     else
         icon = '󰌹 '
     end
+    ---@type render.md.MarkInfo
     return {
         row = { row, row },
         col = { start_col, end_col },
@@ -203,6 +210,7 @@ end
 ---@return render.md.MarkInfo
 function M.quote(row, format, highlight)
     local quote = string.format(format, '▋')
+    ---@type render.md.MarkInfo
     return {
         row = { row, row },
         col = { 0, vim.fn.strdisplaywidth(quote) },
@@ -222,6 +230,7 @@ function M.table_pipe(row, col, head)
     else
         highlight = 'TableRow'
     end
+    ---@type render.md.MarkInfo
     return {
         row = { row, row },
         col = { col, col + 1 },
@@ -235,6 +244,7 @@ end
 ---@param spaces integer
 ---@return render.md.MarkInfo
 function M.table_padding(row, col, spaces)
+    ---@type render.md.MarkInfo
     return {
         row = { row },
         col = { col },
@@ -267,6 +277,7 @@ function M.table_border(row, section, lengths)
     local value = border[1] .. table.concat(parts, border[2]) .. border[3]
 
     if vim.tbl_contains({ 'above', 'below' }, section) then
+        ---@type render.md.MarkInfo
         return {
             row = { row },
             col = { 0 },
@@ -274,6 +285,7 @@ function M.table_border(row, section, lengths)
             virt_lines_above = section == 'above',
         }
     else
+        ---@type render.md.MarkInfo
         return {
             row = { row, row },
             col = { 0, vim.fn.strdisplaywidth(value) },
@@ -295,6 +307,7 @@ function M.table_row(row, col, value, head)
     else
         highlight = 'TableRow'
     end
+    ---@type render.md.MarkInfo
     return {
         row = { row, row },
         col = { 0, col },

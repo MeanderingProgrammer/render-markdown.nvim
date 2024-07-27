@@ -1,8 +1,8 @@
-local async_tests = require('plenary.async.tests')
+---@module 'luassert'
 local util = require('tests.util')
 
-async_tests.describe('heading_code.md', function()
-    async_tests.it('default', function()
+describe('heading_code.md', function()
+    it('default', function()
         util.setup('demo/heading_code.md')
 
         local expected = {}

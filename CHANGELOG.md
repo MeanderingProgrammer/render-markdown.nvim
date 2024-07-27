@@ -54,6 +54,9 @@
 - Code highlight border with notermguicolors [#77](https://github.com/MeanderingProgrammer/markdown.nvim/issues/77)
   [#81](https://github.com/MeanderingProgrammer/markdown.nvim/pull/81)
 - Hide cursor row in active buffer only [56d92af](https://github.com/MeanderingProgrammer/markdown.nvim/commit/56d92af432141346f2d414213726f7a45e82b2b3)
+- Remove gifs from repo, fix concel on window change [51eec4e](https://github.com/MeanderingProgrammer/markdown.nvim/commit/51eec4e4cab69faf7e37c183d23df6b9614952db)
+- Wrap get_parser in pcall [#101](https://github.com/MeanderingProgrammer/markdown.nvim/issues/101)
+  [ddb4547](https://github.com/MeanderingProgrammer/markdown.nvim/commit/ddb454792dd85c0f6039ec14006aecaee67e782d)
 
 ### Collaborator Shoutouts
 

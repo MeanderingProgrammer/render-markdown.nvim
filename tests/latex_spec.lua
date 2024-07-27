@@ -1,7 +1,6 @@
-local async_tests = require('plenary.async.tests')
+---@module 'luassert'
 local stub = require('luassert.stub')
 local util = require('tests.util')
-
 local eq = assert.are.same
 
 ---@param start_row integer
@@ -22,8 +21,8 @@ local function latex(start_row, end_row, start_col, end_col, lines)
     }
 end
 
-async_tests.describe('latex.md', function()
-    async_tests.it('default', function()
+describe('latex.md', function()
+    it('default', function()
         stub.new(vim.fn, 'executable', function(expr)
             eq('latex2text', expr)
             return 1

@@ -1,4 +1,4 @@
-local async_tests = require('plenary.async.tests')
+---@module 'luassert'
 local util = require('tests.util')
 
 ---@param row integer
@@ -8,6 +8,7 @@ local util = require('tests.util')
 ---@param highlight string
 ---@return render.md.MarkInfo
 local function callout(row, start_col, end_col, text, highlight)
+    ---@type render.md.MarkInfo
     return {
         row = { row, row },
         col = { start_col, end_col },
@@ -16,8 +17,8 @@ local function callout(row, start_col, end_col, text, highlight)
     }
 end
 
-async_tests.describe('callout.md', function()
-    async_tests.it('default', function()
+describe('callout.md', function()
+    it('default', function()
         util.setup('demo/callout.md')
 
         local info = 'Info'

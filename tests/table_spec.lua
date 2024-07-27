@@ -1,8 +1,8 @@
-local async_tests = require('plenary.async.tests')
+---@module 'luassert'
 local util = require('tests.util')
 
-async_tests.describe('table.md', function()
-    async_tests.it('default', function()
+describe('table.md', function()
+    it('default', function()
         util.setup('tests/data/table.md')
 
         local expected = {}
@@ -45,7 +45,7 @@ async_tests.describe('table.md', function()
         util.marks_are_equal(expected, actual)
     end)
 
-    async_tests.it('raw', function()
+    it('raw', function()
         util.setup('tests/data/table.md', { pipe_table = { cell = 'raw' } })
 
         local expected = {}
@@ -83,7 +83,7 @@ async_tests.describe('table.md', function()
         util.marks_are_equal(expected, actual)
     end)
 
-    async_tests.it('overlay', function()
+    it('overlay', function()
         util.setup('tests/data/table.md', { pipe_table = { cell = 'overlay' } })
 
         local expected = {}

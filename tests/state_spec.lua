@@ -1,7 +1,5 @@
 ---@module 'luassert'
-
 local util = require('tests.util')
-
 local eq = assert.are.same
 
 describe('state', function()
