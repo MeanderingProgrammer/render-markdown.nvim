@@ -31,7 +31,7 @@ function M.setup()
             for _, win in ipairs(vim.v.event.windows) do
                 local buf = util.win_to_buf(win)
                 if vim.tbl_contains(data.buffers, buf) then
-                    ui.schedule_refresh(buf, true)
+                    ui.schedule_render(buf, true)
                 end
             end
         end,
@@ -44,7 +44,7 @@ function M.set_all(enabled)
     M.attach(vim.api.nvim_get_current_buf())
     state.enabled = enabled
     for _, buf in ipairs(data.buffers) do
-        ui.schedule_refresh(buf, true)
+        ui.schedule_render(buf, true)
     end
 end
 
@@ -57,17 +57,20 @@ function M.attach(buf)
     if vim.tbl_contains(state.config.exclude.buftypes, util.get_buf(buf, 'buftype')) then
         return
     end
+    if util.file_size_mb(buf) > state.config.max_file_size then
+        return
+    end
     if vim.tbl_contains(data.buffers, buf) then
         return
     end
     table.insert(data.buffers, buf)
     -- Events that do not imply modifications to buffer so can avoid re-parsing
-    -- This relies on the ui parsing the buffer anyway if it is the first refresh
+    -- This relies on the ui parsing the buffer anyway if it is the first time it is seen
     vim.api.nvim_create_autocmd({ 'BufWinEnter', 'BufLeave' }, {
         group = M.group,
         buffer = buf,
         callback = function()
-            ui.schedule_refresh(buf, false)
+            ui.schedule_render(buf, false)
         end,
     })
     -- Events that imply modifications to buffer so require re-parsing
@@ -75,7 +78,7 @@ function M.attach(buf)
         group = M.group,
         buffer = buf,
         callback = function()
-            ui.schedule_refresh(buf, true)
+            ui.schedule_render(buf, true)
         end,
     })
     -- Use information specific to this event to determine whether to render or not
@@ -91,7 +94,7 @@ function M.attach(buf)
             if prev_rendered ~= should_render then
                 -- Since we do not listen to changes that happen while the user is in insert mode
                 -- we must assume changes were made and re-parse the buffer
-                ui.schedule_refresh(buf, true)
+                ui.schedule_render(buf, true)
             end
         end,
     })
@@ -101,7 +104,7 @@ function M.attach(buf)
             buffer = buf,
             callback = function()
                 -- Moving cursor should not result in modifications to buffer so can avoid re-parsing
-                ui.schedule_refresh(buf, false)
+                ui.schedule_render(buf, false)
             end,
         })
     end

@@ -28,15 +28,15 @@ end
 
 ---@param buf integer
 ---@param parse boolean
-function M.schedule_refresh(buf, parse)
+function M.schedule_render(buf, parse)
     local mode = vim.fn.mode(true)
     vim.schedule(function()
         if state.config.profile then
             profiler.profile(buf, function()
-                return M.refresh(buf, mode, parse)
+                return M.render(buf, mode, parse)
             end)
         else
-            M.refresh(buf, mode, parse)
+            M.render(buf, mode, parse)
         end
     end)
 end
@@ -46,20 +46,15 @@ end
 ---@param mode string
 ---@param parse boolean
 ---@return 'invalid'|'disable'|'parsed'|'movement'
-function M.refresh(buf, mode, parse)
-    -- Remove any existing marks if buffer is valid
-    if not vim.api.nvim_buf_is_valid(buf) then
+function M.render(buf, mode, parse)
+    -- Check that buffer and associated window are valid
+    local win = util.buf_to_win(buf)
+    if not vim.api.nvim_buf_is_valid(buf) or not vim.api.nvim_win_is_valid(win) then
         return 'invalid'
     end
     vim.api.nvim_buf_clear_namespace(buf, M.namespace, 0, -1)
 
-    -- Check that buffer is associated with a valid window before window operations
-    local win = util.buf_to_win(buf)
-    if not vim.api.nvim_win_is_valid(win) then
-        return 'invalid'
-    end
-
-    if not M.should_render(buf, win, mode) then
+    if not M.should_render(win, mode) then
         -- Set window options back to default
         for name, value in pairs(state.config.win_options) do
             util.set_win(win, name, value.default)
@@ -100,11 +95,10 @@ function M.refresh(buf, mode, parse)
 end
 
 ---@private
----@param buf integer
 ---@param win integer
 ---@param mode string
 ---@return boolean
-function M.should_render(buf, win, mode)
+function M.should_render(win, mode)
     if not state.enabled then
         return false
     end
@@ -114,9 +108,6 @@ function M.should_render(buf, win, mode)
     if not vim.tbl_contains(state.config.render_modes, mode) then
         return false
     end
-    if util.file_size_mb(buf) > state.config.max_file_size then
-        return false
-    end
     return true
 end
 
@@ -124,13 +115,15 @@ end
 ---@param buf integer
 ---@return render.md.Mark[]
 function M.parse_buffer(buf)
-    local marks = {}
     -- Make sure injections are processed
     local parser = vim.treesitter.get_parser(buf)
-    parser:parse(true)
-    -- Parse and cache marks
+    if not parser:is_valid() then
+        parser:parse(true)
+    end
+    -- Parse marks
+    local marks = {}
     parser:for_each_tree(function(tree, language_tree)
-        vim.list_extend(marks, M.parse(buf, language_tree:lang(), tree:root()))
+        vim.list_extend(marks, M.parse_tree(buf, language_tree:lang(), tree:root()))
     end)
     return marks
 end
@@ -142,7 +135,7 @@ end
 ---@param language string
 ---@param root TSNode
 ---@return render.md.Mark[]
-function M.parse(buf, language, root)
+function M.parse_tree(buf, language, root)
     logger.debug('language', language)
 
     local marks = {}
