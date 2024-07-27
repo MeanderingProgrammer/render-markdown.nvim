@@ -115,8 +115,11 @@ end
 ---@param buf integer
 ---@return render.md.Mark[]
 function M.parse_buffer(buf)
+    local has_parser, parser = pcall(vim.treesitter.get_parser, buf)
+    if not has_parser then
+        return {}
+    end
     -- Make sure injections are processed
-    local parser = vim.treesitter.get_parser(buf)
     if not parser:is_valid() then
         parser:parse(true)
     end
