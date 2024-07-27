@@ -94,6 +94,7 @@
 
 ---@class render.md.Config
 ---@field public enabled boolean
+---@field public profile boolean
 ---@field public max_file_size number
 ---@field public markdown_query string
 ---@field public markdown_quote_query string

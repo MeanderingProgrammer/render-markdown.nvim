@@ -64,12 +64,18 @@ end
 ---@return number
 function M.file_size_mb(buf)
     local ok, stats = pcall(function()
-        return vim.uv.fs_stat(vim.api.nvim_buf_get_name(buf))
+        return vim.uv.fs_stat(M.file_path(buf))
     end)
     if not (ok and stats) then
         return 0
     end
     return stats.size / (1024 * 1024)
+end
+
+---@param buf integer
+---@return string
+function M.file_path(buf)
+    return vim.api.nvim_buf_get_name(buf)
 end
 
 return M

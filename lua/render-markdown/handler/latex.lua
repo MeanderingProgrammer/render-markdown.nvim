@@ -3,10 +3,8 @@ local state = require('render-markdown.state')
 local ts = require('render-markdown.ts')
 
 ---@class render.md.LatexCache
----@field expressions table<string, string[]>
-
----@type render.md.LatexCache
 local cache = {
+    ---@type table<string, string[]>
     expressions = {},
 }
 

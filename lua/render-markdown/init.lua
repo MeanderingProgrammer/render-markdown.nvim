@@ -107,6 +107,7 @@ local M = {}
 
 ---@class render.md.UserConfig
 ---@field public enabled? boolean
+---@field public profile? boolean
 ---@field public max_file_size? number
 ---@field public markdown_query? string
 ---@field public markdown_quote_query? string
@@ -136,6 +137,8 @@ local M = {}
 M.default_config = {
     -- Whether Markdown should be rendered by default or not
     enabled = true,
+    -- Whether to track performance metrics, should only be used for development
+    profile = false,
     -- Maximum file size (in MB) that this plugin will attempt to render
     -- Any file larger than this will effectively be ignored
     max_file_size = 1.5,

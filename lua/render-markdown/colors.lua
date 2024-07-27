@@ -1,8 +1,6 @@
 ---@class render.md.ColorCache
----@field highlights string[]
-
----@type render.md.ColorCache
 local cache = {
+    ---@type string[]
     highlights = {},
 }
 

@@ -20,8 +20,8 @@ end
 ---@field message string
 
 ---@class render.md.Log
----@field entries render.md.LogEntry[]
 local log = {
+    ---@type render.md.LogEntry[]
     entries = {},
 }
 

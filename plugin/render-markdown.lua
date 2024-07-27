@@ -12,12 +12,9 @@ vim.api.nvim_create_user_command('RenderMarkdown', function(opts)
     if #args == 0 then
         require('render-markdown.api').enable()
     elseif #args == 1 then
-        if args[1] == 'enable' then
-            require('render-markdown.api').enable()
-        elseif args[1] == 'disable' then
-            require('render-markdown.api').disable()
-        elseif args[1] == 'toggle' then
-            require('render-markdown.api').toggle()
+        local command = require('render-markdown.api')[args[1]]
+        if command ~= nil then
+            command()
         else
             vim.notify('markdown.nvim: unexpected command: ' .. args[1], vim.log.levels.ERROR)
         end
@@ -31,7 +28,7 @@ end, {
         if cmdline:find('RenderMarkdown%s+%S+%s+.*') then
             return {}
         elseif cmdline:find('RenderMarkdown%s+') then
-            return { 'enable', 'disable', 'toggle' }
+            return vim.tbl_keys(require('render-markdown.api'))
         else
             return {}
         end

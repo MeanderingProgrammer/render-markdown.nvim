@@ -3,10 +3,8 @@ local ui = require('render-markdown.ui')
 local util = require('render-markdown.util')
 
 ---@class render.md.manager.Data
----@field buffers integer[]
-
----@type render.md.manager.Data
 local data = {
+    ---@type integer[]
     buffers = {},
 }
 

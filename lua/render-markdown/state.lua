@@ -76,6 +76,7 @@ function state.validate()
     local config = state.config
     append_errors('render-markdown', config, {
         enabled = { config.enabled, 'boolean' },
+        profile = { config.profile, 'boolean' },
         max_file_size = { config.max_file_size, 'number' },
         markdown_query = { config.markdown_query, 'string' },
         markdown_quote_query = { config.markdown_quote_query, 'string' },

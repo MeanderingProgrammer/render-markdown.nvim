@@ -1,4 +1,5 @@
 local logger = require('render-markdown.logger')
+local profiler = require('render-markdown.profiler')
 local state = require('render-markdown.state')
 local util = require('render-markdown.util')
 
@@ -10,10 +11,8 @@ local builtin_handlers = {
 }
 
 ---@class render.md.UiCache
----@field marks table<integer, render.md.Mark[]>
-
----@type render.md.UiCache
 local cache = {
+    ---@type table<integer, render.md.Mark[]>
     marks = {},
 }
 
@@ -32,7 +31,13 @@ end
 function M.schedule_refresh(buf, parse)
     local mode = vim.fn.mode(true)
     vim.schedule(function()
-        M.refresh(buf, mode, parse)
+        if state.config.profile then
+            profiler.profile(buf, function()
+                return M.refresh(buf, mode, parse)
+            end)
+        else
+            M.refresh(buf, mode, parse)
+        end
     end)
 end
 
@@ -40,17 +45,18 @@ end
 ---@param buf integer
 ---@param mode string
 ---@param parse boolean
+---@return 'invalid'|'disable'|'parsed'|'movement'
 function M.refresh(buf, mode, parse)
     -- Remove any existing marks if buffer is valid
     if not vim.api.nvim_buf_is_valid(buf) then
-        return
+        return 'invalid'
     end
     vim.api.nvim_buf_clear_namespace(buf, M.namespace, 0, -1)
 
     -- Check that buffer is associated with a valid window before window operations
     local win = util.buf_to_win(buf)
     if not vim.api.nvim_win_is_valid(win) then
-        return
+        return 'invalid'
     end
 
     if not M.should_render(buf, win, mode) then
@@ -58,6 +64,7 @@ function M.refresh(buf, mode, parse)
         for name, value in pairs(state.config.win_options) do
             util.set_win(win, name, value.default)
         end
+        return 'disable'
     else
         -- Set window options to rendered & perform render
         for name, value in pairs(state.config.win_options) do
@@ -66,8 +73,8 @@ function M.refresh(buf, mode, parse)
 
         -- Re-compute marks, needed if missing or between text changes
         local marks = cache.marks[buf]
-        parse = marks == nil or parse
-        if parse then
+        local parsed = marks == nil or parse
+        if parsed then
             logger.start()
             marks = M.parse_buffer(buf)
             logger.flush()
@@ -79,9 +86,15 @@ function M.refresh(buf, mode, parse)
             if M.should_show_mark(mark, row) then
                 -- Only ensure strictness if the buffer was parsed this request
                 -- The order of events can cause our cache to be stale
-                mark.opts.strict = parse
+                mark.opts.strict = parsed
                 vim.api.nvim_buf_set_extmark(buf, M.namespace, mark.start_row, mark.start_col, mark.opts)
             end
+        end
+
+        if parsed then
+            return 'parsed'
+        else
+            return 'movement'
         end
     end
 end
