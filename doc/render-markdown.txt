@@ -1,4 +1,4 @@
-*render-markdown.txt*           For 0.10.0           Last change: 2024 July 26
+*render-markdown.txt*           For 0.10.0           Last change: 2024 July 27
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -8,6 +8,7 @@ Table of Contents                          *render-markdown-table-of-contents*
 3. Requirements                                 |render-markdown-requirements|
 4. Install                                           |render-markdown-install|
   - lazy.nvim                              |render-markdown-install-lazy.nvim|
+  - rocks.nvim                            |render-markdown-install-rocks.nvim|
   - packer.nvim                          |render-markdown-install-packer.nvim|
 5. Commands                                         |render-markdown-commands|
 6. Setup                                               |render-markdown-setup|
@@ -97,6 +98,13 @@ LAZY.NVIM                                  *render-markdown-install-lazy.nvim*
         -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
         -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
     }
+<
+
+
+ROCKS.NVIM                                *render-markdown-install-rocks.nvim*
+
+>vimscript
+    :Rocks install markdown.nvim
 <
 
 

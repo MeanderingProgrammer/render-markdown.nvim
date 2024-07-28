@@ -9,6 +9,11 @@
   interchangeable. Notice of deprecation has been available for a month since
   [726c85c](https://github.com/MeanderingProgrammer/markdown.nvim/commit/726c85cb9cc6d7d9c85af6ab093e1ee53b5e3c82).
     - Ultimately removed in TODO
+
+## 5.0.0 (2024-07-27)
+
+### ⚠ BREAKING CHANGES
+
 - Add additional user command controls to allow lazy loading on command [#72](https://github.com/MeanderingProgrammer/markdown.nvim/issues/72)
   [3c36a25](https://github.com/MeanderingProgrammer/markdown.nvim/commit/3c36a257e2a5684b274c1a44fddd64183c7a7507)
 - In order to fix:
@@ -46,6 +51,7 @@
   [a273033](https://github.com/MeanderingProgrammer/markdown.nvim/commit/a27303384570b85ee4538fa5f30eb418fef01ec7)
 - Auto-setup using plugin directory [#79](https://github.com/MeanderingProgrammer/markdown.nvim/issues/79)
   [67bdd9b](https://github.com/MeanderingProgrammer/markdown.nvim/commit/67bdd9b68c6519bf1d5365f10c96107032bb4532)
+- Upload to LuaRocks [#78](https://github.com/MeanderingProgrammer/markdown.nvim/pull/78)
 
 ### Bug Fixes
 
@@ -67,6 +73,7 @@
 - @chrisgrieser
 - @Zeioth
 - @joshuarayton
+- @mrcjkb
 
 ### Awesome Things
 
