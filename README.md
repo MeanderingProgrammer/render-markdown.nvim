@@ -73,6 +73,12 @@ Plugin to improve viewing Markdown files in Neovim
 }
 ```
 
+## rocks.nvim
+
+```vimscript
+:Rocks install markdown.nvim
+```
+
 ## packer.nvim
 
 ```lua
