@@ -257,7 +257,7 @@ function M.render_code(buf, info)
                 start_col = 0,
                 opts = {
                     priority = 0,
-                    hl_mode = 'combine',
+                    hl_mode = 'replace',
                     virt_text = { { pad, 'Normal' } },
                     virt_text_win_col = width,
                 },
