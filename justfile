@@ -3,8 +3,16 @@ init := "tests/minimal.lua"
 default: update test health
 
 test:
+  just busted "tests"
+
+bench:
+  just gen-medium
+  just busted "benches"
+
+[private]
+busted directory:
   nvim --headless --noplugin -u {{init}} \
-    -c "PlenaryBustedDirectory tests { minimal_init = '{{init}}', sequential=true }"
+    -c "PlenaryBustedDirectory {{directory}} { minimal_init = '{{init}}', sequential = true, keep_going = false }"
 
 health:
   nvim -c "checkhealth render-markdown" -- .
@@ -52,13 +60,17 @@ cat-log:
   cat ~/.local/state/nvim/render-markdown.log
 
 gen-medium:
-  just gen-file "1000" > temp/medium.md
+  just gen-file "1000" "temp/medium.md"
 
 gen-large:
-  just gen-file "100000" > temp/large.md
+  just gen-file "100000" "temp/large.md"
 
 [private]
-gen-file lines:
+gen-file lines path:
+  {{path_exists(path)}} || just gen-file-content {{lines}} > {{path}}
+
+[private]
+gen-file-content lines:
   #!/usr/bin/env python
   for i in range({{lines}}):
     level = "#" * ((i % 6) + 1)

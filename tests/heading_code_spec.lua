@@ -1,4 +1,5 @@
 ---@module 'luassert'
+
 local util = require('tests.util')
 
 describe('heading_code.md', function()

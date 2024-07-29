@@ -1,4 +1,5 @@
 ---@module 'luassert'
+
 local stub = require('luassert.stub')
 local util = require('tests.util')
 local eq = assert.are.same

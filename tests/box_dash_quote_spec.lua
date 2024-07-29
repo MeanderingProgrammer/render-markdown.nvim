@@ -1,4 +1,5 @@
 ---@module 'luassert'
+
 local util = require('tests.util')
 
 describe('box_dash_quote.md', function()

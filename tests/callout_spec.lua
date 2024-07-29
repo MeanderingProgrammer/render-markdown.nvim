@@ -1,4 +1,5 @@
 ---@module 'luassert'
+
 local util = require('tests.util')
 
 ---@param row integer

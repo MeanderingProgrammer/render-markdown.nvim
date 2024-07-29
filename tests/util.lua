@@ -1,4 +1,5 @@
 ---@module 'luassert'
+
 local state = require('render-markdown.state')
 local ui = require('render-markdown.ui')
 local eq = assert.are.same

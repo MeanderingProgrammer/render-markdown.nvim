@@ -122,8 +122,6 @@ Some of the more useful fields are discussed further down.
 require('render-markdown').setup({
     -- Whether Markdown should be rendered by default or not
     enabled = true,
-    -- Whether to track performance metrics, should only be used for development
-    profile = false,
     -- Maximum file size (in MB) that this plugin will attempt to render
     -- Any file larger than this will effectively be ignored
     max_file_size = 1.5,
