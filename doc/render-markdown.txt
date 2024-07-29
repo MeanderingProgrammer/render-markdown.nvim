@@ -1,4 +1,4 @@
-*render-markdown.txt*           For 0.10.0           Last change: 2024 July 27
+*render-markdown.txt*           For 0.10.0           Last change: 2024 July 29
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -103,9 +103,11 @@ LAZY.NVIM                                  *render-markdown-install-lazy.nvim*
 
 ROCKS.NVIM                                *render-markdown-install-rocks.nvim*
 
->vimscript
+>vim
     :Rocks install markdown.nvim
 <
+
+- luarocks.org <https://luarocks.org/modules/MeanderingProgrammer/markdown.nvim>
 
 
 PACKER.NVIM                              *render-markdown-install-packer.nvim*

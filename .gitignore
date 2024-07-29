@@ -1,7 +1,2 @@
-*.cast
 *.gif
-*.json
-medium.md
-large.md
-test.md
-test.log
+/temp/

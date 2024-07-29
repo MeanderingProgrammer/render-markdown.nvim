@@ -10,6 +10,14 @@
   [726c85c](https://github.com/MeanderingProgrammer/markdown.nvim/commit/726c85cb9cc6d7d9c85af6ab093e1ee53b5e3c82).
     - Ultimately removed in TODO
 
+### Bug Fixes
+
+- Block code rendering with transparent background [#102](https://github.com/MeanderingProgrammer/markdown.nvim/pull/102)
+
+### Collaborator Shoutouts
+
+- @scottmckendry
+
 ## 5.0.0 (2024-07-27)
 
 ### ⚠ BREAKING CHANGES

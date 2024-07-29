@@ -52,10 +52,10 @@ cat-log:
   cat ~/.local/state/nvim/render-markdown.log
 
 gen-medium:
-  just gen-file "1000" > medium.md
+  just gen-file "1000" > temp/medium.md
 
 gen-large:
-  just gen-file "100000" > large.md
+  just gen-file "100000" > temp/large.md
 
 [private]
 gen-file lines:
