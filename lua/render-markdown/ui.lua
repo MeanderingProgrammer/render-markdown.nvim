@@ -46,14 +46,15 @@ function M.render(buf, mode, parse)
     end
     vim.api.nvim_buf_clear_namespace(buf, M.namespace, 0, -1)
 
-    if not M.should_render(win, mode) then
+    local config = state.get_config(buf)
+    if not M.should_render(config, win, mode) then
         -- Set window options back to default
-        for name, value in pairs(state.config.win_options) do
+        for name, value in pairs(config.win_options) do
             util.set_win(win, name, value.default)
         end
     else
         -- Set window options to rendered & perform render
-        for name, value in pairs(state.config.win_options) do
+        for name, value in pairs(config.win_options) do
             util.set_win(win, name, value.rendered)
         end
 
@@ -69,7 +70,7 @@ function M.render(buf, mode, parse)
 
         local row = util.cursor_row(buf)
         for _, mark in ipairs(marks) do
-            if M.should_show_mark(mark, row) then
+            if M.should_show_mark(config, mark, row) then
                 -- Only ensure strictness if the buffer was parsed this request
                 -- The order of events can cause our cache to be stale
                 mark.opts.strict = parsed
@@ -80,17 +81,18 @@ function M.render(buf, mode, parse)
 end
 
 ---@private
+---@param config render.md.BufferConfig
 ---@param win integer
 ---@param mode string
 ---@return boolean
-function M.should_render(win, mode)
+function M.should_render(config, win, mode)
     if not state.enabled then
         return false
     end
     if not util.get_leftcol(win) == 0 then
         return false
     end
-    if not vim.tbl_contains(state.config.render_modes, mode) then
+    if not vim.tbl_contains(config.render_modes, mode) then
         return false
     end
     return true
@@ -127,7 +129,7 @@ function M.parse_tree(buf, language, root)
     logger.debug('language', language)
 
     local marks = {}
-    local user_handler = state.config.custom_handlers[language]
+    local user_handler = state.custom_handlers[language]
     if user_handler ~= nil then
         logger.debug('running handler', 'user')
         -- TODO: remove call to render & parse nil check
@@ -156,12 +158,13 @@ end
 
 ---Render marks based on anti-conceal behavior and current row
 ---@private
+---@param config render.md.BufferConfig
 ---@param mark render.md.Mark
 ---@param row? integer
 ---@return boolean
-function M.should_show_mark(mark, row)
+function M.should_show_mark(config, mark, row)
     -- Anti-conceal is not enabled -> all marks should be shown
-    if not state.config.anti_conceal.enabled then
+    if not config.anti_conceal.enabled then
         return true
     end
     -- Row is not known means buffer is not active -> all marks should be shown

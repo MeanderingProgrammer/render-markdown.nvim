@@ -17,6 +17,7 @@ local M = {}
 ---@param buf integer
 ---@return render.md.Mark[]
 function M.parse(root, buf)
+    local config = state.get_config(buf)
     local marks = {}
     local query = state.markdown_query
     for id, node in query:iter_captures(root, buf) do
@@ -24,17 +25,17 @@ function M.parse(root, buf)
         local info = ts.info(node, buf)
         logger.debug_node_info(capture, info)
         if capture == 'heading' then
-            vim.list_extend(marks, M.render_heading(buf, info))
+            vim.list_extend(marks, M.heading(config, buf, info))
         elseif capture == 'dash' then
-            list.add_mark(marks, M.render_dash(buf, info))
+            list.add_mark(marks, M.dash(config, buf, info))
         elseif capture == 'code' then
-            vim.list_extend(marks, M.render_code(buf, info))
+            vim.list_extend(marks, M.code(config, buf, info))
         elseif capture == 'list_marker' then
-            vim.list_extend(marks, M.render_list_marker(buf, info))
+            vim.list_extend(marks, M.list_marker(config, buf, info))
         elseif capture == 'checkbox_unchecked' then
-            list.add_mark(marks, M.render_checkbox(info, state.config.checkbox.unchecked))
+            list.add_mark(marks, M.checkbox(config, info, config.checkbox.unchecked))
         elseif capture == 'checkbox_checked' then
-            list.add_mark(marks, M.render_checkbox(info, state.config.checkbox.checked))
+            list.add_mark(marks, M.checkbox(config, info, config.checkbox.checked))
         elseif capture == 'quote' then
             local quote_query = state.markdown_quote_query
             for nested_id, nested_node in quote_query:iter_captures(info.node, buf) do
@@ -42,13 +43,13 @@ function M.parse(root, buf)
                 local nested_info = ts.info(nested_node, buf)
                 logger.debug_node_info(nested_capture, nested_info)
                 if nested_capture == 'quote_marker' then
-                    list.add_mark(marks, M.render_quote_marker(nested_info, info))
+                    list.add_mark(marks, M.quote_marker(config, nested_info, info))
                 else
                     logger.unhandled_capture('markdown quote', nested_capture)
                 end
             end
         elseif capture == 'table' then
-            vim.list_extend(marks, M.render_table(buf, info))
+            vim.list_extend(marks, M.pipe_table(config, buf, info))
         else
             logger.unhandled_capture('markdown', capture)
         end
@@ -57,11 +58,12 @@ function M.parse(root, buf)
 end
 
 ---@private
+---@param config render.md.BufferConfig
 ---@param buf integer
 ---@param info render.md.NodeInfo
 ---@return render.md.Mark[]
-function M.render_heading(buf, info)
-    local heading = state.config.heading
+function M.heading(config, buf, info)
+    local heading = config.heading
     if not heading.enabled then
         return {}
     end
@@ -87,7 +89,7 @@ function M.render_heading(buf, info)
     list.add_mark(marks, background_mark)
 
     if heading.sign then
-        list.add_mark(marks, M.render_sign(buf, info, list.cycle(heading.signs, level), foreground))
+        list.add_mark(marks, M.sign(config, info, list.cycle(heading.signs, level), foreground))
     end
 
     if icon == nil then
@@ -134,11 +136,12 @@ function M.render_heading(buf, info)
 end
 
 ---@private
+---@param config render.md.BufferConfig
 ---@param buf integer
 ---@param info render.md.NodeInfo
 ---@return render.md.Mark?
-function M.render_dash(buf, info)
-    local dash = state.config.dash
+function M.dash(config, buf, info)
+    local dash = config.dash
     if not dash.enabled then
         return nil
     end
@@ -164,11 +167,12 @@ function M.render_dash(buf, info)
 end
 
 ---@private
+---@param config render.md.BufferConfig
 ---@param buf integer
 ---@param info render.md.NodeInfo
 ---@return render.md.Mark[]
-function M.render_code(buf, info)
-    local code = state.config.code
+function M.code(config, buf, info)
+    local code = config.code
     if not code.enabled or code.style == 'none' then
         return {}
     end
@@ -177,7 +181,7 @@ function M.render_code(buf, info)
     if code_info ~= nil then
         local language_info = ts.child(buf, code_info, 'language', code_info.start_row)
         if language_info ~= nil then
-            vim.list_extend(marks, M.render_language(buf, language_info, info))
+            vim.list_extend(marks, M.language(config, buf, language_info, info))
         end
     end
     if not vim.tbl_contains({ 'normal', 'full' }, code.style) then
@@ -290,12 +294,13 @@ function M.render_code(buf, info)
 end
 
 ---@private
+---@param config render.md.BufferConfig
 ---@param buf integer
 ---@param info render.md.NodeInfo
 ---@param code_block render.md.NodeInfo
 ---@return render.md.Mark[]
-function M.render_language(buf, info, code_block)
-    local code = state.config.code
+function M.language(config, buf, info, code_block)
+    local code = config.code
     if not vim.tbl_contains({ 'language', 'full' }, code.style) then
         return {}
     end
@@ -305,7 +310,7 @@ function M.render_language(buf, info, code_block)
     end
     local marks = {}
     if code.sign then
-        list.add_mark(marks, M.render_sign(buf, info, icon, icon_highlight))
+        list.add_mark(marks, M.sign(config, info, icon, icon_highlight))
     end
     -- Requires inline extmarks
     if not util.has_10 then
@@ -338,13 +343,14 @@ function M.render_language(buf, info, code_block)
 end
 
 ---@private
+---@param config render.md.BufferConfig
 ---@param buf integer
 ---@param info render.md.NodeInfo
 ---@return render.md.Mark[]
-function M.render_list_marker(buf, info)
+function M.list_marker(config, buf, info)
     ---@return boolean
     local function sibling_checkbox()
-        if not state.config.checkbox.enabled then
+        if not config.checkbox.enabled then
             return false
         end
         if ts.sibling(buf, info, 'task_list_marker_unchecked') ~= nil then
@@ -357,7 +363,7 @@ function M.render_list_marker(buf, info)
         if paragraph == nil then
             return false
         end
-        return component.checkbox(paragraph.text, 'starts') ~= nil
+        return component.checkbox(config, paragraph.text, 'starts') ~= nil
     end
     if sibling_checkbox() then
         -- Hide the list marker for checkboxes rather than replacing with a bullet point
@@ -374,7 +380,7 @@ function M.render_list_marker(buf, info)
         }
         return { checkbox_mark }
     else
-        local bullet = state.config.bullet
+        local bullet = config.bullet
         if not bullet.enabled then
             return {}
         end
@@ -420,11 +426,12 @@ function M.render_list_marker(buf, info)
 end
 
 ---@private
+---@param config render.md.BufferConfig
 ---@param info render.md.NodeInfo
 ---@param checkbox_state render.md.CheckboxComponent
 ---@return render.md.Mark?
-function M.render_checkbox(info, checkbox_state)
-    local checkbox = state.config.checkbox
+function M.checkbox(config, info, checkbox_state)
+    local checkbox = config.checkbox
     if not checkbox.enabled then
         return nil
     end
@@ -443,16 +450,17 @@ function M.render_checkbox(info, checkbox_state)
 end
 
 ---@private
+---@param config render.md.BufferConfig
 ---@param info render.md.NodeInfo
 ---@param block_quote render.md.NodeInfo
 ---@return render.md.Mark?
-function M.render_quote_marker(info, block_quote)
-    local quote = state.config.quote
+function M.quote_marker(config, info, block_quote)
+    local quote = config.quote
     if not quote.enabled then
         return nil
     end
     local highlight = quote.highlight
-    local callout = component.callout(block_quote.text, 'contains')
+    local callout = component.callout(config, block_quote.text, 'contains')
     if callout ~= nil then
         highlight = callout.highlight
     end
@@ -471,17 +479,14 @@ function M.render_quote_marker(info, block_quote)
 end
 
 ---@private
----@param buf integer
+---@param config render.md.BufferConfig
 ---@param info render.md.NodeInfo
 ---@param text? string
 ---@param highlight string
 ---@return render.md.Mark?
-function M.render_sign(buf, info, text, highlight)
-    local sign = state.config.sign
+function M.sign(config, info, text, highlight)
+    local sign = config.sign
     if not sign.enabled or text == nil then
-        return nil
-    end
-    if vim.tbl_contains(sign.exclude.buftypes, util.get_buf(buf, 'buftype')) then
         return nil
     end
     ---@type render.md.Mark
@@ -499,11 +504,12 @@ function M.render_sign(buf, info, text, highlight)
 end
 
 ---@private
+---@param config render.md.BufferConfig
 ---@param buf integer
 ---@param info render.md.NodeInfo
 ---@return render.md.Mark[]
-function M.render_table(buf, info)
-    local pipe_table = state.config.pipe_table
+function M.pipe_table(config, buf, info)
+    local pipe_table = config.pipe_table
     if not pipe_table.enabled or pipe_table.style == 'none' then
         return {}
     end
@@ -513,23 +519,24 @@ function M.render_table(buf, info)
     end
 
     local marks = {}
-    vim.list_extend(marks, M.render_table_row(buf, parsed_table.head, pipe_table.head))
-    list.add_mark(marks, M.render_table_delimiter(parsed_table.delim, parsed_table.columns))
+    vim.list_extend(marks, M.table_row(config, buf, parsed_table.head, pipe_table.head))
+    list.add_mark(marks, M.table_delimiter(config, parsed_table.delim, parsed_table.columns))
     for _, row in ipairs(parsed_table.rows) do
-        vim.list_extend(marks, M.render_table_row(buf, row, pipe_table.row))
+        vim.list_extend(marks, M.table_row(config, buf, row, pipe_table.row))
     end
     if pipe_table.style == 'full' then
-        vim.list_extend(marks, M.render_table_full(buf, parsed_table))
+        vim.list_extend(marks, M.table_full(config, buf, parsed_table))
     end
     return marks
 end
 
 ---@private
+---@param config render.md.BufferConfig
 ---@param row render.md.NodeInfo
 ---@param columns render.md.parsed.TableColumn[]
 ---@return render.md.Mark
-function M.render_table_delimiter(row, columns)
-    local pipe_table = state.config.pipe_table
+function M.table_delimiter(config, row, columns)
+    local pipe_table = config.pipe_table
     local indicator = pipe_table.alignment_indicator
     local border = pipe_table.border
     local sections = vim.tbl_map(
@@ -571,12 +578,13 @@ function M.render_table_delimiter(row, columns)
 end
 
 ---@private
+---@param config render.md.BufferConfig
 ---@param buf integer
 ---@param row render.md.NodeInfo
 ---@param highlight string
 ---@return render.md.Mark
-function M.render_table_row(buf, row, highlight)
-    local pipe_table = state.config.pipe_table
+function M.table_row(config, buf, row, highlight)
+    local pipe_table = config.pipe_table
     local marks = {}
     if vim.tbl_contains({ 'raw', 'padded' }, pipe_table.cell) then
         for cell_node in row.node:iter_children() do
@@ -598,7 +606,7 @@ function M.render_table_row(buf, row, highlight)
             elseif cell.type == 'pipe_table_cell' then
                 -- Requires inline extmarks
                 if pipe_table.cell == 'padded' and util.has_10 then
-                    local offset = M.table_visual_offset(buf, cell)
+                    local offset = M.table_visual_offset(config, buf, cell)
                     if offset > 0 then
                         ---@type render.md.Mark
                         local padding_mark = {
@@ -636,11 +644,12 @@ function M.render_table_row(buf, row, highlight)
 end
 
 ---@private
+---@param config render.md.BufferConfig
 ---@param buf integer
 ---@param parsed_table render.md.parsed.Table
 ---@return render.md.Mark[]
-function M.render_table_full(buf, parsed_table)
-    local pipe_table = state.config.pipe_table
+function M.table_full(config, buf, parsed_table)
+    local pipe_table = config.pipe_table
     local border = pipe_table.border
 
     ---@param info render.md.NodeInfo
@@ -650,7 +659,7 @@ function M.render_table_full(buf, parsed_table)
         if pipe_table.cell == 'raw' then
             -- For the raw cell style we want the lengths to match after
             -- concealing & inlined elements
-            result = result - M.table_visual_offset(buf, info)
+            result = result - M.table_visual_offset(config, buf, info)
         end
         return result
     end
@@ -701,17 +710,18 @@ function M.render_table_full(buf, parsed_table)
 end
 
 ---@private
+---@param config render.md.BufferConfig
 ---@param buf integer
 ---@param info render.md.NodeInfo
 ---@return integer
-function M.table_visual_offset(buf, info)
+function M.table_visual_offset(config, buf, info)
     local result = ts.concealed(buf, info)
     local query = state.inline_link_query
     local tree = vim.treesitter.get_string_parser(info.text, 'markdown_inline')
     for id, node in query:iter_captures(tree:parse()[1]:root(), info.text) do
         if query.captures[id] == 'link' then
             local link_info = ts.info(node, info.text)
-            result = result - str.width(shared.link_icon(link_info))
+            result = result - str.width(shared.link_icon(config, link_info))
         end
     end
     return result

@@ -16,7 +16,7 @@ function M.check()
         vim.health.error(message)
     end
 
-    local latex = state.config.latex
+    local latex = state.latex
     local latex_advice = 'Disable LaTeX support to avoid this warning by setting { latex = { enabled = false } }'
 
     vim.health.start('markdown.nvim [nvim-treesitter]')
@@ -42,7 +42,7 @@ function M.check()
     end
 
     vim.health.start('markdown.nvim [conflicts]')
-    if state.config.acknowledge_conflicts then
+    if state.acknowledge_conflicts then
         vim.health.ok('conflicts acknowledged')
     else
         M.check_plugin('headlines')

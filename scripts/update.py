@@ -35,7 +35,10 @@ class LuaClass:
             return []
         lines: list[str] = [self.name.replace("User", "")]
         for field in self.fields:
-            lines.append(field.replace("User", "").replace("?", ""))
+            if "ConfigOverrides" in self.name:
+                lines.append(field.replace("?", ""))
+            else:
+                lines.append(field.replace("User", "").replace("?", ""))
         lines.append("")
         return lines
 

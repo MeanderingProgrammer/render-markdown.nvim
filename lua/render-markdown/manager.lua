@@ -51,13 +51,14 @@ end
 ---@private
 ---@param buf integer
 function M.attach(buf)
-    if not vim.tbl_contains(state.config.file_types, util.get_buf(buf, 'filetype')) then
+    if not vim.tbl_contains(state.file_types, util.get_buf(buf, 'filetype')) then
         return
     end
-    if vim.tbl_contains(state.config.exclude.buftypes, util.get_buf(buf, 'buftype')) then
+    local config = state.get_config(buf)
+    if not config.enabled then
         return
     end
-    if util.file_size_mb(buf) > state.config.max_file_size then
+    if util.file_size_mb(buf) > config.max_file_size then
         return
     end
     if vim.tbl_contains(data.buffers, buf) then
@@ -86,7 +87,7 @@ function M.attach(buf)
         group = M.group,
         buffer = buf,
         callback = function()
-            local render_modes = state.config.render_modes
+            local render_modes = config.render_modes
             local prev_rendered = vim.tbl_contains(render_modes, vim.v.event.old_mode)
             local should_render = vim.tbl_contains(render_modes, vim.v.event.new_mode)
             -- Only need to re-render if render state is changing. I.e. going from normal mode to
@@ -98,7 +99,7 @@ function M.attach(buf)
             end
         end,
     })
-    if state.config.anti_conceal.enabled then
+    if config.anti_conceal.enabled then
         vim.api.nvim_create_autocmd({ 'CursorMoved' }, {
             group = M.group,
             buffer = buf,

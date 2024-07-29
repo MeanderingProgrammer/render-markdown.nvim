@@ -9,7 +9,7 @@
   interchangeable. Notice of deprecation has been available for a month since
   [726c85c](https://github.com/MeanderingProgrammer/markdown.nvim/commit/726c85cb9cc6d7d9c85af6ab093e1ee53b5e3c82).
     - Ultimately removed in TODO
-- Remove `profile` field in favor of benches [2f21726](https://github.com/MeanderingProgrammer/markdown.nvim/commit/2f217266c6b416c4948ddb7e88a5db02670c75d5)
+- Remove `profile` field in favor of benches [dcfa033](https://github.com/MeanderingProgrammer/markdown.nvim/commit/dcfa033cb39bc4f30019925aa91d3af5ec049614)
 - In order to fix:
   - Implement `parse` method instead of `render`, no direct translation
   - `profile` field was only meant for development, should not have any users

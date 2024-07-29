@@ -1,5 +1,3 @@
-local state = require('render-markdown.state')
-
 ---@class render.md.Component
 ---@field text string
 ---@field highlight string
@@ -7,10 +5,11 @@ local state = require('render-markdown.state')
 ---@class render.md.ComponentHelper
 local M = {}
 
+---@param config render.md.BufferConfig
 ---@param text string
 ---@param comparison 'exact'|'contains'
 ---@return render.md.Component?
-function M.callout(text, comparison)
+function M.callout(config, text, comparison)
     ---@param callout render.md.CustomComponent
     ---@return boolean
     local function matches(callout)
@@ -22,7 +21,7 @@ function M.callout(text, comparison)
             error(string.format('Unhandled comparison: %s', comparison))
         end
     end
-    for _, callout in pairs(state.config.callout) do
+    for _, callout in pairs(config.callout) do
         if matches(callout) then
             return { text = callout.rendered, highlight = callout.highlight }
         end
@@ -30,10 +29,11 @@ function M.callout(text, comparison)
     return nil
 end
 
+---@param config render.md.BufferConfig
 ---@param text string
 ---@param comparison 'exact'|'starts'
 ---@return render.md.Component?
-function M.checkbox(text, comparison)
+function M.checkbox(config, text, comparison)
     ---@param checkbox render.md.CustomComponent
     ---@return boolean
     local function matches(checkbox)
@@ -45,7 +45,7 @@ function M.checkbox(text, comparison)
             error(string.format('Unhandled comparison: %s', comparison))
         end
     end
-    for _, checkbox in pairs(state.config.checkbox.custom) do
+    for _, checkbox in pairs(config.checkbox.custom) do
         if matches(checkbox) then
             return { text = checkbox.rendered, highlight = checkbox.highlight }
         end

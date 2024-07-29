@@ -12,13 +12,13 @@ needed, and concealing when the cursor enters.
 Each handler must conform to the following interface:
 
 ```lua
----@class render.md.Mark
+---@class (exact) render.md.Mark
 ---@field public conceal boolean
 ---@field public start_row integer
 ---@field public start_col integer
 ---@field public opts vim.api.keyset.set_extmark
 
----@class render.md.Handler
+---@class (exact) render.md.Handler
 ---@field public parse fun(root: TSNode, buf: integer): render.md.Mark[]
 ---@field public extends? boolean
 ```

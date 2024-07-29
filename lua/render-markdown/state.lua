@@ -1,60 +1,136 @@
+local util = require('render-markdown.util')
+
+---@class render.md.StateCache
+local cache = {
+    ---@type table<integer, render.md.BufferConfig>
+    configs = {},
+}
+
 ---@class render.md.State
----@field config render.md.Config
+---@field private config render.md.Config
 ---@field enabled boolean
+---@field log_level 'debug'|'error'
+---@field file_types string[]
+---@field acknowledge_conflicts boolean
+---@field latex render.md.Latex
+---@field custom_handlers table<string, render.md.Handler>
 ---@field markdown_query vim.treesitter.Query
 ---@field markdown_quote_query vim.treesitter.Query
 ---@field inline_query vim.treesitter.Query
 ---@field inline_link_query vim.treesitter.Query
-local state = {}
+local M = {}
+
+---@param default_config render.md.Config
+---@param user_config? render.md.UserConfig
+function M.setup(default_config, user_config)
+    -- Reset cache to pickup config changes
+    cache.configs = {}
+
+    -- Create top level config from default & user
+    local config = vim.deepcopy(vim.tbl_deep_extend('force', default_config, user_config or {}), true)
+    M.config = config
+    M.enabled = config.enabled
+    M.log_level = config.log_level
+    M.file_types = config.file_types
+    M.acknowledge_conflicts = config.acknowledge_conflicts
+    M.latex = config.latex
+    M.custom_handlers = config.custom_handlers
+    vim.schedule(function()
+        M.markdown_query = vim.treesitter.query.parse('markdown', config.markdown_query)
+        M.markdown_quote_query = vim.treesitter.query.parse('markdown', config.markdown_quote_query)
+        M.inline_query = vim.treesitter.query.parse('markdown_inline', config.inline_query)
+        M.inline_link_query = vim.treesitter.query.parse('markdown_inline', config.inline_link_query)
+    end)
+end
+
+---@param buf integer
+---@return render.md.BufferConfig
+M.get_config = function(buf)
+    local config = cache.configs[buf]
+    if config == nil then
+        local buftype = util.get_buf(buf, 'buftype')
+        local buftype_config = M.config.overrides.buftype[buftype]
+        if buftype_config ~= nil then
+            config = vim.tbl_deep_extend('force', M.default_buffer_config(), buftype_config)
+        else
+            config = M.default_buffer_config()
+        end
+        cache.configs[buf] = config
+    end
+    return config
+end
+
+---@private
+---@return render.md.BufferConfig
+function M.default_buffer_config()
+    local config = M.config
+    ---@type render.md.BufferConfig
+    return {
+        enabled = true,
+        max_file_size = config.max_file_size,
+        render_modes = config.render_modes,
+        anti_conceal = config.anti_conceal,
+        heading = config.heading,
+        code = config.code,
+        dash = config.dash,
+        bullet = config.bullet,
+        checkbox = config.checkbox,
+        quote = config.quote,
+        pipe_table = config.pipe_table,
+        callout = config.callout,
+        link = config.link,
+        sign = config.sign,
+        win_options = config.win_options,
+    }
+end
 
 ---@return string[]
-function state.validate()
+function M.validate()
     local errors = {}
-
-    ---@param value string
-    ---@param valid_values string[]
-    ---@return vim.validate.Spec
-    local function one_of(value, valid_values)
-        return {
-            value,
-            function(v)
-                return vim.tbl_contains(valid_values, v)
-            end,
-            'one of ' .. vim.inspect(valid_values),
-        }
-    end
 
     ---@param value any
     ---@param valid_values string[]
-    ---@param valid_type type
+    ---@param valid_types type[]
+    ---@param nilable boolean
     ---@return vim.validate.Spec
-    local function one_of_or(value, valid_values, valid_type)
+    local function one_of(value, valid_values, valid_types, nilable)
+        if nilable then
+            table.insert(valid_types, 'nil')
+        end
         return {
             value,
             function(v)
-                return vim.tbl_contains(valid_values, v) or type(v) == valid_type
+                return vim.tbl_contains(valid_values, v) or vim.tbl_contains(valid_types, type(v))
             end,
-            'one of ' .. vim.inspect(valid_values) .. ' or ' .. valid_type,
+            'one of ' .. vim.inspect(valid_values) .. ' or type ' .. vim.inspect(valid_types),
         }
     end
 
     ---@param value string[]
+    ---@param nilable boolean
     ---@return vim.validate.Spec
-    local function string_array(value)
+    local function string_array(value, nilable)
+        local description = 'string array'
+        if nilable then
+            description = description .. ' or nil'
+        end
         return {
             value,
             function(v)
-                if type(v) ~= 'table' then
+                if v == nil then
+                    return nilable
+                elseif type(v) ~= 'table' then
                     return false
-                end
-                for i, item in ipairs(v) do
-                    if type(item) ~= 'string' then
-                        return false, string.format('Index %d is %s', i, type(item))
+                else
+                    for i, item in ipairs(v) do
+                        if type(item) ~= 'string' then
+                            return false, string.format('Index %d is %s', i, type(item))
+                        end
                     end
+                    return true
                 end
-                return true
             end,
-            'string array',
+            description,
         }
     end
 
@@ -73,44 +149,191 @@ function state.validate()
         end
     end
 
-    local config = state.config
+    ---@param path string
+    ---@param config render.md.BufferConfig|render.md.UserBufferConfig
+    ---@param nilable boolean
+    local function validate_buffer_config(path, config, nilable)
+        local anti_conceal = config.anti_conceal
+        if anti_conceal ~= nil then
+            append_errors(path .. '.anti_conceal', anti_conceal, {
+                enabled = { anti_conceal.enabled, 'boolean', nilable },
+            })
+        end
+
+        local heading = config.heading
+        if heading ~= nil then
+            append_errors(path .. '.heading', heading, {
+                enabled = { heading.enabled, 'boolean', nilable },
+                sign = { heading.sign, 'boolean', nilable },
+                icons = string_array(heading.icons, nilable),
+                signs = string_array(heading.signs, nilable),
+                width = one_of(heading.width, { 'full', 'block' }, {}, nilable),
+                backgrounds = string_array(heading.backgrounds, nilable),
+                foregrounds = string_array(heading.foregrounds, nilable),
+            })
+        end
+
+        local code = config.code
+        if code ~= nil then
+            append_errors(path .. '.code', code, {
+                enabled = { code.enabled, 'boolean', nilable },
+                sign = { code.sign, 'boolean', nilable },
+                style = one_of(code.style, { 'full', 'normal', 'language', 'none' }, {}, nilable),
+                left_pad = { code.left_pad, 'number', nilable },
+                right_pad = { code.right_pad, 'number', nilable },
+                width = one_of(code.width, { 'full', 'block' }, {}, nilable),
+                border = one_of(code.border, { 'thin', 'thick' }, {}, nilable),
+                above = { code.above, 'string', nilable },
+                below = { code.below, 'string', nilable },
+                highlight = { code.highlight, 'string', nilable },
+                highlight_inline = { code.highlight_inline, 'string', nilable },
+            })
+        end
+
+        local dash = config.dash
+        if dash ~= nil then
+            append_errors(path .. '.dash', dash, {
+                enabled = { dash.enabled, 'boolean', nilable },
+                icon = { dash.icon, 'string', nilable },
+                width = one_of(dash.width, { 'full' }, { 'number' }, nilable),
+                highlight = { dash.highlight, 'string', nilable },
+            })
+        end
+
+        local bullet = config.bullet
+        if bullet ~= nil then
+            append_errors(path .. '.bullet', bullet, {
+                enabled = { bullet.enabled, 'boolean', nilable },
+                icons = string_array(bullet.icons, nilable),
+                right_pad = { bullet.right_pad, 'number', nilable },
+                highlight = { bullet.highlight, 'string', nilable },
+            })
+        end
+
+        local checkbox = config.checkbox
+        if checkbox ~= nil then
+            append_errors(path .. '.checkbox', checkbox, {
+                enabled = { checkbox.enabled, 'boolean', nilable },
+                unchecked = { checkbox.unchecked, 'table', nilable },
+                checked = { checkbox.checked, 'table', nilable },
+                custom = { checkbox.custom, 'table', nilable },
+            })
+            local unchecked = checkbox.unchecked
+            if unchecked ~= nil then
+                append_errors(path .. '.checkbox.unchecked', unchecked, {
+                    icon = { unchecked.icon, 'string', nilable },
+                    highlight = { unchecked.highlight, 'string', nilable },
+                })
+            end
+            local checked = checkbox.checked
+            if checked ~= nil then
+                append_errors(path .. '.checkbox.checked', checked, {
+                    icon = { checked.icon, 'string', nilable },
+                    highlight = { checked.highlight, 'string', nilable },
+                })
+            end
+            if checkbox.custom ~= nil then
+                for name, component in pairs(checkbox.custom) do
+                    append_errors(path .. '.checkbox.custom.' .. name, component, {
+                        raw = { component.raw, 'string' },
+                        rendered = { component.rendered, 'string' },
+                        highlight = { component.highlight, 'string' },
+                    })
+                end
+            end
+        end
+
+        local quote = config.quote
+        if quote ~= nil then
+            append_errors(path .. '.quote', quote, {
+                enabled = { quote.enabled, 'boolean', nilable },
+                icon = { quote.icon, 'string', nilable },
+                highlight = { quote.highlight, 'string', nilable },
+            })
+        end
+
+        local pipe_table = config.pipe_table
+        if pipe_table ~= nil then
+            append_errors(path .. '.pipe_table', pipe_table, {
+                enabled = { pipe_table.enabled, 'boolean', nilable },
+                style = one_of(pipe_table.style, { 'full', 'normal', 'none' }, {}, nilable),
+                cell = one_of(pipe_table.cell, { 'padded', 'raw', 'overlay' }, {}, nilable),
+                border = string_array(pipe_table.border, nilable),
+                alignment_indicator = { pipe_table.alignment_indicator, 'string', nilable },
+                head = { pipe_table.head, 'string', nilable },
+                row = { pipe_table.row, 'string', nilable },
+                filler = { pipe_table.filler, 'string', nilable },
+            })
+        end
+
+        if config.callout ~= nil then
+            for name, component in pairs(config.callout) do
+                append_errors(path .. '.callout.' .. name, component, {
+                    raw = { component.raw, 'string' },
+                    rendered = { component.rendered, 'string' },
+                    highlight = { component.highlight, 'string' },
+                })
+            end
+        end
+
+        local link = config.link
+        if link ~= nil then
+            append_errors(path .. '.link', link, {
+                enabled = { link.enabled, 'boolean', nilable },
+                image = { link.image, 'string', nilable },
+                hyperlink = { link.hyperlink, 'string', nilable },
+                highlight = { link.highlight, 'string', nilable },
+            })
+        end
+
+        local sign = config.sign
+        if sign ~= nil then
+            append_errors(path .. '.sign', sign, {
+                enabled = { sign.enabled, 'boolean', nilable },
+                highlight = { sign.highlight, 'string', nilable },
+            })
+        end
+
+        if config.win_options ~= nil then
+            for name, win_option in pairs(config.win_options) do
+                append_errors(path .. '.win_options.' .. name, win_option, {
+                    default = { win_option.default, { 'number', 'string' } },
+                    rendered = { win_option.rendered, { 'number', 'string' } },
+                })
+            end
+        end
+    end
+
+    local config = M.config
     append_errors('render-markdown', config, {
         enabled = { config.enabled, 'boolean' },
         max_file_size = { config.max_file_size, 'number' },
-        markdown_query = { config.markdown_query, 'string' },
-        markdown_quote_query = { config.markdown_quote_query, 'string' },
-        inline_query = { config.inline_query, 'string' },
-        inline_link_query = { config.inline_link_query, 'string' },
-        log_level = one_of(config.log_level, { 'debug', 'error' }),
-        file_types = string_array(config.file_types),
-        render_modes = string_array(config.render_modes),
-        acknowledge_conflicts = { config.acknowledge_conflicts, 'boolean' },
-        exclude = { config.exclude, 'table' },
+        render_modes = string_array(config.render_modes, false),
         anti_conceal = { config.anti_conceal, 'table' },
-        latex = { config.latex, 'table' },
         heading = { config.heading, 'table' },
         code = { config.code, 'table' },
         dash = { config.dash, 'table' },
         bullet = { config.bullet, 'table' },
-        pipe_table = { config.pipe_table, 'table' },
         checkbox = { config.checkbox, 'table' },
         quote = { config.quote, 'table' },
+        pipe_table = { config.pipe_table, 'table' },
         callout = { config.callout, 'table' },
         link = { config.link, 'table' },
         sign = { config.sign, 'table' },
         win_options = { config.win_options, 'table' },
+        markdown_query = { config.markdown_query, 'string' },
+        markdown_quote_query = { config.markdown_quote_query, 'string' },
+        inline_query = { config.inline_query, 'string' },
+        inline_link_query = { config.inline_link_query, 'string' },
+        log_level = one_of(config.log_level, { 'debug', 'error' }, {}, false),
+        file_types = string_array(config.file_types, false),
+        acknowledge_conflicts = { config.acknowledge_conflicts, 'boolean' },
+        latex = { config.latex, 'table' },
+        overrides = { config.overrides, 'table' },
         custom_handlers = { config.custom_handlers, 'table' },
     })
 
-    local exclude = config.exclude
-    append_errors('render-markdown.exclude', exclude, {
-        buftypes = string_array(exclude.buftypes),
-    })
-
-    local anti_conceal = config.anti_conceal
-    append_errors('render-markdown.anti_conceal', anti_conceal, {
-        enabled = { anti_conceal.enabled, 'boolean' },
-    })
+    validate_buffer_config('render-markdown', config, false)
 
     local latex = config.latex
     append_errors('render-markdown.latex', latex, {
@@ -121,124 +344,30 @@ function state.validate()
         bottom_pad = { latex.bottom_pad, 'number' },
     })
 
-    local heading = config.heading
-    append_errors('render-markdown.heading', heading, {
-        enabled = { heading.enabled, 'boolean' },
-        sign = { heading.sign, 'boolean' },
-        icons = string_array(heading.icons),
-        signs = string_array(heading.signs),
-        width = one_of(heading.width, { 'full', 'block' }),
-        backgrounds = string_array(heading.backgrounds),
-        foregrounds = string_array(heading.foregrounds),
+    local overrides = config.overrides
+    append_errors('render-markdown.overrides', overrides, {
+        buftype = { overrides.buftype, 'table' },
     })
-
-    local code = config.code
-    append_errors('render-markdown.code', code, {
-        enabled = { code.enabled, 'boolean' },
-        sign = { code.sign, 'boolean' },
-        style = one_of(code.style, { 'full', 'normal', 'language', 'none' }),
-        left_pad = { code.left_pad, 'number' },
-        right_pad = { code.right_pad, 'number' },
-        width = one_of(code.width, { 'full', 'block' }),
-        border = one_of(code.border, { 'thin', 'thick' }),
-        above = { code.above, 'string' },
-        below = { code.below, 'string' },
-        highlight = { code.highlight, 'string' },
-        highlight_inline = { code.highlight_inline, 'string' },
-    })
-
-    local dash = config.dash
-    append_errors('render-markdown.dash', dash, {
-        enabled = { dash.enabled, 'boolean' },
-        icon = { dash.icon, 'string' },
-        width = one_of_or(dash.width, { 'full' }, 'number'),
-        highlight = { dash.highlight, 'string' },
-    })
-
-    local bullet = config.bullet
-    append_errors('render-markdown.bullet', bullet, {
-        enabled = { bullet.enabled, 'boolean' },
-        icons = string_array(bullet.icons),
-        right_pad = { bullet.right_pad, 'number' },
-        highlight = { bullet.highlight, 'string' },
-    })
-
-    local checkbox = config.checkbox
-    append_errors('render-markdown.checkbox', checkbox, {
-        enabled = { checkbox.enabled, 'boolean' },
-        unchecked = { checkbox.unchecked, 'table' },
-        checked = { checkbox.checked, 'table' },
-        custom = { checkbox.custom, 'table' },
-    })
-    local unchecked = checkbox.unchecked
-    append_errors('render-markdown.checkbox.unchecked', unchecked, {
-        icon = { unchecked.icon, 'string' },
-        highlight = { unchecked.highlight, 'string' },
-    })
-    local checked = checkbox.checked
-    append_errors('render-markdown.checkbox.checked', checked, {
-        icon = { checked.icon, 'string' },
-        highlight = { checked.highlight, 'string' },
-    })
-    for name, component in pairs(checkbox.custom) do
-        append_errors('render-markdown.checkbox.custom.' .. name, component, {
-            raw = { component.raw, 'string' },
-            rendered = { component.rendered, 'string' },
-            highlight = { component.highlight, 'string' },
+    for name, override in pairs(overrides.buftype) do
+        local path = 'render-markdown.overrides.buftype.' .. name
+        append_errors(path, override, {
+            enabled = { override.enabled, 'boolean', true },
+            max_file_size = { override.max_file_size, 'number', true },
+            render_modes = string_array(override.render_modes, true),
+            anti_conceal = { override.anti_conceal, 'table', true },
+            heading = { override.heading, 'table', true },
+            code = { override.code, 'table', true },
+            dash = { override.dash, 'table', true },
+            bullet = { override.bullet, 'table', true },
+            checkbox = { override.checkbox, 'table', true },
+            quote = { override.quote, 'table', true },
+            pipe_table = { override.pipe_table, 'table', true },
+            callout = { override.callout, 'table', true },
+            link = { override.link, 'table', true },
+            sign = { override.sign, 'table', true },
+            win_options = { override.win_options, 'table', true },
         })
-    end
-
-    local quote = config.quote
-    append_errors('render-markdown.quote', quote, {
-        enabled = { quote.enabled, 'boolean' },
-        icon = { quote.icon, 'string' },
-        highlight = { quote.highlight, 'string' },
-    })
-
-    local pipe_table = config.pipe_table
-    append_errors('render-markdown.pipe_table', pipe_table, {
-        enabled = { pipe_table.enabled, 'boolean' },
-        style = one_of(pipe_table.style, { 'full', 'normal', 'none' }),
-        cell = one_of(pipe_table.cell, { 'padded', 'raw', 'overlay' }),
-        border = string_array(pipe_table.border),
-        alignment_indicator = { pipe_table.alignment_indicator, 'string' },
-        head = { pipe_table.head, 'string' },
-        row = { pipe_table.row, 'string' },
-        filler = { pipe_table.filler, 'string' },
-    })
-
-    for name, component in pairs(config.callout) do
-        append_errors('render-markdown.callout.' .. name, component, {
-            raw = { component.raw, 'string' },
-            rendered = { component.rendered, 'string' },
-            highlight = { component.highlight, 'string' },
-        })
-    end
-
-    local link = config.link
-    append_errors('render-markdown.link', link, {
-        enabled = { link.enabled, 'boolean' },
-        image = { link.image, 'string' },
-        hyperlink = { link.hyperlink, 'string' },
-        highlight = { link.highlight, 'string' },
-    })
-
-    local sign = config.sign
-    append_errors('render-markdown.sign', sign, {
-        enabled = { sign.enabled, 'boolean' },
-        exclude = { sign.exclude, 'table' },
-        highlight = { sign.highlight, 'string' },
-    })
-    local sign_exclude = sign.exclude
-    append_errors('render-markdown.sign.exclude', sign_exclude, {
-        buftypes = string_array(sign_exclude.buftypes),
-    })
-
-    for name, win_option in pairs(config.win_options) do
-        append_errors('render-markdown.win_options.' .. name, win_option, {
-            default = { win_option.default, { 'number', 'string' } },
-            rendered = { win_option.rendered, { 'number', 'string' } },
-        })
+        validate_buffer_config(path, override, true)
     end
 
     for name, handler in pairs(config.custom_handlers) do
@@ -251,4 +380,4 @@ function state.validate()
     return errors
 end
 
-return state
+return M

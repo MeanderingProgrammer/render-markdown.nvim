@@ -14,6 +14,7 @@ local M = {}
 ---@param buf integer
 ---@return render.md.Mark[]
 function M.parse(root, buf)
+    local config = state.get_config(buf)
     local marks = {}
     local query = state.inline_query
     for id, node in query:iter_captures(root, buf) do
@@ -21,11 +22,11 @@ function M.parse(root, buf)
         local info = ts.info(node, buf)
         logger.debug_node_info(capture, info)
         if capture == 'code' then
-            list.add_mark(marks, M.render_code(info))
+            list.add_mark(marks, M.code(config, info))
         elseif capture == 'callout' then
-            list.add_mark(marks, M.render_callout(info))
+            list.add_mark(marks, M.callout(config, info))
         elseif capture == 'link' then
-            list.add_mark(marks, M.render_link(info))
+            list.add_mark(marks, M.link(config, info))
         else
             logger.unhandled_capture('inline', capture)
         end
@@ -34,10 +35,11 @@ function M.parse(root, buf)
 end
 
 ---@private
+---@param config render.md.BufferConfig
 ---@param info render.md.NodeInfo
 ---@return render.md.Mark?
-function M.render_code(info)
-    local code = state.config.code
+function M.code(config, info)
+    local code = config.code
     if not code.enabled then
         return nil
     end
@@ -58,12 +60,13 @@ function M.render_code(info)
 end
 
 ---@private
+---@param config render.md.BufferConfig
 ---@param info render.md.NodeInfo
 ---@return render.md.Mark?
-function M.render_callout(info)
-    local callout = component.callout(info.text, 'exact')
+function M.callout(config, info)
+    local callout = component.callout(config, info.text, 'exact')
     if callout ~= nil then
-        if not state.config.quote.enabled then
+        if not config.quote.enabled then
             return nil
         end
         ---@type render.md.Mark
@@ -79,14 +82,14 @@ function M.render_callout(info)
             },
         }
     else
-        if not state.config.checkbox.enabled then
+        if not config.checkbox.enabled then
             return nil
         end
         -- Requires inline extmarks
         if not util.has_10 then
             return nil
         end
-        local checkbox = component.checkbox(info.text, 'exact')
+        local checkbox = component.checkbox(config, info.text, 'exact')
         if checkbox == nil then
             return nil
         end
@@ -107,10 +110,11 @@ function M.render_callout(info)
 end
 
 ---@private
+---@param config render.md.BufferConfig
 ---@param info render.md.NodeInfo
 ---@return render.md.Mark?
-function M.render_link(info)
-    local icon = shared.link_icon(info)
+function M.link(config, info)
+    local icon = shared.link_icon(config, info)
     if icon == nil then
         return nil
     end
@@ -122,7 +126,7 @@ function M.render_link(info)
         opts = {
             end_row = info.end_row,
             end_col = info.end_col,
-            virt_text = { { icon, state.config.link.highlight } },
+            virt_text = { { icon, config.link.highlight } },
             virt_text_pos = 'inline',
         },
     }

@@ -1,34 +1,38 @@
-local state = require('render-markdown.state')
-
 ---@class render.md.Init: render.md.Api
 local M = {}
 
----@class render.md.Mark
+---@class (exact) render.md.Mark
 ---@field public conceal boolean
 ---@field public start_row integer
 ---@field public start_col integer
 ---@field public opts vim.api.keyset.set_extmark
 
----@class render.md.Handler
+---@class (exact) render.md.Handler
 ---@field public parse fun(root: TSNode, buf: integer): render.md.Mark[]
 ---@field public extends? boolean
 
----@class render.md.UserWindowOption
+---@class (exact) render.md.UserLatex
+---@field public enabled? boolean
+---@field public converter? string
+---@field public highlight? string
+---@field public top_pad? integer
+---@field public bottom_pad? integer
+
+---@class (exact) render.md.UserWindowOption
 ---@field public default? number|string
 ---@field public rendered? number|string
 
----@class render.md.UserSign
+---@class (exact) render.md.UserSign
 ---@field public enabled? boolean
----@field public exclude? render.md.UserExclude
 ---@field public highlight? string
 
----@class render.md.UserLink
+---@class (exact) render.md.UserLink
 ---@field public enabled? boolean
 ---@field public image? string
 ---@field public hyperlink? string
 ---@field public highlight? string
 
----@class render.md.UserPipeTable
+---@class (exact) render.md.UserPipeTable
 ---@field public enabled? boolean
 ---@field public style? 'full'|'normal'|'none'
 ---@field public cell? 'padded'|'raw'|'overlay'
@@ -38,39 +42,39 @@ local M = {}
 ---@field public row? string
 ---@field public filler? string
 
----@class render.md.UserCustomComponent
+---@class (exact) render.md.UserCustomComponent
 ---@field public raw? string
 ---@field public rendered? string
 ---@field public highlight? string
 
----@class render.md.UserQuote
+---@class (exact) render.md.UserQuote
 ---@field public enabled? boolean
 ---@field public icon? string
 ---@field public highlight? string
 
----@class render.md.UserCheckboxComponent
+---@class (exact) render.md.UserCheckboxComponent
 ---@field public icon? string
 ---@field public highlight? string
 
----@class render.md.UserCheckbox
+---@class (exact) render.md.UserCheckbox
 ---@field public enabled? boolean
 ---@field public unchecked? render.md.UserCheckboxComponent
 ---@field public checked? render.md.UserCheckboxComponent
 ---@field public custom? table<string, render.md.CustomComponent>
 
----@class render.md.UserBullet
+---@class (exact) render.md.UserBullet
 ---@field public enabled? boolean
 ---@field public icons? string[]
 ---@field public right_pad? integer
 ---@field public highlight? string
 
----@class render.md.UserDash
+---@class (exact) render.md.UserDash
 ---@field public enabled? boolean
 ---@field public icon? string
 ---@field public width? 'full'|integer
 ---@field public highlight? string
 
----@class render.md.UserCode
+---@class (exact) render.md.UserCode
 ---@field public enabled? boolean
 ---@field public sign? boolean
 ---@field public style? 'full'|'normal'|'language'|'none'
@@ -83,7 +87,7 @@ local M = {}
 ---@field public highlight? string
 ---@field public highlight_inline? string
 
----@class render.md.UserHeading
+---@class (exact) render.md.UserHeading
 ---@field public enabled? boolean
 ---@field public sign? boolean
 ---@field public icons? string[]
@@ -92,33 +96,17 @@ local M = {}
 ---@field public backgrounds? string[]
 ---@field public foregrounds? string[]
 
----@class render.md.UserLatex
----@field public enabled? boolean
----@field public converter? string
----@field public highlight? string
----@field public top_pad? integer
----@field public bottom_pad? integer
-
----@class render.md.UserAntiConceal
+---@class (exact) render.md.UserAntiConceal
 ---@field public enabled? boolean
 
----@class render.md.UserExclude
----@field public buftypes? string[]
+---@class (exact) render.md.UserConfigOverrides
+---@field public buftype? table<string, render.md.UserBufferConfig>
 
----@class render.md.UserConfig
+---@class (exact) render.md.UserBufferConfig
 ---@field public enabled? boolean
 ---@field public max_file_size? number
----@field public markdown_query? string
----@field public markdown_quote_query? string
----@field public inline_query? string
----@field public inline_link_query? string
----@field public log_level? 'debug'|'error'
----@field public file_types? string[]
 ---@field public render_modes? string[]
----@field public acknowledge_conflicts? boolean
----@field public exclude? render.md.UserExclude
 ---@field public anti_conceal? render.md.UserAntiConceal
----@field public latex? render.md.UserLatex
 ---@field public heading? render.md.UserHeading
 ---@field public code? render.md.UserCode
 ---@field public dash? render.md.UserDash
@@ -130,8 +118,20 @@ local M = {}
 ---@field public link? render.md.UserLink
 ---@field public sign? render.md.UserSign
 ---@field public win_options? table<string, render.md.UserWindowOption>
+
+---@class (exact) render.md.UserConfig: render.md.UserBufferConfig
+---@field public markdown_query? string
+---@field public markdown_quote_query? string
+---@field public inline_query? string
+---@field public inline_link_query? string
+---@field public log_level? 'debug'|'error'
+---@field public file_types? string[]
+---@field public acknowledge_conflicts? boolean
+---@field public latex? render.md.UserLatex
+---@field public overrides? render.md.UserConfigOverrides
 ---@field public custom_handlers? table<string, render.md.Handler>
 
+---@private
 ---@type render.md.Config
 M.default_config = {
     -- Whether Markdown should be rendered by default or not
@@ -194,10 +194,6 @@ M.default_config = {
     render_modes = { 'n', 'c' },
     -- Set to avoid seeing warnings for conflicts in health check
     acknowledge_conflicts = false,
-    exclude = {
-        -- Buftypes ignored by this plugin, see :h 'buftype'
-        buftypes = {},
-    },
     anti_conceal = {
         -- This enables hiding any added text on the line the cursor is on
         -- This does have a performance penalty as we must listen to the 'CursorMoved' event
@@ -413,10 +409,6 @@ M.default_config = {
     sign = {
         -- Turn on / off sign rendering
         enabled = true,
-        -- More granular mechanism, disable signs within specific buftypes
-        exclude = {
-            buftypes = { 'nofile' },
-        },
         -- Applies to background of sign text
         highlight = 'RenderMarkdownSign',
     },
@@ -437,6 +429,19 @@ M.default_config = {
             rendered = '',
         },
     },
+    -- More granular configuration mechanism, allows different aspects of buffers
+    -- to have their own behavior. Values default to the top level configuration
+    -- if no override is provided. Supports the following fields:
+    --   enabled, max_file_size, render_modes, anti_conceal, heading, code, dash, bullet,
+    --   checkbox, quote, pipe_table, callout, link, sign, win_options
+    overrides = {
+        -- Overrides for different buftypes, see :h 'buftype'
+        buftype = {
+            nofile = {
+                sign = { enabled = false },
+            },
+        },
+    },
     -- Mapping from treesitter language to user defined handlers
     -- See 'Custom Handlers' document for more info
     custom_handlers = {},
@@ -444,14 +449,7 @@ M.default_config = {
 
 ---@param opts? render.md.UserConfig
 function M.setup(opts)
-    state.config = vim.tbl_deep_extend('force', M.default_config, opts or {})
-    state.enabled = state.config.enabled
-    vim.schedule(function()
-        state.markdown_query = vim.treesitter.query.parse('markdown', state.config.markdown_query)
-        state.markdown_quote_query = vim.treesitter.query.parse('markdown', state.config.markdown_quote_query)
-        state.inline_query = vim.treesitter.query.parse('markdown_inline', state.config.inline_query)
-        state.inline_link_query = vim.treesitter.query.parse('markdown_inline', state.config.inline_link_query)
-    end)
+    require('render-markdown.state').setup(M.default_config, opts)
     require('render-markdown.ui').invalidate_cache()
 end
 

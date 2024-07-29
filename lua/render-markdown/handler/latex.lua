@@ -15,7 +15,7 @@ local M = {}
 ---@param buf integer
 ---@return render.md.Mark[]
 function M.parse(root, buf)
-    local latex = state.config.latex
+    local latex = state.latex
     if not latex.enabled then
         return {}
     end

@@ -180,10 +180,6 @@ require('render-markdown').setup({
     render_modes = { 'n', 'c' },
     -- Set to avoid seeing warnings for conflicts in health check
     acknowledge_conflicts = false,
-    exclude = {
-        -- Buftypes ignored by this plugin, see :h 'buftype'
-        buftypes = {},
-    },
     anti_conceal = {
         -- This enables hiding any added text on the line the cursor is on
         -- This does have a performance penalty as we must listen to the 'CursorMoved' event
@@ -399,10 +395,6 @@ require('render-markdown').setup({
     sign = {
         -- Turn on / off sign rendering
         enabled = true,
-        -- More granular mechanism, disable signs within specific buftypes
-        exclude = {
-            buftypes = { 'nofile' },
-        },
         -- Applies to background of sign text
         highlight = 'RenderMarkdownSign',
     },
@@ -421,6 +413,19 @@ require('render-markdown').setup({
             default = vim.api.nvim_get_option_value('concealcursor', {}),
             -- Used when being rendered, disable concealing text in all modes
             rendered = '',
+        },
+    },
+    -- More granular configuration mechanism, allows different aspects of buffers
+    -- to have their own behavior. Values default to the top level configuration
+    -- if no override is provided. Supports the following fields:
+    --   enabled, max_file_size, render_modes, anti_conceal, heading, code, dash, bullet,
+    --   checkbox, quote, pipe_table, callout, link, sign, win_options
+    overrides = {
+        -- Overrides for different buftypes, see :h 'buftype'
+        buftype = {
+            nofile = {
+                sign = { enabled = false },
+            },
         },
     },
     -- Mapping from treesitter language to user defined handlers
@@ -703,10 +708,6 @@ require('render-markdown').setup({
     sign = {
         -- Turn on / off sign rendering
         enabled = true,
-        -- More granular mechanism, disable signs within specific buftypes
-        exclude = {
-            buftypes = { 'nofile' },
-        },
         -- Applies to background of sign text
         highlight = 'RenderMarkdownSign',
     },

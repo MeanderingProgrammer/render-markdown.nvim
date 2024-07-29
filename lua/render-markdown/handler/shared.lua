@@ -1,4 +1,3 @@
-local state = require('render-markdown.state')
 local util = require('render-markdown.util')
 
 ---@class render.md.handler.Shared
@@ -6,10 +5,11 @@ local M = {}
 
 ---When adding links to table cells we shift the text which can mess up alignment
 ---As a result table rendering needs to be painfully aware of this logic
+---@param config render.md.BufferConfig
 ---@param info render.md.NodeInfo
 ---@return string?
-function M.link_icon(info)
-    local link = state.config.link
+function M.link_icon(config, info)
+    local link = config.link
     if not link.enabled then
         return nil
     end

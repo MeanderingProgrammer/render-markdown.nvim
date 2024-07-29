@@ -67,7 +67,7 @@ end
 ---@param name string
 ---@param message any
 function M.debug(name, message)
-    if vim.tbl_contains({ 'debug' }, state.config.log_level) then
+    if vim.tbl_contains({ 'debug' }, state.log_level) then
         log.add('debug', name, message)
     end
 end
@@ -76,7 +76,7 @@ end
 ---@param name string
 ---@param message any
 function M.error(name, message)
-    if vim.tbl_contains({ 'debug', 'error' }, state.config.log_level) then
+    if vim.tbl_contains({ 'debug', 'error' }, state.log_level) then
         log.add('error', name, message)
     end
 end
