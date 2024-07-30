@@ -1,5 +1,4 @@
 local manager = require('render-markdown.manager')
-local profiler = require('render-markdown.profiler')
 local state = require('render-markdown.state')
 
 ---@class render.md.Api
@@ -15,10 +14,6 @@ end
 
 function M.toggle()
     manager.set_all(not state.enabled)
-end
-
-function M.stats()
-    profiler.dump_stats()
 end
 
 return M

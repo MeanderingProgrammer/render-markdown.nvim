@@ -13,6 +13,13 @@
 - In order to fix:
   - Implement `parse` method instead of `render`, no direct translation
   - `profile` field was only meant for development, should not have any users
+- Updated buftype options, in order to fix:
+  - `exclude.buftypes.<v>` -> `overrides.buftype.<v>.enabled = false`
+  - `sign.exclude.buftypes.<v>` -> `overrides.buftype.<v>.sign.enabled = false`
+
+### Features
+
+- Support full buftype options [9a8a2e5](https://github.com/MeanderingProgrammer/markdown.nvim/commit/9a8a2e5bd204931646f1559235c7c4a7680ecbcd)
 
 ### Bug Fixes
 
