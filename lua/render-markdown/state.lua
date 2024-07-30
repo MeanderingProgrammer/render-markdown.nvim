@@ -21,10 +21,10 @@ local M = {}
 ---@param user_config? render.md.UserConfig
 function M.setup(default_config, user_config)
     -- Reset cache to pickup config changes
-    configs = {}
+    M.invalidate_cache()
 
     -- Create top level config from default & user
-    local config = vim.deepcopy(vim.tbl_deep_extend('force', default_config, user_config or {}), true)
+    local config = vim.tbl_deep_extend('force', default_config, user_config or {})
     M.config = config
     M.enabled = config.enabled
     M.log_level = config.log_level
@@ -40,17 +40,19 @@ function M.setup(default_config, user_config)
     end)
 end
 
+function M.invalidate_cache()
+    configs = {}
+end
+
 ---@param buf integer
 ---@return render.md.BufferConfig
 M.get_config = function(buf)
     local config = configs[buf]
     if config == nil then
-        local buftype = util.get_buf(buf, 'buftype')
-        local buftype_config = M.config.overrides.buftype[buftype]
+        config = M.default_buffer_config()
+        local buftype_config = M.config.overrides.buftype[util.get_buf(buf, 'buftype')]
         if buftype_config ~= nil then
-            config = vim.tbl_deep_extend('force', M.default_buffer_config(), buftype_config)
-        else
-            config = M.default_buffer_config()
+            config = vim.tbl_deep_extend('force', config, buftype_config)
         end
         configs[buf] = config
     end

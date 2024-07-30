@@ -13,7 +13,7 @@ local function callout(row, start_col, end_col, text, highlight)
     return {
         row = { row, row },
         col = { start_col, end_col },
-        virt_text = { { text, 'RenderMarkdown' .. highlight } },
+        virt_text = { { text, util.hl(highlight) } },
         virt_text_pos = 'overlay',
     }
 end

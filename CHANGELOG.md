@@ -8,22 +8,30 @@
   former assumed rendering inside, the latter gets marks back so they are not
   interchangeable. Notice of deprecation has been available for a month since
   [726c85c](https://github.com/MeanderingProgrammer/markdown.nvim/commit/726c85cb9cc6d7d9c85af6ab093e1ee53b5e3c82).
-    - Ultimately removed in TODO
+  - Ultimately removed in TODO
+  - In order to fix:
+    - Implement `parse` method instead of `render`, no direct translation
 - Remove `profile` field in favor of benches [dcfa033](https://github.com/MeanderingProgrammer/markdown.nvim/commit/dcfa033cb39bc4f30019925aa91d3af5ec049614)
-- In order to fix:
-  - Implement `parse` method instead of `render`, no direct translation
-  - `profile` field was only meant for development, should not have any users
-- Updated buftype options, in order to fix:
-  - `exclude.buftypes.<v>` -> `overrides.buftype.<v>.enabled = false`
-  - `sign.exclude.buftypes.<v>` -> `overrides.buftype.<v>.sign.enabled = false`
+  - In order to fix:
+    - `profile` field was only meant for development, should not have any users
+- Updated buftype options
+  - In order to fix:
+    - `exclude.buftypes.<v>` -> `overrides.buftype.<v>.enabled = false`
+    - `sign.exclude.buftypes.<v>` -> `overrides.buftype.<v>.sign.enabled = false`
 
 ### Features
 
 - Support full buftype options [9a8a2e5](https://github.com/MeanderingProgrammer/markdown.nvim/commit/9a8a2e5bd204931646f1559235c7c4a7680ecbcd)
+- Inline heading position [#107](https://github.com/MeanderingProgrammer/markdown.nvim/issues/107)
+  [345596b](https://github.com/MeanderingProgrammer/markdown.nvim/commit/345596bb6ef2b0c0a145c59906c2e84dbddfbbd4)
+- Pre-compute concealed data once per parse cycle [fcd908b](https://github.com/MeanderingProgrammer/markdown.nvim/commit/fcd908bafb96e4a30abe7bf8f502790b93ea85ac)
+  [3bdae40](https://github.com/MeanderingProgrammer/markdown.nvim/commit/3bdae400e079a834ae12b658bf1115abf206bb4c)
 
 ### Bug Fixes
 
 - Block code rendering with transparent background [#102](https://github.com/MeanderingProgrammer/markdown.nvim/pull/102)
+- Remove broken reference to `profiler` module [#105](https://github.com/MeanderingProgrammer/markdown.nvim/issues/105)
+  [15d8e02](https://github.com/MeanderingProgrammer/markdown.nvim/commit/15d8e02663aa58f215ecadbcebbd34149b06a7bc)
 
 ### Collaborator Shoutouts
 

@@ -12,7 +12,7 @@ local eq = assert.are.same
 ---@return render.md.MarkInfo
 local function latex(start_row, end_row, start_col, end_col, lines)
     local virt_lines = vim.tbl_map(function(line)
-        return { { line, 'RenderMarkdownMath' } }
+        return { { line, util.hl('Math') } }
     end, lines)
     return {
         row = { start_row, end_row },

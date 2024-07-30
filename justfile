@@ -60,18 +60,34 @@ cat-log:
   cat ~/.local/state/nvim/render-markdown.log
 
 gen-medium:
-  just gen-file "1000" "temp/medium.md"
+  just gen-headings "1000" "temp/medium.md"
+  just gen-table "5000" "temp/medium-table.md"
 
 gen-large:
-  just gen-file "100000" "temp/large.md"
+  just gen-headings "100000" "temp/large.md"
 
 [private]
-gen-file lines path:
-  {{path_exists(path)}} || just gen-file-content {{lines}} > {{path}}
+gen-headings lines path:
+  {{path_exists(path)}} || just gen-headings-content {{lines}} > {{path}}
 
 [private]
-gen-file-content lines:
+gen-headings-content lines:
   #!/usr/bin/env python
   for i in range({{lines}}):
     level = "#" * ((i % 6) + 1)
     print(f"{level} Title {i}\n")
+
+[private]
+gen-table lines path:
+  {{path_exists(path)}} || just gen-table-contents {{lines}} > {{path}}
+
+[private]
+gen-table-contents lines:
+  #!/usr/bin/env python
+  print("# Table")
+  print()
+  print(f"| `Column 1`     | **Column 2**     | *Column 3*     |")
+  print(f"| -------------- | :--------------- | -------------: |")
+  for i in range({{lines}}):
+    print(f"| Row {i:<4} Col 1 | `Row {i:<4} Col 2` | Row {i:<4} Col 3 |")
+  print()

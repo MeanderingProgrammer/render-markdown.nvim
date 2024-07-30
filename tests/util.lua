@@ -17,15 +17,8 @@ local eq = assert.are.same
 ---@field sign_text? string
 ---@field sign_hl_group? string
 
----@class render.md.TestUtil
+---@class render.md.test.Util
 local M = {}
-
----@param opts? render.md.UserConfig
----@return string[]
-function M.validate(opts)
-    require('render-markdown').setup(opts)
-    return state.validate()
-end
 
 ---@param file string
 ---@param opts? render.md.UserConfig
@@ -35,23 +28,19 @@ function M.setup(file, opts)
     vim.wait(0)
 end
 
----@private
----@type string
-M.prefix = 'RenderMarkdown'
-
 ---@param row integer
 ---@param level integer
 ---@return render.md.MarkInfo[]
 function M.heading(row, level)
     local icons = { '󰲡 ', ' 󰲣 ', '  󰲥 ', '   󰲧 ', '    󰲩 ', '     󰲫 ' }
-    local foreground = string.format('%sH%d', M.prefix, level)
-    local background = string.format('%sH%dBg', M.prefix, level)
+    local foreground = M.hl(string.format('H%d', level))
+    local background = M.hl(string.format('H%dBg', level))
     ---@type render.md.MarkInfo
     local sign_mark = {
         row = { row, row },
         col = { 0, level },
         sign_text = '󰫎 ',
-        sign_hl_group = string.format('%s_%s_%sSign', M.prefix, foreground, M.prefix),
+        sign_hl_group = M.hl('_' .. foreground .. '_' .. M.hl('Sign')),
     }
     if row == 0 then
         return { sign_mark }
@@ -75,52 +64,6 @@ function M.heading(row, level)
 end
 
 ---@param row integer
----@param col integer
----@param level integer
----@param spaces? integer
----@return render.md.MarkInfo
-function M.bullet(row, col, level, spaces)
-    local icons = { '●', '○', '◆', '◇' }
-    spaces = spaces or 0
-    ---@type render.md.MarkInfo
-    return {
-        row = { row, row },
-        col = { col, col + spaces + 2 },
-        virt_text = { { string.rep(' ', spaces) .. icons[level], M.prefix .. 'Bullet' } },
-        virt_text_pos = 'overlay',
-    }
-end
-
----@param row integer
----@param icon string
----@param highlight string
----@param custom boolean
----@return render.md.MarkInfo[]
-function M.checkbox(row, icon, highlight, custom)
-    local virt_text_pos = 'overlay'
-    local conceal = nil
-    if custom then
-        virt_text_pos = 'inline'
-        conceal = ''
-    end
-    ---@type render.md.MarkInfo
-    local conceal_mark = {
-        row = { row, row },
-        col = { 0, 2 },
-        conceal = '',
-    }
-    ---@type render.md.MarkInfo
-    local checkbox_mark = {
-        row = { row, row },
-        col = { 2, 5 },
-        virt_text = { { icon, highlight } },
-        virt_text_pos = virt_text_pos,
-        conceal = conceal,
-    }
-    return { conceal_mark, checkbox_mark }
-end
-
----@param row integer
 ---@param start_col integer
 ---@param end_col integer
 ---@return render.md.MarkInfo
@@ -130,7 +73,7 @@ function M.inline_code(row, start_col, end_col)
         row = { row, row },
         col = { start_col, end_col },
         hl_eol = false,
-        hl_group = M.prefix .. 'CodeInline',
+        hl_group = M.hl('CodeInline'),
     }
 end
 
@@ -143,7 +86,7 @@ function M.code_block(start_row, end_row)
         row = { start_row, end_row },
         col = { 0, 0 },
         hl_eol = true,
-        hl_group = M.prefix .. 'Code',
+        hl_group = M.hl('Code'),
     }
 end
 
@@ -160,13 +103,13 @@ function M.code_language(row, start_col, end_col, icon, name, highlight)
         row = { row, row },
         col = { start_col, end_col },
         sign_text = icon,
-        sign_hl_group = string.format('%s_%s_%sSign', M.prefix, highlight, M.prefix),
+        sign_hl_group = M.hl('_' .. highlight .. '_' .. M.hl('Sign')),
     }
     ---@type render.md.MarkInfo
     local language_mark = {
         row = { row },
         col = { start_col },
-        virt_text = { { icon .. name, { highlight, M.prefix .. 'Code' } } },
+        virt_text = { { icon .. name, { highlight, M.hl('Code') } } },
         virt_text_pos = 'inline',
     }
     return { sign_mark, language_mark }
@@ -179,7 +122,7 @@ function M.code_below(row, col)
     return {
         row = { row },
         col = { col },
-        virt_text = { { string.rep('▀', vim.opt.columns:get()), M.prefix .. '_Inverse_' .. M.prefix .. 'Code' } },
+        virt_text = { { string.rep('▀', vim.opt.columns:get()), M.hl('_Inverse_' .. M.hl('Code')) } },
         virt_text_pos = 'overlay',
     }
 end
@@ -200,7 +143,7 @@ function M.link(row, start_col, end_col, image)
     return {
         row = { row, row },
         col = { start_col, end_col },
-        virt_text = { { icon, M.prefix .. 'Link' } },
+        virt_text = { { icon, M.hl('Link') } },
         virt_text_pos = 'inline',
     }
 end
@@ -215,7 +158,7 @@ function M.quote(row, format, highlight)
     return {
         row = { row, row },
         col = { 0, vim.fn.strdisplaywidth(quote) },
-        virt_text = { { quote, M.prefix .. highlight } },
+        virt_text = { { quote, M.hl(highlight) } },
         virt_text_pos = 'overlay',
     }
 end
@@ -235,7 +178,7 @@ function M.table_pipe(row, col, head)
     return {
         row = { row, row },
         col = { col, col + 1 },
-        virt_text = { { '│', M.prefix .. highlight } },
+        virt_text = { { '│', M.hl(highlight) } },
         virt_text_pos = 'overlay',
     }
 end
@@ -249,7 +192,7 @@ function M.table_padding(row, col, spaces)
     return {
         row = { row },
         col = { col },
-        virt_text = { { string.rep(' ', spaces), M.prefix .. 'TableFill' } },
+        virt_text = { { string.rep(' ', spaces), M.hl('TableFill') } },
         virt_text_pos = 'inline',
     }
 end
@@ -282,7 +225,7 @@ function M.table_border(row, section, lengths)
         return {
             row = { row },
             col = { 0 },
-            virt_lines = { { { value, M.prefix .. highlight } } },
+            virt_lines = { { { value, M.hl(highlight) } } },
             virt_lines_above = section == 'above',
         }
     else
@@ -290,31 +233,16 @@ function M.table_border(row, section, lengths)
         return {
             row = { row, row },
             col = { 0, vim.fn.strdisplaywidth(value) },
-            virt_text = { { value, M.prefix .. highlight } },
+            virt_text = { { value, M.hl(highlight) } },
             virt_text_pos = 'overlay',
         }
     end
 end
 
----@param row integer
----@param col integer
----@param value string
----@param head boolean
----@return render.md.MarkInfo
-function M.table_row(row, col, value, head)
-    local highlight
-    if head then
-        highlight = 'TableHead'
-    else
-        highlight = 'TableRow'
-    end
-    ---@type render.md.MarkInfo
-    return {
-        row = { row, row },
-        col = { 0, col },
-        virt_text = { { value, M.prefix .. highlight } },
-        virt_text_pos = 'overlay',
-    }
+---@param suffix string
+---@return string
+function M.hl(suffix)
+    return 'RenderMarkdown' .. suffix
 end
 
 ---@return render.md.MarkInfo[]

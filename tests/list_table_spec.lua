@@ -2,6 +2,23 @@
 
 local util = require('tests.util')
 
+---@param row integer
+---@param col integer
+---@param level integer
+---@param spaces? integer
+---@return render.md.MarkInfo
+local function bullet(row, col, level, spaces)
+    local icons = { '●', '○', '◆', '◇' }
+    spaces = spaces or 0
+    ---@type render.md.MarkInfo
+    return {
+        row = { row, row },
+        col = { col, col + spaces + 2 },
+        virt_text = { { string.rep(' ', spaces) .. icons[level], util.hl('Bullet') } },
+        virt_text_pos = 'overlay',
+    }
+end
+
 describe('list_table.md', function()
     it('default', function()
         util.setup('demo/list_table.md')
@@ -11,16 +28,16 @@ describe('list_table.md', function()
         -- Unordered list
         vim.list_extend(expected, util.heading(0, 1))
         vim.list_extend(expected, {
-            util.bullet(2, 0, 1), -- List Item 1
+            bullet(2, 0, 1), -- List Item 1
             util.link(2, 20, 47, false), -- List Item 1, link
-            util.bullet(3, 0, 1), -- List Item 2
+            bullet(3, 0, 1), -- List Item 2
             util.inline_code(3, 20, 28), -- List Item 2, code
-            util.bullet(4, 2, 2, 2), -- Nested List 1 Item 1
-            util.bullet(5, 4, 2), -- Nested List 1 Item 2
-            util.bullet(6, 6, 3), -- Nested List 2 Item 1
-            util.bullet(7, 8, 4), -- Nested List 3 Item 1
-            util.bullet(8, 10, 1), -- Nested List 4 Item 1
-            util.bullet(9, 0, 1), -- List Item 3
+            bullet(4, 2, 2, 2), -- Nested List 1 Item 1
+            bullet(5, 4, 2), -- Nested List 1 Item 2
+            bullet(6, 6, 3), -- Nested List 2 Item 1
+            bullet(7, 8, 4), -- Nested List 3 Item 1
+            bullet(8, 10, 1), -- Nested List 4 Item 1
+            bullet(9, 0, 1), -- List Item 3
             util.link(9, 20, 45, false), -- List Item 3, link
         })
 
@@ -47,7 +64,7 @@ describe('list_table.md', function()
                 virt_text = {
                     {
                         '├━───────┼───────━───────┼──────━┼──────┤',
-                        'RenderMarkdownTableHead',
+                        util.hl('TableHead'),
                     },
                 },
                 virt_text_pos = 'overlay',

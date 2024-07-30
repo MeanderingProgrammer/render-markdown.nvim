@@ -1,69 +1,38 @@
 ---@module 'luassert'
 
-local util = require('tests.util')
+local state = require('render-markdown.state')
 local eq = assert.are.same
 
+---@param opts? render.md.UserConfig
+---@return string[]
+local function validate(opts)
+    require('render-markdown').setup(opts)
+    return state.validate()
+end
+
+---@param opts render.md.UserBufferConfig
+---@return string[]
+local function validate_override(opts)
+    return validate({ overrides = { buftype = { nofile = opts } } })
+end
+
+local prefix = 'render-markdown'
+local override_prefix = prefix .. '.overrides.buftype.nofile'
+
 describe('state', function()
-    it('validate', function()
-        local base_prefix = 'render-markdown'
+    it('valid', function()
+        eq(0, #validate())
+        vim.bo.buftype = ''
+        eq(true, state.get_config(0).sign.enabled)
+        state.invalidate_cache()
+        vim.bo.buftype = 'nofile'
+        eq(false, state.get_config(0).sign.enabled)
 
-        eq(0, #util.validate())
+        eq(0, #validate({ callout = { note = { raw = 'value' } } }))
 
-        eq({ base_prefix .. '.additional: is not a valid key' }, util.validate({ additional = true }))
+        eq(0, #validate({ callout = { new = { raw = 'value', rendered = 'value', highlight = 'value' } } }))
 
-        eq(
-            { base_prefix .. '.enabled: expected boolean, got string' },
-            ---@diagnostic disable-next-line: assign-type-mismatch
-            util.validate({ enabled = 'invalid' })
-        )
-
-        eq(
-            { base_prefix .. '.log_level: expected one of { "debug", "error" } or type {}, got invalid' },
-            ---@diagnostic disable-next-line: assign-type-mismatch
-            util.validate({ log_level = 'invalid' })
-        )
-
-        eq(
-            { base_prefix .. '.render_modes: expected string array, got true' },
-            ---@diagnostic disable-next-line: assign-type-mismatch
-            util.validate({ render_modes = true })
-        )
-
-        ---@diagnostic disable-next-line: assign-type-mismatch
-        local errors = util.validate({ render_modes = { 1, 2 } })
-        eq(1, #errors)
-        eq(true, vim.startswith(errors[1], base_prefix .. '.render_modes: expected string array, got '))
-        eq(true, vim.endswith(errors[1], 'Info: Index 1 is number'))
-
-        eq(0, #util.validate({ callout = { note = { raw = 'value' } } }))
-
-        eq(
-            { base_prefix .. '.callout.note.additional: is not a valid key' },
-            util.validate({ callout = { note = { additional = true } } })
-        )
-
-        eq(0, #util.validate({ callout = { new = { raw = 'value', rendered = 'value', highlight = 'value' } } }))
-
-        eq(
-            { base_prefix .. '.callout.new.highlight: expected string, got nil' },
-            util.validate({ callout = { new = { raw = 'value', rendered = 'value' } } })
-        )
-
-        eq({ base_prefix .. '.latex.additional: is not a valid key' }, util.validate({ latex = { additional = true } }))
-
-        local over_prefix = base_prefix .. '.overrides.buftype.nofile'
-        ---@param opts render.md.UserBufferConfig
-        ---@return string[]
-        local function validate_over(opts)
-            return util.validate({ overrides = { buftype = { nofile = opts } } })
-        end
-
-        eq(
-            { over_prefix .. '.sign.highlight: expected string, got boolean' },
-            ---@diagnostic disable-next-line: assign-type-mismatch
-            validate_over({ sign = { highlight = false } })
-        )
-        eq(0, #validate_over({
+        eq(0, #validate_override({
             enabled = false,
             max_file_size = 0,
             render_modes = {},
@@ -80,5 +49,53 @@ describe('state', function()
             sign = {},
             win_options = {},
         }))
+    end)
+
+    it('extra', function()
+        eq({ prefix .. '.additional: is not a valid key' }, validate({ additional = true }))
+
+        eq(
+            { prefix .. '.callout.note.additional: is not a valid key' },
+            validate({ callout = { note = { additional = true } } })
+        )
+
+        eq({ prefix .. '.latex.additional: is not a valid key' }, validate({ latex = { additional = true } }))
+    end)
+
+    it('type', function()
+        eq(
+            { prefix .. '.enabled: expected boolean, got string' },
+            ---@diagnostic disable-next-line: assign-type-mismatch
+            validate({ enabled = 'invalid' })
+        )
+
+        eq(
+            { prefix .. '.log_level: expected one of { "debug", "error" } or type {}, got invalid' },
+            ---@diagnostic disable-next-line: assign-type-mismatch
+            validate({ log_level = 'invalid' })
+        )
+
+        eq(
+            { prefix .. '.render_modes: expected string array, got true' },
+            ---@diagnostic disable-next-line: assign-type-mismatch
+            validate({ render_modes = true })
+        )
+
+        ---@diagnostic disable-next-line: assign-type-mismatch
+        local errors = validate({ render_modes = { 1, 2 } })
+        eq(1, #errors)
+        eq(true, vim.startswith(errors[1], prefix .. '.render_modes: expected string array, got '))
+        eq(true, vim.endswith(errors[1], 'Info: Index 1 is number'))
+
+        eq(
+            { prefix .. '.callout.new.highlight: expected string, got nil' },
+            validate({ callout = { new = { raw = 'value', rendered = 'value' } } })
+        )
+
+        eq(
+            { override_prefix .. '.sign.highlight: expected string, got boolean' },
+            ---@diagnostic disable-next-line: assign-type-mismatch
+            validate_override({ sign = { highlight = false } })
+        )
     end)
 end)
