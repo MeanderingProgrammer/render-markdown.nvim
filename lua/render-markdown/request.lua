@@ -2,7 +2,7 @@ local util = require('render-markdown.util')
 
 ---@class render.md.RequestCache
 local cache = {
-    ---@type table<integer, TSNode[]>
+    ---@type table<integer, table<integer, TSNode[]>>
     conceal = {},
 }
 
@@ -30,7 +30,11 @@ function M.compute_conceal(buf, parser)
             if query ~= nil then
                 for _, node, metadata in query:iter_captures(tree:root(), buf, 0, -1) do
                     if metadata.conceal ~= nil then
-                        table.insert(nodes, node)
+                        local row = node:range()
+                        if nodes[row] == nil then
+                            nodes[row] = {}
+                        end
+                        table.insert(nodes[row], node)
                     end
                 end
             end
@@ -44,7 +48,7 @@ end
 ---@param col integer
 ---@return boolean
 function M.concealed(buf, row, col)
-    for _, node in ipairs(cache.conceal[buf]) do
+    for _, node in ipairs(cache.conceal[buf][row] or {}) do
         if vim.treesitter.is_in_node_range(node, row, col) then
             return true
         end
