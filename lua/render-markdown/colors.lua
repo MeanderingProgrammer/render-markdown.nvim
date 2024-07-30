@@ -1,8 +1,5 @@
----@class render.md.ColorCache
-local cache = {
-    ---@type string[]
-    highlights = {},
-}
+---@type string[]
+local cache = {}
 
 ---@class render.md.Colors
 local M = {}
@@ -65,7 +62,7 @@ end
 ---@return string
 function M.combine(foreground, background)
     local name = string.format('%s_%s_%s', M.prefix, foreground, background)
-    if not vim.tbl_contains(cache.highlights, name) then
+    if not vim.tbl_contains(cache, name) then
         local fg = M.get_hl(foreground)
         local bg = M.get_hl(background)
         vim.api.nvim_set_hl(0, name, {
@@ -76,7 +73,7 @@ function M.combine(foreground, background)
             ---@diagnostic disable-next-line: undefined-field
             ctermbg = bg.ctermbg,
         })
-        table.insert(cache.highlights, name)
+        table.insert(cache, name)
     end
     return name
 end
@@ -85,7 +82,7 @@ end
 ---@return string
 function M.inverse(highlight)
     local name = string.format('%s_Inverse_%s', M.prefix, highlight)
-    if not vim.tbl_contains(cache.highlights, name) then
+    if not vim.tbl_contains(cache, name) then
         local hl = M.get_hl(highlight)
         vim.api.nvim_set_hl(0, name, {
             fg = hl.bg,
@@ -95,7 +92,7 @@ function M.inverse(highlight)
             ---@diagnostic disable-next-line: undefined-field
             ctermfg = hl.ctermbg,
         })
-        table.insert(cache.highlights, name)
+        table.insert(cache, name)
     end
     return name
 end

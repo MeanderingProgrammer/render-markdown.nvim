@@ -2,11 +2,8 @@ local state = require('render-markdown.state')
 local ui = require('render-markdown.ui')
 local util = require('render-markdown.util')
 
----@class render.md.manager.Data
-local data = {
-    ---@type integer[]
-    buffers = {},
-}
+---@type integer[]
+local buffers = {}
 
 ---@class render.md.Manager
 local M = {}
@@ -30,7 +27,7 @@ function M.setup()
         callback = function()
             for _, win in ipairs(vim.v.event.windows) do
                 local buf = util.win_to_buf(win)
-                if vim.tbl_contains(data.buffers, buf) then
+                if vim.tbl_contains(buffers, buf) then
                     ui.schedule_render(buf, true)
                 end
             end
@@ -43,7 +40,7 @@ function M.set_all(enabled)
     -- Attempt to attach current buffer in case this is from a lazy load
     M.attach(vim.api.nvim_get_current_buf())
     state.enabled = enabled
-    for _, buf in ipairs(data.buffers) do
+    for _, buf in ipairs(buffers) do
         ui.schedule_render(buf, true)
     end
 end
@@ -61,10 +58,10 @@ function M.attach(buf)
     if util.file_size_mb(buf) > config.max_file_size then
         return
     end
-    if vim.tbl_contains(data.buffers, buf) then
+    if vim.tbl_contains(buffers, buf) then
         return
     end
-    table.insert(data.buffers, buf)
+    table.insert(buffers, buf)
     -- Events that do not imply modifications to buffer so can avoid re-parsing
     -- This relies on the ui parsing the buffer anyway if it is the first time it is seen
     vim.api.nvim_create_autocmd({ 'BufWinEnter', 'BufLeave' }, {

@@ -2,11 +2,8 @@ local logger = require('render-markdown.logger')
 local state = require('render-markdown.state')
 local ts = require('render-markdown.ts')
 
----@class render.md.LatexCache
-local cache = {
-    ---@type table<string, string[]>
-    expressions = {},
-}
+---@type table<string, string[]>
+local cache = {}
 
 ---@class render.md.handler.Latex: render.md.Handler
 local M = {}
@@ -27,7 +24,7 @@ function M.parse(root, buf)
     local info = ts.info(root, buf)
     logger.debug_node_info('latex', info)
 
-    local expressions = cache.expressions[info.text]
+    local expressions = cache[info.text]
     if expressions == nil then
         local raw_expression = vim.fn.system(latex.converter, info.text)
         expressions = vim.split(raw_expression, '\n', { plain = true, trimempty = true })
@@ -37,7 +34,7 @@ function M.parse(root, buf)
         for _ = 1, latex.bottom_pad do
             table.insert(expressions, '')
         end
-        cache.expressions[info.text] = expressions
+        cache[info.text] = expressions
     end
 
     local latex_lines = vim.tbl_map(function(expression)

@@ -1,5 +1,5 @@
+local request = require('render-markdown.request')
 local str = require('render-markdown.str')
-local util = require('render-markdown.util')
 
 ---@param node TSNode
 ---@return boolean
@@ -110,18 +110,12 @@ end
 ---@param info render.md.NodeInfo
 ---@return integer
 function M.concealed(buf, info)
-    if util.get_win(util.buf_to_win(buf), 'conceallevel') == 0 then
-        return 0
-    end
     local result = 0
     local col = info.start_col
     for _, index in ipairs(vim.fn.str2list(info.text)) do
         local ch = vim.fn.nr2char(index)
-        local captures = vim.treesitter.get_captures_at_pos(buf, info.start_row, col)
-        for _, capture in ipairs(captures) do
-            if capture.metadata.conceal ~= nil then
-                result = result + str.width(ch)
-            end
+        if request.concealed(buf, info.start_row, col) then
+            result = result + str.width(ch)
         end
         col = col + #ch
     end

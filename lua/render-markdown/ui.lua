@@ -1,4 +1,5 @@
 local logger = require('render-markdown.logger')
+local request = require('render-markdown.request')
 local state = require('render-markdown.state')
 local util = require('render-markdown.util')
 
@@ -9,11 +10,8 @@ local builtin_handlers = {
     latex = require('render-markdown.handler.latex'),
 }
 
----@class render.md.UiCache
-local cache = {
-    ---@type table<integer, render.md.Mark[]>
-    marks = {},
-}
+---@type table<integer, render.md.Mark[]>
+local cache = {}
 
 ---@class render.md.Ui
 local M = {}
@@ -22,7 +20,7 @@ local M = {}
 M.namespace = vim.api.nvim_create_namespace('render-markdown.nvim')
 
 function M.invalidate_cache()
-    cache.marks = {}
+    cache = {}
 end
 
 ---@param buf integer
@@ -59,13 +57,13 @@ function M.render(buf, mode, parse)
         end
 
         -- Re-compute marks, needed if missing or between text changes
-        local marks = cache.marks[buf]
+        local marks = cache[buf]
         local parsed = marks == nil or parse
         if parsed then
             logger.start()
             marks = M.parse_buffer(buf)
             logger.flush()
-            cache.marks[buf] = marks
+            cache[buf] = marks
         end
 
         local row = util.cursor_row(buf)
@@ -110,6 +108,9 @@ function M.parse_buffer(buf)
     if not parser:is_valid() then
         parser:parse(true)
     end
+    -- Pre-compute conceal information after reseting buffer cache
+    request.reset_buf(buf)
+    request.compute_conceal(buf, parser)
     -- Parse marks
     local marks = {}
     parser:for_each_tree(function(tree, language_tree)

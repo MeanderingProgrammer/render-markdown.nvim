@@ -1,10 +1,7 @@
 local util = require('render-markdown.util')
 
----@class render.md.StateCache
-local cache = {
-    ---@type table<integer, render.md.BufferConfig>
-    configs = {},
-}
+---@type table<integer, render.md.BufferConfig>
+local configs = {}
 
 ---@class render.md.State
 ---@field private config render.md.Config
@@ -24,7 +21,7 @@ local M = {}
 ---@param user_config? render.md.UserConfig
 function M.setup(default_config, user_config)
     -- Reset cache to pickup config changes
-    cache.configs = {}
+    configs = {}
 
     -- Create top level config from default & user
     local config = vim.deepcopy(vim.tbl_deep_extend('force', default_config, user_config or {}), true)
@@ -46,7 +43,7 @@ end
 ---@param buf integer
 ---@return render.md.BufferConfig
 M.get_config = function(buf)
-    local config = cache.configs[buf]
+    local config = configs[buf]
     if config == nil then
         local buftype = util.get_buf(buf, 'buftype')
         local buftype_config = M.config.overrides.buftype[buftype]
@@ -55,7 +52,7 @@ M.get_config = function(buf)
         else
             config = M.default_buffer_config()
         end
-        cache.configs[buf] = config
+        configs[buf] = config
     end
     return config
 end
