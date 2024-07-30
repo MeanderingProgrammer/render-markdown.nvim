@@ -99,7 +99,7 @@ function M.heading(config, buf, info)
     -- is added to account for the space after the last `#` but before the heading title,
     -- and concealed text is subtracted since that space is not usable
     local padding = level + 1 - ts.concealed(buf, info) - str.width(icon)
-    if padding < 0 then
+    if heading.position == 'inline' or padding < 0 then
         -- Requires inline extmarks to place when there is not enough space available
         if util.has_10 then
             ---@type render.md.Mark

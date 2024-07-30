@@ -162,6 +162,7 @@ function M.validate()
             append_errors(path .. '.heading', heading, {
                 enabled = { heading.enabled, 'boolean', nilable },
                 sign = { heading.sign, 'boolean', nilable },
+                position = one_of(heading.position, { 'overlay', 'inline' }, {}, nilable),
                 icons = string_array(heading.icons, nilable),
                 signs = string_array(heading.signs, nilable),
                 width = one_of(heading.width, { 'full', 'block' }, {}, nilable),

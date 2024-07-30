@@ -79,6 +79,7 @@
 ---@class (exact) render.md.Heading
 ---@field public enabled boolean
 ---@field public sign boolean
+---@field public position 'overlay'|'inline'
 ---@field public icons string[]
 ---@field public signs string[]
 ---@field public width 'full'|'block'
