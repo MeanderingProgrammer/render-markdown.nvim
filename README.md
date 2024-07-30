@@ -168,8 +168,6 @@ require('render-markdown').setup({
 
         [(inline_link) (full_reference_link) (image)] @link
     ]],
-    -- Query to be able to identify links in nodes
-    inline_link_query = '[(inline_link) (full_reference_link) (image)] @link',
     -- The level of logs to write to file: vim.fn.stdpath('state') .. '/render-markdown.log'
     -- Only intended to be used for plugin development / debugging
     log_level = 'error',

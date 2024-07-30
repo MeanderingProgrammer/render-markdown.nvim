@@ -4,7 +4,7 @@ local icons = require('render-markdown.icons')
 local list = require('render-markdown.list')
 local logger = require('render-markdown.logger')
 local pipe_table_parser = require('render-markdown.parser.pipe_table')
-local shared = require('render-markdown.handler.shared')
+local request = require('render-markdown.request')
 local state = require('render-markdown.state')
 local str = require('render-markdown.str')
 local ts = require('render-markdown.ts')
@@ -98,7 +98,7 @@ function M.heading(config, buf, info)
     -- Available width is level + 1 - concealed, where level = number of `#` characters, one
     -- is added to account for the space after the last `#` but before the heading title,
     -- and concealed text is subtracted since that space is not usable
-    local padding = level + 1 - ts.concealed(buf, info) - str.width(icon)
+    local padding = level + 1 - M.concealed(buf, info) - str.width(icon)
     if heading.position == 'inline' or padding < 0 then
         -- Requires inline extmarks to place when there is not enough space available
         if util.has_10 then
@@ -205,7 +205,7 @@ function M.code(config, buf, info)
 
     if code.border == 'thin' then
         local code_start = ts.child(buf, info, 'fenced_code_block_delimiter', info.start_row)
-        if #marks == 0 and ts.hidden(buf, code_info) and ts.hidden(buf, code_start) then
+        if #marks == 0 and M.hidden(buf, code_info) and M.hidden(buf, code_start) then
             start_row = start_row + 1
             ---@type render.md.Mark
             local start_mark = {
@@ -220,7 +220,7 @@ function M.code(config, buf, info)
             list.add_mark(marks, start_mark)
         end
         local code_end = ts.child(buf, info, 'fenced_code_block_delimiter', info.end_row - 1)
-        if ts.hidden(buf, code_end) then
+        if M.hidden(buf, code_end) then
             end_row = end_row - 1
             ---@type render.md.Mark
             local end_mark = {
@@ -317,7 +317,7 @@ function M.language(config, buf, info, code_block)
         return marks
     end
     local icon_text = icon .. ' '
-    if ts.hidden(buf, info) then
+    if M.hidden(buf, info) then
         -- Code blocks will pick up varying amounts of leading white space depending on the
         -- context they are in. This gets lumped into the delimiter node and as a result,
         -- after concealing, the extmark will be left shifted. Logic below accounts for this.
@@ -606,7 +606,7 @@ function M.table_row(config, buf, row, highlight)
             elseif cell.type == 'pipe_table_cell' then
                 -- Requires inline extmarks
                 if pipe_table.cell == 'padded' and util.has_10 then
-                    local offset = M.table_visual_offset(config, buf, cell)
+                    local offset = M.table_visual_offset(buf, cell)
                     if offset > 0 then
                         ---@type render.md.Mark
                         local padding_mark = {
@@ -659,7 +659,7 @@ function M.table_full(config, buf, parsed_table)
         if pipe_table.cell == 'raw' then
             -- For the raw cell style we want the lengths to match after
             -- concealing & inlined elements
-            result = result - M.table_visual_offset(config, buf, info)
+            result = result - M.table_visual_offset(buf, info)
         end
         return result
     end
@@ -710,18 +710,51 @@ function M.table_full(config, buf, parsed_table)
 end
 
 ---@private
----@param config render.md.BufferConfig
+---@param buf integer
+---@param info? render.md.NodeInfo
+---@return boolean
+function M.hidden(buf, info)
+    -- Missing nodes are considered hidden
+    if info == nil then
+        return true
+    end
+    return str.width(info.text) == M.concealed(buf, info)
+end
+
+---@private
 ---@param buf integer
 ---@param info render.md.NodeInfo
 ---@return integer
-function M.table_visual_offset(config, buf, info)
-    local result = ts.concealed(buf, info)
-    local query = state.inline_link_query
-    local tree = vim.treesitter.get_string_parser(info.text, 'markdown_inline')
-    for id, node in query:iter_captures(tree:parse()[1]:root(), info.text) do
-        if query.captures[id] == 'link' then
-            local link_info = ts.info(node, info.text)
-            result = result - str.width(shared.link_icon(config, link_info))
+function M.concealed(buf, info)
+    local ranges = request.concealed(buf, info.start_row)
+    if #ranges == 0 then
+        return 0
+    end
+    local result = 0
+    local col = info.start_col
+    for _, index in ipairs(vim.fn.str2list(info.text)) do
+        local ch = vim.fn.nr2char(index)
+        for _, range in ipairs(ranges) do
+            -- Essentially vim.treesitter.is_in_node_range but only care about column
+            if col >= range[1] and col + 1 <= range[2] then
+                result = result + str.width(ch)
+            end
+        end
+        col = col + #ch
+    end
+    return result
+end
+
+---@private
+---@param buf integer
+---@param info render.md.NodeInfo
+---@return integer
+function M.table_visual_offset(buf, info)
+    local result = M.concealed(buf, info)
+    local icon_ranges = request.inline_links(buf, info.start_row)
+    for _, icon_range in ipairs(icon_ranges) do
+        if info.start_col < icon_range[2] and info.end_col > icon_range[1] then
+            result = result - str.width(icon_range[3])
         end
     end
     return result

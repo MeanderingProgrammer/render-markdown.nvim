@@ -124,7 +124,6 @@ local M = {}
 ---@field public markdown_query? string
 ---@field public markdown_quote_query? string
 ---@field public inline_query? string
----@field public inline_link_query? string
 ---@field public log_level? 'debug'|'error'
 ---@field public file_types? string[]
 ---@field public acknowledge_conflicts? boolean
@@ -183,8 +182,6 @@ M.default_config = {
 
         [(inline_link) (full_reference_link) (image)] @link
     ]],
-    -- Query to be able to identify links in nodes
-    inline_link_query = '[(inline_link) (full_reference_link) (image)] @link',
     -- The level of logs to write to file: vim.fn.stdpath('state') .. '/render-markdown.log'
     -- Only intended to be used for plugin development / debugging
     log_level = 'error',

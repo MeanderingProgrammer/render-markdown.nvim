@@ -1,6 +1,3 @@
-local request = require('render-markdown.request')
-local str = require('render-markdown.str')
-
 ---@param node TSNode
 ---@return boolean
 local function in_section(node)
@@ -93,33 +90,6 @@ function M.child(buf, info, target_type, target_row)
         end
     end
     return nil
-end
-
----@param buf integer
----@param info? render.md.NodeInfo
----@return boolean
-function M.hidden(buf, info)
-    -- Missing nodes are considered hidden
-    if info == nil then
-        return true
-    end
-    return str.width(info.text) == M.concealed(buf, info)
-end
-
----@param buf integer
----@param info render.md.NodeInfo
----@return integer
-function M.concealed(buf, info)
-    local result = 0
-    local col = info.start_col
-    for _, index in ipairs(vim.fn.str2list(info.text)) do
-        local ch = vim.fn.nr2char(index)
-        if request.concealed(buf, info.start_row, col) then
-            result = result + str.width(ch)
-        end
-        col = col + #ch
-    end
-    return result
 end
 
 return M

@@ -2,8 +2,10 @@ local util = require('render-markdown.util')
 
 ---@class render.md.RequestCache
 local cache = {
-    ---@type table<integer, table<integer, TSNode[]>>
+    ---@type table<integer, table<integer, { [1]: integer, [2]: integer }[]>>
     conceal = {},
+    ---@type table<integer, table<integer, { [1]: integer, [2]: integer, [3]: string }[]>>
+    inline_links = {},
 }
 
 ---@class render.md.Request
@@ -12,6 +14,7 @@ local M = {}
 ---@param buf integer
 function M.reset_buf(buf)
     cache.conceal[buf] = {}
+    cache.inline_links[buf] = {}
 end
 
 ---@param buf integer
@@ -30,11 +33,11 @@ function M.compute_conceal(buf, parser)
             if query ~= nil then
                 for _, node, metadata in query:iter_captures(tree:root(), buf, 0, -1) do
                     if metadata.conceal ~= nil then
-                        local row = node:range()
+                        local row, start_col, _, end_col = node:range()
                         if nodes[row] == nil then
                             nodes[row] = {}
                         end
-                        table.insert(nodes[row], node)
+                        table.insert(nodes[row], { start_col, end_col })
                     end
                 end
             end
@@ -45,15 +48,28 @@ end
 
 ---@param buf integer
 ---@param row integer
----@param col integer
----@return boolean
-function M.concealed(buf, row, col)
-    for _, node in ipairs(cache.conceal[buf][row] or {}) do
-        if vim.treesitter.is_in_node_range(node, row, col) then
-            return true
-        end
+---@return { [1]: integer, [2]: integer }[]
+function M.concealed(buf, row)
+    return cache.conceal[buf][row] or {}
+end
+
+---@param buf integer
+---@param info render.md.NodeInfo
+---@param icon string
+function M.add_inline_link(buf, info, icon)
+    local inline_links = cache.inline_links[buf]
+    local row = info.start_row
+    if inline_links[row] == nil then
+        inline_links[row] = {}
     end
-    return false
+    table.insert(inline_links[row], { info.start_col, info.end_col, icon })
+end
+
+---@param buf integer
+---@param row integer
+---@return { [1]: integer, [2]: integer, [3]: string }[]
+function M.inline_links(buf, row)
+    return cache.inline_links[buf][row] or {}
 end
 
 return M

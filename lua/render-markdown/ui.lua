@@ -113,9 +113,19 @@ function M.parse_buffer(buf)
     request.compute_conceal(buf, parser)
     -- Parse marks
     local marks = {}
+    -- Parse markdown after all other nodes to take advantage of state
+    local markdown_roots = {}
     parser:for_each_tree(function(tree, language_tree)
-        vim.list_extend(marks, M.parse_tree(buf, language_tree:lang(), tree:root()))
+        local language = language_tree:lang()
+        if language == 'markdown' then
+            table.insert(markdown_roots, tree:root())
+        else
+            vim.list_extend(marks, M.parse_tree(buf, language, tree:root()))
+        end
     end)
+    for _, root in ipairs(markdown_roots) do
+        vim.list_extend(marks, M.parse_tree(buf, 'markdown', root))
+    end
     return marks
 end
 

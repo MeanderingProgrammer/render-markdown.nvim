@@ -14,7 +14,6 @@ local configs = {}
 ---@field markdown_query vim.treesitter.Query
 ---@field markdown_quote_query vim.treesitter.Query
 ---@field inline_query vim.treesitter.Query
----@field inline_link_query vim.treesitter.Query
 local M = {}
 
 ---@param default_config render.md.Config
@@ -36,7 +35,6 @@ function M.setup(default_config, user_config)
         M.markdown_query = vim.treesitter.query.parse('markdown', config.markdown_query)
         M.markdown_quote_query = vim.treesitter.query.parse('markdown', config.markdown_quote_query)
         M.inline_query = vim.treesitter.query.parse('markdown_inline', config.inline_query)
-        M.inline_link_query = vim.treesitter.query.parse('markdown_inline', config.inline_link_query)
     end)
 end
 
@@ -324,7 +322,6 @@ function M.validate()
         markdown_query = { config.markdown_query, 'string' },
         markdown_quote_query = { config.markdown_quote_query, 'string' },
         inline_query = { config.inline_query, 'string' },
-        inline_link_query = { config.inline_link_query, 'string' },
         log_level = one_of(config.log_level, { 'debug', 'error' }, {}, false),
         file_types = string_array(config.file_types, false),
         acknowledge_conflicts = { config.acknowledge_conflicts, 'boolean' },
