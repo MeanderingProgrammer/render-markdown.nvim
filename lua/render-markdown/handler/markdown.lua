@@ -1,10 +1,10 @@
 local colors = require('render-markdown.colors')
 local component = require('render-markdown.component')
+local context = require('render-markdown.context')
 local icons = require('render-markdown.icons')
 local list = require('render-markdown.list')
 local logger = require('render-markdown.logger')
 local pipe_table_parser = require('render-markdown.parser.pipe_table')
-local request = require('render-markdown.request')
 local state = require('render-markdown.state')
 local str = require('render-markdown.str')
 local ts = require('render-markdown.ts')
@@ -726,7 +726,7 @@ end
 ---@param info render.md.NodeInfo
 ---@return integer
 function M.concealed(buf, info)
-    local ranges = request.concealed(buf, info.start_row)
+    local ranges = context.concealed(buf, info.start_row)
     if #ranges == 0 then
         return 0
     end
@@ -751,7 +751,7 @@ end
 ---@return integer
 function M.table_visual_offset(buf, info)
     local result = M.concealed(buf, info)
-    local icon_ranges = request.inline_links(buf, info.start_row)
+    local icon_ranges = context.inline_links(buf, info.start_row)
     for _, icon_range in ipairs(icon_ranges) do
         if info.start_col < icon_range[2] and info.end_col > icon_range[1] then
             result = result - str.width(icon_range[3])

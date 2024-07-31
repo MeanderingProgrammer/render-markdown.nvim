@@ -7,7 +7,7 @@ describe('medium.md', function()
         util.between(25, 75, util.setup('temp/medium.md'))
         util.num_marks(2998)
 
-        util.between(1, 5, util.move_down(3))
+        util.between(0, 1, util.move_down(3))
         util.num_marks(3000)
 
         util.between(25, 50, util.insert_mode())

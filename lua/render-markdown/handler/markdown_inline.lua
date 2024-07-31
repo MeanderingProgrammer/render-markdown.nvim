@@ -1,7 +1,7 @@
 local component = require('render-markdown.component')
+local context = require('render-markdown.context')
 local list = require('render-markdown.list')
 local logger = require('render-markdown.logger')
-local request = require('render-markdown.request')
 local state = require('render-markdown.state')
 local str = require('render-markdown.str')
 local ts = require('render-markdown.ts')
@@ -132,7 +132,7 @@ function M.link(config, buf, info)
     if icon == nil then
         return nil
     end
-    request.add_inline_link(buf, info, icon)
+    context.add_inline_link(buf, info, icon)
     ---@type render.md.Mark
     return {
         conceal = true,
