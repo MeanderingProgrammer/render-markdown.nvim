@@ -1,14 +1,10 @@
----@class render.md.Component
----@field text string
----@field highlight string
-
 ---@class render.md.ComponentHelper
 local M = {}
 
 ---@param config render.md.BufferConfig
 ---@param text string
 ---@param comparison 'exact'|'contains'
----@return render.md.Component?
+---@return render.md.CustomComponent?
 function M.callout(config, text, comparison)
     ---@param callout render.md.CustomComponent
     ---@return boolean
@@ -23,7 +19,7 @@ function M.callout(config, text, comparison)
     end
     for _, callout in pairs(config.callout) do
         if matches(callout) then
-            return { text = callout.rendered, highlight = callout.highlight }
+            return callout
         end
     end
     return nil
@@ -32,7 +28,7 @@ end
 ---@param config render.md.BufferConfig
 ---@param text string
 ---@param comparison 'exact'|'starts'
----@return render.md.Component?
+---@return render.md.CustomComponent?
 function M.checkbox(config, text, comparison)
     ---@param checkbox render.md.CustomComponent
     ---@return boolean
@@ -47,7 +43,7 @@ function M.checkbox(config, text, comparison)
     end
     for _, checkbox in pairs(config.checkbox.custom) do
         if matches(checkbox) then
-            return { text = checkbox.rendered, highlight = checkbox.highlight }
+            return checkbox
         end
     end
     return nil

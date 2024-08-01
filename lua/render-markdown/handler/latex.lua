@@ -1,5 +1,6 @@
 local logger = require('render-markdown.logger')
 local state = require('render-markdown.state')
+local str = require('render-markdown.str')
 local ts = require('render-markdown.ts')
 
 ---@type table<string, string[]>
@@ -27,7 +28,7 @@ function M.parse(root, buf)
     local expressions = cache[info.text]
     if expressions == nil then
         local raw_expression = vim.fn.system(latex.converter, info.text)
-        expressions = vim.split(raw_expression, '\n', { plain = true, trimempty = true })
+        expressions = str.split(raw_expression, '\n')
         for _ = 1, latex.top_pad do
             table.insert(expressions, 1, '')
         end

@@ -7,14 +7,16 @@ local util = require('tests.util')
 ---@param end_col integer
 ---@param text string
 ---@param highlight string
+---@param conceal string?
 ---@return render.md.MarkInfo
-local function callout(row, start_col, end_col, text, highlight)
+local function callout(row, start_col, end_col, text, highlight, conceal)
     ---@type render.md.MarkInfo
     return {
         row = { row, row },
         col = { start_col, end_col },
         virt_text = { { text, util.hl(highlight) } },
         virt_text_pos = 'overlay',
+        conceal = conceal,
     }
 end
 
@@ -69,7 +71,7 @@ describe('callout.md', function()
         vim.list_extend(expected, util.heading(warning_start, 1))
         vim.list_extend(expected, {
             util.quote(warning_start + 2, '%s ', warn), -- Quote start
-            callout(warning_start + 2, 2, 12, '󰀪 Warning', warn), -- Callout text
+            callout(warning_start + 2, 2, 12, '󰀪 Custom Title', warn, ''), -- Callout text
             util.quote(warning_start + 3, '%s ', warn), -- Quote continued
         })
 

@@ -1,6 +1,13 @@
 ---@class render.md.StringHelper
 local M = {}
 
+---@param s string
+---@param sep string
+---@return string[]
+function M.split(s, sep)
+    return vim.split(s, sep, { plain = true, trimempty = true })
+end
+
 ---@param s? string
 ---@return integer
 function M.width(s)

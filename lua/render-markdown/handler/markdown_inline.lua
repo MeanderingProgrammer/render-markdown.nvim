@@ -24,7 +24,7 @@ function M.parse(root, buf)
         if capture == 'code' then
             list.add_mark(marks, M.code(config, info))
         elseif capture == 'callout' then
-            list.add_mark(marks, M.callout(config, info))
+            list.add_mark(marks, M.callout(config, buf, info))
         elseif capture == 'link' then
             list.add_mark(marks, M.link(config, buf, info))
         else
@@ -61,14 +61,33 @@ end
 
 ---@private
 ---@param config render.md.BufferConfig
+---@param buf integer
 ---@param info render.md.NodeInfo
 ---@return render.md.Mark?
-function M.callout(config, info)
+function M.callout(config, buf, info)
+    ---Support for overriding title: https://help.obsidian.md/Editing+and+formatting/Callouts#Change+the+title
+    ---@param callout render.md.CustomComponent
+    ---@return string
+    ---@return string?
+    local function custom_title(callout)
+        local content = ts.parent(buf, info, 'inline')
+        if content ~= nil then
+            local line = str.split(content.text, '\n')[1]
+            if #line > #callout.raw and vim.startswith(line:lower(), callout.raw:lower()) then
+                local icon = str.split(callout.rendered, ' ')[1]
+                local title = vim.trim(line:sub(#callout.raw + 1))
+                return icon .. ' ' .. title, ''
+            end
+        end
+        return callout.rendered, nil
+    end
+
     local callout = component.callout(config, info.text, 'exact')
     if callout ~= nil then
         if not config.quote.enabled then
             return nil
         end
+        local text, conceal = custom_title(callout)
         ---@type render.md.Mark
         return {
             conceal = true,
@@ -77,8 +96,9 @@ function M.callout(config, info)
             opts = {
                 end_row = info.end_row,
                 end_col = info.end_col,
-                virt_text = { { callout.text, callout.highlight } },
+                virt_text = { { text, callout.highlight } },
                 virt_text_pos = 'overlay',
+                conceal = conceal,
             },
         }
     else
@@ -101,7 +121,7 @@ function M.callout(config, info)
             opts = {
                 end_row = info.end_row,
                 end_col = info.end_col,
-                virt_text = { { str.pad_to(info.text, checkbox.text), checkbox.highlight } },
+                virt_text = { { str.pad_to(info.text, checkbox.rendered), checkbox.highlight } },
                 virt_text_pos = 'inline',
                 conceal = '',
             },

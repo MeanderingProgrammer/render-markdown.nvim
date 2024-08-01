@@ -21,7 +21,7 @@
 
 # Warning
 
-> [!WARNING]
+> [!WARNING] Custom Title
 > Dastardly surprise
 
 # Caution

@@ -68,6 +68,21 @@ end
 ---@param info render.md.NodeInfo
 ---@param target string
 ---@return render.md.NodeInfo?
+function M.parent(buf, info, target)
+    local parent = info.node:parent()
+    while parent ~= nil do
+        if parent:type() == target then
+            return M.info(parent, buf)
+        end
+        parent = parent:parent()
+    end
+    return nil
+end
+
+---@param buf integer
+---@param info render.md.NodeInfo
+---@param target string
+---@return render.md.NodeInfo?
 function M.sibling(buf, info, target)
     local sibling = info.node:next_sibling()
     while sibling ~= nil do
