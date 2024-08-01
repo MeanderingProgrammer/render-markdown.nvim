@@ -1,3 +1,4 @@
+local code_block_parser = require('render-markdown.parser.code_block')
 local colors = require('render-markdown.colors')
 local component = require('render-markdown.component')
 local context = require('render-markdown.context')
@@ -98,7 +99,7 @@ function M.heading(config, buf, info)
     -- Available width is level + 1 - concealed, where level = number of `#` characters, one
     -- is added to account for the space after the last `#` but before the heading title,
     -- and concealed text is subtracted since that space is not usable
-    local padding = level + 1 - M.concealed(buf, info) - str.width(icon)
+    local padding = level + 1 - ts.concealed(buf, info) - str.width(icon)
     if heading.position == 'inline' or padding < 0 then
         -- Requires inline extmarks to place when there is not enough space available
         if util.has_10 then
@@ -148,7 +149,7 @@ function M.dash(config, buf, info)
 
     local width
     if dash.width == 'full' then
-        width = util.get_width(buf)
+        width = context.get(buf):get_width()
     else
         ---@type integer
         width = dash.width
@@ -176,137 +177,41 @@ function M.code(config, buf, info)
     if not code.enabled or code.style == 'none' then
         return {}
     end
-    local marks = {}
-    local code_info = ts.child(buf, info, 'info_string', info.start_row)
-    if code_info ~= nil then
-        local language_info = ts.child(buf, code_info, 'language', code_info.start_row)
-        if language_info ~= nil then
-            vim.list_extend(marks, M.language(config, buf, language_info, info))
-        end
-    end
-    if not vim.tbl_contains({ 'normal', 'full' }, code.style) then
-        return marks
-    end
-    local start_row = info.start_row
-    local end_row = info.end_row
-    -- Do not attempt to render single line code block
-    if start_row == end_row - 1 then
-        return marks
+    local code_block = code_block_parser.parse(buf, info)
+    if code_block == nil then
+        return {}
     end
 
-    local width
-    if code.width == 'full' then
-        width = util.get_width(buf)
-    elseif code.width == 'block' then
-        local lines = vim.api.nvim_buf_get_lines(buf, start_row, end_row, true)
-        local code_width = vim.fn.max(vim.tbl_map(str.width, lines))
-        width = code.left_pad + code_width + code.right_pad
-    end
+    local add_background = vim.tbl_contains({ 'normal', 'full' }, code.style)
+    add_background = add_background and not vim.tbl_contains(code.disable_background, code_block.language)
 
-    if code.border == 'thin' then
-        local code_start = ts.child(buf, info, 'fenced_code_block_delimiter', info.start_row)
-        if #marks == 0 and M.hidden(buf, code_info) and M.hidden(buf, code_start) then
-            start_row = start_row + 1
-            ---@type render.md.Mark
-            local start_mark = {
-                conceal = true,
-                start_row = info.start_row,
-                start_col = info.start_col,
-                opts = {
-                    virt_text = { { code.above:rep(width), colors.inverse(code.highlight) } },
-                    virt_text_pos = 'overlay',
-                },
-            }
-            list.add_mark(marks, start_mark)
-        end
-        local code_end = ts.child(buf, info, 'fenced_code_block_delimiter', info.end_row - 1)
-        if M.hidden(buf, code_end) then
-            end_row = end_row - 1
-            ---@type render.md.Mark
-            local end_mark = {
-                conceal = true,
-                start_row = info.end_row - 1,
-                start_col = info.start_col,
-                opts = {
-                    virt_text = { { code.below:rep(width), colors.inverse(code.highlight) } },
-                    virt_text_pos = 'overlay',
-                },
-            }
-            list.add_mark(marks, end_mark)
-        end
+    local marks, icon_added = M.language(config, buf, code_block, add_background)
+    if add_background then
+        vim.list_extend(marks, M.code_background(config, buf, code_block, icon_added))
     end
-
-    ---@type render.md.Mark
-    local background_mark = {
-        conceal = false,
-        start_row = start_row,
-        start_col = 0,
-        opts = {
-            end_row = end_row,
-            end_col = 0,
-            hl_group = code.highlight,
-            hl_eol = true,
-        },
-    }
-    list.add_mark(marks, background_mark)
-
-    if code.width == 'block' then
-        -- Overwrite anything beyond left_pad + block width + right_pad with Normal
-        local pad = str.pad(vim.o.columns * 2)
-        for row = start_row, code.border == 'thin' and end_row or end_row - 1 do
-            ---@type render.md.Mark
-            local block_background_mark = {
-                conceal = false,
-                start_row = row,
-                start_col = 0,
-                opts = {
-                    priority = 0,
-                    hl_mode = 'replace',
-                    virt_text = { { pad, 'Normal' } },
-                    virt_text_win_col = width,
-                },
-            }
-            list.add_mark(marks, block_background_mark)
-        end
-    end
-
-    -- Requires inline extmarks
-    if not util.has_10 or code.left_pad <= 0 then
-        return marks
-    end
-    for row = start_row, end_row - 1 do
-        -- Uses a low priority so other marks are loaded first and included in padding
-        ---@type render.md.Mark
-        local row_padding_mark = {
-            conceal = false,
-            start_row = row,
-            start_col = info.start_col,
-            opts = {
-                end_row = row + 1,
-                priority = 0,
-                virt_text = { { str.pad(code.left_pad), code.highlight } },
-                virt_text_pos = 'inline',
-            },
-        }
-        list.add_mark(marks, row_padding_mark)
-    end
+    vim.list_extend(marks, M.code_left_pad(config, code_block, add_background))
     return marks
 end
 
 ---@private
 ---@param config render.md.BufferConfig
 ---@param buf integer
----@param info render.md.NodeInfo
----@param code_block render.md.NodeInfo
+---@param code_block render.md.parsed.CodeBlock
+---@param add_background boolean
 ---@return render.md.Mark[]
-function M.language(config, buf, info, code_block)
+---@return boolean
+function M.language(config, buf, code_block, add_background)
     local code = config.code
     if not vim.tbl_contains({ 'language', 'full' }, code.style) then
-        return {}
+        return {}, false
+    end
+    local info = code_block.language_info
+    if info == nil then
+        return {}, false
     end
     local icon, icon_highlight = icons.get(info.text)
     if icon == nil or icon_highlight == nil then
-        return {}
+        return {}, false
     end
     local marks = {}
     if code.sign then
@@ -314,19 +219,18 @@ function M.language(config, buf, info, code_block)
     end
     -- Requires inline extmarks
     if not util.has_10 then
-        return marks
+        return marks, false
     end
     local icon_text = icon .. ' '
-    if M.hidden(buf, info) then
+    if ts.hidden(buf, info) then
         -- Code blocks will pick up varying amounts of leading white space depending on the
         -- context they are in. This gets lumped into the delimiter node and as a result,
         -- after concealing, the extmark will be left shifted. Logic below accounts for this.
-        local padding = str.leading_spaces(code_block.text)
-        icon_text = str.pad(padding, icon_text .. info.text)
+        icon_text = str.pad(code_block.leading_spaces, icon_text .. info.text)
     end
     local highlight = { icon_highlight }
-    if code.style == 'full' then
-        highlight = { icon_highlight, code.highlight }
+    if add_background then
+        table.insert(highlight, code.highlight)
     end
     ---@type render.md.Mark
     local language_marker = {
@@ -339,6 +243,133 @@ function M.language(config, buf, info, code_block)
         },
     }
     list.add_mark(marks, language_marker)
+    return marks, true
+end
+
+---@private
+---@param config render.md.BufferConfig
+---@param buf integer
+---@param code_block render.md.parsed.CodeBlock
+---@param icon_added boolean
+---@return render.md.Mark[]
+function M.code_background(config, buf, code_block, icon_added)
+    local code = config.code
+
+    local width
+    if code.width == 'block' then
+        local lines = vim.api.nvim_buf_get_lines(buf, code_block.start_row, code_block.end_row, true)
+        local code_width = vim.fn.max(vim.tbl_map(str.width, lines))
+        width = code.left_pad + code_width + code.right_pad
+    else
+        width = context.get(buf):get_width()
+    end
+
+    local marks = {}
+
+    if code.border == 'thin' then
+        local border_width = width - code_block.col
+        if not icon_added and ts.hidden(buf, code_block.code_info) and ts.hidden(buf, code_block.start_delim) then
+            ---@type render.md.Mark
+            local start_mark = {
+                conceal = true,
+                start_row = code_block.start_row,
+                start_col = code_block.col,
+                opts = {
+                    virt_text = { { code.above:rep(border_width), colors.inverse(code.highlight) } },
+                    virt_text_pos = 'overlay',
+                },
+            }
+            list.add_mark(marks, start_mark)
+            code_block.start_row = code_block.start_row + 1
+        end
+        if ts.hidden(buf, code_block.end_delim) then
+            ---@type render.md.Mark
+            local end_mark = {
+                conceal = true,
+                start_row = code_block.end_row - 1,
+                start_col = code_block.col,
+                opts = {
+                    virt_text = { { code.below:rep(border_width), colors.inverse(code.highlight) } },
+                    virt_text_pos = 'overlay',
+                },
+            }
+            list.add_mark(marks, end_mark)
+            code_block.end_row = code_block.end_row - 1
+        end
+    end
+
+    ---@type render.md.Mark
+    local background_mark = {
+        conceal = false,
+        start_row = code_block.start_row,
+        start_col = 0,
+        opts = {
+            end_row = code_block.end_row,
+            end_col = 0,
+            hl_group = code.highlight,
+            hl_eol = true,
+        },
+    }
+    list.add_mark(marks, background_mark)
+
+    if code.width == 'block' then
+        -- Overwrite anything beyond left_pad + block width + right_pad with Normal
+        local padding = str.pad(vim.o.columns * 2)
+        for row = code_block.start_row, code_block.end_row - 1 do
+            ---@type render.md.Mark
+            local block_background_mark = {
+                conceal = false,
+                start_row = row,
+                start_col = 0,
+                opts = {
+                    priority = 0,
+                    hl_mode = 'replace',
+                    virt_text = { { padding, 'Normal' } },
+                    virt_text_win_col = width,
+                },
+            }
+            list.add_mark(marks, block_background_mark)
+        end
+    end
+
+    return marks
+end
+
+---@private
+---@param config render.md.BufferConfig
+---@param code_block render.md.parsed.CodeBlock
+---@param add_background boolean
+---@return render.md.Mark[]
+function M.code_left_pad(config, code_block, add_background)
+    local code = config.code
+    -- Requires inline extmarks
+    if not util.has_10 or code.left_pad <= 0 then
+        return {}
+    end
+    local marks = {}
+    local padding = str.pad(code.left_pad)
+    local highlight
+    if add_background then
+        highlight = code.highlight
+    else
+        highlight = 'Normal'
+    end
+    for row = code_block.start_row, code_block.end_row - 1 do
+        -- Uses a low priority so other marks are loaded first and included in padding
+        ---@type render.md.Mark
+        local padding_mark = {
+            conceal = false,
+            start_row = row,
+            start_col = code_block.col,
+            opts = {
+                end_row = row + 1,
+                priority = 0,
+                virt_text = { { padding, highlight } },
+                virt_text_pos = 'inline',
+            },
+        }
+        list.add_mark(marks, padding_mark)
+    end
     return marks
 end
 
@@ -646,7 +677,7 @@ end
 ---@private
 ---@param config render.md.BufferConfig
 ---@param buf integer
----@param parsed_table render.md.parsed.Table
+---@param parsed_table render.md.parsed.PipeTable
 ---@return render.md.Mark[]
 function M.table_full(config, buf, parsed_table)
     local pipe_table = config.pipe_table
@@ -711,47 +742,11 @@ end
 
 ---@private
 ---@param buf integer
----@param info? render.md.NodeInfo
----@return boolean
-function M.hidden(buf, info)
-    -- Missing nodes are considered hidden
-    if info == nil then
-        return true
-    end
-    return str.width(info.text) == M.concealed(buf, info)
-end
-
----@private
----@param buf integer
----@param info render.md.NodeInfo
----@return integer
-function M.concealed(buf, info)
-    local ranges = context.concealed(buf, info.start_row)
-    if #ranges == 0 then
-        return 0
-    end
-    local result = 0
-    local col = info.start_col
-    for _, index in ipairs(vim.fn.str2list(info.text)) do
-        local ch = vim.fn.nr2char(index)
-        for _, range in ipairs(ranges) do
-            -- Essentially vim.treesitter.is_in_node_range but only care about column
-            if col >= range[1] and col + 1 <= range[2] then
-                result = result + str.width(ch)
-            end
-        end
-        col = col + #ch
-    end
-    return result
-end
-
----@private
----@param buf integer
 ---@param info render.md.NodeInfo
 ---@return integer
 function M.table_visual_offset(buf, info)
-    local result = M.concealed(buf, info)
-    local icon_ranges = context.inline_links(buf, info.start_row)
+    local result = ts.concealed(buf, info)
+    local icon_ranges = context.get(buf):get_links(info.start_row)
     for _, icon_range in ipairs(icon_ranges) do
         if info.start_col < icon_range[2] and info.end_col > icon_range[1] then
             result = result - str.width(icon_range[3])

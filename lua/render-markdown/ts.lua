@@ -1,3 +1,6 @@
+local context = require('render-markdown.context')
+local str = require('render-markdown.str')
+
 ---@param node TSNode
 ---@return boolean
 local function in_section(node)
@@ -77,11 +80,14 @@ function M.sibling(buf, info, target)
 end
 
 ---@param buf integer
----@param info render.md.NodeInfo
+---@param info? render.md.NodeInfo
 ---@param target_type string
 ---@param target_row? integer
 ---@return render.md.NodeInfo?
 function M.child(buf, info, target_type, target_row)
+    if info == nil then
+        return nil
+    end
     for child in info.node:iter_children() do
         if child:type() == target_type then
             if target_row == nil or child:range() == target_row then
@@ -90,6 +96,40 @@ function M.child(buf, info, target_type, target_row)
         end
     end
     return nil
+end
+
+---@param buf integer
+---@param info? render.md.NodeInfo
+---@return boolean
+function M.hidden(buf, info)
+    -- Missing nodes are considered hidden
+    if info == nil then
+        return true
+    end
+    return str.width(info.text) == M.concealed(buf, info)
+end
+
+---@param buf integer
+---@param info render.md.NodeInfo
+---@return integer
+function M.concealed(buf, info)
+    local ranges = context.get(buf):get_conceal(info.start_row)
+    if #ranges == 0 then
+        return 0
+    end
+    local result = 0
+    local col = info.start_col
+    for _, index in ipairs(vim.fn.str2list(info.text)) do
+        local ch = vim.fn.nr2char(index)
+        for _, range in ipairs(ranges) do
+            -- Essentially vim.treesitter.is_in_node_range but only care about column
+            if col >= range[1] and col + 1 <= range[2] then
+                result = result + str.width(ch)
+            end
+        end
+        col = col + #ch
+    end
+    return result
 end
 
 return M

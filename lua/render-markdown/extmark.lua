@@ -11,6 +11,7 @@ Extmark.__index = Extmark
 ---@param namespace integer
 ---@param buf integer
 ---@param mark render.md.Mark
+---@return render.md.Extmark
 function Extmark.new(namespace, buf, mark)
     local self = setmetatable({}, Extmark)
     self.namespace = namespace

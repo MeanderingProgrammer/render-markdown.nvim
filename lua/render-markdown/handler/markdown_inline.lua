@@ -132,7 +132,7 @@ function M.link(config, buf, info)
     if icon == nil then
         return nil
     end
-    context.add_inline_link(buf, info, icon)
+    context.get(buf):add_link(info, icon)
     ---@type render.md.Mark
     return {
         conceal = true,

@@ -73,12 +73,12 @@ function M.render(buf, mode, parse)
         if marks == nil or parse then
             M.clear(buf)
             logger.start()
-            marks = M.parse_buffer(buf)
+            marks = M.parse_buffer(buf, win)
             logger.flush()
             cache[buf] = marks
         end
 
-        local row = util.cursor_row(buf)
+        local row = util.cursor_row(buf, win)
         for _, mark in ipairs(marks) do
             mark:render(row)
         end
@@ -105,8 +105,9 @@ end
 
 ---@private
 ---@param buf integer
+---@param win integer
 ---@return render.md.Extmark[]
-function M.parse_buffer(buf)
+function M.parse_buffer(buf, win)
     local has_parser, parser = pcall(vim.treesitter.get_parser, buf)
     if not has_parser then
         return {}
@@ -115,9 +116,8 @@ function M.parse_buffer(buf)
     if not parser:is_valid() then
         parser:parse(true)
     end
-    -- Pre-compute conceal information after reseting buffer cache
-    context.reset_buf(buf)
-    context.compute_conceal(buf, parser)
+    -- Reset buffer context
+    context.reset(buf, win)
     -- Parse marks
     local marks = {}
     -- Parse markdown after all other nodes to take advantage of state

@@ -67,6 +67,7 @@
 ---@field public enabled boolean
 ---@field public sign boolean
 ---@field public style 'full'|'normal'|'language'|'none'
+---@field public disable_background string[]
 ---@field public left_pad integer
 ---@field public right_pad integer
 ---@field public width 'full'|'block'

@@ -17,25 +17,13 @@ function M.buf_to_win(buf)
 end
 
 ---@param buf integer
+---@param win integer
 ---@return integer?
-function M.cursor_row(buf)
+function M.cursor_row(buf, win)
     if vim.api.nvim_get_current_buf() ~= buf then
         return nil
     end
-    return vim.api.nvim_win_get_cursor(M.buf_to_win(buf))[1] - 1
-end
-
----@param buf integer
----@return integer
-function M.get_width(buf)
-    return vim.api.nvim_win_get_width(M.buf_to_win(buf))
-end
-
----@param win integer
----@param name string
----@return number|string
-function M.get_win(win, name)
-    return vim.api.nvim_get_option_value(name, { scope = 'local', win = win })
+    return vim.api.nvim_win_get_cursor(win)[1] - 1
 end
 
 ---@param win integer
@@ -64,18 +52,12 @@ end
 ---@return number
 function M.file_size_mb(buf)
     local ok, stats = pcall(function()
-        return vim.uv.fs_stat(M.file_path(buf))
+        return vim.uv.fs_stat(vim.api.nvim_buf_get_name(buf))
     end)
     if not (ok and stats) then
         return 0
     end
     return stats.size / (1024 * 1024)
-end
-
----@param buf integer
----@return string
-function M.file_path(buf)
-    return vim.api.nvim_buf_get_name(buf)
 end
 
 return M

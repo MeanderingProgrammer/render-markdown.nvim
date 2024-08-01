@@ -121,7 +121,7 @@ function M.code_below(row, col)
     return {
         row = { row },
         col = { col },
-        virt_text = { { string.rep('▀', vim.opt.columns:get()), M.hl('_Inverse_' .. M.hl('Code')) } },
+        virt_text = { { string.rep('▀', vim.opt.columns:get() - col), M.hl('_Inverse_' .. M.hl('Code')) } },
         virt_text_pos = 'overlay',
     }
 end

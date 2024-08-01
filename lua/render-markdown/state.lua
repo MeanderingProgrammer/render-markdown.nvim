@@ -177,6 +177,7 @@ function M.validate()
                 enabled = { code.enabled, 'boolean', nilable },
                 sign = { code.sign, 'boolean', nilable },
                 style = one_of(code.style, { 'full', 'normal', 'language', 'none' }, {}, nilable),
+                disable_background = string_array(code.disable_background, nilable),
                 left_pad = { code.left_pad, 'number', nilable },
                 right_pad = { code.right_pad, 'number', nilable },
                 width = one_of(code.width, { 'full', 'block' }, {}, nilable),

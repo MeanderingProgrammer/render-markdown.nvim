@@ -8,7 +8,7 @@ local M = {}
 ---@field width integer
 ---@field alignment 'left'|'right'|'center'|'default'
 
----@class render.md.parsed.Table
+---@class render.md.parsed.PipeTable
 ---@field head render.md.NodeInfo
 ---@field delim render.md.NodeInfo
 ---@field columns render.md.parsed.TableColumn[]
@@ -16,7 +16,7 @@ local M = {}
 
 ---@param buf integer
 ---@param info render.md.NodeInfo
----@return render.md.parsed.Table?
+---@return render.md.parsed.PipeTable?
 function M.parse(buf, info)
     local head = nil
     local delim = nil
@@ -55,7 +55,7 @@ function M.parse(buf, info)
         return nil
     end
     ts.sort_inplace(rows)
-    ---@type render.md.parsed.Table
+    ---@type render.md.parsed.PipeTable
     return { head = head, delim = delim, columns = columns, rows = rows }
 end
 

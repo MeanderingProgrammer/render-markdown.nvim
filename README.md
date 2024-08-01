@@ -247,6 +247,9 @@ require('render-markdown').setup({
         --  language: adds language icon to sign column if enabled and icon + name above code blocks
         --  full: normal + language
         style = 'full',
+        -- An array of language names for which background highlighting will be disabled
+        -- Likely because that language has background highlights itself
+        disable_background = { 'diff' },
         -- Amount of padding to add to the left of code blocks
         left_pad = 0,
         -- Amount of padding to add to the right of code blocks when width is 'block'
@@ -507,6 +510,9 @@ require('render-markdown').setup({
         --  language: adds language icon to sign column if enabled and icon + name above code blocks
         --  full: normal + language
         style = 'full',
+        -- An array of language names for which background highlighting will be disabled
+        -- Likely because that language has background highlights itself
+        disable_background = { 'diff' },
         -- Amount of padding to add to the left of code blocks
         left_pad = 0,
         -- Amount of padding to add to the right of code blocks when width is 'block'

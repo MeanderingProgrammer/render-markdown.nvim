@@ -78,6 +78,7 @@ local M = {}
 ---@field public enabled? boolean
 ---@field public sign? boolean
 ---@field public style? 'full'|'normal'|'language'|'none'
+---@field public disable_background? string[]
 ---@field public left_pad? integer
 ---@field public right_pad? integer
 ---@field public width? 'full'|'block'
@@ -261,6 +262,9 @@ M.default_config = {
         --  language: adds language icon to sign column if enabled and icon + name above code blocks
         --  full: normal + language
         style = 'full',
+        -- An array of language names for which background highlighting will be disabled
+        -- Likely because that language has background highlights itself
+        disable_background = { 'diff' },
         -- Amount of padding to add to the left of code blocks
         left_pad = 0,
         -- Amount of padding to add to the right of code blocks when width is 'block'
