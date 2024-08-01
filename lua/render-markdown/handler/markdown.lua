@@ -177,7 +177,7 @@ function M.code(config, buf, info)
     if not code.enabled or code.style == 'none' then
         return {}
     end
-    local code_block = code_block_parser.parse(buf, info)
+    local code_block = code_block_parser.parse(code, buf, info)
     if code_block == nil then
         return {}
     end
@@ -217,33 +217,52 @@ function M.language(config, buf, code_block, add_background)
     if code.sign then
         list.add_mark(marks, M.sign(config, info, icon, icon_highlight))
     end
-    -- Requires inline extmarks
-    if not util.has_10 then
-        return marks, false
-    end
-    local icon_text = icon .. ' '
-    if ts.hidden(buf, info) then
-        -- Code blocks will pick up varying amounts of leading white space depending on the
-        -- context they are in. This gets lumped into the delimiter node and as a result,
-        -- after concealing, the extmark will be left shifted. Logic below accounts for this.
-        icon_text = str.pad(code_block.leading_spaces, icon_text .. info.text)
-    end
     local highlight = { icon_highlight }
     if add_background then
         table.insert(highlight, code.highlight)
     end
-    ---@type render.md.Mark
-    local language_marker = {
-        conceal = true,
-        start_row = info.start_row,
-        start_col = info.start_col,
-        opts = {
-            virt_text = { { icon_text, highlight } },
-            virt_text_pos = 'inline',
-        },
-    }
-    list.add_mark(marks, language_marker)
-    return marks, true
+    -- Requires inline extmarks
+    if code.position == 'left' and util.has_10 then
+        local icon_text = icon .. ' '
+        if ts.hidden(buf, info) then
+            -- Code blocks will pick up varying amounts of leading white space depending on the
+            -- context they are in. This gets lumped into the delimiter node and as a result,
+            -- after concealing, the extmark will be left shifted. Logic below accounts for this.
+            icon_text = str.pad(code_block.leading_spaces, icon_text .. info.text)
+        end
+        ---@type render.md.Mark
+        local language_marker = {
+            conceal = true,
+            start_row = info.start_row,
+            start_col = info.start_col,
+            opts = {
+                virt_text = { { icon_text, highlight } },
+                virt_text_pos = 'inline',
+            },
+        }
+        list.add_mark(marks, language_marker)
+        return marks, true
+    elseif code.position == 'right' then
+        local icon_text = icon .. ' ' .. info.text
+        local win_col = code_block.longest_line
+        if code.width == 'block' then
+            win_col = win_col - str.width(icon_text)
+        end
+        ---@type render.md.Mark
+        local language_marker = {
+            conceal = true,
+            start_row = info.start_row,
+            start_col = 0,
+            opts = {
+                virt_text = { { icon_text, highlight } },
+                virt_text_win_col = win_col,
+            },
+        }
+        list.add_mark(marks, language_marker)
+        return marks, true
+    else
+        return marks, false
+    end
 end
 
 ---@private
@@ -255,19 +274,9 @@ end
 function M.code_background(config, buf, code_block, icon_added)
     local code = config.code
 
-    local width
-    if code.width == 'block' then
-        local lines = vim.api.nvim_buf_get_lines(buf, code_block.start_row, code_block.end_row, true)
-        local code_width = vim.fn.max(vim.tbl_map(str.width, lines))
-        width = code.left_pad + code_width + code.right_pad
-    else
-        width = context.get(buf):get_width()
-    end
-
     local marks = {}
-
     if code.border == 'thin' then
-        local border_width = width - code_block.col
+        local border_width = code_block.width - code_block.col
         if not icon_added and ts.hidden(buf, code_block.code_info) and ts.hidden(buf, code_block.start_delim) then
             ---@type render.md.Mark
             local start_mark = {
@@ -323,15 +332,13 @@ function M.code_background(config, buf, code_block, icon_added)
                 start_col = 0,
                 opts = {
                     priority = 0,
-                    hl_mode = 'replace',
                     virt_text = { { padding, 'Normal' } },
-                    virt_text_win_col = width,
+                    virt_text_win_col = code_block.width,
                 },
             }
             list.add_mark(marks, block_background_mark)
         end
     end
-
     return marks
 end
 

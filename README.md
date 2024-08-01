@@ -247,6 +247,10 @@ require('render-markdown').setup({
         --  language: adds language icon to sign column if enabled and icon + name above code blocks
         --  full: normal + language
         style = 'full',
+        -- Determines where language icon is rendered:
+        --  right: Right side of code block
+        --  left: Left side of code block
+        position = 'left',
         -- An array of language names for which background highlighting will be disabled
         -- Likely because that language has background highlights itself
         disable_background = { 'diff' },
@@ -266,8 +270,9 @@ require('render-markdown').setup({
         above = '▄',
         -- Used below code blocks for thin border
         below = '▀',
-        -- Highlight for code blocks & inline code
+        -- Highlight for code blocks
         highlight = 'RenderMarkdownCode',
+        -- Highlight for inline code
         highlight_inline = 'RenderMarkdownCodeInline',
     },
     dash = {
@@ -510,6 +515,10 @@ require('render-markdown').setup({
         --  language: adds language icon to sign column if enabled and icon + name above code blocks
         --  full: normal + language
         style = 'full',
+        -- Determines where language icon is rendered:
+        --  right: Right side of code block
+        --  left: Left side of code block
+        position = 'left',
         -- An array of language names for which background highlighting will be disabled
         -- Likely because that language has background highlights itself
         disable_background = { 'diff' },
@@ -529,8 +538,9 @@ require('render-markdown').setup({
         above = '▄',
         -- Used below code blocks for thin border
         below = '▀',
-        -- Highlight for code blocks & inline code
+        -- Highlight for code blocks
         highlight = 'RenderMarkdownCode',
+        -- Highlight for inline code
         highlight_inline = 'RenderMarkdownCodeInline',
     },
 })
