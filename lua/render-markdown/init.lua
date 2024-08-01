@@ -460,8 +460,17 @@ M.default_config = {
 
 ---@param opts? render.md.UserConfig
 function M.setup(opts)
-    require('render-markdown.state').setup(M.default_config, opts)
-    require('render-markdown.ui').invalidate_cache()
+    -- This handles discrepancies in initialization order of different plugin managers, some
+    -- run the plugin directory first (lazy.nvim) while others run setup first (vim-plug).
+    -- To support both we want to pickup the last non-empty configuration. This works because
+    -- the plugin directory supplies an empty configuration which will be skipped if state
+    -- has already been initialized by the user.
+    local state = require('render-markdown.state')
+    if not state.initialized() or vim.tbl_count(opts or {}) > 0 then
+        state.setup(M.default_config, opts)
+        state.invalidate_cache()
+        require('render-markdown.ui').invalidate_cache()
+    end
 end
 
 return setmetatable(M, {

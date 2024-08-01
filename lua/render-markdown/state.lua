@@ -16,13 +16,14 @@ local configs = {}
 ---@field inline_query vim.treesitter.Query
 local M = {}
 
+---@return boolean
+function M.initialized()
+    return M.config ~= nil
+end
+
 ---@param default_config render.md.Config
 ---@param user_config? render.md.UserConfig
 function M.setup(default_config, user_config)
-    -- Reset cache to pickup config changes
-    M.invalidate_cache()
-
-    -- Create top level config from default & user
     local config = vim.tbl_deep_extend('force', default_config, user_config or {})
     M.config = config
     M.enabled = config.enabled

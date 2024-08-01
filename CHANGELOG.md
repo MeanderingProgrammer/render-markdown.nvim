@@ -26,6 +26,14 @@
   [345596b](https://github.com/MeanderingProgrammer/markdown.nvim/commit/345596bb6ef2b0c0a145c59906c2e84dbddfbbd4)
 - Pre-compute concealed data once per parse cycle [fcd908b](https://github.com/MeanderingProgrammer/markdown.nvim/commit/fcd908bafb96e4a30abe7bf8f502790b93ea85ac)
   [3bdae40](https://github.com/MeanderingProgrammer/markdown.nvim/commit/3bdae400e079a834ae12b658bf1115abf206bb4c)
+- Improve table parsing performance by storing state [4d046cd](https://github.com/MeanderingProgrammer/markdown.nvim/commit/4d046cdf65393a62c0eb209e01574b39f28bc01b)
+- Improve performance of showing / hiding marks by storing mark id [ef0c921](https://github.com/MeanderingProgrammer/markdown.nvim/commit/ef0c921858cbe079d40304200af60b6ce0c99429)
+- Hide code block background based on language [#110](https://github.com/MeanderingProgrammer/markdown.nvim/issues/110)
+  [9725df2](https://github.com/MeanderingProgrammer/markdown.nvim/commit/9725df2306409a836a142244c9eabde96268d730)
+- Right aligned code block language hint [#73](https://github.com/MeanderingProgrammer/markdown.nvim/issues/73)
+  [4d8b603](https://github.com/MeanderingProgrammer/markdown.nvim/commit/4d8b6032b659a45582089de8bcd839f8ccc4161d)
+- Obsidian like custom callout titles [#109](https://github.com/MeanderingProgrammer/markdown.nvim/issues/109)
+  [a1bcbf4](https://github.com/MeanderingProgrammer/markdown.nvim/commit/a1bcbf4858d1834f922029b5fc6ae55a7417bd51)
 
 ### Bug Fixes
 
