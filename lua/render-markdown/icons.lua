@@ -5,8 +5,7 @@ local has_devicons, devicons = pcall(require, 'nvim-web-devicons')
 local M = {}
 
 ---@param language string
----@return string?
----@return string?
+---@return string?, string?
 function M.get(language)
     if has_mini_icons then
         ---@diagnostic disable-next-line: return-type-mismatch

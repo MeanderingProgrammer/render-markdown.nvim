@@ -61,7 +61,7 @@ cat-log:
 
 gen-medium:
   just gen-headings "1000" "temp/medium.md"
-  just gen-table "5000" "temp/medium-table.md"
+  just gen-table "50" "100" "temp/medium-table.md"
 
 gen-large:
   just gen-headings "100000" "temp/large.md"
@@ -78,16 +78,17 @@ gen-headings-content lines:
     print(f"{level} Title {i}\n")
 
 [private]
-gen-table lines path:
-  {{path_exists(path)}} || just gen-table-contents {{lines}} > {{path}}
+gen-table tables lines path:
+  {{path_exists(path)}} || just gen-table-contents {{tables}} {{lines}} > {{path}}
 
 [private]
-gen-table-contents lines:
+gen-table-contents tables lines:
   #!/usr/bin/env python
-  print("# Table")
-  print()
-  print(f"| `Column 1`     | **Column 2**     | *Column 3*     |")
-  print(f"| -------------- | :--------------- | -------------: |")
-  for i in range({{lines}}):
-    print(f"| Row {i:<4} Col 1 | `Row {i:<4} Col 2` | Row {i:<4} Col 3 |")
-  print()
+  for i in range({{tables}}):
+    print(f"# Table {i}")
+    print()
+    print(f"| `Column 1`     | **Column 2**     | *Column 3*     |")
+    print(f"| -------------- | :--------------- | -------------: |")
+    for j in range({{lines}}):
+      print(f"| Row {j:<4} Col 1 | `Row {j:<4} Col 2` | Row {j:<4} Col 3 |")
+    print()

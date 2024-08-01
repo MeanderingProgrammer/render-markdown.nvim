@@ -198,8 +198,7 @@ end
 ---@param buf integer
 ---@param code_block render.md.parsed.CodeBlock
 ---@param add_background boolean
----@return render.md.Mark[]
----@return boolean
+---@return render.md.Mark[], boolean
 function M.language(config, buf, code_block, add_background)
     local code = config.code
     if not vim.tbl_contains({ 'language', 'full' }, code.style) then

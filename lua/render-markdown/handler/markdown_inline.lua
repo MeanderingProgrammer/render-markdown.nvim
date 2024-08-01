@@ -67,8 +67,7 @@ end
 function M.callout(config, buf, info)
     ---Support for overriding title: https://help.obsidian.md/Editing+and+formatting/Callouts#Change+the+title
     ---@param callout render.md.CustomComponent
-    ---@return string
-    ---@return string?
+    ---@return string, string?
     local function custom_title(callout)
         local content = ts.parent(buf, info, 'inline')
         if content ~= nil then

@@ -50,8 +50,7 @@ end
 ---@param config render.md.Code
 ---@param buf integer
 ---@param info render.md.NodeInfo
----@return integer
----@return integer
+---@return integer, integer
 function M.get_width(config, buf, info)
     local lines = vim.api.nvim_buf_get_lines(buf, info.start_row, info.end_row, true)
     local code_width = vim.fn.max(vim.tbl_map(str.width, lines))

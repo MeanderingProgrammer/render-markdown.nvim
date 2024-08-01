@@ -40,6 +40,8 @@
 - Block code rendering with transparent background [#102](https://github.com/MeanderingProgrammer/markdown.nvim/pull/102)
 - Remove broken reference to `profiler` module [#105](https://github.com/MeanderingProgrammer/markdown.nvim/issues/105)
   [15d8e02](https://github.com/MeanderingProgrammer/markdown.nvim/commit/15d8e02663aa58f215ecadbcebbd34149b06a7bc)
+- Loading user configuration with vim-plug [#111](https://github.com/MeanderingProgrammer/markdown.nvim/issues/111)
+  [4539c1a](https://github.com/MeanderingProgrammer/markdown.nvim/commit/4539c1a5d5f961c11bfee7622aa127f4b8a1de16)
 
 ### Collaborator Shoutouts
 

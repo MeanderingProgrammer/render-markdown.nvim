@@ -41,9 +41,9 @@ end
 ---@param f fun()
 ---@return number
 function M.time(f)
-    local start_ns = vim.uv.hrtime()
+    local start = vim.uv.hrtime()
     f()
-    return (vim.uv.hrtime() - start_ns) / 1e+6
+    return (vim.uv.hrtime() - start) / 1e+6
 end
 
 ---@private
