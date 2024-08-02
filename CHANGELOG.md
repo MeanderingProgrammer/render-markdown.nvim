@@ -21,6 +21,7 @@
 
 ### Features
 
+- Performance only parse & render visible range [c7a2055](https://github.com/MeanderingProgrammer/markdown.nvim/commit/c7a20552b83c2abad92ac5e52feb7fe3b929f0a7)
 - Support full buftype options [9a8a2e5](https://github.com/MeanderingProgrammer/markdown.nvim/commit/9a8a2e5bd204931646f1559235c7c4a7680ecbcd)
 - Inline heading position [#107](https://github.com/MeanderingProgrammer/markdown.nvim/issues/107)
   [345596b](https://github.com/MeanderingProgrammer/markdown.nvim/commit/345596bb6ef2b0c0a145c59906c2e84dbddfbbd4)

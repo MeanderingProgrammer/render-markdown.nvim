@@ -34,7 +34,7 @@ function M.clear(buf)
 end
 
 ---@param buf integer
-function M.debcoune_update(buf)
+function M.debounce_update(buf)
     local buf_state = cache[buf] or buffer_state.new(buf)
     cache[buf] = buf_state
     buf_state:debounce(state.get_config(buf).debounce, M.update)

@@ -21,8 +21,8 @@ function M.parse(root, buf)
         logger.debug_node_info(capture, info)
         if capture == 'code' then
             list.add_mark(marks, M.code(config, info))
-        elseif capture == 'callout' then
-            list.add_mark(marks, M.callout(config, buf, info))
+        elseif capture == 'shortcut' then
+            list.add_mark(marks, M.shortcut(config, buf, info))
         elseif capture == 'link' then
             list.add_mark(marks, M.link(config, buf, info))
         else
@@ -62,11 +62,32 @@ end
 ---@param buf integer
 ---@param info render.md.NodeInfo
 ---@return render.md.Mark?
-function M.callout(config, buf, info)
+function M.shortcut(config, buf, info)
+    local callout = component.callout(config, info.text, 'exact')
+    if callout ~= nil then
+        return M.callout(config, buf, info, callout)
+    end
+    local checkbox = component.checkbox(config, info.text, 'exact')
+    if checkbox ~= nil then
+        return M.checkbox(config, info, checkbox)
+    end
+    local line = vim.api.nvim_buf_get_lines(buf, info.start_row, info.start_row + 1, true)[1]
+    if line:find('[' .. info.text .. ']', 1, true) ~= nil then
+        return M.wiki_link(config, info)
+    end
+    return nil
+end
+
+---@private
+---@param config render.md.BufferConfig
+---@param buf integer
+---@param info render.md.NodeInfo
+---@param callout render.md.CustomComponent
+---@return render.md.Mark?
+function M.callout(config, buf, info, callout)
     ---Support for overriding title: https://help.obsidian.md/Editing+and+formatting/Callouts#Change+the+title
-    ---@param callout render.md.CustomComponent
     ---@return string, string?
-    local function custom_title(callout)
+    local function custom_title()
         local content = ts.parent(buf, info, 'inline')
         if content ~= nil then
             local line = str.split(content.text, '\n')[1]
@@ -79,51 +100,81 @@ function M.callout(config, buf, info)
         return callout.rendered, nil
     end
 
-    local callout = component.callout(config, info.text, 'exact')
-    if callout ~= nil then
-        if not config.quote.enabled then
-            return nil
-        end
-        local text, conceal = custom_title(callout)
-        ---@type render.md.Mark
-        return {
-            conceal = true,
-            start_row = info.start_row,
-            start_col = info.start_col,
-            opts = {
-                end_row = info.end_row,
-                end_col = info.end_col,
-                virt_text = { { text, callout.highlight } },
-                virt_text_pos = 'overlay',
-                conceal = conceal,
-            },
-        }
-    else
-        if not config.checkbox.enabled then
-            return nil
-        end
-        -- Requires inline extmarks
-        if not util.has_10 then
-            return nil
-        end
-        local checkbox = component.checkbox(config, info.text, 'exact')
-        if checkbox == nil then
-            return nil
-        end
-        ---@type render.md.Mark
-        return {
-            conceal = true,
-            start_row = info.start_row,
-            start_col = info.start_col,
-            opts = {
-                end_row = info.end_row,
-                end_col = info.end_col,
-                virt_text = { { str.pad_to(info.text, checkbox.rendered), checkbox.highlight } },
-                virt_text_pos = 'inline',
-                conceal = '',
-            },
-        }
+    if not config.quote.enabled then
+        return nil
     end
+    local text, conceal = custom_title()
+    ---@type render.md.Mark
+    return {
+        conceal = true,
+        start_row = info.start_row,
+        start_col = info.start_col,
+        opts = {
+            end_row = info.end_row,
+            end_col = info.end_col,
+            virt_text = { { text, callout.highlight } },
+            virt_text_pos = 'overlay',
+            conceal = conceal,
+        },
+    }
+end
+
+---@private
+---@param config render.md.BufferConfig
+---@param info render.md.NodeInfo
+---@param checkbox render.md.CustomComponent
+---@return render.md.Mark?
+function M.checkbox(config, info, checkbox)
+    if not config.checkbox.enabled then
+        return nil
+    end
+    -- Requires inline extmarks
+    if not util.has_10 then
+        return nil
+    end
+    ---@type render.md.Mark
+    return {
+        conceal = true,
+        start_row = info.start_row,
+        start_col = info.start_col,
+        opts = {
+            end_row = info.end_row,
+            end_col = info.end_col,
+            virt_text = { { str.pad_to(info.text, checkbox.rendered), checkbox.highlight } },
+            virt_text_pos = 'inline',
+            conceal = '',
+        },
+    }
+end
+
+---@private
+---@param config render.md.BufferConfig
+---@param info render.md.NodeInfo
+---@return render.md.Mark?
+function M.wiki_link(config, info)
+    local link = config.link
+    if not link.enabled then
+        return nil
+    end
+    -- Requires inline extmarks
+    if not util.has_10 then
+        return nil
+    end
+    local text = info.text:sub(2, -2)
+    local elements = str.split(text, '|')
+    ---@type render.md.Mark
+    return {
+        conceal = true,
+        start_row = info.start_row,
+        start_col = info.start_col - 1,
+        opts = {
+            end_row = info.end_row,
+            end_col = info.end_col + 1,
+            virt_text = { { link.hyperlink .. elements[#elements], link.highlight } },
+            virt_text_pos = 'inline',
+            conceal = '',
+        },
+    }
 end
 
 ---@private
@@ -158,7 +209,7 @@ function M.link(config, buf, info)
         opts = {
             end_row = info.end_row,
             end_col = info.end_col,
-            virt_text = { { icon, config.link.highlight } },
+            virt_text = { { icon, link.highlight } },
             virt_text_pos = 'inline',
         },
     }

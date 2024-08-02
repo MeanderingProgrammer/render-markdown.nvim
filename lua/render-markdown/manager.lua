@@ -28,7 +28,7 @@ function M.setup()
             for _, win in ipairs(vim.v.event.windows) do
                 local buf = util.win_to_buf(win)
                 if vim.tbl_contains(buffers, buf) then
-                    ui.debcoune_update(buf)
+                    ui.debounce_update(buf)
                 end
             end
         end,
@@ -41,7 +41,7 @@ function M.set_all(enabled)
     M.attach(vim.api.nvim_get_current_buf())
     state.enabled = enabled
     for _, buf in ipairs(buffers) do
-        ui.debcoune_update(buf)
+        ui.debounce_update(buf)
     end
 end
 
@@ -73,7 +73,7 @@ function M.attach(buf)
         group = M.group,
         buffer = buf,
         callback = function()
-            ui.debcoune_update(buf)
+            ui.debounce_update(buf)
         end,
     })
 end

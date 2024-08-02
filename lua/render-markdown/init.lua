@@ -184,7 +184,7 @@ M.default_config = {
     inline_query = [[
         (code_span) @code
 
-        (shortcut_link) @callout
+        (shortcut_link) @shortcut
 
         [(inline_link) (full_reference_link) (image)] @link
     ]],

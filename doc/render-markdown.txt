@@ -1,4 +1,4 @@
-*render-markdown.txt*          For 0.10.0          Last change: 2024 August 01
+*render-markdown.txt*          For 0.10.0          Last change: 2024 August 02
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -200,7 +200,7 @@ Full Default Configuration ~
         inline_query = [[
             (code_span) @code
     
-            (shortcut_link) @callout
+            (shortcut_link) @shortcut
     
             [(inline_link) (full_reference_link) (image)] @link
         ]],
