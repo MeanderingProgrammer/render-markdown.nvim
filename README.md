@@ -125,6 +125,9 @@ require('render-markdown').setup({
     -- Maximum file size (in MB) that this plugin will attempt to render
     -- Any file larger than this will effectively be ignored
     max_file_size = 1.5,
+    -- Milliseconds that must pass before updating marks, updates occur
+    -- within the context of the visible window, not the entire buffer
+    debounce = 100,
     -- Capture groups that get pulled from markdown
     markdown_query = [[
         (atx_heading [
@@ -427,8 +430,8 @@ require('render-markdown').setup({
     -- More granular configuration mechanism, allows different aspects of buffers
     -- to have their own behavior. Values default to the top level configuration
     -- if no override is provided. Supports the following fields:
-    --   enabled, max_file_size, render_modes, anti_conceal, heading, code, dash, bullet,
-    --   checkbox, quote, pipe_table, callout, link, sign, win_options
+    --   enabled, max_file_size, debounce, render_modes, anti_conceal, heading, code,
+    --   dash, bullet, checkbox, quote, pipe_table, callout, link, sign, win_options
     overrides = {
         -- Overrides for different buftypes, see :h 'buftype'
         buftype = {

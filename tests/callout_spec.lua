@@ -83,13 +83,7 @@ describe('callout.md', function()
             util.quote(caution_start + 3, '%s ', error), -- Quote continued
         })
 
-        local bug_start = 31
-        vim.list_extend(expected, util.heading(bug_start, 1))
-        vim.list_extend(expected, {
-            util.quote(bug_start + 2, '%s ', error), -- Quote start
-            callout(bug_start + 2, 2, 8, '󰨰 Bug', error), -- Callout text
-            util.quote(bug_start + 3, '%s ', error), -- Quote continued
-        })
+        vim.list_extend(expected, util.heading(31, 1))
 
         local actual = util.get_actual_marks()
         util.marks_are_equal(expected, actual)

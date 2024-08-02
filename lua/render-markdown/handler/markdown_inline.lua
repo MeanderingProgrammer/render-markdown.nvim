@@ -16,9 +16,7 @@ local M = {}
 function M.parse(root, buf)
     local config = state.get_config(buf)
     local marks = {}
-    local query = state.inline_query
-    for id, node in query:iter_captures(root, buf) do
-        local capture = query.captures[id]
+    context.get(buf):query(root, state.inline_query, function(capture, node)
         local info = ts.info(node, buf)
         logger.debug_node_info(capture, info)
         if capture == 'code' then
@@ -30,7 +28,7 @@ function M.parse(root, buf)
         else
             logger.unhandled_capture('inline', capture)
         end
-    end
+    end)
     return marks
 end
 

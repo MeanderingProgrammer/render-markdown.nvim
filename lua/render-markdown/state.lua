@@ -66,6 +66,7 @@ function M.default_buffer_config()
     return {
         enabled = true,
         max_file_size = config.max_file_size,
+        debounce = config.debounce,
         render_modes = config.render_modes,
         anti_conceal = config.anti_conceal,
         heading = config.heading,
@@ -309,6 +310,7 @@ function M.validate()
     append_errors('render-markdown', config, {
         enabled = { config.enabled, 'boolean' },
         max_file_size = { config.max_file_size, 'number' },
+        debounce = { config.debounce, 'number' },
         render_modes = string_array(config.render_modes, false),
         anti_conceal = { config.anti_conceal, 'table' },
         heading = { config.heading, 'table' },
@@ -353,6 +355,7 @@ function M.validate()
         append_errors(path, override, {
             enabled = { override.enabled, 'boolean', true },
             max_file_size = { override.max_file_size, 'number', true },
+            debounce = { override.debounce, 'number', true },
             render_modes = string_array(override.render_modes, true),
             anti_conceal = { override.anti_conceal, 'table', true },
             heading = { override.heading, 'table', true },

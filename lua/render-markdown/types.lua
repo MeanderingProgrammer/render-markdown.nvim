@@ -97,6 +97,7 @@
 ---@class (exact) render.md.BufferConfig
 ---@field public enabled boolean
 ---@field public max_file_size number
+---@field public debounce integer
 ---@field public render_modes string[]
 ---@field public anti_conceal render.md.AntiConceal
 ---@field public heading render.md.Heading

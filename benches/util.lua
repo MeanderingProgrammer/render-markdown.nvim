@@ -8,13 +8,11 @@ local truthy = assert.truthy
 local M = {}
 
 ---@param file string
----@param opts? render.md.UserConfig
 ---@return number
-function M.setup(file, opts)
+function M.setup(file)
     return M.time(function()
-        require('render-markdown').setup(opts)
+        require('render-markdown').setup({ debounce = 0 })
         vim.cmd('e ' .. file)
-        vim.wait(0)
     end)
 end
 
@@ -25,7 +23,6 @@ function M.move_down(n)
         M.feed(string.format('%dj', n))
         -- Unsure why, but the CursorMoved event needs to be triggered manually
         vim.api.nvim_exec_autocmds('CursorMoved', {})
-        vim.wait(0)
     end)
 end
 
@@ -33,7 +30,6 @@ end
 function M.insert_mode()
     return M.time(function()
         M.feed('i')
-        vim.wait(0)
     end)
 end
 
@@ -43,6 +39,7 @@ end
 function M.time(f)
     local start = vim.uv.hrtime()
     f()
+    vim.wait(0)
     return (vim.uv.hrtime() - start) / 1e+6
 end
 

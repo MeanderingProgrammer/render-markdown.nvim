@@ -20,9 +20,7 @@ local M = {}
 function M.parse(root, buf)
     local config = state.get_config(buf)
     local marks = {}
-    local query = state.markdown_query
-    for id, node in query:iter_captures(root, buf) do
-        local capture = query.captures[id]
+    context.get(buf):query(root, state.markdown_query, function(capture, node)
         local info = ts.info(node, buf)
         logger.debug_node_info(capture, info)
         if capture == 'heading' then
@@ -38,9 +36,7 @@ function M.parse(root, buf)
         elseif capture == 'checkbox_checked' then
             list.add_mark(marks, M.checkbox(config, info, config.checkbox.checked))
         elseif capture == 'quote' then
-            local quote_query = state.markdown_quote_query
-            for nested_id, nested_node in quote_query:iter_captures(info.node, buf) do
-                local nested_capture = quote_query.captures[nested_id]
+            context.get(buf):query(info.node, state.markdown_quote_query, function(nested_capture, nested_node)
                 local nested_info = ts.info(nested_node, buf)
                 logger.debug_node_info(nested_capture, nested_info)
                 if nested_capture == 'quote_marker' then
@@ -48,13 +44,13 @@ function M.parse(root, buf)
                 else
                     logger.unhandled_capture('markdown quote', nested_capture)
                 end
-            end
+            end)
         elseif capture == 'table' then
             vim.list_extend(marks, M.pipe_table(config, buf, info))
         else
             logger.unhandled_capture('markdown', capture)
         end
-    end
+    end)
     return marks
 end
 

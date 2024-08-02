@@ -1,6 +1,8 @@
 ---@class render.md.Context
 ---@field private buf integer
 ---@field private win integer
+---@field private top integer
+---@field private bottom integer
 ---@field private conceallevel integer
 ---@field private conceal? table<integer, [integer, integer][]>
 ---@field private links table<integer, [integer, integer, string][]>
@@ -9,10 +11,15 @@ Context.__index = Context
 
 ---@param buf integer
 ---@param win integer
-function Context.new(buf, win)
+---@param offset integer
+function Context.new(buf, win, offset)
     local self = setmetatable({}, Context)
     self.buf = buf
     self.win = win
+    local top = vim.api.nvim_win_call(win, vim.fn.winsaveview).topline - 1
+    local height = vim.api.nvim_win_get_height(win)
+    self.top = math.max(top - offset, 0)
+    self.bottom = top + height + offset
     self.conceallevel = vim.api.nvim_get_option_value('conceallevel', { scope = 'local', win = win })
     self.conceal = nil
     self.links = {}
@@ -40,6 +47,28 @@ function Context:get_width()
     return vim.api.nvim_win_get_width(self.win)
 end
 
+---@return Range2
+function Context:range()
+    return { self.top, self.bottom }
+end
+
+---@param node TSNode
+---@return boolean
+function Context:contains_node(node)
+    local top, _, bottom, _ = node:range()
+    return top <= self.bottom and bottom >= self.top
+end
+
+---@param root TSNode
+---@param query vim.treesitter.Query
+---@param cb fun(capture: string, node: TSNode, metadata: vim.treesitter.query.TSMetadata)
+function Context:query(root, query, cb)
+    for id, node, metadata in query:iter_captures(root, self.buf, self.top, self.bottom) do
+        local capture = query.captures[id]
+        cb(capture, node, metadata)
+    end
+end
+
 ---@param row integer
 ---@return [integer, integer][]
 function Context:get_conceal(row)
@@ -58,6 +87,7 @@ function Context:compute_conceal()
     end
     local ranges = {}
     local parser = vim.treesitter.get_parser(self.buf)
+    parser:parse(self:range())
     parser:for_each_tree(function(tree, language_tree)
         local nodes = self:compute_conceal_nodes(language_tree:lang(), tree:root())
         for _, node in ipairs(nodes) do
@@ -76,6 +106,9 @@ end
 ---@param root TSNode
 ---@return TSNode[]
 function Context:compute_conceal_nodes(language, root)
+    if not self:contains_node(root) then
+        return {}
+    end
     if not vim.tbl_contains({ 'markdown', 'markdown_inline' }, language) then
         return {}
     end
@@ -84,11 +117,11 @@ function Context:compute_conceal_nodes(language, root)
         return {}
     end
     local nodes = {}
-    for _, node, metadata in query:iter_captures(root, self.buf) do
+    self:query(root, query, function(_, node, metadata)
         if metadata.conceal ~= nil then
             table.insert(nodes, node)
         end
-    end
+    end)
     return nodes
 end
 
@@ -101,7 +134,7 @@ local M = {}
 ---@param buf integer
 ---@param win integer
 function M.reset(buf, win)
-    cache[buf] = Context.new(buf, win)
+    cache[buf] = Context.new(buf, win, 10)
 end
 
 ---@param buf integer
