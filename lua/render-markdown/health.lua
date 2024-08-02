@@ -3,9 +3,14 @@ local state = require('render-markdown.state')
 ---@class render.md.Health
 local M = {}
 
+---@private
+---@type string
+M.version = '5.1.0'
+
 function M.check()
-    vim.health.start('markdown.nvim [neovim version]')
-    M.version('0.9', '0.10')
+    vim.health.start('markdown.nvim [version]')
+    vim.health.ok('plugin ' .. M.version)
+    M.neovim('0.9', '0.10')
 
     vim.health.start('markdown.nvim [configuration]')
     local errors = state.validate()
@@ -53,18 +58,20 @@ function M.check()
     end
 end
 
+---@private
 ---@param minimum string
 ---@param recommended string
-function M.version(minimum, recommended)
+function M.neovim(minimum, recommended)
     if vim.fn.has('nvim-' .. minimum) == 0 then
-        vim.health.error('Version < ' .. minimum)
+        vim.health.error('neovim < ' .. minimum)
     elseif vim.fn.has('nvim-' .. recommended) == 0 then
-        vim.health.warn('Version < ' .. recommended .. ' some features will not work')
+        vim.health.warn('neovim < ' .. recommended .. ' some features will not work')
     else
-        vim.health.ok('Version >= ' .. recommended)
+        vim.health.ok('neovim >= ' .. recommended)
     end
 end
 
+---@private
 ---@param language string
 ---@param advice? string
 function M.check_parser(language, advice)
@@ -78,6 +85,7 @@ function M.check_parser(language, advice)
     end
 end
 
+---@private
 ---@param language string
 function M.check_highlight(language)
     local configs = require('nvim-treesitter.configs')
@@ -88,6 +96,7 @@ function M.check_highlight(language)
     end
 end
 
+---@private
 ---@param name string
 ---@param advice? string
 function M.check_executable(name, advice)
@@ -100,6 +109,7 @@ function M.check_executable(name, advice)
     end
 end
 
+---@private
 ---@param name string
 ---@param advice? string[]
 function M.check_plugin(name, advice)
