@@ -50,11 +50,10 @@ function M.feed(keys)
     vim.api.nvim_feedkeys(escape, 'nx', false)
 end
 
----@param low integer
----@param high integer
 ---@param actual number
-function M.between(low, high, actual)
-    truthy(actual > low and actual < high, string.format('expected %d < %f < %d', low, actual, high))
+---@param max number
+function M.less_than(actual, max)
+    truthy(actual < max, string.format('expected %f < %f', actual, max))
 end
 
 ---@param expected integer

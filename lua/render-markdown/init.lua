@@ -141,7 +141,7 @@ M.default_config = {
     enabled = true,
     -- Maximum file size (in MB) that this plugin will attempt to render
     -- Any file larger than this will effectively be ignored
-    max_file_size = 1.5,
+    max_file_size = 10.0,
     -- Milliseconds that must pass before updating marks, updates occur
     -- within the context of the visible window, not the entire buffer
     debounce = 100,

@@ -28,7 +28,7 @@ function M.setup()
             for _, win in ipairs(vim.v.event.windows) do
                 local buf = util.win_to_buf(win)
                 if vim.tbl_contains(buffers, buf) then
-                    ui.debounce_update(buf)
+                    ui.debounce_update(buf, true)
                 end
             end
         end,
@@ -41,7 +41,7 @@ function M.set_all(enabled)
     M.attach(vim.api.nvim_get_current_buf())
     state.enabled = enabled
     for _, buf in ipairs(buffers) do
-        ui.debounce_update(buf)
+        ui.debounce_update(buf, true)
     end
 end
 
@@ -63,17 +63,17 @@ function M.attach(buf)
     end
     table.insert(buffers, buf)
 
-    local events = { 'BufWinEnter', 'BufLeave', 'ModeChanged' }
-    vim.list_extend(events, { 'CursorHold', 'CursorMoved', 'TextChanged' })
+    local events = { 'BufWinEnter', 'BufLeave', 'CursorHold', 'CursorMoved' }
+    local change_events = { 'ModeChanged', 'TextChanged' }
     if vim.tbl_contains(config.render_modes, 'i') then
-        vim.list_extend(events, { 'CursorHoldI', 'CursorMovedI', 'TextChangedI' })
+        vim.list_extend(events, { 'CursorHoldI', 'CursorMovedI' })
+        vim.list_extend(change_events, { 'TextChangedI' })
     end
-
-    vim.api.nvim_create_autocmd(events, {
+    vim.api.nvim_create_autocmd(vim.list_extend(events, change_events), {
         group = M.group,
         buffer = buf,
-        callback = function()
-            ui.debounce_update(buf)
+        callback = function(args)
+            ui.debounce_update(buf, vim.tbl_contains(change_events, args.event))
         end,
     })
 end

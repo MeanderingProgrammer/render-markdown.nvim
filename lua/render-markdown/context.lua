@@ -3,7 +3,6 @@
 ---@field private win integer
 ---@field private top integer
 ---@field private bottom integer
----@field private conceallevel integer
 ---@field private conceal? table<integer, [integer, integer][]>
 ---@field private links table<integer, [integer, integer, string][]>
 local Context = {}
@@ -12,15 +11,16 @@ Context.__index = Context
 ---@param buf integer
 ---@param win integer
 ---@param offset integer
+---@return render.md.Context
 function Context.new(buf, win, offset)
     local self = setmetatable({}, Context)
     self.buf = buf
     self.win = win
     local top = vim.api.nvim_win_call(win, vim.fn.winsaveview).topline - 1
     local height = vim.api.nvim_win_get_height(win)
+    local lines = vim.api.nvim_buf_line_count(buf)
     self.top = math.max(top - offset, 0)
-    self.bottom = top + height + offset
-    self.conceallevel = vim.api.nvim_get_option_value('conceallevel', { scope = 'local', win = win })
+    self.bottom = math.min(top + height + offset, lines)
     self.conceal = nil
     self.links = {}
     return self
@@ -45,6 +45,12 @@ end
 ---@return integer
 function Context:get_width()
     return vim.api.nvim_win_get_width(self.win)
+end
+
+---@param other render.md.Context
+---@return boolean
+function Context:contains_range(other)
+    return self.top <= other.top and self.bottom >= other.bottom
 end
 
 ---@return Range2
@@ -82,7 +88,8 @@ end
 ---@private
 ---@return table<integer, [integer, integer][]>
 function Context:compute_conceal()
-    if self.conceallevel == 0 then
+    local conceallevel = vim.api.nvim_get_option_value('conceallevel', { scope = 'local', win = self.win })
+    if conceallevel == 0 then
         return {}
     end
     local ranges = {}
@@ -135,6 +142,17 @@ local M = {}
 ---@param win integer
 function M.reset(buf, win)
     cache[buf] = Context.new(buf, win, 10)
+end
+
+---@param buf integer
+---@param win integer
+---@return boolean
+function M.contains_range(buf, win)
+    local context = cache[buf]
+    if context == nil then
+        return false
+    end
+    return context:contains_range(Context.new(buf, win, 0))
 end
 
 ---@param buf integer

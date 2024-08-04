@@ -3,6 +3,7 @@
 ---@field private timer uv_timer_t
 ---@field private running boolean
 ---@field state? 'default'|'rendered'
+---@field marks? render.md.Extmark[]
 local BufferState = {}
 BufferState.__index = BufferState
 
@@ -14,18 +15,19 @@ function BufferState.new(buf)
     self.timer = (vim.uv or vim.loop).new_timer()
     self.running = false
     self.state = nil
+    self.marks = nil
     return self
 end
 
 ---@param ms integer
----@param cb fun(buf: integer)
-function BufferState:debounce(ms, cb)
+---@param callback fun()
+function BufferState:debounce(ms, callback)
     self.timer:start(ms, 0, function()
         self.running = false
     end)
     if not self.running then
         self.running = true
-        vim.schedule_wrap(cb)(self.buf)
+        vim.schedule(callback)
     end
 end
 

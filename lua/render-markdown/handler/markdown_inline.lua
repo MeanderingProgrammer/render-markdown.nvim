@@ -71,7 +71,7 @@ function M.shortcut(config, buf, info)
     if checkbox ~= nil then
         return M.checkbox(config, info, checkbox)
     end
-    local line = vim.api.nvim_buf_get_lines(buf, info.start_row, info.start_row + 1, true)[1]
+    local line = vim.api.nvim_buf_get_lines(buf, info.start_row, info.start_row + 1, false)[1]
     if line:find('[' .. info.text .. ']', 1, true) ~= nil then
         return M.wiki_link(config, info)
     end

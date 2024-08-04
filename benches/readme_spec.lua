@@ -5,13 +5,13 @@ local util = require('benches.util')
 describe('README.md', function()
     it('default', function()
         local base_marks = 55
-        util.between(30, 50, util.setup('README.md'))
+        util.less_than(util.setup('README.md'), 50)
         util.num_marks(base_marks)
 
-        util.between(1, 5, util.move_down(1))
+        util.less_than(util.move_down(1), 0.5)
         util.num_marks(base_marks + 2)
 
-        util.between(10, 20, util.insert_mode())
+        util.less_than(util.insert_mode(), 20)
         util.num_marks(base_marks + 2)
     end)
 end)
