@@ -19,8 +19,8 @@ local M = {}
 ---@field public bottom_pad? integer
 
 ---@class (exact) render.md.UserWindowOption
----@field public default? number|string
----@field public rendered? number|string
+---@field public default? number|string|boolean
+---@field public rendered? number|string|boolean
 
 ---@class (exact) render.md.UserSign
 ---@field public enabled? boolean
@@ -50,6 +50,7 @@ local M = {}
 ---@class (exact) render.md.UserQuote
 ---@field public enabled? boolean
 ---@field public icon? string
+---@field public repeat_linebreak? boolean
 ---@field public highlight? string
 
 ---@class (exact) render.md.UserCheckboxComponent
@@ -354,6 +355,12 @@ M.default_config = {
         enabled = true,
         -- Replaces '>' of 'block_quote'
         icon = '▋',
+        -- Whether to repeat icon on wrapped lines. Requires neovim >= 0.10. This will obscure text if
+        -- not configured correctly with :h 'showbreak', :h 'breakindent' and :h 'breakindentopt'. A
+        -- combination of these that is likely to work is showbreak = '  ' (2 spaces), breakindent = true,
+        -- breakindentopt = '' (empty string). These values are not validated by this plugin. If you want
+        -- to avoid adding these to your main configuration then set them in win_options for this plugin.
+        repeat_linebreak = false,
         -- Highlight for the quote icon
         highlight = 'RenderMarkdownQuote',
     },

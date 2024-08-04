@@ -1,3 +1,5 @@
+local util = require('render-markdown.util')
+
 ---@class render.md.Context
 ---@field private buf integer
 ---@field private win integer
@@ -88,7 +90,7 @@ end
 ---@private
 ---@return table<integer, [integer, integer][]>
 function Context:compute_conceal()
-    local conceallevel = vim.api.nvim_get_option_value('conceallevel', { scope = 'local', win = self.win })
+    local conceallevel = util.get_win(self.win, 'conceallevel')
     if conceallevel == 0 then
         return {}
     end

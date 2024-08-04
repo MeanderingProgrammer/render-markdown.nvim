@@ -28,14 +28,21 @@ end
 
 ---@param win integer
 ---@param name string
----@param value number|string
+---@return number|string|boolean
+function M.get_win(win, name)
+    return vim.api.nvim_get_option_value(name, { scope = 'local', win = win })
+end
+
+---@param win integer
+---@param name string
+---@param value number|string|boolean
 function M.set_win(win, name, value)
     vim.api.nvim_set_option_value(name, value, { scope = 'local', win = win })
 end
 
 ---@param buf integer
 ---@param name string
----@return number|string
+---@return number|string|boolean
 function M.get_buf(buf, name)
     return vim.api.nvim_get_option_value(name, { buf = buf })
 end

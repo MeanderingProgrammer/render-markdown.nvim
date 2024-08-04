@@ -507,6 +507,7 @@ function M.quote_marker(config, info, block_quote)
             end_col = info.end_col,
             virt_text = { { info.text:gsub('>', quote.icon), highlight } },
             virt_text_pos = 'overlay',
+            virt_text_repeat_linebreak = quote.repeat_linebreak or nil,
         },
     }
 end

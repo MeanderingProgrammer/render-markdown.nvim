@@ -8,8 +8,8 @@
 ---@field public bottom_pad integer
 
 ---@class (exact) render.md.WindowOption
----@field public default number|string
----@field public rendered number|string
+---@field public default number|string|boolean
+---@field public rendered number|string|boolean
 
 ---@class (exact) render.md.Sign
 ---@field public enabled boolean
@@ -39,6 +39,7 @@
 ---@class (exact) render.md.Quote
 ---@field public enabled boolean
 ---@field public icon string
+---@field public repeat_linebreak boolean
 ---@field public highlight string
 
 ---@class (exact) render.md.CheckboxComponent

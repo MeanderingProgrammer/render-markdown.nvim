@@ -337,6 +337,12 @@ require('render-markdown').setup({
         enabled = true,
         -- Replaces '>' of 'block_quote'
         icon = '▋',
+        -- Whether to repeat icon on wrapped lines. Requires neovim >= 0.10. This will obscure text if
+        -- not configured correctly with :h 'showbreak', :h 'breakindent' and :h 'breakindentopt'. A
+        -- combination of these that is likely to work is showbreak = '  ' (2 spaces), breakindent = true,
+        -- breakindentopt = '' (empty string). These values are not validated by this plugin. If you want
+        -- to avoid adding these to your main configuration then set them in win_options for this plugin.
+        repeat_linebreak = false,
         -- Highlight for the quote icon
         highlight = 'RenderMarkdownQuote',
     },
@@ -633,6 +639,12 @@ require('render-markdown').setup({
         enabled = true,
         -- Replaces '>' of 'block_quote'
         icon = '▋',
+        -- Whether to repeat icon on wrapped lines. Requires neovim >= 0.10. This will obscure text if
+        -- not configured correctly with :h 'showbreak', :h 'breakindent' and :h 'breakindentopt'. A
+        -- combination of these that is likely to work is showbreak = '  ' (2 spaces), breakindent = true,
+        -- breakindentopt = '' (empty string). These values are not validated by this plugin. If you want
+        -- to avoid adding these to your main configuration then set them in win_options for this plugin.
+        repeat_linebreak = false,
         -- Highlight for the quote icon
         highlight = 'RenderMarkdownQuote',
     },

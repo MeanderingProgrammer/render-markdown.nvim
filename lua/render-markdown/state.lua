@@ -250,6 +250,7 @@ function M.validate()
             append_errors(path .. '.quote', quote, {
                 enabled = { quote.enabled, 'boolean', nilable },
                 icon = { quote.icon, 'string', nilable },
+                repeat_linebreak = { quote.repeat_linebreak, 'boolean', nilable },
                 highlight = { quote.highlight, 'string', nilable },
             })
         end
@@ -299,8 +300,8 @@ function M.validate()
         if config.win_options ~= nil then
             for name, win_option in pairs(config.win_options) do
                 append_errors(path .. '.win_options.' .. name, win_option, {
-                    default = { win_option.default, { 'number', 'string' } },
-                    rendered = { win_option.rendered, { 'number', 'string' } },
+                    default = { win_option.default, { 'number', 'string', 'boolean' } },
+                    rendered = { win_option.rendered, { 'number', 'string', 'boolean' } },
                 })
             end
         end
