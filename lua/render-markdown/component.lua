@@ -49,4 +49,16 @@ function M.checkbox(config, text, comparison)
     return nil
 end
 
+---@param config render.md.BufferConfig
+---@param text string
+---@return render.md.LinkComponent?
+function M.link(config, text)
+    for _, component in pairs(config.link.custom) do
+        if text:find(component.pattern) then
+            return component
+        end
+    end
+    return nil
+end
+
 return M

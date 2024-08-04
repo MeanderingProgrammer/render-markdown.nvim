@@ -129,14 +129,16 @@ end
 ---@param row integer
 ---@param start_col integer
 ---@param end_col integer
----@param image boolean
+---@param kind 'image'|'link'|'web'
 ---@return render.md.MarkInfo
-function M.link(row, start_col, end_col, image)
+function M.link(row, start_col, end_col, kind)
     local icon
-    if image then
+    if kind == 'image' then
         icon = '󰥶 '
-    else
+    elseif kind == 'link' then
         icon = '󰌹 '
+    elseif kind == 'web' then
+        icon = '󰖟 '
     end
     ---@type render.md.MarkInfo
     return {

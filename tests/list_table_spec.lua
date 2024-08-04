@@ -29,7 +29,7 @@ describe('list_table.md', function()
         vim.list_extend(expected, util.heading(0, 1))
         vim.list_extend(expected, {
             bullet(2, 0, 1), -- List Item 1
-            util.link(2, 20, 47, false), -- List Item 1, link
+            util.link(2, 20, 47, 'web'), -- List Item 1, link
             bullet(3, 0, 1), -- List Item 2
             util.inline_code(3, 20, 28), -- List Item 2, code
             bullet(4, 2, 2, 2), -- Nested List 1 Item 1
@@ -38,7 +38,7 @@ describe('list_table.md', function()
             bullet(7, 8, 4), -- Nested List 3 Item 1
             bullet(8, 10, 1), -- Nested List 4 Item 1
             bullet(9, 0, 1), -- List Item 3
-            util.link(9, 20, 45, false), -- List Item 3, link
+            util.link(9, 20, 45, 'link'), -- List Item 3, link
         })
 
         -- Ordered list
@@ -82,7 +82,7 @@ describe('list_table.md', function()
             util.table_pipe(21, 0, false), -- Pipe 1
             util.table_border(21, 'below', { 8, 15, 7, 6 }),
             util.table_pipe(21, 9, false), -- Pipe 2
-            util.link(21, 11, 24, false), -- Link
+            util.link(21, 11, 24, 'link'), -- Link
             util.table_padding(21, 24, 7), -- Padding 1
             util.table_pipe(21, 25, false), -- Pipe 3
             util.table_pipe(21, 33, false), -- Pipe 4

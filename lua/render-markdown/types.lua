@@ -15,11 +15,17 @@
 ---@field public enabled boolean
 ---@field public highlight string
 
+---@class (exact) render.md.LinkComponent
+---@field public pattern string
+---@field public icon string
+---@field public highlight string
+
 ---@class (exact) render.md.Link
 ---@field public enabled boolean
 ---@field public image string
 ---@field public hyperlink string
 ---@field public highlight string
+---@field public custom table<string, render.md.LinkComponent>
 
 ---@class (exact) render.md.PipeTable
 ---@field public enabled boolean

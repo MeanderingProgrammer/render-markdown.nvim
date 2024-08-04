@@ -16,7 +16,7 @@ describe('heading_code.md', function()
         vim.list_extend(expected, util.heading(8, 6))
 
         vim.list_extend(expected, {
-            util.link(10, 0, 21, true), -- Image link
+            util.link(10, 0, 21, 'image'), -- Image link
             util.code_block(12, 22), -- Code block
         })
         vim.list_extend(expected, util.code_language(12, 3, 9, '󰌠 ', 'python', 'MiniIconsYellow'))

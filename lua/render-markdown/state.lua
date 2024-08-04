@@ -286,7 +286,17 @@ function M.validate()
                 image = { link.image, 'string', nilable },
                 hyperlink = { link.hyperlink, 'string', nilable },
                 highlight = { link.highlight, 'string', nilable },
+                custom = { link.custom, 'table', nilable },
             })
+            if link.custom ~= nil then
+                for name, component in pairs(link.custom) do
+                    append_errors(path .. '.link.custom.' .. name, component, {
+                        pattern = { component.pattern, 'string' },
+                        icon = { component.icon, 'string' },
+                        highlight = { component.highlight, 'string' },
+                    })
+                end
+            end
         end
 
         local sign = config.sign

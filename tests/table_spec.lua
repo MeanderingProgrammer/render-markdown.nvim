@@ -23,7 +23,7 @@ describe('table.md', function()
             util.inline_code(4, 2, 12), -- Row inline code
             util.table_padding(4, 12, 2), -- Row padding 1
             util.table_pipe(4, 13, false), -- Row pipe 2
-            util.link(4, 15, 38, false), -- Row link
+            util.link(4, 15, 38, 'web'), -- Row link
             util.table_padding(4, 38, 16), -- Row padding 2
             util.table_pipe(4, 39, false), -- Row pipe 3
         })
@@ -62,7 +62,7 @@ describe('table.md', function()
             util.table_pipe(4, 0, false), -- Row pipe 1
             util.inline_code(4, 2, 12), -- Row inline code
             util.table_pipe(4, 13, false), -- Row pipe 2
-            util.link(4, 15, 38, false), -- Row link
+            util.link(4, 15, 38, 'web'), -- Row link
             util.table_pipe(4, 39, false), -- Row pipe 3
         })
 
@@ -120,7 +120,7 @@ describe('table.md', function()
             table_row(4, 40, '│ `Item 行` │ [link](https://行.com) │', false),
             util.table_border(4, 'below', { 11, 24 }),
             util.inline_code(4, 2, 12), -- Row inline code
-            util.link(4, 15, 38, false), -- Row link
+            util.link(4, 15, 38, 'web'), -- Row link
         })
 
         -- Table no inline
