@@ -18,6 +18,13 @@ end
 
 ---@param buf integer
 ---@param win integer
+---@return boolean
+function M.valid(buf, win)
+    return vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_win_is_valid(win)
+end
+
+---@param buf integer
+---@param win integer
 ---@return integer?
 function M.cursor_row(buf, win)
     if vim.api.nvim_get_current_buf() ~= buf then

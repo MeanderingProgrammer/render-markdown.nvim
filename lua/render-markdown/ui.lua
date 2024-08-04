@@ -39,9 +39,8 @@ end
 ---@param buf integer
 ---@param change boolean
 function M.debounce_update(buf, change)
-    -- Check that buffer and associated window are valid
     local win = util.buf_to_win(buf)
-    if not vim.api.nvim_buf_is_valid(buf) or not vim.api.nvim_win_is_valid(win) then
+    if not util.valid(buf, win) then
         return
     end
 
@@ -65,6 +64,10 @@ end
 ---@param win integer
 ---@param parse boolean
 function M.update(buf, win, parse)
+    if not util.valid(buf, win) then
+        return
+    end
+
     local config = state.get_config(buf)
     local buf_state = cache[buf]
 
