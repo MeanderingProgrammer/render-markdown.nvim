@@ -6,7 +6,7 @@ Plugin to improve viewing Markdown files in Neovim
 
 |                                                                                                    |                                                                                                |
 | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| ![Heading Code](https://github.com/user-attachments/assets/663a34c5-0438-4688-8204-332065f65835)   | ![List Table](https://github.com/user-attachments/assets/106739a4-506f-4177-93e0-fd749e5ded5c) |
+| ![Heading Code](https://github.com/user-attachments/assets/663a34c5-0438-4688-8204-332065f65835)   | ![List Table](https://github.com/user-attachments/assets/162986e1-91f0-4e13-a83f-6183d58b0fcb) |
 | ![Box Dash Quote](https://github.com/user-attachments/assets/3f76e73e-b3a0-4cd8-90c1-208c5070659c) | ![LaTeX](https://github.com/user-attachments/assets/9e8909e4-7256-45fc-b481-4aba8850ebc3)      |
 | ![Callout](https://github.com/user-attachments/assets/4324ea72-a017-4175-9f9d-363da5e5f6ba)        |                                                                                                |
 

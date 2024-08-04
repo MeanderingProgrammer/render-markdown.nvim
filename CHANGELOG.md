@@ -35,6 +35,13 @@
   [4d8b603](https://github.com/MeanderingProgrammer/markdown.nvim/commit/4d8b6032b659a45582089de8bcd839f8ccc4161d)
 - Obsidian like custom callout titles [#109](https://github.com/MeanderingProgrammer/markdown.nvim/issues/109)
   [a1bcbf4](https://github.com/MeanderingProgrammer/markdown.nvim/commit/a1bcbf4858d1834f922029b5fc6ae55a7417bd51)
+- Support for wikilinks [e6695b4](https://github.com/MeanderingProgrammer/markdown.nvim/commit/e6695b4ff330cf9c216fe5e40491cee39d93383a)
+- Skip parsing when no text changes and already parsed [#115](https://github.com/MeanderingProgrammer/markdown.nvim/issues/115)
+  [6bb1d43](https://github.com/MeanderingProgrammer/markdown.nvim/commit/6bb1d43c9e360929d4497a0459084b062bfe9de5)
+- Callouts on wrapped lines kind of [#114](https://github.com/MeanderingProgrammer/markdown.nvim/issues/114)
+  [66110dd](https://github.com/MeanderingProgrammer/markdown.nvim/commit/66110ddfc27b8785f3046dcf516a4f75d6a8f0f9)
+- Custom link icons based on destination [#117](https://github.com/MeanderingProgrammer/markdown.nvim/issues/117)
+  [d5b57b3](https://github.com/MeanderingProgrammer/markdown.nvim/commit/d5b57b32397c0be1f511f4cdf2b876c5b1f01144)
 
 ### Bug Fixes
 
@@ -47,6 +54,10 @@
 ### Collaborator Shoutouts
 
 - @scottmckendry
+
+### Awesome Things
+
+- Supported by catppuccin colorscheme [#740](https://github.com/catppuccin/nvim/pull/740)
 
 ## 5.0.0 (2024-07-27)
 

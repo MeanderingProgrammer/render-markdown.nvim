@@ -158,7 +158,7 @@ function Handler:wiki_link(info)
     end
     local text = info.text:sub(2, -2)
     local parts = str.split(text, '|')
-    local icon, highlight = self:destination_info(parts[1])
+    local icon, highlight = self:dest_virt_text(parts[1])
     ---@type render.md.Mark
     return {
         conceal = true,
@@ -178,26 +178,11 @@ end
 ---@param info render.md.NodeInfo
 ---@return render.md.Mark?
 function Handler:link(info)
-    local link = self.config.link
     -- Requires inline extmarks
-    if not link.enabled or not util.has_10 then
+    if not self.config.link.enabled or not util.has_10 then
         return nil
     end
-    local icon, highlight
-    if info.type == 'inline_link' then
-        local destination = ts.child(self.buf, info, 'link_destination')
-        if destination ~= nil then
-            icon, highlight = self:destination_info(destination.text)
-        else
-            icon, highlight = link.hyperlink, link.highlight
-        end
-    elseif info.type == 'full_reference_link' then
-        icon, highlight = link.hyperlink, link.highlight
-    elseif info.type == 'image' then
-        icon, highlight = link.image, link.highlight
-    else
-        return nil
-    end
+    local icon, highlight = self:link_virt_text(info)
     context.get(self.buf):add_link(info, icon)
     ---@type render.md.Mark
     return {
@@ -214,15 +199,32 @@ function Handler:link(info)
 end
 
 ---@private
+---@param info render.md.NodeInfo
+---@return string, string
+function Handler:link_virt_text(info)
+    local link = self.config.link
+    if info.type == 'image' then
+        return link.image, link.highlight
+    elseif info.type == 'inline_link' then
+        local destination = ts.child(self.buf, info, 'link_destination')
+        if destination ~= nil then
+            return self:dest_virt_text(destination.text)
+        end
+    end
+    return link.hyperlink, link.highlight
+end
+
+---@private
 ---@param destination string
 ---@return string, string
-function Handler:destination_info(destination)
-    local link_component = component.link(self.config, destination)
-    if link_component == nil then
-        return self.config.link.hyperlink, self.config.link.highlight
-    else
-        return link_component.icon, link_component.highlight
+function Handler:dest_virt_text(destination)
+    local link = self.config.link
+    for _, link_component in pairs(link.custom) do
+        if destination:find(link_component.pattern) then
+            return link_component.icon, link_component.highlight
+        end
     end
+    return link.hyperlink, link.highlight
 end
 
 ---@class render.md.handler.MarkdownInline: render.md.Handler
