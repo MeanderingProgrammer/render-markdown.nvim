@@ -16,14 +16,14 @@ vim.api.nvim_create_user_command('RenderMarkdown', function(opts)
         if command ~= nil then
             command()
         else
-            vim.notify('markdown.nvim: unexpected command: ' .. args[1], vim.log.levels.ERROR)
+            vim.notify('render-markdown.nvim: unexpected command: ' .. args[1], vim.log.levels.ERROR)
         end
     else
-        vim.notify('markdown.nvim: unexpected # arguments: ' .. #args, vim.log.levels.ERROR)
+        vim.notify('render-markdown.nvim: unexpected # arguments: ' .. #args, vim.log.levels.ERROR)
     end
 end, {
     nargs = '*',
-    desc = 'markdown.nvim commands',
+    desc = 'render-markdown.nvim commands',
     complete = function(_, cmdline)
         if cmdline:find('RenderMarkdown%s+%S+%s+.*') then
             return {}

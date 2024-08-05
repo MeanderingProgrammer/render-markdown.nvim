@@ -165,7 +165,7 @@ function M.parse_tree(buf, language, root)
         -- TODO: remove call to render & parse nil check
         ---@diagnostic disable-next-line: undefined-field
         if user_handler.render ~= nil then
-            local message = 'markdown.nvim: custom_handlers render is deprecated use parse instead'
+            local message = 'render-markdown.nvim: custom_handlers render is deprecated use parse instead'
             message = message .. ', will be fully removed on 2024-08-19'
             vim.notify_once(message, vim.log.levels.ERROR)
             ---@diagnostic disable-next-line: undefined-field

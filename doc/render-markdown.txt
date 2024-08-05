@@ -3,7 +3,7 @@
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
 
-1. markdown.nvim                               |render-markdown-markdown.nvim|
+1. render-markdown.nvim                 |render-markdown-render-markdown.nvim|
 2. Features                                         |render-markdown-features|
 3. Requirements                                 |render-markdown-requirements|
 4. Install                                           |render-markdown-install|
@@ -30,7 +30,7 @@ Table of Contents                          *render-markdown-table-of-contents*
   - Additional                               |render-markdown-info-additional|
 
 ==============================================================================
-1. markdown.nvim                               *render-markdown-markdown.nvim*
+1. render-markdown.nvim                 *render-markdown-render-markdown.nvim*
 
 Plugin to improve viewing Markdown files in Neovim
 
@@ -90,10 +90,8 @@ LAZY.NVIM                                  *render-markdown-install-lazy.nvim*
 
 >lua
     {
-        'MeanderingProgrammer/markdown.nvim',
-        main = "render-markdown",
+        'MeanderingProgrammer/render-markdown.nvim',
         opts = {},
-        name = 'render-markdown', -- Only needed if you have another plugin named markdown.nvim
         dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
         -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
         -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
@@ -106,6 +104,8 @@ ROCKS.NVIM                                *render-markdown-install-rocks.nvim*
 This plugin is available on LuaRocks
 <https://luarocks.org/modules/MeanderingProgrammer/markdown.nvim>
 
+- TODO: Publish this under both packages?
+
 >vim
     :Rocks install markdown.nvim
 <
@@ -115,8 +115,7 @@ PACKER.NVIM                              *render-markdown-install-packer.nvim*
 
 >lua
     use({
-        'MeanderingProgrammer/markdown.nvim',
-        as = 'render-markdown', -- Only needed if you have another plugin named markdown.nvim
+        'MeanderingProgrammer/render-markdown.nvim',
         after = { 'nvim-treesitter' },
         requires = { 'echasnovski/mini.nvim', opt = true }, -- if you use the mini.nvim suite
         -- requires = { 'echasnovski/mini.icons', opt = true }, -- if you use standalone mini plugins
@@ -932,8 +931,7 @@ OBSIDIAN.NVIM                             *render-markdown-info-obsidian.nvim*
   things like this can break at any time given the reliance on internal logic:
   >lua
       return {
-          'MeanderingProgrammer/markdown.nvim',
-          name = 'render-markdown',
+          'MeanderingProgrammer/render-markdown.nvim',
           cmd = { 'RenderMarkdown' },
           dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' },
           config = function()

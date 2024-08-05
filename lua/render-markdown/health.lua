@@ -8,11 +8,11 @@ local M = {}
 M.version = '5.1.4'
 
 function M.check()
-    vim.health.start('markdown.nvim [version]')
+    vim.health.start('render-markdown.nvim [version]')
     vim.health.ok('plugin ' .. M.version)
     M.neovim('0.9', '0.10')
 
-    vim.health.start('markdown.nvim [configuration]')
+    vim.health.start('render-markdown.nvim [configuration]')
     local errors = state.validate()
     if #errors == 0 then
         vim.health.ok('valid')
@@ -24,7 +24,7 @@ function M.check()
     local latex = state.latex
     local latex_advice = 'Disable LaTeX support to avoid this warning by setting { latex = { enabled = false } }'
 
-    vim.health.start('markdown.nvim [nvim-treesitter]')
+    vim.health.start('render-markdown.nvim [nvim-treesitter]')
     local has_treesitter = pcall(require, 'nvim-treesitter')
     if has_treesitter then
         vim.health.ok('installed')
@@ -39,14 +39,14 @@ function M.check()
         vim.health.error('not installed')
     end
 
-    vim.health.start('markdown.nvim [executables]')
+    vim.health.start('render-markdown.nvim [executables]')
     if latex.enabled then
         M.check_executable(latex.converter, latex_advice)
     else
         vim.health.ok('none to check')
     end
 
-    vim.health.start('markdown.nvim [conflicts]')
+    vim.health.start('render-markdown.nvim [conflicts]')
     if state.acknowledge_conflicts then
         vim.health.ok('conflicts acknowledged')
     else

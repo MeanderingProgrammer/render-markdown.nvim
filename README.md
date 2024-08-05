@@ -1,4 +1,4 @@
-# markdown.nvim
+# render-markdown.nvim
 
 Plugin to improve viewing Markdown files in Neovim
 
@@ -63,10 +63,8 @@ Plugin to improve viewing Markdown files in Neovim
 
 ```lua
 {
-    'MeanderingProgrammer/markdown.nvim',
-    main = "render-markdown",
+    'MeanderingProgrammer/render-markdown.nvim',
     opts = {},
-    name = 'render-markdown', -- Only needed if you have another plugin named markdown.nvim
     dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
@@ -77,6 +75,8 @@ Plugin to improve viewing Markdown files in Neovim
 
 This plugin is available on [LuaRocks](https://luarocks.org/modules/MeanderingProgrammer/markdown.nvim)
 
+- TODO: Publish this under both packages?
+
 ```vim
 :Rocks install markdown.nvim
 ```
@@ -85,8 +85,7 @@ This plugin is available on [LuaRocks](https://luarocks.org/modules/MeanderingPr
 
 ```lua
 use({
-    'MeanderingProgrammer/markdown.nvim',
-    as = 'render-markdown', -- Only needed if you have another plugin named markdown.nvim
+    'MeanderingProgrammer/render-markdown.nvim',
     after = { 'nvim-treesitter' },
     requires = { 'echasnovski/mini.nvim', opt = true }, -- if you use the mini.nvim suite
     -- requires = { 'echasnovski/mini.icons', opt = true }, -- if you use standalone mini plugins
@@ -852,8 +851,7 @@ The table below shows all the highlight groups with their default link
 >
 > ```lua
 > return {
->     'MeanderingProgrammer/markdown.nvim',
->     name = 'render-markdown',
+>     'MeanderingProgrammer/render-markdown.nvim',
 >     cmd = { 'RenderMarkdown' },
 >     dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' },
 >     config = function()
