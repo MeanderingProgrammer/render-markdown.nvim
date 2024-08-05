@@ -1,4 +1,4 @@
-*render-markdown.txt*          For 0.10.0          Last change: 2024 August 04
+*render-markdown.txt*          For 0.10.0          Last change: 2024 August 05
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -34,6 +34,10 @@ Table of Contents                          *render-markdown-table-of-contents*
 
 Plugin to improve viewing Markdown files in Neovim
 
+
+  [!NOTE]
+  Repo has been renamed from `markdown.nvim` to make things less confusing and
+  more consistent. Github should redirect all requests so nothing should break.
 
 ==============================================================================
 2. Features                                         *render-markdown-features*
@@ -927,8 +931,9 @@ OBSIDIAN.NVIM                             *render-markdown-info-obsidian.nvim*
   You can also do something more custom like lazy loading this plugin via a
   command and adding logic to the config method to disable `obsidian.nvim` as
   suggested in #116
-  <https://github.com/MeanderingProgrammer/markdown.nvim/issues/116>, though
-  things like this can break at any time given the reliance on internal logic:
+  <https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/116>,
+  though things like this can break at any time given the reliance on internal
+  logic:
   >lua
       return {
           'MeanderingProgrammer/render-markdown.nvim',

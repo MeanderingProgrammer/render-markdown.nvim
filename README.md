@@ -2,6 +2,11 @@
 
 Plugin to improve viewing Markdown files in Neovim
 
+> [!NOTE]
+>
+> Repo has been renamed from `markdown.nvim` to make things less confusing and
+> more consistent. Github should redirect all requests so nothing should break.
+
 <!-- panvimdoc-ignore-start -->
 
 |                                                                                                    |                                                                                                |
@@ -846,8 +851,8 @@ The table below shows all the highlight groups with their default link
 >
 > You can also do something more custom like lazy loading this plugin via a command
 > and adding logic to the config method to disable `obsidian.nvim` as suggested in
-> [#116](https://github.com/MeanderingProgrammer/markdown.nvim/issues/116), though
-> things like this can break at any time given the reliance on internal logic:
+> [#116](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/116),
+> though things like this can break at any time given the reliance on internal logic:
 >
 > ```lua
 > return {
