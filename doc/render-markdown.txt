@@ -106,12 +106,10 @@ LAZY.NVIM                                  *render-markdown-install-lazy.nvim*
 ROCKS.NVIM                                *render-markdown-install-rocks.nvim*
 
 This plugin is available on LuaRocks
-<https://luarocks.org/modules/MeanderingProgrammer/markdown.nvim>
-
-- TODO: Publish this under both packages?
+<https://luarocks.org/modules/MeanderingProgrammer/render-markdown.nvim>
 
 >vim
-    :Rocks install markdown.nvim
+    :Rocks install render-markdown.nvim
 <
 
 
