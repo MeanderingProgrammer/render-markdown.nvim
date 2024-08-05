@@ -11,68 +11,81 @@ local str = require('render-markdown.str')
 local ts = require('render-markdown.ts')
 local util = require('render-markdown.util')
 
----@class render.md.handler.Markdown: render.md.Handler
-local M = {}
+---@class render.md.handler.buf.Markdown
+---@field private buf integer
+---@field private config render.md.BufferConfig
+---@field private marks render.md.Mark[]
+local Handler = {}
+Handler.__index = Handler
+
+---@param buf integer
+---@return render.md.handler.buf.Markdown
+function Handler.new(buf)
+    local self = setmetatable({}, Handler)
+    self.buf = buf
+    self.config = state.get_config(buf)
+    self.marks = {}
+    return self
+end
 
 ---@param root TSNode
----@param buf integer
 ---@return render.md.Mark[]
-function M.parse(root, buf)
-    local config = state.get_config(buf)
-    local marks = {}
-    context.get(buf):query(root, state.markdown_query, function(capture, node)
-        local info = ts.info(node, buf)
+function Handler:parse(root)
+    context.get(self.buf):query(root, state.markdown_query, function(capture, node)
+        local info = ts.info(node, self.buf)
         logger.debug_node_info(capture, info)
         if capture == 'heading' then
-            vim.list_extend(marks, M.heading(config, buf, info))
+            self:heading(info)
         elseif capture == 'dash' then
-            list.add_mark(marks, M.dash(config, buf, info))
+            self:dash(info)
         elseif capture == 'code' then
-            vim.list_extend(marks, M.code(config, buf, info))
+            self:code(info)
         elseif capture == 'list_marker' then
-            vim.list_extend(marks, M.list_marker(config, buf, info))
+            self:list_marker(info)
         elseif capture == 'checkbox_unchecked' then
-            list.add_mark(marks, M.checkbox(config, info, config.checkbox.unchecked))
+            self:checkbox(info, self.config.checkbox.unchecked)
         elseif capture == 'checkbox_checked' then
-            list.add_mark(marks, M.checkbox(config, info, config.checkbox.checked))
+            self:checkbox(info, self.config.checkbox.checked)
         elseif capture == 'quote' then
-            context.get(buf):query(info.node, state.markdown_quote_query, function(nested_capture, nested_node)
-                local nested_info = ts.info(nested_node, buf)
+            context.get(self.buf):query(info.node, state.markdown_quote_query, function(nested_capture, nested_node)
+                local nested_info = ts.info(nested_node, self.buf)
                 logger.debug_node_info(nested_capture, nested_info)
                 if nested_capture == 'quote_marker' then
-                    list.add_mark(marks, M.quote_marker(config, nested_info, info))
+                    self:quote_marker(nested_info, info)
                 else
                     logger.unhandled_capture('markdown quote', nested_capture)
                 end
             end)
         elseif capture == 'table' then
-            vim.list_extend(marks, M.pipe_table(config, buf, info))
+            self:pipe_table(info)
         else
             logger.unhandled_capture('markdown', capture)
         end
     end)
-    return marks
+    return self.marks
 end
 
 ---@private
----@param config render.md.BufferConfig
----@param buf integer
+---@param mark render.md.Mark
+function Handler:add(mark)
+    logger.debug('mark', mark)
+    table.insert(self.marks, mark)
+end
+
+---@private
 ---@param info render.md.NodeInfo
----@return render.md.Mark[]
-function M.heading(config, buf, info)
-    local heading = config.heading
+function Handler:heading(info)
+    local heading = self.config.heading
     if not heading.enabled then
-        return {}
+        return
     end
-    local marks = {}
 
     local level = str.width(info.text)
     local icon = list.cycle(heading.icons, level)
     local foreground = list.clamp(heading.foregrounds, level)
     local background = list.clamp(heading.backgrounds, level)
 
-    ---@type render.md.Mark
-    local background_mark = {
+    self:add({
         conceal = true,
         start_row = info.start_row,
         start_col = 0,
@@ -82,25 +95,23 @@ function M.heading(config, buf, info)
             hl_group = background,
             hl_eol = heading.width == 'full',
         },
-    }
-    list.add_mark(marks, background_mark)
+    })
 
     if heading.sign then
-        list.add_mark(marks, M.sign(config, info, list.cycle(heading.signs, level), foreground))
+        self:sign(info, list.cycle(heading.signs, level), foreground)
     end
 
     if icon == nil then
-        return marks
+        return
     end
     -- Available width is level + 1 - concealed, where level = number of `#` characters, one
     -- is added to account for the space after the last `#` but before the heading title,
     -- and concealed text is subtracted since that space is not usable
-    local padding = level + 1 - ts.concealed(buf, info) - str.width(icon)
+    local padding = level + 1 - ts.concealed(self.buf, info) - str.width(icon)
     if heading.position == 'inline' or padding < 0 then
         -- Requires inline extmarks to place when there is not enough space available
         if util.has_10 then
-            ---@type render.md.Mark
-            local icon_mark = {
+            self:add({
                 conceal = true,
                 start_row = info.start_row,
                 start_col = info.start_col,
@@ -111,12 +122,10 @@ function M.heading(config, buf, info)
                     virt_text_pos = 'inline',
                     conceal = '',
                 },
-            }
-            list.add_mark(marks, icon_mark)
+            })
         end
     else
-        ---@type render.md.Mark
-        local icon_mark = {
+        self:add({
             conceal = true,
             start_row = info.start_row,
             start_col = info.start_col,
@@ -126,33 +135,27 @@ function M.heading(config, buf, info)
                 virt_text = { { str.pad(padding, icon), { foreground, background } } },
                 virt_text_pos = 'overlay',
             },
-        }
-        list.add_mark(marks, icon_mark)
+        })
     end
-    return marks
 end
 
 ---@private
----@param config render.md.BufferConfig
----@param buf integer
 ---@param info render.md.NodeInfo
----@return render.md.Mark?
-function M.dash(config, buf, info)
-    local dash = config.dash
+function Handler:dash(info)
+    local dash = self.config.dash
     if not dash.enabled then
-        return nil
+        return
     end
 
     local width
     if dash.width == 'full' then
-        width = context.get(buf):get_width()
+        width = context.get(self.buf):get_width()
     else
         ---@type integer
         width = dash.width
     end
 
-    ---@type render.md.Mark
-    return {
+    self:add({
         conceal = true,
         start_row = info.start_row,
         start_col = 0,
@@ -160,57 +163,50 @@ function M.dash(config, buf, info)
             virt_text = { { dash.icon:rep(width), dash.highlight } },
             virt_text_pos = 'overlay',
         },
-    }
+    })
 end
 
 ---@private
----@param config render.md.BufferConfig
----@param buf integer
 ---@param info render.md.NodeInfo
----@return render.md.Mark[]
-function M.code(config, buf, info)
-    local code = config.code
+function Handler:code(info)
+    local code = self.config.code
     if not code.enabled or code.style == 'none' then
-        return {}
+        return
     end
-    local code_block = code_block_parser.parse(code, buf, info)
+    local code_block = code_block_parser.parse(code, self.buf, info)
     if code_block == nil then
-        return {}
+        return
     end
 
     local add_background = vim.tbl_contains({ 'normal', 'full' }, code.style)
     add_background = add_background and not vim.tbl_contains(code.disable_background, code_block.language)
 
-    local marks, icon_added = M.language(config, buf, code_block, add_background)
+    local icon_added = self:language(code_block, add_background)
     if add_background then
-        vim.list_extend(marks, M.code_background(config, buf, code_block, icon_added))
+        self:code_background(code_block, icon_added)
     end
-    vim.list_extend(marks, M.code_left_pad(config, code_block, add_background))
-    return marks
+    self:code_left_pad(code_block, add_background)
 end
 
 ---@private
----@param config render.md.BufferConfig
----@param buf integer
 ---@param code_block render.md.parsed.CodeBlock
 ---@param add_background boolean
----@return render.md.Mark[], boolean
-function M.language(config, buf, code_block, add_background)
-    local code = config.code
+---@return boolean
+function Handler:language(code_block, add_background)
+    local code = self.config.code
     if not vim.tbl_contains({ 'language', 'full' }, code.style) then
-        return {}, false
+        return false
     end
     local info = code_block.language_info
     if info == nil then
-        return {}, false
+        return false
     end
     local icon, icon_highlight = icons.get(info.text)
     if icon == nil or icon_highlight == nil then
-        return {}, false
+        return false
     end
-    local marks = {}
     if code.sign then
-        list.add_mark(marks, M.sign(config, info, icon, icon_highlight))
+        self:sign(info, icon, icon_highlight)
     end
     local highlight = { icon_highlight }
     if add_background then
@@ -219,14 +215,13 @@ function M.language(config, buf, code_block, add_background)
     -- Requires inline extmarks
     if code.position == 'left' and util.has_10 then
         local icon_text = icon .. ' '
-        if ts.hidden(buf, info) then
+        if ts.hidden(self.buf, info) then
             -- Code blocks will pick up varying amounts of leading white space depending on the
             -- context they are in. This gets lumped into the delimiter node and as a result,
             -- after concealing, the extmark will be left shifted. Logic below accounts for this.
             icon_text = str.pad(code_block.leading_spaces, icon_text .. info.text)
         end
-        ---@type render.md.Mark
-        local language_marker = {
+        self:add({
             conceal = true,
             start_row = info.start_row,
             start_col = info.start_col,
@@ -234,17 +229,15 @@ function M.language(config, buf, code_block, add_background)
                 virt_text = { { icon_text, highlight } },
                 virt_text_pos = 'inline',
             },
-        }
-        list.add_mark(marks, language_marker)
-        return marks, true
+        })
+        return true
     elseif code.position == 'right' then
         local icon_text = icon .. ' ' .. info.text
         local win_col = code_block.longest_line
         if code.width == 'block' then
             win_col = win_col - str.width(icon_text)
         end
-        ---@type render.md.Mark
-        local language_marker = {
+        self:add({
             conceal = true,
             start_row = info.start_row,
             start_col = 0,
@@ -252,29 +245,27 @@ function M.language(config, buf, code_block, add_background)
                 virt_text = { { icon_text, highlight } },
                 virt_text_win_col = win_col,
             },
-        }
-        list.add_mark(marks, language_marker)
-        return marks, true
+        })
+        return true
     else
-        return marks, false
+        return false
     end
 end
 
 ---@private
----@param config render.md.BufferConfig
----@param buf integer
 ---@param code_block render.md.parsed.CodeBlock
 ---@param icon_added boolean
----@return render.md.Mark[]
-function M.code_background(config, buf, code_block, icon_added)
-    local code = config.code
+function Handler:code_background(code_block, icon_added)
+    local code = self.config.code
 
-    local marks = {}
     if code.border == 'thin' then
         local border_width = code_block.width - code_block.col
-        if not icon_added and ts.hidden(buf, code_block.code_info) and ts.hidden(buf, code_block.start_delim) then
-            ---@type render.md.Mark
-            local start_mark = {
+        if
+            not icon_added
+            and ts.hidden(self.buf, code_block.code_info)
+            and ts.hidden(self.buf, code_block.start_delim)
+        then
+            self:add({
                 conceal = true,
                 start_row = code_block.start_row,
                 start_col = code_block.col,
@@ -282,13 +273,11 @@ function M.code_background(config, buf, code_block, icon_added)
                     virt_text = { { code.above:rep(border_width), colors.inverse(code.highlight) } },
                     virt_text_pos = 'overlay',
                 },
-            }
-            list.add_mark(marks, start_mark)
+            })
             code_block.start_row = code_block.start_row + 1
         end
-        if ts.hidden(buf, code_block.end_delim) then
-            ---@type render.md.Mark
-            local end_mark = {
+        if ts.hidden(self.buf, code_block.end_delim) then
+            self:add({
                 conceal = true,
                 start_row = code_block.end_row - 1,
                 start_col = code_block.col,
@@ -296,14 +285,12 @@ function M.code_background(config, buf, code_block, icon_added)
                     virt_text = { { code.below:rep(border_width), colors.inverse(code.highlight) } },
                     virt_text_pos = 'overlay',
                 },
-            }
-            list.add_mark(marks, end_mark)
+            })
             code_block.end_row = code_block.end_row - 1
         end
     end
 
-    ---@type render.md.Mark
-    local background_mark = {
+    self:add({
         conceal = false,
         start_row = code_block.start_row,
         start_col = 0,
@@ -313,15 +300,13 @@ function M.code_background(config, buf, code_block, icon_added)
             hl_group = code.highlight,
             hl_eol = true,
         },
-    }
-    list.add_mark(marks, background_mark)
+    })
 
     if code.width == 'block' then
         -- Overwrite anything beyond left_pad + block width + right_pad with Normal
         local padding = str.pad(vim.o.columns * 2)
         for row = code_block.start_row, code_block.end_row - 1 do
-            ---@type render.md.Mark
-            local block_background_mark = {
+            self:add({
                 conceal = false,
                 start_row = row,
                 start_col = 0,
@@ -330,25 +315,20 @@ function M.code_background(config, buf, code_block, icon_added)
                     virt_text = { { padding, 'Normal' } },
                     virt_text_win_col = code_block.width,
                 },
-            }
-            list.add_mark(marks, block_background_mark)
+            })
         end
     end
-    return marks
 end
 
 ---@private
----@param config render.md.BufferConfig
 ---@param code_block render.md.parsed.CodeBlock
 ---@param add_background boolean
----@return render.md.Mark[]
-function M.code_left_pad(config, code_block, add_background)
-    local code = config.code
+function Handler:code_left_pad(code_block, add_background)
+    local code = self.config.code
     -- Requires inline extmarks
     if not util.has_10 or code.left_pad <= 0 then
-        return {}
+        return
     end
-    local marks = {}
     local padding = str.pad(code.left_pad)
     local highlight
     if add_background then
@@ -358,8 +338,7 @@ function M.code_left_pad(config, code_block, add_background)
     end
     for row = code_block.start_row, code_block.end_row - 1 do
         -- Uses a low priority so other marks are loaded first and included in padding
-        ---@type render.md.Mark
-        local padding_mark = {
+        self:add({
             conceal = false,
             start_row = row,
             start_col = code_block.col,
@@ -369,39 +348,33 @@ function M.code_left_pad(config, code_block, add_background)
                 virt_text = { { padding, highlight } },
                 virt_text_pos = 'inline',
             },
-        }
-        list.add_mark(marks, padding_mark)
+        })
     end
-    return marks
 end
 
 ---@private
----@param config render.md.BufferConfig
----@param buf integer
 ---@param info render.md.NodeInfo
----@return render.md.Mark[]
-function M.list_marker(config, buf, info)
+function Handler:list_marker(info)
     ---@return boolean
     local function sibling_checkbox()
-        if not config.checkbox.enabled then
+        if not self.config.checkbox.enabled then
             return false
         end
-        if ts.sibling(buf, info, 'task_list_marker_unchecked') ~= nil then
+        if ts.sibling(self.buf, info, 'task_list_marker_unchecked') ~= nil then
             return true
         end
-        if ts.sibling(buf, info, 'task_list_marker_checked') ~= nil then
+        if ts.sibling(self.buf, info, 'task_list_marker_checked') ~= nil then
             return true
         end
-        local paragraph = ts.sibling(buf, info, 'paragraph')
+        local paragraph = ts.sibling(self.buf, info, 'paragraph')
         if paragraph == nil then
             return false
         end
-        return component.checkbox(config, paragraph.text, 'starts') ~= nil
+        return component.checkbox(self.config, paragraph.text, 'starts') ~= nil
     end
     if sibling_checkbox() then
         -- Hide the list marker for checkboxes rather than replacing with a bullet point
-        ---@type render.md.Mark
-        local checkbox_mark = {
+        self:add({
             conceal = true,
             start_row = info.start_row,
             start_col = info.start_col,
@@ -410,25 +383,22 @@ function M.list_marker(config, buf, info)
                 end_col = info.end_col,
                 conceal = '',
             },
-        }
-        return { checkbox_mark }
+        })
     else
-        local bullet = config.bullet
+        local bullet = self.config.bullet
         if not bullet.enabled then
-            return {}
+            return
         end
         local level = ts.level_in_section(info, 'list')
         local icon = list.cycle(bullet.icons, level)
         if icon == nil then
-            return {}
+            return
         end
-        local marks = {}
         -- List markers from tree-sitter should have leading spaces removed, however there are known
         -- edge cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
         -- As a result we handle leading spaces here, can remove if this gets fixed upstream
         local leading_spaces = str.leading_spaces(info.text)
-        ---@type render.md.Mark
-        local bullet_mark = {
+        self:add({
             conceal = true,
             start_row = info.start_row,
             start_col = info.start_col,
@@ -438,12 +408,10 @@ function M.list_marker(config, buf, info)
                 virt_text = { { str.pad(leading_spaces, icon), bullet.highlight } },
                 virt_text_pos = 'overlay',
             },
-        }
-        list.add_mark(marks, bullet_mark)
+        })
         -- Requires inline extmarks
         if util.has_10 and bullet.right_pad > 0 then
-            ---@type render.md.Mark
-            local padding_mark = {
+            self:add({
                 conceal = true,
                 start_row = info.start_row,
                 start_col = info.end_col - 1,
@@ -451,25 +419,19 @@ function M.list_marker(config, buf, info)
                     virt_text = { { str.pad(bullet.right_pad), 'Normal' } },
                     virt_text_pos = 'inline',
                 },
-            }
-            list.add_mark(marks, padding_mark)
+            })
         end
-        return marks
     end
 end
 
 ---@private
----@param config render.md.BufferConfig
 ---@param info render.md.NodeInfo
 ---@param checkbox_state render.md.CheckboxComponent
----@return render.md.Mark?
-function M.checkbox(config, info, checkbox_state)
-    local checkbox = config.checkbox
-    if not checkbox.enabled then
-        return nil
+function Handler:checkbox(info, checkbox_state)
+    if not self.config.checkbox.enabled then
+        return
     end
-    ---@type render.md.Mark
-    return {
+    self:add({
         conceal = true,
         start_row = info.start_row,
         start_col = info.start_col,
@@ -479,26 +441,23 @@ function M.checkbox(config, info, checkbox_state)
             virt_text = { { str.pad_to(info.text, checkbox_state.icon), checkbox_state.highlight } },
             virt_text_pos = 'overlay',
         },
-    }
+    })
 end
 
 ---@private
----@param config render.md.BufferConfig
 ---@param info render.md.NodeInfo
 ---@param block_quote render.md.NodeInfo
----@return render.md.Mark?
-function M.quote_marker(config, info, block_quote)
-    local quote = config.quote
+function Handler:quote_marker(info, block_quote)
+    local quote = self.config.quote
     if not quote.enabled then
-        return nil
+        return
     end
     local highlight = quote.highlight
-    local callout = component.callout(config, block_quote.text, 'contains')
+    local callout = component.callout(self.config, block_quote.text, 'contains')
     if callout ~= nil then
         highlight = callout.highlight
     end
-    ---@type render.md.Mark
-    return {
+    self:add({
         conceal = true,
         start_row = info.start_row,
         start_col = info.start_col,
@@ -509,22 +468,19 @@ function M.quote_marker(config, info, block_quote)
             virt_text_pos = 'overlay',
             virt_text_repeat_linebreak = quote.repeat_linebreak or nil,
         },
-    }
+    })
 end
 
 ---@private
----@param config render.md.BufferConfig
 ---@param info render.md.NodeInfo
 ---@param text? string
 ---@param highlight string
----@return render.md.Mark?
-function M.sign(config, info, text, highlight)
-    local sign = config.sign
+function Handler:sign(info, text, highlight)
+    local sign = self.config.sign
     if not sign.enabled or text == nil then
-        return nil
+        return
     end
-    ---@type render.md.Mark
-    return {
+    self:add({
         conceal = false,
         start_row = info.start_row,
         start_col = info.start_col,
@@ -534,43 +490,36 @@ function M.sign(config, info, text, highlight)
             sign_text = text,
             sign_hl_group = colors.combine(highlight, sign.highlight),
         },
-    }
+    })
 end
 
 ---@private
----@param config render.md.BufferConfig
----@param buf integer
 ---@param info render.md.NodeInfo
----@return render.md.Mark[]
-function M.pipe_table(config, buf, info)
-    local pipe_table = config.pipe_table
+function Handler:pipe_table(info)
+    local pipe_table = self.config.pipe_table
     if not pipe_table.enabled or pipe_table.style == 'none' then
-        return {}
+        return
     end
-    local parsed_table = pipe_table_parser.parse(buf, info)
+    local parsed_table = pipe_table_parser.parse(self.buf, info)
     if parsed_table == nil then
-        return {}
+        return
     end
 
-    local marks = {}
-    vim.list_extend(marks, M.table_row(config, buf, parsed_table.head, pipe_table.head))
-    list.add_mark(marks, M.table_delimiter(config, parsed_table.delim, parsed_table.columns))
+    self:table_row(parsed_table.head, pipe_table.head)
+    self:table_delimiter(parsed_table.delim, parsed_table.columns)
     for _, row in ipairs(parsed_table.rows) do
-        vim.list_extend(marks, M.table_row(config, buf, row, pipe_table.row))
+        self:table_row(row, pipe_table.row)
     end
     if pipe_table.style == 'full' then
-        vim.list_extend(marks, M.table_full(config, buf, parsed_table))
+        self:table_full(parsed_table)
     end
-    return marks
 end
 
 ---@private
----@param config render.md.BufferConfig
 ---@param row render.md.NodeInfo
 ---@param columns render.md.parsed.TableColumn[]
----@return render.md.Mark
-function M.table_delimiter(config, row, columns)
-    local pipe_table = config.pipe_table
+function Handler:table_delimiter(row, columns)
+    local pipe_table = self.config.pipe_table
     local indicator = pipe_table.alignment_indicator
     local border = pipe_table.border
     local sections = vim.tbl_map(
@@ -597,8 +546,7 @@ function M.table_delimiter(config, row, columns)
         columns
     )
     local delimiter = border[4] .. table.concat(sections, border[5]) .. border[6]
-    ---@type render.md.Mark
-    return {
+    self:add({
         conceal = true,
         start_row = row.start_row,
         start_col = row.start_col,
@@ -608,24 +556,19 @@ function M.table_delimiter(config, row, columns)
             virt_text = { { delimiter, pipe_table.head } },
             virt_text_pos = 'overlay',
         },
-    }
+    })
 end
 
 ---@private
----@param config render.md.BufferConfig
----@param buf integer
 ---@param row render.md.NodeInfo
 ---@param highlight string
----@return render.md.Mark
-function M.table_row(config, buf, row, highlight)
-    local pipe_table = config.pipe_table
-    local marks = {}
+function Handler:table_row(row, highlight)
+    local pipe_table = self.config.pipe_table
     if vim.tbl_contains({ 'raw', 'padded' }, pipe_table.cell) then
         for cell_node in row.node:iter_children() do
-            local cell = ts.info(cell_node, buf)
+            local cell = ts.info(cell_node, self.buf)
             if cell.type == '|' then
-                ---@type render.md.Mark
-                local pipe_mark = {
+                self:add({
                     conceal = true,
                     start_row = cell.start_row,
                     start_col = cell.start_col,
@@ -635,15 +578,13 @@ function M.table_row(config, buf, row, highlight)
                         virt_text = { { pipe_table.border[10], highlight } },
                         virt_text_pos = 'overlay',
                     },
-                }
-                list.add_mark(marks, pipe_mark)
+                })
             elseif cell.type == 'pipe_table_cell' then
                 -- Requires inline extmarks
                 if pipe_table.cell == 'padded' and util.has_10 then
-                    local offset = M.table_visual_offset(buf, cell)
+                    local offset = self:table_visual_offset(cell)
                     if offset > 0 then
-                        ---@type render.md.Mark
-                        local padding_mark = {
+                        self:add({
                             conceal = true,
                             start_row = cell.start_row,
                             start_col = cell.end_col - 1,
@@ -651,8 +592,7 @@ function M.table_row(config, buf, row, highlight)
                                 virt_text = { { str.pad(offset), pipe_table.filler } },
                                 virt_text_pos = 'inline',
                             },
-                        }
-                        list.add_mark(marks, padding_mark)
+                        })
                     end
                 end
             else
@@ -660,8 +600,7 @@ function M.table_row(config, buf, row, highlight)
             end
         end
     elseif pipe_table.cell == 'overlay' then
-        ---@type render.md.Mark
-        local overlay_mark = {
+        self:add({
             conceal = true,
             start_row = row.start_row,
             start_col = row.start_col,
@@ -671,19 +610,14 @@ function M.table_row(config, buf, row, highlight)
                 virt_text = { { row.text:gsub('|', pipe_table.border[10]), highlight } },
                 virt_text_pos = 'overlay',
             },
-        }
-        list.add_mark(marks, overlay_mark)
+        })
     end
-    return marks
 end
 
 ---@private
----@param config render.md.BufferConfig
----@param buf integer
 ---@param parsed_table render.md.parsed.PipeTable
----@return render.md.Mark[]
-function M.table_full(config, buf, parsed_table)
-    local pipe_table = config.pipe_table
+function Handler:table_full(parsed_table)
+    local pipe_table = self.config.pipe_table
     local border = pipe_table.border
 
     ---@param info render.md.NodeInfo
@@ -693,7 +627,7 @@ function M.table_full(config, buf, parsed_table)
         if pipe_table.cell == 'raw' then
             -- For the raw cell style we want the lengths to match after
             -- concealing & inlined elements
-            result = result - M.table_visual_offset(buf, info)
+            result = result - self:table_visual_offset(info)
         end
         return result
     end
@@ -717,8 +651,7 @@ function M.table_full(config, buf, parsed_table)
     )
 
     local line_above = border[1] .. table.concat(sections, border[2]) .. border[3]
-    ---@type render.md.Mark
-    local above_mark = {
+    self:add({
         conceal = false,
         start_row = first.start_row,
         start_col = first.start_col,
@@ -726,11 +659,10 @@ function M.table_full(config, buf, parsed_table)
             virt_lines_above = true,
             virt_lines = { { { line_above, pipe_table.head } } },
         },
-    }
+    })
 
     local line_below = border[7] .. table.concat(sections, border[8]) .. border[9]
-    ---@type render.md.Mark
-    local below_mark = {
+    self:add({
         conceal = false,
         start_row = last.start_row,
         start_col = last.start_col,
@@ -738,24 +670,31 @@ function M.table_full(config, buf, parsed_table)
             virt_lines_above = false,
             virt_lines = { { { line_below, pipe_table.row } } },
         },
-    }
-
-    return { above_mark, below_mark }
+    })
 end
 
 ---@private
----@param buf integer
 ---@param info render.md.NodeInfo
 ---@return integer
-function M.table_visual_offset(buf, info)
-    local result = ts.concealed(buf, info)
-    local icon_ranges = context.get(buf):get_links(info.start_row)
+function Handler:table_visual_offset(info)
+    local result = ts.concealed(self.buf, info)
+    local icon_ranges = context.get(self.buf):get_links(info.start_row)
     for _, icon_range in ipairs(icon_ranges) do
         if info.start_col < icon_range[2] and info.end_col > icon_range[1] then
             result = result - str.width(icon_range[3])
         end
     end
     return result
+end
+
+---@class render.md.handler.Markdown: render.md.Handler
+local M = {}
+
+---@param root TSNode
+---@param buf integer
+---@return render.md.Mark[]
+function M.parse(root, buf)
+    return Handler.new(buf):parse(root)
 end
 
 return M

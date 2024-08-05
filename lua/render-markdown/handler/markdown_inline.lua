@@ -1,6 +1,5 @@
 local component = require('render-markdown.component')
 local context = require('render-markdown.context')
-local list = require('render-markdown.list')
 local logger = require('render-markdown.logger')
 local state = require('render-markdown.state')
 local str = require('render-markdown.str')
@@ -10,6 +9,7 @@ local util = require('render-markdown.util')
 ---@class render.md.handler.buf.MarkdownInline
 ---@field private buf integer
 ---@field private config render.md.BufferConfig
+---@field private marks render.md.Mark[]
 local Handler = {}
 Handler.__index = Handler
 
@@ -19,42 +19,47 @@ function Handler.new(buf)
     local self = setmetatable({}, Handler)
     self.buf = buf
     self.config = state.get_config(buf)
+    self.marks = {}
     return self
 end
 
 ---@param root TSNode
 ---@return render.md.Mark[]
 function Handler:parse(root)
-    local marks = {}
     context.get(self.buf):query(root, state.inline_query, function(capture, node)
         local info = ts.info(node, self.buf)
         logger.debug_node_info(capture, info)
         if capture == 'code' then
-            list.add_mark(marks, self:code(info))
+            self:code(info)
         elseif capture == 'shortcut' then
-            list.add_mark(marks, self:shortcut(info))
+            self:shortcut(info)
         elseif capture == 'link' then
-            list.add_mark(marks, self:link(info))
+            self:link(info)
         else
             logger.unhandled_capture('inline', capture)
         end
     end)
-    return marks
+    return self.marks
+end
+
+---@private
+---@param mark render.md.Mark
+function Handler:add(mark)
+    logger.debug('mark', mark)
+    table.insert(self.marks, mark)
 end
 
 ---@private
 ---@param info render.md.NodeInfo
----@return render.md.Mark?
 function Handler:code(info)
     local code = self.config.code
     if not code.enabled then
-        return nil
+        return
     end
     if not vim.tbl_contains({ 'normal', 'full' }, code.style) then
-        return nil
+        return
     end
-    ---@type render.md.Mark
-    return {
+    self:add({
         conceal = true,
         start_row = info.start_row,
         start_col = info.start_col,
@@ -63,32 +68,31 @@ function Handler:code(info)
             end_col = info.end_col,
             hl_group = code.highlight_inline,
         },
-    }
+    })
 end
 
 ---@private
 ---@param info render.md.NodeInfo
----@return render.md.Mark?
 function Handler:shortcut(info)
     local callout = component.callout(self.config, info.text, 'exact')
     if callout ~= nil then
-        return self:callout(info, callout)
+        self:callout(info, callout)
+        return
     end
     local checkbox = component.checkbox(self.config, info.text, 'exact')
     if checkbox ~= nil then
-        return self:checkbox(info, checkbox)
+        self:checkbox(info, checkbox)
+        return
     end
     local line = vim.api.nvim_buf_get_lines(self.buf, info.start_row, info.start_row + 1, false)[1]
     if line:find('[' .. info.text .. ']', 1, true) ~= nil then
-        return self:wiki_link(info)
+        self:wiki_link(info)
     end
-    return nil
 end
 
 ---@private
 ---@param info render.md.NodeInfo
 ---@param callout render.md.CustomComponent
----@return render.md.Mark?
 function Handler:callout(info, callout)
     ---Support for overriding title: https://help.obsidian.md/Editing+and+formatting/Callouts#Change+the+title
     ---@return string, string?
@@ -106,11 +110,10 @@ function Handler:callout(info, callout)
     end
 
     if not self.config.quote.enabled then
-        return nil
+        return
     end
     local text, conceal = custom_title()
-    ---@type render.md.Mark
-    return {
+    self:add({
         conceal = true,
         start_row = info.start_row,
         start_col = info.start_col,
@@ -121,20 +124,18 @@ function Handler:callout(info, callout)
             virt_text_pos = 'overlay',
             conceal = conceal,
         },
-    }
+    })
 end
 
 ---@private
 ---@param info render.md.NodeInfo
 ---@param checkbox render.md.CustomComponent
----@return render.md.Mark?
 function Handler:checkbox(info, checkbox)
     -- Requires inline extmarks
     if not self.config.checkbox.enabled or not util.has_10 then
-        return nil
+        return
     end
-    ---@type render.md.Mark
-    return {
+    self:add({
         conceal = true,
         start_row = info.start_row,
         start_col = info.start_col,
@@ -145,22 +146,20 @@ function Handler:checkbox(info, checkbox)
             virt_text_pos = 'inline',
             conceal = '',
         },
-    }
+    })
 end
 
 ---@private
 ---@param info render.md.NodeInfo
----@return render.md.Mark?
 function Handler:wiki_link(info)
     -- Requires inline extmarks
     if not self.config.link.enabled or not util.has_10 then
-        return nil
+        return
     end
     local text = info.text:sub(2, -2)
     local parts = str.split(text, '|')
     local icon, highlight = self:dest_virt_text(parts[1])
-    ---@type render.md.Mark
-    return {
+    self:add({
         conceal = true,
         start_row = info.start_row,
         start_col = info.start_col - 1,
@@ -171,21 +170,19 @@ function Handler:wiki_link(info)
             virt_text_pos = 'inline',
             conceal = '',
         },
-    }
+    })
 end
 
 ---@private
 ---@param info render.md.NodeInfo
----@return render.md.Mark?
 function Handler:link(info)
     -- Requires inline extmarks
     if not self.config.link.enabled or not util.has_10 then
-        return nil
+        return
     end
     local icon, highlight = self:link_virt_text(info)
     context.get(self.buf):add_link(info, icon)
-    ---@type render.md.Mark
-    return {
+    self:add({
         conceal = true,
         start_row = info.start_row,
         start_col = info.start_col,
@@ -195,7 +192,7 @@ function Handler:link(info)
             virt_text = { { icon, highlight } },
             virt_text_pos = 'inline',
         },
-    }
+    })
 end
 
 ---@private
