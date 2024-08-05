@@ -10,7 +10,7 @@
   former assumed rendering inside, the latter gets marks back so they are not
   interchangeable. Notice of deprecation has been available for a month since
   [726c85c](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/726c85cb9cc6d7d9c85af6ab093e1ee53b5e3c82).
-  - Ultimately removed in TODO
+  - Ultimately removed in [83b3865](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/83b386531a0fa67eab1e875f164aff89f560c11b)
   - In order to fix:
     - Implement `parse` method instead of `render`, no direct translation
 - Remove `profile` field in favor of benches [dcfa033](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/dcfa033cb39bc4f30019925aa91d3af5ec049614)
@@ -51,7 +51,8 @@
   this was a long standing bug. Everything internally & externally already used the
   `render markdown` naming convention except for the repo itself. Since Github
   treats the URLs the same and redirects between the 2 there should be no breaking
-  changes from this.
+  changes from this. [aeb5cec](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/aeb5cec617c3bd5738ab82ba2c3f9ccdc27656c2)
+  [090ea1e](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/090ea1e9913457fa8848c7afdbfa3b73bb7c7ac8)
 - Block code rendering with transparent background [#102](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/102)
 - Remove broken reference to `profiler` module [#105](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/105)
   [15d8e02](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/15d8e02663aa58f215ecadbcebbd34149b06a7bc)
