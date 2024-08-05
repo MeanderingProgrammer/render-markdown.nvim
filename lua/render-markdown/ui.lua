@@ -159,29 +159,18 @@ function M.parse_tree(buf, language, root)
     end
 
     local marks = {}
-    local user_handler = state.custom_handlers[language]
-    if user_handler ~= nil then
+    local user = state.custom_handlers[language]
+    if user ~= nil then
         logger.debug('running handler', 'user')
-        -- TODO: remove call to render & parse nil check
-        ---@diagnostic disable-next-line: undefined-field
-        if user_handler.render ~= nil then
-            local message = 'render-markdown.nvim: custom_handlers render is deprecated use parse instead'
-            message = message .. ', will be fully removed on 2024-08-19'
-            vim.notify_once(message, vim.log.levels.ERROR)
-            ---@diagnostic disable-next-line: undefined-field
-            user_handler.render(M.namespace, root, buf)
-        end
-        if user_handler.parse ~= nil then
-            vim.list_extend(marks, user_handler.parse(root, buf))
-        end
-        if not user_handler.extends then
+        vim.list_extend(marks, user.parse(root, buf))
+        if not user.extends then
             return marks
         end
     end
-    local builtin_handler = builtin_handlers[language]
-    if builtin_handler ~= nil then
+    local builtin = builtin_handlers[language]
+    if builtin ~= nil then
         logger.debug('running handler', 'builtin')
-        vim.list_extend(marks, builtin_handler.parse(root, buf))
+        vim.list_extend(marks, builtin.parse(root, buf))
     end
     return marks
 end

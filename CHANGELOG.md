@@ -1,6 +1,8 @@
 # Change Log
 
-## Pre-release (slated for 2024-08-19)
+## Pre-release
+
+## 6.0.0 (2024-08-05)
 
 ### ⚠ BREAKING CHANGES
 

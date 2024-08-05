@@ -52,7 +52,7 @@ describe('custom_handler.md', function()
         util.marks_are_equal(expected, actual)
     end)
 
-    it('custom override parse', function()
+    it('custom parse override', function()
         util.setup('tests/data/custom_handler.md', {
             custom_handlers = {
                 markdown_inline = {
@@ -73,7 +73,7 @@ describe('custom_handler.md', function()
         util.marks_are_equal(expected, actual)
     end)
 
-    it('custom extends', function()
+    it('custom parse extend', function()
         util.setup('tests/data/custom_handler.md', {
             custom_handlers = {
                 markdown_inline = {
