@@ -9,7 +9,6 @@ local pipe_table_parser = require('render-markdown.parser.pipe_table')
 local state = require('render-markdown.state')
 local str = require('render-markdown.str')
 local ts = require('render-markdown.ts')
-local util = require('render-markdown.util')
 
 ---@class render.md.handler.buf.Markdown
 ---@field private buf integer
@@ -72,20 +71,7 @@ end
 ---@param opts vim.api.keyset.set_extmark
 ---@return boolean
 function Handler:add(conceal, start_row, start_col, opts)
-    -- Inline extmarks require neovim >= 0.10.0
-    if opts.virt_text_pos == 'inline' and not util.has_10 then
-        return false
-    end
-    ---@type render.md.Mark
-    local mark = {
-        conceal = conceal,
-        start_row = start_row,
-        start_col = start_col,
-        opts = opts,
-    }
-    logger.debug('mark', mark)
-    table.insert(self.marks, mark)
-    return true
+    return list.add_mark(self.marks, conceal, start_row, start_col, opts)
 end
 
 ---@private

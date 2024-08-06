@@ -1,4 +1,4 @@
-*render-markdown.txt*          For 0.10.0          Last change: 2024 August 05
+*render-markdown.txt*          For 0.10.0          Last change: 2024 August 06
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -36,8 +36,23 @@ Plugin to improve viewing Markdown files in Neovim
 
 
   [!NOTE]
-  Repo has been renamed from `markdown.nvim` to make things less confusing and
-  more consistent. Github should redirect all requests so nothing should break.
+  Repo has been renamed from `markdown.nvim` to make things more consistent.
+  Github will redirect all requests so nothing should break for most users.
+  For `lazy.nvim` & `tokyonight.nvim` users changing the plugin name will remove
+  custom highlights until the following is merged #620
+  <https://github.com/folke/tokyonight.nvim/pull/620>.
+  In the meantime you can fix this by adding the following to your config:
+  >lua
+      require('tokyonight').setup({
+          plugins = { markdown = true },
+      })
+  <
+  For `rocks.nvim` users migrate to the new LuaRock
+  <https://luarocks.org/modules/MeanderingProgrammer/render-markdown.nvim>.
+  >vim
+      :Rocks prune markdown.nvim
+      :Rocks install render-markdown.nvim
+  <
 
 ==============================================================================
 2. Features                                         *render-markdown-features*

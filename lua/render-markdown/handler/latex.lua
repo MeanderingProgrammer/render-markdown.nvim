@@ -1,3 +1,4 @@
+local list = require('render-markdown.list')
 local logger = require('render-markdown.logger')
 local state = require('render-markdown.state')
 local str = require('render-markdown.str')
@@ -42,20 +43,14 @@ function M.parse(root, buf)
         return { { expression, latex.highlight } }
     end, expressions)
 
-    ---@type render.md.Mark
-    local latex_mark = {
-        conceal = false,
-        start_row = info.start_row,
-        start_col = info.start_col,
-        opts = {
-            end_row = info.end_row,
-            end_col = info.end_col,
-            virt_lines = latex_lines,
-            virt_lines_above = true,
-        },
-    }
-    logger.debug('mark', latex_mark)
-    return { latex_mark }
+    local marks = {}
+    list.add_mark(marks, false, info.start_row, info.start_col, {
+        end_row = info.end_row,
+        end_col = info.end_col,
+        virt_lines = latex_lines,
+        virt_lines_above = true,
+    })
+    return marks
 end
 
 return M
