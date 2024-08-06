@@ -1,3 +1,4 @@
+local presets = require('render-markdown.presets')
 local util = require('render-markdown.util')
 
 ---@type table<integer, render.md.BufferConfig>
@@ -22,9 +23,9 @@ function M.initialized()
 end
 
 ---@param default_config render.md.Config
----@param user_config? render.md.UserConfig
+---@param user_config render.md.UserConfig
 function M.setup(default_config, user_config)
-    local config = vim.tbl_deep_extend('force', default_config, user_config or {})
+    local config = vim.tbl_deep_extend('force', default_config, presets.get(user_config), user_config)
     M.config = config
     M.enabled = config.enabled
     M.log_level = config.log_level
@@ -337,6 +338,7 @@ function M.validate()
         link = { config.link, 'table' },
         sign = { config.sign, 'table' },
         win_options = { config.win_options, 'table' },
+        preset = one_of(config.preset, { 'none', 'lazy', 'obsidian' }, {}, false),
         markdown_query = { config.markdown_query, 'string' },
         markdown_quote_query = { config.markdown_quote_query, 'string' },
         inline_query = { config.inline_query, 'string' },

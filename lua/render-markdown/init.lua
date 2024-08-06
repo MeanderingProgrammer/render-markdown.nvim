@@ -133,6 +133,7 @@ local M = {}
 ---@field public win_options? table<string, render.md.UserWindowOption>
 
 ---@class (exact) render.md.UserConfig: render.md.UserBufferConfig
+---@field public preset? 'none'|'lazy'|'obsidian'
 ---@field public markdown_query? string
 ---@field public markdown_quote_query? string
 ---@field public inline_query? string
@@ -154,6 +155,12 @@ M.default_config = {
     -- Milliseconds that must pass before updating marks, updates occur
     -- within the context of the visible window, not the entire buffer
     debounce = 100,
+    -- Pre configured settings that will attempt to mimic various target
+    -- user experiences. Any user provided settings will take precedence.
+    --  obsidian: mimic Obsidian UI
+    --  lazy: will attempt to stay up to date with LazyVim configuration
+    --  none: does nothing
+    preset = 'none',
     -- Capture groups that get pulled from markdown
     markdown_query = [[
         (atx_heading [
@@ -500,7 +507,7 @@ function M.setup(opts)
     -- has already been initialized by the user.
     local state = require('render-markdown.state')
     if not state.initialized() or vim.tbl_count(opts or {}) > 0 then
-        state.setup(M.default_config, opts)
+        state.setup(M.default_config, opts or {})
         state.invalidate_cache()
         require('render-markdown.ui').invalidate_cache()
     end

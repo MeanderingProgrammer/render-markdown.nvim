@@ -122,6 +122,7 @@
 ---@field public win_options table<string, render.md.WindowOption>
 
 ---@class (exact) render.md.Config: render.md.BufferConfig
+---@field public preset 'none'|'lazy'|'obsidian'
 ---@field public markdown_query string
 ---@field public markdown_quote_query string
 ---@field public inline_query string

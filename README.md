@@ -130,6 +130,12 @@ require('render-markdown').setup({
     -- Milliseconds that must pass before updating marks, updates occur
     -- within the context of the visible window, not the entire buffer
     debounce = 100,
+    -- Pre configured settings that will attempt to mimic various target
+    -- user experiences. Any user provided settings will take precedence.
+    --  obsidian: mimic Obsidian UI
+    --  lazy: will attempt to stay up to date with LazyVim configuration
+    --  none: does nothing
+    preset = 'none',
     -- Capture groups that get pulled from markdown
     markdown_query = [[
         (atx_heading [
