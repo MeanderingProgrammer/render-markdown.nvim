@@ -89,6 +89,7 @@ local M = {}
 ---@field public disable_background? string[]
 ---@field public left_pad? integer
 ---@field public right_pad? integer
+---@field public min_width? integer
 ---@field public width? 'full'|'block'
 ---@field public border? 'thin'|'thick'
 ---@field public above? string
@@ -285,6 +286,8 @@ M.default_config = {
         left_pad = 0,
         -- Amount of padding to add to the right of code blocks when width is 'block'
         right_pad = 0,
+        -- Minimum width to use for code blocks when width is 'block'
+        min_width = 0,
         -- Width of the code block background:
         --  block: width of the code block
         --  full: full width of the window

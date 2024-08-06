@@ -263,6 +263,8 @@ require('render-markdown').setup({
         left_pad = 0,
         -- Amount of padding to add to the right of code blocks when width is 'block'
         right_pad = 0,
+        -- Minimum width to use for code blocks when width is 'block'
+        min_width = 0,
         -- Width of the code block background:
         --  block: width of the code block
         --  full: full width of the window
@@ -547,6 +549,8 @@ require('render-markdown').setup({
         left_pad = 0,
         -- Amount of padding to add to the right of code blocks when width is 'block'
         right_pad = 0,
+        -- Minimum width to use for code blocks when width is 'block'
+        min_width = 0,
         -- Width of the code block background:
         --  block: width of the code block
         --  full: full width of the window

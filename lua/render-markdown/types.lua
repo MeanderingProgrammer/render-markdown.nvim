@@ -78,6 +78,7 @@
 ---@field public disable_background string[]
 ---@field public left_pad integer
 ---@field public right_pad integer
+---@field public min_width integer
 ---@field public width 'full'|'block'
 ---@field public border 'thin'|'thick'
 ---@field public above string

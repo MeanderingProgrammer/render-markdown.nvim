@@ -183,6 +183,7 @@ function M.validate()
                 disable_background = string_array(code.disable_background, nilable),
                 left_pad = { code.left_pad, 'number', nilable },
                 right_pad = { code.right_pad, 'number', nilable },
+                min_width = { code.min_width, 'number', nilable },
                 width = one_of(code.width, { 'full', 'block' }, {}, nilable),
                 border = one_of(code.border, { 'thin', 'thick' }, {}, nilable),
                 above = { code.above, 'string', nilable },

@@ -43,8 +43,17 @@ function Handler:parse(root)
 end
 
 ---@private
----@param mark render.md.Mark
-function Handler:add(mark)
+---@param start_row integer
+---@param start_col integer
+---@param opts vim.api.keyset.set_extmark
+function Handler:add(start_row, start_col, opts)
+    ---@type render.md.Mark
+    local mark = {
+        conceal = true,
+        start_row = start_row,
+        start_col = start_col,
+        opts = opts,
+    }
     logger.debug('mark', mark)
     table.insert(self.marks, mark)
 end
@@ -59,15 +68,10 @@ function Handler:code(info)
     if not vim.tbl_contains({ 'normal', 'full' }, code.style) then
         return
     end
-    self:add({
-        conceal = true,
-        start_row = info.start_row,
-        start_col = info.start_col,
-        opts = {
-            end_row = info.end_row,
-            end_col = info.end_col,
-            hl_group = code.highlight_inline,
-        },
+    self:add(info.start_row, info.start_col, {
+        end_row = info.end_row,
+        end_col = info.end_col,
+        hl_group = code.highlight_inline,
     })
 end
 
@@ -113,17 +117,12 @@ function Handler:callout(info, callout)
         return
     end
     local text, conceal = custom_title()
-    self:add({
-        conceal = true,
-        start_row = info.start_row,
-        start_col = info.start_col,
-        opts = {
-            end_row = info.end_row,
-            end_col = info.end_col,
-            virt_text = { { text, callout.highlight } },
-            virt_text_pos = 'overlay',
-            conceal = conceal,
-        },
+    self:add(info.start_row, info.start_col, {
+        end_row = info.end_row,
+        end_col = info.end_col,
+        virt_text = { { text, callout.highlight } },
+        virt_text_pos = 'overlay',
+        conceal = conceal,
     })
 end
 
@@ -135,17 +134,12 @@ function Handler:checkbox(info, checkbox)
     if not self.config.checkbox.enabled or not util.has_10 then
         return
     end
-    self:add({
-        conceal = true,
-        start_row = info.start_row,
-        start_col = info.start_col,
-        opts = {
-            end_row = info.end_row,
-            end_col = info.end_col,
-            virt_text = { { str.pad_to(info.text, checkbox.rendered), checkbox.highlight } },
-            virt_text_pos = 'inline',
-            conceal = '',
-        },
+    self:add(info.start_row, info.start_col, {
+        end_row = info.end_row,
+        end_col = info.end_col,
+        virt_text = { { str.pad_to(info.text, checkbox.rendered), checkbox.highlight } },
+        virt_text_pos = 'inline',
+        conceal = '',
     })
 end
 
@@ -159,17 +153,12 @@ function Handler:wiki_link(info)
     local text = info.text:sub(2, -2)
     local parts = str.split(text, '|')
     local icon, highlight = self:dest_virt_text(parts[1])
-    self:add({
-        conceal = true,
-        start_row = info.start_row,
-        start_col = info.start_col - 1,
-        opts = {
-            end_row = info.end_row,
-            end_col = info.end_col + 1,
-            virt_text = { { icon .. parts[#parts], highlight } },
-            virt_text_pos = 'inline',
-            conceal = '',
-        },
+    self:add(info.start_row, info.start_col - 1, {
+        end_row = info.end_row,
+        end_col = info.end_col + 1,
+        virt_text = { { icon .. parts[#parts], highlight } },
+        virt_text_pos = 'inline',
+        conceal = '',
     })
 end
 
@@ -182,16 +171,11 @@ function Handler:link(info)
     end
     local icon, highlight = self:link_virt_text(info)
     context.get(self.buf):add_link(info, icon)
-    self:add({
-        conceal = true,
-        start_row = info.start_row,
-        start_col = info.start_col,
-        opts = {
-            end_row = info.end_row,
-            end_col = info.end_col,
-            virt_text = { { icon, highlight } },
-            virt_text_pos = 'inline',
-        },
+    self:add(info.start_row, info.start_col, {
+        end_row = info.end_row,
+        end_col = info.end_col,
+        virt_text = { { icon, highlight } },
+        virt_text_pos = 'inline',
     })
 end
 

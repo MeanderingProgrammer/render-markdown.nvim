@@ -55,10 +55,11 @@ function M.get_width(config, buf, info)
     local lines = vim.api.nvim_buf_get_lines(buf, info.start_row, info.end_row, false)
     local code_width = vim.fn.max(vim.tbl_map(str.width, lines))
     local longest_line = config.left_pad + code_width + config.right_pad
+    local width = math.max(longest_line, config.min_width)
     if config.width == 'block' then
-        return longest_line, longest_line
+        return width, width
     else
-        return longest_line, context.get(buf):get_width()
+        return width, context.get(buf):get_width()
     end
 end
 
