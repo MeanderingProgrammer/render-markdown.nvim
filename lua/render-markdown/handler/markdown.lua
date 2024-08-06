@@ -70,7 +70,12 @@ end
 ---@param start_row integer
 ---@param start_col integer
 ---@param opts vim.api.keyset.set_extmark
+---@return boolean
 function Handler:add(conceal, start_row, start_col, opts)
+    -- Inline extmarks require neovim >= 0.10.0
+    if opts.virt_text_pos == 'inline' and not util.has_10 then
+        return false
+    end
     ---@type render.md.Mark
     local mark = {
         conceal = conceal,
@@ -80,6 +85,7 @@ function Handler:add(conceal, start_row, start_col, opts)
     }
     logger.debug('mark', mark)
     table.insert(self.marks, mark)
+    return true
 end
 
 ---@private
@@ -114,16 +120,13 @@ function Handler:heading(info)
     -- and concealed text is subtracted since that space is not usable
     local padding = level + 1 - ts.concealed(self.buf, info) - str.width(icon)
     if heading.position == 'inline' or padding < 0 then
-        -- Requires inline extmarks to place when there is not enough space available
-        if util.has_10 then
-            self:add(true, info.start_row, info.start_col, {
-                end_row = info.end_row,
-                end_col = info.end_col,
-                virt_text = { { icon, { foreground, background } } },
-                virt_text_pos = 'inline',
-                conceal = '',
-            })
-        end
+        self:add(true, info.start_row, info.start_col, {
+            end_row = info.end_row,
+            end_col = info.end_col,
+            virt_text = { { icon, { foreground, background } } },
+            virt_text_pos = 'inline',
+            conceal = '',
+        })
     else
         self:add(true, info.start_row, info.start_col, {
             end_row = info.end_row,
@@ -202,8 +205,7 @@ function Handler:language(code_block, add_background)
     if add_background then
         table.insert(highlight, code.highlight)
     end
-    -- Requires inline extmarks
-    if code.position == 'left' and util.has_10 then
+    if code.position == 'left' then
         local icon_text = icon .. ' '
         if ts.hidden(self.buf, info) then
             -- Code blocks will pick up varying amounts of leading white space depending on the
@@ -211,22 +213,20 @@ function Handler:language(code_block, add_background)
             -- after concealing, the extmark will be left shifted. Logic below accounts for this.
             icon_text = str.pad(code_block.leading_spaces, icon_text .. info.text)
         end
-        self:add(true, info.start_row, info.start_col, {
+        return self:add(true, info.start_row, info.start_col, {
             virt_text = { { icon_text, highlight } },
             virt_text_pos = 'inline',
         })
-        return true
     elseif code.position == 'right' then
         local icon_text = icon .. ' ' .. info.text
         local win_col = code_block.longest_line
         if code.width == 'block' then
             win_col = win_col - str.width(icon_text)
         end
-        self:add(true, info.start_row, 0, {
+        return self:add(true, info.start_row, 0, {
             virt_text = { { icon_text, highlight } },
             virt_text_win_col = win_col,
         })
-        return true
     else
         return false
     end
@@ -285,8 +285,7 @@ end
 ---@param add_background boolean
 function Handler:code_left_pad(code_block, add_background)
     local code = self.config.code
-    -- Requires inline extmarks
-    if not util.has_10 or code.left_pad <= 0 then
+    if code.left_pad <= 0 then
         return
     end
     local padding = str.pad(code.left_pad)
@@ -354,8 +353,14 @@ function Handler:list_marker(info)
             virt_text = { { str.pad(leading_spaces, icon), bullet.highlight } },
             virt_text_pos = 'overlay',
         })
-        -- Requires inline extmarks
-        if util.has_10 and bullet.right_pad > 0 then
+        if bullet.left_pad > 0 then
+            self:add(false, info.start_row, 0, {
+                priority = 0,
+                virt_text = { { str.pad(bullet.left_pad), 'Normal' } },
+                virt_text_pos = 'inline',
+            })
+        end
+        if bullet.right_pad > 0 then
             self:add(true, info.start_row, info.end_col - 1, {
                 virt_text = { { str.pad(bullet.right_pad), 'Normal' } },
                 virt_text_pos = 'inline',
@@ -495,8 +500,7 @@ function Handler:table_row(row, highlight)
                     virt_text_pos = 'overlay',
                 })
             elseif cell.type == 'pipe_table_cell' then
-                -- Requires inline extmarks
-                if pipe_table.cell == 'padded' and util.has_10 then
+                if pipe_table.cell == 'padded' then
                     local offset = self:table_visual_offset(cell)
                     if offset > 0 then
                         self:add(true, cell.start_row, cell.end_col - 1, {

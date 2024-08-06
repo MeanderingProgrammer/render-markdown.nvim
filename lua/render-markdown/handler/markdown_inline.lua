@@ -46,7 +46,12 @@ end
 ---@param start_row integer
 ---@param start_col integer
 ---@param opts vim.api.keyset.set_extmark
+---@return boolean
 function Handler:add(start_row, start_col, opts)
+    -- Inline extmarks require neovim >= 0.10.0
+    if opts.virt_text_pos == 'inline' and not util.has_10 then
+        return false
+    end
     ---@type render.md.Mark
     local mark = {
         conceal = true,
@@ -56,16 +61,14 @@ function Handler:add(start_row, start_col, opts)
     }
     logger.debug('mark', mark)
     table.insert(self.marks, mark)
+    return true
 end
 
 ---@private
 ---@param info render.md.NodeInfo
 function Handler:code(info)
     local code = self.config.code
-    if not code.enabled then
-        return
-    end
-    if not vim.tbl_contains({ 'normal', 'full' }, code.style) then
+    if not code.enabled or not vim.tbl_contains({ 'normal', 'full' }, code.style) then
         return
     end
     self:add(info.start_row, info.start_col, {
@@ -130,8 +133,7 @@ end
 ---@param info render.md.NodeInfo
 ---@param checkbox render.md.CustomComponent
 function Handler:checkbox(info, checkbox)
-    -- Requires inline extmarks
-    if not self.config.checkbox.enabled or not util.has_10 then
+    if not self.config.checkbox.enabled then
         return
     end
     self:add(info.start_row, info.start_col, {
@@ -146,8 +148,7 @@ end
 ---@private
 ---@param info render.md.NodeInfo
 function Handler:wiki_link(info)
-    -- Requires inline extmarks
-    if not self.config.link.enabled or not util.has_10 then
+    if not self.config.link.enabled then
         return
     end
     local text = info.text:sub(2, -2)
@@ -165,18 +166,19 @@ end
 ---@private
 ---@param info render.md.NodeInfo
 function Handler:link(info)
-    -- Requires inline extmarks
-    if not self.config.link.enabled or not util.has_10 then
+    if not self.config.link.enabled then
         return
     end
     local icon, highlight = self:link_virt_text(info)
-    context.get(self.buf):add_link(info, icon)
-    self:add(info.start_row, info.start_col, {
+    local added = self:add(info.start_row, info.start_col, {
         end_row = info.end_row,
         end_col = info.end_col,
         virt_text = { { icon, highlight } },
         virt_text_pos = 'inline',
     })
+    if added then
+        context.get(self.buf):add_link(info, icon)
+    end
 end
 
 ---@private

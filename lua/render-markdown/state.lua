@@ -208,6 +208,7 @@ function M.validate()
             append_errors(path .. '.bullet', bullet, {
                 enabled = { bullet.enabled, 'boolean', nilable },
                 icons = string_array(bullet.icons, nilable),
+                left_pad = { bullet.left_pad, 'number', nilable },
                 right_pad = { bullet.right_pad, 'number', nilable },
                 highlight = { bullet.highlight, 'string', nilable },
             })
