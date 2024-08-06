@@ -245,6 +245,12 @@ require('render-markdown').setup({
         --  block: width of the heading text
         --  full: full width of the window
         width = 'full',
+        -- Amount of padding to add to the left of headings
+        left_pad = 0,
+        -- Amount of padding to add to the right of headings when width is 'block'
+        right_pad = 0,
+        -- Minimum width to use for headings when width is 'block'
+        min_width = 0,
         -- The 'level' is used to index into the array using a clamp
         -- Highlight for the heading icon and extends through the entire line
         backgrounds = {
@@ -284,16 +290,16 @@ require('render-markdown').setup({
         -- An array of language names for which background highlighting will be disabled
         -- Likely because that language has background highlights itself
         disable_background = { 'diff' },
+        -- Width of the code block background:
+        --  block: width of the code block
+        --  full: full width of the window
+        width = 'full',
         -- Amount of padding to add to the left of code blocks
         left_pad = 0,
         -- Amount of padding to add to the right of code blocks when width is 'block'
         right_pad = 0,
         -- Minimum width to use for code blocks when width is 'block'
         min_width = 0,
-        -- Width of the code block background:
-        --  block: width of the code block
-        --  full: full width of the window
-        width = 'full',
         -- Determins how the top / bottom of code block are rendered:
         --  thick: use the same highlight as the code body
         --  thin: when lines are empty overlay the above & below icons
@@ -526,6 +532,12 @@ require('render-markdown').setup({
         --  block: width of the heading text
         --  full: full width of the window
         width = 'full',
+        -- Amount of padding to add to the left of headings
+        left_pad = 0,
+        -- Amount of padding to add to the right of headings when width is 'block'
+        right_pad = 0,
+        -- Minimum width to use for headings when width is 'block'
+        min_width = 0,
         -- The 'level' is used to index into the array using a clamp
         -- Highlight for the heading icon and extends through the entire line
         backgrounds = {
@@ -572,16 +584,16 @@ require('render-markdown').setup({
         -- An array of language names for which background highlighting will be disabled
         -- Likely because that language has background highlights itself
         disable_background = { 'diff' },
+        -- Width of the code block background:
+        --  block: width of the code block
+        --  full: full width of the window
+        width = 'full',
         -- Amount of padding to add to the left of code blocks
         left_pad = 0,
         -- Amount of padding to add to the right of code blocks when width is 'block'
         right_pad = 0,
         -- Minimum width to use for code blocks when width is 'block'
         min_width = 0,
-        -- Width of the code block background:
-        --  block: width of the code block
-        --  full: full width of the window
-        width = 'full',
         -- Determins how the top / bottom of code block are rendered:
         --  thick: use the same highlight as the code body
         --  thin: when lines are empty overlay the above & below icons

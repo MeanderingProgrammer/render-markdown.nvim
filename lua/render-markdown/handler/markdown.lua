@@ -83,28 +83,63 @@ function Handler:heading(info)
     end
 
     local level = str.width(info.text)
-    local icon = list.cycle(heading.icons, level)
     local foreground = list.clamp(heading.foregrounds, level)
     local background = list.clamp(heading.backgrounds, level)
+
+    local icon_width = self:heading_icon(info, level, foreground, background)
+    if heading.sign then
+        self:sign(info, list.cycle(heading.signs, level), foreground)
+    end
 
     self:add(true, info.start_row, 0, {
         end_row = info.end_row + 1,
         end_col = 0,
         hl_group = background,
-        hl_eol = heading.width == 'full',
+        hl_eol = true,
     })
 
-    if heading.sign then
-        self:sign(info, list.cycle(heading.signs, level), foreground)
+    if heading.width == 'block' then
+        -- Overwrite anything beyond left_pad + heading width + right_pad with Normal
+        local width = heading.left_pad + icon_width + heading.right_pad
+        local content = ts.sibling(self.buf, info, 'inline')
+        if content ~= nil then
+            width = width + str.width(content.text) - ts.concealed(self.buf, content)
+        end
+        self:add(true, info.start_row, 0, {
+            priority = 0,
+            virt_text = { { str.pad(vim.o.columns * 2), 'Normal' } },
+            virt_text_win_col = math.max(width, heading.min_width),
+        })
     end
 
-    if icon == nil then
-        return
+    if heading.left_pad > 0 then
+        self:add(false, info.start_row, 0, {
+            priority = 0,
+            virt_text = { { str.pad(heading.left_pad), background } },
+            virt_text_pos = 'inline',
+        })
     end
+end
+
+---@private
+---@param info render.md.NodeInfo
+---@param level integer
+---@param foreground string
+---@param background string
+---@return integer
+function Handler:heading_icon(info, level, foreground, background)
+    local heading = self.config.heading
+    local icon = list.cycle(heading.icons, level)
+
     -- Available width is level + 1 - concealed, where level = number of `#` characters, one
     -- is added to account for the space after the last `#` but before the heading title,
     -- and concealed text is subtracted since that space is not usable
-    local padding = level + 1 - ts.concealed(self.buf, info) - str.width(icon)
+    local width = level + 1 - ts.concealed(self.buf, info)
+    if icon == nil then
+        return width
+    end
+
+    local padding = width - str.width(icon)
     if heading.position == 'inline' or padding < 0 then
         self:add(true, info.start_row, info.start_col, {
             end_row = info.end_row,
@@ -113,6 +148,7 @@ function Handler:heading(info)
             virt_text_pos = 'inline',
             conceal = '',
         })
+        return str.width(icon)
     else
         self:add(true, info.start_row, info.start_col, {
             end_row = info.end_row,
@@ -120,6 +156,7 @@ function Handler:heading(info)
             virt_text = { { str.pad(padding, icon), { foreground, background } } },
             virt_text_pos = 'overlay',
         })
+        return width
     end
 end
 
@@ -284,7 +321,6 @@ function Handler:code_left_pad(code_block, add_background)
     for row = code_block.start_row, code_block.end_row - 1 do
         -- Uses a low priority so other marks are loaded first and included in padding
         self:add(false, row, code_block.col, {
-            end_row = row + 1,
             priority = 0,
             virt_text = { { padding, highlight } },
             virt_text_pos = 'inline',

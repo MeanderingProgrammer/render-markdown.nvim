@@ -45,20 +45,20 @@ function M.heading(row, level)
         return { sign_mark }
     else
         ---@type render.md.MarkInfo
-        local background_mark = {
-            row = { row, row + 1 },
-            col = { 0, 0 },
-            hl_group = background,
-            hl_eol = true,
-        }
-        ---@type render.md.MarkInfo
         local icon_mark = {
             row = { row, row },
             col = { 0, level },
             virt_text = { { icons[level], { foreground, background } } },
             virt_text_pos = 'overlay',
         }
-        return { background_mark, icon_mark, sign_mark }
+        ---@type render.md.MarkInfo
+        local background_mark = {
+            row = { row, row + 1 },
+            col = { 0, 0 },
+            hl_group = background,
+            hl_eol = true,
+        }
+        return { icon_mark, background_mark, sign_mark }
     end
 end
 

@@ -73,14 +73,17 @@ function Handler:shortcut(info)
         self:callout(info, callout)
         return
     end
+
     local checkbox = component.checkbox(self.config, info.text, 'exact')
     if checkbox ~= nil then
         self:checkbox(info, checkbox)
         return
     end
+
     local line = vim.api.nvim_buf_get_lines(self.buf, info.start_row, info.start_row + 1, false)[1]
     if line:find('[' .. info.text .. ']', 1, true) ~= nil then
         self:wiki_link(info)
+        return
     end
 end
 
@@ -88,6 +91,10 @@ end
 ---@param info render.md.NodeInfo
 ---@param callout render.md.CustomComponent
 function Handler:callout(info, callout)
+    if not self.config.quote.enabled then
+        return
+    end
+
     ---Support for overriding title: https://help.obsidian.md/Editing+and+formatting/Callouts#Change+the+title
     ---@return string, string?
     local function custom_title()
@@ -103,9 +110,6 @@ function Handler:callout(info, callout)
         return callout.rendered, nil
     end
 
-    if not self.config.quote.enabled then
-        return
-    end
     local text, conceal = custom_title()
     self:add(info.start_row, info.start_col, {
         end_row = info.end_row,
