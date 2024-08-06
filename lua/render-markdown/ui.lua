@@ -37,9 +37,9 @@ function M.clear(buf, buf_state)
 end
 
 ---@param buf integer
+---@param win integer
 ---@param change boolean
-function M.debounce_update(buf, change)
-    local win = util.buf_to_win(buf)
+function M.debounce_update(buf, win, change)
     if not util.valid(buf, win) then
         return
     end

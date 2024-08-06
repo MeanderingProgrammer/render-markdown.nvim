@@ -17,8 +17,8 @@ function M.setup()
     -- Attempt to attach to all buffers, cannot use pattern to support plugin directory
     vim.api.nvim_create_autocmd('FileType', {
         group = M.group,
-        callback = function(event)
-            M.attach(event.buf)
+        callback = function(args)
+            M.attach(args.buf)
         end,
     })
     -- Window resizing is not buffer specific so is managed more globablly
@@ -26,9 +26,9 @@ function M.setup()
         group = M.group,
         callback = function()
             for _, win in ipairs(vim.v.event.windows) do
-                local buf = util.win_to_buf(win)
+                local buf = vim.fn.winbufnr(win)
                 if vim.tbl_contains(buffers, buf) then
-                    ui.debounce_update(buf, true)
+                    ui.debounce_update(buf, win, true)
                 end
             end
         end,
@@ -41,7 +41,7 @@ function M.set_all(enabled)
     M.attach(vim.api.nvim_get_current_buf())
     state.enabled = enabled
     for _, buf in ipairs(buffers) do
-        ui.debounce_update(buf, true)
+        ui.debounce_update(buf, vim.fn.bufwinid(buf), true)
     end
 end
 
@@ -73,7 +73,10 @@ function M.attach(buf)
         group = M.group,
         buffer = buf,
         callback = function(args)
-            ui.debounce_update(buf, vim.tbl_contains(change_events, args.event))
+            local win = vim.api.nvim_get_current_win()
+            if buf == vim.fn.winbufnr(win) then
+                ui.debounce_update(buf, win, vim.tbl_contains(change_events, args.event))
+            end
         end,
     })
 end

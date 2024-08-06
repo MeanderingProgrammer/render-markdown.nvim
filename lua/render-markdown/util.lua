@@ -4,18 +4,6 @@ local M = {}
 ---@type boolean
 M.has_10 = vim.fn.has('nvim-0.10') == 1
 
----@param win integer
----@return integer
-function M.win_to_buf(win)
-    return vim.fn.winbufnr(win)
-end
-
----@param buf integer
----@return integer
-function M.buf_to_win(buf)
-    return vim.fn.bufwinid(buf)
-end
-
 ---@param buf integer
 ---@param win integer
 ---@return boolean
