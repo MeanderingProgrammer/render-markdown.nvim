@@ -1,8 +1,8 @@
+local NodeInfo = require('render-markdown.node_info')
 local list = require('render-markdown.list')
 local logger = require('render-markdown.logger')
 local state = require('render-markdown.state')
 local str = require('render-markdown.str')
-local ts = require('render-markdown.ts')
 
 ---@type table<string, string[]>
 local cache = {}
@@ -23,7 +23,7 @@ function M.parse(root, buf)
         return {}
     end
 
-    local info = ts.info(root, buf)
+    local info = NodeInfo.new(buf, root)
     logger.debug_node_info('latex', info)
 
     local expressions = cache[info.text]

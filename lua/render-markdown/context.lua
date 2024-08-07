@@ -69,11 +69,11 @@ end
 
 ---@param root TSNode
 ---@param query vim.treesitter.Query
----@param cb fun(capture: string, node: TSNode, metadata: vim.treesitter.query.TSMetadata)
-function Context:query(root, query, cb)
+---@param callback fun(capture: string, node: TSNode, metadata: vim.treesitter.query.TSMetadata)
+function Context:query(root, query, callback)
     for id, node, metadata in query:iter_captures(root, self.buf, self.top, self.bottom) do
         local capture = query.captures[id]
-        cb(capture, node, metadata)
+        callback(capture, node, metadata)
     end
 end
 

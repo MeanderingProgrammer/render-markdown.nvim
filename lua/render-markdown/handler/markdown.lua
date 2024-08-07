@@ -1,3 +1,4 @@
+local NodeInfo = require('render-markdown.node_info')
 local code_block_parser = require('render-markdown.parser.code_block')
 local colors = require('render-markdown.colors')
 local component = require('render-markdown.component')
@@ -8,7 +9,6 @@ local logger = require('render-markdown.logger')
 local pipe_table_parser = require('render-markdown.parser.pipe_table')
 local state = require('render-markdown.state')
 local str = require('render-markdown.str')
-local ts = require('render-markdown.ts')
 
 ---@class render.md.handler.buf.Markdown
 ---@field private buf integer
@@ -31,7 +31,7 @@ end
 ---@return render.md.Mark[]
 function Handler:parse(root)
     context.get(self.buf):query(root, state.markdown_query, function(capture, node)
-        local info = ts.info(node, self.buf)
+        local info = NodeInfo.new(self.buf, node)
         logger.debug_node_info(capture, info)
         if capture == 'heading' then
             self:heading(info)
@@ -46,8 +46,8 @@ function Handler:parse(root)
         elseif capture == 'checkbox_checked' then
             self:checkbox(info, self.config.checkbox.checked)
         elseif capture == 'quote' then
-            context.get(self.buf):query(info.node, state.markdown_quote_query, function(nested_capture, nested_node)
-                local nested_info = ts.info(nested_node, self.buf)
+            context.get(self.buf):query(node, state.markdown_quote_query, function(nested_capture, nested_node)
+                local nested_info = NodeInfo.new(self.buf, nested_node)
                 logger.debug_node_info(nested_capture, nested_info)
                 if nested_capture == 'quote_marker' then
                     self:quote_marker(nested_info, info)
@@ -101,9 +101,9 @@ function Handler:heading(info)
     if heading.width == 'block' then
         -- Overwrite anything beyond left_pad + heading width + right_pad with Normal
         local width = heading.left_pad + icon_width + heading.right_pad
-        local content = ts.sibling(self.buf, info, 'inline')
+        local content = info:sibling('inline')
         if content ~= nil then
-            width = width + str.width(content.text) - ts.concealed(self.buf, content)
+            width = width + str.width(content.text) - content:concealed()
         end
         self:add(true, info.start_row, 0, {
             priority = 0,
@@ -134,7 +134,7 @@ function Handler:heading_icon(info, level, foreground, background)
     -- Available width is level + 1 - concealed, where level = number of `#` characters, one
     -- is added to account for the space after the last `#` but before the heading title,
     -- and concealed text is subtracted since that space is not usable
-    local width = level + 1 - ts.concealed(self.buf, info)
+    local width = level + 1 - info:concealed()
     if icon == nil then
         return width
     end
@@ -230,7 +230,7 @@ function Handler:language(code_block, add_background)
     end
     if code.position == 'left' then
         local icon_text = icon .. ' '
-        if ts.hidden(self.buf, info) then
+        if info:hidden() then
             -- Code blocks will pick up varying amounts of leading white space depending on the
             -- context they are in. This gets lumped into the delimiter node and as a result,
             -- after concealing, the extmark will be left shifted. Logic below accounts for this.
@@ -263,18 +263,14 @@ function Handler:code_background(code_block, icon_added)
 
     if code.border == 'thin' then
         local border_width = code_block.width - code_block.col
-        if
-            not icon_added
-            and ts.hidden(self.buf, code_block.code_info)
-            and ts.hidden(self.buf, code_block.start_delim)
-        then
+        if not icon_added and code_block.code_info_hidden and code_block.start_delim_hidden then
             self:add(true, code_block.start_row, code_block.col, {
                 virt_text = { { code.above:rep(border_width), colors.inverse(code.highlight) } },
                 virt_text_pos = 'overlay',
             })
             code_block.start_row = code_block.start_row + 1
         end
-        if ts.hidden(self.buf, code_block.end_delim) then
+        if code_block.end_delim_hidden then
             self:add(true, code_block.end_row - 1, code_block.col, {
                 virt_text = { { code.below:rep(border_width), colors.inverse(code.highlight) } },
                 virt_text_pos = 'overlay',
@@ -336,13 +332,13 @@ function Handler:list_marker(info)
         if not self.config.checkbox.enabled then
             return false
         end
-        if ts.sibling(self.buf, info, 'task_list_marker_unchecked') ~= nil then
+        if info:sibling('task_list_marker_unchecked') ~= nil then
             return true
         end
-        if ts.sibling(self.buf, info, 'task_list_marker_checked') ~= nil then
+        if info:sibling('task_list_marker_checked') ~= nil then
             return true
         end
-        local paragraph = ts.sibling(self.buf, info, 'paragraph')
+        local paragraph = info:sibling('paragraph')
         if paragraph == nil then
             return false
         end
@@ -360,7 +356,7 @@ function Handler:list_marker(info)
         if not bullet.enabled then
             return
         end
-        local level = ts.level_in_section(info, 'list')
+        local level = info:level_in_section('list')
         local icon = list.cycle(bullet.icons, level)
         if icon == nil then
             return
@@ -452,7 +448,7 @@ function Handler:pipe_table(info)
     if not pipe_table.enabled or pipe_table.style == 'none' then
         return
     end
-    local parsed_table = pipe_table_parser.parse(self.buf, info)
+    local parsed_table = pipe_table_parser.parse(info)
     if parsed_table == nil then
         return
     end
@@ -512,8 +508,7 @@ end
 function Handler:table_row(row, highlight)
     local pipe_table = self.config.pipe_table
     if vim.tbl_contains({ 'raw', 'padded' }, pipe_table.cell) then
-        for cell_node in row.node:iter_children() do
-            local cell = ts.info(cell_node, self.buf)
+        row:for_each_child(function(cell)
             if cell.type == '|' then
                 self:add(true, cell.start_row, cell.start_col, {
                     end_row = cell.end_row,
@@ -534,7 +529,7 @@ function Handler:table_row(row, highlight)
             else
                 logger.unhandled_type('markdown', 'cell', cell.type)
             end
-        end
+        end)
     elseif pipe_table.cell == 'overlay' then
         self:add(true, row.start_row, row.start_col, {
             end_row = row.end_row,
@@ -598,7 +593,7 @@ end
 ---@param info render.md.NodeInfo
 ---@return integer
 function Handler:table_visual_offset(info)
-    local result = ts.concealed(self.buf, info)
+    local result = info:concealed()
     local icon_ranges = context.get(self.buf):get_links(info.start_row)
     for _, icon_range in ipairs(icon_ranges) do
         if info.start_col < icon_range[2] and info.end_col > icon_range[1] then

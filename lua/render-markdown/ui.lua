@@ -1,6 +1,6 @@
-local buffer_state = require('render-markdown.buffer_state')
+local BufferState = require('render-markdown.buffer_state')
+local Extmark = require('render-markdown.extmark')
 local context = require('render-markdown.context')
-local extmark = require('render-markdown.extmark')
 local logger = require('render-markdown.logger')
 local state = require('render-markdown.state')
 local util = require('render-markdown.util')
@@ -22,18 +22,18 @@ local M = {}
 M.namespace = vim.api.nvim_create_namespace('render-markdown.nvim')
 
 function M.invalidate_cache()
-    for buf, buf_state in pairs(cache) do
-        M.clear(buf, buf_state)
+    for buf, buffer_state in pairs(cache) do
+        M.clear(buf, buffer_state)
     end
     cache = {}
 end
 
 ---@private
 ---@param buf integer
----@param buf_state render.md.BufferState
-function M.clear(buf, buf_state)
+---@param buffer_state render.md.BufferState
+function M.clear(buf, buffer_state)
     vim.api.nvim_buf_clear_namespace(buf, M.namespace, 0, -1)
-    buf_state.marks = nil
+    buffer_state.marks = nil
 end
 
 ---@param buf integer
@@ -45,15 +45,15 @@ function M.debounce_update(buf, win, change)
     end
 
     local config = state.get_config(buf)
-    local buf_state = cache[buf] or buffer_state.new(buf)
-    cache[buf] = buf_state
+    local buffer_state = cache[buf] or BufferState.new(buf)
+    cache[buf] = buffer_state
 
     if not change and context.contains_range(buf, win) then
         vim.schedule(function()
             M.update(buf, win, false)
         end)
     else
-        buf_state:debounce(config.debounce, function()
+        buffer_state:debounce(config.debounce, function()
             M.update(buf, win, true)
         end)
     end
@@ -69,29 +69,29 @@ function M.update(buf, win, parse)
     end
 
     local config = state.get_config(buf)
-    local buf_state = cache[buf]
+    local buffer_state = cache[buf]
 
     local next_state = M.next_state(config, win)
-    if next_state ~= buf_state.state then
+    if next_state ~= buffer_state.state then
         for name, value in pairs(config.win_options) do
             util.set_win(win, name, value[next_state])
         end
     end
-    buf_state.state = next_state
+    buffer_state.state = next_state
 
     if next_state == 'rendered' then
-        if buf_state.marks == nil or parse then
-            M.clear(buf, buf_state)
+        if buffer_state.marks == nil or parse then
+            M.clear(buf, buffer_state)
             logger.start()
-            buf_state.marks = M.parse_buffer(buf, win)
+            buffer_state.marks = M.parse_buffer(buf, win)
             logger.flush()
         end
         local row = util.cursor_row(buf, win)
-        for _, mark in ipairs(buf_state.marks) do
+        for _, mark in ipairs(buffer_state.marks) do
             mark:render(config, row)
         end
     else
-        M.clear(buf, buf_state)
+        M.clear(buf, buffer_state)
     end
 end
 
@@ -141,7 +141,7 @@ function M.parse_buffer(buf, win)
         vim.list_extend(marks, M.parse_tree(buf, 'markdown', root))
     end
     return vim.tbl_map(function(mark)
-        return extmark.new(M.namespace, buf, mark)
+        return Extmark.new(M.namespace, buf, mark)
     end, marks)
 end
 

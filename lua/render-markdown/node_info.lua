@@ -8,37 +8,37 @@ local function in_section(node)
     return not vim.tbl_contains({ 'section', 'document' }, node:type())
 end
 
----@class render.md.TSHelper
-local M = {}
-
 ---@class render.md.NodeInfo
----@field node TSNode
+---@field private buf integer
+---@field private node TSNode
 ---@field type string
 ---@field text string
 ---@field start_row integer
 ---@field start_col integer
 ---@field end_row integer
 ---@field end_col integer
+local NodeInfo = {}
+NodeInfo.__index = NodeInfo
 
+---@param buf integer
 ---@param node TSNode
----@param source integer|string
 ---@return render.md.NodeInfo
-function M.info(node, source)
+function NodeInfo.new(buf, node)
+    local self = setmetatable({}, NodeInfo)
+    self.buf = buf
+    self.node = node
+    self.type = node:type()
+    self.text = vim.treesitter.get_node_text(node, buf)
     local start_row, start_col, end_row, end_col = node:range()
-    ---@type render.md.NodeInfo
-    return {
-        node = node,
-        type = node:type(),
-        text = vim.treesitter.get_node_text(node, source),
-        start_row = start_row,
-        start_col = start_col,
-        end_row = end_row,
-        end_col = end_col,
-    }
+    self.start_row = start_row
+    self.start_col = start_col
+    self.end_row = end_row
+    self.end_col = end_col
+    return self
 end
 
 ---@param infos render.md.NodeInfo[]
-function M.sort_inplace(infos)
+function NodeInfo.sort_inplace(infos)
     table.sort(infos, function(info1, info2)
         if info1.start_row ~= info2.start_row then
             return info1.start_row < info2.start_row
@@ -49,12 +49,11 @@ function M.sort_inplace(infos)
 end
 
 ---Walk through parent nodes, count the number of target nodes
----@param info render.md.NodeInfo
 ---@param target string
 ---@return integer
-function M.level_in_section(info, target)
+function NodeInfo:level_in_section(target)
     local level = 0
-    local parent = info.node:parent()
+    local parent = self.node:parent()
     while parent ~= nil and in_section(parent) do
         if parent:type() == target then
             level = level + 1
@@ -64,77 +63,76 @@ function M.level_in_section(info, target)
     return level
 end
 
----@param buf integer
----@param info render.md.NodeInfo
 ---@param target string
 ---@return render.md.NodeInfo?
-function M.parent(buf, info, target)
-    local parent = info.node:parent()
+function NodeInfo:parent(target)
+    local parent = self.node:parent()
     while parent ~= nil do
         if parent:type() == target then
-            return M.info(parent, buf)
+            return NodeInfo.new(self.buf, parent)
         end
         parent = parent:parent()
     end
     return nil
 end
 
----@param buf integer
----@param info render.md.NodeInfo
 ---@param target string
 ---@return render.md.NodeInfo?
-function M.sibling(buf, info, target)
-    local sibling = info.node:next_sibling()
+function NodeInfo:sibling(target)
+    local sibling = self.node:next_sibling()
     while sibling ~= nil do
         if sibling:type() == target then
-            return M.info(sibling, buf)
+            return NodeInfo.new(self.buf, sibling)
         end
         sibling = sibling:next_sibling()
     end
     return nil
 end
 
----@param buf integer
----@param info? render.md.NodeInfo
 ---@param target_type string
 ---@param target_row? integer
 ---@return render.md.NodeInfo?
-function M.child(buf, info, target_type, target_row)
-    if info == nil then
-        return nil
-    end
-    for child in info.node:iter_children() do
+function NodeInfo:child(target_type, target_row)
+    for child in self.node:iter_children() do
         if child:type() == target_type then
             if target_row == nil or child:range() == target_row then
-                return M.info(child, buf)
+                return NodeInfo.new(self.buf, child)
             end
         end
     end
     return nil
 end
 
----@param buf integer
----@param info? render.md.NodeInfo
----@return boolean
-function M.hidden(buf, info)
-    -- Missing nodes are considered hidden
-    if info == nil then
-        return true
+---@param callback fun(node: render.md.NodeInfo)
+function NodeInfo:for_each_child(callback)
+    for child in self.node:iter_children() do
+        callback(NodeInfo.new(self.buf, child))
     end
-    return str.width(info.text) == M.concealed(buf, info)
 end
 
----@param buf integer
----@param info render.md.NodeInfo
+---@return string[]
+function NodeInfo:lines()
+    local end_row = self.end_row
+    if end_row == self.start_row then
+        end_row = end_row + 1
+    end
+    return vim.api.nvim_buf_get_lines(self.buf, self.start_row, end_row, false)
+end
+
+---@return boolean
+function NodeInfo:hidden()
+    return str.width(self.text) == self:concealed()
+end
+
 ---@return integer
-function M.concealed(buf, info)
-    local ranges = context.get(buf):get_conceal(info.start_row)
+function NodeInfo:concealed()
+    local ranges = context.get(self.buf):get_conceal(self.start_row)
     if #ranges == 0 then
         return 0
     end
     local result = 0
-    local col = info.start_col
-    for _, index in ipairs(vim.fn.str2list(info.text)) do
+    local col = self.start_col
+    for _, index in ipairs(vim.fn.str2list(self.text)) do
         local ch = vim.fn.nr2char(index)
         for _, range in ipairs(ranges) do
             -- Essentially vim.treesitter.is_in_node_range but only care about column
@@ -147,4 +145,4 @@ function M.concealed(buf, info)
     return result
 end
 
-return M
+return NodeInfo

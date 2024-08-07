@@ -1,6 +1,5 @@
 local context = require('render-markdown.context')
 local str = require('render-markdown.str')
-local ts = require('render-markdown.ts')
 
 ---@class render.md.parser.CodeBlock
 local M = {}
@@ -12,11 +11,11 @@ local M = {}
 ---@field leading_spaces integer
 ---@field longest_line integer
 ---@field width integer
----@field code_info? render.md.NodeInfo
+---@field code_info_hidden boolean
 ---@field language_info? render.md.NodeInfo
 ---@field language? string
----@field start_delim? render.md.NodeInfo
----@field end_delim? render.md.NodeInfo
+---@field start_delim_hidden boolean
+---@field end_delim_hidden boolean
 
 ---@param config render.md.Code
 ---@param buf integer
@@ -27,8 +26,11 @@ function M.parse(config, buf, info)
     if info.end_row - info.start_row <= 1 then
         return nil
     end
-    local code_info = ts.child(buf, info, 'info_string', info.start_row)
-    local language_info = ts.child(buf, code_info, 'language', info.start_row)
+    local code_info = info:child('info_string', info.start_row)
+    local language_info = nil
+    if code_info ~= nil then
+        language_info = code_info:child('language', info.start_row)
+    end
     local longest_line, width = M.get_width(config, buf, info)
     ---@type render.md.parsed.CodeBlock
     return {
@@ -38,11 +40,11 @@ function M.parse(config, buf, info)
         leading_spaces = str.leading_spaces(info.text),
         longest_line = longest_line,
         width = width,
-        code_info = code_info,
+        code_info_hidden = M.hidden(code_info),
         language_info = language_info,
         language = (language_info or {}).text,
-        start_delim = ts.child(buf, info, 'fenced_code_block_delimiter', info.start_row),
-        end_delim = ts.child(buf, info, 'fenced_code_block_delimiter', info.end_row - 1),
+        start_delim_hidden = M.hidden(info:child('fenced_code_block_delimiter', info.start_row)),
+        end_delim_hidden = M.hidden(info:child('fenced_code_block_delimiter', info.end_row - 1)),
     }
 end
 
@@ -52,7 +54,7 @@ end
 ---@param info render.md.NodeInfo
 ---@return integer, integer
 function M.get_width(config, buf, info)
-    local lines = vim.api.nvim_buf_get_lines(buf, info.start_row, info.end_row, false)
+    local lines = info:lines()
     local code_width = vim.fn.max(vim.tbl_map(str.width, lines))
     local longest_line = config.left_pad + code_width + config.right_pad
     local width = math.max(longest_line, config.min_width)
@@ -61,6 +63,16 @@ function M.get_width(config, buf, info)
     else
         return width, context.get(buf):get_width()
     end
+end
+
+---@private
+---@param info? render.md.NodeInfo
+---@return boolean
+function M.hidden(info)
+    if info == nil then
+        return true
+    end
+    return info:hidden()
 end
 
 return M

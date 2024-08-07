@@ -1,10 +1,10 @@
+local NodeInfo = require('render-markdown.node_info')
 local component = require('render-markdown.component')
 local context = require('render-markdown.context')
 local list = require('render-markdown.list')
 local logger = require('render-markdown.logger')
 local state = require('render-markdown.state')
 local str = require('render-markdown.str')
-local ts = require('render-markdown.ts')
 
 ---@class render.md.handler.buf.MarkdownInline
 ---@field private buf integer
@@ -27,7 +27,7 @@ end
 ---@return render.md.Mark[]
 function Handler:parse(root)
     context.get(self.buf):query(root, state.inline_query, function(capture, node)
-        local info = ts.info(node, self.buf)
+        local info = NodeInfo.new(self.buf, node)
         logger.debug_node_info(capture, info)
         if capture == 'code' then
             self:code(info)
@@ -80,7 +80,7 @@ function Handler:shortcut(info)
         return
     end
 
-    local line = vim.api.nvim_buf_get_lines(self.buf, info.start_row, info.start_row + 1, false)[1]
+    local line = info:lines()[1]
     if line:find('[' .. info.text .. ']', 1, true) ~= nil then
         self:wiki_link(info)
         return
@@ -98,7 +98,7 @@ function Handler:callout(info, callout)
     ---Support for overriding title: https://help.obsidian.md/Editing+and+formatting/Callouts#Change+the+title
     ---@return string, string?
     local function custom_title()
-        local content = ts.parent(self.buf, info, 'inline')
+        local content = info:parent('inline')
         if content ~= nil then
             local line = str.split(content.text, '\n')[1]
             if #line > #callout.raw and vim.startswith(line:lower(), callout.raw:lower()) then
@@ -180,7 +180,7 @@ function Handler:link_virt_text(info)
     if info.type == 'image' then
         return link.image, link.highlight
     elseif info.type == 'inline_link' then
-        local destination = ts.child(self.buf, info, 'link_destination')
+        local destination = info:child('link_destination')
         if destination ~= nil then
             return self:dest_virt_text(destination.text)
         end
