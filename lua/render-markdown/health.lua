@@ -5,7 +5,7 @@ local M = {}
 
 ---@private
 ---@type string
-M.version = '6.0.7'
+M.version = '6.0.8'
 
 function M.check()
     vim.health.start('render-markdown.nvim [version]')

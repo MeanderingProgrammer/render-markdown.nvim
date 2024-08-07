@@ -110,13 +110,23 @@ function NodeInfo:for_each_child(callback)
     end
 end
 
+---@param position 'above'|'below'|'on'
+---@return string
+function NodeInfo:line(position)
+    local start_row = nil
+    if position == 'above' then
+        start_row = self.start_row - 1
+    elseif position == 'above' then
+        start_row = self.end_row + 1
+    else
+        start_row = self.start_row
+    end
+    return vim.api.nvim_buf_get_lines(self.buf, start_row, start_row + 1, false)[1]
+end
+
 ---@return string[]
 function NodeInfo:lines()
-    local end_row = self.end_row
-    if end_row == self.start_row then
-        end_row = end_row + 1
-    end
-    return vim.api.nvim_buf_get_lines(self.buf, self.start_row, end_row, false)
+    return vim.api.nvim_buf_get_lines(self.buf, self.start_row, self.end_row, false)
 end
 
 ---@return boolean

@@ -13,6 +13,7 @@ local str = require('render-markdown.str')
 ---@class render.md.handler.buf.Markdown
 ---@field private buf integer
 ---@field private config render.md.BufferConfig
+---@field private last_heading_border integer
 ---@field private marks render.md.Mark[]
 local Handler = {}
 Handler.__index = Handler
@@ -23,6 +24,7 @@ function Handler.new(buf)
     local self = setmetatable({}, Handler)
     self.buf = buf
     self.config = state.get_config(buf)
+    self.last_heading_border = -1
     self.marks = {}
     return self
 end
@@ -98,18 +100,43 @@ function Handler:heading(info)
         hl_eol = true,
     })
 
+    local width = self:heading_width(info, icon_width)
+
     if heading.width == 'block' then
-        -- Overwrite anything beyond left_pad + heading width + right_pad with Normal
-        local width = heading.left_pad + icon_width + heading.right_pad
-        local content = info:sibling('inline')
-        if content ~= nil then
-            width = width + str.width(content.text) + self:added_width(content) - content:concealed()
-        end
+        -- Overwrite anything beyond width with Normal
         self:add(true, info.start_row, 0, {
             priority = 0,
             virt_text = { { str.pad(vim.o.columns * 2), 'Normal' } },
-            virt_text_win_col = math.max(width, heading.min_width),
+            virt_text_win_col = width,
         })
+    end
+
+    if heading.border then
+        local text_above = { heading.above:rep(width), colors.inverse(background) }
+        if info:line('above') == '' and info.start_row - 1 ~= self.last_heading_border then
+            self:add(true, info.start_row - 1, 0, {
+                virt_text = { text_above },
+                virt_text_pos = 'overlay',
+            })
+        else
+            self:add(false, info.start_row, 0, {
+                virt_lines = { { text_above } },
+                virt_lines_above = true,
+            })
+        end
+
+        local text_below = { heading.below:rep(width), colors.inverse(background) }
+        if info:line('below') == '' then
+            self:add(true, info.end_row + 1, 0, {
+                virt_text = { text_below },
+                virt_text_pos = 'overlay',
+            })
+            self.last_heading_border = info.end_row + 1
+        else
+            self:add(false, info.end_row, 0, {
+                virt_lines = { { text_below } },
+            })
+        end
     end
 
     if heading.left_pad > 0 then
@@ -157,6 +184,24 @@ function Handler:heading_icon(info, level, foreground, background)
             virt_text_pos = 'overlay',
         })
         return width
+    end
+end
+
+---@private
+---@param info render.md.NodeInfo
+---@param icon_width integer
+---@return integer
+function Handler:heading_width(info, icon_width)
+    local heading = self.config.heading
+    if heading.width == 'block' then
+        local width = heading.left_pad + icon_width + heading.right_pad
+        local content = info:sibling('inline')
+        if content ~= nil then
+            width = width + str.width(content.text) + self:added_width(content) - content:concealed()
+        end
+        return math.max(width, heading.min_width)
+    else
+        return context.get(self.buf):get_width()
     end
 end
 
@@ -287,7 +332,7 @@ function Handler:code_background(code_block, icon_added)
     })
 
     if code.width == 'block' then
-        -- Overwrite anything beyond left_pad + block width + right_pad with Normal
+        -- Overwrite anything beyond width with Normal
         local padding = str.pad(vim.o.columns * 2)
         for row = code_block.start_row, code_block.end_row - 1 do
             self:add(false, row, 0, {

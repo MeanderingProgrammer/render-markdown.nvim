@@ -251,6 +251,12 @@ require('render-markdown').setup({
         right_pad = 0,
         -- Minimum width to use for headings when width is 'block'
         min_width = 0,
+        -- Determins if a border is added above and below headings
+        border = false,
+        -- Used above heading for border
+        above = '▄',
+        -- Used below heading for border
+        below = '▀',
         -- The 'level' is used to index into the array using a clamp
         -- Highlight for the heading icon and extends through the entire line
         backgrounds = {
@@ -538,6 +544,12 @@ require('render-markdown').setup({
         right_pad = 0,
         -- Minimum width to use for headings when width is 'block'
         min_width = 0,
+        -- Determins if a border is added above and below headings
+        border = false,
+        -- Used above heading for border
+        above = '▄',
+        -- Used below heading for border
+        below = '▀',
         -- The 'level' is used to index into the array using a clamp
         -- Highlight for the heading icon and extends through the entire line
         backgrounds = {

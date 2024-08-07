@@ -80,8 +80,7 @@ function Handler:shortcut(info)
         return
     end
 
-    local line = info:lines()[1]
-    if line:find('[' .. info.text .. ']', 1, true) ~= nil then
+    if info:line('on'):find('[' .. info.text .. ']', 1, true) ~= nil then
         self:wiki_link(info)
         return
     end
