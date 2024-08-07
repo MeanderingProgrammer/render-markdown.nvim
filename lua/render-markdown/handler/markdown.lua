@@ -103,7 +103,7 @@ function Handler:heading(info)
         local width = heading.left_pad + icon_width + heading.right_pad
         local content = info:sibling('inline')
         if content ~= nil then
-            width = width + str.width(content.text) - content:concealed()
+            width = width + str.width(content.text) + self:added_width(content) - content:concealed()
         end
         self:add(true, info.start_row, 0, {
             priority = 0,
@@ -593,11 +593,18 @@ end
 ---@param info render.md.NodeInfo
 ---@return integer
 function Handler:table_visual_offset(info)
-    local result = info:concealed()
+    return info:concealed() - self:added_width(info)
+end
+
+---@private
+---@param info render.md.NodeInfo
+---@return integer
+function Handler:added_width(info)
+    local result = 0
     local icon_ranges = context.get(self.buf):get_links(info.start_row)
     for _, icon_range in ipairs(icon_ranges) do
         if info.start_col < icon_range[2] and info.end_col > icon_range[1] then
-            result = result - str.width(icon_range[3])
+            result = result + str.width(icon_range[3])
         end
     end
     return result
