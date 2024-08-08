@@ -399,6 +399,10 @@ require('render-markdown').setup({
     pipe_table = {
         -- Turn on / off pipe table rendering
         enabled = true,
+        -- Pre configured settings largely for setting table border easier
+        --  round: use round border characters rather than right angles
+        --  none: does nothing
+        preset = 'none',
         -- Determines how the table as a whole is rendered:
         --  none: disables all rendering
         --  normal: applies the 'cell' style rendering to each row of the table
@@ -752,6 +756,10 @@ require('render-markdown').setup({
     pipe_table = {
         -- Turn on / off pipe table rendering
         enabled = true,
+        -- Pre configured settings largely for setting table border easier
+        --  round: use round border characters rather than right angles
+        --  none: does nothing
+        preset = 'none',
         -- Determines how the table as a whole is rendered:
         --  none: disables all rendering
         --  normal: applies the 'cell' style rendering to each row of the table

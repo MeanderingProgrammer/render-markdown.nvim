@@ -300,6 +300,7 @@ function M.validate()
         if pipe_table ~= nil then
             append_errors(path .. '.pipe_table', pipe_table, {
                 enabled = { pipe_table.enabled, 'boolean', nilable },
+                preset = one_of(pipe_table.preset, { 'none', 'round' }, {}, nilable),
                 style = one_of(pipe_table.style, { 'full', 'normal', 'none' }, {}, nilable),
                 cell = one_of(pipe_table.cell, { 'padded', 'raw', 'overlay' }, {}, nilable),
                 border = string_array(pipe_table.border, nilable),

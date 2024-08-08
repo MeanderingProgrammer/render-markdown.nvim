@@ -38,11 +38,13 @@ local M = {}
 ---@field public highlight? string
 ---@field public custom? table<string, render.md.UserLinkComponent>
 
+---@alias render.md.table.Preset 'none'|'round'
 ---@alias render.md.table.Style 'full'|'normal'|'none'
 ---@alias render.md.table.Cell 'padded'|'raw'|'overlay'
 
 ---@class (exact) render.md.UserPipeTable
 ---@field public enabled? boolean
+---@field public preset? render.md.table.Preset
 ---@field public style? render.md.table.Style
 ---@field public cell? render.md.table.Cell
 ---@field public border? string[]
@@ -423,6 +425,10 @@ M.default_config = {
     pipe_table = {
         -- Turn on / off pipe table rendering
         enabled = true,
+        -- Pre configured settings largely for setting table border easier
+        --  round: use round border characters rather than right angles
+        --  none: does nothing
+        preset = 'none',
         -- Determines how the table as a whole is rendered:
         --  none: disables all rendering
         --  normal: applies the 'cell' style rendering to each row of the table

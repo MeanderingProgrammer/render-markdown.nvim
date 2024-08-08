@@ -29,6 +29,7 @@
 
 ---@class (exact) render.md.PipeTable
 ---@field public enabled boolean
+---@field public preset render.md.table.Preset
 ---@field public style render.md.table.Style
 ---@field public cell render.md.table.Cell
 ---@field public border string[]
