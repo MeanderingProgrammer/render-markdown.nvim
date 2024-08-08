@@ -129,6 +129,9 @@ use({
 
 # Setup
 
+Checkout the [Wiki](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki)
+for examples and images associated with different configuration options.
+
 The full default configuration is provided below for reference.
 
 Any part of it can be modified however for many fields this does not make much sense.
@@ -518,6 +521,8 @@ We use the following definitions when discussing indexing into arrays:
 
 ## Headings
 
+[Wiki Page](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Headings)
+
 ```lua
 require('render-markdown').setup({
     heading = {
@@ -580,6 +585,8 @@ require('render-markdown').setup({
 
 ## Code Blocks
 
+[Wiki Page](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/CodeBlocks)
+
 ```lua
 require('render-markdown').setup({
     code = {
@@ -628,6 +635,8 @@ require('render-markdown').setup({
 
 ## Dashed Line
 
+[Wiki Page](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/DashedLine)
+
 ```lua
 require('render-markdown').setup({
     dash = {
@@ -647,6 +656,8 @@ require('render-markdown').setup({
 ```
 
 ## List Bullets
+
+[Wiki Page](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/ListBullets)
 
 ```lua
 require('render-markdown').setup({
@@ -669,6 +680,8 @@ require('render-markdown').setup({
 ```
 
 ## Checkboxes
+
+[Wiki Page](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Checkboxes)
 
 ```lua
 require('render-markdown').setup({
@@ -705,6 +718,8 @@ require('render-markdown').setup({
 
 ## Block Quotes
 
+[Wiki Page](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/BlockQuotes)
+
 ```lua
 require('render-markdown').setup({
     quote = {
@@ -725,6 +740,8 @@ require('render-markdown').setup({
 ```
 
 ## Tables
+
+[Wiki Page](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Tables)
 
 ```lua
 require('render-markdown').setup({
@@ -764,6 +781,8 @@ require('render-markdown').setup({
 
 ## Callouts
 
+[Wiki Page](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Callouts)
+
 ```lua
 require('render-markdown').setup({
     -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'
@@ -794,6 +813,8 @@ require('render-markdown').setup({
 
 ## Links
 
+[Wiki Page](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Links)
+
 ```lua
 require('render-markdown').setup({
     link = {
@@ -820,6 +841,8 @@ require('render-markdown').setup({
 ```
 
 ## Signs
+
+[Wiki Page](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Signs)
 
 ```lua
 require('render-markdown').setup({

@@ -1,4 +1,4 @@
-*render-markdown.txt*          For 0.10.0          Last change: 2024 August 07
+*render-markdown.txt*          For 0.10.0          Last change: 2024 August 08
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -157,6 +157,10 @@ PACKER.NVIM                              *render-markdown-install-packer.nvim*
 
 ==============================================================================
 6. Setup                                               *render-markdown-setup*
+
+Checkout the Wiki
+<https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki> for
+examples and images associated with different configuration options.
 
 The full default configuration is provided below for reference.
 
@@ -545,6 +549,9 @@ Example: `{ 1, 2, 3 }` @ 4 = 3.
 
 HEADINGS                                      *render-markdown-setup-headings*
 
+Wiki Page
+<https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Headings>
+
 >lua
     require('render-markdown').setup({
         heading = {
@@ -608,6 +615,9 @@ HEADINGS                                      *render-markdown-setup-headings*
 
 CODE BLOCKS                                *render-markdown-setup-code-blocks*
 
+Wiki Page
+<https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/CodeBlocks>
+
 >lua
     require('render-markdown').setup({
         code = {
@@ -657,6 +667,9 @@ CODE BLOCKS                                *render-markdown-setup-code-blocks*
 
 DASHED LINE                                *render-markdown-setup-dashed-line*
 
+Wiki Page
+<https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/DashedLine>
+
 >lua
     require('render-markdown').setup({
         dash = {
@@ -677,6 +690,9 @@ DASHED LINE                                *render-markdown-setup-dashed-line*
 
 
 LIST BULLETS                              *render-markdown-setup-list-bullets*
+
+Wiki Page
+<https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/ListBullets>
 
 >lua
     require('render-markdown').setup({
@@ -700,6 +716,9 @@ LIST BULLETS                              *render-markdown-setup-list-bullets*
 
 
 CHECKBOXES                                  *render-markdown-setup-checkboxes*
+
+Wiki Page
+<https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Checkboxes>
 
 >lua
     require('render-markdown').setup({
@@ -737,6 +756,9 @@ CHECKBOXES                                  *render-markdown-setup-checkboxes*
 
 BLOCK QUOTES                              *render-markdown-setup-block-quotes*
 
+Wiki Page
+<https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/BlockQuotes>
+
 >lua
     require('render-markdown').setup({
         quote = {
@@ -758,6 +780,9 @@ BLOCK QUOTES                              *render-markdown-setup-block-quotes*
 
 
 TABLES                                          *render-markdown-setup-tables*
+
+Wiki Page
+<https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Tables>
 
 >lua
     require('render-markdown').setup({
@@ -798,6 +823,9 @@ TABLES                                          *render-markdown-setup-tables*
 
 CALLOUTS                                      *render-markdown-setup-callouts*
 
+Wiki Page
+<https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Callouts>
+
 >lua
     require('render-markdown').setup({
         -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'
@@ -829,6 +857,9 @@ CALLOUTS                                      *render-markdown-setup-callouts*
 
 LINKS                                            *render-markdown-setup-links*
 
+Wiki Page
+<https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Links>
+
 >lua
     require('render-markdown').setup({
         link = {
@@ -856,6 +887,9 @@ LINKS                                            *render-markdown-setup-links*
 
 
 SIGNS                                            *render-markdown-setup-signs*
+
+Wiki Page
+<https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Signs>
 
 >lua
     require('render-markdown').setup({
