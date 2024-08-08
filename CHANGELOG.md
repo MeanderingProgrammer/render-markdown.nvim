@@ -4,6 +4,7 @@
 
 ### Features
 
+- Created wiki with examples [here](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki)
 - min_width code block option [4b80b4f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4b80b4fb8f81dc39da23a13a0b4e971731c5f849)
 - left_pad bullet option [e455c4f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/e455c4f4886d250bd610165a24524da2c6adce80)
 - preset option, obsidian & lazy [96988cc](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/96988cc76414a2f69a57c5dbaca7bf9336c9cb52)
@@ -11,6 +12,8 @@
   [6392a5d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/6392a5dfa10f367e10fe58ea9c2faf3179b145d5)
 - border heading option [#123](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/123)
   [b700269](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b7002694a7a794f8d8a6a0cc54769628cf1cf9d8)
+- heading width based on level [#126](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/126)
+  [f06d19a](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/f06d19ad58e4977f02f7885ea00c3ecfdfe609ff)
 
 ### Bug Fixes
 
