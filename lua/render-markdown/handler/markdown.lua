@@ -1,8 +1,8 @@
+local Context = require('render-markdown.context')
 local NodeInfo = require('render-markdown.node_info')
 local code_block_parser = require('render-markdown.parser.code_block')
 local colors = require('render-markdown.colors')
 local component = require('render-markdown.component')
-local context = require('render-markdown.context')
 local icons = require('render-markdown.icons')
 local list = require('render-markdown.list')
 local logger = require('render-markdown.logger')
@@ -13,6 +13,7 @@ local str = require('render-markdown.str')
 ---@class render.md.handler.buf.Markdown
 ---@field private buf integer
 ---@field private config render.md.BufferConfig
+---@field private context render.md.Context
 ---@field private last_heading_border integer
 ---@field private marks render.md.Mark[]
 local Handler = {}
@@ -24,6 +25,7 @@ function Handler.new(buf)
     local self = setmetatable({}, Handler)
     self.buf = buf
     self.config = state.get_config(buf)
+    self.context = Context.get(buf)
     self.last_heading_border = -1
     self.marks = {}
     return self
@@ -32,7 +34,7 @@ end
 ---@param root TSNode
 ---@return render.md.Mark[]
 function Handler:parse(root)
-    context.get(self.buf):query(root, state.markdown_query, function(capture, node)
+    self.context:query(root, state.markdown_query, function(capture, node)
         local info = NodeInfo.new(self.buf, node)
         logger.debug_node_info(capture, info)
         if capture == 'heading' then
@@ -48,7 +50,7 @@ function Handler:parse(root)
         elseif capture == 'checkbox_checked' then
             self:checkbox(info, self.config.checkbox.checked)
         elseif capture == 'quote' then
-            context.get(self.buf):query(node, state.markdown_quote_query, function(nested_capture, nested_node)
+            self.context:query(node, state.markdown_quote_query, function(nested_capture, nested_node)
                 local nested_info = NodeInfo.new(self.buf, nested_node)
                 logger.debug_node_info(nested_capture, nested_info)
                 if nested_capture == 'quote_marker' then
@@ -135,7 +137,7 @@ function Handler:heading_icon(info, level, foreground, background)
     -- Available width is level + 1 - concealed, where level = number of `#` characters, one
     -- is added to account for the space after the last `#` but before the heading title,
     -- and concealed text is subtracted since that space is not usable
-    local width = level + 1 - info:concealed()
+    local width = level + 1 - self.context:concealed(info)
     if icon == nil then
         return width
     end
@@ -171,11 +173,11 @@ function Handler:heading_width(info, icon_width)
         local width = heading.left_pad + icon_width + heading.right_pad
         local content = info:sibling('inline')
         if content ~= nil then
-            width = width + str.width(content.text) + self:added_width(content) - content:concealed()
+            width = width + str.width(content.text) + self.context:link_width(content) - self.context:concealed(content)
         end
         return math.max(width, heading.min_width)
     else
-        return context.get(self.buf):get_width()
+        return self.context:get_width()
     end
 end
 
@@ -234,7 +236,7 @@ function Handler:dash(info)
 
     local width
     if dash.width == 'full' then
-        width = context.get(self.buf):get_width()
+        width = self.context:get_width()
     else
         ---@type integer
         width = dash.width
@@ -253,7 +255,7 @@ function Handler:code(info)
     if not code.enabled or code.style == 'none' then
         return
     end
-    local code_block = code_block_parser.parse(code, self.buf, info)
+    local code_block = code_block_parser.parse(code, self.context, info)
     if code_block == nil then
         return
     end
@@ -294,7 +296,7 @@ function Handler:language(code_block, add_background)
     end
     if code.position == 'left' then
         local icon_text = icon .. ' '
-        if info:hidden() then
+        if self.context:hidden(info) then
             -- Code blocks will pick up varying amounts of leading white space depending on the
             -- context they are in. This gets lumped into the delimiter node and as a result,
             -- after concealing, the extmark will be left shifted. Logic below accounts for this.
@@ -657,21 +659,7 @@ end
 ---@param info render.md.NodeInfo
 ---@return integer
 function Handler:table_visual_offset(info)
-    return info:concealed() - self:added_width(info)
-end
-
----@private
----@param info render.md.NodeInfo
----@return integer
-function Handler:added_width(info)
-    local result = 0
-    local icon_ranges = context.get(self.buf):get_links(info.start_row)
-    for _, icon_range in ipairs(icon_ranges) do
-        if info.start_col < icon_range[2] and info.end_col > icon_range[1] then
-            result = result + str.width(icon_range[3])
-        end
-    end
-    return result
+    return self.context:concealed(info) - self.context:link_width(info)
 end
 
 ---@class render.md.handler.Markdown: render.md.Handler

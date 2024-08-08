@@ -1,6 +1,3 @@
-local context = require('render-markdown.context')
-local str = require('render-markdown.str')
-
 ---@param node TSNode
 ---@return boolean
 local function in_section(node)
@@ -127,32 +124,6 @@ end
 ---@return string[]
 function NodeInfo:lines()
     return vim.api.nvim_buf_get_lines(self.buf, self.start_row, self.end_row, false)
-end
-
----@return boolean
-function NodeInfo:hidden()
-    return str.width(self.text) == self:concealed()
-end
-
----@return integer
-function NodeInfo:concealed()
-    local ranges = context.get(self.buf):get_conceal(self.start_row)
-    if #ranges == 0 then
-        return 0
-    end
-    local result = 0
-    local col = self.start_col
-    for _, index in ipairs(vim.fn.str2list(self.text)) do
-        local ch = vim.fn.nr2char(index)
-        for _, range in ipairs(ranges) do
-            -- Essentially vim.treesitter.is_in_node_range but only care about column
-            if col >= range[1] and col + 1 <= range[2] then
-                result = result + str.width(ch)
-            end
-        end
-        col = col + #ch
-    end
-    return result
 end
 
 return NodeInfo

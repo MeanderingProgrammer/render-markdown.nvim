@@ -1,6 +1,6 @@
 local BufferState = require('render-markdown.buffer_state')
+local Context = require('render-markdown.context')
 local Extmark = require('render-markdown.extmark')
-local context = require('render-markdown.context')
 local logger = require('render-markdown.logger')
 local state = require('render-markdown.state')
 local util = require('render-markdown.util')
@@ -48,7 +48,7 @@ function M.debounce_update(buf, win, change)
     local buffer_state = cache[buf] or BufferState.new(buf)
     cache[buf] = buffer_state
 
-    if not change and context.contains_range(buf, win) then
+    if not change and Context.contains_range(buf, win) then
         vim.schedule(function()
             M.update(buf, win, false)
         end)
@@ -122,9 +122,9 @@ function M.parse_buffer(buf, win)
         return {}
     end
     -- Reset buffer context
-    context.reset(buf, win)
+    Context.reset(buf, win)
     -- Make sure injections are processed
-    parser:parse(context.get(buf):range())
+    parser:parse(Context.get(buf):range())
     -- Parse marks
     local marks = {}
     -- Parse markdown after all other nodes to take advantage of state
@@ -154,7 +154,7 @@ end
 ---@return render.md.Mark[]
 function M.parse_tree(buf, language, root)
     logger.debug('language', language)
-    if not context.get(buf):contains_node(root) then
+    if not Context.get(buf):contains_node(root) then
         return {}
     end
 

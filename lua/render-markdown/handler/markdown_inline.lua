@@ -1,6 +1,6 @@
+local Context = require('render-markdown.context')
 local NodeInfo = require('render-markdown.node_info')
 local component = require('render-markdown.component')
-local context = require('render-markdown.context')
 local list = require('render-markdown.list')
 local logger = require('render-markdown.logger')
 local state = require('render-markdown.state')
@@ -9,6 +9,7 @@ local str = require('render-markdown.str')
 ---@class render.md.handler.buf.MarkdownInline
 ---@field private buf integer
 ---@field private config render.md.BufferConfig
+---@field private context render.md.Context
 ---@field private marks render.md.Mark[]
 local Handler = {}
 Handler.__index = Handler
@@ -19,6 +20,7 @@ function Handler.new(buf)
     local self = setmetatable({}, Handler)
     self.buf = buf
     self.config = state.get_config(buf)
+    self.context = Context.get(buf)
     self.marks = {}
     return self
 end
@@ -26,7 +28,7 @@ end
 ---@param root TSNode
 ---@return render.md.Mark[]
 function Handler:parse(root)
-    context.get(self.buf):query(root, state.inline_query, function(capture, node)
+    self.context:query(root, state.inline_query, function(capture, node)
         local info = NodeInfo.new(self.buf, node)
         logger.debug_node_info(capture, info)
         if capture == 'code' then
@@ -167,7 +169,7 @@ function Handler:link(info)
         virt_text_pos = 'inline',
     })
     if added then
-        context.get(self.buf):add_link(info, icon)
+        self.context:add_link(info, icon)
     end
 end
 

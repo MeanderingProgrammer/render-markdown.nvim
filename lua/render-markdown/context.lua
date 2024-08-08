@@ -1,3 +1,4 @@
+local str = require('render-markdown.str')
 local util = require('render-markdown.util')
 
 ---@class render.md.Context
@@ -38,10 +39,16 @@ function Context:add_link(info, icon)
     table.insert(self.links[row], { info.start_col, info.end_col, icon })
 end
 
----@param row integer
----@return [integer, integer, string][]
-function Context:get_links(row)
-    return self.links[row] or {}
+---@param info render.md.NodeInfo
+---@return integer
+function Context:link_width(info)
+    local result = 0
+    for _, icon_range in ipairs(self.links[info.start_row] or {}) do
+        if info.start_col < icon_range[2] and info.end_col > icon_range[1] then
+            result = result + str.width(icon_range[3])
+        end
+    end
+    return result
 end
 
 ---@return integer
@@ -64,7 +71,7 @@ end
 ---@return boolean
 function Context:contains_node(node)
     local top, _, bottom, _ = node:range()
-    return top <= self.bottom and bottom >= self.top
+    return top < self.bottom and bottom >= self.top
 end
 
 ---@param root TSNode
@@ -77,6 +84,38 @@ function Context:query(root, query, callback)
     end
 end
 
+---@param info? render.md.NodeInfo
+---@return boolean
+function Context:hidden(info)
+    if info == nil then
+        return true
+    end
+    return str.width(info.text) == self:concealed(info)
+end
+
+---@param info render.md.NodeInfo
+---@return integer
+function Context:concealed(info)
+    local ranges = self:get_conceal(info.start_row)
+    if #ranges == 0 then
+        return 0
+    end
+    local result = 0
+    local col = info.start_col
+    for _, index in ipairs(vim.fn.str2list(info.text)) do
+        local ch = vim.fn.nr2char(index)
+        for _, range in ipairs(ranges) do
+            -- Essentially vim.treesitter.is_in_node_range but only care about column
+            if col >= range[1] and col + 1 <= range[2] then
+                result = result + str.width(ch)
+            end
+        end
+        col = col + #ch
+    end
+    return result
+end
+
+---@private
 ---@param row integer
 ---@return [integer, integer][]
 function Context:get_conceal(row)
