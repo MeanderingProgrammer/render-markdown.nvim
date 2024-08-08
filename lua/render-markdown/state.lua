@@ -173,6 +173,7 @@ function M.validate()
                 right_pad = { heading.right_pad, 'number', nilable },
                 min_width = { heading.min_width, 'number', nilable },
                 border = { heading.border, 'boolean', nilable },
+                border_prefix = { heading.border_prefix, 'boolean', nilable },
                 above = { heading.above, 'string', nilable },
                 below = { heading.below, 'string', nilable },
                 backgrounds = string_array(heading.backgrounds, nilable),

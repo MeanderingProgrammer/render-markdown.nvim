@@ -116,7 +116,7 @@ function NodeInfo:line(position)
     local start_row = nil
     if position == 'above' then
         start_row = self.start_row - 1
-    elseif position == 'above' then
+    elseif position == 'below' then
         start_row = self.end_row + 1
     else
         start_row = self.start_row

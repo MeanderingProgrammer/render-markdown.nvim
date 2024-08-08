@@ -101,7 +101,6 @@ function Handler:heading(info)
     })
 
     local width = self:heading_width(info, icon_width)
-
     if heading.width == 'block' then
         -- Overwrite anything beyond width with Normal
         self:add(true, info.start_row, 0, {
@@ -110,33 +109,8 @@ function Handler:heading(info)
             virt_text_win_col = width,
         })
     end
-
     if heading.border then
-        local text_above = { heading.above:rep(width), colors.inverse(background) }
-        if info:line('above') == '' and info.start_row - 1 ~= self.last_heading_border then
-            self:add(true, info.start_row - 1, 0, {
-                virt_text = { text_above },
-                virt_text_pos = 'overlay',
-            })
-        else
-            self:add(false, info.start_row, 0, {
-                virt_lines = { { text_above } },
-                virt_lines_above = true,
-            })
-        end
-
-        local text_below = { heading.below:rep(width), colors.inverse(background) }
-        if info:line('below') == '' then
-            self:add(true, info.end_row + 1, 0, {
-                virt_text = { text_below },
-                virt_text_pos = 'overlay',
-            })
-            self.last_heading_border = info.end_row + 1
-        else
-            self:add(false, info.end_row, 0, {
-                virt_lines = { { text_below } },
-            })
-        end
+        self:heading_border(info, level, foreground, colors.inverse(background), width)
     end
 
     if heading.left_pad > 0 then
@@ -202,6 +176,51 @@ function Handler:heading_width(info, icon_width)
         return math.max(width, heading.min_width)
     else
         return context.get(self.buf):get_width()
+    end
+end
+
+---@private
+---@param info render.md.NodeInfo
+---@param level integer
+---@param foreground string
+---@param background string
+---@param width integer
+function Handler:heading_border(info, level, foreground, background, width)
+    local heading = self.config.heading
+    local prefix = heading.border_prefix and level or 0
+
+    local line_above = {
+        { heading.above:rep(heading.left_pad), background },
+        { heading.above:rep(prefix), foreground },
+        { heading.above:rep(width - heading.left_pad - prefix), background },
+    }
+    if str.width(info:line('above')) == 0 and info.start_row - 1 ~= self.last_heading_border then
+        self:add(true, info.start_row - 1, 0, {
+            virt_text = line_above,
+            virt_text_pos = 'overlay',
+        })
+    else
+        self:add(false, info.start_row, 0, {
+            virt_lines = { line_above },
+            virt_lines_above = true,
+        })
+    end
+
+    local line_below = {
+        { heading.below:rep(heading.left_pad), background },
+        { heading.below:rep(prefix), foreground },
+        { heading.below:rep(width - heading.left_pad - prefix), background },
+    }
+    if str.width(info:line('below')) == 0 then
+        self:add(true, info.end_row + 1, 0, {
+            virt_text = line_below,
+            virt_text_pos = 'overlay',
+        })
+        self.last_heading_border = info.end_row + 1
+    else
+        self:add(false, info.end_row, 0, {
+            virt_lines = { line_below },
+        })
     end
 end
 

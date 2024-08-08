@@ -98,6 +98,7 @@
 ---@field public right_pad integer
 ---@field public min_width integer
 ---@field public border boolean
+---@field public border_prefix boolean
 ---@field public above string
 ---@field public below string
 ---@field public backgrounds string[]

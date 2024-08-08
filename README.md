@@ -253,6 +253,8 @@ require('render-markdown').setup({
         min_width = 0,
         -- Determins if a border is added above and below headings
         border = false,
+        -- Highlight the start of the border using the foreground highlight
+        border_prefix = false,
         -- Used above heading for border
         above = '▄',
         -- Used below heading for border
@@ -546,6 +548,8 @@ require('render-markdown').setup({
         min_width = 0,
         -- Determins if a border is added above and below headings
         border = false,
+        -- Highlight the start of the border using the foreground highlight
+        border_prefix = false,
         -- Used above heading for border
         above = '▄',
         -- Used below heading for border

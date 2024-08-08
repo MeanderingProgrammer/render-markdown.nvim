@@ -109,6 +109,7 @@ local M = {}
 ---@field public right_pad? integer
 ---@field public min_width? integer
 ---@field public border? boolean
+---@field public border_prefix? boolean
 ---@field public above? string
 ---@field public below? string
 ---@field public backgrounds? string[]
@@ -265,6 +266,8 @@ M.default_config = {
         min_width = 0,
         -- Determins if a border is added above and below headings
         border = false,
+        -- Highlight the start of the border using the foreground highlight
+        border_prefix = false,
         -- Used above heading for border
         above = '▄',
         -- Used below heading for border

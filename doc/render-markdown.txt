@@ -281,6 +281,8 @@ Full Default Configuration ~
             min_width = 0,
             -- Determins if a border is added above and below headings
             border = false,
+            -- Highlight the start of the border using the foreground highlight
+            border_prefix = false,
             -- Used above heading for border
             above = '▄',
             -- Used below heading for border
@@ -573,6 +575,8 @@ HEADINGS                                      *render-markdown-setup-headings*
             min_width = 0,
             -- Determins if a border is added above and below headings
             border = false,
+            -- Highlight the start of the border using the foreground highlight
+            border_prefix = false,
             -- Used above heading for border
             above = '▄',
             -- Used below heading for border
