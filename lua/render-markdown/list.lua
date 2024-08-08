@@ -27,9 +27,10 @@ function M.add_mark(marks, conceal, start_row, start_col, opts)
     return true
 end
 
----@param values string[]
+---@generic T
+---@param values T[]
 ---@param index integer
----@return string?
+---@return T?
 function M.cycle(values, index)
     if #values == 0 then
         return nil
@@ -37,9 +38,10 @@ function M.cycle(values, index)
     return values[((index - 1) % #values) + 1]
 end
 
----@param values string[]
+---@generic T
+---@param values T[]
 ---@param index integer
----@return string
+---@return T
 function M.clamp(values, index)
     assert(#values >= 1, 'Must have at least one value')
     return values[math.min(index, #values)]

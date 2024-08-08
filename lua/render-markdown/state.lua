@@ -7,7 +7,7 @@ local configs = {}
 ---@class render.md.State
 ---@field private config render.md.Config
 ---@field enabled boolean
----@field log_level 'debug'|'error'
+---@field log_level render.md.config.LogLevel
 ---@field file_types string[]
 ---@field acknowledge_conflicts boolean
 ---@field latex render.md.Latex
@@ -106,6 +106,37 @@ function M.validate()
         }
     end
 
+    ---@param value any
+    ---@param valid_values string[]
+    ---@param nilable boolean
+    ---@return vim.validate.Spec
+    local function one_or_array_of(value, valid_values, nilable)
+        local description = 'one or array of ' .. vim.inspect(valid_values)
+        if nilable then
+            description = description .. ' or nil'
+        end
+        return {
+            value,
+            function(v)
+                if v == nil then
+                    return nilable
+                elseif type(v) == 'string' then
+                    return vim.tbl_contains(valid_values, v)
+                elseif type(v) == 'table' then
+                    for i, item in ipairs(v) do
+                        if not vim.tbl_contains(valid_values, item) then
+                            return false, string.format('Index %d is %s', i, item)
+                        end
+                    end
+                    return true
+                else
+                    return false
+                end
+            end,
+            description,
+        }
+    end
+
     ---@param value string[]
     ---@param nilable boolean
     ---@return vim.validate.Spec
@@ -119,15 +150,15 @@ function M.validate()
             function(v)
                 if v == nil then
                     return nilable
-                elseif type(v) ~= 'table' then
-                    return false
-                else
+                elseif type(v) == 'table' then
                     for i, item in ipairs(v) do
                         if type(item) ~= 'string' then
                             return false, string.format('Index %d is %s', i, type(item))
                         end
                     end
                     return true
+                else
+                    return false
                 end
             end,
             description,
@@ -168,7 +199,7 @@ function M.validate()
                 position = one_of(heading.position, { 'overlay', 'inline' }, {}, nilable),
                 icons = string_array(heading.icons, nilable),
                 signs = string_array(heading.signs, nilable),
-                width = one_of(heading.width, { 'full', 'block' }, {}, nilable),
+                width = one_or_array_of(heading.width, { 'full', 'block' }, nilable),
                 left_pad = { heading.left_pad, 'number', nilable },
                 right_pad = { heading.right_pad, 'number', nilable },
                 min_width = { heading.min_width, 'number', nilable },

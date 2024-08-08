@@ -247,6 +247,8 @@ require('render-markdown').setup({
         -- Width of the heading background:
         --  block: width of the heading text
         --  full: full width of the window
+        -- Can also be an array of the above values in which case the 'level' is used
+        -- to index into the array using a clamp
         width = 'full',
         -- Amount of padding to add to the left of headings
         left_pad = 0,
@@ -544,6 +546,8 @@ require('render-markdown').setup({
         -- Width of the heading background:
         --  block: width of the heading text
         --  full: full width of the window
+        -- Can also be an array of the above values in which case the 'level' is used
+        -- to index into the array using a clamp
         width = 'full',
         -- Amount of padding to add to the left of headings
         left_pad = 0,

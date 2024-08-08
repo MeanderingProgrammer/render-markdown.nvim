@@ -4,9 +4,11 @@ local logger = require('render-markdown.logger')
 ---@class render.md.parser.PipeTable
 local M = {}
 
+---@alias render.md.table.Alignment 'left'|'right'|'center'|'default'
+
 ---@class render.md.parsed.TableColumn
 ---@field width integer
----@field alignment 'left'|'right'|'center'|'default'
+---@field alignment render.md.table.Alignment
 
 ---@class render.md.parsed.PipeTable
 ---@field head render.md.NodeInfo
@@ -86,7 +88,7 @@ end
 
 ---@private
 ---@param cell render.md.NodeInfo
----@return 'left'|'right'|'center'|'default'
+---@return render.md.table.Alignment
 function M.parse_alignment(cell)
     local align_left = cell:child('pipe_table_align_left') ~= nil
     local align_right = cell:child('pipe_table_align_right') ~= nil

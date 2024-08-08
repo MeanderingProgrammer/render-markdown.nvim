@@ -29,8 +29,8 @@
 
 ---@class (exact) render.md.PipeTable
 ---@field public enabled boolean
----@field public style 'full'|'normal'|'none'
----@field public cell 'padded'|'raw'|'overlay'
+---@field public style render.md.table.Style
+---@field public cell render.md.table.Cell
 ---@field public border string[]
 ---@field public alignment_indicator string
 ---@field public head string
@@ -74,14 +74,14 @@
 ---@class (exact) render.md.Code
 ---@field public enabled boolean
 ---@field public sign boolean
----@field public style 'full'|'normal'|'language'|'none'
----@field public position 'left'|'right'
+---@field public style render.md.code.Style
+---@field public position render.md.code.Position
 ---@field public disable_background string[]
----@field public width 'full'|'block'
+---@field public width render.md.code.Width
 ---@field public left_pad integer
 ---@field public right_pad integer
 ---@field public min_width integer
----@field public border 'thin'|'thick'
+---@field public border render.md.code.Border
 ---@field public above string
 ---@field public below string
 ---@field public highlight string
@@ -90,10 +90,10 @@
 ---@class (exact) render.md.Heading
 ---@field public enabled boolean
 ---@field public sign boolean
----@field public position 'overlay'|'inline'
+---@field public position render.md.heading.Position
 ---@field public icons string[]
 ---@field public signs string[]
----@field public width 'full'|'block'
+---@field public width render.md.heading.Width|(render.md.heading.Width)[]
 ---@field public left_pad integer
 ---@field public right_pad integer
 ---@field public min_width integer
@@ -129,11 +129,11 @@
 ---@field public win_options table<string, render.md.WindowOption>
 
 ---@class (exact) render.md.Config: render.md.BufferConfig
----@field public preset 'none'|'lazy'|'obsidian'
+---@field public preset render.md.config.Preset
 ---@field public markdown_query string
 ---@field public markdown_quote_query string
 ---@field public inline_query string
----@field public log_level 'debug'|'error'
+---@field public log_level render.md.config.LogLevel
 ---@field public file_types string[]
 ---@field public acknowledge_conflicts boolean
 ---@field public latex render.md.Latex

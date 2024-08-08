@@ -89,6 +89,10 @@ function Handler:heading(info)
     local level = str.width(info.text)
     local foreground = list.clamp(heading.foregrounds, level)
     local background = list.clamp(heading.backgrounds, level)
+    local heading_width = heading.width
+    if type(heading_width) == 'table' then
+        heading_width = list.clamp(heading_width, level)
+    end
 
     local icon_width = self:heading_icon(info, level, foreground, background)
     if heading.sign then
@@ -102,8 +106,8 @@ function Handler:heading(info)
         hl_eol = true,
     })
 
-    local width = self:heading_width(info, icon_width)
-    if heading.width == 'block' then
+    local width = self:heading_width(info, heading_width, icon_width)
+    if heading_width == 'block' then
         -- Overwrite anything beyond width with Normal
         self:add(true, info.start_row, 0, {
             priority = 0,
@@ -165,11 +169,12 @@ end
 
 ---@private
 ---@param info render.md.NodeInfo
+---@param heading_width render.md.heading.Width
 ---@param icon_width integer
 ---@return integer
-function Handler:heading_width(info, icon_width)
+function Handler:heading_width(info, heading_width, icon_width)
     local heading = self.config.heading
-    if heading.width == 'block' then
+    if heading_width == 'block' then
         local width = heading.left_pad + icon_width + heading.right_pad
         local content = info:sibling('inline')
         if content ~= nil then

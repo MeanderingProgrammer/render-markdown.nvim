@@ -29,7 +29,7 @@ function log.reset()
     log.entries = {}
 end
 
----@param level string
+---@param level render.md.config.LogLevel
 ---@param name string
 ---@param message any
 function log.add(level, name, message)

@@ -38,10 +38,13 @@ local M = {}
 ---@field public highlight? string
 ---@field public custom? table<string, render.md.UserLinkComponent>
 
+---@alias render.md.table.Style 'full'|'normal'|'none'
+---@alias render.md.table.Cell 'padded'|'raw'|'overlay'
+
 ---@class (exact) render.md.UserPipeTable
 ---@field public enabled? boolean
----@field public style? 'full'|'normal'|'none'
----@field public cell? 'padded'|'raw'|'overlay'
+---@field public style? render.md.table.Style
+---@field public cell? render.md.table.Cell
 ---@field public border? string[]
 ---@field public alignment_indicator? string
 ---@field public head? string
@@ -82,29 +85,37 @@ local M = {}
 ---@field public width? 'full'|integer
 ---@field public highlight? string
 
+---@alias render.md.code.Style 'full'|'normal'|'language'|'none'
+---@alias render.md.code.Position 'left'|'right'
+---@alias render.md.code.Width 'full'|'block'
+---@alias render.md.code.Border 'thin'|'thick'
+
 ---@class (exact) render.md.UserCode
 ---@field public enabled? boolean
 ---@field public sign? boolean
----@field public style? 'full'|'normal'|'language'|'none'
----@field public position? 'left'|'right'
+---@field public style? render.md.code.Style
+---@field public position? render.md.code.Position
 ---@field public disable_background? string[]
----@field public width? 'full'|'block'
+---@field public width? render.md.code.Width
 ---@field public left_pad? integer
 ---@field public right_pad? integer
 ---@field public min_width? integer
----@field public border? 'thin'|'thick'
+---@field public border? render.md.code.Border
 ---@field public above? string
 ---@field public below? string
 ---@field public highlight? string
 ---@field public highlight_inline? string
 
+---@alias render.md.heading.Position 'overlay'|'inline'
+---@alias render.md.heading.Width 'full'|'block'
+
 ---@class (exact) render.md.UserHeading
 ---@field public enabled? boolean
 ---@field public sign? boolean
----@field public position? 'overlay'|'inline'
+---@field public position? render.md.heading.Position
 ---@field public icons? string[]
 ---@field public signs? string[]
----@field public width? 'full'|'block'
+---@field public width? render.md.heading.Width|(render.md.heading.Width)[]
 ---@field public left_pad? integer
 ---@field public right_pad? integer
 ---@field public min_width? integer
@@ -139,12 +150,15 @@ local M = {}
 ---@field public sign? render.md.UserSign
 ---@field public win_options? table<string, render.md.UserWindowOption>
 
+---@alias render.md.config.Preset 'none'|'lazy'|'obsidian'
+---@alias render.md.config.LogLevel 'debug'|'error'
+
 ---@class (exact) render.md.UserConfig: render.md.UserBufferConfig
----@field public preset? 'none'|'lazy'|'obsidian'
+---@field public preset? render.md.config.Preset
 ---@field public markdown_query? string
 ---@field public markdown_quote_query? string
 ---@field public inline_query? string
----@field public log_level? 'debug'|'error'
+---@field public log_level? render.md.config.LogLevel
 ---@field public file_types? string[]
 ---@field public acknowledge_conflicts? boolean
 ---@field public latex? render.md.UserLatex
@@ -257,6 +271,8 @@ M.default_config = {
         -- Width of the heading background:
         --  block: width of the heading text
         --  full: full width of the window
+        -- Can also be an array of the above values in which case the 'level' is used
+        -- to index into the array using a clamp
         width = 'full',
         -- Amount of padding to add to the left of headings
         left_pad = 0,
