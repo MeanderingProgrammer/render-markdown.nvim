@@ -67,6 +67,7 @@ function M.pipe_table_preset(name)
     elseif name == 'heavy' then
         ---@type render.md.UserPipeTable
         return {
+            alignment_indicator = '─',
             -- stylua: ignore
             border = {
                 '┏', '┳', '┓',
