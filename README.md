@@ -155,8 +155,8 @@ require('render-markdown').setup({
     -- Pre configured settings that will attempt to mimic various target
     -- user experiences. Any user provided settings will take precedence.
     --  obsidian: mimic Obsidian UI
-    --  lazy: will attempt to stay up to date with LazyVim configuration
-    --  none: does nothing
+    --  lazy:     will attempt to stay up to date with LazyVim configuration
+    --  none:     does nothing
     preset = 'none',
     -- Capture groups that get pulled from markdown
     markdown_query = [[
@@ -234,7 +234,7 @@ require('render-markdown').setup({
         -- Turn on / off any sign column related rendering
         sign = true,
         -- Determines how the icon fills the available space:
-        --  inline: underlying '#'s are concealed resulting in a left aligned icon
+        --  inline:  underlying '#'s are concealed resulting in a left aligned icon
         --  overlay: result is left padded with spaces to hide any additional '#'
         position = 'overlay',
         -- Replaces '#+' of 'atx_h._marker'
@@ -246,7 +246,7 @@ require('render-markdown').setup({
         signs = { '󰫎 ' },
         -- Width of the heading background:
         --  block: width of the heading text
-        --  full: full width of the window
+        --  full:  full width of the window
         -- Can also be an array of the above values in which case the 'level' is used
         -- to index into the array using a clamp
         width = 'full',
@@ -291,21 +291,21 @@ require('render-markdown').setup({
         -- Turn on / off any sign column related rendering
         sign = true,
         -- Determines how code blocks & inline code are rendered:
-        --  none: disables all rendering
-        --  normal: adds highlight group to code blocks & inline code, adds padding to code blocks
+        --  none:     disables all rendering
+        --  normal:   adds highlight group to code blocks & inline code, adds padding to code blocks
         --  language: adds language icon to sign column if enabled and icon + name above code blocks
-        --  full: normal + language
+        --  full:     normal + language
         style = 'full',
         -- Determines where language icon is rendered:
-        --  right: Right side of code block
-        --  left: Left side of code block
+        --  right: right side of code block
+        --  left:  left side of code block
         position = 'left',
         -- An array of language names for which background highlighting will be disabled
         -- Likely because that language has background highlights itself
         disable_background = { 'diff' },
         -- Width of the code block background:
         --  block: width of the code block
-        --  full: full width of the window
+        --  full:  full width of the window
         width = 'full',
         -- Amount of padding to add to the left of code blocks
         left_pad = 0,
@@ -315,7 +315,7 @@ require('render-markdown').setup({
         min_width = 0,
         -- Determins how the top / bottom of code block are rendered:
         --  thick: use the same highlight as the code body
-        --  thin: when lines are empty overlay the above & below icons
+        --  thin:  when lines are empty overlay the above & below icons
         border = 'thin',
         -- Used above code blocks for thin border
         above = '▄',
@@ -334,7 +334,7 @@ require('render-markdown').setup({
         icon = '─',
         -- Width of the generated line:
         --  <integer>: a hard coded width value
-        --  full: full width of the window
+        --  full:      full width of the window
         width = 'full',
         -- Highlight for the whole line generated from the icon
         highlight = 'RenderMarkdownDash',
@@ -375,8 +375,8 @@ require('render-markdown').setup({
         -- As a result this requires neovim >= 0.10.0 since it relies on 'inline' extmarks
         -- Can specify as many additional states as you like following the 'todo' pattern below
         --   The key in this case 'todo' is for healthcheck and to allow users to change its values
-        --   'raw': Matched against the raw text of a 'shortcut_link'
-        --   'rendered': Replaces the 'raw' value when rendering
+        --   'raw':       Matched against the raw text of a 'shortcut_link'
+        --   'rendered':  Replaces the 'raw' value when rendering
         --   'highlight': Highlight for the 'rendered' icon
         custom = {
             todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownTodo' },
@@ -400,18 +400,20 @@ require('render-markdown').setup({
         -- Turn on / off pipe table rendering
         enabled = true,
         -- Pre configured settings largely for setting table border easier
-        --  round: use round border characters rather than right angles
-        --  none: does nothing
+        --  heavy:  use thicker border characters
+        --  double: use double line border characters
+        --  round:  use round border corners
+        --  none:   does nothing
         preset = 'none',
         -- Determines how the table as a whole is rendered:
-        --  none: disables all rendering
+        --  none:   disables all rendering
         --  normal: applies the 'cell' style rendering to each row of the table
-        --  full: normal + a top & bottom line that fill out the table when lengths match
+        --  full:   normal + a top & bottom line that fill out the table when lengths match
         style = 'full',
         -- Determines how individual cells of a table are rendered:
         --  overlay: writes completely over the table, removing conceal behavior and highlights
-        --  raw: replaces only the '|' characters in each row, leaving the cells unmodified
-        --  padded: raw + cells are padded with inline extmarks to make up for any concealed text
+        --  raw:     replaces only the '|' characters in each row, leaving the cells unmodified
+        --  padded:  raw + cells are padded with inline extmarks to make up for any concealed text
         cell = 'padded',
         -- Gets placed in delimiter row for each column, position is based on alignmnet
         alignment_indicator = '━',
@@ -434,8 +436,8 @@ require('render-markdown').setup({
     -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'
     -- Can specify as many additional values as you like following the pattern from any below, such as 'note'
     --   The key in this case 'note' is for healthcheck and to allow users to change its values
-    --   'raw': Matched against the raw text of a 'shortcut_link', case insensitive
-    --   'rendered': Replaces the 'raw' value when rendering
+    --   'raw':       Matched against the raw text of a 'shortcut_link', case insensitive
+    --   'rendered':  Replaces the 'raw' value when rendering
     --   'highlight': Highlight for the 'rendered' text and quote markers
     callout = {
         note = { raw = '[!NOTE]', rendered = '󰋽 Note', highlight = 'RenderMarkdownInfo' },
@@ -467,8 +469,8 @@ require('render-markdown').setup({
         -- contains. Applies to 'inline_link' and wikilink nodes.
         -- Can specify as many additional values as you like following the 'web' pattern below
         --   The key in this case 'web' is for healthcheck and to allow users to change its values
-        --   'pattern': Matched against the destination text see :h lua-pattern
-        --   'icon': Gets inlined before the link text
+        --   'pattern':   Matched against the destination text see :h lua-pattern
+        --   'icon':      Gets inlined before the link text
         --   'highlight': Highlight for the 'icon'
         custom = {
             web = { pattern = '^http[s]?://', icon = '󰖟 ', highlight = 'RenderMarkdownLink' },
@@ -537,7 +539,7 @@ require('render-markdown').setup({
         -- Turn on / off any sign column related rendering
         sign = true,
         -- Determines how the icon fills the available space:
-        --  inline: underlying '#'s are concealed resulting in a left aligned icon
+        --  inline:  underlying '#'s are concealed resulting in a left aligned icon
         --  overlay: result is left padded with spaces to hide any additional '#'
         position = 'overlay',
         -- Replaces '#+' of 'atx_h._marker'
@@ -549,7 +551,7 @@ require('render-markdown').setup({
         signs = { '󰫎 ' },
         -- Width of the heading background:
         --  block: width of the heading text
-        --  full: full width of the window
+        --  full:  full width of the window
         -- Can also be an array of the above values in which case the 'level' is used
         -- to index into the array using a clamp
         width = 'full',
@@ -603,21 +605,21 @@ require('render-markdown').setup({
         -- Turn on / off any sign column related rendering
         sign = true,
         -- Determines how code blocks & inline code are rendered:
-        --  none: disables all rendering
-        --  normal: adds highlight group to code blocks & inline code, adds padding to code blocks
+        --  none:     disables all rendering
+        --  normal:   adds highlight group to code blocks & inline code, adds padding to code blocks
         --  language: adds language icon to sign column if enabled and icon + name above code blocks
-        --  full: normal + language
+        --  full:     normal + language
         style = 'full',
         -- Determines where language icon is rendered:
-        --  right: Right side of code block
-        --  left: Left side of code block
+        --  right: right side of code block
+        --  left:  left side of code block
         position = 'left',
         -- An array of language names for which background highlighting will be disabled
         -- Likely because that language has background highlights itself
         disable_background = { 'diff' },
         -- Width of the code block background:
         --  block: width of the code block
-        --  full: full width of the window
+        --  full:  full width of the window
         width = 'full',
         -- Amount of padding to add to the left of code blocks
         left_pad = 0,
@@ -627,7 +629,7 @@ require('render-markdown').setup({
         min_width = 0,
         -- Determins how the top / bottom of code block are rendered:
         --  thick: use the same highlight as the code body
-        --  thin: when lines are empty overlay the above & below icons
+        --  thin:  when lines are empty overlay the above & below icons
         border = 'thin',
         -- Used above code blocks for thin border
         above = '▄',
@@ -655,7 +657,7 @@ require('render-markdown').setup({
         icon = '─',
         -- Width of the generated line:
         --  <integer>: a hard coded width value
-        --  full: full width of the window
+        --  full:      full width of the window
         width = 'full',
         -- Highlight for the whole line generated from the icon
         highlight = 'RenderMarkdownDash',
@@ -714,8 +716,8 @@ require('render-markdown').setup({
         -- As a result this requires neovim >= 0.10.0 since it relies on 'inline' extmarks
         -- Can specify as many additional states as you like following the 'todo' pattern below
         --   The key in this case 'todo' is for healthcheck and to allow users to change its values
-        --   'raw': Matched against the raw text of a 'shortcut_link'
-        --   'rendered': Replaces the 'raw' value when rendering
+        --   'raw':       Matched against the raw text of a 'shortcut_link'
+        --   'rendered':  Replaces the 'raw' value when rendering
         --   'highlight': Highlight for the 'rendered' icon
         custom = {
             todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownTodo' },
@@ -757,18 +759,20 @@ require('render-markdown').setup({
         -- Turn on / off pipe table rendering
         enabled = true,
         -- Pre configured settings largely for setting table border easier
-        --  round: use round border characters rather than right angles
-        --  none: does nothing
+        --  heavy:  use thicker border characters
+        --  double: use double line border characters
+        --  round:  use round border corners
+        --  none:   does nothing
         preset = 'none',
         -- Determines how the table as a whole is rendered:
-        --  none: disables all rendering
+        --  none:   disables all rendering
         --  normal: applies the 'cell' style rendering to each row of the table
-        --  full: normal + a top & bottom line that fill out the table when lengths match
+        --  full:   normal + a top & bottom line that fill out the table when lengths match
         style = 'full',
         -- Determines how individual cells of a table are rendered:
         --  overlay: writes completely over the table, removing conceal behavior and highlights
-        --  raw: replaces only the '|' characters in each row, leaving the cells unmodified
-        --  padded: raw + cells are padded with inline extmarks to make up for any concealed text
+        --  raw:     replaces only the '|' characters in each row, leaving the cells unmodified
+        --  padded:  raw + cells are padded with inline extmarks to make up for any concealed text
         cell = 'padded',
         -- Gets placed in delimiter row for each column, position is based on alignmnet
         alignment_indicator = '━',
@@ -800,8 +804,8 @@ require('render-markdown').setup({
     -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'
     -- Can specify as many additional values as you like following the pattern from any below, such as 'note'
     --   The key in this case 'note' is for healthcheck and to allow users to change its values
-    --   'raw': Matched against the raw text of a 'shortcut_link', case insensitive
-    --   'rendered': Replaces the 'raw' value when rendering
+    --   'raw':       Matched against the raw text of a 'shortcut_link', case insensitive
+    --   'rendered':  Replaces the 'raw' value when rendering
     --   'highlight': Highlight for the 'rendered' text and quote markers
     callout = {
         note = { raw = '[!NOTE]', rendered = '󰋽 Note', highlight = 'RenderMarkdownInfo' },
@@ -842,8 +846,8 @@ require('render-markdown').setup({
         -- contains. Applies to 'inline_link' and wikilink nodes.
         -- Can specify as many additional values as you like following the 'web' pattern below
         --   The key in this case 'web' is for healthcheck and to allow users to change its values
-        --   'pattern': Matched against the destination text see :h lua-pattern
-        --   'icon': Gets inlined before the link text
+        --   'pattern':   Matched against the destination text see :h lua-pattern
+        --   'icon':      Gets inlined before the link text
         --   'highlight': Highlight for the 'icon'
         custom = {
             web = { pattern = '^http[s]?://', icon = '󰖟 ', highlight = 'RenderMarkdownLink' },

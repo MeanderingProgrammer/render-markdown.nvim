@@ -53,6 +53,28 @@ function M.pipe_table_preset(name)
                 '│', '─',
             },
         }
+    elseif name == 'double' then
+        ---@type render.md.UserPipeTable
+        return {
+            -- stylua: ignore
+            border = {
+                '╔', '╦', '╗',
+                '╠', '╬', '╣',
+                '╚', '╩', '╝',
+                '║', '═',
+            },
+        }
+    elseif name == 'heavy' then
+        ---@type render.md.UserPipeTable
+        return {
+            -- stylua: ignore
+            border = {
+                '┏', '┳', '┓',
+                '┣', '╋', '┫',
+                '┗', '┻', '┛',
+                '┃', '━',
+            },
+        }
     else
         return {}
     end
