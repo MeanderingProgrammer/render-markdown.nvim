@@ -16,6 +16,8 @@ different functionality will clash.
 - [obsidian.nvim](https://github.com/epwalsh/obsidian.nvim) - While this plugin
   has many more `obsidian` related features it also provides a UI enabled by
   default that clashes with this plugin
+- [markview.nvim](https://github.com/OXY2DEV/markview.nvim) - An offshoot of this
+  plugin with different style choices
 
 ## Render in Browser
 
