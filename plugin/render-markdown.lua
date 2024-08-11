@@ -3,6 +3,17 @@ if vim.g.loaded_render_markdown then
 end
 vim.g.loaded_render_markdown = true
 
+vim.notify(
+    [[
+The markdown.nvim package has been renamed and receives no updates under the old name
+Migrate to the new LuaRock render-markdown.nvim: https://luarocks.org/modules/MeanderingProgrammer/render-markdown.nvim
+If you use rocks.nvim this can be done by running the following two commands:
+  :Rocks prune markdown.nvim
+  :Rocks install render-markdown.nvim
+]],
+    vim.log.levels.WARN
+)
+
 require('render-markdown').setup({})
 require('render-markdown.colors').setup()
 require('render-markdown.manager').setup()

@@ -35,6 +35,7 @@ jobs:
         env:
           LUAROCKS_API_KEY: ${{ secrets.LUAROCKS_API_KEY }}
         with:
+          name: markdown.nvim
           version: ${{ env.LUAROCKS_VERSION }}
           dependencies: |
             tree-sitter-markdown
