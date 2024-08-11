@@ -2,18 +2,21 @@
 
 ## Pre-release
 
+## 6.1.0 (2024-08-11)
+
 ### Features
 
-- Created wiki with examples [here](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki)
-- min_width code block option [4b80b4f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4b80b4fb8f81dc39da23a13a0b4e971731c5f849)
-- left_pad bullet option [e455c4f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/e455c4f4886d250bd610165a24524da2c6adce80)
-- preset option, obsidian & lazy [96988cc](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/96988cc76414a2f69a57c5dbaca7bf9336c9cb52)
-- pipe table preset option [c4eb6bf](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c4eb6bf30525fdc7efaf5f33bcb0fa9491ace245)
-- left_pad, right_pad, & min_width heading options [#121](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/121)
+- created wiki with examples [here](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki)
+- code block: min_width [4b80b4f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4b80b4fb8f81dc39da23a13a0b4e971731c5f849)
+- list bullet: left_pad [e455c4f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/e455c4f4886d250bd610165a24524da2c6adce80)
+- preset: obsidian & lazy [96988cc](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/96988cc76414a2f69a57c5dbaca7bf9336c9cb52)
+- pipe table: preset round [c4eb6bf](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c4eb6bf30525fdc7efaf5f33bcb0fa9491ace245)
+  - double & heavy [3bacd99](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/3bacd9903e3b4f81b918380a0f170be6713a4da1)
+- heading: left_pad, right_pad, & min_width [#121](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/121)
   [6392a5d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/6392a5dfa10f367e10fe58ea9c2faf3179b145d5)
-- border heading option [#123](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/123)
+- heading: border [#123](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/123)
   [b700269](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b7002694a7a794f8d8a6a0cc54769628cf1cf9d8)
-- heading width based on level [#126](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/126)
+- heading: width based on level [#126](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/126)
   [f06d19a](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/f06d19ad58e4977f02f7885ea00c3ecfdfe609ff)
 
 ### Bug Fixes
@@ -22,6 +25,8 @@
   [1c7b5ee](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/1c7b5ee30d8cf6e52628862dbd06f2e23ecb888e)
 - link icon in headings [#124](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/124)
   [f365cef](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/f365cef5c1d05fd2dd390e1830d5c41f2d1f2121)
+- provide patch for previous [LuaRock](https://luarocks.org/modules/MeanderingProgrammer/markdown.nvim)
+  [v5.0.1](https://github.com/MeanderingProgrammer/render-markdown.nvim/releases/tag/v5.0.1)
 
 ## 6.0.0 (2024-08-05)
 
