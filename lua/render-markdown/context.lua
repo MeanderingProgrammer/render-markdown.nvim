@@ -74,6 +74,12 @@ function Context:contains_node(node)
     return top < self.bottom and bottom >= self.top
 end
 
+---@param info render.md.NodeInfo
+---@return boolean
+function Context:contains_info(info)
+    return info.start_row < self.bottom and info.end_row >= self.top
+end
+
 ---@param root TSNode
 ---@param query vim.treesitter.Query
 ---@param callback fun(capture: string, node: TSNode, metadata: vim.treesitter.query.TSMetadata)

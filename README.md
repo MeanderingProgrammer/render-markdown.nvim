@@ -55,7 +55,8 @@ Plugin to improve viewing Markdown files in Neovim
   - List bullet points: replace with provided icon based on level
   - Checkboxes: replace with provided icon based on whether they are checked
   - Block quotes: replace leading `>` with provided icon
-  - Tables: replace border characters, does NOT automatically align
+  - Tables: replace border characters, handles misaligned tables but does NOT align
+    according to delimiter indicator
   - [Callouts](https://github.com/orgs/community/discussions/16925)
     - Github & Obsidian out of the box, supports user defined as well
   - Custom checkbox states [^1], function similar to `callouts`

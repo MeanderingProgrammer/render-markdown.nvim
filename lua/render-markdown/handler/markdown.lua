@@ -519,15 +519,14 @@ function Handler:pipe_table(info)
     if not pipe_table.enabled or pipe_table.style == 'none' then
         return
     end
-    local parsed_table = pipe_table_parser.parse(info)
+    local parsed_table = pipe_table_parser.parse(self.context, info)
     if parsed_table == nil then
         return
     end
 
-    self:table_row(parsed_table.head, pipe_table.head)
-    self:table_delimiter(parsed_table.delim, parsed_table.columns)
+    self:table_delimiter(parsed_table.delim)
     for _, row in ipairs(parsed_table.rows) do
-        self:table_row(row, pipe_table.row)
+        self:table_row(parsed_table.delim, row)
     end
     if pipe_table.style == 'full' then
         self:table_full(parsed_table)
@@ -535,77 +534,76 @@ function Handler:pipe_table(info)
 end
 
 ---@private
----@param row render.md.NodeInfo
----@param columns render.md.parsed.TableColumn[]
-function Handler:table_delimiter(row, columns)
+---@param delim render.md.parsed.table.DelimRow
+function Handler:table_delimiter(delim)
     local pipe_table = self.config.pipe_table
     local indicator = pipe_table.alignment_indicator
     local border = pipe_table.border
-    local sections = vim.tbl_map(
-        ---@param column render.md.parsed.TableColumn
-        ---@return string
-        function(column)
-            -- If column is small there's no good place to put the alignment indicator
-            -- Alignment indicator must be exactly one character wide
-            -- We do not put an indicator for default alignment
-            if column.width < 4 or str.width(indicator) ~= 1 or column.alignment == 'default' then
-                return border[11]:rep(column.width)
-            end
-            -- Handle the various alignmnet possibilities
-            local left = border[11]:rep(math.floor(column.width / 2))
-            local right = border[11]:rep(math.ceil(column.width / 2) - 1)
-            if column.alignment == 'left' then
-                return indicator .. left .. right
-            elseif column.alignment == 'right' then
-                return left .. right .. indicator
-            else
-                return left .. indicator .. right
-            end
-        end,
-        columns
-    )
+    local sections = vim.tbl_map(function(column)
+        -- If column is small there's no good place to put the alignment indicator
+        -- Alignment indicator must be exactly one character wide
+        -- Do not put an indicator for default alignment
+        if column.width < 4 or str.width(indicator) ~= 1 or column.alignment == 'default' then
+            return border[11]:rep(column.width)
+        end
+        -- Handle the various alignmnet possibilities
+        local left = border[11]:rep(math.floor(column.width / 2))
+        local right = border[11]:rep(math.ceil(column.width / 2) - 1)
+        if column.alignment == 'left' then
+            return indicator .. left .. right
+        elseif column.alignment == 'right' then
+            return left .. right .. indicator
+        else
+            return left .. indicator .. right
+        end
+    end, delim.columns)
     local delimiter = border[4] .. table.concat(sections, border[5]) .. border[6]
-    self:add(true, row.start_row, row.start_col, {
-        end_row = row.end_row,
-        end_col = row.end_col,
+    self:add(true, delim.info.start_row, delim.info.start_col, {
+        end_row = delim.info.end_row,
+        end_col = delim.info.end_col,
         virt_text = { { delimiter, pipe_table.head } },
         virt_text_pos = 'overlay',
     })
 end
 
 ---@private
----@param row render.md.NodeInfo
----@param highlight string
-function Handler:table_row(row, highlight)
+---@param delim render.md.parsed.table.DelimRow
+---@param row render.md.parsed.table.Row
+function Handler:table_row(delim, row)
     local pipe_table = self.config.pipe_table
-    if vim.tbl_contains({ 'raw', 'padded' }, pipe_table.cell) then
-        row:for_each_child(function(cell)
-            if cell.type == '|' then
-                self:add(true, cell.start_row, cell.start_col, {
-                    end_row = cell.end_row,
-                    end_col = cell.end_col,
-                    virt_text = { { pipe_table.border[10], highlight } },
-                    virt_text_pos = 'overlay',
+    local highlight = row.info.type == 'pipe_table_header' and pipe_table.head or pipe_table.row
+    if pipe_table.cell == 'padded' then
+        for _, pipe in ipairs(row.pipes) do
+            self:add(true, pipe.start_row, pipe.start_col, {
+                end_row = pipe.end_row,
+                end_col = pipe.end_col,
+                virt_text = { { pipe_table.border[10], highlight } },
+                virt_text_pos = 'overlay',
+            })
+        end
+        for i, column in ipairs(row.columns) do
+            local offset = delim.columns[i].width - column.width
+            if offset > 0 then
+                self:add(true, column.info.start_row, column.info.end_col - 1, {
+                    virt_text = { { str.pad(offset), pipe_table.filler } },
+                    virt_text_pos = 'inline',
                 })
-            elseif cell.type == 'pipe_table_cell' then
-                if pipe_table.cell == 'padded' then
-                    local offset = self:table_visual_offset(cell)
-                    if offset > 0 then
-                        self:add(true, cell.start_row, cell.end_col - 1, {
-                            virt_text = { { str.pad(offset), pipe_table.filler } },
-                            virt_text_pos = 'inline',
-                        })
-                    end
-                end
-            else
-                logger.unhandled_type('markdown', 'cell', cell.type)
             end
-        end)
+        end
+    elseif pipe_table.cell == 'raw' then
+        for _, pipe in ipairs(row.pipes) do
+            self:add(true, pipe.start_row, pipe.start_col, {
+                end_row = pipe.end_row,
+                end_col = pipe.end_col,
+                virt_text = { { pipe_table.border[10], highlight } },
+                virt_text_pos = 'overlay',
+            })
+        end
     elseif pipe_table.cell == 'overlay' then
-        self:add(true, row.start_row, row.start_col, {
-            end_row = row.end_row,
-            end_col = row.end_col,
-            virt_text = { { row.text:gsub('|', pipe_table.border[10]), highlight } },
+        self:add(true, row.info.start_row, row.info.start_col, {
+            end_row = row.info.end_row,
+            end_col = row.info.end_col,
+            virt_text = { { row.info.text:gsub('|', pipe_table.border[10]), highlight } },
             virt_text_pos = 'overlay',
         })
     end
@@ -617,54 +615,51 @@ function Handler:table_full(parsed_table)
     local pipe_table = self.config.pipe_table
     local border = pipe_table.border
 
-    ---@param info render.md.NodeInfo
-    ---@return integer
-    local function width(info)
-        local result = str.width(info.text)
-        if pipe_table.cell == 'raw' then
-            -- For the raw cell style we want the lengths to match after
-            -- concealing & inlined elements
-            result = result - self:table_visual_offset(info)
+    ---@param row render.md.parsed.table.Row
+    ---@param delim render.md.parsed.table.DelimRow
+    ---@return boolean
+    local function width_equal(row, delim)
+        if pipe_table.cell == 'padded' then
+            -- Assume table was padded to match
+            return true
+        elseif pipe_table.cell == 'raw' then
+            -- Want the computed widths to match
+            for i, column in ipairs(row.columns) do
+                if delim.columns[i].width ~= column.width then
+                    return false
+                end
+            end
+            return true
+        elseif pipe_table.cell == 'overlay' then
+            -- Want the underlying text widths to match
+            return str.width(delim.info.text) == str.width(row.info.text)
+        else
+            return false
         end
-        return result
     end
 
-    local first = parsed_table.head
+    local delim = parsed_table.delim
+    local first = parsed_table.rows[1]
     local last = parsed_table.rows[#parsed_table.rows]
-
-    -- Do not need to account for concealed / inlined text on delimiter row
-    local delim_width = str.width(parsed_table.delim.text)
-    if delim_width ~= width(first) or delim_width ~= width(last) then
-        return {}
+    if not width_equal(first, delim) or not width_equal(last, delim) then
+        return
     end
 
-    local sections = vim.tbl_map(
-        ---@param column render.md.parsed.TableColumn
-        ---@return string
-        function(column)
-            return border[11]:rep(column.width)
-        end,
-        parsed_table.columns
-    )
+    local sections = vim.tbl_map(function(column)
+        return border[11]:rep(column.width)
+    end, delim.columns)
 
     local line_above = border[1] .. table.concat(sections, border[2]) .. border[3]
-    self:add(false, first.start_row, first.start_col, {
+    self:add(false, first.info.start_row, first.info.start_col, {
         virt_lines_above = true,
         virt_lines = { { { line_above, pipe_table.head } } },
     })
 
     local line_below = border[7] .. table.concat(sections, border[8]) .. border[9]
-    self:add(false, last.start_row, last.start_col, {
+    self:add(false, last.info.start_row, last.info.start_col, {
         virt_lines_above = false,
         virt_lines = { { { line_below, pipe_table.row } } },
     })
-end
-
----@private
----@param info render.md.NodeInfo
----@return integer
-function Handler:table_visual_offset(info)
-    return self.context:concealed(info) - self.context:link_width(info)
 end
 
 ---@class render.md.handler.Markdown: render.md.Handler
