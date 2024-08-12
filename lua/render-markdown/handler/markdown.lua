@@ -178,7 +178,7 @@ function Handler:heading_width(info, heading_width, icon_width)
         local width = heading.left_pad + icon_width + heading.right_pad
         local content = info:sibling('inline')
         if content ~= nil then
-            width = width + str.width(content.text) + self.context:link_width(content) - self.context:concealed(content)
+            width = width + str.width(content.text) + self.context:get_offset(content) - self.context:concealed(content)
         end
         return math.max(width, heading.min_width)
     else

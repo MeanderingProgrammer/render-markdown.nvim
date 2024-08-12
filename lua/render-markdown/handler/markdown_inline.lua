@@ -146,13 +146,17 @@ function Handler:wiki_link(info)
     local text = info.text:sub(2, -2)
     local parts = str.split(text, '|')
     local icon, highlight = self:dest_virt_text(parts[1])
-    self:add(info.start_row, info.start_col - 1, {
+    local link_text = icon .. parts[#parts]
+    local added = self:add(info.start_row, info.start_col - 1, {
         end_row = info.end_row,
         end_col = info.end_col + 1,
-        virt_text = { { icon .. parts[#parts], highlight } },
+        virt_text = { { link_text, highlight } },
         virt_text_pos = 'inline',
         conceal = '',
     })
+    if added then
+        self.context:add_offset(info, str.width(link_text) - str.width(info.text))
+    end
 end
 
 ---@private
@@ -169,7 +173,7 @@ function Handler:link(info)
         virt_text_pos = 'inline',
     })
     if added then
-        self.context:add_link(info, icon)
+        self.context:add_offset(info, str.width(icon))
     end
 end
 

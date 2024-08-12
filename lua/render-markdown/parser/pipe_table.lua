@@ -145,7 +145,7 @@ function M.parse_row(context, info, num_columns)
         -- Account for double width glyphs by replacing cell spacing with text width
         width = width - (cell.end_col - cell.start_col) + str.width(cell.text)
         -- Remove concealed and add inlined text
-        width = width - context:concealed(cell) + context:link_width(cell)
+        width = width - context:concealed(cell) + context:get_offset(cell)
         if width < 0 then
             return nil
         end

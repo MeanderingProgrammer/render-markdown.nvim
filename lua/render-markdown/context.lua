@@ -7,7 +7,7 @@ local util = require('render-markdown.util')
 ---@field private top integer
 ---@field private bottom integer
 ---@field private conceal? table<integer, [integer, integer][]>
----@field private links table<integer, [integer, integer, string][]>
+---@field private links table<integer, [integer, integer, integer][]>
 local Context = {}
 Context.__index = Context
 
@@ -30,22 +30,22 @@ function Context.new(buf, win, offset)
 end
 
 ---@param info render.md.NodeInfo
----@param icon string
-function Context:add_link(info, icon)
+---@param amount integer
+function Context:add_offset(info, amount)
     local row = info.start_row
     if self.links[row] == nil then
         self.links[row] = {}
     end
-    table.insert(self.links[row], { info.start_col, info.end_col, icon })
+    table.insert(self.links[row], { info.start_col, info.end_col, amount })
 end
 
 ---@param info render.md.NodeInfo
 ---@return integer
-function Context:link_width(info)
+function Context:get_offset(info)
     local result = 0
-    for _, icon_range in ipairs(self.links[info.start_row] or {}) do
-        if info.start_col < icon_range[2] and info.end_col > icon_range[1] then
-            result = result + str.width(icon_range[3])
+    for _, offset_range in ipairs(self.links[info.start_row] or {}) do
+        if info.start_col < offset_range[2] and info.end_col > offset_range[1] then
+            result = result + offset_range[3]
         end
     end
     return result
