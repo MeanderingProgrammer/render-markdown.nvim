@@ -130,6 +130,8 @@ local M = {}
 
 ---@class (exact) render.md.UserAntiConceal
 ---@field public enabled? boolean
+---@field public above? integer
+---@field public below? integer
 
 ---@class (exact) render.md.UserConfigOverrides
 ---@field public buftype? table<string, render.md.UserBufferConfig>
@@ -239,8 +241,11 @@ M.default_config = {
     acknowledge_conflicts = false,
     anti_conceal = {
         -- This enables hiding any added text on the line the cursor is on
-        -- This does have a performance penalty as we must listen to the 'CursorMoved' event
         enabled = true,
+        -- Number of lines above cursor to show
+        above = 0,
+        -- Number of lines below cursor to show
+        below = 0,
     },
     latex = {
         -- Whether LaTeX should be rendered, mainly used for health check

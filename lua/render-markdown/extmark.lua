@@ -22,7 +22,7 @@ end
 ---@param config render.md.BufferConfig
 ---@param row? integer
 function Extmark:render(config, row)
-    if self:should_show(config, row) then
+    if self:should_show(config.anti_conceal, row) then
         self:show()
     else
         self:hide()
@@ -53,12 +53,12 @@ end
 
 ---Render marks based on anti-conceal behavior and current row
 ---@private
----@param config render.md.BufferConfig
+---@param anti_conceal render.md.AntiConceal
 ---@param row? integer
 ---@return boolean
-function Extmark:should_show(config, row)
+function Extmark:should_show(anti_conceal, row)
     -- Anti-conceal is not enabled -> all marks should be shown
-    if not config.anti_conceal.enabled then
+    if not anti_conceal.enabled then
         return true
     end
     -- Row is not known means buffer is not active -> all marks should be shown
@@ -69,8 +69,9 @@ function Extmark:should_show(config, row)
     if not self.mark.conceal then
         return true
     end
-    -- Show mark if it is not on the current row
-    return self.mark.start_row ~= row
+    -- Show mark if it is outside current row range
+    local mark_row = self.mark.start_row
+    return mark_row < row - anti_conceal.above or mark_row > row + anti_conceal.below
 end
 
 return Extmark

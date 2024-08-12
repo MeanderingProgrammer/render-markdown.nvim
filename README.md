@@ -28,11 +28,11 @@ Plugin to improve viewing Markdown files in Neovim
 
 <!-- panvimdoc-ignore-start -->
 
-|                                                                                                    |                                                                                                |
-| -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| ![Heading Code](https://github.com/user-attachments/assets/663a34c5-0438-4688-8204-332065f65835)   | ![List Table](https://github.com/user-attachments/assets/162986e1-91f0-4e13-a83f-6183d58b0fcb) |
-| ![Box Dash Quote](https://github.com/user-attachments/assets/3f76e73e-b3a0-4cd8-90c1-208c5070659c) | ![LaTeX](https://github.com/user-attachments/assets/9e8909e4-7256-45fc-b481-4aba8850ebc3)      |
-| ![Callout](https://github.com/user-attachments/assets/4324ea72-a017-4175-9f9d-363da5e5f6ba)        |                                                                                                |
+|           |         |
+| --------- | ------- |
+| ![Heading](https://github.com/user-attachments/assets/663a34c5-0438-4688-8204-332065f65835) | ![Table](https://github.com/user-attachments/assets/162986e1-91f0-4e13-a83f-6183d58b0fcb) |
+| ![Quote](https://github.com/user-attachments/assets/3f76e73e-b3a0-4cd8-90c1-208c5070659c)   | ![LaTeX](https://github.com/user-attachments/assets/9e8909e4-7256-45fc-b481-4aba8850ebc3) |
+| ![Callout](https://github.com/user-attachments/assets/4324ea72-a017-4175-9f9d-363da5e5f6ba) | |
 
 <!-- panvimdoc-ignore-end -->
 
@@ -127,6 +127,10 @@ use({
   - Can also be accessed directly through `require('render-markdown').disable()`
 - `:RenderMarkdown toggle` - Switch between enabling & disabling this plugin
   - Can also be accessed directly through `require('render-markdown').toggle()`
+- `:RenderMarkdown expand` - Increase anti-conceal margin above and below by 1
+  - Can also be accessed directly through `require('render-markdown').expand()`
+- `:RenderMarkdown contract` - Decrease anti-conceal margin above and below by 1
+  - Can also be accessed directly through `require('render-markdown').contract()`
 
 # Setup
 
@@ -214,8 +218,11 @@ require('render-markdown').setup({
     acknowledge_conflicts = false,
     anti_conceal = {
         -- This enables hiding any added text on the line the cursor is on
-        -- This does have a performance penalty as we must listen to the 'CursorMoved' event
         enabled = true,
+        -- Number of lines above cursor to show
+        above = 0,
+        -- Number of lines below cursor to show
+        below = 0,
     },
     latex = {
         -- Whether LaTeX should be rendered, mainly used for health check

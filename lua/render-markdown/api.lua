@@ -16,4 +16,14 @@ function M.toggle()
     manager.set_all(not state.enabled)
 end
 
+function M.expand()
+    state.modify_anti_conceal(1)
+    M.enable()
+end
+
+function M.contract()
+    state.modify_anti_conceal(-1)
+    M.enable()
+end
+
 return M

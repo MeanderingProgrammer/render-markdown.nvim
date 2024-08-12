@@ -44,6 +44,19 @@ function M.invalidate_cache()
     configs = {}
 end
 
+---@param amount integer
+function M.modify_anti_conceal(amount)
+    ---@param anti_conceal render.md.AntiConceal
+    local function modify(anti_conceal)
+        anti_conceal.above = math.max(anti_conceal.above + amount, 0)
+        anti_conceal.below = math.max(anti_conceal.below + amount, 0)
+    end
+    modify(M.config.anti_conceal)
+    for _, config in pairs(configs) do
+        modify(config.anti_conceal)
+    end
+end
+
 ---@param buf integer
 ---@return render.md.BufferConfig
 M.get_config = function(buf)
@@ -64,7 +77,7 @@ end
 function M.default_buffer_config()
     local config = M.config
     ---@type render.md.BufferConfig
-    return {
+    return vim.deepcopy({
         enabled = true,
         max_file_size = config.max_file_size,
         debounce = config.debounce,
@@ -81,7 +94,7 @@ function M.default_buffer_config()
         link = config.link,
         sign = config.sign,
         win_options = config.win_options,
-    }
+    }, true)
 end
 
 ---@return string[]
@@ -188,6 +201,8 @@ function M.validate()
         if anti_conceal ~= nil then
             append_errors(path .. '.anti_conceal', anti_conceal, {
                 enabled = { anti_conceal.enabled, 'boolean', nilable },
+                above = { anti_conceal.above, 'number', nilable },
+                below = { anti_conceal.below, 'number', nilable },
             })
         end
 

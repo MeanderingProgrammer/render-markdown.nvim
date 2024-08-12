@@ -2,6 +2,10 @@
 
 ## Pre-release
 
+### Features
+
+- handle imperfectly spaced tables using max width [166a254](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/166a254aaf5b4333fe015a29a66ad99c276538ea)
+
 ## 6.1.0 (2024-08-11)
 
 ### Features

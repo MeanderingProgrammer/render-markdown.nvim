@@ -107,6 +107,8 @@
 
 ---@class (exact) render.md.AntiConceal
 ---@field public enabled boolean
+---@field public above integer
+---@field public below integer
 
 ---@class (exact) render.md.ConfigOverrides
 ---@field public buftype table<string, render.md.UserBufferConfig>
