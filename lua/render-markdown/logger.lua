@@ -72,7 +72,6 @@ function M.debug(name, message)
     end
 end
 
----@private
 ---@param name string
 ---@param message any
 function M.error(name, message)

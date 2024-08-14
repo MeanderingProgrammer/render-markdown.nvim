@@ -11,10 +11,6 @@ local M = {}
 ---@param opts vim.api.keyset.set_extmark
 ---@return boolean
 function M.add_mark(marks, conceal, start_row, start_col, opts)
-    -- Inline extmarks require neovim >= 0.10.0
-    if opts.virt_text_pos == 'inline' and not util.has_10 then
-        return false
-    end
     ---@type render.md.Mark
     local mark = {
         conceal = conceal,
@@ -22,6 +18,10 @@ function M.add_mark(marks, conceal, start_row, start_col, opts)
         start_col = start_col,
         opts = opts,
     }
+    if opts.virt_text_pos == 'inline' and not util.has_10 then
+        logger.error('inline marks require neovim >= 0.10.0', mark)
+        return false
+    end
     logger.debug('mark', mark)
     table.insert(marks, mark)
     return true

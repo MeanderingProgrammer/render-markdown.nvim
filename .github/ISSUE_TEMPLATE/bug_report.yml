@@ -45,6 +45,12 @@ body:
       description: Your configuration for this plugin.
     validations:
       required: true
+  - type: textarea
+    attributes:
+      label: Plugin error log
+      description: Error log stored in vim.fn.stdpath(state)/render-markdown.log, typically ~/.local/state/nvim/render-markdown.log, if file is missing put N/A.
+    validations:
+      required: true
   - type: checkboxes
     attributes:
       label: Confirmations
