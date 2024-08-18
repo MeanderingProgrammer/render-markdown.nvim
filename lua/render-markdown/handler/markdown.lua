@@ -350,18 +350,16 @@ function Handler:code_background(code_block, icon_added)
         end
     end
 
-    self:add(false, code_block.start_row, 0, {
-        end_row = code_block.end_row,
-        end_col = 0,
-        hl_group = code.highlight,
-        hl_eol = true,
-    })
-
-    if code.width == 'block' then
-        -- Overwrite anything beyond width with Normal
-        local padding = str.pad(vim.o.columns * 2)
-        for row = code_block.start_row, code_block.end_row - 1 do
-            self:add(false, row, 0, {
+    local padding = str.pad(vim.o.columns * 2)
+    for row = code_block.start_row, code_block.end_row - 1 do
+        self:add(false, row, code_block.col, {
+            end_row = row + 1,
+            hl_group = code.highlight,
+            hl_eol = true,
+        })
+        if code.width == 'block' then
+            -- Overwrite anything beyond width with Normal
+            self:add(false, row, code_block.col, {
                 priority = 0,
                 virt_text = { { padding, 'Normal' } },
                 virt_text_win_col = code_block.width,

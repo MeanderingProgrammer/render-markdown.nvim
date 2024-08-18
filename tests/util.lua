@@ -76,14 +76,14 @@ function M.inline_code(row, start_col, end_col)
     }
 end
 
----@param start_row integer
----@param end_row integer
+---@param row integer
+---@param col integer
 ---@return render.md.MarkInfo
-function M.code_block(start_row, end_row)
+function M.code_block_row(row, col)
     ---@type render.md.MarkInfo
     return {
-        row = { start_row, end_row },
-        col = { 0, 0 },
+        row = { row, row + 1 },
+        col = { col, 0 },
         hl_eol = true,
         hl_group = M.hl('Code'),
     }
@@ -92,11 +92,15 @@ end
 ---@param row integer
 ---@param start_col integer
 ---@param end_col integer
----@param icon string
----@param name string
----@param highlight string
+---@param name 'python'|'lua'
 ---@return render.md.MarkInfo[]
-function M.code_language(row, start_col, end_col, icon, name, highlight)
+function M.code_language(row, start_col, end_col, name)
+    local icon, highlight
+    if name == 'python' then
+        icon, highlight = '󰌠 ', 'MiniIconsYellow'
+    elseif name == 'lua' then
+        icon, highlight = '󰢱 ', 'MiniIconsAzure'
+    end
     ---@type render.md.MarkInfo
     local sign_mark = {
         row = { row, row },

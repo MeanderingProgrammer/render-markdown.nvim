@@ -17,10 +17,13 @@ describe('heading_code.md', function()
 
         vim.list_extend(expected, {
             util.link(10, 0, 21, 'image'), -- Image link
-            util.code_block(12, 22), -- Code block
+            util.code_block_row(12, 0), -- Code block start
         })
-        vim.list_extend(expected, util.code_language(12, 3, 9, '󰌠 ', 'python', 'MiniIconsYellow'))
-        vim.list_extend(expected, { util.code_below(22, 0) })
+        vim.list_extend(expected, util.code_language(12, 3, 9, 'python'))
+        for i = 13, 21 do
+            table.insert(expected, util.code_block_row(i, 0))
+        end
+        table.insert(expected, util.code_below(22, 0))
 
         local actual = util.get_actual_marks()
         util.marks_are_equal(expected, actual)
