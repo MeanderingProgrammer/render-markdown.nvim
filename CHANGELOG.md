@@ -14,6 +14,12 @@
 - wiki links nested in tables [72688ba](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/72688baea4ef0ed605033bf654b54d801b6a5f01)
 - code block background when indented in lists [#133](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/133)
   [4c823b1](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4c823b1df151dbf1ed3ddaacac517be606b1e145)
+- do not set noref in vim.deepcopy [#139](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/139)
+- gate virt_text_repeat_linebreak to neovim >= 0.10.0 [98f9965](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/98f996563591b753470942165d2d5134df868529)
+
+### Collaborator Shoutouts
+
+- @P1roks
 
 ## 6.1.0 (2024-08-11)
 

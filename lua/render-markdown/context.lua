@@ -19,14 +19,29 @@ function Context.new(buf, win, offset)
     local self = setmetatable({}, Context)
     self.buf = buf
     self.win = win
-    local top = vim.api.nvim_win_call(win, vim.fn.winsaveview).topline - 1
-    local height = vim.api.nvim_win_get_height(win)
-    local lines = vim.api.nvim_buf_line_count(buf)
+    local top = util.view(win).topline - 1
     self.top = math.max(top - offset, 0)
-    self.bottom = math.min(top + height + offset, lines)
+    self.bottom = self:compute_bottom(top, offset)
     self.conceal = nil
     self.links = {}
     return self
+end
+
+---@private
+---@param top integer
+---@param offset integer
+---@return integer
+function Context:compute_bottom(top, offset)
+    local bottom = top
+    local lines = vim.api.nvim_buf_line_count(self.buf)
+    local target = vim.api.nvim_win_get_height(self.win) + offset
+    while bottom < lines and target > 0 do
+        bottom = bottom + 1
+        if util.visible(self.win, bottom) then
+            target = target - 1
+        end
+    end
+    return bottom
 end
 
 ---@param info render.md.NodeInfo
