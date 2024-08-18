@@ -94,7 +94,7 @@ function M.default_buffer_config()
         link = config.link,
         sign = config.sign,
         win_options = config.win_options,
-    }, true)
+    })
 end
 
 ---@return string[]
