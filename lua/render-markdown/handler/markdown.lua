@@ -115,6 +115,7 @@ function Handler:heading(info)
             virt_text_win_col = width,
         })
     end
+
     if heading.border then
         self:heading_border(info, level, foreground, colors.inverse(background), width)
     end
@@ -239,13 +240,8 @@ function Handler:dash(info)
         return
     end
 
-    local width
-    if dash.width == 'full' then
-        width = self.context:get_width()
-    else
-        ---@type integer
-        width = dash.width
-    end
+    local width = dash.width
+    width = type(width) == 'number' and width or self.context:get_width()
 
     self:add(true, info.start_row, 0, {
         virt_text = { { dash.icon:rep(width), dash.highlight } },
@@ -377,12 +373,7 @@ function Handler:code_left_pad(code_block, add_background)
         return
     end
     local padding = str.pad(code.left_pad)
-    local highlight
-    if add_background then
-        highlight = code.highlight
-    else
-        highlight = 'Normal'
-    end
+    local highlight = add_background and code.highlight or 'Normal'
     for row = code_block.start_row, code_block.end_row - 1 do
         -- Uses a low priority so other marks are loaded first and included in padding
         self:add(false, row, code_block.col, {
@@ -479,11 +470,8 @@ function Handler:quote_marker(info, block_quote)
     if not quote.enabled then
         return
     end
-    local highlight = quote.highlight
     local callout = component.callout(self.config, block_quote.text, 'contains')
-    if callout ~= nil then
-        highlight = callout.highlight
-    end
+    local highlight = callout ~= nil and callout.highlight or quote.highlight
     self:add(true, info.start_row, info.start_col, {
         end_row = info.end_row,
         end_col = info.end_col,

@@ -42,11 +42,11 @@ describe('custom_handler.md', function()
     it('default', function()
         util.setup('tests/data/custom_handler.md')
 
-        local expected = {}
-
-        -- Heading / inline code
-        vim.list_extend(expected, util.heading(0, 1))
-        vim.list_extend(expected, { util.inline_code(2, 0, 8) })
+        local expected = {
+            util.heading(0, 1), -- Heading
+            util.inline_code(2, 0, 8), -- Inline code
+            {}, -- No backslash escapes
+        }
 
         local actual = util.get_actual_marks()
         util.marks_are_equal(expected, actual)
@@ -61,13 +61,11 @@ describe('custom_handler.md', function()
             },
         })
 
-        local expected = {}
-
-        -- Heading / no inline code
-        vim.list_extend(expected, util.heading(0, 1))
-
-        -- Backslash escapes
-        vim.list_extend(expected, { backslash(4, 0), backslash(4, 7) })
+        local expected = {
+            util.heading(0, 1), -- Heading
+            {}, -- No inline code
+            { backslash(4, 0), backslash(4, 7) }, -- Backslash escapes
+        }
 
         local actual = util.get_actual_marks()
         util.marks_are_equal(expected, actual)
@@ -83,14 +81,11 @@ describe('custom_handler.md', function()
             },
         })
 
-        local expected = {}
-
-        -- Heading / inline code
-        vim.list_extend(expected, util.heading(0, 1))
-        vim.list_extend(expected, { util.inline_code(2, 0, 8) })
-
-        -- Backslash escapes
-        vim.list_extend(expected, { backslash(4, 0), backslash(4, 7) })
+        local expected = {
+            util.heading(0, 1), -- Heading
+            util.inline_code(2, 0, 8), -- Inline code
+            { backslash(4, 0), backslash(4, 7) }, -- Backslash escapes
+        }
 
         local actual = util.get_actual_marks()
         util.marks_are_equal(expected, actual)
