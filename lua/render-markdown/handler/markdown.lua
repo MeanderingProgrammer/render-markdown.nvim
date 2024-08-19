@@ -301,7 +301,11 @@ function Handler:language(code_block, add_background)
             -- Code blocks will pick up varying amounts of leading white space depending on the
             -- context they are in. This gets lumped into the delimiter node and as a result,
             -- after concealing, the extmark will be left shifted. Logic below accounts for this.
-            icon_text = str.pad(code.language_pad, icon_text .. info.text)
+            local pad = code_block.leading_spaces
+            if code.width == 'block' then
+                pad = code.language_pad
+            end
+            icon_text = str.pad(pad, icon_text .. info.text)
         end
         return self:add(true, info.start_row, info.start_col, {
             virt_text = { { icon_text, highlight } },
