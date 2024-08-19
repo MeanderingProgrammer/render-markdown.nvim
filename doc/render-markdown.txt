@@ -664,6 +664,8 @@ Wiki Page
             left_pad = 0,
             -- Amount of padding to add to the right of code blocks when width is 'block'
             right_pad = 0,
+            -- Amount of padding to add around the language when width is 'block'
+            language_pad = 0,
             -- Minimum width to use for code blocks when width is 'block'
             min_width = 0,
             -- Determins how the top / bottom of code block are rendered:
