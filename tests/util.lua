@@ -186,6 +186,19 @@ function M.quote(row, format, highlight)
 end
 
 ---@param row integer
+---@param spaces integer
+---@return render.md.MarkInfo
+function M.padding(row, spaces)
+    ---@type render.md.MarkInfo
+    return {
+        row = { row },
+        col = { 0 },
+        virt_text = { { string.rep(' ', spaces), 'Normal' } },
+        virt_text_pos = 'inline',
+    }
+end
+
+---@param row integer
 ---@param col integer
 ---@param head boolean
 ---@return render.md.MarkInfo

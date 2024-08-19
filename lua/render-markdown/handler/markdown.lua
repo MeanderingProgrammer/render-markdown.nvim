@@ -369,18 +369,30 @@ end
 ---@param add_background boolean
 function Handler:code_left_pad(code_block, add_background)
     local code = self.config.code
-    if code.left_pad <= 0 then
+    if (code_block.col == 0 or #code_block.empty_rows == 0) and code.left_pad <= 0 then
         return
     end
-    local padding = str.pad(code.left_pad)
-    local highlight = add_background and code.highlight or 'Normal'
+
+    -- Use low priority to include other marks in padding when code block is at edge
+    local priority = code_block.col == 0 and 0 or nil
+    local outer_text = { str.pad(code_block.col), 'Normal' }
+    local left_text = { str.pad(code.left_pad), add_background and code.highlight or 'Normal' }
+
     for row = code_block.start_row, code_block.end_row - 1 do
-        -- Uses a low priority so other marks are loaded first and included in padding
-        self:add(false, row, code_block.col, {
-            priority = 0,
-            virt_text = { { padding, highlight } },
-            virt_text_pos = 'inline',
-        })
+        local virt_text = {}
+        if code_block.col > 0 and vim.tbl_contains(code_block.empty_rows, row) then
+            table.insert(virt_text, outer_text)
+        end
+        if code.left_pad > 0 then
+            table.insert(virt_text, left_text)
+        end
+        if #virt_text > 0 then
+            self:add(false, row, code_block.col, {
+                priority = priority,
+                virt_text = virt_text,
+                virt_text_pos = 'inline',
+            })
+        end
     end
 end
 

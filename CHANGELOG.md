@@ -16,6 +16,8 @@
   [4c823b1](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4c823b1df151dbf1ed3ddaacac517be606b1e145)
 - do not set noref in vim.deepcopy [#139](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/139)
 - gate virt_text_repeat_linebreak to neovim >= 0.10.0 [98f9965](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/98f996563591b753470942165d2d5134df868529)
+- account for folds when computing visible range [#138](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/138)
+  [cd0a5ad](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/cd0a5ad8c77c3754d02437048bc0bb604a2fe268)
 
 ### Collaborator Shoutouts
 

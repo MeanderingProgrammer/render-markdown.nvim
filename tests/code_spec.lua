@@ -24,9 +24,8 @@ describe('code.md', function()
             util.code_row(11, 2),
             util.code_language(11, 5, 8, 'lua'),
             util.code_row(12, 2),
-            -- TODO: look into fixing indented code with blank lines
-            --       probably need to fill with inline extmark
             util.code_row(13, 0),
+            util.padding(13, 2),
             util.code_row(14, 2),
             util.code_below(15, 2),
         })

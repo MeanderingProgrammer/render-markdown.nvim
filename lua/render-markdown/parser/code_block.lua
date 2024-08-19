@@ -8,6 +8,7 @@ local M = {}
 ---@field start_row integer
 ---@field end_row integer
 ---@field leading_spaces integer
+---@field empty_rows integer[]
 ---@field longest_line integer
 ---@field width integer
 ---@field code_info_hidden boolean
@@ -25,15 +26,17 @@ function M.parse(config, context, info)
     if info.end_row - info.start_row <= 1 then
         return nil
     end
+    local widths = vim.tbl_map(str.width, info:lines())
     local code_info = info:child('info_string', info.start_row)
     local language_info = code_info ~= nil and code_info:child('language', info.start_row) or nil
-    local longest_line, width = M.get_width(config, context, info)
+    local longest_line, width = M.get_width(config, context, widths)
     ---@type render.md.parsed.CodeBlock
     return {
         col = info.start_col,
         start_row = info.start_row,
         end_row = info.end_row,
         leading_spaces = str.leading_spaces(info.text),
+        empty_rows = M.get_empty_rows(info.start_row, widths),
         longest_line = longest_line,
         width = width,
         code_info_hidden = context:hidden(code_info),
@@ -45,13 +48,26 @@ function M.parse(config, context, info)
 end
 
 ---@private
+---@param start_row integer
+---@param widths integer[]
+---@return integer[]
+function M.get_empty_rows(start_row, widths)
+    local empty_rows = {}
+    for row, width in ipairs(widths) do
+        if width == 0 then
+            table.insert(empty_rows, start_row + row - 1)
+        end
+    end
+    return empty_rows
+end
+
+---@private
 ---@param config render.md.Code
 ---@param context render.md.Context
----@param info render.md.NodeInfo
+---@param widths integer[]
 ---@return integer, integer
-function M.get_width(config, context, info)
-    local lines = info:lines()
-    local code_width = vim.fn.max(vim.tbl_map(str.width, lines))
+function M.get_width(config, context, widths)
+    local code_width = vim.fn.max(widths)
     local longest_line = config.left_pad + code_width + config.right_pad
     local width = math.max(longest_line, config.min_width)
     if config.width == 'block' then
