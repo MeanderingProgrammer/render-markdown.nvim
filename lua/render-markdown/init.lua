@@ -101,6 +101,7 @@ local M = {}
 ---@field public width? render.md.code.Width
 ---@field public left_pad? integer
 ---@field public right_pad? integer
+---@field public language_pad? integer
 ---@field public min_width? integer
 ---@field public border? render.md.code.Border
 ---@field public above? string
@@ -342,6 +343,8 @@ M.default_config = {
         left_pad = 0,
         -- Amount of padding to add to the right of code blocks when width is 'block'
         right_pad = 0,
+        -- Amount of padding to add around the language when width is 'block'
+        language_pad = 0,
         -- Minimum width to use for code blocks when width is 'block'
         min_width = 0,
         -- Determins how the top / bottom of code block are rendered:
