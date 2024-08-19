@@ -374,7 +374,8 @@ function Handler:code_left_pad(code_block, add_background)
     end
     local padding = str.pad(code.left_pad)
     local highlight = add_background and code.highlight or 'Normal'
-    for row = code_block.start_row, code_block.end_row - 1 do
+    -- skip the first row, as it is already handled by 'language_pad'
+    for row = code_block.start_row + 1, code_block.end_row - 1 do
         -- Uses a low priority so other marks are loaded first and included in padding
         self:add(false, row, code_block.col, {
             priority = 0,
