@@ -311,7 +311,7 @@ function Handler:language(code_block, add_background)
         local icon_text = icon .. ' ' .. info.text
         local win_col = code_block.longest_line
         if code.width == 'block' then
-            win_col = win_col - str.width(icon_text) - code.right_pad
+            win_col = math.max(win_col - str.width(icon_text) - code.language_pad, 0)
         end
         return self:add(true, info.start_row, 0, {
             virt_text = { { icon_text, highlight } },
