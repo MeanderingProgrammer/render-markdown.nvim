@@ -8,38 +8,36 @@ describe('table.md', function()
 
         local expected = {}
 
-        -- Table with inline
-        vim.list_extend(expected, util.heading(0, 1))
         vim.list_extend(expected, {
-            util.table_pipe(2, 0, true), -- Heading pipe 1
+            util.heading(0, 1),
+            util.table_pipe(2, 0, true),
             util.table_border(2, 'above', { 11, 24 }),
-            util.table_pipe(2, 12, true), -- Heading pipe 2
-            util.inline_code(2, 14, 25), -- Inline code in heading
-            util.table_padding(2, 36, 2), -- Heading padding 2
-            util.table_pipe(2, 37, true), -- Heading pipe 3
+            util.table_pipe(2, 12, true),
+            util.inline_code(2, 14, 25),
+            util.table_padding(2, 36, 2),
+            util.table_pipe(2, 37, true),
             util.table_border(3, 'delimiter', { 11, 24 }),
-            util.table_pipe(4, 0, false), -- Row pipe 1
+            util.table_pipe(4, 0, false),
             util.table_border(4, 'below', { 11, 24 }),
-            util.inline_code(4, 2, 12), -- Row inline code
-            util.table_padding(4, 12, 2), -- Row padding 1
-            util.table_pipe(4, 13, false), -- Row pipe 2
-            util.link(4, 15, 38, 'web'), -- Row link
-            util.table_padding(4, 38, 16), -- Row padding 2
-            util.table_pipe(4, 39, false), -- Row pipe 3
+            util.inline_code(4, 2, 12),
+            util.table_padding(4, 12, 2),
+            util.table_pipe(4, 13, false),
+            util.link(4, 15, 38, 'web'),
+            util.table_padding(4, 38, 16),
+            util.table_pipe(4, 39, false),
         })
 
-        -- Table no inline
-        vim.list_extend(expected, util.heading(6, 1))
         vim.list_extend(expected, {
-            util.table_pipe(8, 0, true), -- Heading pipe 1
+            util.heading(6, 1),
+            util.table_pipe(8, 0, true),
             util.table_border(8, 'above', { 11, 11 }),
-            util.table_pipe(8, 12, true), -- Heading pipe 2
-            util.table_pipe(8, 24, true), -- Heading pipe 3
+            util.table_pipe(8, 12, true),
+            util.table_pipe(8, 24, true),
             util.table_border(9, 'delimiter', { 11, 11 }),
-            util.table_pipe(10, 0, false), -- Row pipe 1
+            util.table_pipe(10, 0, false),
             util.table_border(10, 'below', { 11, 11 }),
-            util.table_pipe(10, 12, false), -- Row pipe 2
-            util.table_pipe(10, 24, false), -- Row pipe 3
+            util.table_pipe(10, 12, false),
+            util.table_pipe(10, 24, false),
         })
 
         local actual = util.get_actual_marks()
@@ -51,33 +49,31 @@ describe('table.md', function()
 
         local expected = {}
 
-        -- Table with inline
-        vim.list_extend(expected, util.heading(0, 1))
         vim.list_extend(expected, {
-            util.table_pipe(2, 0, true), -- Heading pipe 1
-            util.table_pipe(2, 12, true), -- Heading pipe 2
-            util.inline_code(2, 14, 25), -- Inline code in heading
-            util.table_pipe(2, 37, true), -- Heading pipe 3
+            util.heading(0, 1),
+            util.table_pipe(2, 0, true),
+            util.table_pipe(2, 12, true),
+            util.inline_code(2, 14, 25),
+            util.table_pipe(2, 37, true),
             util.table_border(3, 'delimiter', { 11, 24 }),
-            util.table_pipe(4, 0, false), -- Row pipe 1
-            util.inline_code(4, 2, 12), -- Row inline code
-            util.table_pipe(4, 13, false), -- Row pipe 2
-            util.link(4, 15, 38, 'web'), -- Row link
-            util.table_pipe(4, 39, false), -- Row pipe 3
+            util.table_pipe(4, 0, false),
+            util.inline_code(4, 2, 12),
+            util.table_pipe(4, 13, false),
+            util.link(4, 15, 38, 'web'),
+            util.table_pipe(4, 39, false),
         })
 
-        -- Table no inline
-        vim.list_extend(expected, util.heading(6, 1))
         vim.list_extend(expected, {
-            util.table_pipe(8, 0, true), -- Heading pipe 1
+            util.heading(6, 1),
+            util.table_pipe(8, 0, true),
             util.table_border(8, 'above', { 11, 11 }),
-            util.table_pipe(8, 12, true), -- Heading pipe 2
-            util.table_pipe(8, 24, true), -- Heading pipe 3
+            util.table_pipe(8, 12, true),
+            util.table_pipe(8, 24, true),
             util.table_border(9, 'delimiter', { 11, 11 }),
-            util.table_pipe(10, 0, false), -- Row pipe 1
+            util.table_pipe(10, 0, false),
             util.table_border(10, 'below', { 11, 11 }),
-            util.table_pipe(10, 12, false), -- Row pipe 2
-            util.table_pipe(10, 24, false), -- Row pipe 3
+            util.table_pipe(10, 12, false),
+            util.table_pipe(10, 24, false),
         })
 
         local actual = util.get_actual_marks()
@@ -91,12 +87,7 @@ describe('table.md', function()
         ---@param head boolean
         ---@return render.md.MarkInfo
         local function table_row(row, col, value, head)
-            local highlight
-            if head then
-                highlight = 'TableHead'
-            else
-                highlight = 'TableRow'
-            end
+            local highlight = head and 'TableHead' or 'TableRow'
             ---@type render.md.MarkInfo
             return {
                 row = { row, row },
@@ -110,22 +101,20 @@ describe('table.md', function()
 
         local expected = {}
 
-        -- Table with inline
-        vim.list_extend(expected, util.heading(0, 1))
         vim.list_extend(expected, {
+            util.heading(0, 1),
             table_row(2, 38, '│ Heading 1 │ `Heading 2`            │', true),
             util.table_border(2, 'above', { 11, 24 }),
-            util.inline_code(2, 14, 25), -- Inline code in heading
+            util.inline_code(2, 14, 25),
             util.table_border(3, 'delimiter', { 11, 24 }),
             table_row(4, 40, '│ `Item 行` │ [link](https://行.com) │', false),
             util.table_border(4, 'below', { 11, 24 }),
-            util.inline_code(4, 2, 12), -- Row inline code
-            util.link(4, 15, 38, 'web'), -- Row link
+            util.inline_code(4, 2, 12),
+            util.link(4, 15, 38, 'web'),
         })
 
-        -- Table no inline
-        vim.list_extend(expected, util.heading(6, 1))
         vim.list_extend(expected, {
+            util.heading(6, 1),
             table_row(8, 25, '│ Heading 1 │ Heading 2 │', true),
             util.table_border(8, 'above', { 11, 11 }),
             util.table_border(9, 'delimiter', { 11, 11 }),

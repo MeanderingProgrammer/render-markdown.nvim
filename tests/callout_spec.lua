@@ -33,54 +33,53 @@ describe('callout.md', function()
         local expected = {}
 
         local note_start = 0
-        vim.list_extend(expected, util.heading(note_start, 1))
         vim.list_extend(expected, {
-            util.quote(note_start + 2, '%s ', info), -- Quote start
-            callout(note_start + 2, 2, 9, '󰋽 Note', info), -- Callout text
-            util.quote(note_start + 3, '%s', info), -- Quote continued
+            util.heading(note_start, 1),
+            util.quote(note_start + 2, '%s ', info),
+            callout(note_start + 2, 2, 9, '󰋽 Note', info),
+            util.quote(note_start + 3, '%s', info),
             util.quote(note_start + 4, '%s ', info),
             util.quote(note_start + 5, '%s', info),
             util.quote(note_start + 6, '%s ', info),
         })
 
         local tip_start = 8
-        vim.list_extend(expected, util.heading(tip_start, 1))
         vim.list_extend(expected, {
-            util.quote(tip_start + 2, '%s ', ok), -- Quote start
-            callout(tip_start + 2, 2, 8, '󰌶 Tip', ok), -- Callout text
-            util.quote(tip_start + 3, '%s', ok), -- Quote continued
+            util.heading(tip_start, 1),
+            util.quote(tip_start + 2, '%s ', ok),
+            callout(tip_start + 2, 2, 8, '󰌶 Tip', ok),
+            util.quote(tip_start + 3, '%s', ok),
             util.quote(tip_start + 4, '%s ', ok),
-            util.code_block(tip_start + 4, tip_start + 6),
-        })
-        vim.list_extend(expected, util.code_language(tip_start + 4, 5, 8, '󰢱 ', 'lua', 'MiniIconsAzure'))
-        vim.list_extend(expected, {
+            util.code_row(tip_start + 4, 2),
+            util.code_language(tip_start + 4, 5, 8, 'lua'),
             util.quote(tip_start + 5, '%s ', ok),
+            util.code_row(tip_start + 5, 2),
             util.quote(tip_start + 6, '%s ', ok),
             util.code_below(tip_start + 6, 2),
         })
 
         local important_start = 16
-        vim.list_extend(expected, util.heading(important_start, 1))
         vim.list_extend(expected, {
-            util.quote(important_start + 2, '%s ', hint), -- Quote start
-            callout(important_start + 2, 2, 14, '󰅾 Important', hint), -- Callout text
-            util.quote(important_start + 3, '%s ', hint), -- Quote continued
+            util.heading(important_start, 1),
+            util.quote(important_start + 2, '%s ', hint),
+            callout(important_start + 2, 2, 14, '󰅾 Important', hint),
+            util.quote(important_start + 3, '%s ', hint),
         })
 
         local warning_start = 21
-        vim.list_extend(expected, util.heading(warning_start, 1))
         vim.list_extend(expected, {
-            util.quote(warning_start + 2, '%s ', warn), -- Quote start
-            callout(warning_start + 2, 2, 12, '󰀪 Custom Title', warn, ''), -- Callout text
-            util.quote(warning_start + 3, '%s ', warn), -- Quote continued
+            util.heading(warning_start, 1),
+            util.quote(warning_start + 2, '%s ', warn),
+            callout(warning_start + 2, 2, 12, '󰀪 Custom Title', warn, ''),
+            util.quote(warning_start + 3, '%s ', warn),
         })
 
         local caution_start = 26
-        vim.list_extend(expected, util.heading(caution_start, 1))
         vim.list_extend(expected, {
-            util.quote(caution_start + 2, '%s ', error), -- Quote start
-            callout(caution_start + 2, 2, 12, '󰳦 Caution', error), -- Callout text
-            util.quote(caution_start + 3, '%s ', error), -- Quote continued
+            util.heading(caution_start, 1),
+            util.quote(caution_start + 2, '%s ', error),
+            callout(caution_start + 2, 2, 12, '󰳦 Caution', error),
+            util.quote(caution_start + 3, '%s ', error),
         })
 
         vim.list_extend(expected, util.heading(31, 1))

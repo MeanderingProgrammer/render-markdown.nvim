@@ -43,10 +43,17 @@ function M.get_buf(buf, name)
 end
 
 ---@param win integer
----@return integer
-function M.get_leftcol(win)
+---@return vim.fn.winsaveview.ret
+function M.view(win)
+    return vim.api.nvim_win_call(win, vim.fn.winsaveview)
+end
+
+---@param win integer
+---@param row integer
+---@return boolean
+function M.visible(win, row)
     return vim.api.nvim_win_call(win, function()
-        return vim.fn.winsaveview().leftcol
+        return vim.fn.foldclosed(row) == -1
     end)
 end
 

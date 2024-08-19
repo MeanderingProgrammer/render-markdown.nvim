@@ -23,7 +23,9 @@ describe('ad_hoc.md', function()
         util.setup('tests/data/ad_hoc.md')
 
         local expected = {}
+
         vim.list_extend(expected, util.heading(0, 1))
+
         vim.list_extend(expected, {
             wiki_link(4, 0, 13, 'Basic One'),
             wiki_link(6, 0, 23, 'With Alias'),

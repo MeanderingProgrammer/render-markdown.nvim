@@ -8,15 +8,6 @@ local util = require('tests.util')
 ---@param custom boolean
 ---@return render.md.MarkInfo[]
 local function checkbox(row, icon, highlight, custom)
-    local virt_text_pos
-    local conceal
-    if custom then
-        virt_text_pos = 'inline'
-        conceal = ''
-    else
-        virt_text_pos = 'overlay'
-        conceal = nil
-    end
     ---@type render.md.MarkInfo
     local conceal_mark = {
         row = { row, row },
@@ -28,10 +19,22 @@ local function checkbox(row, icon, highlight, custom)
         row = { row, row },
         col = { 2, 5 },
         virt_text = { { icon, util.hl(highlight) } },
-        virt_text_pos = virt_text_pos,
-        conceal = conceal,
+        virt_text_pos = custom and 'inline' or 'overlay',
+        conceal = custom and '' or nil,
     }
     return { conceal_mark, checkbox_mark }
+end
+
+---@param row integer
+---@return render.md.MarkInfo
+local function dash(row)
+    ---@type render.md.MarkInfo
+    return {
+        row = { row },
+        col = { 0 },
+        virt_text = { { string.rep('─', vim.opt.columns:get()), util.hl('Dash') } },
+        virt_text_pos = 'overlay',
+    }
 end
 
 describe('box_dash_quote.md', function()
@@ -40,25 +43,14 @@ describe('box_dash_quote.md', function()
 
         local expected = {}
 
-        -- Heading
         vim.list_extend(expected, util.heading(0, 1))
 
-        -- Checkboxes
         vim.list_extend(expected, checkbox(2, ' 󰄱 ', 'Unchecked', false))
         vim.list_extend(expected, checkbox(3, ' 󰱒 ', 'Checked', false))
         vim.list_extend(expected, checkbox(4, ' 󰥔 ', 'Todo', true))
 
-        -- Line break
-        vim.list_extend(expected, {
-            {
-                row = { 6 },
-                col = { 0 },
-                virt_text = { { string.rep('─', vim.opt.columns:get()), util.hl('Dash') } },
-                virt_text_pos = 'overlay',
-            },
-        })
+        table.insert(expected, dash(6))
 
-        -- Quote lines
         vim.list_extend(expected, {
             util.quote(8, '  %s ', 'Quote'),
             util.quote(9, '  %s ', 'Quote'),

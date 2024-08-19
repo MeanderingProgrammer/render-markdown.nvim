@@ -103,7 +103,7 @@ function M.next_state(config, win)
     if not state.enabled then
         return 'default'
     end
-    if not util.get_leftcol(win) == 0 then
+    if not util.view(win).leftcol == 0 then
         return 'default'
     end
     if not vim.tbl_contains(config.render_modes, vim.fn.mode(true)) then

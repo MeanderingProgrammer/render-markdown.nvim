@@ -26,10 +26,7 @@ function M.parse(config, context, info)
         return nil
     end
     local code_info = info:child('info_string', info.start_row)
-    local language_info = nil
-    if code_info ~= nil then
-        language_info = code_info:child('language', info.start_row)
-    end
+    local language_info = code_info ~= nil and code_info:child('language', info.start_row) or nil
     local longest_line, width = M.get_width(config, context, info)
     ---@type render.md.parsed.CodeBlock
     return {

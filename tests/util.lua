@@ -63,6 +63,23 @@ function M.heading(row, level)
 end
 
 ---@param row integer
+---@param col integer
+---@param level integer
+---@param spaces? integer
+---@return render.md.MarkInfo
+function M.bullet(row, col, level, spaces)
+    local icons = { '●', '○', '◆', '◇' }
+    spaces = spaces or 0
+    ---@type render.md.MarkInfo
+    return {
+        row = { row, row },
+        col = { col, col + spaces + 2 },
+        virt_text = { { string.rep(' ', spaces) .. icons[level], M.hl('Bullet') } },
+        virt_text_pos = 'overlay',
+    }
+end
+
+---@param row integer
 ---@param start_col integer
 ---@param end_col integer
 ---@return render.md.MarkInfo
@@ -76,14 +93,14 @@ function M.inline_code(row, start_col, end_col)
     }
 end
 
----@param start_row integer
----@param end_row integer
+---@param row integer
+---@param col integer
 ---@return render.md.MarkInfo
-function M.code_block(start_row, end_row)
+function M.code_row(row, col)
     ---@type render.md.MarkInfo
     return {
-        row = { start_row, end_row },
-        col = { 0, 0 },
+        row = { row, row + 1 },
+        col = { col, 0 },
         hl_eol = true,
         hl_group = M.hl('Code'),
     }
@@ -92,11 +109,15 @@ end
 ---@param row integer
 ---@param start_col integer
 ---@param end_col integer
----@param icon string
----@param name string
----@param highlight string
+---@param name 'python'|'lua'
 ---@return render.md.MarkInfo[]
-function M.code_language(row, start_col, end_col, icon, name, highlight)
+function M.code_language(row, start_col, end_col, name)
+    local icon, highlight
+    if name == 'python' then
+        icon, highlight = '󰌠 ', 'MiniIconsYellow'
+    elseif name == 'lua' then
+        icon, highlight = '󰢱 ', 'MiniIconsAzure'
+    end
     ---@type render.md.MarkInfo
     local sign_mark = {
         row = { row, row },
@@ -271,9 +292,20 @@ function M.get_actual_marks()
     return actual
 end
 
----@param expected render.md.MarkInfo[]
+---@param expected (render.md.MarkInfo|render.md.MarkInfo[])[]
 ---@param actual render.md.MarkInfo[]
 function M.marks_are_equal(expected, actual)
+    expected = vim.iter(expected)
+        :map(function(mark_or_marks)
+            if vim.islist(mark_or_marks) then
+                return mark_or_marks
+            else
+                return { mark_or_marks }
+            end
+        end)
+        :flatten()
+        :totable()
+
     for i = 1, math.min(#expected, #actual) do
         eq(expected[i], actual[i], string.format('Marks at index %d mismatch', i))
     end
