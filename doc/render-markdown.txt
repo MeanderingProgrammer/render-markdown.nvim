@@ -1,4 +1,4 @@
-*render-markdown.txt*          For 0.10.0          Last change: 2024 August 19
+*render-markdown.txt*          For 0.10.0          Last change: 2024 August 20
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -47,12 +47,6 @@ Plugin to improve viewing Markdown files in Neovim
           plugins = { markdown = true },
       })
   <
-  For `rocks.nvim` users migrate to the new LuaRock
-  <https://luarocks.org/modules/MeanderingProgrammer/render-markdown.nvim>.
-  >vim
-      :Rocks prune markdown.nvim
-      :Rocks install render-markdown.nvim
-  <
 
 ==============================================================================
 2. Features                                         *render-markdown-features*
@@ -60,10 +54,10 @@ Plugin to improve viewing Markdown files in Neovim
 - Functions entirely inside of Neovim with no external windows
 - Changes between `rendered` view in normal mode and `raw` view in all other modes
 - Supports anti-conceal behavior, removing any virtual text added by this plugin
-    on the line the cursor is on, this does have a performance penalty and can be disabled
+    on the line the cursor is on, this can be disabled
 - Changes window options between `rendered` and `raw` view based on configuration
     - Effects `conceallevel` & `concealcursor` by default
-- Supports rendering `markdown` injected into other file types
+- Supports rendering `markdown` injected into any file type
 - Renders the following `markdown` components:
     - Headings: highlight depending on level and replaces `#` with icon
     - Horizontal breaks: replace with full-width lines
@@ -76,8 +70,8 @@ Plugin to improve viewing Markdown files in Neovim
     - Block quotes: replace leading `>` with provided icon
     - Tables: replace border characters, handles misaligned tables but does NOT align
         according to delimiter indicator
-    - Callouts <https://github.com/orgs/community/discussions/16925>
-        - Github & Obsidian out of the box, supports user defined as well
+    - Callouts <https://github.com/orgs/community/discussions/16925>: Github & Obsidian
+        out of the box, supports user defined as well
     - Custom checkbox states , function similar to `callouts`
     - Adds icon before images / links 
     - `LaTeX` blocks: renders formulas if `latex` parser and `pylatexenc` are installed
@@ -270,7 +264,7 @@ Full Default Configuration ~
             enabled = true,
             -- Turn on / off any sign column related rendering
             sign = true,
-            -- Determines how the icon fills the available space:
+            -- Determines how icons fill the available space:
             --  inline:  underlying '#'s are concealed resulting in a left aligned icon
             --  overlay: result is left padded with spaces to hide any additional '#'
             position = 'overlay',
@@ -396,6 +390,10 @@ Full Default Configuration ~
         checkbox = {
             -- Turn on / off checkbox state rendering
             enabled = true,
+            -- Determines how icons fill the available space:
+            --  inline:  underlying text is concealed resulting in a left aligned icon
+            --  overlay: result is left padded with spaces to hide any additional text
+            position = 'inline',
             unchecked = {
                 -- Replaces '[ ]' of 'task_list_marker_unchecked'
                 icon = '󰄱 ',
@@ -575,7 +573,7 @@ Wiki Page
             enabled = true,
             -- Turn on / off any sign column related rendering
             sign = true,
-            -- Determines how the icon fills the available space:
+            -- Determines how icons fill the available space:
             --  inline:  underlying '#'s are concealed resulting in a left aligned icon
             --  overlay: result is left padded with spaces to hide any additional '#'
             position = 'overlay',
@@ -745,6 +743,10 @@ Wiki Page
         checkbox = {
             -- Turn on / off checkbox state rendering
             enabled = true,
+            -- Determines how icons fill the available space:
+            --  inline:  underlying text is concealed resulting in a left aligned icon
+            --  overlay: result is left padded with spaces to hide any additional text
+            position = 'inline',
             unchecked = {
                 -- Replaces '[ ]' of 'task_list_marker_unchecked'
                 icon = '󰄱 ',

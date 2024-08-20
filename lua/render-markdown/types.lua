@@ -55,6 +55,7 @@
 
 ---@class (exact) render.md.Checkbox
 ---@field public enabled boolean
+---@field public position render.md.checkbox.Position
 ---@field public unchecked render.md.CheckboxComponent
 ---@field public checked render.md.CheckboxComponent
 ---@field public custom table<string, render.md.CustomComponent>

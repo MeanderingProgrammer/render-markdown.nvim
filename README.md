@@ -18,20 +18,13 @@ Plugin to improve viewing Markdown files in Neovim
 >     plugins = { markdown = true },
 > })
 > ```
->
-> For `rocks.nvim` users migrate to the new [LuaRock](https://luarocks.org/modules/MeanderingProgrammer/render-markdown.nvim).
->
-> ```vim
-> :Rocks prune markdown.nvim
-> :Rocks install render-markdown.nvim
-> ```
 
 <!-- panvimdoc-ignore-start -->
 
 |           |         |
 | --------- | ------- |
 | ![Heading](https://github.com/user-attachments/assets/663a34c5-0438-4688-8204-332065f65835) | ![Table](https://github.com/user-attachments/assets/162986e1-91f0-4e13-a83f-6183d58b0fcb) |
-| ![Quote](https://github.com/user-attachments/assets/3f76e73e-b3a0-4cd8-90c1-208c5070659c)   | ![LaTeX](https://github.com/user-attachments/assets/9e8909e4-7256-45fc-b481-4aba8850ebc3) |
+| ![Quote](https://github.com/user-attachments/assets/5343ca45-d5e1-4de0-9065-46499e1ed919)   | ![LaTeX](https://github.com/user-attachments/assets/9e8909e4-7256-45fc-b481-4aba8850ebc3) |
 | ![Callout](https://github.com/user-attachments/assets/4324ea72-a017-4175-9f9d-363da5e5f6ba) | |
 
 <!-- panvimdoc-ignore-end -->
@@ -41,10 +34,10 @@ Plugin to improve viewing Markdown files in Neovim
 - Functions entirely inside of Neovim with no external windows
 - Changes between `rendered` view in normal mode and `raw` view in all other modes
 - Supports anti-conceal behavior, removing any virtual text added by this plugin
-  on the line the cursor is on, this does have a performance penalty and can be disabled
+  on the line the cursor is on, this can be disabled
 - Changes window options between `rendered` and `raw` view based on configuration
   - Effects `conceallevel` & `concealcursor` by default
-- Supports rendering `markdown` injected into other file types
+- Supports rendering `markdown` injected into any file type
 - Renders the following `markdown` components:
   - Headings: highlight depending on level and replaces `#` with icon
   - Horizontal breaks: replace with full-width lines
@@ -57,8 +50,8 @@ Plugin to improve viewing Markdown files in Neovim
   - Block quotes: replace leading `>` with provided icon
   - Tables: replace border characters, handles misaligned tables but does NOT align
     according to delimiter indicator
-  - [Callouts](https://github.com/orgs/community/discussions/16925)
-    - Github & Obsidian out of the box, supports user defined as well
+  - [Callouts](https://github.com/orgs/community/discussions/16925): Github & Obsidian
+    out of the box, supports user defined as well
   - Custom checkbox states [^1], function similar to `callouts`
   - Adds icon before images / links [^1]
   - `LaTeX` blocks: renders formulas if `latex` parser and `pylatexenc` are installed
@@ -241,7 +234,7 @@ require('render-markdown').setup({
         enabled = true,
         -- Turn on / off any sign column related rendering
         sign = true,
-        -- Determines how the icon fills the available space:
+        -- Determines how icons fill the available space:
         --  inline:  underlying '#'s are concealed resulting in a left aligned icon
         --  overlay: result is left padded with spaces to hide any additional '#'
         position = 'overlay',
@@ -367,6 +360,10 @@ require('render-markdown').setup({
     checkbox = {
         -- Turn on / off checkbox state rendering
         enabled = true,
+        -- Determines how icons fill the available space:
+        --  inline:  underlying text is concealed resulting in a left aligned icon
+        --  overlay: result is left padded with spaces to hide any additional text
+        position = 'inline',
         unchecked = {
             -- Replaces '[ ]' of 'task_list_marker_unchecked'
             icon = '󰄱 ',
@@ -546,7 +543,7 @@ require('render-markdown').setup({
         enabled = true,
         -- Turn on / off any sign column related rendering
         sign = true,
-        -- Determines how the icon fills the available space:
+        -- Determines how icons fill the available space:
         --  inline:  underlying '#'s are concealed resulting in a left aligned icon
         --  overlay: result is left padded with spaces to hide any additional '#'
         position = 'overlay',
@@ -708,6 +705,10 @@ require('render-markdown').setup({
     checkbox = {
         -- Turn on / off checkbox state rendering
         enabled = true,
+        -- Determines how icons fill the available space:
+        --  inline:  underlying text is concealed resulting in a left aligned icon
+        --  overlay: result is left padded with spaces to hide any additional text
+        position = 'inline',
         unchecked = {
             -- Replaces '[ ]' of 'task_list_marker_unchecked'
             icon = '󰄱 ',

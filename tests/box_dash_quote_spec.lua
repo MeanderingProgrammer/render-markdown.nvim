@@ -5,9 +5,8 @@ local util = require('tests.util')
 ---@param row integer
 ---@param icon string
 ---@param highlight string
----@param custom boolean
 ---@return render.md.MarkInfo[]
-local function checkbox(row, icon, highlight, custom)
+local function checkbox(row, icon, highlight)
     ---@type render.md.MarkInfo
     local conceal_mark = {
         row = { row, row },
@@ -19,8 +18,8 @@ local function checkbox(row, icon, highlight, custom)
         row = { row, row },
         col = { 2, 5 },
         virt_text = { { icon, util.hl(highlight) } },
-        virt_text_pos = custom and 'inline' or 'overlay',
-        conceal = custom and '' or nil,
+        virt_text_pos = 'inline',
+        conceal = '',
     }
     return { conceal_mark, checkbox_mark }
 end
@@ -45,15 +44,18 @@ describe('box_dash_quote.md', function()
 
         vim.list_extend(expected, util.heading(0, 1))
 
-        vim.list_extend(expected, checkbox(2, ' 󰄱 ', 'Unchecked', false))
-        vim.list_extend(expected, checkbox(3, ' 󰱒 ', 'Checked', false))
-        vim.list_extend(expected, checkbox(4, ' 󰥔 ', 'Todo', true))
+        vim.list_extend(expected, {
+            checkbox(2, '󰄱 ', 'Unchecked'),
+            checkbox(3, '󰱒 ', 'Checked'),
+            checkbox(4, '󰥔 ', 'Todo'),
+            util.bullet(5, 0, 1),
+        })
 
-        table.insert(expected, dash(6))
+        table.insert(expected, dash(7))
 
         vim.list_extend(expected, {
-            util.quote(8, '  %s ', 'Quote'),
             util.quote(9, '  %s ', 'Quote'),
+            util.quote(10, '  %s ', 'Quote'),
         })
 
         local actual = util.get_actual_marks()

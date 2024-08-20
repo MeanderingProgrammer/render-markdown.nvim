@@ -111,7 +111,7 @@ function Handler:heading(info)
         -- Overwrite anything beyond width with Normal
         self:add(true, info.start_row, 0, {
             priority = 0,
-            virt_text = { { str.pad(vim.o.columns * 2), 'Normal' } },
+            virt_text = { { str.spaces(vim.o.columns * 2), 'Normal' } },
             virt_text_win_col = width,
         })
     end
@@ -123,7 +123,7 @@ function Handler:heading(info)
     if heading.left_pad > 0 then
         self:add(false, info.start_row, 0, {
             priority = 0,
-            virt_text = { { str.pad(heading.left_pad), background } },
+            virt_text = { { str.spaces(heading.left_pad), background } },
             virt_text_pos = 'inline',
         })
     end
@@ -346,7 +346,7 @@ function Handler:code_background(code_block, icon_added)
         end
     end
 
-    local padding = str.pad(vim.o.columns * 2)
+    local padding = str.spaces(vim.o.columns * 2)
     for row = code_block.start_row, code_block.end_row - 1 do
         self:add(false, row, code_block.col, {
             end_row = row + 1,
@@ -375,8 +375,8 @@ function Handler:code_left_pad(code_block, add_background)
 
     -- Use low priority to include other marks in padding when code block is at edge
     local priority = code_block.col == 0 and 0 or nil
-    local outer_text = { str.pad(code_block.col), 'Normal' }
-    local left_text = { str.pad(code.left_pad), add_background and code.highlight or 'Normal' }
+    local outer_text = { str.spaces(code_block.col), 'Normal' }
+    local left_text = { str.spaces(code.left_pad), add_background and code.highlight or 'Normal' }
 
     for row = code_block.start_row, code_block.end_row - 1 do
         local virt_text = {}
@@ -446,13 +446,13 @@ function Handler:list_marker(info)
         if bullet.left_pad > 0 then
             self:add(false, info.start_row, 0, {
                 priority = 0,
-                virt_text = { { str.pad(bullet.left_pad), 'Normal' } },
+                virt_text = { { str.spaces(bullet.left_pad), 'Normal' } },
                 virt_text_pos = 'inline',
             })
         end
         if bullet.right_pad > 0 then
             self:add(true, info.start_row, info.end_col - 1, {
-                virt_text = { { str.pad(bullet.right_pad), 'Normal' } },
+                virt_text = { { str.spaces(bullet.right_pad), 'Normal' } },
                 virt_text_pos = 'inline',
             })
         end
@@ -461,16 +461,19 @@ end
 
 ---@private
 ---@param info render.md.NodeInfo
----@param checkbox_state render.md.CheckboxComponent
-function Handler:checkbox(info, checkbox_state)
+---@param checkbox render.md.CheckboxComponent
+function Handler:checkbox(info, checkbox)
     if not self.config.checkbox.enabled then
         return
     end
+    local inline = self.config.checkbox.position == 'inline'
+    local icon, highlight = checkbox.icon, checkbox.highlight
     self:add(true, info.start_row, info.start_col, {
         end_row = info.end_row,
         end_col = info.end_col,
-        virt_text = { { str.pad_to(info.text, checkbox_state.icon), checkbox_state.highlight } },
-        virt_text_pos = 'overlay',
+        virt_text = { { inline and icon or str.pad_to(info.text, icon), highlight } },
+        virt_text_pos = inline and 'inline' or 'overlay',
+        conceal = inline and '' or nil,
     })
 end
 
@@ -583,7 +586,7 @@ function Handler:table_row(delim, row)
             local offset = delim.columns[i].width - column.width
             if offset > 0 then
                 self:add(true, column.info.start_row, column.info.end_col - 1, {
-                    virt_text = { { str.pad(offset), pipe_table.filler } },
+                    virt_text = { { str.spaces(offset), pipe_table.filler } },
                     virt_text_pos = 'inline',
                 })
             end

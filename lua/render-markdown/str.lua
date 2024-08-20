@@ -24,23 +24,25 @@ function M.leading_spaces(s)
     return leading_spaces or 0
 end
 
----@param value string
----@param s string
+---@param n integer
 ---@return string
-function M.pad_to(value, s)
-    local padding = M.width(value) - M.width(s)
-    return M.pad(padding, s)
+function M.spaces(n)
+    return string.rep(' ', n)
 end
 
----@param padding integer
----@param s? string
+---@param target string
+---@param s string
 ---@return string
-function M.pad(padding, s)
-    local result = string.rep(' ', padding)
-    if s ~= nil then
-        result = result .. s
-    end
-    return result
+function M.pad_to(target, s)
+    local n = M.width(target) - M.width(s)
+    return M.pad(n, s)
+end
+
+---@param n integer
+---@param s string
+---@return string
+function M.pad(n, s)
+    return M.spaces(n) .. s
 end
 
 return M

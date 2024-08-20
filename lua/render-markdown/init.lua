@@ -68,8 +68,11 @@ local M = {}
 ---@field public icon? string
 ---@field public highlight? string
 
+---@alias render.md.checkbox.Position 'overlay'|'inline'
+
 ---@class (exact) render.md.UserCheckbox
 ---@field public enabled? boolean
+---@field public position? render.md.checkbox.Position
 ---@field public unchecked? render.md.UserCheckboxComponent
 ---@field public checked? render.md.UserCheckboxComponent
 ---@field public custom? table<string, render.md.CustomComponent>
@@ -264,7 +267,7 @@ M.default_config = {
         enabled = true,
         -- Turn on / off any sign column related rendering
         sign = true,
-        -- Determines how the icon fills the available space:
+        -- Determines how icons fill the available space:
         --  inline:  underlying '#'s are concealed resulting in a left aligned icon
         --  overlay: result is left padded with spaces to hide any additional '#'
         position = 'overlay',
@@ -390,6 +393,10 @@ M.default_config = {
     checkbox = {
         -- Turn on / off checkbox state rendering
         enabled = true,
+        -- Determines how icons fill the available space:
+        --  inline:  underlying text is concealed resulting in a left aligned icon
+        --  overlay: result is left padded with spaces to hide any additional text
+        position = 'inline',
         unchecked = {
             -- Replaces '[ ]' of 'task_list_marker_unchecked'
             icon = '󰄱 ',

@@ -128,10 +128,12 @@ function Handler:checkbox(info, checkbox)
     if not self.config.checkbox.enabled then
         return
     end
+    local inline = self.config.checkbox.position == 'inline'
+    local icon, highlight = checkbox.rendered, checkbox.highlight
     self:add(info.start_row, info.start_col, {
         end_row = info.end_row,
         end_col = info.end_col,
-        virt_text = { { str.pad_to(info.text, checkbox.rendered), checkbox.highlight } },
+        virt_text = { { inline and icon or str.pad_to(info.text, icon), highlight } },
         virt_text_pos = 'inline',
         conceal = '',
     })
