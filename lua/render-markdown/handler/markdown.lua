@@ -268,6 +268,9 @@ function Handler:code(info)
     if add_background then
         self:code_background(code_block, icon_added)
     end
+    if code_block.language then
+        code_block.start_row = code_block.start_row + 1
+    end
     self:code_left_pad(code_block, add_background)
 end
 
@@ -378,8 +381,7 @@ function Handler:code_left_pad(code_block, add_background)
     end
     local padding = str.pad(code.left_pad)
     local highlight = add_background and code.highlight or 'Normal'
-    -- skip the first row, as it is already handled by 'language_pad'
-    for row = code_block.start_row + 1, code_block.end_row - 1 do
+    for row = code_block.start_row, code_block.end_row - 1 do
         -- Uses a low priority so other marks are loaded first and included in padding
         self:add(false, row, code_block.col, {
             priority = 0,
