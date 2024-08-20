@@ -45,13 +45,13 @@ describe('latex.md', function()
         })
         util.setup('demo/latex.md')
 
-        local expected = {}
+        local expected, row = {}, util.row()
 
-        vim.list_extend(expected, util.heading(0, 1))
+        vim.list_extend(expected, util.heading(row:get(), 1))
 
         vim.list_extend(expected, {
-            latex(2, 2, 21, { '√(3x-1)+(1+x)^2' }), -- Inline
-            latex(4, 7, 2, { '    f(x,y) = x + √(y)', '    f(x,y) = √(y) + x^2/4y' }), -- Block
+            latex(row:increment(2), 2, 21, { '√(3x-1)+(1+x)^2' }), -- Inline
+            latex(row:increment(2), 7, 2, { '    f(x,y) = x + √(y)', '    f(x,y) = √(y) + x^2/4y' }), -- Block
         })
 
         local actual = util.get_actual_marks()

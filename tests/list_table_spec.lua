@@ -19,64 +19,64 @@ describe('list_table.md', function()
     it('default', function()
         util.setup('demo/list_table.md')
 
-        local expected = {}
+        local expected, row = {}, util.row()
 
-        vim.list_extend(expected, util.heading(0, 1))
+        vim.list_extend(expected, util.heading(row:get(), 1))
 
         vim.list_extend(expected, {
-            util.bullet(2, 0, 1),
-            util.link(2, 20, 47, 'web'),
-            util.bullet(3, 0, 1),
-            util.inline_code(3, 20, 28),
-            util.bullet(4, 2, 2, 2),
-            util.bullet(5, 4, 2),
-            util.bullet(6, 6, 3),
-            util.bullet(7, 8, 4),
-            util.bullet(8, 10, 1),
-            util.bullet(9, 0, 1),
-            util.link(9, 20, 45, 'link'),
+            util.bullet(row:increment(2), 0, 1),
+            util.link(row:get(), 20, 47, 'web'),
+            util.bullet(row:increment(), 0, 1),
+            util.inline_code(row:get(), 20, 28),
+            util.bullet(row:increment(), 2, 2, 2),
+            util.bullet(row:increment(), 4, 2),
+            util.bullet(row:increment(), 6, 3),
+            util.bullet(row:increment(), 8, 4),
+            util.bullet(row:increment(), 10, 1),
+            util.bullet(row:increment(), 0, 1),
+            util.link(row:get(), 20, 45, 'link'),
         })
 
-        vim.list_extend(expected, util.heading(11, 1))
+        vim.list_extend(expected, util.heading(row:increment(2), 1))
 
-        vim.list_extend(expected, util.heading(16, 1))
+        vim.list_extend(expected, util.heading(row:increment(5), 1))
 
         vim.list_extend(expected, {
-            util.table_pipe(18, 0, true),
-            util.table_border(18, 'above', { 8, 15, 7, 6 }),
-            util.inline_code(18, 2, 8),
-            util.table_padding(18, 8, 2),
-            util.table_pipe(18, 9, true),
-            util.table_padding(18, 24, 2),
-            util.table_pipe(18, 25, true),
-            util.table_pipe(18, 33, true),
-            util.table_pipe(18, 40, true),
+            util.table_pipe(row:increment(2), 0, true),
+            util.table_border(row:get(), 'above', { 8, 15, 7, 6 }),
+            util.inline_code(row:get(), 2, 8),
+            util.table_padding(row:get(), 8, 2),
+            util.table_pipe(row:get(), 9, true),
+            util.table_padding(row:get(), 24, 2),
+            util.table_pipe(row:get(), 25, true),
+            util.table_pipe(row:get(), 33, true),
+            util.table_pipe(row:get(), 40, true),
         })
         vim.list_extend(expected, {
             delimiter(
-                19,
+                row:increment(),
                 '├━───────┼───────━───────┼──────━┼──────┤'
             ),
         })
         vim.list_extend(expected, {
-            util.table_pipe(20, 0, false),
-            util.inline_code(20, 2, 8),
-            util.table_padding(20, 8, 2),
-            util.table_pipe(20, 9, false),
-            util.table_padding(20, 24, 4),
-            util.table_pipe(20, 25, false),
-            util.table_pipe(20, 33, false),
-            util.table_pipe(20, 40, false),
+            util.table_pipe(row:increment(), 0, false),
+            util.inline_code(row:get(), 2, 8),
+            util.table_padding(row:get(), 8, 2),
+            util.table_pipe(row:get(), 9, false),
+            util.table_padding(row:get(), 24, 4),
+            util.table_pipe(row:get(), 25, false),
+            util.table_pipe(row:get(), 33, false),
+            util.table_pipe(row:get(), 40, false),
         })
         vim.list_extend(expected, {
-            util.table_pipe(21, 0, false),
-            util.table_border(21, 'below', { 8, 15, 7, 6 }),
-            util.table_pipe(21, 9, false),
-            util.link(21, 11, 24, 'link'),
-            util.table_padding(21, 24, 7),
-            util.table_pipe(21, 25, false),
-            util.table_pipe(21, 33, false),
-            util.table_pipe(21, 40, false),
+            util.table_pipe(row:increment(), 0, false),
+            util.table_border(row:get(), 'below', { 8, 15, 7, 6 }),
+            util.table_pipe(row:get(), 9, false),
+            util.link(row:get(), 11, 24, 'link'),
+            util.table_padding(row:get(), 24, 7),
+            util.table_pipe(row:get(), 25, false),
+            util.table_pipe(row:get(), 33, false),
+            util.table_pipe(row:get(), 40, false),
         })
 
         local actual = util.get_actual_marks()

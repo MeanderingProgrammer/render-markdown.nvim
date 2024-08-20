@@ -24,65 +24,59 @@ describe('callout.md', function()
     it('default', function()
         util.setup('demo/callout.md')
 
+        local expected, row = {}, util.row()
+
         local info = 'Info'
+        vim.list_extend(expected, {
+            util.heading(row:get(), 1),
+            util.quote(row:increment(2), '%s ', info),
+            callout(row:get(), 2, 9, '󰋽 Note', info),
+            util.quote(row:increment(), '%s', info),
+            util.quote(row:increment(), '%s ', info),
+            util.quote(row:increment(), '%s', info),
+            util.quote(row:increment(), '%s ', info),
+        })
+
         local ok = 'Success'
+        vim.list_extend(expected, {
+            util.heading(row:increment(2), 1),
+            util.quote(row:increment(2), '%s ', ok),
+            callout(row:get(), 2, 8, '󰌶 Tip', ok),
+            util.quote(row:increment(), '%s', ok),
+            util.quote(row:increment(), '%s ', ok),
+            util.code_row(row:get(), 2),
+            util.code_language(row:get(), 5, 8, 'lua'),
+            util.quote(row:increment(), '%s ', ok),
+            util.code_row(row:get(), 2),
+            util.quote(row:increment(), '%s ', ok),
+            util.code_below(row:get(), 2),
+        })
+
         local hint = 'Hint'
+        vim.list_extend(expected, {
+            util.heading(row:increment(2), 1),
+            util.quote(row:increment(2), '%s ', hint),
+            callout(row:get(), 2, 14, '󰅾 Important', hint),
+            util.quote(row:increment(1), '%s ', hint),
+        })
+
         local warn = 'Warn'
+        vim.list_extend(expected, {
+            util.heading(row:increment(2), 1),
+            util.quote(row:increment(2), '%s ', warn),
+            callout(row:get(), 2, 12, '󰀪 Custom Title', warn, ''),
+            util.quote(row:increment(), '%s ', warn),
+        })
+
         local error = 'Error'
-
-        local expected = {}
-
-        local note_start = 0
         vim.list_extend(expected, {
-            util.heading(note_start, 1),
-            util.quote(note_start + 2, '%s ', info),
-            callout(note_start + 2, 2, 9, '󰋽 Note', info),
-            util.quote(note_start + 3, '%s', info),
-            util.quote(note_start + 4, '%s ', info),
-            util.quote(note_start + 5, '%s', info),
-            util.quote(note_start + 6, '%s ', info),
+            util.heading(row:increment(2), 1),
+            util.quote(row:increment(2), '%s ', error),
+            callout(row:get(), 2, 12, '󰳦 Caution', error),
+            util.quote(row:increment(), '%s ', error),
         })
 
-        local tip_start = 8
-        vim.list_extend(expected, {
-            util.heading(tip_start, 1),
-            util.quote(tip_start + 2, '%s ', ok),
-            callout(tip_start + 2, 2, 8, '󰌶 Tip', ok),
-            util.quote(tip_start + 3, '%s', ok),
-            util.quote(tip_start + 4, '%s ', ok),
-            util.code_row(tip_start + 4, 2),
-            util.code_language(tip_start + 4, 5, 8, 'lua'),
-            util.quote(tip_start + 5, '%s ', ok),
-            util.code_row(tip_start + 5, 2),
-            util.quote(tip_start + 6, '%s ', ok),
-            util.code_below(tip_start + 6, 2),
-        })
-
-        local important_start = 16
-        vim.list_extend(expected, {
-            util.heading(important_start, 1),
-            util.quote(important_start + 2, '%s ', hint),
-            callout(important_start + 2, 2, 14, '󰅾 Important', hint),
-            util.quote(important_start + 3, '%s ', hint),
-        })
-
-        local warning_start = 21
-        vim.list_extend(expected, {
-            util.heading(warning_start, 1),
-            util.quote(warning_start + 2, '%s ', warn),
-            callout(warning_start + 2, 2, 12, '󰀪 Custom Title', warn, ''),
-            util.quote(warning_start + 3, '%s ', warn),
-        })
-
-        local caution_start = 26
-        vim.list_extend(expected, {
-            util.heading(caution_start, 1),
-            util.quote(caution_start + 2, '%s ', error),
-            callout(caution_start + 2, 2, 12, '󰳦 Caution', error),
-            util.quote(caution_start + 3, '%s ', error),
-        })
-
-        vim.list_extend(expected, util.heading(31, 1))
+        vim.list_extend(expected, util.heading(row:increment(2), 1))
 
         local actual = util.get_actual_marks()
         util.marks_are_equal(expected, actual)

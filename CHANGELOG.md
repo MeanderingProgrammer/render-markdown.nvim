@@ -8,6 +8,8 @@
 - anti-conceal margin [abc02f3](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/abc02f35cd6cb28e9b8eb37c88fc863a546367bf)
 - log error when mark is skipped [#132](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/132)
   [7986be4](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7986be47531d652e950776536987e01dd5b55b94)
+- checkbox: position [#140](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/140)
+  [275f289](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/275f28943ab9ce6017f90bab56c5b5b3c651c269)
 
 ### Bug Fixes
 

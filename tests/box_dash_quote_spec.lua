@@ -40,22 +40,22 @@ describe('box_dash_quote.md', function()
     it('default', function()
         util.setup('demo/box_dash_quote.md')
 
-        local expected = {}
+        local expected, row = {}, util.row()
 
-        vim.list_extend(expected, util.heading(0, 1))
+        vim.list_extend(expected, util.heading(row:get(), 1))
 
         vim.list_extend(expected, {
-            checkbox(2, '󰄱 ', 'Unchecked'),
-            checkbox(3, '󰱒 ', 'Checked'),
-            checkbox(4, '󰥔 ', 'Todo'),
-            util.bullet(5, 0, 1),
+            checkbox(row:increment(2), '󰄱 ', 'Unchecked'),
+            checkbox(row:increment(), '󰱒 ', 'Checked'),
+            checkbox(row:increment(), '󰥔 ', 'Todo'),
+            util.bullet(row:increment(), 0, 1),
         })
 
-        table.insert(expected, dash(7))
+        table.insert(expected, dash(row:increment(2)))
 
         vim.list_extend(expected, {
-            util.quote(9, '  %s ', 'Quote'),
-            util.quote(10, '  %s ', 'Quote'),
+            util.quote(row:increment(2), '  %s ', 'Quote'),
+            util.quote(row:increment(), '  %s ', 'Quote'),
         })
 
         local actual = util.get_actual_marks()

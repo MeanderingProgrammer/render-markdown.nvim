@@ -3,6 +3,30 @@
 local ui = require('render-markdown.ui')
 local eq = assert.are.same
 
+---@class render.md.test.Row
+---@field private value integer
+local Row = {}
+Row.__index = Row
+
+---@return render.md.test.Row
+function Row.new()
+    local self = setmetatable({}, Row)
+    self.value = 0
+    return self
+end
+
+---@return integer
+function Row:get()
+    return self.value
+end
+
+---@param n? integer
+---@return integer
+function Row:increment(n)
+    self.value = self.value + (n or 1)
+    return self.value
+end
+
 ---@class render.md.MarkInfo
 ---@field row integer[]
 ---@field col integer[]
@@ -25,6 +49,11 @@ function M.setup(file, opts)
     require('render-markdown').setup(opts)
     vim.cmd('e ' .. file)
     vim.wait(0)
+end
+
+---@return render.md.test.Row
+function M.row()
+    return Row.new()
 end
 
 ---@param row integer

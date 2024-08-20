@@ -22,13 +22,13 @@ describe('ad_hoc.md', function()
     it('default', function()
         util.setup('tests/data/ad_hoc.md')
 
-        local expected = {}
+        local expected, row = {}, util.row()
 
-        vim.list_extend(expected, util.heading(0, 1))
+        vim.list_extend(expected, util.heading(row:get(), 1))
 
         vim.list_extend(expected, {
-            wiki_link(4, 0, 13, 'Basic One'),
-            wiki_link(6, 0, 23, 'With Alias'),
+            wiki_link(row:increment(4), 0, 13, 'Basic One'),
+            wiki_link(row:increment(2), 0, 23, 'With Alias'),
         })
 
         local actual = util.get_actual_marks()
