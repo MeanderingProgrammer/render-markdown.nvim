@@ -55,6 +55,10 @@ function M.get_width(config, context, info)
     local longest_line = config.left_pad + code_width + config.right_pad
     local width = math.max(longest_line, config.min_width)
     if config.width == 'block' then
+        width = width + config.language_pad
+        if config.position == 'left' and config.language_pad > 0 then
+            width = width - 1
+        end
         return width, width
     else
         return width, context:get_width()
