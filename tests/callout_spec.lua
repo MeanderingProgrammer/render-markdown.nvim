@@ -45,7 +45,7 @@ describe('callout.md', function()
             util.quote(row:increment(), '%s', ok),
             util.quote(row:increment(), '%s ', ok),
             util.code_row(row:get(), 2),
-            util.code_language(row:get(), 5, 8, 'lua'),
+            util.code_language(row:get(), 2, 'lua'),
             util.quote(row:increment(), '%s ', ok),
             util.code_row(row:get(), 2),
             util.quote(row:increment(), '%s ', ok),

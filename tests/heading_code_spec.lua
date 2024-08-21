@@ -20,7 +20,7 @@ describe('heading_code.md', function()
 
         vim.list_extend(expected, {
             util.code_row(row:increment(2), 0),
-            util.code_language(row:get(), 3, 9, 'python'),
+            util.code_language(row:get(), 0, 'python'),
         })
         for _ = 13, 21 do
             table.insert(expected, util.code_row(row:increment(), 0))

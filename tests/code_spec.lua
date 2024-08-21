@@ -49,7 +49,7 @@ describe('code.md', function()
 
         vim.list_extend(expected, {
             util.code_row(row:increment(2), 0),
-            util.code_language(row:get(), 3, 7, 'rust'),
+            util.code_language(row:get(), 0, 'rust'),
         })
         for _ = 1, 3 do
             table.insert(expected, util.code_row(row:increment(), 0))
@@ -59,7 +59,7 @@ describe('code.md', function()
         vim.list_extend(expected, {
             util.bullet(row:increment(2), 0, 1),
             util.code_row(row:increment(2), 2),
-            util.code_language(row:get(), 5, 8, 'lua'),
+            util.code_language(row:get(), 2, 'lua'),
         })
         for _ = 1, 2 do
             table.insert(expected, util.code_row(row:increment(), 2))
@@ -69,7 +69,7 @@ describe('code.md', function()
         vim.list_extend(expected, {
             util.bullet(row:increment(2), 0, 1),
             util.code_row(row:increment(2), 2),
-            util.code_language(row:get(), 5, 8, 'lua'),
+            util.code_language(row:get(), 2, 'lua'),
         })
         for _, col in ipairs({ 2, 0, 2 }) do
             table.insert(expected, util.code_row(row:increment(), col))
@@ -95,7 +95,7 @@ describe('code.md', function()
         vim.list_extend(expected, {
             util.code_row(row:increment(2), 0),
             hide_background(row:get(), 0, 34),
-            util.code_language(row:get(), 3, 7, 'rust'),
+            util.code_language(row:get(), 0, 'rust'),
         })
         for _ = 1, 3 do
             vim.list_extend(expected, {
@@ -110,7 +110,7 @@ describe('code.md', function()
             util.bullet(row:increment(2), 0, 1),
             util.code_row(row:increment(2), 2),
             hide_background(row:get(), 2, 20),
-            util.code_language(row:get(), 5, 8, 'lua'),
+            util.code_language(row:get(), 2, 'lua'),
         })
         for _ = 1, 2 do
             vim.list_extend(expected, {
@@ -125,7 +125,7 @@ describe('code.md', function()
             util.bullet(row:increment(2), 0, 1),
             util.code_row(row:increment(2), 2),
             hide_background(row:get(), 2, 20),
-            util.code_language(row:get(), 5, 8, 'lua'),
+            util.code_language(row:get(), 2, 'lua'),
         })
         for _, col in ipairs({ 2, 0, 2 }) do
             vim.list_extend(expected, {
