@@ -10,6 +10,8 @@
   [7986be4](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7986be47531d652e950776536987e01dd5b55b94)
 - checkbox: position [#140](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/140)
   [275f289](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/275f28943ab9ce6017f90bab56c5b5b3c651c269)
+- code: independent language padding: [#131](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/131)
+  [739d845](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/739d8458d6c5742fbcf96a5961b88670fefa1d53)
 
 ### Bug Fixes
 
@@ -25,6 +27,7 @@
 ### Collaborator Shoutouts
 
 - @P1roks
+- @Biggybi
 
 ## 6.1.0 (2024-08-11)
 

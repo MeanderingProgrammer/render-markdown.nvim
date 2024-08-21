@@ -35,6 +35,7 @@ end
 ---@field conceal? string
 ---@field virt_text? { [1]: string, [2]: string|string[] }[]
 ---@field virt_text_pos? string
+---@field virt_text_win_col? integer
 ---@field virt_lines? { [1]: string, [2]: string }[][]
 ---@field virt_lines_above? boolean
 ---@field sign_text? string
@@ -138,7 +139,7 @@ end
 ---@param row integer
 ---@param start_col integer
 ---@param end_col integer
----@param name 'python'|'lua'
+---@param name 'python'|'lua'|'rust'
 ---@return render.md.MarkInfo[]
 function M.code_language(row, start_col, end_col, name)
     local icon, highlight
@@ -146,6 +147,8 @@ function M.code_language(row, start_col, end_col, name)
         icon, highlight = '󰌠 ', 'MiniIconsYellow'
     elseif name == 'lua' then
         icon, highlight = '󰢱 ', 'MiniIconsAzure'
+    elseif name == 'rust' then
+        icon, highlight = '󱘗 ', 'MiniIconsOrange'
     end
     ---@type render.md.MarkInfo
     local sign_mark = {
@@ -166,12 +169,14 @@ end
 
 ---@param row integer
 ---@param col integer
-function M.code_below(row, col)
+---@param width? integer
+function M.code_below(row, col, width)
+    width = (width or vim.opt.columns:get()) - col
     ---@type render.md.MarkInfo
     return {
         row = { row },
         col = { col },
-        virt_text = { { string.rep('▀', vim.opt.columns:get() - col), M.hl('_Inverse_' .. M.hl('Code')) } },
+        virt_text = { { string.rep('▀', width), M.hl('_Inverse_' .. M.hl('Code')) } },
         virt_text_pos = 'overlay',
     }
 end
@@ -211,19 +216,6 @@ function M.quote(row, format, highlight)
         col = { 0, vim.fn.strdisplaywidth(quote) },
         virt_text = { { quote, M.hl(highlight) } },
         virt_text_pos = 'overlay',
-    }
-end
-
----@param row integer
----@param spaces integer
----@return render.md.MarkInfo
-function M.padding(row, spaces)
-    ---@type render.md.MarkInfo
-    return {
-        row = { row },
-        col = { 0 },
-        virt_text = { { string.rep(' ', spaces), 'Normal' } },
-        virt_text_pos = 'inline',
     }
 end
 
@@ -324,6 +316,7 @@ function M.get_actual_marks()
             conceal = details.conceal,
             virt_text = details.virt_text,
             virt_text_pos = details.virt_text_pos,
+            virt_text_win_col = details.virt_text_win_col,
             virt_lines = details.virt_lines,
             virt_lines_above = details.virt_lines_above,
             sign_text = details.sign_text,

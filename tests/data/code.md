@@ -1,5 +1,11 @@
 # Heading
 
+```rust
+fn main() {
+    println!("Hello, World!");
+}
+```
+
 - Nested code
 
   ```lua
