@@ -100,6 +100,7 @@ local M = {}
 ---@field public sign? boolean
 ---@field public style? render.md.code.Style
 ---@field public position? render.md.code.Position
+---@field public language_pad? integer
 ---@field public disable_background? string[]
 ---@field public width? render.md.code.Width
 ---@field public left_pad? integer
@@ -334,6 +335,8 @@ M.default_config = {
         --  right: right side of code block
         --  left:  left side of code block
         position = 'left',
+        -- Amount of padding to add around the language
+        language_pad = 0,
         -- An array of language names for which background highlighting will be disabled
         -- Likely because that language has background highlights itself
         disable_background = { 'diff' },

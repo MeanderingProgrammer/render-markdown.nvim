@@ -78,6 +78,7 @@
 ---@field public sign boolean
 ---@field public style render.md.code.Style
 ---@field public position render.md.code.Position
+---@field public language_pad integer
 ---@field public disable_background string[]
 ---@field public width render.md.code.Width
 ---@field public left_pad integer

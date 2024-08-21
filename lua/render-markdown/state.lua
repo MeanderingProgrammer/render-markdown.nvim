@@ -240,6 +240,7 @@ function M.validate()
                 sign = { code.sign, 'boolean', nilable },
                 style = one_of(code.style, { 'full', 'normal', 'language', 'none' }, {}, nilable),
                 position = one_of(code.position, { 'left', 'right' }, {}, nilable),
+                language_pad = { code.language_pad, 'number', nilable },
                 disable_background = string_array(code.disable_background, nilable),
                 width = one_of(code.width, { 'full', 'block' }, {}, nilable),
                 left_pad = { code.left_pad, 'number', nilable },

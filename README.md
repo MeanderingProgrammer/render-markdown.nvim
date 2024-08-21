@@ -301,6 +301,8 @@ require('render-markdown').setup({
         --  right: right side of code block
         --  left:  left side of code block
         position = 'left',
+        -- Amount of padding to add around the language
+        language_pad = 0,
         -- An array of language names for which background highlighting will be disabled
         -- Likely because that language has background highlights itself
         disable_background = { 'diff' },
@@ -619,6 +621,8 @@ require('render-markdown').setup({
         --  right: right side of code block
         --  left:  left side of code block
         position = 'left',
+        -- Amount of padding to add around the language
+        language_pad = 0,
         -- An array of language names for which background highlighting will be disabled
         -- Likely because that language has background highlights itself
         disable_background = { 'diff' },

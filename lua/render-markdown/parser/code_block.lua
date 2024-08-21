@@ -26,10 +26,15 @@ function M.parse(config, context, info)
     if info.end_row - info.start_row <= 1 then
         return nil
     end
+
+    -- Account for language padding in first row
     local widths = vim.tbl_map(str.width, info:lines())
+    widths[1] = widths[1] + config.language_pad
+    local longest_line, width = M.get_width(config, context, widths)
+
     local code_info = info:child('info_string', info.start_row)
     local language_info = code_info ~= nil and code_info:child('language', info.start_row) or nil
-    local longest_line, width = M.get_width(config, context, widths)
+
     ---@type render.md.parsed.CodeBlock
     return {
         col = info.start_col,

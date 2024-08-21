@@ -1,4 +1,4 @@
-*render-markdown.txt*          For 0.10.0          Last change: 2024 August 20
+*render-markdown.txt*          For 0.10.0          Last change: 2024 August 21
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -331,6 +331,8 @@ Full Default Configuration ~
             --  right: right side of code block
             --  left:  left side of code block
             position = 'left',
+            -- Amount of padding to add around the language
+            language_pad = 0,
             -- An array of language names for which background highlighting will be disabled
             -- Likely because that language has background highlights itself
             disable_background = { 'diff' },
@@ -651,6 +653,8 @@ Wiki Page
             --  right: right side of code block
             --  left:  left side of code block
             position = 'left',
+            -- Amount of padding to add around the language
+            language_pad = 0,
             -- An array of language names for which background highlighting will be disabled
             -- Likely because that language has background highlights itself
             disable_background = { 'diff' },

@@ -268,6 +268,9 @@ function Handler:code(info)
     if add_background then
         self:code_background(code_block, icon_added)
     end
+    if icon_added then
+        code_block.start_row = code_block.start_row + 1
+    end
     self:code_left_pad(code_block, add_background)
 end
 
@@ -301,7 +304,7 @@ function Handler:language(code_block, add_background)
             -- Code blocks will pick up varying amounts of leading white space depending on the
             -- context they are in. This gets lumped into the delimiter node and as a result,
             -- after concealing, the extmark will be left shifted. Logic below accounts for this.
-            icon_text = str.pad(code_block.leading_spaces, icon_text .. info.text)
+            icon_text = str.pad(code_block.leading_spaces + code.language_pad, icon_text .. info.text)
         end
         return self:add(true, info.start_row, info.start_col, {
             virt_text = { { icon_text, highlight } },
@@ -309,7 +312,7 @@ function Handler:language(code_block, add_background)
         })
     elseif code.position == 'right' then
         local icon_text = icon .. ' ' .. info.text
-        local win_col = code_block.longest_line
+        local win_col = code_block.longest_line - code.language_pad
         if code.width == 'block' then
             win_col = win_col - str.width(icon_text)
         end
