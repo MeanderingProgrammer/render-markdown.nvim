@@ -514,10 +514,10 @@ require('render-markdown').setup({
     overrides = {
         -- Overrides for different buftypes, see :h 'buftype'
         buftype = {
-            nofile = {
-                sign = { enabled = false },
-            },
+            nofile = { sign = { enabled = false } },
         },
+        -- Overrides for different filetypes, see :h 'filetype'
+        filetype = {},
     },
     -- Mapping from treesitter language to user defined handlers
     -- See 'Custom Handlers' document for more info

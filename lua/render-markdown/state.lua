@@ -69,9 +69,11 @@ M.get_config = function(buf)
     local config = configs[buf]
     if config == nil then
         config = M.default_buffer_config()
-        local buftype_config = M.config.overrides.buftype[util.get_buf(buf, 'buftype')]
-        if buftype_config ~= nil then
-            config = vim.tbl_deep_extend('force', config, buftype_config)
+        for _, name in ipairs({ 'buftype', 'filetype' }) do
+            local override_config = M.config.overrides[name][util.get_buf(buf, name)]
+            if override_config ~= nil then
+                config = vim.tbl_deep_extend('force', config, override_config)
+            end
         end
         configs[buf] = config
     end
@@ -426,28 +428,31 @@ function M.validate()
     local overrides = config.overrides
     append_errors('render-markdown.overrides', overrides, {
         buftype = { overrides.buftype, 'table' },
+        filetype = { overrides.filetype, 'table' },
     })
-    for name, override in pairs(overrides.buftype) do
-        local path = 'render-markdown.overrides.buftype.' .. name
-        append_errors(path, override, {
-            enabled = { override.enabled, 'boolean', true },
-            max_file_size = { override.max_file_size, 'number', true },
-            debounce = { override.debounce, 'number', true },
-            render_modes = string_array(override.render_modes, true),
-            anti_conceal = { override.anti_conceal, 'table', true },
-            heading = { override.heading, 'table', true },
-            code = { override.code, 'table', true },
-            dash = { override.dash, 'table', true },
-            bullet = { override.bullet, 'table', true },
-            checkbox = { override.checkbox, 'table', true },
-            quote = { override.quote, 'table', true },
-            pipe_table = { override.pipe_table, 'table', true },
-            callout = { override.callout, 'table', true },
-            link = { override.link, 'table', true },
-            sign = { override.sign, 'table', true },
-            win_options = { override.win_options, 'table', true },
-        })
-        validate_buffer_config(path, override, true)
+    for name, value_override in pairs(overrides) do
+        for value, override in pairs(value_override) do
+            local path = string.format('render-markdown.overrides.%s.%s', name, value)
+            append_errors(path, override, {
+                enabled = { override.enabled, 'boolean', true },
+                max_file_size = { override.max_file_size, 'number', true },
+                debounce = { override.debounce, 'number', true },
+                render_modes = string_array(override.render_modes, true),
+                anti_conceal = { override.anti_conceal, 'table', true },
+                heading = { override.heading, 'table', true },
+                code = { override.code, 'table', true },
+                dash = { override.dash, 'table', true },
+                bullet = { override.bullet, 'table', true },
+                checkbox = { override.checkbox, 'table', true },
+                quote = { override.quote, 'table', true },
+                pipe_table = { override.pipe_table, 'table', true },
+                callout = { override.callout, 'table', true },
+                link = { override.link, 'table', true },
+                sign = { override.sign, 'table', true },
+                win_options = { override.win_options, 'table', true },
+            })
+            validate_buffer_config(path, override, true)
+        end
     end
 
     for name, handler in pairs(config.custom_handlers) do

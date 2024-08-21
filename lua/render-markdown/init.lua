@@ -139,6 +139,7 @@ local M = {}
 
 ---@class (exact) render.md.UserConfigOverrides
 ---@field public buftype? table<string, render.md.UserBufferConfig>
+---@field public filetype? table<string, render.md.UserBufferConfig>
 
 ---@class (exact) render.md.UserBufferConfig
 ---@field public enabled? boolean
@@ -548,10 +549,10 @@ M.default_config = {
     overrides = {
         -- Overrides for different buftypes, see :h 'buftype'
         buftype = {
-            nofile = {
-                sign = { enabled = false },
-            },
+            nofile = { sign = { enabled = false } },
         },
+        -- Overrides for different filetypes, see :h 'filetype'
+        filetype = {},
     },
     -- Mapping from treesitter language to user defined handlers
     -- See 'Custom Handlers' document for more info

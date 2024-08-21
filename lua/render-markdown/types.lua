@@ -114,6 +114,7 @@
 
 ---@class (exact) render.md.ConfigOverrides
 ---@field public buftype table<string, render.md.UserBufferConfig>
+---@field public filetype table<string, render.md.UserBufferConfig>
 
 ---@class (exact) render.md.BufferConfig
 ---@field public enabled boolean
