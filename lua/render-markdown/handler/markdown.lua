@@ -570,6 +570,7 @@ function Handler:table_delimiter(delim)
     local pipe_table = self.config.pipe_table
     local indicator = pipe_table.alignment_indicator
     local border = pipe_table.border
+
     local sections = vim.tbl_map(function(column)
         -- If column is small there's no good place to put the alignment indicator
         -- Alignment indicator must be exactly one character wide
@@ -588,11 +589,18 @@ function Handler:table_delimiter(delim)
             return left .. indicator .. right
         end
     end, delim.columns)
-    local delimiter = border[4] .. table.concat(sections, border[5]) .. border[6]
+
+    local virt_text = {}
+    local leading_spaces = str.leading_spaces(delim.info.text)
+    if leading_spaces > 0 then
+        table.insert(virt_text, { str.spaces(leading_spaces), 'Normal' })
+    end
+    table.insert(virt_text, { border[4] .. table.concat(sections, border[5]) .. border[6], pipe_table.head })
+
     self:add(true, delim.info.start_row, delim.info.start_col, {
         end_row = delim.info.end_row,
         end_col = delim.info.end_col,
-        virt_text = { { delimiter, pipe_table.head } },
+        virt_text = virt_text,
         virt_text_pos = 'overlay',
     })
 end
@@ -615,7 +623,9 @@ function Handler:table_row(delim, row)
         for i, column in ipairs(row.columns) do
             local offset = delim.columns[i].width - column.width
             if offset > 0 then
-                self:add(true, column.info.start_row, column.info.end_col - 1, {
+                -- Use low priority to include pipe marks in padding
+                self:add(true, column.info.start_row, column.info.end_col, {
+                    priority = 0,
                     virt_text = { { str.spaces(offset), pipe_table.filler } },
                     virt_text_pos = 'inline',
                 })
@@ -669,6 +679,12 @@ function Handler:table_full(parsed_table)
         end
     end
 
+    ---@param row render.md.parsed.table.Row
+    ---@return integer
+    local function get_spaces(row)
+        return math.max(str.leading_spaces(row.info.text), row.info.start_col)
+    end
+
     local delim = parsed_table.delim
     local first = parsed_table.rows[1]
     local last = parsed_table.rows[#parsed_table.rows]
@@ -676,21 +692,24 @@ function Handler:table_full(parsed_table)
         return
     end
 
+    local spaces = get_spaces(first)
+    if spaces ~= get_spaces(last) then
+        return
+    end
+
     local sections = vim.tbl_map(function(column)
         return border[11]:rep(column.width)
     end, delim.columns)
 
-    local line_above = {
-        { border[1] .. table.concat(sections, border[2]) .. border[3], pipe_table.head },
-    }
+    local line_above = spaces > 0 and { { str.spaces(spaces), 'Normal' } } or {}
+    table.insert(line_above, { border[1] .. table.concat(sections, border[2]) .. border[3], pipe_table.head })
     self:add(false, first.info.start_row, first.info.start_col, {
         virt_lines_above = true,
         virt_lines = { self:indent_virt_line(parsed_table.info, line_above) },
     })
 
-    local line_below = {
-        { border[7] .. table.concat(sections, border[8]) .. border[9], pipe_table.row },
-    }
+    local line_below = spaces > 0 and { { str.spaces(spaces), 'Normal' } } or {}
+    table.insert(line_below, { border[7] .. table.concat(sections, border[8]) .. border[9], pipe_table.row })
     self:add(false, last.info.start_row, last.info.start_col, {
         virt_lines_above = false,
         virt_lines = { self:indent_virt_line(parsed_table.info, line_below) },

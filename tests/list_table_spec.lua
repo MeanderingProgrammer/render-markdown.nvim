@@ -55,10 +55,10 @@ describe('list_table.md', function()
             util.table_pipe(row:increment(2), 0, true),
             util.table_border(row:get(), 'above', { 8, 15, 7, 6 }),
             util.inline_code(row:get(), 2, 8),
-            util.table_padding(row:get(), 8, 2),
             util.table_pipe(row:get(), 9, true),
-            util.table_padding(row:get(), 24, 2),
+            util.table_padding(row:get(), 9, 2),
             util.table_pipe(row:get(), 25, true),
+            util.table_padding(row:get(), 25, 2),
             util.table_pipe(row:get(), 33, true),
             util.table_pipe(row:get(), 40, true),
         })
@@ -66,10 +66,10 @@ describe('list_table.md', function()
         vim.list_extend(expected, {
             util.table_pipe(row:increment(), 0, false),
             util.inline_code(row:get(), 2, 8),
-            util.table_padding(row:get(), 8, 2),
             util.table_pipe(row:get(), 9, false),
-            util.table_padding(row:get(), 24, 4),
+            util.table_padding(row:get(), 9, 2),
             util.table_pipe(row:get(), 25, false),
+            util.table_padding(row:get(), 25, 4),
             util.table_pipe(row:get(), 33, false),
             util.table_pipe(row:get(), 40, false),
         })
@@ -78,8 +78,8 @@ describe('list_table.md', function()
             util.table_border(row:get(), 'below', { 8, 15, 7, 6 }),
             util.table_pipe(row:get(), 9, false),
             util.link(row:get(), 11, 24, 'link'),
-            util.table_padding(row:get(), 24, 7),
             util.table_pipe(row:get(), 25, false),
+            util.table_padding(row:get(), 25, 7),
             util.table_pipe(row:get(), 33, false),
             util.table_pipe(row:get(), 40, false),
         })

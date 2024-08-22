@@ -14,17 +14,17 @@ describe('table.md', function()
             util.table_border(row:get(), 'above', { 11, 24 }),
             util.table_pipe(row:get(), 12, true),
             util.inline_code(row:get(), 14, 25),
-            util.table_padding(row:get(), 36, 2),
             util.table_pipe(row:get(), 37, true),
+            util.table_padding(row:get(), 37, 2),
             util.table_border(row:increment(), 'delimiter', { 11, 24 }),
             util.table_pipe(row:increment(), 0, false),
             util.table_border(row:get(), 'below', { 11, 24 }),
             util.inline_code(row:get(), 2, 12),
-            util.table_padding(row:get(), 12, 2),
             util.table_pipe(row:get(), 13, false),
+            util.table_padding(row:get(), 13, 2),
             util.link(row:get(), 15, 38, 'web'),
-            util.table_padding(row:get(), 38, 16),
             util.table_pipe(row:get(), 39, false),
+            util.table_padding(row:get(), 39, 16),
         })
 
         vim.list_extend(expected, {
