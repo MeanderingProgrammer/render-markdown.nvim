@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 6.2.0 (2024-08-21)
+
 ### Features
 
 - handle imperfectly spaced tables using max width [166a254](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/166a254aaf5b4333fe015a29a66ad99c276538ea)
@@ -12,6 +14,9 @@
   [275f289](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/275f28943ab9ce6017f90bab56c5b5b3c651c269)
 - code: independent language padding: [#131](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/131)
   [739d845](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/739d8458d6c5742fbcf96a5961b88670fefa1d53)
+- full filetype overrides [952b1c0](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/952b1c077a5967f91228f57a6a4979f86386f3c4)
+- basic org-indent-mode behavior [#134](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/134)
+  [277ae65](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/277ae65ab14c23525ce3dbc9b812244c1976049e)
 
 ### Bug Fixes
 
