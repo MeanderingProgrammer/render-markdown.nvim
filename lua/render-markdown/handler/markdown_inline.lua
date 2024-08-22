@@ -8,9 +8,9 @@ local str = require('render-markdown.str')
 
 ---@class render.md.handler.buf.MarkdownInline
 ---@field private buf integer
+---@field private marks render.md.Marks
 ---@field private config render.md.BufferConfig
 ---@field private context render.md.Context
----@field private marks render.md.Mark[]
 local Handler = {}
 Handler.__index = Handler
 
@@ -19,9 +19,9 @@ Handler.__index = Handler
 function Handler.new(buf)
     local self = setmetatable({}, Handler)
     self.buf = buf
+    self.marks = list.new_marks()
     self.config = state.get_config(buf)
     self.context = Context.get(buf)
-    self.marks = {}
     return self
 end
 
@@ -41,16 +41,7 @@ function Handler:parse(root)
             logger.unhandled_capture('inline', capture)
         end
     end)
-    return self.marks
-end
-
----@private
----@param start_row integer
----@param start_col integer
----@param opts vim.api.keyset.set_extmark
----@return boolean
-function Handler:add(start_row, start_col, opts)
-    return list.add_mark(self.marks, true, start_row, start_col, opts)
+    return self.marks:get()
 end
 
 ---@private
@@ -60,7 +51,7 @@ function Handler:code(info)
     if not code.enabled or not vim.tbl_contains({ 'normal', 'full' }, code.style) then
         return
     end
-    self:add(info.start_row, info.start_col, {
+    self.marks:add(true, info.start_row, info.start_col, {
         end_row = info.end_row,
         end_col = info.end_col,
         hl_group = code.highlight_inline,
@@ -112,7 +103,7 @@ function Handler:callout(info, callout)
     end
 
     local text, conceal = custom_title()
-    self:add(info.start_row, info.start_col, {
+    self.marks:add(true, info.start_row, info.start_col, {
         end_row = info.end_row,
         end_col = info.end_col,
         virt_text = { { text, callout.highlight } },
@@ -130,7 +121,7 @@ function Handler:checkbox(info, checkbox)
     end
     local inline = self.config.checkbox.position == 'inline'
     local icon, highlight = checkbox.rendered, checkbox.highlight
-    self:add(info.start_row, info.start_col, {
+    self.marks:add(true, info.start_row, info.start_col, {
         end_row = info.end_row,
         end_col = info.end_col,
         virt_text = { { inline and icon or str.pad_to(info.text, icon), highlight } },
@@ -149,7 +140,7 @@ function Handler:wiki_link(info)
     local parts = str.split(text, '|')
     local icon, highlight = self:dest_virt_text(parts[1])
     local link_text = icon .. parts[#parts]
-    local added = self:add(info.start_row, info.start_col - 1, {
+    local added = self.marks:add(true, info.start_row, info.start_col - 1, {
         end_row = info.end_row,
         end_col = info.end_col + 1,
         virt_text = { { link_text, highlight } },
@@ -168,7 +159,7 @@ function Handler:link(info)
         return
     end
     local icon, highlight = self:link_virt_text(info)
-    local added = self:add(info.start_row, info.start_col, {
+    local added = self.marks:add(true, info.start_row, info.start_col, {
         end_row = info.end_row,
         end_col = info.end_col,
         virt_text = { { icon, highlight } },

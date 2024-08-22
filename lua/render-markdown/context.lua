@@ -8,6 +8,7 @@ local util = require('render-markdown.util')
 ---@field private bottom integer
 ---@field private conceal? table<integer, [integer, integer][]>
 ---@field private links table<integer, [integer, integer, integer][]>
+---@field last_heading integer
 local Context = {}
 Context.__index = Context
 
@@ -24,6 +25,7 @@ function Context.new(buf, win, offset)
     self.bottom = self:compute_bottom(top, offset)
     self.conceal = nil
     self.links = {}
+    self.last_heading = -1
     return self
 end
 

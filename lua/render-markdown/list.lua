@@ -1,16 +1,29 @@
 local logger = require('render-markdown.logger')
 local util = require('render-markdown.util')
 
----@class render.md.ListHelper
-local M = {}
+---@class render.md.Marks
+---@field private marks render.md.Mark[]
+local Marks = {}
+Marks.__index = Marks
 
----@param marks render.md.Mark[]
+---@return render.md.Marks
+function Marks.new()
+    local self = setmetatable({}, Marks)
+    self.marks = {}
+    return self
+end
+
+---@return render.md.Mark[]
+function Marks:get()
+    return self.marks
+end
+
 ---@param conceal boolean
 ---@param start_row integer
 ---@param start_col integer
 ---@param opts vim.api.keyset.set_extmark
 ---@return boolean
-function M.add_mark(marks, conceal, start_row, start_col, opts)
+function Marks:add(conceal, start_row, start_col, opts)
     ---@type render.md.Mark
     local mark = {
         conceal = conceal,
@@ -27,8 +40,16 @@ function M.add_mark(marks, conceal, start_row, start_col, opts)
         return false
     end
     logger.debug('mark', mark)
-    table.insert(marks, mark)
+    table.insert(self.marks, mark)
     return true
+end
+
+---@class render.md.ListHelper
+local M = {}
+
+---@return render.md.Marks
+function M.new_marks()
+    return Marks.new()
 end
 
 ---@generic T

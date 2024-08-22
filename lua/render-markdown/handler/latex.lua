@@ -43,14 +43,14 @@ function M.parse(root, buf)
         return { { expression, latex.highlight } }
     end, expressions)
 
-    local marks = {}
-    list.add_mark(marks, false, info.start_row, info.start_col, {
+    local marks = list.new_marks()
+    marks:add(false, info.start_row, info.start_col, {
         end_row = info.end_row,
         end_col = info.end_col,
         virt_lines = latex_lines,
         virt_lines_above = true,
     })
-    return marks
+    return marks:get()
 end
 
 return M

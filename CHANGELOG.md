@@ -6,6 +6,8 @@
 
 - tables indented and no spaces in cells [#142](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/142)
   [a3617d6](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/a3617d61fcf4cec623ee6acb48570589d7ddcb03)
+- skip tables with errors [c5f25ef](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c5f25ef19ed9bb3da4e7d947c5119cf8a6191beb)
+- render table border below delimiter when no rows [631e03e](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/631e03e2cfc153c38327c9cc995f4e7c2bbd9b24)
 
 ## 6.2.0 (2024-08-21)
 
