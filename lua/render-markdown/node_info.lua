@@ -45,6 +45,11 @@ function NodeInfo.sort_inplace(infos)
     end)
 end
 
+---@return boolean
+function NodeInfo:has_error()
+    return self.node:has_error()
+end
+
 ---@return integer
 function NodeInfo:level()
     local level = 0

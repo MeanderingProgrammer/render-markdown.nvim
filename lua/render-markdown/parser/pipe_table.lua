@@ -33,6 +33,10 @@ local M = {}
 ---@param info render.md.NodeInfo
 ---@return render.md.parsed.PipeTable?
 function M.parse(context, info)
+    if info:has_error() then
+        return nil
+    end
+
     ---@type render.md.parsed.table.DelimRow?
     local delim = nil
     ---@type render.md.NodeInfo[]

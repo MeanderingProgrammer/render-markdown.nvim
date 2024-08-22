@@ -2,6 +2,11 @@
 
 ## Pre-release
 
+### Bug Fixes
+
+- tables indented and no spaces in cells [#142](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/142)
+  [a3617d6](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/a3617d61fcf4cec623ee6acb48570589d7ddcb03)
+
 ## 6.2.0 (2024-08-21)
 
 ### Features
@@ -12,7 +17,7 @@
   [7986be4](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7986be47531d652e950776536987e01dd5b55b94)
 - checkbox: position [#140](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/140)
   [275f289](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/275f28943ab9ce6017f90bab56c5b5b3c651c269)
-- code: independent language padding: [#131](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/131)
+- code: independent language padding [#131](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/131)
   [739d845](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/739d8458d6c5742fbcf96a5961b88670fefa1d53)
 - full filetype overrides [952b1c0](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/952b1c077a5967f91228f57a6a4979f86386f3c4)
 - basic org-indent-mode behavior [#134](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/134)
@@ -312,29 +317,29 @@
 
 ### Features
 
-- Make default icons consistent: [#37](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/37)
+- Make default icons consistent [#37](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/37)
   [7cfe1cf](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7cfe1cfa3b77f6be955f10f0310d5148edc69688)
-- Document known limitations: [#34](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/34)
+- Document known limitations [#34](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/34)
   [#35](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/35)
   [0adb35c](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/0adb35cc190d682d689a1a8415d5980c92708403)
-- Add troubleshooting guide: [#38](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/38)
+- Add troubleshooting guide [#38](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/38)
   [6208fc4](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/6208fc408d444024f5977ea02b83dea8fe177cfa)
 - Add note for `vimwiki` users [#39](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/39)
   [56ba207](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/56ba207c860fd86250dcfb9d974a2cf67a5792d7)
-- Add issue templates: [e353f1f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/e353f1f566195176b54e2af5b321b517ac240102)
-- Add `raw` cell style option: [#40](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/40)
+- Add issue templates [e353f1f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/e353f1f566195176b54e2af5b321b517ac240102)
+- Add `raw` cell style option [#40](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/40)
   [973a5ac](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/973a5ac8a0a7e8721576d144af8ba5f95c057689)
-- Allow custom handlers to extend builtins: [870426e](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/870426ea7efe3c0494f3673db7b3b4cb26135ded)
-- Add language icon above code blocks: [6eef62c](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/6eef62ca1ef373943ff812d4bece94477c3402f2)
-- Use full modes instead of truncated values, support pending operation: [#43](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/43)
+- Allow custom handlers to extend builtins [870426e](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/870426ea7efe3c0494f3673db7b3b4cb26135ded)
+- Add language icon above code blocks [6eef62c](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/6eef62ca1ef373943ff812d4bece94477c3402f2)
+- Use full modes instead of truncated values, support pending operation [#43](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/43)
   [467ad24](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/467ad24c4d74c47f6ad346966a577f87f041f0e7)
 
 ### Bug Fixes
 
-- Get mode at time of event instead of callback execution: [#36](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/36)
+- Get mode at time of event instead of callback execution [#36](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/36)
   [b556210](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b556210e6c8759b7d23d5bc74c84aaafe2304da4)
-- Update health check to work with neovim 0.9.5: [64969bc](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/64969bc94a9d633dc23b59a382cab407c99fecb1)
-- Handle block quotes with empty lines: [#41](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/41)
+- Update health check to work with neovim 0.9.5 [64969bc](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/64969bc94a9d633dc23b59a382cab407c99fecb1)
+- Handle block quotes with empty lines [#41](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/41)
   [6f64bf6](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/6f64bf645b817ff493a28925b1872a69d07fc094)
 
 ### Contributor Shoutouts
