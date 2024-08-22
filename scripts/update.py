@@ -72,11 +72,22 @@ def update_readme(init_file: Path, readme_file: Path) -> None:
     new_config = wrap_setup(get_default_config(init_file))
     text = readme_file.read_text().replace(old_config, new_config)
 
-    parameters: list[str] = ["heading", "code", "dash", "bullet", "checkbox"]
-    parameters.extend(["quote", "pipe_table", "callout", "link", "sign"])
+    parameters: list[str] = [
+        "heading",
+        "code",
+        "dash",
+        "bullet",
+        "checkbox",
+        "quote",
+        "pipe_table",
+        "callout",
+        "link",
+        "sign",
+        "indent",
+    ]
     for parameter in parameters:
         old_param = get_code_block(readme_file, f"\n    {parameter} = {{", 2)
-        new_param = wrap_setup(get_config_for(new_config, f"{parameter} = {{"))
+        new_param = wrap_setup(get_config_for(new_config, parameter))
         text = text.replace(old_param, new_param)
 
     readme_file.write_text(text)
@@ -125,28 +136,13 @@ def wrap_setup(value: str) -> str:
 
 def get_config_for(config: str, parameter: str) -> str:
     lines: list[str] = config.splitlines()
-    param_start: int | None = None
-    for i, line in enumerate(lines):
-        if parameter in line:
-            param_start = i
-            break
-    assert param_start is not None
-
-    start_line: int = param_start
-    for i in range(param_start - 1, 0, -1):
+    start: int = lines.index(f"    {parameter} = {{")
+    for i in range(start - 1, 0, -1):
         if "--" not in lines[i]:
-            start_line = i + 1
+            start = i + 1
             break
-
-    end_line: int = param_start
-    level: int = 0
-    for i in range(param_start, len(lines)):
-        level += lines[i].count("{") - lines[i].count("}")
-        if level == 0:
-            end_line = i
-            break
-
-    return "\n".join(["{"] + lines[start_line : end_line + 1] + ["}"])
+    end: int = lines.index("    },", start)
+    return "\n".join(["{"] + lines[start : end + 1] + ["}"])
 
 
 def get_comments(file: Path) -> list[str]:

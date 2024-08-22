@@ -22,6 +22,10 @@ local M = {}
 ---@field public default? number|string|boolean
 ---@field public rendered? number|string|boolean
 
+---@class (exact) render.md.UserIndent
+---@field public enabled? boolean
+---@field public per_level? integer
+
 ---@class (exact) render.md.UserSign
 ---@field public enabled? boolean
 ---@field public highlight? string
@@ -157,6 +161,7 @@ local M = {}
 ---@field public callout? table<string, render.md.UserCustomComponent>
 ---@field public link? render.md.UserLink
 ---@field public sign? render.md.UserSign
+---@field public indent? render.md.UserIndent
 ---@field public win_options? table<string, render.md.UserWindowOption>
 
 ---@alias render.md.config.Preset 'none'|'lazy'|'obsidian'
@@ -193,6 +198,8 @@ M.default_config = {
     preset = 'none',
     -- Capture groups that get pulled from markdown
     markdown_query = [[
+        (section) @section
+
         (atx_heading [
             (atx_h1_marker)
             (atx_h2_marker)
@@ -524,6 +531,14 @@ M.default_config = {
         -- Applies to background of sign text
         highlight = 'RenderMarkdownSign',
     },
+    -- Mimic org-indent-mode behavior by indenting everything under a heading based on the
+    -- level of the heading. Indenting starts from level 2 headings onward.
+    indent = {
+        -- Turn on / off org-indent-mode
+        enabled = false,
+        -- Amount of additional padding added for each heading level
+        per_level = 2,
+    },
     -- Window options to use that change between rendered and raw view
     win_options = {
         -- See :h 'conceallevel'
@@ -545,7 +560,7 @@ M.default_config = {
     -- to have their own behavior. Values default to the top level configuration
     -- if no override is provided. Supports the following fields:
     --   enabled, max_file_size, debounce, render_modes, anti_conceal, heading, code,
-    --   dash, bullet, checkbox, quote, pipe_table, callout, link, sign, win_options
+    --   dash, bullet, checkbox, quote, pipe_table, callout, link, sign, indent, win_options
     overrides = {
         -- Overrides for different buftypes, see :h 'buftype'
         buftype = {

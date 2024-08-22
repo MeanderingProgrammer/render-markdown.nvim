@@ -37,7 +37,9 @@ function Handler:parse(root)
     self.context:query(root, state.markdown_query, function(capture, node)
         local info = NodeInfo.new(self.buf, node)
         logger.debug_node_info(capture, info)
-        if capture == 'heading' then
+        if capture == 'section' then
+            self:section(info)
+        elseif capture == 'heading' then
             self:heading(info)
         elseif capture == 'dash' then
             self:dash(info)
@@ -76,6 +78,31 @@ end
 ---@return boolean
 function Handler:add(conceal, start_row, start_col, opts)
     return list.add_mark(self.marks, conceal, start_row, start_col, opts)
+end
+
+---@private
+---@param info render.md.NodeInfo
+function Handler:section(info)
+    local indent = self.config.indent
+    if not indent.enabled then
+        return
+    end
+
+    -- Do not add any indentation on unknown or first level
+    local heading = info:child('atx_heading')
+    if heading == nil or heading:child('atx_h1_marker') ~= nil then
+        return
+    end
+
+    -- Each level stacks inline marks so we do not need to multiply spaces
+    -- However skipping a level, i.e. 2 -> 5, will only add one level of spaces
+    for row = info.start_row, info.end_row - 1 do
+        self:add(false, row, 0, {
+            priority = 0,
+            virt_text = { { str.spaces(indent.per_level), 'Normal' } },
+            virt_text_pos = 'inline',
+        })
+    end
 end
 
 ---@private
@@ -209,7 +236,7 @@ function Handler:heading_border(info, level, foreground, background, width)
         })
     else
         self:add(false, info.start_row, 0, {
-            virt_lines = { line_above },
+            virt_lines = { self:indent_virt_line(info, line_above) },
             virt_lines_above = true,
         })
     end
@@ -227,7 +254,7 @@ function Handler:heading_border(info, level, foreground, background, width)
         self.last_heading_border = info.end_row + 1
     else
         self:add(false, info.end_row, 0, {
-            virt_lines = { line_below },
+            virt_lines = { self:indent_virt_line(info, line_below) },
         })
     end
 end
@@ -653,17 +680,39 @@ function Handler:table_full(parsed_table)
         return border[11]:rep(column.width)
     end, delim.columns)
 
-    local line_above = border[1] .. table.concat(sections, border[2]) .. border[3]
+    local line_above = {
+        { border[1] .. table.concat(sections, border[2]) .. border[3], pipe_table.head },
+    }
     self:add(false, first.info.start_row, first.info.start_col, {
         virt_lines_above = true,
-        virt_lines = { { { line_above, pipe_table.head } } },
+        virt_lines = { self:indent_virt_line(parsed_table.info, line_above) },
     })
 
-    local line_below = border[7] .. table.concat(sections, border[8]) .. border[9]
+    local line_below = {
+        { border[7] .. table.concat(sections, border[8]) .. border[9], pipe_table.row },
+    }
     self:add(false, last.info.start_row, last.info.start_col, {
         virt_lines_above = false,
-        virt_lines = { { { line_below, pipe_table.row } } },
+        virt_lines = { self:indent_virt_line(parsed_table.info, line_below) },
     })
+end
+
+---@private
+---@param info render.md.NodeInfo
+---@param line { [1]: string, [2]: string }[]
+---@return { [1]: string, [2]: string }[]
+function Handler:indent_virt_line(info, line)
+    local indent = self.config.indent
+    if not indent.enabled then
+        return line
+    end
+    local level = info:level() - 1
+    if level <= 0 then
+        return line
+    end
+    local indent_line = { str.spaces(indent.per_level * level), 'Normal' }
+    table.insert(line, 1, indent_line)
+    return line
 end
 
 ---@class render.md.handler.Markdown: render.md.Handler

@@ -45,6 +45,19 @@ function NodeInfo.sort_inplace(infos)
     end)
 end
 
+---@return integer
+function NodeInfo:level()
+    local level = 0
+    local parent = self.node:parent()
+    while parent ~= nil and parent:type() ~= 'document' do
+        if parent:type() == 'section' then
+            level = level + 1
+        end
+        parent = parent:parent()
+    end
+    return level
+end
+
 ---Walk through parent nodes, count the number of target nodes
 ---@param target string
 ---@return integer

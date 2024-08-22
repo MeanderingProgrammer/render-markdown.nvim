@@ -85,7 +85,7 @@ end
 function M.default_buffer_config()
     local config = M.config
     ---@type render.md.BufferConfig
-    return vim.deepcopy({
+    local buffer_config = {
         enabled = true,
         max_file_size = config.max_file_size,
         debounce = config.debounce,
@@ -101,8 +101,10 @@ function M.default_buffer_config()
         callout = config.callout,
         link = config.link,
         sign = config.sign,
+        indent = config.indent,
         win_options = config.win_options,
-    })
+    }
+    return vim.deepcopy(buffer_config)
 end
 
 ---@return string[]
@@ -374,6 +376,14 @@ function M.validate()
             })
         end
 
+        local indent = config.indent
+        if indent ~= nil then
+            append_errors(path .. '.indent', indent, {
+                enabled = { indent.enabled, 'boolean', nilable },
+                per_level = { indent.per_level, 'number', nilable },
+            })
+        end
+
         if config.win_options ~= nil then
             for name, win_option in pairs(config.win_options) do
                 append_errors(path .. '.win_options.' .. name, win_option, {
@@ -401,6 +411,7 @@ function M.validate()
         callout = { config.callout, 'table' },
         link = { config.link, 'table' },
         sign = { config.sign, 'table' },
+        indent = { config.indent, 'table' },
         win_options = { config.win_options, 'table' },
         preset = one_of(config.preset, { 'none', 'lazy', 'obsidian' }, {}, false),
         markdown_query = { config.markdown_query, 'string' },
@@ -449,6 +460,7 @@ function M.validate()
                 callout = { override.callout, 'table', true },
                 link = { override.link, 'table', true },
                 sign = { override.sign, 'table', true },
+                indent = { override.indent, 'table', true },
                 win_options = { override.win_options, 'table', true },
             })
             validate_buffer_config(path, override, true)

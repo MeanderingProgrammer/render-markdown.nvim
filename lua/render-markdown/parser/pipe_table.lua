@@ -22,6 +22,7 @@ local str = require('render-markdown.str')
 ---@field columns render.md.parsed.table.Column[]
 
 ---@class render.md.parsed.PipeTable
+---@field info render.md.NodeInfo
 ---@field delim render.md.parsed.table.DelimRow
 ---@field rows render.md.parsed.table.Row[]
 
@@ -72,7 +73,7 @@ function M.parse(context, info)
     end
 
     ---@type render.md.parsed.PipeTable
-    return { delim = delim, rows = rows }
+    return { info = info, delim = delim, rows = rows }
 end
 
 ---@private

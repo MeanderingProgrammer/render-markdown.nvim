@@ -11,6 +11,10 @@
 ---@field public default number|string|boolean
 ---@field public rendered number|string|boolean
 
+---@class (exact) render.md.Indent
+---@field public enabled boolean
+---@field public per_level integer
+
 ---@class (exact) render.md.Sign
 ---@field public enabled boolean
 ---@field public highlight string
@@ -132,6 +136,7 @@
 ---@field public callout table<string, render.md.CustomComponent>
 ---@field public link render.md.Link
 ---@field public sign render.md.Sign
+---@field public indent render.md.Indent
 ---@field public win_options table<string, render.md.WindowOption>
 
 ---@class (exact) render.md.Config: render.md.BufferConfig
