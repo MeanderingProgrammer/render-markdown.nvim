@@ -3,14 +3,24 @@
 local util = require('tests.util')
 
 ---@param row integer
----@param text string
+---@param sections integer[][]
 ---@return render.md.MarkInfo
-local function delimiter(row, text)
+local function delimiter(row, sections)
+    local text = vim.iter(sections)
+        :map(function(widths)
+            return vim.iter(widths)
+                :map(function(width)
+                    return width == 1 and '━' or string.rep('─', width)
+                end)
+                :join('')
+        end)
+        :join('┼')
+
     ---@type render.md.MarkInfo
     return {
         row = { row, row },
-        col = { 0, vim.fn.strdisplaywidth(text) },
-        virt_text = { { text, util.hl('TableHead') } },
+        col = { 0, vim.fn.strdisplaywidth(text) + 2 },
+        virt_text = { { '├' .. text .. '┤', util.hl('TableHead') } },
         virt_text_pos = 'overlay',
     }
 end
@@ -52,12 +62,7 @@ describe('list_table.md', function()
             util.table_pipe(row:get(), 33, true),
             util.table_pipe(row:get(), 40, true),
         })
-        vim.list_extend(expected, {
-            delimiter(
-                row:increment(),
-                '├━───────┼───────━───────┼──────━┼──────┤'
-            ),
-        })
+        table.insert(expected, delimiter(row:increment(), { { 1, 7 }, { 7, 1, 7 }, { 6, 1 }, { 6 } }))
         vim.list_extend(expected, {
             util.table_pipe(row:increment(), 0, false),
             util.inline_code(row:get(), 2, 8),
