@@ -701,19 +701,22 @@ function Handler:table_full(parsed_table)
         return border[11]:rep(column.width)
     end, delim.columns)
 
-    local line_above = spaces > 0 and { { str.spaces(spaces), 'Normal' } } or {}
-    table.insert(line_above, { border[1] .. table.concat(sections, border[2]) .. border[3], pipe_table.head })
-    self:add(false, first.info.start_row, first.info.start_col, {
-        virt_lines_above = true,
-        virt_lines = { self:indent_virt_line(parsed_table.info, line_above) },
-    })
+    ---@param info render.md.NodeInfo
+    ---@param above boolean
+    ---@param chars { [1]: string, [2]: string, [3]: string }
+    local function table_border(info, above, chars)
+        local line = spaces > 0 and { { str.spaces(spaces), 'Normal' } } or {}
+        local highlight = above and pipe_table.head or pipe_table.row
+        table.insert(line, { chars[1] .. table.concat(sections, chars[2]) .. chars[3], highlight })
+        self:add(false, info.start_row, info.start_col, {
+            virt_lines_above = above,
+            virt_lines = { self:indent_virt_line(parsed_table.info, line) },
+        })
+    end
 
-    local line_below = spaces > 0 and { { str.spaces(spaces), 'Normal' } } or {}
-    table.insert(line_below, { border[7] .. table.concat(sections, border[8]) .. border[9], pipe_table.row })
-    self:add(false, last.info.start_row, last.info.start_col, {
-        virt_lines_above = false,
-        virt_lines = { self:indent_virt_line(parsed_table.info, line_below) },
-    })
+    local last_info = #parsed_table.rows == 1 and delim.info or last.info
+    table_border(first.info, true, { border[1], border[2], border[3] })
+    table_border(last_info, false, { border[7], border[8], border[9] })
 end
 
 ---@private
