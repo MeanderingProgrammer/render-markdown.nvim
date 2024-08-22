@@ -61,13 +61,13 @@ end
 ---@private
 ---@param info render.md.NodeInfo
 function Handler:shortcut(info)
-    local callout = component.callout(self.config, info.text, 'exact')
+    local callout = component.callout(self.buf, info.text, 'exact')
     if callout ~= nil then
         self:callout(info, callout)
         return
     end
 
-    local checkbox = component.checkbox(self.config, info.text, 'exact')
+    local checkbox = component.checkbox(self.buf, info.text, 'exact')
     if checkbox ~= nil then
         self:checkbox(info, checkbox)
         return

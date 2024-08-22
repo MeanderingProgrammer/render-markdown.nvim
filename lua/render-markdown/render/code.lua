@@ -76,8 +76,7 @@ end
 ---@param widths integer[]
 ---@return integer, integer
 function Parser.get_width(config, context, widths)
-    local code_width = vim.fn.max(widths)
-    local longest_line = config.left_pad + code_width + config.right_pad
+    local longest_line = config.left_pad + vim.fn.max(widths) + config.right_pad
     local width = math.max(longest_line, config.min_width)
     if config.width == 'block' then
         return width, width
@@ -113,13 +112,14 @@ function Render:render(info)
     if not self.config.enabled or self.config.style == 'none' then
         return
     end
+
     local code = Parser.parse(self.config, self.context, info)
     if code == nil then
         return
     end
 
-    local add_background = vim.tbl_contains({ 'normal', 'full' }, self.config.style)
-    add_background = add_background and not vim.tbl_contains(self.config.disable_background, code.language)
+    local disabled_language = vim.tbl_contains(self.config.disable_background, code.language)
+    local add_background = vim.tbl_contains({ 'normal', 'full' }, self.config.style) and not disabled_language
 
     local icon_added = self:language(code, add_background)
     if add_background then

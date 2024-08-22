@@ -124,10 +124,7 @@ function Handler:list_marker(info)
             return true
         end
         local paragraph = info:sibling('paragraph')
-        if paragraph == nil then
-            return false
-        end
-        return component.checkbox(self.config, paragraph.text, 'starts') ~= nil
+        return paragraph ~= nil and component.checkbox(self.buf, paragraph.text, 'starts') ~= nil
     end
     if sibling_checkbox() then
         -- Hide the list marker for checkboxes rather than replacing with a bullet point
@@ -198,7 +195,7 @@ function Handler:quote_marker(info, block_quote)
     if not quote.enabled then
         return
     end
-    local callout = component.callout(self.config, block_quote.text, 'contains')
+    local callout = component.callout(self.buf, block_quote.text, 'contains')
     local highlight = callout ~= nil and callout.highlight or quote.highlight
     self.marks:add(true, info.start_row, info.start_col, {
         end_row = info.end_row,

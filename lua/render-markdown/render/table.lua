@@ -3,6 +3,15 @@ local logger = require('render-markdown.logger')
 local str = require('render-markdown.str')
 local util = require('render-markdown.render.util')
 
+---@class render.md.table.Column
+---@field info render.md.NodeInfo
+---@field width integer
+
+---@class render.md.table.Row
+---@field info render.md.NodeInfo
+---@field pipes render.md.NodeInfo[]
+---@field columns render.md.table.Column[]
+
 ---@alias render.md.table.Alignment 'left'|'right'|'center'|'default'
 
 ---@class render.md.table.DelimColumn
@@ -12,15 +21,6 @@ local util = require('render-markdown.render.util')
 ---@class render.md.table.DelimRow
 ---@field info render.md.NodeInfo
 ---@field columns render.md.table.DelimColumn[]
-
----@class render.md.table.Column
----@field info render.md.NodeInfo
----@field width integer
-
----@class render.md.table.Row
----@field info render.md.NodeInfo
----@field pipes render.md.NodeInfo[]
----@field columns render.md.table.Column[]
 
 ---@class render.md.table.Table
 ---@field info render.md.NodeInfo
@@ -47,7 +47,7 @@ function Parser.parse(context, info)
         if row.type == 'pipe_table_delimiter_row' then
             delim = Parser.delim(row)
         elseif context:contains_info(row) then
-            if row.type == 'pipe_table_header' or row.type == 'pipe_table_row' then
+            if vim.tbl_contains({ 'pipe_table_header', 'pipe_table_row' }, row.type) then
                 table.insert(table_rows, row)
             else
                 logger.unhandled_type('markdown', 'row', row.type)
@@ -73,8 +73,7 @@ function Parser.parse(context, info)
     -- Store the max width information in the delimiter
     for _, row in ipairs(rows) do
         for i, column in ipairs(row.columns) do
-            local delim_column = delim.columns[i]
-            delim_column.width = math.max(delim_column.width, column.width)
+            delim.columns[i].width = math.max(delim.columns[i].width, column.width)
         end
     end
 
@@ -90,17 +89,12 @@ function Parser.delim(info)
     if row_data == nil then
         return nil
     end
-
-    local pipes = row_data.pipes
-    local cells = row_data.cells
-
-    ---@type render.md.table.DelimColumn[]
+    local pipes, cells = row_data.pipes, row_data.cells
     local columns = {}
     for i = 1, #cells do
-        local cell = cells[i]
-        local width = pipes[i + 1].start_col - pipes[i].end_col
+        local cell, width = cells[i], pipes[i + 1].start_col - pipes[i].end_col
         if width < 0 then
-            return {}
+            return nil
         end
         ---@type render.md.table.DelimColumn
         local column = { width = width, alignment = Parser.alignment(cell) }
@@ -137,18 +131,13 @@ function Parser.row(context, info, num_columns)
     if row_data == nil then
         return nil
     end
-
-    local pipes = row_data.pipes
-    local cells = row_data.cells
+    local pipes, cells = row_data.pipes, row_data.cells
     if #cells ~= num_columns then
         return nil
     end
-
-    ---@type render.md.table.Column[]
     local columns = {}
     for i = 1, #cells do
-        local cell = cells[i]
-        local width = pipes[i + 1].start_col - pipes[i].end_col
+        local cell, width = cells[i], pipes[i + 1].start_col - pipes[i].end_col
         -- Account for double width glyphs by replacing cell spacing with text width
         width = width - (cell.end_col - cell.start_col) + str.width(cell.text)
         -- Remove concealed and add inlined text
@@ -160,7 +149,6 @@ function Parser.row(context, info, num_columns)
         local column = { info = cell, width = width }
         table.insert(columns, column)
     end
-
     ---@type render.md.table.Row
     return { info = info, pipes = pipes, columns = columns }
 end
@@ -170,10 +158,7 @@ end
 ---@param cell_type string
 ---@return { pipes: render.md.NodeInfo[], cells: render.md.NodeInfo[] }?
 function Parser.row_data(info, cell_type)
-    ---@type render.md.NodeInfo[]
-    local pipes = {}
-    ---@type render.md.NodeInfo[]
-    local cells = {}
+    local pipes, cells = {}, {}
     info:for_each_child(function(cell)
         if cell.type == '|' then
             table.insert(pipes, cell)
@@ -218,6 +203,7 @@ function Render:render(info)
     if not self.config.enabled or self.config.style == 'none' then
         return
     end
+
     local tbl = Parser.parse(self.context, info)
     if tbl == nil then
         return
@@ -350,9 +336,7 @@ function Render:full(tbl)
         return math.max(str.leading_spaces(row.info.text), row.info.start_col)
     end
 
-    local delim = tbl.delim
-    local first = tbl.rows[1]
-    local last = tbl.rows[#tbl.rows]
+    local delim, first, last = tbl.delim, tbl.rows[1], tbl.rows[#tbl.rows]
     if not width_equal(first, delim) or not width_equal(last, delim) then
         return
     end
