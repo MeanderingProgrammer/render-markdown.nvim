@@ -27,6 +27,7 @@
 ---@class (exact) render.md.Link
 ---@field public enabled boolean
 ---@field public image string
+---@field public email string
 ---@field public hyperlink string
 ---@field public highlight string
 ---@field public custom table<string, render.md.LinkComponent>

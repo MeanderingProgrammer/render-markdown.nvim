@@ -1,4 +1,4 @@
-*render-markdown.txt*          For 0.10.0          Last change: 2024 August 22
+*render-markdown.txt*          For 0.10.0          Last change: 2024 August 23
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -52,32 +52,27 @@ Plugin to improve viewing Markdown files in Neovim
 ==============================================================================
 2. Features                                         *render-markdown-features*
 
-- Functions entirely inside of Neovim with no external windows
-- Changes between `rendered` view in normal mode and `raw` view in all other modes
-- Supports anti-conceal behavior, removing any virtual text added by this plugin
-    on the line the cursor is on, this can be disabled
-- Changes window options between `rendered` and `raw` view based on configuration
-    - Effects `conceallevel` & `concealcursor` by default
-- Supports rendering `markdown` injected into any file type
-- Renders the following `markdown` components:
-    - Headings: highlight depending on level and replaces `#` with icon
-    - Horizontal breaks: replace with full-width lines
-    - Code blocks: highlight to better stand out
-        - Adds language icon , requires icon provider (`mini.icons` or `nvim-web-devicons`)
-        - Left pad lines within block 
-    - Inline code: highlight to better stand out
-    - List bullet points: replace with provided icon based on level
-    - Checkboxes: replace with provided icon based on whether they are checked
-    - Block quotes: replace leading `>` with provided icon
-    - Tables: replace border characters, handles misaligned tables but does NOT align
-        according to delimiter indicator
-    - Callouts <https://github.com/orgs/community/discussions/16925>: Github & Obsidian
-        out of the box, supports user defined as well
-    - Custom checkbox states , function similar to `callouts`
-    - Adds icon before images / links 
-    - `LaTeX` blocks: renders formulas if `latex` parser and `pylatexenc` are installed
-- Disable rendering when file is larger than provided value
-- Support custom handlers which are ran identically to builtin handlers
+- Contained: runs entirely inside Neovim with no external windows
+- Configurable: all components, padding, icons, and colors can be modified
+- File type agnostic: can render `markdown` injected into any file
+- Mode based rendering: changes between `rendered` and `raw` view based on mode
+- Anti-conceal: hides virtual text added by this plugin on cursor line
+- Window options: changes option values between `rendered` and `raw` view
+- Large files: only renders visisble range, can be entirely disabled based on size
+- Custom rendering: provides extension point where user can add anything
+- Renders the following `markdown` components out of the box:
+    - Headings: icon, color, border, padding , width
+    - Code blocks: background, language icon  , border, padding , width
+    - Code inline: background
+    - Horizontal breaks: icon, color, width
+    - List bullets: icon, color, padding 
+    - Checkboxes: icon, color, user defined states 
+    - Block quotes: icon, color, line breaks 
+    - Callouts: icon, color, user defined values, Github & Obsidian defaults
+    - Tables: border, color, alignment indicator, auto align cells always to left 
+    - Links : icon, color, user defined destinations
+    - `LaTeX` blocks : renders formulas
+    - Org indent mode : per level padding
 
 
 ==============================================================================
@@ -230,7 +225,12 @@ Full Default Configuration ~
     
             (shortcut_link) @shortcut
     
-            [(inline_link) (full_reference_link) (image)] @link
+            [
+                (image)
+                (email_autolink)
+                (inline_link)
+                (full_reference_link)
+            ] @link
         ]],
         -- The level of logs to write to file: vim.fn.stdpath('state') .. '/render-markdown.log'
         -- Only intended to be used for plugin development / debugging
@@ -501,6 +501,8 @@ Full Default Configuration ~
             enabled = true,
             -- Inlined with 'image' elements
             image = '󰥶 ',
+            -- Inlined with 'email_autolink' elements
+            email = '󰀓 ',
             -- Fallback icon for 'inline_link' elements
             hyperlink = '󰌹 ',
             -- Applies to the fallback inlined icon
@@ -908,6 +910,8 @@ Wiki Page
             enabled = true,
             -- Inlined with 'image' elements
             image = '󰥶 ',
+            -- Inlined with 'email_autolink' elements
+            email = '󰀓 ',
             -- Fallback icon for 'inline_link' elements
             hyperlink = '󰌹 ',
             -- Applies to the fallback inlined icon

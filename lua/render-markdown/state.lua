@@ -353,6 +353,7 @@ function M.validate()
             append_errors(path .. '.link', link, {
                 enabled = { link.enabled, 'boolean', nilable },
                 image = { link.image, 'string', nilable },
+                email = { link.email, 'string', nilable },
                 hyperlink = { link.hyperlink, 'string', nilable },
                 highlight = { link.highlight, 'string', nilable },
                 custom = { link.custom, 'table', nilable },

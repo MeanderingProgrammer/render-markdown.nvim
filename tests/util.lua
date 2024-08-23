@@ -223,12 +223,7 @@ end
 ---@param head boolean
 ---@return render.md.MarkInfo
 function M.table_pipe(row, col, head)
-    local highlight
-    if head then
-        highlight = 'TableHead'
-    else
-        highlight = 'TableRow'
-    end
+    local highlight = head and 'TableHead' or 'TableRow'
     ---@type render.md.MarkInfo
     return {
         row = { row, row },

@@ -158,25 +158,28 @@ function Handler:link(info)
     if not self.config.link.enabled then
         return
     end
-    local icon, highlight = self:link_virt_text(info)
+    local link_text, highlight, conceal = self:link_virt_text(info)
     local added = self.marks:add(true, info.start_row, info.start_col, {
         end_row = info.end_row,
         end_col = info.end_col,
-        virt_text = { { icon, highlight } },
+        virt_text = { { link_text, highlight } },
         virt_text_pos = 'inline',
+        conceal = conceal,
     })
-    if added then
-        self.context:add_offset(info, str.width(icon))
+    if conceal == nil and added then
+        self.context:add_offset(info, str.width(link_text))
     end
 end
 
 ---@private
 ---@param info render.md.NodeInfo
----@return string, string
+---@return string, string, string?
 function Handler:link_virt_text(info)
     local link = self.config.link
     if info.type == 'image' then
         return link.image, link.highlight
+    elseif info.type == 'email_autolink' then
+        return link.email .. info.text:sub(2, -2), link.highlight, ''
     elseif info.type == 'inline_link' then
         local destination = info:child('link_destination')
         if destination ~= nil then

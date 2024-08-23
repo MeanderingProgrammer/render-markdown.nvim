@@ -3,16 +3,15 @@
 local util = require('tests.util')
 
 ---@param row integer
----@param start_col integer
----@param end_col integer
----@param text string
+---@param col integer
+---@param link_text string
 ---@return render.md.MarkInfo
-local function wiki_link(row, start_col, end_col, text)
+local function conceal_link(row, col, link_text)
     ---@type render.md.MarkInfo
     return {
         row = { row, row },
-        col = { start_col, end_col },
-        virt_text = { { '󰌹 ' .. text, util.hl('Link') } },
+        col = { 0, col },
+        virt_text = { { link_text, util.hl('Link') } },
         virt_text_pos = 'inline',
         conceal = '',
     }
@@ -27,8 +26,9 @@ describe('ad_hoc.md', function()
         vim.list_extend(expected, util.heading(row:get(), 1))
 
         vim.list_extend(expected, {
-            wiki_link(row:increment(4), 0, 13, 'Basic One'),
-            wiki_link(row:increment(2), 0, 23, 'With Alias'),
+            conceal_link(row:increment(4), 13, '󰌹 Basic One'),
+            conceal_link(row:increment(2), 23, '󰌹 With Alias'),
+            conceal_link(row:increment(2), 18, '󰀓 test@example.com'),
         })
 
         local actual = util.get_actual_marks()

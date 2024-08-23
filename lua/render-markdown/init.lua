@@ -38,6 +38,7 @@ local M = {}
 ---@class (exact) render.md.UserLink
 ---@field public enabled? boolean
 ---@field public image? string
+---@field public email? string
 ---@field public hyperlink? string
 ---@field public highlight? string
 ---@field public custom? table<string, render.md.UserLinkComponent>
@@ -239,7 +240,12 @@ M.default_config = {
 
         (shortcut_link) @shortcut
 
-        [(inline_link) (full_reference_link) (image)] @link
+        [
+            (image)
+            (email_autolink)
+            (inline_link)
+            (full_reference_link)
+        ] @link
     ]],
     -- The level of logs to write to file: vim.fn.stdpath('state') .. '/render-markdown.log'
     -- Only intended to be used for plugin development / debugging
@@ -510,6 +516,8 @@ M.default_config = {
         enabled = true,
         -- Inlined with 'image' elements
         image = '󰥶 ',
+        -- Inlined with 'email_autolink' elements
+        email = '󰀓 ',
         -- Fallback icon for 'inline_link' elements
         hyperlink = '󰌹 ',
         -- Applies to the fallback inlined icon
