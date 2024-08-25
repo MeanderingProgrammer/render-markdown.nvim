@@ -126,7 +126,7 @@ function NodeInfo:for_each_child(callback)
 end
 
 ---@param position 'above'|'below'|'on'
----@return string
+---@return string?
 function NodeInfo:line(position)
     local start_row = nil
     if position == 'above' then
