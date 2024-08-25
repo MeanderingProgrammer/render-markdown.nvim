@@ -36,11 +36,11 @@ end
 
 ---@param infos render.md.NodeInfo[]
 function NodeInfo.sort_inplace(infos)
-    table.sort(infos, function(info1, info2)
-        if info1.start_row ~= info2.start_row then
-            return info1.start_row < info2.start_row
+    table.sort(infos, function(a, b)
+        if a.start_row ~= b.start_row then
+            return a.start_row < b.start_row
         else
-            return info1.start_col < info2.start_col
+            return a.start_col < b.start_col
         end
     end)
 end

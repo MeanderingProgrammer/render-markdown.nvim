@@ -196,12 +196,21 @@ end
 ---@return string, string
 function Handler:dest_virt_text(destination)
     local link = self.config.link
-    for _, link_component in pairs(link.custom) do
-        if destination:find(link_component.pattern) then
-            return link_component.icon, link_component.highlight
-        end
+
+    ---@type render.md.LinkComponent[]
+    local link_components = vim.tbl_filter(function(link_component)
+        return destination:find(link_component.pattern) ~= nil
+    end, link.custom)
+    table.sort(link_components, function(a, b)
+        return str.width(a.pattern) < str.width(b.pattern)
+    end)
+
+    if #link_components > 0 then
+        local link_component = link_components[#link_components]
+        return link_component.icon, link_component.highlight
+    else
+        return link.hyperlink, link.highlight
     end
-    return link.hyperlink, link.highlight
 end
 
 ---@class render.md.handler.MarkdownInline: render.md.Handler
