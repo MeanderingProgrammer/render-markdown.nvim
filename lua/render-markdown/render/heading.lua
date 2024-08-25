@@ -3,11 +3,8 @@ local list = require('render-markdown.list')
 local str = require('render-markdown.str')
 local util = require('render-markdown.render.util')
 
----@class render.md.render.Heading
----@field private buf integer
----@field private marks render.md.Marks
+---@class render.md.render.Heading: render.md.Renderer
 ---@field private config render.md.Heading
----@field private context render.md.Context
 local Render = {}
 Render.__index = Render
 

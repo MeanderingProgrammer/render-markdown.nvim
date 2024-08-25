@@ -176,11 +176,8 @@ function Parser.row_data(info, cell_type)
     return { pipes = pipes, cells = cells }
 end
 
----@class render.md.render.Table
----@field private buf integer
----@field private marks render.md.Marks
+---@class render.md.render.Table: render.md.Renderer
 ---@field private config render.md.PipeTable
----@field private context render.md.Context
 local Render = {}
 Render.__index = Render
 

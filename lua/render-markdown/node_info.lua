@@ -7,7 +7,7 @@ end
 
 ---@class render.md.NodeInfo
 ---@field private buf integer
----@field private node TSNode
+---@field node TSNode
 ---@field type string
 ---@field text string
 ---@field start_row integer

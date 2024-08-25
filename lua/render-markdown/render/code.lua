@@ -85,11 +85,8 @@ function Parser.get_width(config, context, widths)
     end
 end
 
----@class render.md.render.Code
----@field private buf integer
----@field private marks render.md.Marks
+---@class render.md.render.Code: render.md.Renderer
 ---@field private config render.md.Code
----@field private context render.md.Context
 local Render = {}
 Render.__index = Render
 

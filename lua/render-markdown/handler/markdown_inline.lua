@@ -31,6 +31,7 @@ function Handler:parse(root)
     self.context:query(root, state.inline_query, function(capture, node)
         local info = NodeInfo.new(self.buf, node)
         logger.debug_node_info(capture, info)
+
         if capture == 'code' then
             self:code(info)
         elseif capture == 'shortcut' then

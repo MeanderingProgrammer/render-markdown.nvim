@@ -2,6 +2,7 @@ local Context = require('render-markdown.context')
 local NodeInfo = require('render-markdown.node_info')
 local RenderCode = require('render-markdown.render.code')
 local RenderHeading = require('render-markdown.render.heading')
+local RenderQuote = require('render-markdown.render.quote')
 local RenderTable = require('render-markdown.render.table')
 local component = require('render-markdown.component')
 local list = require('render-markdown.list')
@@ -14,6 +15,7 @@ local str = require('render-markdown.str')
 ---@field private marks render.md.Marks
 ---@field private config render.md.BufferConfig
 ---@field private context render.md.Context
+---@field private renderers table<string, render.md.Renderer>
 local Handler = {}
 Handler.__index = Handler
 
@@ -25,6 +27,12 @@ function Handler.new(buf)
     self.marks = list.new_marks()
     self.config = state.get_config(buf)
     self.context = Context.get(buf)
+    self.renderers = {
+        code = RenderCode.new(buf, self.marks, self.config, self.context),
+        heading = RenderHeading.new(buf, self.marks, self.config, self.context),
+        quote = RenderQuote.new(buf, self.marks, self.config, self.context),
+        table = RenderTable.new(buf, self.marks, self.config, self.context),
+    }
     return self
 end
 
@@ -34,32 +42,20 @@ function Handler:parse(root)
     self.context:query(root, state.markdown_query, function(capture, node)
         local info = NodeInfo.new(self.buf, node)
         logger.debug_node_info(capture, info)
-        if capture == 'section' then
+
+        local renderer = self.renderers[capture]
+        if renderer ~= nil then
+            renderer:render(info)
+        elseif capture == 'section' then
             self:section(info)
-        elseif capture == 'heading' then
-            RenderHeading.new(self.buf, self.marks, self.config, self.context):render(info)
         elseif capture == 'dash' then
             self:dash(info)
-        elseif capture == 'code' then
-            RenderCode.new(self.buf, self.marks, self.config, self.context):render(info)
         elseif capture == 'list_marker' then
             self:list_marker(info)
         elseif capture == 'checkbox_unchecked' then
             self:checkbox(info, self.config.checkbox.unchecked)
         elseif capture == 'checkbox_checked' then
             self:checkbox(info, self.config.checkbox.checked)
-        elseif capture == 'quote' then
-            self.context:query(node, state.markdown_quote_query, function(nested_capture, nested_node)
-                local nested_info = NodeInfo.new(self.buf, nested_node)
-                logger.debug_node_info(nested_capture, nested_info)
-                if nested_capture == 'quote_marker' then
-                    self:quote_marker(nested_info, info)
-                else
-                    logger.unhandled_capture('markdown quote', nested_capture)
-                end
-            end)
-        elseif capture == 'table' then
-            RenderTable.new(self.buf, self.marks, self.config, self.context):render(info)
         else
             logger.unhandled_capture('markdown', capture)
         end
@@ -184,25 +180,6 @@ function Handler:checkbox(info, checkbox)
         virt_text = { { inline and icon or str.pad_to(info.text, icon), highlight } },
         virt_text_pos = inline and 'inline' or 'overlay',
         conceal = inline and '' or nil,
-    })
-end
-
----@private
----@param info render.md.NodeInfo
----@param block_quote render.md.NodeInfo
-function Handler:quote_marker(info, block_quote)
-    local quote = self.config.quote
-    if not quote.enabled then
-        return
-    end
-    local callout = component.callout(self.buf, block_quote.text, 'contains')
-    local highlight = callout ~= nil and callout.highlight or quote.highlight
-    self.marks:add(true, info.start_row, info.start_col, {
-        end_row = info.end_row,
-        end_col = info.end_col,
-        virt_text = { { info.text:gsub('>', quote.icon), highlight } },
-        virt_text_pos = 'overlay',
-        virt_text_repeat_linebreak = quote.repeat_linebreak or nil,
     })
 end
 

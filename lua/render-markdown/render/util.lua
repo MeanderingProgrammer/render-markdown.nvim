@@ -2,6 +2,12 @@ local colors = require('render-markdown.colors')
 local state = require('render-markdown.state')
 local str = require('render-markdown.str')
 
+---@class render.md.Renderer
+---@field protected buf integer
+---@field protected marks render.md.Marks
+---@field protected context render.md.Context
+---@field render fun(self: render.md.Renderer, info: render.md.NodeInfo)
+
 ---@class render.md.render.Util
 local M = {}
 
