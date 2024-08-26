@@ -1,6 +1,6 @@
 local colors = require('render-markdown.colors')
 local state = require('render-markdown.state')
-local str = require('render-markdown.str')
+local str = require('render-markdown.core.str')
 
 ---@class render.md.Renderer
 ---@field protected buf integer

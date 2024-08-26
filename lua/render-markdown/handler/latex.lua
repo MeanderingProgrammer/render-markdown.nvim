@@ -1,8 +1,8 @@
-local NodeInfo = require('render-markdown.node_info')
-local list = require('render-markdown.list')
-local logger = require('render-markdown.logger')
+local NodeInfo = require('render-markdown.core.node_info')
+local list = require('render-markdown.core.list')
+local logger = require('render-markdown.core.logger')
 local state = require('render-markdown.state')
-local str = require('render-markdown.str')
+local str = require('render-markdown.core.str')
 
 ---@type table<string, string[]>
 local cache = {}

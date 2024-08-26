@@ -1,6 +1,6 @@
-local NodeInfo = require('render-markdown.node_info')
-local logger = require('render-markdown.logger')
-local str = require('render-markdown.str')
+local NodeInfo = require('render-markdown.core.node_info')
+local logger = require('render-markdown.core.logger')
+local str = require('render-markdown.core.str')
 local util = require('render-markdown.render.util')
 
 ---@class render.md.table.Column

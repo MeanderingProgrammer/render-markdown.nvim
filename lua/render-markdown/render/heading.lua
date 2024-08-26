@@ -1,6 +1,6 @@
 local colors = require('render-markdown.colors')
-local list = require('render-markdown.list')
-local str = require('render-markdown.str')
+local list = require('render-markdown.core.list')
+local str = require('render-markdown.core.str')
 local util = require('render-markdown.render.util')
 
 ---@class render.md.render.Heading: render.md.Renderer

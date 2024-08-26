@@ -1,9 +1,9 @@
-local BufferState = require('render-markdown.buffer_state')
-local Context = require('render-markdown.context')
-local Extmark = require('render-markdown.extmark')
-local logger = require('render-markdown.logger')
+local BufferState = require('render-markdown.core.buffer_state')
+local Context = require('render-markdown.core.context')
+local Extmark = require('render-markdown.core.extmark')
+local logger = require('render-markdown.core.logger')
 local state = require('render-markdown.state')
-local util = require('render-markdown.util')
+local util = require('render-markdown.core.util')
 
 ---@type table<string, render.md.Handler>
 local builtin_handlers = {

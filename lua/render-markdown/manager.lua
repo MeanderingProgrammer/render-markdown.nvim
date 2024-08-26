@@ -1,6 +1,6 @@
 local state = require('render-markdown.state')
-local ui = require('render-markdown.ui')
-local util = require('render-markdown.util')
+local ui = require('render-markdown.core.ui')
+local util = require('render-markdown.core.util')
 
 ---@type integer[]
 local buffers = {}

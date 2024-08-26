@@ -1,5 +1,5 @@
 local presets = require('render-markdown.presets')
-local util = require('render-markdown.util')
+local util = require('render-markdown.core.util')
 
 ---@type table<integer, render.md.BufferConfig>
 local configs = {}

@@ -1,10 +1,10 @@
-local Context = require('render-markdown.context')
-local NodeInfo = require('render-markdown.node_info')
-local component = require('render-markdown.component')
-local list = require('render-markdown.list')
-local logger = require('render-markdown.logger')
+local Context = require('render-markdown.core.context')
+local NodeInfo = require('render-markdown.core.node_info')
+local component = require('render-markdown.core.component')
+local list = require('render-markdown.core.list')
+local logger = require('render-markdown.core.logger')
 local state = require('render-markdown.state')
-local str = require('render-markdown.str')
+local str = require('render-markdown.core.str')
 
 ---@class render.md.handler.buf.MarkdownInline
 ---@field private buf integer

@@ -593,7 +593,7 @@ function M.setup(opts)
     if not state.initialized() or vim.tbl_count(opts or {}) > 0 then
         state.setup(M.default_config, opts or {})
         state.invalidate_cache()
-        require('render-markdown.ui').invalidate_cache()
+        require('render-markdown.core.ui').invalidate_cache()
     end
 end
 

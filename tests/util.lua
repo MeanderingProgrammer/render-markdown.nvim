@@ -1,6 +1,6 @@
 ---@module 'luassert'
 
-local ui = require('render-markdown.ui')
+local ui = require('render-markdown.core.ui')
 local eq = assert.are.same
 
 ---@class render.md.test.Row

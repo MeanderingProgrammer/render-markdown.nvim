@@ -1,5 +1,5 @@
-local logger = require('render-markdown.logger')
-local util = require('render-markdown.util')
+local logger = require('render-markdown.core.logger')
+local util = require('render-markdown.core.util')
 
 ---@class render.md.Marks
 ---@field private marks render.md.Mark[]

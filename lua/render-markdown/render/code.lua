@@ -1,6 +1,6 @@
 local colors = require('render-markdown.colors')
-local icons = require('render-markdown.icons')
-local str = require('render-markdown.str')
+local icons = require('render-markdown.core.icons')
+local str = require('render-markdown.core.str')
 local util = require('render-markdown.render.util')
 
 ---@class render.md.code.Code

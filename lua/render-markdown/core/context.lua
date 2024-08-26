@@ -1,5 +1,5 @@
-local str = require('render-markdown.str')
-local util = require('render-markdown.util')
+local str = require('render-markdown.core.str')
+local util = require('render-markdown.core.util')
 
 ---@class render.md.Context
 ---@field private buf integer

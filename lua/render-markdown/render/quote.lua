@@ -1,6 +1,6 @@
-local NodeInfo = require('render-markdown.node_info')
-local component = require('render-markdown.component')
-local logger = require('render-markdown.logger')
+local NodeInfo = require('render-markdown.core.node_info')
+local component = require('render-markdown.core.component')
+local logger = require('render-markdown.core.logger')
 local state = require('render-markdown.state')
 
 ---@class render.md.render.Quote: render.md.Renderer
