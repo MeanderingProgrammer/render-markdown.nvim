@@ -3,14 +3,17 @@ local list = require('render-markdown.core.list')
 local str = require('render-markdown.core.str')
 local util = require('render-markdown.render.util')
 
+---@class render.md.data.Heading
+---@field level integer
+---@field icon? string
+---@field sign? string
+---@field foreground string
+---@field background string
+---@field heading_width render.md.heading.Width
+
 ---@class render.md.render.Heading: render.md.Renderer
 ---@field private heading render.md.Heading
----@field private level integer
----@field private icon? string
----@field private sign? string
----@field private foreground string
----@field private background string
----@field private heading_width render.md.heading.Width
+---@field private data render.md.data.Heading
 local Render = {}
 Render.__index = Render
 
@@ -30,17 +33,19 @@ function Render:setup()
         return false
     end
 
-    self.level = str.width(self.info.text)
-    self.icon = list.cycle(self.heading.icons, self.level)
-    self.sign = list.cycle(self.heading.signs, self.level)
-    self.foreground = list.clamp(self.heading.foregrounds, self.level)
-    self.background = list.clamp(self.heading.backgrounds, self.level)
-
+    local level = str.width(self.info.text)
     local heading_width = self.heading.width
     if type(heading_width) == 'table' then
-        heading_width = list.clamp(heading_width, self.level)
+        heading_width = list.clamp(heading_width, level)
     end
-    self.heading_width = heading_width
+    self.data = {
+        level = level,
+        icon = list.cycle(self.heading.icons, level),
+        sign = list.cycle(self.heading.signs, level),
+        foreground = list.clamp(self.heading.foregrounds, level),
+        background = list.clamp(self.heading.backgrounds, level),
+        heading_width = heading_width,
+    }
 
     return true
 end
@@ -48,18 +53,18 @@ end
 function Render:render()
     local icon_width = self:start_icon()
     if self.heading.sign then
-        util.sign(self.config, self.marks, self.info, self.sign, self.foreground)
+        util.sign(self.config, self.marks, self.info, self.data.sign, self.data.foreground)
     end
 
     self.marks:add(true, self.info.start_row, 0, {
         end_row = self.info.end_row + 1,
         end_col = 0,
-        hl_group = self.background,
+        hl_group = self.data.background,
         hl_eol = true,
     })
 
     local width = self:width(icon_width)
-    if self.heading_width == 'block' then
+    if self.data.heading_width == 'block' then
         -- Overwrite anything beyond width with Normal
         self.marks:add(true, self.info.start_row, 0, {
             priority = 0,
@@ -75,7 +80,7 @@ function Render:render()
     if self.heading.left_pad > 0 then
         self.marks:add(false, self.info.start_row, 0, {
             priority = 0,
-            virt_text = { { str.spaces(self.heading.left_pad), self.background } },
+            virt_text = { { str.spaces(self.heading.left_pad), self.data.background } },
             virt_text_pos = 'inline',
         })
     end
@@ -87,26 +92,26 @@ function Render:start_icon()
     -- Available width is level + 1 - concealed, where level = number of `#` characters, one
     -- is added to account for the space after the last `#` but before the heading title,
     -- and concealed text is subtracted since that space is not usable
-    local width = self.level + 1 - self.context:concealed(self.info)
-    if self.icon == nil then
+    local width = self.data.level + 1 - self.context:concealed(self.info)
+    if self.data.icon == nil then
         return width
     end
 
-    local padding = width - str.width(self.icon)
+    local padding = width - str.width(self.data.icon)
     if self.heading.position == 'inline' or padding < 0 then
         self.marks:add(true, self.info.start_row, self.info.start_col, {
             end_row = self.info.end_row,
             end_col = self.info.end_col,
-            virt_text = { { self.icon, { self.foreground, self.background } } },
+            virt_text = { { self.data.icon, { self.data.foreground, self.data.background } } },
             virt_text_pos = 'inline',
             conceal = '',
         })
-        return str.width(self.icon)
+        return str.width(self.data.icon)
     else
         self.marks:add(true, self.info.start_row, self.info.start_col, {
             end_row = self.info.end_row,
             end_col = self.info.end_col,
-            virt_text = { { str.pad(padding, self.icon), { self.foreground, self.background } } },
+            virt_text = { { str.pad(padding, self.data.icon), { self.data.foreground, self.data.background } } },
             virt_text_pos = 'overlay',
         })
         return width
@@ -117,7 +122,7 @@ end
 ---@param icon_width integer
 ---@return integer
 function Render:width(icon_width)
-    if self.heading_width == 'block' then
+    if self.data.heading_width == 'block' then
         local width = self.heading.left_pad + icon_width + self.heading.right_pad
         local content = self.info:sibling('inline')
         if content ~= nil then
@@ -132,12 +137,12 @@ end
 ---@private
 ---@param width integer
 function Render:border(width)
-    local background = colors.inverse(self.background)
-    local prefix = self.heading.border_prefix and self.level or 0
+    local background = colors.inverse(self.data.background)
+    local prefix = self.heading.border_prefix and self.data.level or 0
 
     local line_above = {
         { self.heading.above:rep(self.heading.left_pad), background },
-        { self.heading.above:rep(prefix), self.foreground },
+        { self.heading.above:rep(prefix), self.data.foreground },
         { self.heading.above:rep(width - self.heading.left_pad - prefix), background },
     }
     if str.width(self.info:line('above')) == 0 and self.info.start_row - 1 ~= self.context.last_heading then
@@ -154,7 +159,7 @@ function Render:border(width)
 
     local line_below = {
         { self.heading.below:rep(self.heading.left_pad), background },
-        { self.heading.below:rep(prefix), self.foreground },
+        { self.heading.below:rep(prefix), self.data.foreground },
         { self.heading.below:rep(width - self.heading.left_pad - prefix), background },
     }
     if str.width(self.info:line('below')) == 0 then

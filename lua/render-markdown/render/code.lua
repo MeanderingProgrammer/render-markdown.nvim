@@ -3,16 +3,19 @@ local icons = require('render-markdown.core.icons')
 local str = require('render-markdown.core.str')
 local util = require('render-markdown.render.util')
 
+---@class render.md.data.Code
+---@field col integer
+---@field start_row integer
+---@field end_row integer
+---@field code_info? render.md.NodeInfo
+---@field language_info? render.md.NodeInfo
+---@field language? string
+---@field max_width integer
+---@field empty_rows integer[]
+
 ---@class render.md.render.Code: render.md.Renderer
 ---@field private code render.md.Code
----@field private col integer
----@field private start_row integer
----@field private end_row integer
----@field private code_info? render.md.NodeInfo
----@field private language_info? render.md.NodeInfo
----@field private language? string
----@field private width integer
----@field private empty_rows integer[]
+---@field private data render.md.data.Code
 local Render = {}
 Render.__index = Render
 
@@ -31,36 +34,41 @@ function Render:setup()
     if not self.code.enabled or self.code.style == 'none' then
         return false
     end
-
     -- Do not attempt to render single line code block
-    self.col, self.start_row, self.end_row = self.info.start_col, self.info.start_row, self.info.end_row
-    if self.end_row - self.start_row <= 1 then
+    if self.info.end_row - self.info.start_row <= 1 then
         return false
     end
 
-    self.code_info = self.info:child('info_string')
-    self.language_info = self.code_info ~= nil and self.code_info:child('language') or nil
-    self.language = (self.language_info or {}).text
+    local code_info = self.info:child('info_string')
+    local language_info = code_info ~= nil and code_info:child('language') or nil
 
     -- Account for language padding in first row
     local widths = vim.tbl_map(str.width, self.info:lines())
     widths[1] = widths[1] + self.code.language_pad
-
-    self.width = self.code.left_pad + vim.fn.max(widths) + self.code.right_pad
-    self.width = math.max(self.width, self.code.min_width)
-
-    self.empty_rows = {}
+    local max_width = self.code.left_pad + vim.fn.max(widths) + self.code.right_pad
+    local empty_rows = {}
     for row, width in ipairs(widths) do
         if width == 0 then
-            table.insert(self.empty_rows, self.start_row + row - 1)
+            table.insert(empty_rows, self.info.start_row + row - 1)
         end
     end
+
+    self.data = {
+        col = self.info.start_col,
+        start_row = self.info.start_row,
+        end_row = self.info.end_row,
+        code_info = code_info,
+        language_info = language_info,
+        language = (language_info or {}).text,
+        max_width = math.max(max_width, self.code.min_width),
+        empty_rows = empty_rows,
+    }
 
     return true
 end
 
 function Render:render()
-    local disabled_language = vim.tbl_contains(self.code.disable_background, self.language)
+    local disabled_language = vim.tbl_contains(self.code.disable_background, self.data.language)
     local add_background = vim.tbl_contains({ 'normal', 'full' }, self.code.style) and not disabled_language
 
     local icon_added = self:language_hint(add_background)
@@ -68,7 +76,7 @@ function Render:render()
         self:background(icon_added)
     end
     if icon_added then
-        self.start_row = self.start_row + 1
+        self.data.start_row = self.data.start_row + 1
     end
     self:left_pad(add_background)
 end
@@ -80,7 +88,7 @@ function Render:language_hint(add_background)
     if not vim.tbl_contains({ 'language', 'full' }, self.code.style) then
         return false
     end
-    local info = self.language_info
+    local info = self.data.language_info
     if info == nil then
         return false
     end
@@ -109,7 +117,7 @@ function Render:language_hint(add_background)
         })
     elseif self.code.position == 'right' then
         local icon_text = icon .. ' ' .. info.text
-        local win_col = self.width - self.code.language_pad
+        local win_col = self.data.max_width - self.code.language_pad
         if self.code.width == 'block' then
             win_col = win_col - str.width(icon_text)
         end
@@ -125,36 +133,36 @@ end
 ---@private
 ---@param icon_added boolean
 function Render:background(icon_added)
-    local width = self.code.width == 'block' and self.width or self.context:get_width()
+    local width = self.code.width == 'block' and self.data.max_width or self.context:get_width()
 
     if self.code.border == 'thin' then
-        local border_width = width - self.col
-        if not icon_added and self.context:hidden(self.code_info) and self:delim_hidden(self.start_row) then
-            self.marks:add(true, self.start_row, self.col, {
+        local border_width = width - self.data.col
+        if not icon_added and self.context:hidden(self.data.code_info) and self:delim_hidden(self.data.start_row) then
+            self.marks:add(true, self.data.start_row, self.data.col, {
                 virt_text = { { self.code.above:rep(border_width), colors.inverse(self.code.highlight) } },
                 virt_text_pos = 'overlay',
             })
-            self.start_row = self.start_row + 1
+            self.data.start_row = self.data.start_row + 1
         end
-        if self:delim_hidden(self.end_row - 1) then
-            self.marks:add(true, self.end_row - 1, self.col, {
+        if self:delim_hidden(self.data.end_row - 1) then
+            self.marks:add(true, self.data.end_row - 1, self.data.col, {
                 virt_text = { { self.code.below:rep(border_width), colors.inverse(self.code.highlight) } },
                 virt_text_pos = 'overlay',
             })
-            self.end_row = self.end_row - 1
+            self.data.end_row = self.data.end_row - 1
         end
     end
 
     local padding = str.spaces(vim.o.columns * 2)
-    for row = self.start_row, self.end_row - 1 do
-        self.marks:add(false, row, self.col, {
+    for row = self.data.start_row, self.data.end_row - 1 do
+        self.marks:add(false, row, self.data.col, {
             end_row = row + 1,
             hl_group = self.code.highlight,
             hl_eol = true,
         })
         if self.code.width == 'block' then
             -- Overwrite anything beyond width with Normal
-            self.marks:add(false, row, self.col, {
+            self.marks:add(false, row, self.data.col, {
                 priority = 0,
                 virt_text = { { padding, 'Normal' } },
                 virt_text_win_col = width,
@@ -173,25 +181,25 @@ end
 ---@private
 ---@param add_background boolean
 function Render:left_pad(add_background)
-    if (self.col == 0 or #self.empty_rows == 0) and self.code.left_pad <= 0 then
+    if (self.data.col == 0 or #self.data.empty_rows == 0) and self.code.left_pad <= 0 then
         return
     end
 
     -- Use low priority to include other marks in padding when code block is at edge
-    local priority = self.col == 0 and 0 or nil
-    local outer_text = { str.spaces(self.col), 'Normal' }
+    local priority = self.data.col == 0 and 0 or nil
+    local outer_text = { str.spaces(self.data.col), 'Normal' }
     local left_text = { str.spaces(self.code.left_pad), add_background and self.code.highlight or 'Normal' }
 
-    for row = self.start_row, self.end_row - 1 do
+    for row = self.data.start_row, self.data.end_row - 1 do
         local virt_text = {}
-        if self.col > 0 and vim.tbl_contains(self.empty_rows, row) then
+        if self.data.col > 0 and vim.tbl_contains(self.data.empty_rows, row) then
             table.insert(virt_text, outer_text)
         end
         if self.code.left_pad > 0 then
             table.insert(virt_text, left_text)
         end
         if #virt_text > 0 then
-            self.marks:add(false, row, self.col, {
+            self.marks:add(false, row, self.data.col, {
                 priority = priority,
                 virt_text = virt_text,
                 virt_text_pos = 'inline',

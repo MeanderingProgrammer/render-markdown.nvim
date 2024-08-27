@@ -4,6 +4,7 @@ local state = require('render-markdown.state')
 
 ---@class render.md.render.Quote: render.md.Renderer
 ---@field private quote render.md.Quote
+---@field private highlight string
 local Render = {}
 Render.__index = Render
 
@@ -23,6 +24,9 @@ function Render:setup()
         return false
     end
 
+    local callout = component.callout(self.config, self.info.text, 'contains')
+    self.highlight = callout ~= nil and callout.highlight or self.quote.highlight
+
     return true
 end
 
@@ -39,12 +43,10 @@ end
 ---@private
 ---@param info render.md.NodeInfo
 function Render:quote_marker(info)
-    local callout = component.callout(self.config, self.info.text, 'contains')
-    local highlight = callout ~= nil and callout.highlight or self.quote.highlight
     self.marks:add(true, info.start_row, info.start_col, {
         end_row = info.end_row,
         end_col = info.end_col,
-        virt_text = { { info.text:gsub('>', self.quote.icon), highlight } },
+        virt_text = { { info.text:gsub('>', self.quote.icon), self.highlight } },
         virt_text_pos = 'overlay',
         virt_text_repeat_linebreak = self.quote.repeat_linebreak or nil,
     })
