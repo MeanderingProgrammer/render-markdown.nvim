@@ -1,3 +1,5 @@
+local NodeInfo = require('render-markdown.core.node_info')
+local logger = require('render-markdown.core.logger')
 local str = require('render-markdown.core.str')
 local util = require('render-markdown.core.util')
 
@@ -99,11 +101,13 @@ end
 
 ---@param root TSNode
 ---@param query vim.treesitter.Query
----@param callback fun(capture: string, node: TSNode, metadata: vim.treesitter.query.TSMetadata)
+---@param callback fun(capture: string, node: render.md.NodeInfo)
 function Context:query(root, query, callback)
-    for id, node, metadata in query:iter_captures(root, self.buf, self.top, self.bottom) do
+    for id, node in query:iter_captures(root, self.buf, self.top, self.bottom) do
         local capture = query.captures[id]
-        callback(capture, node, metadata)
+        local info = NodeInfo.new(self.buf, node)
+        logger.debug_node_info(capture, info)
+        callback(capture, info)
     end
 end
 
@@ -188,11 +192,11 @@ function Context:compute_conceal_nodes(language, root)
         return {}
     end
     local nodes = {}
-    self:query(root, query, function(_, node, metadata)
+    for _, node, metadata in query:iter_captures(root, self.buf, self.top, self.bottom) do
         if metadata.conceal ~= nil then
             table.insert(nodes, node)
         end
-    end)
+    end
     return nodes
 end
 

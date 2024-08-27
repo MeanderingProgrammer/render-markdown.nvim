@@ -1,9 +1,4 @@
 local Context = require('render-markdown.core.context')
-local NodeInfo = require('render-markdown.core.node_info')
-local RenderCode = require('render-markdown.render.code')
-local RenderHeading = require('render-markdown.render.heading')
-local RenderQuote = require('render-markdown.render.quote')
-local RenderTable = require('render-markdown.render.table')
 local component = require('render-markdown.core.component')
 local list = require('render-markdown.core.list')
 local logger = require('render-markdown.core.logger')
@@ -11,7 +6,6 @@ local state = require('render-markdown.state')
 local str = require('render-markdown.core.str')
 
 ---@class render.md.handler.buf.Markdown
----@field private buf integer
 ---@field private marks render.md.Marks
 ---@field private config render.md.BufferConfig
 ---@field private context render.md.Context
@@ -23,15 +17,14 @@ Handler.__index = Handler
 ---@return render.md.handler.buf.Markdown
 function Handler.new(buf)
     local self = setmetatable({}, Handler)
-    self.buf = buf
     self.marks = list.new_marks()
     self.config = state.get_config(buf)
     self.context = Context.get(buf)
     self.renderers = {
-        code = RenderCode.new(buf, self.marks, self.config, self.context),
-        heading = RenderHeading.new(buf, self.marks, self.config, self.context),
-        quote = RenderQuote.new(buf, self.marks, self.config, self.context),
-        table = RenderTable.new(buf, self.marks, self.config, self.context),
+        code = require('render-markdown.render.code'),
+        heading = require('render-markdown.render.heading'),
+        quote = require('render-markdown.render.quote'),
+        table = require('render-markdown.render.table'),
     }
     return self
 end
@@ -39,13 +32,13 @@ end
 ---@param root TSNode
 ---@return render.md.Mark[]
 function Handler:parse(root)
-    self.context:query(root, state.markdown_query, function(capture, node)
-        local info = NodeInfo.new(self.buf, node)
-        logger.debug_node_info(capture, info)
-
+    self.context:query(root, state.markdown_query, function(capture, info)
         local renderer = self.renderers[capture]
         if renderer ~= nil then
-            renderer:render(info)
+            local render = renderer.new(self.marks, self.config, self.context, info)
+            if render:setup() then
+                render:render()
+            end
         elseif capture == 'section' then
             self:section(info)
         elseif capture == 'dash' then
@@ -120,7 +113,7 @@ function Handler:list_marker(info)
             return true
         end
         local paragraph = info:sibling('paragraph')
-        return paragraph ~= nil and component.checkbox(self.buf, paragraph.text, 'starts') ~= nil
+        return paragraph ~= nil and component.checkbox(self.config, paragraph.text, 'starts') ~= nil
     end
     if sibling_checkbox() then
         -- Hide the list marker for checkboxes rather than replacing with a bullet point

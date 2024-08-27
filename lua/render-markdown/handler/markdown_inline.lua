@@ -1,5 +1,4 @@
 local Context = require('render-markdown.core.context')
-local NodeInfo = require('render-markdown.core.node_info')
 local component = require('render-markdown.core.component')
 local list = require('render-markdown.core.list')
 local logger = require('render-markdown.core.logger')
@@ -7,7 +6,6 @@ local state = require('render-markdown.state')
 local str = require('render-markdown.core.str')
 
 ---@class render.md.handler.buf.MarkdownInline
----@field private buf integer
 ---@field private marks render.md.Marks
 ---@field private config render.md.BufferConfig
 ---@field private context render.md.Context
@@ -18,7 +16,6 @@ Handler.__index = Handler
 ---@return render.md.handler.buf.MarkdownInline
 function Handler.new(buf)
     local self = setmetatable({}, Handler)
-    self.buf = buf
     self.marks = list.new_marks()
     self.config = state.get_config(buf)
     self.context = Context.get(buf)
@@ -28,10 +25,7 @@ end
 ---@param root TSNode
 ---@return render.md.Mark[]
 function Handler:parse(root)
-    self.context:query(root, state.inline_query, function(capture, node)
-        local info = NodeInfo.new(self.buf, node)
-        logger.debug_node_info(capture, info)
-
+    self.context:query(root, state.inline_query, function(capture, info)
         if capture == 'code' then
             self:code(info)
         elseif capture == 'shortcut' then
@@ -62,13 +56,13 @@ end
 ---@private
 ---@param info render.md.NodeInfo
 function Handler:shortcut(info)
-    local callout = component.callout(self.buf, info.text, 'exact')
+    local callout = component.callout(self.config, info.text, 'exact')
     if callout ~= nil then
         self:callout(info, callout)
         return
     end
 
-    local checkbox = component.checkbox(self.buf, info.text, 'exact')
+    local checkbox = component.checkbox(self.config, info.text, 'exact')
     if checkbox ~= nil then
         self:checkbox(info, checkbox)
         return

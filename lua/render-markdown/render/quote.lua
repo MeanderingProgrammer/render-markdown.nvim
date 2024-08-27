@@ -1,35 +1,35 @@
-local NodeInfo = require('render-markdown.core.node_info')
 local component = require('render-markdown.core.component')
 local logger = require('render-markdown.core.logger')
 local state = require('render-markdown.state')
 
 ---@class render.md.render.Quote: render.md.Renderer
----@field private config render.md.Quote
+---@field private quote render.md.Quote
 local Render = {}
 Render.__index = Render
 
----@param buf integer
 ---@param marks render.md.Marks
 ---@param config render.md.BufferConfig
 ---@param context render.md.Context
----@return render.md.render.Quote
-function Render.new(buf, marks, config, context)
-    local self = setmetatable({}, Render)
-    self.buf = buf
-    self.marks = marks
-    self.config = config.quote
-    self.context = context
-    return self
+---@param info render.md.NodeInfo
+---@return render.md.Renderer
+function Render.new(marks, config, context, info)
+    return setmetatable({ marks = marks, config = config, context = context, info = info }, Render)
 end
 
----@param info render.md.NodeInfo
-function Render:render(info)
-    self.context:query(info.node, state.markdown_quote_query, function(capture, node)
-        local nested_info = NodeInfo.new(self.buf, node)
-        logger.debug_node_info(capture, nested_info)
+---@return boolean
+function Render:setup()
+    self.quote = self.config.quote
+    if not self.quote.enabled then
+        return false
+    end
 
+    return true
+end
+
+function Render:render()
+    self.context:query(self.info.node, state.markdown_quote_query, function(capture, info)
         if capture == 'quote_marker' then
-            self:quote_marker(nested_info, info)
+            self:quote_marker(info)
         else
             logger.unhandled_capture('markdown quote', capture)
         end
@@ -38,19 +38,15 @@ end
 
 ---@private
 ---@param info render.md.NodeInfo
----@param block_quote render.md.NodeInfo
-function Render:quote_marker(info, block_quote)
-    if not self.config.enabled then
-        return
-    end
-    local callout = component.callout(self.buf, block_quote.text, 'contains')
-    local highlight = callout ~= nil and callout.highlight or self.config.highlight
+function Render:quote_marker(info)
+    local callout = component.callout(self.config, self.info.text, 'contains')
+    local highlight = callout ~= nil and callout.highlight or self.quote.highlight
     self.marks:add(true, info.start_row, info.start_col, {
         end_row = info.end_row,
         end_col = info.end_col,
-        virt_text = { { info.text:gsub('>', self.config.icon), highlight } },
+        virt_text = { { info.text:gsub('>', self.quote.icon), highlight } },
         virt_text_pos = 'overlay',
-        virt_text_repeat_linebreak = self.config.repeat_linebreak or nil,
+        virt_text_repeat_linebreak = self.quote.repeat_linebreak or nil,
     })
 end
 
