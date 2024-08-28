@@ -1,4 +1,5 @@
 local presets = require('render-markdown.presets')
+local treesitter = require('render-markdown.core.treesitter')
 local util = require('render-markdown.core.util')
 
 ---@type table<integer, render.md.BufferConfig>
@@ -44,6 +45,9 @@ function M.setup(default_config, user_config)
         M.markdown_quote_query = vim.treesitter.query.parse('markdown', config.markdown_quote_query)
         M.inline_query = vim.treesitter.query.parse('markdown_inline', config.inline_query)
     end)
+    for _, language in ipairs(M.file_types) do
+        treesitter.inject(language, config.injections[language])
+    end
 end
 
 function M.invalidate_cache()
@@ -420,6 +424,7 @@ function M.validate()
         inline_query = { config.inline_query, 'string' },
         log_level = one_of(config.log_level, { 'debug', 'error' }, {}, false),
         file_types = string_array(config.file_types, false),
+        injections = { config.injections, 'table' },
         acknowledge_conflicts = { config.acknowledge_conflicts, 'boolean' },
         latex = { config.latex, 'table' },
         overrides = { config.overrides, 'table' },
@@ -427,6 +432,14 @@ function M.validate()
     })
 
     validate_buffer_config('render-markdown', config, false)
+
+    local injections = config.injections
+    for name, injection in pairs(injections) do
+        append_errors('render-markdown.injections.' .. name, injection, {
+            enabled = { injection.enabled, 'boolean' },
+            query = { injection.query, 'string' },
+        })
+    end
 
     local latex = config.latex
     append_errors('render-markdown.latex', latex, {

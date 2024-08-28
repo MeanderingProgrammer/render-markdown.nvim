@@ -7,6 +7,10 @@
 ---@field public top_pad integer
 ---@field public bottom_pad integer
 
+---@class (exact) render.md.Injection
+---@field public enabled boolean
+---@field public query string
+
 ---@class (exact) render.md.WindowOption
 ---@field public default number|string|boolean
 ---@field public rendered number|string|boolean
@@ -147,6 +151,7 @@
 ---@field public inline_query string
 ---@field public log_level render.md.config.LogLevel
 ---@field public file_types string[]
+---@field public injections table<string, render.md.Injection>
 ---@field public acknowledge_conflicts boolean
 ---@field public latex render.md.Latex
 ---@field public overrides render.md.ConfigOverrides

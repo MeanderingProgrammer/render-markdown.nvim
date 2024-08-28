@@ -208,6 +208,20 @@ require('render-markdown').setup({
     log_level = 'error',
     -- Filetypes this plugin will run on
     file_types = { 'markdown' },
+    -- Out of the box language injections for known filetypes that allow markdown to be
+    -- interpreted in specified locations, see :h treesitter-language-injections
+    -- Set enabled to false in order to disable
+    injections = {
+        gitcommit = {
+            enabled = true,
+            query = [[
+                ((message) @injection.content
+                    (#set! injection.combined)
+                    (#set! injection.include-children)
+                    (#set! injection.language "markdown"))
+            ]],
+        },
+    },
     -- Vim modes that will show a rendered view of the markdown file
     -- All other modes will be uneffected by this plugin
     render_modes = { 'n', 'c' },
