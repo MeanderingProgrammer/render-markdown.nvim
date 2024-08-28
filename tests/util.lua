@@ -66,8 +66,8 @@ function M.heading(row, level)
     local background = M.hl(string.format('H%dBg', level))
     ---@type render.md.MarkInfo
     local sign_mark = {
-        row = { row, row },
-        col = { 0, level },
+        row = { row },
+        col = { 0 },
         sign_text = '󰫎 ',
         sign_hl_group = M.hl('_' .. foreground .. '_' .. M.hl('Sign')),
     }
@@ -138,9 +138,25 @@ end
 
 ---@param row integer
 ---@param col integer
+---@param win_col integer
+---@return render.md.MarkInfo
+function M.code_hide(row, col, win_col)
+    ---@type render.md.MarkInfo
+    return {
+        row = { row },
+        col = { col },
+        virt_text = { { string.rep(' ', vim.opt.columns:get() * 2), 'Normal' } },
+        virt_text_pos = 'win_col',
+        virt_text_win_col = win_col,
+    }
+end
+
+---@param row integer
+---@param col integer
 ---@param name 'python'|'lua'|'rust'
+---@param win_col? integer
 ---@return render.md.MarkInfo[]
-function M.code_language(row, col, name)
+function M.code_language(row, col, name, win_col)
     local icon, highlight
     if name == 'python' then
         icon, highlight = '󰌠 ', 'MiniIconsYellow'
@@ -149,13 +165,22 @@ function M.code_language(row, col, name)
     elseif name == 'rust' then
         icon, highlight = '󱘗 ', 'MiniIconsOrange'
     end
+
+    local result = {}
+
     ---@type render.md.MarkInfo
     local sign_mark = {
-        row = { row, row },
-        col = { col + 3, col + 3 + #name },
+        row = { row },
+        col = { col },
         sign_text = icon,
         sign_hl_group = M.hl('_' .. highlight .. '_' .. M.hl('Sign')),
     }
+    table.insert(result, sign_mark)
+
+    if win_col ~= nil then
+        table.insert(result, M.code_hide(row, col, win_col))
+    end
+
     ---@type render.md.MarkInfo
     local language_mark = {
         row = { row },
@@ -163,7 +188,7 @@ function M.code_language(row, col, name)
         virt_text = { { icon .. name, { highlight, M.hl('Code') } } },
         virt_text_pos = 'inline',
     }
-    return { sign_mark, language_mark }
+    return vim.list_extend(result, { M.code_row(row, col), language_mark })
 end
 
 ---@param row integer

@@ -26,17 +26,14 @@ function Base:new(marks, config, context, info)
 end
 
 ---@protected
----@param info render.md.NodeInfo
 ---@param text? string
 ---@param highlight string
-function Base:sign(info, text, highlight)
+function Base:sign(text, highlight)
     local sign = self.config.sign
     if not sign.enabled or text == nil then
         return
     end
-    self.marks:add(false, info.start_row, info.start_col, {
-        end_row = info.end_row,
-        end_col = info.end_col,
+    self.marks:add(false, self.info.start_row, self.info.start_col, {
         sign_text = text,
         sign_hl_group = colors.combine(highlight, sign.highlight),
     })

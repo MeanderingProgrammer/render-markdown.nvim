@@ -18,10 +18,7 @@ describe('heading_code.md', function()
 
         table.insert(expected, util.link(row:increment(2), 0, 21, 'image'))
 
-        vim.list_extend(expected, {
-            util.code_row(row:increment(2), 0),
-            util.code_language(row:get(), 0, 'python'),
-        })
+        table.insert(expected, util.code_language(row:increment(2), 0, 'python'))
         for _ = 13, 21 do
             table.insert(expected, util.code_row(row:increment(), 0))
         end

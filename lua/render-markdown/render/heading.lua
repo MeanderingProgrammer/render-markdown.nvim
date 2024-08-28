@@ -53,7 +53,7 @@ end
 function Render:render()
     local icon_width = self:start_icon()
     if self.heading.sign then
-        self:sign(self.info, self.data.sign, self.data.foreground)
+        self:sign(self.data.sign, self.data.foreground)
     end
 
     self.marks:add(true, self.info.start_row, 0, {

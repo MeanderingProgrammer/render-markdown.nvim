@@ -4,21 +4,6 @@ local util = require('tests.util')
 
 ---@param row integer
 ---@param col integer
----@param win_col integer
----@return render.md.MarkInfo
-local function hide_background(row, col, win_col)
-    ---@type render.md.MarkInfo
-    return {
-        row = { row },
-        col = { col },
-        virt_text = { { string.rep(' ', vim.opt.columns:get() * 2), 'Normal' } },
-        virt_text_pos = 'win_col',
-        virt_text_win_col = win_col,
-    }
-end
-
----@param row integer
----@param col integer
 ---@param offset integer
 ---@param left integer
 ---@return render.md.MarkInfo
@@ -47,10 +32,7 @@ describe('code.md', function()
 
         vim.list_extend(expected, util.heading(row:get(), 1))
 
-        vim.list_extend(expected, {
-            util.code_row(row:increment(2), 0),
-            util.code_language(row:get(), 0, 'rust'),
-        })
+        table.insert(expected, util.code_language(row:increment(2), 0, 'rust'))
         for _ = 1, 3 do
             table.insert(expected, util.code_row(row:increment(), 0))
         end
@@ -58,8 +40,7 @@ describe('code.md', function()
 
         vim.list_extend(expected, {
             util.bullet(row:increment(2), 0, 1),
-            util.code_row(row:increment(2), 2),
-            util.code_language(row:get(), 2, 'lua'),
+            util.code_language(row:increment(2), 2, 'lua'),
         })
         for _ = 1, 2 do
             table.insert(expected, util.code_row(row:increment(), 2))
@@ -68,8 +49,7 @@ describe('code.md', function()
 
         vim.list_extend(expected, {
             util.bullet(row:increment(2), 0, 1),
-            util.code_row(row:increment(2), 2),
-            util.code_language(row:get(), 2, 'lua'),
+            util.code_language(row:increment(2), 2, 'lua'),
         })
         for _, col in ipairs({ 2, 0, 2 }) do
             table.insert(expected, util.code_row(row:increment(), col))
@@ -92,46 +72,38 @@ describe('code.md', function()
 
         vim.list_extend(expected, util.heading(row:get(), 1))
 
-        vim.list_extend(expected, {
-            util.code_row(row:increment(2), 0),
-            hide_background(row:get(), 0, 34),
-            util.code_language(row:get(), 0, 'rust'),
-        })
+        table.insert(expected, util.code_language(row:increment(2), 0, 'rust', 34))
         for _ = 1, 3 do
             vim.list_extend(expected, {
                 util.code_row(row:increment(), 0),
                 padding(row:get(), 0, 0, 2),
-                hide_background(row:get(), 0, 34),
+                util.code_hide(row:get(), 0, 34),
             })
         end
         table.insert(expected, util.code_below(row:increment(), 0, 34))
 
         vim.list_extend(expected, {
             util.bullet(row:increment(2), 0, 1),
-            util.code_row(row:increment(2), 2),
-            hide_background(row:get(), 2, 20),
-            util.code_language(row:get(), 2, 'lua'),
+            util.code_language(row:increment(2), 2, 'lua', 20),
         })
         for _ = 1, 2 do
             vim.list_extend(expected, {
                 util.code_row(row:increment(), 2),
                 padding(row:get(), 2, 0, 2),
-                hide_background(row:get(), 2, 20),
+                util.code_hide(row:get(), 2, 20),
             })
         end
         table.insert(expected, util.code_below(row:increment(), 2, 20))
 
         vim.list_extend(expected, {
             util.bullet(row:increment(2), 0, 1),
-            util.code_row(row:increment(2), 2),
-            hide_background(row:get(), 2, 20),
-            util.code_language(row:get(), 2, 'lua'),
+            util.code_language(row:increment(2), 2, 'lua', 20),
         })
         for _, col in ipairs({ 2, 0, 2 }) do
             vim.list_extend(expected, {
                 util.code_row(row:increment(), col),
                 padding(row:get(), col, 2 - col, 2),
-                hide_background(row:get(), col, 20),
+                util.code_hide(row:get(), col, 20),
             })
         end
         table.insert(expected, util.code_below(row:increment(), 2, 20))

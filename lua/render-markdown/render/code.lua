@@ -97,7 +97,7 @@ function Render:language_hint(add_background)
         return false
     end
     if self.code.sign then
-        self:sign(info, icon, icon_highlight)
+        self:sign(icon, icon_highlight)
     end
     local highlight = { icon_highlight }
     if add_background then
