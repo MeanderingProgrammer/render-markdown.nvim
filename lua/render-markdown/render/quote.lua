@@ -1,3 +1,4 @@
+local Base = require('render-markdown.render.base')
 local component = require('render-markdown.core.component')
 local logger = require('render-markdown.core.logger')
 local state = require('render-markdown.state')
@@ -5,7 +6,7 @@ local state = require('render-markdown.state')
 ---@class render.md.render.Quote: render.md.Renderer
 ---@field private quote render.md.Quote
 ---@field private highlight string
-local Render = {}
+local Render = setmetatable({}, Base)
 Render.__index = Render
 
 ---@param marks render.md.Marks
@@ -13,8 +14,8 @@ Render.__index = Render
 ---@param context render.md.Context
 ---@param info render.md.NodeInfo
 ---@return render.md.Renderer
-function Render.new(marks, config, context, info)
-    return setmetatable({ marks = marks, config = config, context = context, info = info }, Render)
+function Render:new(marks, config, context, info)
+    return Base.new(self, marks, config, context, info)
 end
 
 ---@return boolean

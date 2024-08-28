@@ -35,7 +35,7 @@ function Handler:parse(root)
     self.context:query(root, state.markdown_query, function(capture, info)
         local renderer = self.renderers[capture]
         if renderer ~= nil then
-            local render = renderer.new(self.marks, self.config, self.context, info)
+            local render = renderer:new(self.marks, self.config, self.context, info)
             if render:setup() then
                 render:render()
             end

@@ -7,6 +7,8 @@
 - email link icon [74502e5](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/74502e5d34efa68dde051bcc6bf28db9748922c7)
 - deterministic custom link order [#146](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/146)
   [42dbd09](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/42dbd097d73d8c833f886f35ca3be2065973c628)
+- integrate treesitter injections: [#141](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/141)
+  [5ff9a59](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/5ff9a598622422100280769147ad5feff411c6da)
 
 ### Bug Fixes
 

@@ -1,7 +1,7 @@
+local Base = require('render-markdown.render.base')
 local colors = require('render-markdown.colors')
 local icons = require('render-markdown.core.icons')
 local str = require('render-markdown.core.str')
-local util = require('render-markdown.render.util')
 
 ---@class render.md.data.Code
 ---@field col integer
@@ -16,7 +16,7 @@ local util = require('render-markdown.render.util')
 ---@class render.md.render.Code: render.md.Renderer
 ---@field private code render.md.Code
 ---@field private data render.md.data.Code
-local Render = {}
+local Render = setmetatable({}, Base)
 Render.__index = Render
 
 ---@param marks render.md.Marks
@@ -24,8 +24,8 @@ Render.__index = Render
 ---@param context render.md.Context
 ---@param info render.md.NodeInfo
 ---@return render.md.Renderer
-function Render.new(marks, config, context, info)
-    return setmetatable({ marks = marks, config = config, context = context, info = info }, Render)
+function Render:new(marks, config, context, info)
+    return Base.new(self, marks, config, context, info)
 end
 
 ---@return boolean
@@ -97,7 +97,7 @@ function Render:language_hint(add_background)
         return false
     end
     if self.code.sign then
-        util.sign(self.config, self.marks, info, icon, icon_highlight)
+        self:sign(info, icon, icon_highlight)
     end
     local highlight = { icon_highlight }
     if add_background then

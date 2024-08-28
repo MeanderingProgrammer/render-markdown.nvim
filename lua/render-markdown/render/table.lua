@@ -1,7 +1,7 @@
+local Base = require('render-markdown.render.base')
 local NodeInfo = require('render-markdown.core.node_info')
 local logger = require('render-markdown.core.logger')
 local str = require('render-markdown.core.str')
-local util = require('render-markdown.render.util')
 
 ---@class render.md.table.Column
 ---@field row integer
@@ -30,7 +30,7 @@ local util = require('render-markdown.render.util')
 ---@class render.md.render.Table: render.md.Renderer
 ---@field private table render.md.PipeTable
 ---@field private data render.md.data.Table
-local Render = {}
+local Render = setmetatable({}, Base)
 Render.__index = Render
 
 ---@param marks render.md.Marks
@@ -38,8 +38,8 @@ Render.__index = Render
 ---@param context render.md.Context
 ---@param info render.md.NodeInfo
 ---@return render.md.Renderer
-function Render.new(marks, config, context, info)
-    return setmetatable({ marks = marks, config = config, context = context, info = info }, Render)
+function Render:new(marks, config, context, info)
+    return Base.new(self, marks, config, context, info)
 end
 
 ---@return boolean
@@ -320,7 +320,7 @@ function Render:full()
         table.insert(line, { chars[1] .. table.concat(sections, chars[2]) .. chars[3], highlight })
         self.marks:add(false, info.start_row, info.start_col, {
             virt_lines_above = above,
-            virt_lines = { util.indent_virt_line(self.config, self.info, line) },
+            virt_lines = { self:indent_virt_line(line) },
         })
     end
 

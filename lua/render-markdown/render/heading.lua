@@ -1,7 +1,7 @@
+local Base = require('render-markdown.render.base')
 local colors = require('render-markdown.colors')
 local list = require('render-markdown.core.list')
 local str = require('render-markdown.core.str')
-local util = require('render-markdown.render.util')
 
 ---@class render.md.data.Heading
 ---@field level integer
@@ -14,7 +14,7 @@ local util = require('render-markdown.render.util')
 ---@class render.md.render.Heading: render.md.Renderer
 ---@field private heading render.md.Heading
 ---@field private data render.md.data.Heading
-local Render = {}
+local Render = setmetatable({}, Base)
 Render.__index = Render
 
 ---@param marks render.md.Marks
@@ -22,8 +22,8 @@ Render.__index = Render
 ---@param context render.md.Context
 ---@param info render.md.NodeInfo
 ---@return render.md.Renderer
-function Render.new(marks, config, context, info)
-    return setmetatable({ marks = marks, config = config, context = context, info = info }, Render)
+function Render:new(marks, config, context, info)
+    return Base.new(self, marks, config, context, info)
 end
 
 ---@return boolean
@@ -53,7 +53,7 @@ end
 function Render:render()
     local icon_width = self:start_icon()
     if self.heading.sign then
-        util.sign(self.config, self.marks, self.info, self.data.sign, self.data.foreground)
+        self:sign(self.info, self.data.sign, self.data.foreground)
     end
 
     self.marks:add(true, self.info.start_row, 0, {
@@ -152,7 +152,7 @@ function Render:border(width)
         })
     else
         self.marks:add(false, self.info.start_row, 0, {
-            virt_lines = { util.indent_virt_line(self.config, self.info, line_above) },
+            virt_lines = { self:indent_virt_line(line_above) },
             virt_lines_above = true,
         })
     end
@@ -170,7 +170,7 @@ function Render:border(width)
         self.context.last_heading = self.info.end_row + 1
     else
         self.marks:add(false, self.info.end_row, 0, {
-            virt_lines = { util.indent_virt_line(self.config, self.info, line_below) },
+            virt_lines = { self:indent_virt_line(line_below) },
         })
     end
 end
