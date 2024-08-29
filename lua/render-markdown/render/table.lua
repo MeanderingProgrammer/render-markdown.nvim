@@ -136,10 +136,8 @@ function Render:parse_row(row, num_columns)
     local columns = {}
     for i = 1, #cells do
         local cell, width = cells[i], pipes[i + 1].start_col - pipes[i].end_col
-        -- Account for double width glyphs by replacing cell spacing with text width
-        width = width - (cell.end_col - cell.start_col) + str.width(cell.text)
-        -- Remove concealed and add inlined text
-        width = width - self.context:concealed(cell) + self.context:get_offset(cell)
+        -- Account for double width glyphs by replacing cell spacing with width
+        width = width - (cell.end_col - cell.start_col) + self.context:width(cell)
         if width < 0 then
             return nil
         end

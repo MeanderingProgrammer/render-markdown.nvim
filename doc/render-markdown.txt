@@ -1,4 +1,4 @@
-*render-markdown.txt*          For 0.10.0          Last change: 2024 August 28
+*render-markdown.txt*          For 0.10.0          Last change: 2024 August 29
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -195,6 +195,7 @@ Full Default Configuration ~
                 (atx_h5_marker)
                 (atx_h6_marker)
             ] @heading)
+            (setext_heading) @heading
     
             (thematic_break) @dash
     

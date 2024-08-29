@@ -48,6 +48,15 @@ function Context:compute_bottom(top, offset)
     return bottom
 end
 
+---@param info? render.md.NodeInfo
+---@return integer
+function Context:width(info)
+    if info == nil then
+        return 0
+    end
+    return str.width(info.text) + self:get_offset(info) - self:concealed(info)
+end
+
 ---@param info render.md.NodeInfo
 ---@param amount integer
 function Context:add_offset(info, amount)
@@ -58,6 +67,7 @@ function Context:add_offset(info, amount)
     table.insert(self.links[row], { info.start_col, info.end_col, amount })
 end
 
+---@private
 ---@param info render.md.NodeInfo
 ---@return integer
 function Context:get_offset(info)
@@ -114,10 +124,7 @@ end
 ---@param info? render.md.NodeInfo
 ---@return boolean
 function Context:hidden(info)
-    if info == nil then
-        return true
-    end
-    return str.width(info.text) == self:concealed(info)
+    return info == nil or str.width(info.text) == self:concealed(info)
 end
 
 ---@param info render.md.NodeInfo
@@ -127,8 +134,7 @@ function Context:concealed(info)
     if #ranges == 0 then
         return 0
     end
-    local result = 0
-    local col = info.start_col
+    local result, col = 0, info.start_col
     for _, index in ipairs(vim.fn.str2list(info.text)) do
         local ch = vim.fn.nr2char(index)
         for _, range in ipairs(ranges) do

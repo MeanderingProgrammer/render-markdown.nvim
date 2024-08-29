@@ -71,7 +71,7 @@ function Render:render()
     local disabled_language = vim.tbl_contains(self.code.disable_background, self.data.language)
     local add_background = vim.tbl_contains({ 'normal', 'full' }, self.code.style) and not disabled_language
 
-    local icon_added = self:language_hint(add_background)
+    local icon_added = self:language(add_background)
     if add_background then
         self:background(icon_added)
     end
@@ -84,7 +84,7 @@ end
 ---@private
 ---@param add_background boolean
 ---@return boolean
-function Render:language_hint(add_background)
+function Render:language(add_background)
     if not vim.tbl_contains({ 'language', 'full' }, self.code.style) then
         return false
     end

@@ -166,6 +166,7 @@ require('render-markdown').setup({
             (atx_h5_marker)
             (atx_h6_marker)
         ] @heading)
+        (setext_heading) @heading
 
         (thematic_break) @dash
 

@@ -1,5 +1,9 @@
 # Heading
 
+Heading 2 Line 1
+Heading 2 Line 2
+---
+
 - [Normal Shortcut]
 - [[Basic One]] Then normal text
 - [[Nickname|With Alias]] Something important
