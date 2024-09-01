@@ -1,5 +1,4 @@
 local Base = require('render-markdown.render.base')
-local component = require('render-markdown.core.component')
 local logger = require('render-markdown.core.logger')
 local state = require('render-markdown.state')
 
@@ -25,7 +24,7 @@ function Render:setup()
         return false
     end
 
-    local callout = component.callout(self.config, self.info.text, 'contains')
+    local callout = self.context:get_component(self.info)
     self.highlight = callout ~= nil and callout.highlight or self.quote.highlight
 
     return true

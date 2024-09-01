@@ -8,6 +8,7 @@ local util = require('render-markdown.core.util')
 ---@field private win integer
 ---@field private top integer
 ---@field private bottom integer
+---@field private components table<integer, render.md.CustomComponent>
 ---@field private conceal? table<integer, [integer, integer][]>
 ---@field private links table<integer, [integer, integer, integer][]>
 ---@field last_heading integer
@@ -25,6 +26,7 @@ function Context.new(buf, win, offset)
     local top = util.view(win).topline - 1
     self.top = math.max(top - offset, 0)
     self.bottom = self:compute_bottom(top, offset)
+    self.components = {}
     self.conceal = nil
     self.links = {}
     self.last_heading = -1
@@ -46,6 +48,18 @@ function Context:compute_bottom(top, offset)
         end
     end
     return bottom
+end
+
+---@param info render.md.NodeInfo
+---@return render.md.CustomComponent?
+function Context:get_component(info)
+    return self.components[info.start_row]
+end
+
+---@param info render.md.NodeInfo
+---@param component render.md.CustomComponent
+function Context:add_component(info, component)
+    self.components[info.start_row] = component
 end
 
 ---@param info? render.md.NodeInfo

@@ -1,5 +1,4 @@
 local Context = require('render-markdown.core.context')
-local component = require('render-markdown.core.component')
 local list = require('render-markdown.core.list')
 local logger = require('render-markdown.core.logger')
 local state = require('render-markdown.state')
@@ -56,13 +55,13 @@ end
 ---@private
 ---@param info render.md.NodeInfo
 function Handler:shortcut(info)
-    local callout = component.callout(self.config, info.text, 'exact')
+    local callout = self:get_callout(info)
     if callout ~= nil then
         self:callout(info, callout)
         return
     end
 
-    local checkbox = component.checkbox(self.config, info.text, 'exact')
+    local checkbox = self:get_checkbox(info)
     if checkbox ~= nil then
         self:checkbox(info, checkbox)
         return
@@ -73,6 +72,32 @@ function Handler:shortcut(info)
         self:wiki_link(info)
         return
     end
+end
+
+---@private
+---@param info render.md.NodeInfo
+---@return render.md.CustomComponent?
+function Handler:get_callout(info)
+    local text = info.text:lower()
+    for _, callout in pairs(self.config.callout) do
+        if text == callout.raw:lower() then
+            return callout
+        end
+    end
+    return nil
+end
+
+---@private
+---@param info render.md.NodeInfo
+---@return render.md.CustomComponent?
+function Handler:get_checkbox(info)
+    local text = info.text
+    for _, checkbox in pairs(self.config.checkbox.custom) do
+        if text == checkbox.raw then
+            return checkbox
+        end
+    end
+    return nil
 end
 
 ---@private
@@ -99,13 +124,16 @@ function Handler:callout(info, callout)
     end
 
     local text, conceal = custom_title()
-    self.marks:add(true, info.start_row, info.start_col, {
+    local added = self.marks:add(true, info.start_row, info.start_col, {
         end_row = info.end_row,
         end_col = info.end_col,
         virt_text = { { text, callout.highlight } },
         virt_text_pos = 'overlay',
         conceal = conceal,
     })
+    if added then
+        self.context:add_component(info, callout)
+    end
 end
 
 ---@private
@@ -117,13 +145,16 @@ function Handler:checkbox(info, checkbox)
     end
     local inline = self.config.checkbox.position == 'inline'
     local icon, highlight = checkbox.rendered, checkbox.highlight
-    self.marks:add(true, info.start_row, info.start_col, {
+    local added = self.marks:add(true, info.start_row, info.start_col, {
         end_row = info.end_row,
         end_col = info.end_col,
         virt_text = { { inline and icon or str.pad_to(info.text, icon), highlight } },
         virt_text_pos = 'inline',
         conceal = '',
     })
+    if added then
+        self.context:add_component(info, checkbox)
+    end
 end
 
 ---@private

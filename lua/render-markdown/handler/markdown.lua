@@ -1,5 +1,4 @@
 local Context = require('render-markdown.core.context')
-local component = require('render-markdown.core.component')
 local list = require('render-markdown.core.list')
 local logger = require('render-markdown.core.logger')
 local state = require('render-markdown.state')
@@ -106,14 +105,16 @@ function Handler:list_marker(info)
         if not self.config.checkbox.enabled then
             return false
         end
+        if self.context:get_component(info) ~= nil then
+            return true
+        end
         if info:sibling('task_list_marker_unchecked') ~= nil then
             return true
         end
         if info:sibling('task_list_marker_checked') ~= nil then
             return true
         end
-        local paragraph = info:sibling('paragraph')
-        return paragraph ~= nil and component.checkbox(self.config, paragraph.text, 'starts') ~= nil
+        return false
     end
     if sibling_checkbox() then
         -- Hide the list marker for checkboxes rather than replacing with a bullet point
