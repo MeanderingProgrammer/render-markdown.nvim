@@ -2,23 +2,6 @@
 
 Plugin to improve viewing Markdown files in Neovim
 
-> [!NOTE]
->
-> Repo has been renamed from `markdown.nvim` to make things more consistent.
->
-> Github will redirect all requests so nothing should break for most users.
->
-> For `lazy.nvim` & `tokyonight.nvim` users changing the plugin name will remove
-> custom highlights until the following is merged [#620](https://github.com/folke/tokyonight.nvim/pull/620).
->
-> In the meantime you can fix this by adding the following to your config:
->
-> ```lua
-> require('tokyonight').setup({
->     plugins = { markdown = true },
-> })
-> ```
-
 <!-- panvimdoc-ignore-start -->
 
 |           |         |
