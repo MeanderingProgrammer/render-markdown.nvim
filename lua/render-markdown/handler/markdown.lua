@@ -116,9 +116,15 @@ function Handler:list_marker(info)
         end
         return false
     end
+
+    -- List markers from tree-sitter should have leading spaces removed, however there are known
+    -- edge cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
+    -- As a result we account for leading spaces here, can remove if this gets fixed upstream
+    local leading_spaces = str.leading_spaces(info.text)
+
     if sibling_checkbox() then
         -- Hide the list marker for checkboxes rather than replacing with a bullet point
-        self.marks:add(true, info.start_row, info.start_col, {
+        self.marks:add(true, info.start_row, info.start_col + leading_spaces, {
             end_row = info.end_row,
             end_col = info.end_col,
             conceal = '',
@@ -133,10 +139,6 @@ function Handler:list_marker(info)
         if icon == nil then
             return
         end
-        -- List markers from tree-sitter should have leading spaces removed, however there are known
-        -- edge cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
-        -- As a result we handle leading spaces here, can remove if this gets fixed upstream
-        local leading_spaces = str.leading_spaces(info.text)
         self.marks:add(true, info.start_row, info.start_col, {
             end_row = info.end_row,
             end_col = info.end_col,
