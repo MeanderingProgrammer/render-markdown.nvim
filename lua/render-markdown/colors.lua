@@ -80,15 +80,12 @@ end
 
 ---@param highlight string
 ---@return string
-function M.inverse(highlight)
+function M.inverse_bg(highlight)
     local name = string.format('%s_Inverse_%s', M.prefix, highlight)
     if not vim.tbl_contains(cache, name) then
         local hl = M.get_hl(highlight)
         vim.api.nvim_set_hl(0, name, {
             fg = hl.bg,
-            bg = hl.fg,
-            ---@diagnostic disable-next-line: undefined-field
-            ctermbg = hl.ctermfg,
             ---@diagnostic disable-next-line: undefined-field
             ctermfg = hl.ctermbg,
         })

@@ -139,14 +139,14 @@ function Render:background(icon_added)
         local border_width = width - self.data.col
         if not icon_added and self.context:hidden(self.data.code_info) and self:delim_hidden(self.data.start_row) then
             self.marks:add(true, self.data.start_row, self.data.col, {
-                virt_text = { { self.code.above:rep(border_width), colors.inverse(self.code.highlight) } },
+                virt_text = { { self.code.above:rep(border_width), colors.inverse_bg(self.code.highlight) } },
                 virt_text_pos = 'overlay',
             })
             self.data.start_row = self.data.start_row + 1
         end
         if self:delim_hidden(self.data.end_row - 1) then
             self.marks:add(true, self.data.end_row - 1, self.data.col, {
-                virt_text = { { self.code.below:rep(border_width), colors.inverse(self.code.highlight) } },
+                virt_text = { { self.code.below:rep(border_width), colors.inverse_bg(self.code.highlight) } },
                 virt_text_pos = 'overlay',
             })
             self.data.end_row = self.data.end_row - 1

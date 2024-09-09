@@ -166,7 +166,7 @@ function Render:border(width)
         return
     end
 
-    local background = colors.inverse(self.data.background)
+    local background = colors.inverse_bg(self.data.background)
     local prefix = self.heading.border_prefix and self.data.level or 0
 
     local line_above = {
