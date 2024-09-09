@@ -152,7 +152,6 @@
 ---@field public log_level render.md.config.LogLevel
 ---@field public file_types string[]
 ---@field public injections table<string, render.md.Injection>
----@field public acknowledge_conflicts boolean
 ---@field public latex render.md.Latex
 ---@field public overrides render.md.ConfigOverrides
 ---@field public custom_handlers table<string, render.md.Handler>

@@ -5,7 +5,7 @@ local M = {}
 
 ---@private
 ---@type string
-M.version = '6.3.3'
+M.version = '6.3.4'
 
 function M.check()
     vim.health.start('render-markdown.nvim [version]')
@@ -47,15 +47,14 @@ function M.check()
     end
 
     vim.health.start('render-markdown.nvim [conflicts]')
-    if state.acknowledge_conflicts then
-        vim.health.ok('conflicts acknowledged')
-    else
-        M.check_plugin('headlines')
-        M.check_plugin('obsidian', {
-            'Ensure UI is disabled by setting ui = { enable = false } in obsidian.nvim config',
-            'Acknowledge conflicts to avoid this warning by setting { acknowledge_conflicts = true }',
-        })
-    end
+    M.check_plugin('headlines')
+    M.check_plugin('obsidian', function(obsidian)
+        if obsidian.get_client().opts.ui.enable == false then
+            return nil
+        else
+            return 'Ensure UI is disabled by setting ui = { enable = false } in obsidian.nvim config'
+        end
+    end)
 end
 
 ---@private
@@ -111,15 +110,20 @@ end
 
 ---@private
 ---@param name string
----@param advice? string[]
-function M.check_plugin(name, advice)
-    local has_plugin = pcall(require, name)
+---@param validate? fun(plugin: any): string?
+function M.check_plugin(name, validate)
+    local has_plugin, plugin = pcall(require, name)
     if not has_plugin then
         vim.health.ok(name .. ': not installed')
-    elseif advice == nil then
+    elseif validate == nil then
         vim.health.error(name .. ': installed')
     else
-        vim.health.warn(name .. ': installed', advice)
+        local advice = validate(plugin)
+        if advice == nil then
+            vim.health.ok(name .. ': installed but should not conflict')
+        else
+            vim.health.error(name .. ': installed', advice)
+        end
     end
 end
 

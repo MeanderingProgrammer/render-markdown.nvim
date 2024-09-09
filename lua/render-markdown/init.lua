@@ -180,7 +180,6 @@ local M = {}
 ---@field public log_level? render.md.config.LogLevel
 ---@field public file_types? string[]
 ---@field public injections? table<string, render.md.UserInjection>
----@field public acknowledge_conflicts? boolean
 ---@field public latex? render.md.UserLatex
 ---@field public overrides? render.md.UserConfigOverrides
 ---@field public custom_handlers? table<string, render.md.Handler>
@@ -275,8 +274,6 @@ M.default_config = {
     -- Vim modes that will show a rendered view of the markdown file
     -- All other modes will be uneffected by this plugin
     render_modes = { 'n', 'c' },
-    -- Set to avoid seeing warnings for conflicts in health check
-    acknowledge_conflicts = false,
     anti_conceal = {
         -- This enables hiding any added text on the line the cursor is on
         enabled = true,

@@ -10,7 +10,6 @@ local configs = {}
 ---@field enabled boolean
 ---@field log_level render.md.config.LogLevel
 ---@field file_types string[]
----@field acknowledge_conflicts boolean
 ---@field latex render.md.Latex
 ---@field custom_handlers table<string, render.md.Handler>
 ---@field markdown_query vim.treesitter.Query
@@ -37,7 +36,6 @@ function M.setup(default_config, user_config)
     M.enabled = config.enabled
     M.log_level = config.log_level
     M.file_types = config.file_types
-    M.acknowledge_conflicts = config.acknowledge_conflicts
     M.latex = config.latex
     M.custom_handlers = config.custom_handlers
     vim.schedule(function()
@@ -425,7 +423,6 @@ function M.validate()
         log_level = one_of(config.log_level, { 'debug', 'error' }, {}, false),
         file_types = string_array(config.file_types, false),
         injections = { config.injections, 'table' },
-        acknowledge_conflicts = { config.acknowledge_conflicts, 'boolean' },
         latex = { config.latex, 'table' },
         overrides = { config.overrides, 'table' },
         custom_handlers = { config.custom_handlers, 'table' },
