@@ -2,6 +2,16 @@
 
 ## Pre-release
 
+### Features
+
+- add missing obsidian aliases [74b77c7](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/74b77c794d64d9d5a27c2a38ac254d9654fcad1f)
+- store components in context, avoids duplicate queries [d228a3c](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/d228a3cb40f9e9687c3142cca1f46c4d3e985f7a)
+
+### Bug Fixes
+
+- only create foreground when inversing highlight [#154](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/154)
+  [12fdb6f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/12fdb6f6623cb7e20da75be68858f12e1e578ffd)
+
 ## 6.3.0 (2024-08-29)
 
 ### Features
