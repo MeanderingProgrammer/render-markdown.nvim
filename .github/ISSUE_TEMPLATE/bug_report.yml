@@ -6,7 +6,7 @@ body:
   - type: input
     attributes:
       label: Neovim version (nvim -v)
-      placeholder: 0.9.5
+      placeholder: 0.10.0
     validations:
       required: true
   - type: input
@@ -55,7 +55,7 @@ body:
     attributes:
       label: Confirmations
       options:
-      - label: I have provided markdown text for any screenshots used in my description & understand that my issue will be closed if I have not
+      - label: I have provided text for all screenshots & understand that my issue will be closed if I have not
         required: true
   - type: textarea
     attributes:
