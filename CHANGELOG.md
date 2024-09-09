@@ -6,6 +6,8 @@
 
 - add missing obsidian aliases [74b77c7](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/74b77c794d64d9d5a27c2a38ac254d9654fcad1f)
 - store components in context, avoids duplicate queries [d228a3c](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/d228a3cb40f9e9687c3142cca1f46c4d3e985f7a)
+- improve health check for obsidian.nvim conflict [4d2aea3](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4d2aea341a5d0bf2a01adc0ad4ecf5d4877e1bd0)
+  - anyone using `acknowledge_conflicts` in their config should remove it
 
 ### Bug Fixes
 

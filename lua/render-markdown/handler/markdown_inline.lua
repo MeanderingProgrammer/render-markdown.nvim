@@ -109,7 +109,7 @@ function Handler:callout(info, callout)
     end
 
     ---Support for overriding title: https://help.obsidian.md/Editing+and+formatting/Callouts#Change+the+title
-    ---@return string, string?
+    ---@return string, boolean
     local function custom_title()
         local content = info:parent('inline')
         if content ~= nil then
@@ -117,10 +117,10 @@ function Handler:callout(info, callout)
             if #line > #callout.raw and vim.startswith(line:lower(), callout.raw:lower()) then
                 local icon = str.split(callout.rendered, ' ')[1]
                 local title = vim.trim(line:sub(#callout.raw + 1))
-                return icon .. ' ' .. title, ''
+                return icon .. ' ' .. title, true
             end
         end
-        return callout.rendered, nil
+        return callout.rendered, false
     end
 
     local text, conceal = custom_title()
@@ -129,7 +129,7 @@ function Handler:callout(info, callout)
         end_col = info.end_col,
         virt_text = { { text, callout.highlight } },
         virt_text_pos = 'overlay',
-        conceal = conceal,
+        conceal = conceal and '' or nil,
     })
     if added then
         self.context:add_component(info, callout)
@@ -160,12 +160,18 @@ end
 ---@private
 ---@param info render.md.NodeInfo
 function Handler:wiki_link(info)
-    if not self.config.link.enabled then
+    local link = self.config.link
+    if not link.enabled then
         return
     end
-    local text = info.text:sub(2, -2)
-    local parts = str.split(text, '|')
-    local icon, highlight = self:dest_virt_text(parts[1])
+
+    local parts = str.split(info.text:sub(2, -2), '|')
+    local link_component = self:link_component(parts[1])
+
+    local icon, highlight = link.hyperlink, link.highlight
+    if link_component ~= nil then
+        icon, highlight = link_component.icon, link_component.highlight
+    end
     local link_text = icon .. parts[#parts]
     local added = self.marks:add(true, info.start_row, info.start_col - 1, {
         end_row = info.end_row,
@@ -182,60 +188,56 @@ end
 ---@private
 ---@param info render.md.NodeInfo
 function Handler:link(info)
-    if not self.config.link.enabled then
+    local link = self.config.link
+    if not link.enabled then
         return
     end
-    local link_text, highlight, conceal = self:link_virt_text(info)
-    local added = self.marks:add(true, info.start_row, info.start_col, {
-        end_row = info.end_row,
-        end_col = info.end_col,
-        virt_text = { { link_text, highlight } },
-        virt_text_pos = 'inline',
-        conceal = conceal,
-    })
-    if conceal == nil and added then
-        self.context:add_offset(info, str.width(link_text))
-    end
-end
 
----@private
----@param info render.md.NodeInfo
----@return string, string, string?
-function Handler:link_virt_text(info)
-    local link = self.config.link
-    if info.type == 'image' then
-        return link.image, link.highlight
-    elseif info.type == 'email_autolink' then
-        return link.email .. info.text:sub(2, -2), link.highlight, ''
-    elseif info.type == 'inline_link' then
-        local destination = info:child('link_destination')
-        if destination ~= nil then
-            return self:dest_virt_text(destination.text)
+    if info.type == 'email_autolink' then
+        local link_text = link.email .. info.text:sub(2, -2)
+        self.marks:add(true, info.start_row, info.start_col, {
+            end_row = info.end_row,
+            end_col = info.end_col,
+            virt_text = { { link_text, link.highlight } },
+            virt_text_pos = 'inline',
+            conceal = '',
+        })
+    else
+        local link_text, highlight = link.hyperlink, link.highlight
+        if info.type == 'image' then
+            link_text = link.image
+        elseif info.type == 'inline_link' then
+            local destination = info:child('link_destination')
+            local link_component = destination ~= nil and self:link_component(destination.text) or nil
+            if link_component ~= nil then
+                link_text, highlight = link_component.icon, link_component.highlight
+            end
+        end
+
+        local added = self.marks:add(true, info.start_row, info.start_col, {
+            end_row = info.end_row,
+            end_col = info.end_col,
+            virt_text = { { link_text, highlight } },
+            virt_text_pos = 'inline',
+        })
+        if added then
+            self.context:add_offset(info, str.width(link_text))
         end
     end
-    return link.hyperlink, link.highlight
 end
 
 ---@private
 ---@param destination string
----@return string, string
-function Handler:dest_virt_text(destination)
-    local link = self.config.link
-
+---@return render.md.LinkComponent?
+function Handler:link_component(destination)
     ---@type render.md.LinkComponent[]
     local link_components = vim.tbl_filter(function(link_component)
         return destination:find(link_component.pattern) ~= nil
-    end, link.custom)
+    end, self.config.link.custom)
     table.sort(link_components, function(a, b)
         return str.width(a.pattern) < str.width(b.pattern)
     end)
-
-    if #link_components > 0 then
-        local link_component = link_components[#link_components]
-        return link_component.icon, link_component.highlight
-    else
-        return link.hyperlink, link.highlight
-    end
+    return link_components[#link_components]
 end
 
 ---@class render.md.handler.MarkdownInline: render.md.Handler

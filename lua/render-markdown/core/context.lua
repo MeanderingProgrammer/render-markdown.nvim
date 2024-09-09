@@ -74,6 +74,9 @@ end
 ---@param info render.md.NodeInfo
 ---@param amount integer
 function Context:add_offset(info, amount)
+    if amount == 0 then
+        return
+    end
     local row = info.start_row
     if self.links[row] == nil then
         self.links[row] = {}
