@@ -8,6 +8,7 @@
 - store components in context, avoids duplicate queries [d228a3c](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/d228a3cb40f9e9687c3142cca1f46c4d3e985f7a)
 - improve health check for obsidian.nvim conflict [4d2aea3](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4d2aea341a5d0bf2a01adc0ad4ecf5d4877e1bd0)
   - anyone using `acknowledge_conflicts` in their config should remove it
+- performance getting callouts and checkboxes [5513e28](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/5513e283973627385aec9758b00fc018e3a8303f)
 
 ### Bug Fixes
 
