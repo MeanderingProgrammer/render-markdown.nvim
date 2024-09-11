@@ -3,7 +3,7 @@ local str = require('render-markdown.core.str')
 
 ---@class render.md.Renderer
 ---@field protected marks render.md.Marks
----@field protected config render.md.BufferConfig
+---@field protected config render.md.buffer.Config
 ---@field protected context render.md.Context
 ---@field protected info render.md.NodeInfo
 ---@field setup fun(self: render.md.Renderer): boolean
@@ -12,7 +12,7 @@ local Base = {}
 Base.__index = Base
 
 ---@param marks render.md.Marks
----@param config render.md.BufferConfig
+---@param config render.md.buffer.Config
 ---@param context render.md.Context
 ---@param info render.md.NodeInfo
 ---@return render.md.Renderer

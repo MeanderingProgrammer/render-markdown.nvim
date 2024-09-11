@@ -6,7 +6,7 @@ local str = require('render-markdown.core.str')
 
 ---@class render.md.handler.buf.MarkdownInline
 ---@field private marks render.md.Marks
----@field private config render.md.BufferConfig
+---@field private config render.md.buffer.Config
 ---@field private context render.md.Context
 local Handler = {}
 Handler.__index = Handler
@@ -55,13 +55,13 @@ end
 ---@private
 ---@param info render.md.NodeInfo
 function Handler:shortcut(info)
-    local callout = self:get_callout(info)
+    local callout = self.config.component.callout[info.text:lower()]
     if callout ~= nil then
         self:callout(info, callout)
         return
     end
 
-    local checkbox = self:get_checkbox(info)
+    local checkbox = self.config.component.checkbox[info.text:lower()]
     if checkbox ~= nil then
         self:checkbox(info, checkbox)
         return
@@ -72,32 +72,6 @@ function Handler:shortcut(info)
         self:wiki_link(info)
         return
     end
-end
-
----@private
----@param info render.md.NodeInfo
----@return render.md.CustomComponent?
-function Handler:get_callout(info)
-    local text = info.text:lower()
-    for _, callout in pairs(self.config.callout) do
-        if text == callout.raw:lower() then
-            return callout
-        end
-    end
-    return nil
-end
-
----@private
----@param info render.md.NodeInfo
----@return render.md.CustomComponent?
-function Handler:get_checkbox(info)
-    local text = info.text
-    for _, checkbox in pairs(self.config.checkbox.custom) do
-        if text == checkbox.raw then
-            return checkbox
-        end
-    end
-    return nil
 end
 
 ---@private

@@ -6,7 +6,7 @@ local str = require('render-markdown.core.str')
 
 ---@class render.md.handler.buf.Markdown
 ---@field private marks render.md.Marks
----@field private config render.md.BufferConfig
+---@field private config render.md.buffer.Config
 ---@field private context render.md.Context
 ---@field private renderers table<string, render.md.Renderer>
 local Handler = {}

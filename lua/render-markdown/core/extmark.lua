@@ -19,7 +19,7 @@ function Extmark.new(namespace, buf, mark)
     return self
 end
 
----@param config render.md.BufferConfig
+---@param config render.md.buffer.Config
 ---@param row? integer
 function Extmark:render(config, row)
     if self:should_show(config.anti_conceal, row) then

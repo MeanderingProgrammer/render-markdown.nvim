@@ -96,7 +96,7 @@ function M.update(buf, win, parse)
 end
 
 ---@private
----@param config render.md.BufferConfig
+---@param config render.md.buffer.Config
 ---@param win integer
 ---@return 'default'|'rendered'
 function M.next_state(config, win)

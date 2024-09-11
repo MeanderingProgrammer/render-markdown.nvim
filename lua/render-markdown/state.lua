@@ -1,8 +1,9 @@
+local components = require('render-markdown.components')
 local presets = require('render-markdown.presets')
 local treesitter = require('render-markdown.core.treesitter')
 local util = require('render-markdown.core.util')
 
----@type table<integer, render.md.BufferConfig>
+---@type table<integer, render.md.buffer.Config>
 local configs = {}
 
 ---@class render.md.State
@@ -66,17 +67,18 @@ function M.modify_anti_conceal(amount)
 end
 
 ---@param buf integer
----@return render.md.BufferConfig
+---@return render.md.buffer.Config
 function M.get_config(buf)
     local config = configs[buf]
     if config == nil then
-        config = M.default_buffer_config()
+        local buf_config = M.default_buffer_config()
         for _, name in ipairs({ 'buftype', 'filetype' }) do
-            local override_config = M.config.overrides[name][util.get_buf(buf, name)]
-            if override_config ~= nil then
-                config = vim.tbl_deep_extend('force', config, override_config)
+            local override = M.config.overrides[name][util.get_buf(buf, name)]
+            if override ~= nil then
+                buf_config = vim.tbl_deep_extend('force', buf_config, override)
             end
         end
+        config = components.resolve(buf_config)
         configs[buf] = config
     end
     return config

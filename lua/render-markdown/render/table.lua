@@ -34,7 +34,7 @@ local Render = setmetatable({}, Base)
 Render.__index = Render
 
 ---@param marks render.md.Marks
----@param config render.md.BufferConfig
+---@param config render.md.buffer.Config
 ---@param context render.md.Context
 ---@param info render.md.NodeInfo
 ---@return render.md.Renderer
