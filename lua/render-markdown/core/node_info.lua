@@ -58,7 +58,12 @@ function NodeInfo:level()
     local parent = self.node:parent()
     while parent ~= nil and parent:type() ~= 'document' do
         if parent:type() == 'section' then
-            level = level + 1
+            local child = parent:child(0)
+            child = child and child:child(0)
+            local is_first_heading = child and child:type() == 'atx_h1_marker'
+            if not is_first_heading then
+                level = level + 1
+            end
         end
         parent = parent:parent()
     end
