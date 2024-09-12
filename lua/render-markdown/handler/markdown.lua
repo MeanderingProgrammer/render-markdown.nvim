@@ -69,21 +69,9 @@ function Handler:section(info)
         return
     end
 
-    local start_row = info.start_row
-    local heading_renderer = self.renderers.heading --[[@as render.md.render.Heading?]]
-    -- If heading borders are on, and we reuse an empty line in the buffer for the top border, that line needs to be
-    -- indented as well
-    if
-        self.config.heading.border
-        and heading_renderer
-        and heading_renderer:has_space_for_border('above', info, self.context.last_heading)
-    then
-        start_row = start_row - 1
-    end
-
     -- Each level stacks inline marks so we do not need to multiply spaces
     -- However skipping a level, i.e. 2 -> 5, will only add one level of spaces
-    for row = start_row, info.end_row - 1 do
+    for row = info.start_row, info.end_row - 1 do
         self.marks:add(false, row, 0, {
             priority = 0,
             virt_text = { { str.spaces(indent.per_level), 'Normal' } },

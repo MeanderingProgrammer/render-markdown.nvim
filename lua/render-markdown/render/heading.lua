@@ -72,18 +72,6 @@ function Render:render()
     self:conceal_underline()
 end
 
----@param position 'above'|'below'
----@param info render.md.NodeInfo
----@param last_heading integer
----@return boolean
-function Render:has_space_for_border(position, info, last_heading)
-    if position == 'above' then
-        return str.width(info:line('above')) == 0 and info.start_row - 1 ~= last_heading
-    else
-        return str.width(self.info:line('below')) == 0
-    end
-end
-
 ---@private
 ---@return integer
 function Render:icon()
@@ -186,7 +174,10 @@ function Render:border(width)
         { self.heading.above:rep(prefix), self.data.foreground },
         { self.heading.above:rep(width - self.heading.left_pad - prefix), background },
     }
-    if self:has_space_for_border('above', self.info, self.context.last_heading) then
+    if str.width(self.info:line('above')) == 0 and self.info.start_row - 1 ~= self.context.last_heading then
+        if self.data.level > 1 then
+            line_above = self:indent_virt_line(line_above, 1)
+        end
         self.marks:add(true, self.info.start_row - 1, 0, {
             virt_text = line_above,
             virt_text_pos = 'overlay',
@@ -203,7 +194,7 @@ function Render:border(width)
         { self.heading.below:rep(prefix), self.data.foreground },
         { self.heading.below:rep(width - self.heading.left_pad - prefix), background },
     }
-    if self:has_space_for_border('below', self.info, self.context.last_heading) then
+    if str.width(self.info:line('below')) == 0 then
         self.marks:add(true, self.info.end_row + 1, 0, {
             virt_text = line_below,
             virt_text_pos = 'overlay',
