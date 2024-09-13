@@ -152,7 +152,7 @@ function M.heading(row, level)
         row = { row },
         col = { 0 },
         sign_text = '󰫎 ',
-        sign_hl_group = M.hl('_' .. foreground .. '_' .. M.hl('Sign')),
+        sign_hl_group = M.hl_sign(foreground),
     }
     local result = { sign_mark }
     if row > 0 then
@@ -254,7 +254,7 @@ function M.code_language(row, col, name, win_col)
         row = { row },
         col = { col },
         sign_text = icon,
-        sign_hl_group = M.hl('_' .. highlight .. '_' .. M.hl('Sign')),
+        sign_hl_group = M.hl_sign(highlight),
     }
     ---@type render.md.MarkInfo
     local language_mark = {
@@ -280,7 +280,7 @@ function M.code_below(row, col, width)
     return {
         row = { row },
         col = { col },
-        virt_text = { { string.rep('▀', width), M.hl('_Inverse_' .. M.hl('Code')) } },
+        virt_text = { { string.rep('▀', width), M.hl_inverse('Code') } },
         virt_text_pos = 'overlay',
     }
 end
@@ -397,6 +397,19 @@ function M.table_border(row, section, lengths, indent)
             virt_text_pos = 'overlay',
         }
     end
+end
+
+---@private
+---@param highlight string
+---@return string
+function M.hl_sign(highlight)
+    return M.hl('_' .. highlight .. '_' .. M.hl('Sign'))
+end
+
+---@param base string
+---@return string
+function M.hl_inverse(base)
+    return M.hl('_Inverse_' .. M.hl(base))
 end
 
 ---@param suffix string

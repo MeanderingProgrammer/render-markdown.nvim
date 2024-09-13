@@ -52,19 +52,18 @@ function NodeInfo:has_error()
     return self.node:has_error()
 end
 
+---@param parent boolean
 ---@return integer
-function NodeInfo:parent_heading_level()
-    local parent = self:parent('section')
-    return parent ~= nil and parent:heading_level() or 1
-end
-
----@return integer
-function NodeInfo:heading_level()
-    assert(self.type == 'section', 'Node must be a section')
-    local heading = self:child('atx_heading')
+function NodeInfo:heading_level(parent)
+    local info = not parent and self or self:parent('section')
+    if info == nil then
+        return 0
+    end
+    assert(info.type == 'section', 'Node must be a section')
+    local heading = info:child('atx_heading')
     local node = heading ~= nil and heading.node:child(0) or nil
     -- Counts the number of hashtags in the heading marker
-    return node ~= nil and #vim.treesitter.get_node_text(node, self.buf) or 1
+    return node ~= nil and #vim.treesitter.get_node_text(node, self.buf) or 0
 end
 
 ---Walk through parent nodes, count the number of target nodes

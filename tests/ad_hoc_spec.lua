@@ -7,36 +7,22 @@ local util = require('tests.util')
 ---@param level integer
 ---@return render.md.MarkInfo[]
 local function setext_heading(start_row, end_row, level)
-    local icon = level == 1 and '󰲡 ' or '󰲣 '
-    local foreground = util.hl(string.format('H%d', level))
-    local background = util.hl(string.format('H%dBg', level))
+    local result = util.heading(start_row, level)
+    local background_mark = table.remove(result, #result)
+    local icon_mark = table.remove(result, #result)
 
-    ---@type render.md.MarkInfo
-    local sign_mark = {
-        row = { start_row },
-        col = { 0 },
-        sign_text = '󰫎 ',
-        sign_hl_group = util.hl('_' .. foreground .. '_' .. util.hl('Sign')),
-    }
-    local result = { sign_mark }
     for row = start_row, end_row do
-        ---@type render.md.MarkInfo
-        local background_mark = {
-            row = { row, row + 1 },
-            col = { 0, 0 },
-            hl_group = background,
-            hl_eol = true,
-        }
-        table.insert(result, background_mark)
+        local row_background_mark = vim.deepcopy(background_mark)
+        row_background_mark.row = { row, row + 1 }
+        table.insert(result, row_background_mark)
     end
-    ---@type render.md.MarkInfo
-    local icon_mark = {
-        row = { start_row, end_row + 1 },
-        col = { 0, 0 },
-        virt_text = { { icon, { foreground, background } } },
-        virt_text_pos = 'inline',
-    }
+
+    icon_mark.row = { start_row, end_row + 1 }
+    icon_mark.col = { 0, 0 }
+    icon_mark.virt_text[1][1] = vim.trim(icon_mark.virt_text[1][1]) .. ' '
+    icon_mark.virt_text_pos = 'inline'
     table.insert(result, 3, icon_mark)
+
     ---@type render.md.MarkInfo
     local conceal_mark = {
         row = { end_row, end_row },
@@ -44,6 +30,7 @@ local function setext_heading(start_row, end_row, level)
         conceal = '',
     }
     table.insert(result, #result, conceal_mark)
+
     return result
 end
 

@@ -512,6 +512,9 @@ require('render-markdown').setup({
         enabled = false,
         -- Amount of additional padding added for each heading level
         per_level = 2,
+        -- Heading levels <= this value will not be indented
+        -- Use 0 to begin indenting from the very first level
+        skip = 1,
     },
     -- Window options to use that change between rendered and raw view
     win_options = {
@@ -936,6 +939,9 @@ require('render-markdown').setup({
         enabled = false,
         -- Amount of additional padding added for each heading level
         per_level = 2,
+        -- Heading levels <= this value will not be indented
+        -- Use 0 to begin indenting from the very first level
+        skip = 1,
     },
 })
 ```

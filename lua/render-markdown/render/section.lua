@@ -23,8 +23,8 @@ function Render:setup()
         return false
     end
 
-    local current_level = self.info:heading_level()
-    local parent_level = self.info:parent_heading_level()
+    local current_level = self.info:heading_level(false)
+    local parent_level = math.max(self.info:heading_level(true), self.indent.skip)
     self.level_change = current_level - parent_level
 
     -- Nothing to do if there is not a change in level

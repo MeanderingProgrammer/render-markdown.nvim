@@ -47,7 +47,7 @@ function Base:indent_virt_line(line)
     if not indent.enabled then
         return line
     end
-    local level = self.info:parent_heading_level() - 1
+    local level = self.info:heading_level(true) - indent.skip
     if level <= 0 then
         return line
     end

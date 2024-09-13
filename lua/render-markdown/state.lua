@@ -386,6 +386,7 @@ function M.validate()
             append_errors(path .. '.indent', indent, {
                 enabled = { indent.enabled, 'boolean', nilable },
                 per_level = { indent.per_level, 'number', nilable },
+                skip = { indent.skip, 'number', nilable },
             })
         end
 
