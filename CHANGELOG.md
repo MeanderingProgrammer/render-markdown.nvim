@@ -9,6 +9,7 @@
 - improve health check for obsidian.nvim conflict [4d2aea3](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4d2aea341a5d0bf2a01adc0ad4ecf5d4877e1bd0)
   - anyone using `acknowledge_conflicts` in their config should remove it
 - performance getting callouts and checkboxes [5513e28](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/5513e283973627385aec9758b00fc018e3a8303f)
+- indent based on heading level rather than nesting [27cc6ce](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/27cc6ce2605a2d42900b02648673a1de9b8cb933)
 
 ### Bug Fixes
 
