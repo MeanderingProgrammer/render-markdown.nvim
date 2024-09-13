@@ -24,7 +24,7 @@ function Render:setup()
     end
 
     local current_level = self.info:heading_level(false)
-    local parent_level = math.max(self.info:heading_level(true), self.indent.skip)
+    local parent_level = math.max(self.info:heading_level(true), self.indent.skip_level)
     self.level_change = current_level - parent_level
 
     -- Nothing to do if there is not a change in level
@@ -36,13 +36,21 @@ function Render:setup()
 end
 
 function Render:render()
-    -- Include last empty line in previous section
-    -- Exclude if it is the only empty line in that section
-    local above, two_above = self.info:line('above', 1), self.info:line('above', 2)
-    local above_is_empty = str.width(above) == 0
-    local two_above_is_section = two_above ~= nil and vim.startswith(two_above, '#')
-    local start_offset = (above_is_empty and not two_above_is_section) and 1 or 0
-    local start_row = math.max(self.info.start_row - start_offset, 0)
+    local start_row = nil
+    if self.indent.skip_heading then
+        -- Exclude any lines potentially used by section heading
+        local second = self.info:line('first', 1)
+        local start_offset = str.width(second) == 0 and 1 or 0
+        start_row = self.info.start_row + 1 + start_offset
+    else
+        -- Include last empty line in previous section
+        -- Exclude if it is the only empty line in that section
+        local above, two_above = self.info:line('above', 1), self.info:line('above', 2)
+        local above_is_empty = str.width(above) == 0
+        local two_above_is_section = two_above ~= nil and vim.startswith(two_above, '#')
+        local start_offset = (above_is_empty and not two_above_is_section) and 1 or 0
+        start_row = math.max(self.info.start_row - start_offset, 0)
+    end
 
     -- Exclude last empty line in current section
     -- Include if it is the only empty line of the last subsection

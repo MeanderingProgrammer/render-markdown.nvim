@@ -18,7 +18,8 @@
 ---@class (exact) render.md.Indent
 ---@field public enabled boolean
 ---@field public per_level integer
----@field public skip integer
+---@field public skip_level integer
+---@field public skip_heading boolean
 
 ---@class (exact) render.md.Sign
 ---@field public enabled boolean

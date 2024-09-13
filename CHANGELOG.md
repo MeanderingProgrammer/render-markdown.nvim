@@ -10,6 +10,7 @@
   - anyone using `acknowledge_conflicts` in their config should remove it
 - performance getting callouts and checkboxes [5513e28](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/5513e283973627385aec9758b00fc018e3a8303f)
 - indent based on heading level rather than nesting [27cc6ce](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/27cc6ce2605a2d42900b02648673a1de9b8cb933)
+- configurable starting indent level [cdb58fc](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/cdb58fc97c49a1ab75b35d99183c35b5863e845a)
 
 ### Bug Fixes
 
@@ -18,6 +19,7 @@
 - leading spaces in checkbox bullet [#158](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/158)
   [06337f6](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/06337f64367ef1f1115f0a9ba41e49b84a04b1a4)
 - heading borders with indentation [#164](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/164)
+- indenting heading borders with single empty line between [2ddb145](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/2ddb145c9e60267a723083b5966189b13febc72b)
 
 ### Collaborator Shoutouts
 

@@ -181,7 +181,7 @@ function Render:border(width)
         })
     else
         self.marks:add(false, self.info.start_row, 0, {
-            virt_lines = { self:indent_virt_line(line_above) },
+            virt_lines = { self:indent_virt_line(line_above, self.data.level) },
             virt_lines_above = true,
         })
     end
@@ -199,7 +199,7 @@ function Render:border(width)
         self.context.last_heading = self.info.end_row + 1
     else
         self.marks:add(false, self.info.end_row, 0, {
-            virt_lines = { self:indent_virt_line(line_below) },
+            virt_lines = { self:indent_virt_line(line_below, self.data.level) },
         })
     end
 end

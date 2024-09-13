@@ -41,13 +41,20 @@ end
 
 ---@protected
 ---@param line { [1]: string, [2]: string }[]
+---@param level? integer
 ---@return { [1]: string, [2]: string }[]
-function Base:indent_virt_line(line)
+function Base:indent_virt_line(line, level)
     local indent = self.config.indent
     if not indent.enabled then
         return line
     end
-    local level = self.info:heading_level(true) - indent.skip
+    if level == nil then
+        level = self.info:heading_level(true)
+    elseif indent.skip_heading then
+        local parent = self.info:parent('section')
+        level = parent ~= nil and parent:heading_level(true) or 0
+    end
+    level = level - indent.skip_level
     if level <= 0 then
         return line
     end

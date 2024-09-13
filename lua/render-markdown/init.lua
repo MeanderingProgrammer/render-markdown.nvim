@@ -29,7 +29,8 @@ local M = {}
 ---@class (exact) render.md.UserIndent
 ---@field public enabled? boolean
 ---@field public per_level? integer
----@field public skip? integer
+---@field public skip_level? integer
+---@field public skip_heading? boolean
 
 ---@class (exact) render.md.UserSign
 ---@field public enabled? boolean
@@ -579,7 +580,9 @@ M.default_config = {
         per_level = 2,
         -- Heading levels <= this value will not be indented
         -- Use 0 to begin indenting from the very first level
-        skip = 1,
+        skip_level = 1,
+        -- Do not indent heading titles, only the body
+        skip_heading = false,
     },
     -- Window options to use that change between rendered and raw view
     win_options = {
