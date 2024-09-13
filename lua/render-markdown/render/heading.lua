@@ -175,9 +175,6 @@ function Render:border(width)
         { self.heading.above:rep(width - self.heading.left_pad - prefix), background },
     }
     if str.width(self.info:line('above')) == 0 and self.info.start_row - 1 ~= self.context.last_heading then
-        if self.data.level > 1 then
-            line_above = self:indent_virt_line(line_above, 1)
-        end
         self.marks:add(true, self.info.start_row - 1, 0, {
             virt_text = line_above,
             virt_text_pos = 'overlay',

@@ -64,6 +64,7 @@ function M.heading(row, level)
     local icons = { '󰲡 ', ' 󰲣 ', '  󰲥 ', '   󰲧 ', '    󰲩 ', '     󰲫 ' }
     local foreground = M.hl(string.format('H%d', level))
     local background = M.hl(string.format('H%dBg', level))
+
     ---@type render.md.MarkInfo
     local sign_mark = {
         row = { row },
@@ -71,9 +72,8 @@ function M.heading(row, level)
         sign_text = '󰫎 ',
         sign_hl_group = M.hl('_' .. foreground .. '_' .. M.hl('Sign')),
     }
-    if row == 0 then
-        return { sign_mark }
-    else
+    local result = { sign_mark }
+    if row > 0 then
         ---@type render.md.MarkInfo
         local icon_mark = {
             row = { row, row },
@@ -88,8 +88,9 @@ function M.heading(row, level)
             hl_group = background,
             hl_eol = true,
         }
-        return { icon_mark, background_mark, sign_mark }
+        vim.list_extend(result, { icon_mark, background_mark })
     end
+    return result
 end
 
 ---@param row integer
@@ -166,8 +167,6 @@ function M.code_language(row, col, name, win_col)
         icon, highlight = '󱘗 ', 'MiniIconsOrange'
     end
 
-    local result = {}
-
     ---@type render.md.MarkInfo
     local sign_mark = {
         row = { row },
@@ -175,12 +174,6 @@ function M.code_language(row, col, name, win_col)
         sign_text = icon,
         sign_hl_group = M.hl('_' .. highlight .. '_' .. M.hl('Sign')),
     }
-    table.insert(result, sign_mark)
-
-    if win_col ~= nil then
-        table.insert(result, M.code_hide(row, col, win_col))
-    end
-
     ---@type render.md.MarkInfo
     local language_mark = {
         row = { row },
@@ -188,7 +181,12 @@ function M.code_language(row, col, name, win_col)
         virt_text = { { icon .. name, { highlight, M.hl('Code') } } },
         virt_text_pos = 'inline',
     }
-    return vim.list_extend(result, { M.code_row(row, col), language_mark })
+    local result = { sign_mark, language_mark }
+    if win_col ~= nil then
+        table.insert(result, M.code_hide(row, col, win_col))
+    end
+    table.insert(result, M.code_row(row, col))
+    return result
 end
 
 ---@param row integer
@@ -275,8 +273,9 @@ end
 ---@param row integer
 ---@param section 'above'|'delimiter'|'below'
 ---@param lengths integer[]
+---@param indent? integer
 ---@return render.md.MarkInfo
-function M.table_border(row, section, lengths)
+function M.table_border(row, section, lengths, indent)
     local border
     local highlight
     if section == 'above' then
@@ -296,11 +295,15 @@ function M.table_border(row, section, lengths)
     local value = border[1] .. table.concat(parts, border[2]) .. border[3]
 
     if vim.tbl_contains({ 'above', 'below' }, section) then
+        local line = { { value, M.hl(highlight) } }
+        if indent ~= nil then
+            table.insert(line, 1, { string.rep(' ', indent), 'Normal' })
+        end
         ---@type render.md.MarkInfo
         return {
             row = { row },
             col = { 0 },
-            virt_lines = { { { value, M.hl(highlight) } } },
+            virt_lines = { line },
             virt_lines_above = section == 'above',
         }
     else
@@ -322,6 +325,7 @@ end
 
 ---@return render.md.MarkInfo[]
 function M.get_actual_marks()
+    ---@type render.md.MarkInfo[]
     local actual = {}
     local marks = vim.api.nvim_buf_get_extmarks(0, ui.namespace, 0, -1, { details = true })
     for _, mark in ipairs(marks) do
@@ -343,6 +347,64 @@ function M.get_actual_marks()
         }
         table.insert(actual, mark_info)
     end
+
+    ---@param a render.md.MarkInfo
+    ---@param b render.md.MarkInfo
+    ---@param getter fun(mark: render.md.MarkInfo): number[]
+    ---@return boolean?
+    local function compare_ints(a, b, getter)
+        local as, bs = getter(a), getter(b)
+        for i = 1, math.max(#as, #bs) do
+            local av, bv = as[math.min(i, #as)], bs[math.min(i, #bs)]
+            if av ~= bv then
+                return av < bv
+            end
+        end
+        return nil
+    end
+
+    table.sort(actual, function(a, b)
+        local row_comp = compare_ints(a, b, function(mark)
+            if mark.virt_lines == nil then
+                return mark.row
+            end
+            local offset = mark.virt_lines_above and -0.5 or 0.5
+            return vim.iter(mark.row)
+                :map(function(row)
+                    return row + offset
+                end)
+                :totable()
+        end)
+        if row_comp ~= nil then
+            return row_comp
+        end
+
+        local col_comp = compare_ints(a, b, function(mark)
+            if mark.virt_text_win_col == nil then
+                return mark.col
+            else
+                return { mark.virt_text_win_col }
+            end
+        end)
+        if col_comp ~= nil then
+            return col_comp
+        end
+
+        -- Higher priority for inline text
+        local a_inline, b_inline = a.virt_text_pos == 'inline', b.virt_text_pos == 'inline'
+        if a_inline ~= b_inline then
+            return a_inline
+        end
+
+        -- Lower priority for signs
+        local a_sign, b_sign = a.sign_text ~= nil, b.sign_text ~= nil
+        if a_sign ~= b_sign then
+            return not a_sign
+        end
+
+        return false
+    end)
+
     return actual
 end
 

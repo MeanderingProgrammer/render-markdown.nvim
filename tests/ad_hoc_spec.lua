@@ -11,17 +11,14 @@ local function setext_heading(start_row, end_row, level)
     local foreground = util.hl(string.format('H%d', level))
     local background = util.hl(string.format('H%dBg', level))
 
-    local result = {}
-
     ---@type render.md.MarkInfo
-    local icon_mark = {
-        row = { start_row, end_row + 1 },
-        col = { 0, 0 },
-        virt_text = { { icon, { foreground, background } } },
-        virt_text_pos = 'inline',
+    local sign_mark = {
+        row = { start_row },
+        col = { 0 },
+        sign_text = '󰫎 ',
+        sign_hl_group = util.hl('_' .. foreground .. '_' .. util.hl('Sign')),
     }
-    table.insert(result, icon_mark)
-
+    local result = { sign_mark }
     for row = start_row, end_row do
         ---@type render.md.MarkInfo
         local background_mark = {
@@ -32,23 +29,21 @@ local function setext_heading(start_row, end_row, level)
         }
         table.insert(result, background_mark)
     end
-
+    ---@type render.md.MarkInfo
+    local icon_mark = {
+        row = { start_row, end_row + 1 },
+        col = { 0, 0 },
+        virt_text = { { icon, { foreground, background } } },
+        virt_text_pos = 'inline',
+    }
+    table.insert(result, 3, icon_mark)
     ---@type render.md.MarkInfo
     local conceal_mark = {
         row = { end_row, end_row },
         col = { 0, 3 },
         conceal = '',
     }
-    table.insert(result, conceal_mark)
-
-    ---@type render.md.MarkInfo
-    local sign_mark = {
-        row = { start_row },
-        col = { 0 },
-        sign_text = '󰫎 ',
-        sign_hl_group = util.hl('_' .. foreground .. '_' .. util.hl('Sign')),
-    }
-    table.insert(result, 3, sign_mark)
+    table.insert(result, #result, conceal_mark)
     return result
 end
 

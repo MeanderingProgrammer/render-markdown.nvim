@@ -52,13 +52,13 @@ describe('list_table.md', function()
         vim.list_extend(expected, util.heading(row:increment(5), 1))
 
         vim.list_extend(expected, {
-            util.table_pipe(row:increment(2), 0, true),
-            util.table_border(row:get(), 'above', { 8, 15, 7, 6 }),
+            util.table_border(row:increment(2), 'above', { 8, 15, 7, 6 }),
+            util.table_pipe(row:get(), 0, true),
             util.inline_code(row:get(), 2, 8),
-            util.table_pipe(row:get(), 9, true),
             util.table_padding(row:get(), 9, 2),
-            util.table_pipe(row:get(), 25, true),
+            util.table_pipe(row:get(), 9, true),
             util.table_padding(row:get(), 25, 2),
+            util.table_pipe(row:get(), 25, true),
             util.table_pipe(row:get(), 33, true),
             util.table_pipe(row:get(), 40, true),
         })
@@ -66,22 +66,22 @@ describe('list_table.md', function()
         vim.list_extend(expected, {
             util.table_pipe(row:increment(), 0, false),
             util.inline_code(row:get(), 2, 8),
-            util.table_pipe(row:get(), 9, false),
             util.table_padding(row:get(), 9, 2),
-            util.table_pipe(row:get(), 25, false),
+            util.table_pipe(row:get(), 9, false),
             util.table_padding(row:get(), 25, 4),
+            util.table_pipe(row:get(), 25, false),
             util.table_pipe(row:get(), 33, false),
             util.table_pipe(row:get(), 40, false),
         })
         vim.list_extend(expected, {
             util.table_pipe(row:increment(), 0, false),
-            util.table_border(row:get(), 'below', { 8, 15, 7, 6 }),
             util.table_pipe(row:get(), 9, false),
             util.link(row:get(), 11, 24, 'link'),
-            util.table_pipe(row:get(), 25, false),
             util.table_padding(row:get(), 25, 7),
+            util.table_pipe(row:get(), 25, false),
             util.table_pipe(row:get(), 33, false),
             util.table_pipe(row:get(), 40, false),
+            util.table_border(row:get(), 'below', { 8, 15, 7, 6 }),
         })
 
         local actual = util.get_actual_marks()

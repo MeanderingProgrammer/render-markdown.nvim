@@ -23,6 +23,7 @@ function Handler.new(buf)
         code = require('render-markdown.render.code'),
         heading = require('render-markdown.render.heading'),
         quote = require('render-markdown.render.quote'),
+        section = require('render-markdown.render.section'),
         table = require('render-markdown.render.table'),
     }
     return self
@@ -38,8 +39,6 @@ function Handler:parse(root)
             if render:setup() then
                 render:render()
             end
-        elseif capture == 'section' then
-            self:section(info)
         elseif capture == 'dash' then
             self:dash(info)
         elseif capture == 'list_marker' then
@@ -53,31 +52,6 @@ function Handler:parse(root)
         end
     end)
     return self.marks:get()
-end
-
----@private
----@param info render.md.NodeInfo
-function Handler:section(info)
-    local indent = self.config.indent
-    if not indent.enabled then
-        return
-    end
-
-    -- Do not add any indentation on unknown or first level
-    local heading = info:child('atx_heading')
-    if heading == nil or heading:child('atx_h1_marker') ~= nil then
-        return
-    end
-
-    -- Each level stacks inline marks so we do not need to multiply spaces
-    -- However skipping a level, i.e. 2 -> 5, will only add one level of spaces
-    for row = info.start_row, info.end_row - 1 do
-        self.marks:add(false, row, 0, {
-            priority = 0,
-            virt_text = { { str.spaces(indent.per_level), 'Normal' } },
-            virt_text_pos = 'inline',
-        })
-    end
 end
 
 ---@private

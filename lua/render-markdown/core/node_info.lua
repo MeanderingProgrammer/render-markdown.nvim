@@ -53,29 +53,25 @@ function NodeInfo:has_error()
 end
 
 ---@return integer
-function NodeInfo:level()
-    local level = 0
-    local parent = self.node:parent()
-    while parent ~= nil and parent:type() ~= 'document' do
-        if parent:type() == 'section' then
-            local child = parent:child(0)
-            child = child and child:child(0)
-            local is_first_heading = child and child:type() == 'atx_h1_marker'
-            if not is_first_heading then
-                level = level + 1
-            end
-        end
-        parent = parent:parent()
-    end
-    return level
+function NodeInfo:parent_heading_level()
+    local parent = self:parent('section')
+    return parent ~= nil and parent:heading_level() or 1
+end
+
+---@return integer
+function NodeInfo:heading_level()
+    assert(self.type == 'section', 'Node must be a section')
+    local heading = self:child('atx_heading')
+    local node = heading ~= nil and heading.node:child(0) or nil
+    -- Counts the number of hashtags in the heading marker
+    return node ~= nil and #vim.treesitter.get_node_text(node, self.buf) or 1
 end
 
 ---Walk through parent nodes, count the number of target nodes
 ---@param target string
 ---@return integer
 function NodeInfo:level_in_section(target)
-    local level = 0
-    local parent = self.node:parent()
+    local level, parent = 0, self.node:parent()
     while parent ~= nil and in_section(parent) do
         if parent:type() == target then
             level = level + 1
@@ -132,18 +128,20 @@ function NodeInfo:for_each_child(callback)
     end
 end
 
----@param position 'above'|'below'|'on'
+---@param position 'above'|'below'|'first'|'last'
 ---@return string?
 function NodeInfo:line(position)
-    local start_row = nil
+    local row = nil
     if position == 'above' then
-        start_row = self.start_row - 1
+        row = self.start_row - 1
     elseif position == 'below' then
-        start_row = self.end_row + 1
-    else
-        start_row = self.start_row
+        row = self.end_row + 1
+    elseif position == 'first' then
+        row = self.start_row
+    elseif position == 'last' then
+        row = self.end_row - 1
     end
-    return vim.api.nvim_buf_get_lines(self.buf, start_row, start_row + 1, false)[1]
+    return row ~= nil and vim.api.nvim_buf_get_lines(self.buf, row, row + 1, false)[1] or nil
 end
 
 ---@return string[]

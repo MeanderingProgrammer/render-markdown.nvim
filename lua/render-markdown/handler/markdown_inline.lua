@@ -67,7 +67,7 @@ function Handler:shortcut(info)
         return
     end
 
-    local line = info:line('on')
+    local line = info:line('first')
     if line ~= nil and line:find('[' .. info.text .. ']', 1, true) ~= nil then
         self:wiki_link(info)
         return

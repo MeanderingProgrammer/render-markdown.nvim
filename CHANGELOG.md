@@ -16,6 +16,11 @@
   [12fdb6f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/12fdb6f6623cb7e20da75be68858f12e1e578ffd)
 - leading spaces in checkbox bullet [#158](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/158)
   [06337f6](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/06337f64367ef1f1115f0a9ba41e49b84a04b1a4)
+- heading borders with indentation [#164](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/164)
+
+### Collaborator Shoutouts
+
+- @lukas-reineke
 
 ## 6.3.0 (2024-08-29)
 

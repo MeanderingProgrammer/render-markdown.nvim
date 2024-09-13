@@ -52,9 +52,11 @@ describe('code.md', function()
             util.code_language(row:increment(2), 2, 'lua'),
         })
         for _, col in ipairs({ 2, 0, 2 }) do
-            table.insert(expected, util.code_row(row:increment(), col))
             if col == 0 then
-                table.insert(expected, padding(row:get(), 0, 2, 0))
+                table.insert(expected, padding(row:increment(), 0, 2, 0))
+                table.insert(expected, util.code_row(row:get(), col))
+            else
+                table.insert(expected, util.code_row(row:increment(), col))
             end
         end
         table.insert(expected, util.code_below(row:increment(), 2))
@@ -75,9 +77,9 @@ describe('code.md', function()
         table.insert(expected, util.code_language(row:increment(2), 0, 'rust', 34))
         for _ = 1, 3 do
             vim.list_extend(expected, {
-                util.code_row(row:increment(), 0),
-                padding(row:get(), 0, 0, 2),
+                padding(row:increment(), 0, 0, 2),
                 util.code_hide(row:get(), 0, 34),
+                util.code_row(row:get(), 0),
             })
         end
         table.insert(expected, util.code_below(row:increment(), 0, 34))
@@ -88,9 +90,9 @@ describe('code.md', function()
         })
         for _ = 1, 2 do
             vim.list_extend(expected, {
-                util.code_row(row:increment(), 2),
-                padding(row:get(), 2, 0, 2),
+                padding(row:increment(), 2, 0, 2),
                 util.code_hide(row:get(), 2, 20),
+                util.code_row(row:get(), 2),
             })
         end
         table.insert(expected, util.code_below(row:increment(), 2, 20))
@@ -101,9 +103,9 @@ describe('code.md', function()
         })
         for _, col in ipairs({ 2, 0, 2 }) do
             vim.list_extend(expected, {
-                util.code_row(row:increment(), col),
-                padding(row:get(), col, 2 - col, 2),
+                padding(row:increment(), col, 2 - col, 2),
                 util.code_hide(row:get(), col, 20),
+                util.code_row(row:get(), col),
             })
         end
         table.insert(expected, util.code_below(row:increment(), 2, 20))
