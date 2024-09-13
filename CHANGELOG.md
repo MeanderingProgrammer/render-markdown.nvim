@@ -2,6 +2,13 @@
 
 ## Pre-release
 
+## 7.0.0 (2024-09-13)
+
+### ⚠ BREAKING CHANGES
+
+- `indent.skip` -> `indent.skip_level` [a028fbe](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/a028fbe8f40b329ced721efba15a59ea31db8651)
+  - Renamed within hours of adding
+
 ### Features
 
 - add missing obsidian aliases [74b77c7](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/74b77c794d64d9d5a27c2a38ac254d9654fcad1f)
@@ -11,6 +18,8 @@
 - performance getting callouts and checkboxes [5513e28](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/5513e283973627385aec9758b00fc018e3a8303f)
 - indent based on heading level rather than nesting [27cc6ce](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/27cc6ce2605a2d42900b02648673a1de9b8cb933)
 - configurable starting indent level [cdb58fc](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/cdb58fc97c49a1ab75b35d99183c35b5863e845a)
+- configurable heading indents so body is offset [#161](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/161)
+  [a028fbe](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/a028fbe8f40b329ced721efba15a59ea31db8651)
 
 ### Bug Fixes
 
