@@ -36,12 +36,20 @@ function Render:setup()
 end
 
 function Render:render()
-    -- Do include empty line in previous section
-    local start_offset = str.width(self.info:line('above')) == 0 and 1 or 0
+    -- Include last empty line in previous section
+    -- Exclude if it is the only empty line in that section
+    local above, two_above = self.info:line('above', 1), self.info:line('above', 2)
+    local above_is_empty = str.width(above) == 0
+    local two_above_is_section = two_above ~= nil and vim.startswith(two_above, '#')
+    local start_offset = (above_is_empty and not two_above_is_section) and 1 or 0
     local start_row = math.max(self.info.start_row - start_offset, 0)
 
-    -- Do not include empty line at the end of current section
-    local end_offset = str.width(self.info:line('last')) == 0 and 1 or 0
+    -- Exclude last empty line in current section
+    -- Include if it is the only empty line of the last subsection
+    local last, second_last = self.info:line('last', 0), self.info:line('last', 1)
+    local last_is_empty = str.width(last) == 0
+    local second_last_is_section = second_last ~= nil and vim.startswith(second_last, '#')
+    local end_offset = (last_is_empty and not second_last_is_section) and 1 or 0
     local end_row = self.info.end_row - 1 - end_offset
 
     -- Each level stacks inline marks so we only need to multiply based on any skipped levels

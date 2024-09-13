@@ -174,7 +174,7 @@ function Render:border(width)
         { self.heading.above:rep(prefix), self.data.foreground },
         { self.heading.above:rep(width - self.heading.left_pad - prefix), background },
     }
-    if str.width(self.info:line('above')) == 0 and self.info.start_row - 1 ~= self.context.last_heading then
+    if str.width(self.info:line('above', 1)) == 0 and self.info.start_row - 1 ~= self.context.last_heading then
         self.marks:add(true, self.info.start_row - 1, 0, {
             virt_text = line_above,
             virt_text_pos = 'overlay',
@@ -191,7 +191,7 @@ function Render:border(width)
         { self.heading.below:rep(prefix), self.data.foreground },
         { self.heading.below:rep(width - self.heading.left_pad - prefix), background },
     }
-    if str.width(self.info:line('below')) == 0 then
+    if str.width(self.info:line('below', 1)) == 0 then
         self.marks:add(true, self.info.end_row + 1, 0, {
             virt_text = line_below,
             virt_text_pos = 'overlay',

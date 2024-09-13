@@ -127,18 +127,19 @@ function NodeInfo:for_each_child(callback)
     end
 end
 
----@param position 'above'|'below'|'first'|'last'
+---@param position 'above'|'first'|'below'|'last'
+---@param by integer
 ---@return string?
-function NodeInfo:line(position)
-    local row = nil
+function NodeInfo:line(position, by)
+    local one_line, row = self.start_row == self.end_row, nil
     if position == 'above' then
-        row = self.start_row - 1
-    elseif position == 'below' then
-        row = self.end_row + 1
+        row = self.start_row - by
     elseif position == 'first' then
-        row = self.start_row
+        row = self.start_row + by
+    elseif position == 'below' then
+        row = self.end_row - (one_line and 0 or 1) + by
     elseif position == 'last' then
-        row = self.end_row - 1
+        row = self.end_row - (one_line and 0 or 1) - by
     end
     return row ~= nil and vim.api.nvim_buf_get_lines(self.buf, row, row + 1, false)[1] or nil
 end
