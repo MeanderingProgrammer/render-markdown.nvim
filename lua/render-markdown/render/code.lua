@@ -12,6 +12,7 @@ local str = require('render-markdown.core.str')
 ---@field language? string
 ---@field max_width integer
 ---@field empty_rows integer[]
+---@field indent integer
 
 ---@class render.md.render.Code: render.md.Renderer
 ---@field private code render.md.Code
@@ -62,6 +63,7 @@ function Render:setup()
         language = (language_info or {}).text,
         max_width = math.max(max_width, self.code.min_width),
         empty_rows = empty_rows,
+        indent = self:indent(),
     }
 
     return true
@@ -119,7 +121,7 @@ function Render:language(add_background)
         local icon_text = icon .. ' ' .. info.text
         local win_col = self.data.max_width - self.code.language_pad
         if self.code.width == 'block' then
-            win_col = win_col - str.width(icon_text)
+            win_col = win_col - str.width(icon_text) + self.data.indent
         end
         return self.marks:add(true, info.start_row, 0, {
             virt_text = { { icon_text, highlight } },
@@ -165,7 +167,7 @@ function Render:background(icon_added)
             self.marks:add(false, row, self.data.col, {
                 priority = 0,
                 virt_text = { { padding, 'Normal' } },
-                virt_text_win_col = width,
+                virt_text_win_col = width + self.data.indent,
             })
         end
     end

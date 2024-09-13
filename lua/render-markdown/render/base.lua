@@ -44,9 +44,20 @@ end
 ---@param level? integer
 ---@return { [1]: string, [2]: string }[]
 function Base:indent_virt_line(line, level)
+    local amount = self:indent(level)
+    if amount > 0 then
+        table.insert(line, 1, { str.spaces(amount), 'Normal' })
+    end
+    return line
+end
+
+---@protected
+---@param level? integer
+---@return integer
+function Base:indent(level)
     local indent = self.config.indent
     if not indent.enabled then
-        return line
+        return 0
     end
     if level == nil then
         level = self.info:heading_level(true)
@@ -56,11 +67,9 @@ function Base:indent_virt_line(line, level)
     end
     level = level - indent.skip_level
     if level <= 0 then
-        return line
+        return 0
     end
-    local indent_line = { str.spaces(indent.per_level * level), 'Normal' }
-    table.insert(line, 1, indent_line)
-    return line
+    return indent.per_level * level
 end
 
 return Base

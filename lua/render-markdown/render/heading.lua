@@ -141,6 +141,7 @@ end
 ---@private
 ---@param width integer
 function Render:background(width)
+    local win_col = width + self:indent(self.data.level)
     for row = self.info.start_row, self.data.end_row - 1 do
         self.marks:add(true, row, 0, {
             end_row = row + 1,
@@ -152,7 +153,7 @@ function Render:background(width)
             self.marks:add(true, row, 0, {
                 priority = 0,
                 virt_text = { { str.spaces(vim.o.columns * 2), 'Normal' } },
-                virt_text_win_col = width,
+                virt_text_win_col = win_col,
             })
         end
     end

@@ -129,6 +129,7 @@ local M = {}
 ---@param file string
 ---@param opts? render.md.UserConfig
 function M.setup(file, opts)
+    require('luassert.assert'):set_parameter('TableErrorHighlightColor', 'none')
     require('render-markdown').setup(opts)
     vim.cmd('e ' .. file)
     vim.wait(0)
