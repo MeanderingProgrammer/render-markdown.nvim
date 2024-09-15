@@ -1,4 +1,4 @@
-local logger = require('render-markdown.core.logger')
+local log = require('render-markdown.core.log')
 local util = require('render-markdown.core.util')
 
 ---@class render.md.Marks
@@ -32,14 +32,14 @@ function Marks:add(conceal, start_row, start_col, opts)
         opts = opts,
     }
     if opts.virt_text_pos == 'inline' and not util.has_10 then
-        logger.error('inline marks require neovim >= 0.10.0', mark)
+        log.error('inline marks require neovim >= 0.10.0', mark)
         return false
     end
     if opts.virt_text_repeat_linebreak ~= nil and not util.has_10 then
-        logger.error('repeat linebreak marks require neovim >= 0.10.0', mark)
+        log.error('repeat linebreak marks require neovim >= 0.10.0', mark)
         return false
     end
-    logger.debug('mark', mark)
+    log.debug('mark', mark)
     table.insert(self.marks, mark)
     return true
 end

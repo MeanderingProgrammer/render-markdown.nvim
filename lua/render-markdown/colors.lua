@@ -5,7 +5,6 @@ local cache = {}
 local M = {}
 
 ---@private
----@type string
 M.prefix = 'RenderMarkdown'
 
 -- stylua: ignore

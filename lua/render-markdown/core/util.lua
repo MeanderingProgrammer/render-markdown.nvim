@@ -1,7 +1,6 @@
 ---@class render.md.Util
 local M = {}
 
----@type boolean
 M.has_10 = vim.fn.has('nvim-0.10') == 1
 
 ---@param buf integer
@@ -57,11 +56,11 @@ function M.visible(win, row)
     end)
 end
 
----@param buf integer
+---@param file string
 ---@return number
-function M.file_size_mb(buf)
+function M.file_size_mb(file)
     local ok, stats = pcall(function()
-        return vim.uv.fs_stat(vim.api.nvim_buf_get_name(buf))
+        return vim.uv.fs_stat(file)
     end)
     if not (ok and stats) then
         return 0

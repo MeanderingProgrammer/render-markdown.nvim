@@ -1,7 +1,7 @@
 local BufferState = require('render-markdown.core.buffer_state')
 local Context = require('render-markdown.core.context')
 local Extmark = require('render-markdown.core.extmark')
-local logger = require('render-markdown.core.logger')
+local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
 local util = require('render-markdown.core.util')
 
@@ -18,7 +18,6 @@ local cache = {}
 ---@class render.md.Ui
 local M = {}
 
----@type integer
 M.namespace = vim.api.nvim_create_namespace('render-markdown.nvim')
 
 function M.invalidate_cache()
@@ -82,9 +81,7 @@ function M.update(buf, win, parse)
     if next_state == 'rendered' then
         if buffer_state.marks == nil or parse then
             M.clear(buf, buffer_state)
-            logger.start()
             buffer_state.marks = M.parse_buffer(buf, win)
-            logger.flush()
         end
         local row = util.cursor_row(buf, win)
         for _, mark in ipairs(buffer_state.marks) do
@@ -153,7 +150,7 @@ end
 ---@param root TSNode
 ---@return render.md.Mark[]
 function M.parse_tree(buf, language, root)
-    logger.debug('language', language)
+    log.debug('language', language)
     if not Context.get(buf):contains_node(root) then
         return {}
     end
@@ -161,7 +158,7 @@ function M.parse_tree(buf, language, root)
     local marks = {}
     local user = state.custom_handlers[language]
     if user ~= nil then
-        logger.debug('running handler', 'user')
+        log.debug('running handler', 'user')
         vim.list_extend(marks, user.parse(root, buf))
         if not user.extends then
             return marks
@@ -169,7 +166,7 @@ function M.parse_tree(buf, language, root)
     end
     local builtin = builtin_handlers[language]
     if builtin ~= nil then
-        logger.debug('running handler', 'builtin')
+        log.debug('running handler', 'builtin')
         vim.list_extend(marks, builtin.parse(root, buf))
     end
     return marks

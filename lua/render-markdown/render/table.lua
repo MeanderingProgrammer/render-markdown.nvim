@@ -1,6 +1,6 @@
 local Base = require('render-markdown.render.base')
 local NodeInfo = require('render-markdown.core.node_info')
-local logger = require('render-markdown.core.logger')
+local log = require('render-markdown.core.log')
 local str = require('render-markdown.core.str')
 
 ---@class render.md.table.Column
@@ -60,7 +60,7 @@ function Render:setup()
             if vim.tbl_contains({ 'pipe_table_header', 'pipe_table_row' }, row.type) then
                 table.insert(table_rows, row)
             else
-                logger.unhandled_type('markdown', 'row', row.type)
+                log.unhandled_type('markdown', 'row', row.type)
             end
         end
     end)
@@ -160,7 +160,7 @@ function Render.parse_row_data(row, cell_type)
         elseif cell.type == cell_type then
             table.insert(cells, cell)
         else
-            logger.unhandled_type('markdown', 'cell', cell.type)
+            log.unhandled_type('markdown', 'cell', cell.type)
         end
     end)
     if #pipes == 0 or #cells == 0 or #pipes ~= #cells + 1 then

@@ -101,6 +101,8 @@ use({
   - Can also be accessed directly through `require('render-markdown').disable()`
 - `:RenderMarkdown toggle` - Switch between enabling & disabling this plugin
   - Can also be accessed directly through `require('render-markdown').toggle()`
+- `:RenderMarkdown log` - Opens the log file for this plugin
+  - Can also be accessed directly through `require('render-markdown').log()`
 - `:RenderMarkdown expand` - Increase anti-conceal margin above and below by 1
   - Can also be accessed directly through `require('render-markdown').expand()`
 - `:RenderMarkdown contract` - Decrease anti-conceal margin above and below by 1

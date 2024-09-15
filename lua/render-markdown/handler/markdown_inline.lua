@@ -1,6 +1,6 @@
 local Context = require('render-markdown.core.context')
 local list = require('render-markdown.core.list')
-local logger = require('render-markdown.core.logger')
+local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
 local str = require('render-markdown.core.str')
 
@@ -32,7 +32,7 @@ function Handler:parse(root)
         elseif capture == 'link' then
             self:link(info)
         else
-            logger.unhandled_capture('inline', capture)
+            log.unhandled_capture('inline', capture)
         end
     end)
     return self.marks:get()

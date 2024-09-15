@@ -1,6 +1,6 @@
 local NodeInfo = require('render-markdown.core.node_info')
 local list = require('render-markdown.core.list')
-local logger = require('render-markdown.core.logger')
+local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
 local str = require('render-markdown.core.str')
 
@@ -19,12 +19,12 @@ function M.parse(root, buf)
         return {}
     end
     if vim.fn.executable(latex.converter) ~= 1 then
-        logger.debug('executable not found', latex.converter)
+        log.debug('executable not found', latex.converter)
         return {}
     end
 
     local info = NodeInfo.new(buf, root)
-    logger.debug_node_info('latex', info)
+    log.debug_node_info('latex', info)
 
     local expressions = cache[info.text]
     if expressions == nil then

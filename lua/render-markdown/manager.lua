@@ -1,3 +1,4 @@
+local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
 local ui = require('render-markdown.core.ui')
 local util = require('render-markdown.core.util')
@@ -9,7 +10,6 @@ local buffers = {}
 local M = {}
 
 ---@private
----@type integer
 M.group = vim.api.nvim_create_augroup('RenderMarkdown', { clear = true })
 
 ---Should only be called from plugin directory
@@ -33,6 +33,13 @@ function M.setup()
             end
         end,
     })
+    -- Write out any logs before closing
+    vim.api.nvim_create_autocmd('VimLeave', {
+        group = M.group,
+        callback = function()
+            require('render-markdown.log').flush()
+        end,
+    })
 end
 
 ---@param enabled boolean
@@ -48,21 +55,10 @@ end
 ---@private
 ---@param buf integer
 function M.attach(buf)
-    if not vim.tbl_contains(state.file_types, util.get_buf(buf, 'filetype')) then
+    if not M.should_attach(buf) then
         return
     end
     local config = state.get_config(buf)
-    if not config.enabled then
-        return
-    end
-    if util.file_size_mb(buf) > config.max_file_size then
-        return
-    end
-    if vim.tbl_contains(buffers, buf) then
-        return
-    end
-    table.insert(buffers, buf)
-
     local events = { 'BufWinEnter', 'BufLeave', 'CursorHold', 'CursorMoved' }
     local change_events = { 'ModeChanged', 'TextChanged' }
     if vim.tbl_contains(config.render_modes, 'i') then
@@ -79,6 +75,42 @@ function M.attach(buf)
             end
         end,
     })
+end
+
+---@private
+---@param buf integer
+---@return boolean
+function M.should_attach(buf)
+    local file = vim.api.nvim_buf_get_name(buf)
+    local log_name = 'attach ' .. vim.fn.fnamemodify(file, ':t')
+    log.debug(log_name, 'start')
+
+    if vim.tbl_contains(buffers, buf) then
+        log.debug(log_name, 'skip', 'already attached')
+        return false
+    end
+
+    local file_type, file_types = util.get_buf(buf, 'filetype'), state.file_types
+    if not vim.tbl_contains(file_types, file_type) then
+        log.debug(log_name, 'skip', 'file type', string.format('%s /∈ %s', file_type, vim.inspect(file_types)))
+        return false
+    end
+
+    local config = state.get_config(buf)
+    if not config.enabled then
+        log.debug(log_name, 'skip', 'state disabled')
+        return false
+    end
+
+    local file_size, max_file_size = util.file_size_mb(file), config.max_file_size
+    if file_size > max_file_size then
+        log.debug(log_name, 'skip', 'file size', string.format('%f > %f', file_size, max_file_size))
+        return false
+    end
+
+    log.debug(log_name, 'success')
+    table.insert(buffers, buf)
+    return true
 end
 
 return M

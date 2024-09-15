@@ -4,15 +4,14 @@ local state = require('render-markdown.state')
 local M = {}
 
 ---@private
----@type string
-M.version = '7.0.1'
+M.version = '7.0.2'
 
 function M.check()
-    vim.health.start('render-markdown.nvim [version]')
+    M.start('version')
     vim.health.ok('plugin ' .. M.version)
     M.neovim('0.9', '0.10')
 
-    vim.health.start('render-markdown.nvim [configuration]')
+    M.start('configuration')
     local errors = state.validate()
     if #errors == 0 then
         vim.health.ok('valid')
@@ -24,7 +23,7 @@ function M.check()
     local latex = state.latex
     local latex_advice = 'Disable LaTeX support to avoid this warning by setting { latex = { enabled = false } }'
 
-    vim.health.start('render-markdown.nvim [nvim-treesitter]')
+    M.start('nvim-treesitter')
     local has_treesitter = pcall(require, 'nvim-treesitter')
     if has_treesitter then
         vim.health.ok('installed')
@@ -39,14 +38,14 @@ function M.check()
         vim.health.error('not installed')
     end
 
-    vim.health.start('render-markdown.nvim [executables]')
+    M.start('executables')
     if latex.enabled then
         M.check_executable(latex.converter, latex_advice)
     else
         vim.health.ok('none to check')
     end
 
-    vim.health.start('render-markdown.nvim [conflicts]')
+    M.start('conflicts')
     M.check_plugin('headlines')
     M.check_plugin('obsidian', function(obsidian)
         if obsidian.get_client().opts.ui.enable == false then
@@ -55,6 +54,12 @@ function M.check()
             return 'Ensure UI is disabled by setting ui = { enable = false } in obsidian.nvim config'
         end
     end)
+end
+
+---@private
+---@param name string
+function M.start(name)
+    vim.health.start(string.format('render-markdown.nvim [%s]', name))
 end
 
 ---@private

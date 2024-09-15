@@ -1,3 +1,4 @@
+local log = require('render-markdown.core.log')
 local manager = require('render-markdown.manager')
 local state = require('render-markdown.state')
 
@@ -14,6 +15,11 @@ end
 
 function M.toggle()
     manager.set_all(not state.enabled)
+end
+
+function M.log()
+    log.flush()
+    vim.cmd.tabnew(log.file)
 end
 
 function M.expand()

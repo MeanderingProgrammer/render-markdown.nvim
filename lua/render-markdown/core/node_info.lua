@@ -1,10 +1,3 @@
----@param node TSNode
----@return boolean
-local function in_section(node)
-    -- reaching a section or document means we are outside section
-    return not vim.tbl_contains({ 'section', 'document' }, node:type())
-end
-
 ---@class render.md.NodeInfo
 ---@field private buf integer
 ---@field node TSNode
@@ -71,7 +64,7 @@ end
 ---@return integer
 function NodeInfo:level_in_section(target)
     local level, parent = 0, self.node:parent()
-    while parent ~= nil and in_section(parent) do
+    while parent ~= nil and parent:type() ~= 'section' do
         if parent:type() == target then
             level = level + 1
         end

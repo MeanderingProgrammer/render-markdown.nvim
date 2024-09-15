@@ -1,4 +1,5 @@
 local components = require('render-markdown.components')
+local log = require('render-markdown.core.log')
 local presets = require('render-markdown.presets')
 local treesitter = require('render-markdown.core.treesitter')
 local util = require('render-markdown.core.util')
@@ -44,6 +45,7 @@ function M.setup(default_config, user_config)
         M.markdown_quote_query = vim.treesitter.query.parse('markdown', config.markdown_quote_query)
         M.inline_query = vim.treesitter.query.parse('markdown_inline', config.inline_query)
     end)
+    log.setup(config.log_level)
     for _, language in ipairs(M.file_types) do
         treesitter.inject(language, config.injections[language])
     end
@@ -192,10 +194,11 @@ function M.validate()
         }
     end
 
-    ---@param path string
+    ---@param suffix string
     ---@param input table<string, any>
     ---@param opts table<string, vim.validate.Spec>
-    local function append_errors(path, input, opts)
+    local function append_errors(suffix, input, opts)
+        local path = 'render-markdown' .. suffix
         local ok, err = pcall(vim.validate, opts)
         if not ok then
             table.insert(errors, path .. '.' .. err)
@@ -402,7 +405,7 @@ function M.validate()
     end
 
     local config = M.config
-    append_errors('render-markdown', config, {
+    append_errors('', config, {
         enabled = { config.enabled, 'boolean' },
         max_file_size = { config.max_file_size, 'number' },
         debounce = { config.debounce, 'number' },
@@ -432,18 +435,18 @@ function M.validate()
         custom_handlers = { config.custom_handlers, 'table' },
     })
 
-    validate_buffer_config('render-markdown', config, false)
+    validate_buffer_config('', config, false)
 
     local injections = config.injections
     for name, injection in pairs(injections) do
-        append_errors('render-markdown.injections.' .. name, injection, {
+        append_errors('.injections.' .. name, injection, {
             enabled = { injection.enabled, 'boolean' },
             query = { injection.query, 'string' },
         })
     end
 
     local latex = config.latex
-    append_errors('render-markdown.latex', latex, {
+    append_errors('.latex', latex, {
         enabled = { latex.enabled, 'boolean' },
         converter = { latex.converter, 'string' },
         highlight = { latex.highlight, 'string' },
@@ -452,13 +455,13 @@ function M.validate()
     })
 
     local overrides = config.overrides
-    append_errors('render-markdown.overrides', overrides, {
+    append_errors('.overrides', overrides, {
         buftype = { overrides.buftype, 'table' },
         filetype = { overrides.filetype, 'table' },
     })
     for name, value_override in pairs(overrides) do
         for value, override in pairs(value_override) do
-            local path = string.format('render-markdown.overrides.%s.%s', name, value)
+            local path = string.format('.overrides.%s.%s', name, value)
             append_errors(path, override, {
                 enabled = { override.enabled, 'boolean', true },
                 max_file_size = { override.max_file_size, 'number', true },
@@ -483,7 +486,7 @@ function M.validate()
     end
 
     for name, handler in pairs(config.custom_handlers) do
-        append_errors('render-markdown.custom_handlers.' .. name, handler, {
+        append_errors('.custom_handlers.' .. name, handler, {
             parse = { handler.parse, 'function' },
             extends = { handler.extends, 'boolean', true },
         })

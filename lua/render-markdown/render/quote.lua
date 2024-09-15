@@ -1,5 +1,5 @@
 local Base = require('render-markdown.render.base')
-local logger = require('render-markdown.core.logger')
+local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
 
 ---@class render.md.render.Quote: render.md.Renderer
@@ -35,7 +35,7 @@ function Render:render()
         if capture == 'quote_marker' then
             self:quote_marker(info)
         else
-            logger.unhandled_capture('markdown quote', capture)
+            log.unhandled_capture('markdown quote', capture)
         end
     end)
 end
