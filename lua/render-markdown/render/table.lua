@@ -55,7 +55,7 @@ function Render:setup()
     local delim, table_rows = nil, {}
     self.info:for_each_child(function(row)
         if row.type == 'pipe_table_delimiter_row' then
-            delim = Render.parse_delim(row)
+            delim = self:parse_delim(row)
         elseif self.context:contains_info(row) then
             if vim.tbl_contains({ 'pipe_table_header', 'pipe_table_row' }, row.type) then
                 table.insert(table_rows, row)
@@ -92,22 +92,25 @@ end
 ---@private
 ---@param row render.md.NodeInfo
 ---@return render.md.table.DelimRow?
-function Render.parse_delim(row)
+function Render:parse_delim(row)
     local pipes, cells = Render.parse_row_data(row, 'pipe_table_delimiter_cell')
     if pipes == nil or cells == nil then
         return nil
     end
+    local min_width = self.table.cell == 'padded' and self.table.min_width or 0
     local columns = {}
-    for i = 1, #cells do
-        local cell, width = cells[i], pipes[i + 1].start_col - pipes[i].end_col
+    for i, cell in ipairs(cells) do
+        local width = pipes[i + 1].start_col - pipes[i].end_col
         if width < 0 then
             return nil
         end
+        width = math.max(width, min_width)
         table.insert(columns, { width = width, alignment = Render.alignment(cell) })
     end
     return { info = row, columns = columns }
 end
 
+---@private
 ---@param cell render.md.NodeInfo
 ---@return render.md.table.Alignment
 function Render.alignment(cell)
@@ -134,8 +137,8 @@ function Render:parse_row(row, num_columns)
         return nil
     end
     local columns = {}
-    for i = 1, #cells do
-        local cell, width = cells[i], pipes[i + 1].start_col - pipes[i].end_col
+    for i, cell in ipairs(cells) do
+        local width = pipes[i + 1].start_col - pipes[i].end_col
         -- Account for double width glyphs by replacing cell spacing with width
         width = width - (cell.end_col - cell.start_col) + self.context:width(cell)
         if width < 0 then

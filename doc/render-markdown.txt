@@ -1,4 +1,4 @@
-*render-markdown.txt*         For 0.10.0        Last change: 2024 September 14
+*render-markdown.txt*         For 0.10.0        Last change: 2024 September 15
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -458,8 +458,8 @@ Full Default Configuration ~
             --  raw:     replaces only the '|' characters in each row, leaving the cells unmodified
             --  padded:  raw + cells are padded with inline extmarks to make up for any concealed text
             cell = 'padded',
-            -- Gets placed in delimiter row for each column, position is based on alignmnet
-            alignment_indicator = '━',
+            -- Minimum column width to use for padded cell
+            min_width = 0,
             -- Characters used to replace table border
             -- Correspond to top(3), delimiter(3), bottom(3), vertical, & horizontal
             -- stylua: ignore
@@ -469,6 +469,8 @@ Full Default Configuration ~
                 '└', '┴', '┘',
                 '│', '─',
             },
+            -- Gets placed in delimiter row for each column, position is based on alignmnet
+            alignment_indicator = '━',
             -- Highlight for table heading, delimiter, and the line above
             head = 'RenderMarkdownTableHead',
             -- Highlight for everything else, main table rows and the line below
@@ -863,8 +865,8 @@ Wiki Page
             --  raw:     replaces only the '|' characters in each row, leaving the cells unmodified
             --  padded:  raw + cells are padded with inline extmarks to make up for any concealed text
             cell = 'padded',
-            -- Gets placed in delimiter row for each column, position is based on alignmnet
-            alignment_indicator = '━',
+            -- Minimum column width to use for padded cell
+            min_width = 0,
             -- Characters used to replace table border
             -- Correspond to top(3), delimiter(3), bottom(3), vertical, & horizontal
             -- stylua: ignore
@@ -874,6 +876,8 @@ Wiki Page
                 '└', '┴', '┘',
                 '│', '─',
             },
+            -- Gets placed in delimiter row for each column, position is based on alignmnet
+            alignment_indicator = '━',
             -- Highlight for table heading, delimiter, and the line above
             head = 'RenderMarkdownTableHead',
             -- Highlight for everything else, main table rows and the line below

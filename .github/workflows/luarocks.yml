@@ -1,7 +1,6 @@
 name: Luarocks
 
 on:
-  pull_request: # Tests packaging on PR
   workflow_dispatch:
   push:
     tags:

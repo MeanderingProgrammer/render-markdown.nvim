@@ -425,8 +425,8 @@ require('render-markdown').setup({
         --  raw:     replaces only the '|' characters in each row, leaving the cells unmodified
         --  padded:  raw + cells are padded with inline extmarks to make up for any concealed text
         cell = 'padded',
-        -- Gets placed in delimiter row for each column, position is based on alignmnet
-        alignment_indicator = '━',
+        -- Minimum column width to use for padded cell
+        min_width = 0,
         -- Characters used to replace table border
         -- Correspond to top(3), delimiter(3), bottom(3), vertical, & horizontal
         -- stylua: ignore
@@ -436,6 +436,8 @@ require('render-markdown').setup({
             '└', '┴', '┘',
             '│', '─',
         },
+        -- Gets placed in delimiter row for each column, position is based on alignmnet
+        alignment_indicator = '━',
         -- Highlight for table heading, delimiter, and the line above
         head = 'RenderMarkdownTableHead',
         -- Highlight for everything else, main table rows and the line below
@@ -818,8 +820,8 @@ require('render-markdown').setup({
         --  raw:     replaces only the '|' characters in each row, leaving the cells unmodified
         --  padded:  raw + cells are padded with inline extmarks to make up for any concealed text
         cell = 'padded',
-        -- Gets placed in delimiter row for each column, position is based on alignmnet
-        alignment_indicator = '━',
+        -- Minimum column width to use for padded cell
+        min_width = 0,
         -- Characters used to replace table border
         -- Correspond to top(3), delimiter(3), bottom(3), vertical, & horizontal
         -- stylua: ignore
@@ -829,6 +831,8 @@ require('render-markdown').setup({
             '└', '┴', '┘',
             '│', '─',
         },
+        -- Gets placed in delimiter row for each column, position is based on alignmnet
+        alignment_indicator = '━',
         -- Highlight for table heading, delimiter, and the line above
         head = 'RenderMarkdownTableHead',
         -- Highlight for everything else, main table rows and the line below

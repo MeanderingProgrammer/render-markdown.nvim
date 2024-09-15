@@ -43,6 +43,7 @@
 ---@field public preset render.md.table.Preset
 ---@field public style render.md.table.Style
 ---@field public cell render.md.table.Cell
+---@field public min_width integer
 ---@field public border string[]
 ---@field public alignment_indicator string
 ---@field public head string

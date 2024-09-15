@@ -1,0 +1,11 @@
+name: Help
+description: Advice on how to do something
+title: "help: "
+labels: [question]
+body:
+  - type: textarea
+    attributes:
+      label: Description
+      description: What is it you're trying to do?
+    validations:
+      required: true
