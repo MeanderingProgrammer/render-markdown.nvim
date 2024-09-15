@@ -10,7 +10,6 @@ local configs = {}
 ---@class render.md.State
 ---@field private config render.md.Config
 ---@field enabled boolean
----@field log_level render.md.config.LogLevel
 ---@field file_types string[]
 ---@field latex render.md.Latex
 ---@field custom_handlers table<string, render.md.Handler>
@@ -36,7 +35,6 @@ function M.setup(default_config, user_config)
 
     M.config = config
     M.enabled = config.enabled
-    M.log_level = config.log_level
     M.file_types = config.file_types
     M.latex = config.latex
     M.custom_handlers = config.custom_handlers

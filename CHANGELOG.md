@@ -2,6 +2,14 @@
 
 ## Pre-release
 
+### Features
+
+- logging improvements [2b86631](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/2b86631c153e24682a1a2d05e37a0f4f94e9b827)
+
+### Bug Fixes
+
+- indent with block widths [044f2d6](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/044f2d6d76712de69a79b25a7cd8311cb505a9f4)
+
 ## 7.0.0 (2024-09-13)
 
 ### ⚠ BREAKING CHANGES

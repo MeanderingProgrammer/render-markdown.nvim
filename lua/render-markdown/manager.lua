@@ -36,9 +36,7 @@ function M.setup()
     -- Write out any logs before closing
     vim.api.nvim_create_autocmd('VimLeave', {
         group = M.group,
-        callback = function()
-            require('render-markdown.log').flush()
-        end,
+        callback = log.flush,
     })
 end
 
