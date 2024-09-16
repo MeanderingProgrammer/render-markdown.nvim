@@ -11,12 +11,13 @@ function M.valid(buf, win)
 end
 
 ---@param buf integer
----@param win integer
+---@param win? integer
 ---@return integer?
 function M.cursor_row(buf, win)
     if vim.api.nvim_get_current_buf() ~= buf then
         return nil
     end
+    win = win or vim.api.nvim_get_current_win()
     return vim.api.nvim_win_get_cursor(win)[1] - 1
 end
 

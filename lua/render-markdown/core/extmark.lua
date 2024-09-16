@@ -1,8 +1,8 @@
 ---@class render.md.Extmark
 ---@field private namespace integer
 ---@field private buf integer
----@field private mark render.md.Mark
 ---@field private id? integer
+---@field mark render.md.Mark
 local Extmark = {}
 Extmark.__index = Extmark
 
@@ -14,9 +14,20 @@ function Extmark.new(namespace, buf, mark)
     local self = setmetatable({}, Extmark)
     self.namespace = namespace
     self.buf = buf
-    self.mark = mark
     self.id = nil
+    self.mark = mark
     return self
+end
+
+---@param row integer
+---@return boolean
+function Extmark:overlaps(row)
+    local start_row = self.mark.start_row
+    local end_row = self.mark.opts.end_row or start_row
+    if start_row == end_row then
+        end_row = end_row + 1
+    end
+    return not (start_row > row or end_row <= row)
 end
 
 ---@param config render.md.buffer.Config

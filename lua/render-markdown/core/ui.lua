@@ -27,6 +27,22 @@ function M.invalidate_cache()
     cache = {}
 end
 
+---@param buf integer
+---@return integer, render.md.Mark[]
+function M.get_row_marks(buf)
+    local buffer_state, row = cache[buf], util.cursor_row(buf)
+    if buffer_state == nil or row == nil then
+        return 0, {}
+    end
+    local marks = {}
+    for _, extmark in ipairs(buffer_state.marks or {}) do
+        if extmark:overlaps(row) then
+            table.insert(marks, extmark.mark)
+        end
+    end
+    return row, marks
+end
+
 ---@private
 ---@param buf integer
 ---@param buffer_state render.md.BufferState

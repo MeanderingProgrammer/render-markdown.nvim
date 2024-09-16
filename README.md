@@ -95,18 +95,16 @@ use({
 
 # Commands
 
-- `:RenderMarkdown` | `:RenderMarkdown enable` - Enable this plugin
-  - Can also be accessed directly through `require('render-markdown').enable()`
-- `:RenderMarkdown disable` - Disable this plugin
-  - Can also be accessed directly through `require('render-markdown').disable()`
-- `:RenderMarkdown toggle` - Switch between enabling & disabling this plugin
-  - Can also be accessed directly through `require('render-markdown').toggle()`
-- `:RenderMarkdown log` - Opens the log file for this plugin
-  - Can also be accessed directly through `require('render-markdown').log()`
-- `:RenderMarkdown expand` - Increase anti-conceal margin above and below by 1
-  - Can also be accessed directly through `require('render-markdown').expand()`
-- `:RenderMarkdown contract` - Decrease anti-conceal margin above and below by 1
-  - Can also be accessed directly through `require('render-markdown').contract()`
+| Command                    | Lua Function                            | Description                                       |
+| -------------------------- | --------------------------------------- | ------------------------------------------------- |
+| `:RenderMarkdown`          | `require('render-markdown').enable()`   | Enable this plugin                                |
+| `:RenderMarkdown enable`   | `require('render-markdown').enable()`   | Enable this plugin                                |
+| `:RenderMarkdown disable`  | `require('render-markdown').disable()`  | Disable this plugin                               |
+| `:RenderMarkdown toggle`   | `require('render-markdown').toggle()`   | Switch between enabling & disabling this plugin   |
+| `:RenderMarkdown log`      | `require('render-markdown').log()`      | Opens the log file for this plugin                |
+| `:RenderMarkdown expand`   | `require('render-markdown').expand()`   | Increase anti-conceal margin above and below by 1 |
+| `:RenderMarkdown contract` | `require('render-markdown').contract()` | Decrease anti-conceal margin above and below by 1 |
+| `:RenderMarkdown debug`    | `require('render-markdown').debug()`    | Prints information about marks on current line    |
 
 # Setup
 
