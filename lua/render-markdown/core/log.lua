@@ -51,11 +51,25 @@ function M.unhandled_type(language, group, value)
 end
 
 ---@param name string
+---@param buf integer
+---@param ... any
+function M.debug_buf(name, buf, ...)
+    M.debug(string.format('%s %d', name, buf), ...)
+end
+
+---@param name string
 ---@param ... any
 function M.debug(name, ...)
     if vim.tbl_contains({ 'debug' }, M.level) then
         M.add('debug', name, ...)
     end
+end
+
+---@param name string
+---@param buf integer
+---@param ... any
+function M.error_buf(name, buf, ...)
+    M.error(string.format('%s %d', name, buf), ...)
 end
 
 ---@param name string

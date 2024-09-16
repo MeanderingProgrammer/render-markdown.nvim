@@ -53,8 +53,10 @@ end
 
 ---@param buf integer
 ---@param win integer
+---@param event string
 ---@param change boolean
-function M.debounce_update(buf, win, change)
+function M.debounce_update(buf, win, event, change)
+    log.debug_buf('update', buf, string.format('event %s', event), string.format('change %s', change))
     if not util.valid(buf, win) then
         return
     end
@@ -132,16 +134,15 @@ end
 function M.parse_buffer(buf, win)
     local has_parser, parser = pcall(vim.treesitter.get_parser, buf)
     if not has_parser then
+        log.error_buf('fail', buf, 'no treesitter parser found')
         return {}
     end
     -- Reset buffer context
     Context.reset(buf, win)
     -- Make sure injections are processed
     parser:parse(Context.get(buf):range())
-    -- Parse marks
-    local marks = {}
     -- Parse markdown after all other nodes to take advantage of state
-    local markdown_roots = {}
+    local marks, markdown_roots = {}, {}
     parser:for_each_tree(function(tree, language_tree)
         local language = language_tree:lang()
         if language == 'markdown' then
@@ -166,7 +167,7 @@ end
 ---@param root TSNode
 ---@return render.md.Mark[]
 function M.parse_tree(buf, language, root)
-    log.debug('language', language)
+    log.debug_buf('language', buf, language)
     if not Context.get(buf):contains_node(root) then
         return {}
     end
@@ -174,7 +175,7 @@ function M.parse_tree(buf, language, root)
     local marks = {}
     local user = state.custom_handlers[language]
     if user ~= nil then
-        log.debug('running handler', 'user')
+        log.debug_buf('running handler', buf, 'user')
         vim.list_extend(marks, user.parse(root, buf))
         if not user.extends then
             return marks
@@ -182,7 +183,7 @@ function M.parse_tree(buf, language, root)
     end
     local builtin = builtin_handlers[language]
     if builtin ~= nil then
-        log.debug('running handler', 'builtin')
+        log.debug_buf('running handler', buf, 'builtin')
         vim.list_extend(marks, builtin.parse(root, buf))
     end
     return marks
