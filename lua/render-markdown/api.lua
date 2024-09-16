@@ -35,7 +35,7 @@ end
 function M.debug()
     local buf = vim.api.nvim_get_current_buf()
     local row, marks = require('render-markdown.core.ui').get_row_marks(buf)
-    require('render-markdown.core.debug_marks').debug(row, marks)
+    require('render-markdown.debug.marks').debug(row, marks)
 end
 
 return M

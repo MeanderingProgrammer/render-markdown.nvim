@@ -1,15 +1,15 @@
----@class render.md.DebugMark
+---@class render.md.debug.Mark
 ---@field conceal boolean
 ---@field opts vim.api.keyset.set_extmark
 ---@field row { [1]: integer, [2]: integer }
 ---@field col { [1]: integer, [2]: integer }
-local DebugMark = {}
-DebugMark.__index = DebugMark
+local Mark = {}
+Mark.__index = Mark
 
 ---@param mark render.md.Mark
----@return render.md.DebugMark
-function DebugMark.new(mark)
-    local self = setmetatable({}, DebugMark)
+---@return render.md.debug.Mark
+function Mark.new(mark)
+    local self = setmetatable({}, Mark)
     self.conceal, self.opts = mark.conceal, mark.opts
     self.row = { mark.start_row, mark.opts.end_row or mark.start_row }
     self.col = { mark.start_col, mark.opts.end_col or mark.start_col }
@@ -17,7 +17,7 @@ function DebugMark.new(mark)
 end
 
 ---@return integer[]
-function DebugMark:priorities()
+function Mark:priorities()
     local row_offset = 0
     if self.opts.virt_lines ~= nil then
         row_offset = self.opts.virt_lines_above and -0.5 or 0.5
@@ -28,7 +28,7 @@ function DebugMark:priorities()
 end
 
 ---@return string
-function DebugMark:__tostring()
+function Mark:__tostring()
     ---@param text string
     ---@return string
     local function serialize_text(text)
@@ -119,10 +119,10 @@ function DebugMark:__tostring()
     return table.concat(lines, '\n')
 end
 
----@param a render.md.DebugMark
----@param b render.md.DebugMark
+---@param a render.md.debug.Mark
+---@param b render.md.debug.Mark
 ---@return boolean
-function DebugMark.__lt(a, b)
+function Mark.__lt(a, b)
     local as, bs = a:priorities(), b:priorities()
     for i = 1, math.max(#as, #bs) do
         if as[i] ~= bs[i] then
@@ -132,17 +132,17 @@ function DebugMark.__lt(a, b)
     return false
 end
 
----@class render.md.DebugMarks
+---@class render.md.debug.Marks
 local M = {}
 
 ---@param row integer
 ---@param marks render.md.Mark[]
 function M.debug(row, marks)
-    print('Decorations on row: ' .. row)
+    print(string.format('Decorations on row: %d', row))
     if #marks == 0 then
         print('No decorations found')
     end
-    local debug_marks = vim.tbl_map(DebugMark.new, marks)
+    local debug_marks = vim.tbl_map(Mark.new, marks)
     table.sort(debug_marks)
     for _, mark in ipairs(debug_marks) do
         print(mark)

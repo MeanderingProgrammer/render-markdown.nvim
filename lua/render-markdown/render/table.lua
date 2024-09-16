@@ -70,7 +70,8 @@ function Render:setup()
     end
 
     local rows = {}
-    for _, table_row in ipairs(NodeInfo.sort_inplace(table_rows)) do
+    table.sort(table_rows)
+    for _, table_row in ipairs(table_rows) do
         local row = self:parse_row(table_row, #delim.columns)
         if row ~= nil then
             table.insert(rows, row)
@@ -169,7 +170,9 @@ function Render.parse_row_data(row, cell_type)
     if #pipes == 0 or #cells == 0 or #pipes ~= #cells + 1 then
         return nil, nil
     end
-    return NodeInfo.sort_inplace(pipes), NodeInfo.sort_inplace(cells)
+    table.sort(pipes)
+    table.sort(cells)
+    return pipes, cells
 end
 
 function Render:render()

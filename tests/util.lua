@@ -28,8 +28,8 @@ function Row:increment(n)
 end
 
 ---@class render.md.MarkInfo
----@field row integer[]
----@field col integer[]
+---@field row { [1]: integer, [2]?: integer }
+---@field col { [1]: integer, [2]?: integer }
 ---@field hl_eol? boolean
 ---@field hl_group? string
 ---@field conceal? string
@@ -65,61 +65,37 @@ function MarkInfo.new(row, col, details)
     return self
 end
 
+---@return integer[]
+function MarkInfo:priorities()
+    local result = {}
+
+    local row_offset = 0
+    if self.virt_lines ~= nil then
+        row_offset = self.virt_lines_above and -0.5 or 0.5
+    end
+    vim.list_extend(result, { self.row[1] + row_offset, (self.row[2] or self.row[1]) + row_offset })
+
+    local col = self.virt_text_win_col or 0
+    vim.list_extend(result, { math.max(self.col[1], col), math.max((self.col[2] or self.col[1]), col) })
+
+    vim.list_extend(result, {
+        self.virt_text_pos == 'inline' and 0 or 1, -- Inline text comes first
+        self.sign_text == nil and 0 or 1, -- Signs come later
+    })
+
+    return result
+end
+
 ---@param a render.md.MarkInfo
 ---@param b render.md.MarkInfo
 ---@return boolean
 function MarkInfo.__lt(a, b)
-    ---@param getter fun(mark: render.md.MarkInfo): number[]
-    ---@return boolean?
-    local function compare_ints(getter)
-        local as, bs = getter(a), getter(b)
-        for i = 1, math.max(#as, #bs) do
-            local av, bv = as[math.min(i, #as)], bs[math.min(i, #bs)]
-            if av ~= bv then
-                return av < bv
-            end
+    local as, bs = a:priorities(), b:priorities()
+    for i = 1, math.max(#as, #bs) do
+        if as[i] ~= bs[i] then
+            return as[i] < bs[i]
         end
-        return nil
     end
-
-    local row_comp = compare_ints(function(mark)
-        if mark.virt_lines == nil then
-            return mark.row
-        end
-        local offset = mark.virt_lines_above and -0.5 or 0.5
-        return vim.iter(mark.row)
-            :map(function(row)
-                return row + offset
-            end)
-            :totable()
-    end)
-    if row_comp ~= nil then
-        return row_comp
-    end
-
-    local col_comp = compare_ints(function(mark)
-        if mark.virt_text_win_col == nil then
-            return mark.col
-        else
-            return { mark.virt_text_win_col }
-        end
-    end)
-    if col_comp ~= nil then
-        return col_comp
-    end
-
-    -- Higher priority for inline text
-    local a_inline, b_inline = a.virt_text_pos == 'inline', b.virt_text_pos == 'inline'
-    if a_inline ~= b_inline then
-        return a_inline
-    end
-
-    -- Lower priority for signs
-    local a_sign, b_sign = a.sign_text ~= nil, b.sign_text ~= nil
-    if a_sign ~= b_sign then
-        return not a_sign
-    end
-
     return false
 end
 

@@ -27,17 +27,15 @@ function NodeInfo.new(buf, node)
     return self
 end
 
----@param infos render.md.NodeInfo[]
----@return render.md.NodeInfo[]
-function NodeInfo.sort_inplace(infos)
-    table.sort(infos, function(a, b)
-        if a.start_row ~= b.start_row then
-            return a.start_row < b.start_row
-        else
-            return a.start_col < b.start_col
-        end
-    end)
-    return infos
+---@param a render.md.NodeInfo
+---@param b render.md.NodeInfo
+---@return boolean
+function NodeInfo.__lt(a, b)
+    if a.start_row ~= b.start_row then
+        return a.start_row < b.start_row
+    else
+        return a.start_col < b.start_col
+    end
 end
 
 ---@return boolean
