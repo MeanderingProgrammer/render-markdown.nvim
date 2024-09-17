@@ -87,8 +87,9 @@ function M.update(buf, win, parse)
 
     local config = state.get_config(buf)
     local buffer_state = cache[buf]
+    local mode = vim.fn.mode(true)
 
-    local next_state = M.next_state(config, win)
+    local next_state = M.next_state(config, win, mode)
     if next_state ~= buffer_state.state then
         for name, value in pairs(config.win_options) do
             util.set_win(win, name, value[next_state])
@@ -102,8 +103,9 @@ function M.update(buf, win, parse)
             buffer_state.marks = M.parse_buffer(buf, win)
         end
         local row = util.cursor_row(buf, win)
+        local hide_range = M.hide_range(config.anti_conceal, mode, row)
         for _, mark in ipairs(buffer_state.marks) do
-            mark:render(config, row)
+            mark:render(hide_range)
         end
     else
         M.clear(buf, buffer_state)
@@ -113,8 +115,9 @@ end
 ---@private
 ---@param config render.md.buffer.Config
 ---@param win integer
+---@param mode string
 ---@return 'default'|'rendered'
-function M.next_state(config, win)
+function M.next_state(config, win, mode)
     if not state.enabled then
         return 'default'
     end
@@ -124,10 +127,32 @@ function M.next_state(config, win)
     if not util.view(win).leftcol == 0 then
         return 'default'
     end
-    if not config:render(vim.fn.mode(true)) then
+    if not config:render(mode) then
         return 'default'
     end
     return 'rendered'
+end
+
+---@private
+---@param config render.md.AntiConceal
+---@param mode string
+---@param row? integer
+---@return { [1]: integer, [2]: integer }?
+function M.hide_range(config, mode, row)
+    -- Anti-conceal is not enabled -> hide nothing
+    if not config.enabled then
+        return nil
+    end
+    -- Row is not known means buffer is not active -> hide nothing
+    if row == nil then
+        return nil
+    end
+    if mode == 'v' then
+        local start = vim.fn.getpos('v')[2] - 1
+        return { math.min(row, start), math.max(row, start) }
+    else
+        return { row - config.above, row + config.below }
+    end
 end
 
 ---@private

@@ -30,10 +30,9 @@ function Extmark:overlaps(row)
     return not (start_row > row or end_row <= row)
 end
 
----@param config render.md.buffer.Config
----@param row? integer
-function Extmark:render(config, row)
-    if self:should_show(config.anti_conceal, row) then
+---@param hide_range { [1]: integer, [2]: integer }?
+function Extmark:render(hide_range)
+    if self:should_show(hide_range) then
         self:show()
     else
         self:hide()
@@ -62,27 +61,16 @@ function Extmark:hide()
     end
 end
 
----Render marks based on anti-conceal behavior and current row
 ---@private
----@param anti_conceal render.md.AntiConceal
----@param row? integer
+---@param hide_range { [1]: integer, [2]: integer }?
 ---@return boolean
-function Extmark:should_show(anti_conceal, row)
-    -- Anti-conceal is not enabled -> all marks should be shown
-    if not anti_conceal.enabled then
+function Extmark:should_show(hide_range)
+    if hide_range == nil or not self.mark.conceal then
         return true
     end
-    -- Row is not known means buffer is not active -> all marks should be shown
-    if row == nil then
-        return true
-    end
-    -- Mark is not concealable -> mark should always be shown
-    if not self.mark.conceal then
-        return true
-    end
-    -- Show mark if it is outside current row range
-    local mark_row = self.mark.start_row
-    return mark_row < row - anti_conceal.above or mark_row > row + anti_conceal.below
+    -- Show mark if it is outside hidden range
+    local row = self.mark.start_row
+    return row < hide_range[1] or row > hide_range[2]
 end
 
 return Extmark
