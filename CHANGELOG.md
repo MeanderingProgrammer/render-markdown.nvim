@@ -8,6 +8,7 @@
   [2424693](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/2424693c7a4c79641a7ea1e2a838dbc9238d6066)
 - table min width [f84eeae](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/f84eeaebac278e26bd2906fd47747631716a5edb)
 - new debug API for development [6f87257](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/6f8725746ecadae0ae5ab3e7a1a445dad6b2e231)
+- `render_modes` as a boolean [7493db6](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7493db6d3fe3f6679549e6020498f72e97cd9b73)
 
 ### Bug Fixes
 
