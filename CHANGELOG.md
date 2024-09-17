@@ -5,6 +5,7 @@
 ### Features
 
 - logging improvements [2b86631](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/2b86631c153e24682a1a2d05e37a0f4f94e9b827)
+  [2424693](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/2424693c7a4c79641a7ea1e2a838dbc9238d6066)
 - table min width [f84eeae](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/f84eeaebac278e26bd2906fd47747631716a5edb)
 - new debug API for development [6f87257](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/6f8725746ecadae0ae5ab3e7a1a445dad6b2e231)
 
