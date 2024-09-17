@@ -157,7 +157,7 @@ local M = {}
 ---@field public enabled? boolean
 ---@field public max_file_size? number
 ---@field public debounce? integer
----@field public render_modes? string[]
+---@field public render_modes? string[]|boolean
 ---@field public anti_conceal? render.md.UserAntiConceal
 ---@field public heading? render.md.UserHeading
 ---@field public code? render.md.UserCode

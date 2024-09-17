@@ -4,24 +4,24 @@
 
 ---@class render.md.buffer.Config: render.md.BufferConfig
 ---@field component render.md.component.Config
-
----@class render.md.component.Resolver
-local M = {}
+local Config = {}
+Config.__index = Config
 
 ---@param config render.md.BufferConfig
 ---@return render.md.buffer.Config
-function M.resolve(config)
+function Config.new(config)
     ---@type render.md.component.Config
     local component = {
-        callout = M.normalize(config.callout),
-        checkbox = M.normalize(config.checkbox.custom),
+        callout = Config.normalize(config.callout),
+        checkbox = Config.normalize(config.checkbox.custom),
     }
-    return vim.tbl_deep_extend('force', { component = component }, config)
+    local instance = vim.tbl_deep_extend('force', { component = component }, config)
+    return setmetatable(instance, Config)
 end
 
 ---@private
 ---@param components table<string, render.md.CustomComponent>
-function M.normalize(components)
+function Config.normalize(components)
     local result = {}
     for _, component in pairs(components) do
         result[component.raw:lower()] = component
@@ -29,4 +29,15 @@ function M.normalize(components)
     return result
 end
 
-return M
+---@param mode string
+---@return boolean
+function Config:render(mode)
+    local modes = self.render_modes
+    if type(modes) == 'table' then
+        return vim.tbl_contains(modes, mode)
+    else
+        return modes
+    end
+end
+
+return Config

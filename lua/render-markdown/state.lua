@@ -1,4 +1,4 @@
-local components = require('render-markdown.components')
+local Config = require('render-markdown.config')
 local log = require('render-markdown.core.log')
 local presets = require('render-markdown.presets')
 local treesitter = require('render-markdown.core.treesitter')
@@ -78,7 +78,7 @@ function M.get_config(buf)
                 buf_config = vim.tbl_deep_extend('force', buf_config, override)
             end
         end
-        config = components.resolve(buf_config)
+        config = Config.new(buf_config)
         configs[buf] = config
     end
     return config
@@ -113,45 +113,49 @@ end
 
 ---@return string[]
 function M.validate()
-    local errors = {}
+    ---@param types type[]
+    ---@param nilable boolean
+    ---@return string
+    local function handle_types(types, nilable)
+        if nilable then
+            table.insert(types, 'nil')
+        end
+        return #types == 0 and '' or (' or type ' .. vim.inspect(types))
+    end
 
     ---@param value any
-    ---@param valid_values string[]
-    ---@param valid_types type[]
+    ---@param values string[]
+    ---@param types type[]
     ---@param nilable boolean
     ---@return vim.validate.Spec
-    local function one_of(value, valid_values, valid_types, nilable)
-        if nilable then
-            table.insert(valid_types, 'nil')
-        end
+    local function one_of(value, values, types, nilable)
+        local suffix = handle_types(types, nilable)
         return {
             value,
             function(v)
-                return vim.tbl_contains(valid_values, v) or vim.tbl_contains(valid_types, type(v))
+                return vim.tbl_contains(values, v) or vim.tbl_contains(types, type(v))
             end,
-            'one of ' .. vim.inspect(valid_values) .. ' or type ' .. vim.inspect(valid_types),
+            'one of ' .. vim.inspect(values) .. suffix,
         }
     end
 
     ---@param value any
-    ---@param valid_values string[]
+    ---@param values string[]
+    ---@param types type[]
     ---@param nilable boolean
     ---@return vim.validate.Spec
-    local function one_or_array_of(value, valid_values, nilable)
-        local description = 'one or array of ' .. vim.inspect(valid_values)
-        if nilable then
-            description = description .. ' or nil'
-        end
+    local function one_or_array_of(value, values, types, nilable)
+        local suffix = handle_types(types, nilable)
         return {
             value,
             function(v)
-                if v == nil then
-                    return nilable
+                if vim.tbl_contains(types, type(v)) then
+                    return true
                 elseif type(v) == 'string' then
-                    return vim.tbl_contains(valid_values, v)
+                    return vim.tbl_contains(values, v)
                 elseif type(v) == 'table' then
                     for i, item in ipairs(v) do
-                        if not vim.tbl_contains(valid_values, item) then
+                        if not vim.tbl_contains(values, item) then
                             return false, string.format('Index %d is %s', i, item)
                         end
                     end
@@ -160,23 +164,21 @@ function M.validate()
                     return false
                 end
             end,
-            description,
+            'one or array of ' .. vim.inspect(values) .. suffix,
         }
     end
 
-    ---@param value string[]
+    ---@param value any
+    ---@param types type[]
     ---@param nilable boolean
     ---@return vim.validate.Spec
-    local function string_array(value, nilable)
-        local description = 'string array'
-        if nilable then
-            description = description .. ' or nil'
-        end
+    local function string_array(value, types, nilable)
+        local suffix = handle_types(types, nilable)
         return {
             value,
             function(v)
-                if v == nil then
-                    return nilable
+                if vim.tbl_contains(types, type(v)) then
+                    return true
                 elseif type(v) == 'table' then
                     for i, item in ipairs(v) do
                         if type(item) ~= 'string' then
@@ -188,9 +190,11 @@ function M.validate()
                     return false
                 end
             end,
-            description,
+            'string array' .. suffix,
         }
     end
+
+    local errors = {}
 
     ---@param suffix string
     ---@param input table<string, any>
@@ -227,9 +231,9 @@ function M.validate()
                 enabled = { heading.enabled, 'boolean', nilable },
                 sign = { heading.sign, 'boolean', nilable },
                 position = one_of(heading.position, { 'overlay', 'inline' }, {}, nilable),
-                icons = string_array(heading.icons, nilable),
-                signs = string_array(heading.signs, nilable),
-                width = one_or_array_of(heading.width, { 'full', 'block' }, nilable),
+                icons = string_array(heading.icons, {}, nilable),
+                signs = string_array(heading.signs, {}, nilable),
+                width = one_or_array_of(heading.width, { 'full', 'block' }, {}, nilable),
                 left_pad = { heading.left_pad, 'number', nilable },
                 right_pad = { heading.right_pad, 'number', nilable },
                 min_width = { heading.min_width, 'number', nilable },
@@ -237,8 +241,8 @@ function M.validate()
                 border_prefix = { heading.border_prefix, 'boolean', nilable },
                 above = { heading.above, 'string', nilable },
                 below = { heading.below, 'string', nilable },
-                backgrounds = string_array(heading.backgrounds, nilable),
-                foregrounds = string_array(heading.foregrounds, nilable),
+                backgrounds = string_array(heading.backgrounds, {}, nilable),
+                foregrounds = string_array(heading.foregrounds, {}, nilable),
             })
         end
 
@@ -250,7 +254,7 @@ function M.validate()
                 style = one_of(code.style, { 'full', 'normal', 'language', 'none' }, {}, nilable),
                 position = one_of(code.position, { 'left', 'right' }, {}, nilable),
                 language_pad = { code.language_pad, 'number', nilable },
-                disable_background = string_array(code.disable_background, nilable),
+                disable_background = string_array(code.disable_background, {}, nilable),
                 width = one_of(code.width, { 'full', 'block' }, {}, nilable),
                 left_pad = { code.left_pad, 'number', nilable },
                 right_pad = { code.right_pad, 'number', nilable },
@@ -277,7 +281,7 @@ function M.validate()
         if bullet ~= nil then
             append_errors(path .. '.bullet', bullet, {
                 enabled = { bullet.enabled, 'boolean', nilable },
-                icons = string_array(bullet.icons, nilable),
+                icons = string_array(bullet.icons, {}, nilable),
                 left_pad = { bullet.left_pad, 'number', nilable },
                 right_pad = { bullet.right_pad, 'number', nilable },
                 highlight = { bullet.highlight, 'string', nilable },
@@ -336,7 +340,7 @@ function M.validate()
                 style = one_of(pipe_table.style, { 'full', 'normal', 'none' }, {}, nilable),
                 cell = one_of(pipe_table.cell, { 'padded', 'raw', 'overlay' }, {}, nilable),
                 min_width = { pipe_table.min_width, 'number', nilable },
-                border = string_array(pipe_table.border, nilable),
+                border = string_array(pipe_table.border, {}, nilable),
                 alignment_indicator = { pipe_table.alignment_indicator, 'string', nilable },
                 head = { pipe_table.head, 'string', nilable },
                 row = { pipe_table.row, 'string', nilable },
@@ -408,7 +412,7 @@ function M.validate()
         enabled = { config.enabled, 'boolean' },
         max_file_size = { config.max_file_size, 'number' },
         debounce = { config.debounce, 'number' },
-        render_modes = string_array(config.render_modes, false),
+        render_modes = string_array(config.render_modes, { 'boolean' }, false),
         anti_conceal = { config.anti_conceal, 'table' },
         heading = { config.heading, 'table' },
         code = { config.code, 'table' },
@@ -427,7 +431,7 @@ function M.validate()
         markdown_quote_query = { config.markdown_quote_query, 'string' },
         inline_query = { config.inline_query, 'string' },
         log_level = one_of(config.log_level, { 'debug', 'error' }, {}, false),
-        file_types = string_array(config.file_types, false),
+        file_types = string_array(config.file_types, {}, false),
         injections = { config.injections, 'table' },
         latex = { config.latex, 'table' },
         overrides = { config.overrides, 'table' },
@@ -465,7 +469,7 @@ function M.validate()
                 enabled = { override.enabled, 'boolean', true },
                 max_file_size = { override.max_file_size, 'number', true },
                 debounce = { override.debounce, 'number', true },
-                render_modes = string_array(override.render_modes, true),
+                render_modes = string_array(override.render_modes, {}, true),
                 anti_conceal = { override.anti_conceal, 'table', true },
                 heading = { override.heading, 'table', true },
                 code = { override.code, 'table', true },

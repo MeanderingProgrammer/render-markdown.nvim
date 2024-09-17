@@ -121,7 +121,7 @@ function M.next_state(config, win)
     if not util.view(win).leftcol == 0 then
         return 'default'
     end
-    if not vim.tbl_contains(config.render_modes, vim.fn.mode(true)) then
+    if not config:render(vim.fn.mode(true)) then
         return 'default'
     end
     return 'rendered'

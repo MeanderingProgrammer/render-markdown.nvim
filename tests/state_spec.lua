@@ -70,22 +70,24 @@ describe('state', function()
         )
 
         eq(
-            { prefix .. '.log_level: expected one of { "debug", "error" } or type {}, got invalid' },
+            { prefix .. '.log_level: expected one of { "debug", "error" }, got invalid' },
             ---@diagnostic disable-next-line: assign-type-mismatch
             validate({ log_level = 'invalid' })
         )
 
         eq(
-            { prefix .. '.render_modes: expected string array, got true' },
+            { prefix .. '.render_modes: expected string array or type { "boolean" }, got invalid' },
             ---@diagnostic disable-next-line: assign-type-mismatch
-            validate({ render_modes = true })
+            validate({ render_modes = 'invalid' })
         )
 
-        ---@diagnostic disable-next-line: assign-type-mismatch
-        local errors = validate({ render_modes = { 1, 2 } })
-        eq(1, #errors)
-        eq(true, vim.startswith(errors[1], prefix .. '.render_modes: expected string array, got '))
-        eq(true, vim.endswith(errors[1], 'Info: Index 1 is number'))
+        local int_render_modes = { 1, 2 }
+        eq({
+            prefix
+                .. '.render_modes: expected string array or type { "boolean" }, got '
+                .. tostring(int_render_modes)
+                .. '. Info: Index 1 is number',
+        }, validate({ render_modes = int_render_modes }))
 
         eq(
             { prefix .. '.callout.new.highlight: expected string, got nil' },
