@@ -39,5 +39,5 @@ have no issues running alongside this plugin.
     PKM features to LSP
 - [tadmccorkle/markdown.nvim](https://github.com/tadmccorkle/markdown.nvim) Adds
   keybindings and commands for interacting with `markdown`
-- [preservim/vim-markdown](https://github.com/preservim/vim-markdown) Adds synatx
+- [preservim/vim-markdown](https://github.com/preservim/vim-markdown) Adds syntax
   highlighting and keybindings for interacting with `markdown`
