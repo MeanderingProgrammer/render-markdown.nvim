@@ -87,6 +87,10 @@ function M.update(buf, win, parse)
 
     local config = state.get_config(buf)
     local buffer_state = cache[buf]
+    if not buffer_state then
+        buffer_state = BufferState.new(buf)
+        cache[buf] = buffer_state
+    end
     local mode = vim.fn.mode(true)
 
     local next_state = M.next_state(config, win, mode)
