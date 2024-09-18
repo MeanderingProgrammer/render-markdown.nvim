@@ -12,8 +12,22 @@ local builtin_handlers = {
     latex = require('render-markdown.handler.latex'),
 }
 
----@type table<integer, render.md.BufferState>
-local cache = {}
+---@class render.md.cache.Ui
+---@field states table<integer, render.md.BufferState>
+local Cache = {
+    states = {},
+}
+
+---@param buf integer
+---@return render.md.BufferState
+function Cache.get(buf)
+    local buffer_state = Cache.states[buf]
+    if buffer_state == nil then
+        buffer_state = BufferState.new(buf)
+        Cache.states[buf] = buffer_state
+    end
+    return buffer_state
+end
 
 ---@class render.md.Ui
 local M = {}
@@ -21,20 +35,20 @@ local M = {}
 M.namespace = vim.api.nvim_create_namespace('render-markdown.nvim')
 
 function M.invalidate_cache()
-    for buf, buffer_state in pairs(cache) do
+    for buf, buffer_state in pairs(Cache.states) do
         M.clear(buf, buffer_state)
     end
-    cache = {}
+    Cache.states = {}
 end
 
 ---@param buf integer
 ---@return integer, render.md.Mark[]
 function M.get_row_marks(buf)
-    local buffer_state, row = cache[buf], util.cursor_row(buf)
-    if buffer_state == nil or row == nil then
+    local row = util.cursor_row(buf)
+    if row == nil then
         return 0, {}
     end
-    local marks = {}
+    local marks, buffer_state = {}, Cache.get(buf)
     for _, extmark in ipairs(buffer_state.marks or {}) do
         if extmark:overlaps(row) then
             table.insert(marks, extmark.mark)
@@ -61,9 +75,7 @@ function M.debounce_update(buf, win, event, change)
         return
     end
 
-    local config = state.get_config(buf)
-    local buffer_state = cache[buf] or BufferState.new(buf)
-    cache[buf] = buffer_state
+    local config, buffer_state = state.get(buf), Cache.get(buf)
 
     if not change and Context.contains_range(buf, win) then
         vim.schedule(function()
@@ -85,12 +97,7 @@ function M.update(buf, win, parse)
         return
     end
 
-    local config = state.get_config(buf)
-    local buffer_state = cache[buf]
-    if not buffer_state then
-        buffer_state = BufferState.new(buf)
-        cache[buf] = buffer_state
-    end
+    local config, buffer_state = state.get(buf), Cache.get(buf)
     local mode = vim.fn.mode(true)
 
     local next_state = M.next_state(config, win, mode)
@@ -107,9 +114,9 @@ function M.update(buf, win, parse)
             buffer_state.marks = M.parse_buffer(buf, win)
         end
         local row = util.cursor_row(buf, win)
-        local hide_range = M.hide_range(config.anti_conceal, mode, row)
+        local hidden = config:hidden(mode, row)
         for _, mark in ipairs(buffer_state.marks) do
-            mark:render(hide_range)
+            mark:render(hidden)
         end
     else
         M.clear(buf, buffer_state)
@@ -135,28 +142,6 @@ function M.next_state(config, win, mode)
         return 'default'
     end
     return 'rendered'
-end
-
----@private
----@param config render.md.AntiConceal
----@param mode string
----@param row? integer
----@return { [1]: integer, [2]: integer }?
-function M.hide_range(config, mode, row)
-    -- Anti-conceal is not enabled -> hide nothing
-    if not config.enabled then
-        return nil
-    end
-    -- Row is not known means buffer is not active -> hide nothing
-    if row == nil then
-        return nil
-    end
-    if mode == 'v' then
-        local start = vim.fn.getpos('v')[2] - 1
-        return { math.min(row, start), math.max(row, start) }
-    else
-        return { row - config.above, row + config.below }
-    end
 end
 
 ---@private

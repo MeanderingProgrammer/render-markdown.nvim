@@ -23,10 +23,10 @@ describe('state', function()
     it('valid', function()
         eq(0, #validate())
         vim.bo.buftype = ''
-        eq(true, state.get_config(0).sign.enabled)
+        eq(true, state.get(0).sign.enabled)
         state.invalidate_cache()
         vim.bo.buftype = 'nofile'
-        eq(false, state.get_config(0).sign.enabled)
+        eq(false, state.get(0).sign.enabled)
 
         eq(0, #validate({ callout = { note = { raw = 'value' } } }))
 

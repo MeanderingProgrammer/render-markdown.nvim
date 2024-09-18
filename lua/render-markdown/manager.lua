@@ -56,7 +56,7 @@ function M.attach(buf)
     if not M.should_attach(buf) then
         return
     end
-    local config = state.get_config(buf)
+    local config = state.get(buf)
     local events = { 'BufWinEnter', 'BufLeave', 'CursorHold', 'CursorMoved' }
     local change_events = { 'DiffUpdated', 'ModeChanged', 'TextChanged' }
     if config:render('i') then
@@ -95,7 +95,7 @@ function M.should_attach(buf)
         return false
     end
 
-    local config = state.get_config(buf)
+    local config = state.get(buf)
     if not config.enabled then
         log.debug_buf(log_name, buf, 'skip', 'state disabled')
         return false

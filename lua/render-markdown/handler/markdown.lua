@@ -17,7 +17,7 @@ Handler.__index = Handler
 function Handler.new(buf)
     local self = setmetatable({}, Handler)
     self.marks = list.new_marks()
-    self.config = state.get_config(buf)
+    self.config = state.get(buf)
     self.context = Context.get(buf)
     self.renderers = {
         code = require('render-markdown.render.code'),

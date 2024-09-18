@@ -40,4 +40,21 @@ function Config:render(mode)
     end
 end
 
+---@param mode string
+---@param row? integer
+---@return Range2?
+function Config:hidden(mode, row)
+    -- Anti-conceal is not enabled -> hide nothing
+    -- Row is not known means buffer is not active -> hide nothing
+    if not self.anti_conceal.enabled or row == nil then
+        return nil
+    end
+    if vim.tbl_contains({ 'v', 'V', '\22' }, mode) then
+        local start = vim.fn.getpos('v')[2] - 1
+        return { math.min(row, start), math.max(row, start) }
+    else
+        return { row - self.anti_conceal.above, row + self.anti_conceal.below }
+    end
+end
+
 return Config

@@ -9,10 +9,20 @@
 - table min width [f84eeae](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/f84eeaebac278e26bd2906fd47747631716a5edb)
 - new debug API for development [6f87257](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/6f8725746ecadae0ae5ab3e7a1a445dad6b2e231)
 - `render_modes` as a boolean [7493db6](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7493db6d3fe3f6679549e6020498f72e97cd9b73)
+- anti conceal selected range in visual mode [#168](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/168)
+  [5ff191f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/5ff191f0c7457ede2fd30ecf76ab16c65118b4ee)
+- disable rendering in diff mode [#169](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/169)
+  [01b38dc](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/01b38dcf7d0a99620547651fb59a3ba521ba12d5)
 
 ### Bug Fixes
 
 - indent with block widths [044f2d6](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/044f2d6d76712de69a79b25a7cd8311cb505a9f4)
+- nil buffer state [#171](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/171)
+  [#172](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/172)
+
+### Collaborator Shoutouts
+
+- @xudyang1
 
 ## 7.0.0 (2024-09-13)
 

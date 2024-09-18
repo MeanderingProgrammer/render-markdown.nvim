@@ -68,7 +68,7 @@ end
 
 ---@param buf integer
 ---@return render.md.buffer.Config
-function M.get_config(buf)
+function M.get(buf)
     local config = configs[buf]
     if config == nil then
         local buf_config = M.default_buffer_config()

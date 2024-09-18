@@ -30,9 +30,9 @@ function Extmark:overlaps(row)
     return not (start_row > row or end_row <= row)
 end
 
----@param hide_range { [1]: integer, [2]: integer }?
-function Extmark:render(hide_range)
-    if self:should_show(hide_range) then
+---@param hidden Range2?
+function Extmark:render(hidden)
+    if self:should_show(hidden) then
         self:show()
     else
         self:hide()
@@ -62,15 +62,15 @@ function Extmark:hide()
 end
 
 ---@private
----@param hide_range { [1]: integer, [2]: integer }?
+---@param hidden Range2?
 ---@return boolean
-function Extmark:should_show(hide_range)
-    if hide_range == nil or not self.mark.conceal then
+function Extmark:should_show(hidden)
+    if hidden == nil or not self.mark.conceal then
         return true
     end
     -- Show mark if it is outside hidden range
     local row = self.mark.start_row
-    return row < hide_range[1] or row > hide_range[2]
+    return row < hidden[1] or row > hidden[2]
 end
 
 return Extmark
