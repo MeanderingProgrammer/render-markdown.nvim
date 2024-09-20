@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 7.1.0 (2024-09-19)
+
 ### Features
 
 - logging improvements [2b86631](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/2b86631c153e24682a1a2d05e37a0f4f94e9b827)
@@ -14,6 +16,7 @@
   [354baf4](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/354baf485370b670bb1c1cd64309438607b0465d)
 - disable rendering in diff mode [#169](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/169)
   [01b38dc](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/01b38dcf7d0a99620547651fb59a3ba521ba12d5)
+- reload runtime highlights on color scheme change [199cc52](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/199cc52ae970c86a6df843bd634db4dd932be1f0)
 
 ### Bug Fixes
 
