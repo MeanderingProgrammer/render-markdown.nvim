@@ -42,15 +42,17 @@ function M.invalidate_cache()
 end
 
 ---@param buf integer
+---@param win integer
 ---@return integer, render.md.Mark[]
-function M.get_row_marks(buf)
-    local row = util.cursor_row(buf)
-    if row == nil then
-        return 0, {}
-    end
-    local marks, buffer_state = {}, Cache.get(buf)
+function M.get_row_marks(buf, win)
+    local config, buffer_state = state.get(buf), Cache.get(buf)
+    local mode, row = util.mode(), util.row(buf, win)
+    local hidden = config:hidden(mode, row)
+    assert(row ~= nil and hidden ~= nil, 'Row & range must be known to get marks')
+
+    local marks = {}
     for _, extmark in ipairs(buffer_state.marks or {}) do
-        if extmark:overlaps(row) then
+        if extmark:overlaps(hidden) then
             table.insert(marks, extmark.mark)
         end
     end
@@ -98,7 +100,7 @@ function M.update(buf, win, parse)
     end
 
     local config, buffer_state = state.get(buf), Cache.get(buf)
-    local mode = vim.fn.mode(true)
+    local mode, row = util.mode(), util.row(buf, win)
 
     local next_state = M.next_state(config, win, mode)
     if next_state ~= buffer_state.state then
@@ -113,10 +115,13 @@ function M.update(buf, win, parse)
             M.clear(buf, buffer_state)
             buffer_state.marks = M.parse_buffer(buf, win)
         end
-        local row = util.cursor_row(buf, win)
         local hidden = config:hidden(mode, row)
-        for _, mark in ipairs(buffer_state.marks) do
-            mark:render(hidden)
+        for _, extmark in ipairs(buffer_state.marks) do
+            if extmark.mark.conceal and extmark:overlaps(hidden) then
+                extmark:hide(M.namespace, buf)
+            else
+                extmark:show(M.namespace, buf)
+            end
         end
     else
         M.clear(buf, buffer_state)
@@ -171,9 +176,7 @@ function M.parse_buffer(buf, win)
     for _, root in ipairs(markdown_roots) do
         vim.list_extend(marks, M.parse_tree(buf, 'markdown', root))
     end
-    return vim.tbl_map(function(mark)
-        return Extmark.new(M.namespace, buf, mark)
-    end, marks)
+    return vim.tbl_map(Extmark.new, marks)
 end
 
 ---Run user & builtin handlers when available. User handler is always executed,
