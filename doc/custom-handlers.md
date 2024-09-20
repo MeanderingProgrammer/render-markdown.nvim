@@ -19,8 +19,8 @@ Each handler must conform to the following interface:
 ---@field public opts vim.api.keyset.set_extmark
 
 ---@class (exact) render.md.Handler
----@field public parse fun(root: TSNode, buf: integer): render.md.Mark[]
 ---@field public extends? boolean
+---@field public parse fun(root: TSNode, buf: integer): render.md.Mark[]
 ```
 
 The `parse` function parameters are:

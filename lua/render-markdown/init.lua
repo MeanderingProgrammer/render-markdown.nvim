@@ -8,8 +8,8 @@ local M = {}
 ---@field public opts vim.api.keyset.set_extmark
 
 ---@class (exact) render.md.Handler
----@field public parse fun(root: TSNode, buf: integer): render.md.Mark[]
 ---@field public extends? boolean
+---@field public parse fun(root: TSNode, buf: integer): render.md.Mark[]
 
 ---@class (exact) render.md.UserLatex
 ---@field public enabled? boolean
