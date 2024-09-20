@@ -33,11 +33,6 @@ function M.setup()
             end
         end,
     })
-    -- Write out any logs before closing
-    vim.api.nvim_create_autocmd('VimLeave', {
-        group = M.group,
-        callback = log.flush,
-    })
 end
 
 ---@param enabled boolean

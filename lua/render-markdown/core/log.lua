@@ -14,6 +14,11 @@ local M = {}
 
 ---@param level render.md.config.LogLevel
 function M.setup(level)
+    -- Write out any logs before closing
+    vim.api.nvim_create_autocmd('VimLeave', {
+        group = vim.api.nvim_create_augroup('RenderMarkdownLog', { clear = true }),
+        callback = M.flush,
+    })
     M.level = level
     M.entries = {}
     -- Typically resolves to ~/.local/state/nvim/render-markdown.log

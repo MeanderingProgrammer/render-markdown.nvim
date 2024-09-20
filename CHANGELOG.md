@@ -11,6 +11,7 @@
 - `render_modes` as a boolean [7493db6](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7493db6d3fe3f6679549e6020498f72e97cd9b73)
 - anti conceal selected range in visual mode [#168](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/168)
   [5ff191f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/5ff191f0c7457ede2fd30ecf76ab16c65118b4ee)
+  [354baf4](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/354baf485370b670bb1c1cd64309438607b0465d)
 - disable rendering in diff mode [#169](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/169)
   [01b38dc](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/01b38dcf7d0a99620547651fb59a3ba521ba12d5)
 

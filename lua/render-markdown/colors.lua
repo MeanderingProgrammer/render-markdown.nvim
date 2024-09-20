@@ -1,5 +1,10 @@
----@type string[]
-local cache = {}
+---@class render.md.cache.Colors
+---@field combine table<string, { fg: string, bg: string }>
+---@field inverse table<string, { hl: string }>
+local Cache = {
+    combine = {},
+    inverse = {},
+}
 
 ---@class render.md.Colors
 local M = {}
@@ -51,19 +56,34 @@ M.colors = {
 
 ---Should only be called from plugin directory
 function M.setup()
+    -- Reload generated colors on color scheme change
+    vim.api.nvim_create_autocmd('ColorScheme', {
+        group = vim.api.nvim_create_augroup('RenderMarkdownColors', { clear = true }),
+        callback = M.reload,
+    })
     for name, link in pairs(M.colors) do
         vim.api.nvim_set_hl(0, M.prefix .. name, { link = link, default = true })
     end
 end
 
+---@private
+function M.reload()
+    for _, color in pairs(Cache.combine) do
+        M.combine(color.fg, color.bg, true)
+    end
+    for _, color in pairs(Cache.inverse) do
+        M.inverse_bg(color.hl, true)
+    end
+end
+
 ---@param foreground string
 ---@param background string
+---@param force? boolean
 ---@return string
-function M.combine(foreground, background)
+function M.combine(foreground, background, force)
     local name = string.format('%s_%s_%s', M.prefix, foreground, background)
-    if not vim.tbl_contains(cache, name) then
-        local fg = M.get_hl(foreground)
-        local bg = M.get_hl(background)
+    if Cache.combine[name] == nil or force then
+        local fg, bg = M.get_hl(foreground), M.get_hl(background)
         vim.api.nvim_set_hl(0, name, {
             fg = fg.fg,
             bg = bg.bg,
@@ -72,23 +92,24 @@ function M.combine(foreground, background)
             ---@diagnostic disable-next-line: undefined-field
             ctermbg = bg.ctermbg,
         })
-        table.insert(cache, name)
+        Cache.combine[name] = { fg = foreground, bg = background }
     end
     return name
 end
 
 ---@param highlight string
+---@param force? boolean
 ---@return string
-function M.inverse_bg(highlight)
+function M.inverse_bg(highlight, force)
     local name = string.format('%s_Inverse_%s', M.prefix, highlight)
-    if not vim.tbl_contains(cache, name) then
+    if Cache.inverse[name] == nil or force then
         local hl = M.get_hl(highlight)
         vim.api.nvim_set_hl(0, name, {
             fg = hl.bg,
             ---@diagnostic disable-next-line: undefined-field
             ctermfg = hl.ctermbg,
         })
-        table.insert(cache, name)
+        Cache.inverse[name] = { hl = highlight }
     end
     return name
 end
