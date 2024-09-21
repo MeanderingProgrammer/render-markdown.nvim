@@ -8,12 +8,6 @@ local util = require('tests.util')
 ---@return render.md.MarkInfo[]
 local function checkbox(row, icon, highlight)
     ---@type render.md.MarkInfo
-    local conceal_mark = {
-        row = { row, row },
-        col = { 0, 2 },
-        conceal = '',
-    }
-    ---@type render.md.MarkInfo
     local checkbox_mark = {
         row = { row, row },
         col = { 2, 5 },
@@ -21,7 +15,7 @@ local function checkbox(row, icon, highlight)
         virt_text_pos = 'inline',
         conceal = '',
     }
-    return { conceal_mark, checkbox_mark }
+    return { util.conceal(row, 0, 2), checkbox_mark }
 end
 
 ---@param row integer

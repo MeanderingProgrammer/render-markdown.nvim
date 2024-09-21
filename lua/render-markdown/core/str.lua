@@ -17,16 +17,18 @@ function M.width(s)
     return vim.fn.strdisplaywidth(s)
 end
 
+---@param pos 'start'|'end'
 ---@param s string
 ---@return integer
-function M.leading_spaces(s)
-    local _, leading_spaces = s:find('^%s*')
-    return leading_spaces or 0
+function M.spaces(pos, s)
+    local pattern = pos == 'start' and '^%s*' or '%s*$'
+    local from, to = s:find(pattern)
+    return (from ~= nil and to ~= nil) and to - from + 1 or 0
 end
 
 ---@param n integer
 ---@return string
-function M.spaces(n)
+function M.pad(n)
     return string.rep(' ', n)
 end
 
@@ -34,15 +36,7 @@ end
 ---@param s string
 ---@return string
 function M.pad_to(target, s)
-    local n = M.width(target) - M.width(s)
-    return M.pad(n, s)
-end
-
----@param n integer
----@param s string
----@return string
-function M.pad(n, s)
-    return M.spaces(n) .. s
+    return M.pad(M.width(target) - M.width(s))
 end
 
 return M

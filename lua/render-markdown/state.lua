@@ -338,7 +338,7 @@ function M.validate()
                 enabled = { pipe_table.enabled, 'boolean', nilable },
                 preset = one_of(pipe_table.preset, { 'none', 'round', 'double', 'heavy' }, {}, nilable),
                 style = one_of(pipe_table.style, { 'full', 'normal', 'none' }, {}, nilable),
-                cell = one_of(pipe_table.cell, { 'padded', 'raw', 'overlay' }, {}, nilable),
+                cell = one_of(pipe_table.cell, { 'trimmed', 'padded', 'raw', 'overlay' }, {}, nilable),
                 min_width = { pipe_table.min_width, 'number', nilable },
                 border = string_array(pipe_table.border, {}, nilable),
                 alignment_indicator = { pipe_table.alignment_indicator, 'string', nilable },

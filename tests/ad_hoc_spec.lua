@@ -23,13 +23,7 @@ local function setext_heading(start_row, end_row, level)
     icon_mark.virt_text_pos = 'inline'
     table.insert(result, 3, icon_mark)
 
-    ---@type render.md.MarkInfo
-    local conceal_mark = {
-        row = { end_row, end_row },
-        col = { 0, 3 },
-        conceal = '',
-    }
-    table.insert(result, #result, conceal_mark)
+    table.insert(result, #result, util.conceal(end_row, 0, 3))
 
     return result
 end

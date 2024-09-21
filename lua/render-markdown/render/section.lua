@@ -64,7 +64,7 @@ function Render:render()
     for row = start_row, end_row do
         self.marks:add(false, row, 0, {
             priority = 0,
-            virt_text = { { str.spaces(self.indent.per_level * self.level_change), 'Normal' } },
+            virt_text = { { str.pad(self.indent.per_level * self.level_change), 'Normal' } },
             virt_text_pos = 'inline',
         })
     end

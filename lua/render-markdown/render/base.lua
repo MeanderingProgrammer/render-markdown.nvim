@@ -46,7 +46,7 @@ end
 function Base:indent_virt_line(line, level)
     local amount = self:indent(level)
     if amount > 0 then
-        table.insert(line, 1, { str.spaces(amount), 'Normal' })
+        table.insert(line, 1, { str.pad(amount), 'Normal' })
     end
     return line
 end

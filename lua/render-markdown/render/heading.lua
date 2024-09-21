@@ -110,7 +110,7 @@ function Render:icon()
         self.marks:add(true, self.info.start_row, self.info.start_col, {
             end_row = self.info.end_row,
             end_col = self.info.end_col,
-            virt_text = { { str.pad(padding, self.data.icon), { self.data.foreground, self.data.background } } },
+            virt_text = { { str.pad(padding) .. self.data.icon, { self.data.foreground, self.data.background } } },
             virt_text_pos = 'overlay',
         })
         return width
@@ -152,7 +152,7 @@ function Render:background(width)
             -- Overwrite anything beyond width with Normal
             self.marks:add(true, row, 0, {
                 priority = 0,
-                virt_text = { { str.spaces(vim.o.columns * 2), 'Normal' } },
+                virt_text = { { str.pad(vim.o.columns * 2), 'Normal' } },
                 virt_text_win_col = win_col,
             })
         end
@@ -213,7 +213,7 @@ function Render:left_pad()
     for row = self.info.start_row, self.data.end_row - 1 do
         self.marks:add(false, row, 0, {
             priority = 0,
-            virt_text = { { str.spaces(self.heading.left_pad), self.data.background } },
+            virt_text = { { str.pad(self.heading.left_pad), self.data.background } },
             virt_text_pos = 'inline',
         })
     end

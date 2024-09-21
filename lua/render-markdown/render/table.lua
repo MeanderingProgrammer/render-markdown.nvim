@@ -1,5 +1,4 @@
 local Base = require('render-markdown.render.base')
-local NodeInfo = require('render-markdown.core.node_info')
 local log = require('render-markdown.core.log')
 local str = require('render-markdown.core.str')
 
@@ -7,6 +6,7 @@ local str = require('render-markdown.core.str')
 ---@field row integer
 ---@field col integer
 ---@field width integer
+---@field free integer
 
 ---@class render.md.table.Row
 ---@field info render.md.NodeInfo
@@ -98,14 +98,17 @@ function Render:parse_delim(row)
     if pipes == nil or cells == nil then
         return nil
     end
-    local min_width = self.table.cell == 'padded' and self.table.min_width or 0
     local columns = {}
     for i, cell in ipairs(cells) do
         local width = pipes[i + 1].start_col - pipes[i].end_col
         if width < 0 then
             return nil
         end
-        width = math.max(width, min_width)
+        if self.table.cell == 'padded' then
+            width = math.max(width, self.table.min_width)
+        elseif self.table.cell == 'trimmed' then
+            width = self.table.min_width
+        end
         table.insert(columns, { width = width, alignment = Render.alignment(cell) })
     end
     return { info = row, columns = columns }
@@ -142,12 +145,16 @@ function Render:parse_row(row, num_columns)
         local width = pipes[i + 1].start_col - pipes[i].end_col
         -- Account for double width glyphs by replacing cell spacing with width
         width = width - (cell.end_col - cell.start_col) + self.context:width(cell)
+        local free = 0
+        if self.table.cell == 'trimmed' then
+            -- Remove trailing spaces from width calculation except for 1
+            free = math.max(str.spaces('end', cell.text) - 1, 0)
+            width = width - free
+        end
         if width < 0 then
             return nil
         end
-        ---@type render.md.table.Column
-        local column = { row = cell.start_row, col = cell.end_col, width = width }
-        table.insert(columns, column)
+        table.insert(columns, { row = cell.start_row, col = cell.end_col, width = width, free = free })
     end
     return { info = row, pipes = pipes, columns = columns }
 end
@@ -209,17 +216,14 @@ function Render:delimiter()
         end
     end, delim.columns)
 
-    local virt_text = {}
-    local leading_spaces = str.leading_spaces(delim.info.text)
-    if leading_spaces > 0 then
-        table.insert(virt_text, { str.spaces(leading_spaces), 'Normal' })
-    end
-    table.insert(virt_text, { border[4] .. table.concat(sections, border[5]) .. border[6], self.table.head })
+    local text = str.pad(str.spaces('start', delim.info.text))
+    text = text .. border[4] .. table.concat(sections, border[5]) .. border[6]
+    text = text .. str.pad_to(delim.info.text, text)
 
     self.marks:add(true, delim.info.start_row, delim.info.start_col, {
         end_row = delim.info.end_row,
         end_col = delim.info.end_col,
-        virt_text = virt_text,
+        virt_text = { { text, self.table.head } },
         virt_text_pos = 'overlay',
     })
 end
@@ -230,7 +234,7 @@ function Render:row(row)
     local delim, border = self.data.delim, self.table.border
     local highlight = row.info.type == 'pipe_table_header' and self.table.head or self.table.row
 
-    if self.table.cell == 'padded' then
+    if vim.tbl_contains({ 'trimmed', 'padded', 'raw' }, self.table.cell) then
         for _, pipe in ipairs(row.pipes) do
             self.marks:add(true, pipe.start_row, pipe.start_col, {
                 end_row = pipe.end_row,
@@ -239,27 +243,29 @@ function Render:row(row)
                 virt_text_pos = 'overlay',
             })
         end
+    end
+
+    -- Use low priority to include pipe marks
+    if vim.tbl_contains({ 'trimmed', 'padded' }, self.table.cell) then
         for i, column in ipairs(row.columns) do
-            local offset = delim.columns[i].width - column.width
+            local offset = delim.columns[i].width - column.width - column.free
             if offset > 0 then
-                -- Use low priority to include pipe marks in padding
                 self.marks:add(true, column.row, column.col, {
                     priority = 0,
-                    virt_text = { { str.spaces(offset), self.table.filler } },
+                    virt_text = { { str.pad(offset), self.table.filler } },
                     virt_text_pos = 'inline',
+                })
+            elseif offset < 0 then
+                self.marks:add(true, column.row, column.col + offset, {
+                    priority = 0,
+                    end_col = column.col,
+                    conceal = '',
                 })
             end
         end
-    elseif self.table.cell == 'raw' then
-        for _, pipe in ipairs(row.pipes) do
-            self.marks:add(true, pipe.start_row, pipe.start_col, {
-                end_row = pipe.end_row,
-                end_col = pipe.end_col,
-                virt_text = { { border[10], highlight } },
-                virt_text_pos = 'overlay',
-            })
-        end
-    elseif self.table.cell == 'overlay' then
+    end
+
+    if self.table.cell == 'overlay' then
         self.marks:add(true, row.info.start_row, row.info.start_col, {
             end_row = row.info.end_row,
             end_col = row.info.end_col,
@@ -276,8 +282,8 @@ function Render:full()
     ---@param row render.md.table.Row
     ---@return boolean
     local function width_equal(row)
-        if self.table.cell == 'padded' then
-            -- Assume table was padded to match
+        if vim.tbl_contains({ 'trimmed', 'padded' }, self.table.cell) then
+            -- Assume table was trimmed or padded to match
             return true
         elseif self.table.cell == 'raw' then
             -- Want the computed widths to match
@@ -298,7 +304,7 @@ function Render:full()
     ---@param row render.md.table.Row
     ---@return integer
     local function get_spaces(row)
-        return math.max(str.leading_spaces(row.info.text), row.info.start_col)
+        return math.max(str.spaces('start', row.info.text), row.info.start_col)
     end
 
     local first, last = rows[1], rows[#rows]
@@ -319,7 +325,7 @@ function Render:full()
     ---@param above boolean
     ---@param chars { [1]: string, [2]: string, [3]: string }
     local function table_border(info, above, chars)
-        local line = spaces > 0 and { { str.spaces(spaces), 'Normal' } } or {}
+        local line = spaces > 0 and { { str.pad(spaces), 'Normal' } } or {}
         local highlight = above and self.table.head or self.table.row
         table.insert(line, { chars[1] .. table.concat(sections, chars[2]) .. chars[3], highlight })
         self.marks:add(false, info.start_row, info.start_col, {

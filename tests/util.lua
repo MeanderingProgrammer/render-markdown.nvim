@@ -173,6 +173,19 @@ end
 ---@param start_col integer
 ---@param end_col integer
 ---@return render.md.MarkInfo
+function M.conceal(row, start_col, end_col)
+    ---@type render.md.MarkInfo
+    return {
+        row = { row, row },
+        col = { start_col, end_col },
+        conceal = '',
+    }
+end
+
+---@param row integer
+---@param start_col integer
+---@param end_col integer
+---@return render.md.MarkInfo
 function M.inline_code(row, start_col, end_col)
     ---@type render.md.MarkInfo
     return {
@@ -333,8 +346,9 @@ end
 ---@param section 'above'|'delimiter'|'below'
 ---@param lengths integer[]
 ---@param indent? integer
+---@param suffix? integer
 ---@return render.md.MarkInfo
-function M.table_border(row, section, lengths, indent)
+function M.table_border(row, section, lengths, indent, suffix)
     local border
     local highlight
     if section == 'above' then
@@ -352,12 +366,15 @@ function M.table_border(row, section, lengths, indent)
         return string.rep('─', length)
     end, lengths)
     local value = border[1] .. table.concat(parts, border[2]) .. border[3]
+    value = value .. string.rep(' ', suffix or 0)
+
+    local line = {}
+    if indent ~= nil then
+        table.insert(line, { string.rep(' ', indent), 'Normal' })
+    end
+    table.insert(line, { value, M.hl(highlight) })
 
     if vim.tbl_contains({ 'above', 'below' }, section) then
-        local line = { { value, M.hl(highlight) } }
-        if indent ~= nil then
-            table.insert(line, 1, { string.rep(' ', indent), 'Normal' })
-        end
         ---@type render.md.MarkInfo
         return {
             row = { row },
@@ -370,7 +387,7 @@ function M.table_border(row, section, lengths, indent)
         return {
             row = { row, row },
             col = { 0, vim.fn.strdisplaywidth(value) },
-            virt_text = { { value, M.hl(highlight) } },
+            virt_text = line,
             virt_text_pos = 'overlay',
         }
     end

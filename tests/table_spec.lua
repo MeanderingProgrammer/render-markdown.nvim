@@ -44,6 +44,47 @@ describe('table.md', function()
         util.marks_are_equal(expected, actual)
     end)
 
+    it('trimmed', function()
+        util.setup('tests/data/table.md', { pipe_table = { cell = 'trimmed' } })
+
+        local expected, row = {}, util.row()
+
+        vim.list_extend(expected, {
+            util.heading(row:get(), 1),
+            util.table_border(row:increment(2), 'above', { 11, 11 }),
+            util.table_pipe(row:get(), 0, true),
+            util.table_pipe(row:get(), 12, true),
+            util.inline_code(row:get(), 14, 25),
+            util.conceal(row:get(), 26, 37),
+            util.table_pipe(row:get(), 37, true),
+            util.table_border(row:increment(), 'delimiter', { 11, 11 }, nil, 13),
+            util.table_pipe(row:increment(), 0, false),
+            util.inline_code(row:get(), 2, 12),
+            util.table_padding(row:get(), 13, 2),
+            util.table_pipe(row:get(), 13, false),
+            util.link(row:get(), 15, 38, 'web'),
+            util.table_padding(row:get(), 39, 3),
+            util.table_pipe(row:get(), 39, false),
+            util.table_border(row:get(), 'below', { 11, 11 }),
+        })
+
+        vim.list_extend(expected, {
+            util.heading(row:increment(2), 1),
+            util.table_border(row:increment(2), 'above', { 11, 11 }),
+            util.table_pipe(row:get(), 0, true),
+            util.table_pipe(row:get(), 12, true),
+            util.table_pipe(row:get(), 24, true),
+            util.table_border(row:increment(), 'delimiter', { 11, 11 }),
+            util.table_pipe(row:increment(), 0, false),
+            util.table_pipe(row:get(), 12, false),
+            util.table_pipe(row:get(), 24, false),
+            util.table_border(row:get(), 'below', { 11, 11 }),
+        })
+
+        local actual = util.get_actual_marks()
+        util.marks_are_equal(expected, actual)
+    end)
+
     it('raw', function()
         util.setup('tests/data/table.md', { pipe_table = { cell = 'raw' } })
 

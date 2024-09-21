@@ -111,7 +111,7 @@ function Render:language(add_background)
             -- Code blocks will pick up varying amounts of leading white space depending on the
             -- context they are in. This gets lumped into the delimiter node and as a result,
             -- after concealing, the extmark will be left shifted. Logic below accounts for this.
-            icon_text = str.pad(str.leading_spaces(self.info.text) + self.code.language_pad, icon_text .. info.text)
+            icon_text = str.pad(str.spaces('start', self.info.text) + self.code.language_pad) .. icon_text .. info.text
         end
         return self.marks:add(true, info.start_row, info.start_col, {
             virt_text = { { icon_text, highlight } },
@@ -155,7 +155,7 @@ function Render:background(icon_added)
         end
     end
 
-    local padding = str.spaces(vim.o.columns * 2)
+    local padding = str.pad(vim.o.columns * 2)
     for row = self.data.start_row, self.data.end_row - 1 do
         self.marks:add(false, row, self.data.col, {
             end_row = row + 1,
@@ -189,8 +189,8 @@ function Render:left_pad(add_background)
 
     -- Use low priority to include other marks in padding when code block is at edge
     local priority = self.data.col == 0 and 0 or nil
-    local outer_text = { str.spaces(self.data.col), 'Normal' }
-    local left_text = { str.spaces(self.code.left_pad), add_background and self.code.highlight or 'Normal' }
+    local outer_text = { str.pad(self.data.col), 'Normal' }
+    local left_text = { str.pad(self.code.left_pad), add_background and self.code.highlight or 'Normal' }
 
     for row = self.data.start_row, self.data.end_row - 1 do
         local virt_text = {}

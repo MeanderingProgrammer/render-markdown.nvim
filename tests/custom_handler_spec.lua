@@ -68,19 +68,6 @@ end
 ---@param start_col integer
 ---@param end_col integer
 ---@return render.md.MarkInfo
-local function conceal(row, start_col, end_col)
-    ---@type render.md.MarkInfo
-    return {
-        row = { row, row },
-        col = { start_col, end_col },
-        conceal = '',
-    }
-end
-
----@param row integer
----@param start_col integer
----@param end_col integer
----@return render.md.MarkInfo
 local function highlight(row, start_col, end_col)
     ---@type render.md.MarkInfo
     return {
@@ -117,7 +104,7 @@ describe('custom_handler.md', function()
         vim.list_extend(expected, {
             util.heading(row:get(), 1), -- Heading
             {}, -- No inline code
-            { conceal(row:increment(4), 0, 1), conceal(row:get(), 7, 8) }, -- Backslash escapes
+            { util.conceal(row:increment(4), 0, 1), util.conceal(row:get(), 7, 8) }, -- Backslash escapes
         })
 
         local actual = util.get_actual_marks()
@@ -135,7 +122,7 @@ describe('custom_handler.md', function()
         vim.list_extend(expected, {
             util.heading(row:get(), 1), -- Heading
             util.inline_code(row:increment(2), 0, 8), -- Inline code
-            { conceal(row:increment(2), 0, 1), conceal(row:get(), 7, 8) }, -- Backslash escapes
+            { util.conceal(row:increment(2), 0, 1), util.conceal(row:get(), 7, 8) }, -- Backslash escapes
         })
 
         local actual = util.get_actual_marks()
@@ -154,8 +141,8 @@ describe('custom_handler.md', function()
         vim.list_extend(expected, {
             util.heading(row:get(), 1), -- Heading
             util.inline_code(row:increment(2), 0, 8), -- Inline code
-            { conceal(row:increment(2), 0, 1), conceal(row:get(), 7, 8) }, -- Backslash escapes
-            { conceal(row:increment(2), 5, 7), highlight(row:get(), 5, 25), conceal(row:get(), 23, 25) }, -- Highlight equals
+            { util.conceal(row:increment(2), 0, 1), util.conceal(row:get(), 7, 8) }, -- Backslash escapes
+            { util.conceal(row:increment(2), 5, 7), highlight(row:get(), 5, 25), util.conceal(row:get(), 23, 25) }, -- Highlight equals
         })
 
         local actual = util.get_actual_marks()

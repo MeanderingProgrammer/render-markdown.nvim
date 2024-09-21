@@ -94,7 +94,7 @@ function Handler:list_marker(info)
     -- List markers from tree-sitter should have leading spaces removed, however there are known
     -- edge cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
     -- As a result we account for leading spaces here, can remove if this gets fixed upstream
-    local leading_spaces = str.leading_spaces(info.text)
+    local leading_spaces = str.spaces('start', info.text)
 
     if sibling_checkbox() then
         -- Hide the list marker for checkboxes rather than replacing with a bullet point
@@ -116,19 +116,19 @@ function Handler:list_marker(info)
         self.marks:add(true, info.start_row, info.start_col, {
             end_row = info.end_row,
             end_col = info.end_col,
-            virt_text = { { str.pad(leading_spaces, icon), bullet.highlight } },
+            virt_text = { { str.pad(leading_spaces) .. icon, bullet.highlight } },
             virt_text_pos = 'overlay',
         })
         if bullet.left_pad > 0 then
             self.marks:add(false, info.start_row, 0, {
                 priority = 0,
-                virt_text = { { str.spaces(bullet.left_pad), 'Normal' } },
+                virt_text = { { str.pad(bullet.left_pad), 'Normal' } },
                 virt_text_pos = 'inline',
             })
         end
         if bullet.right_pad > 0 then
             self.marks:add(true, info.start_row, info.end_col - 1, {
-                virt_text = { { str.spaces(bullet.right_pad), 'Normal' } },
+                virt_text = { { str.pad(bullet.right_pad), 'Normal' } },
                 virt_text_pos = 'inline',
             })
         end
@@ -147,7 +147,7 @@ function Handler:checkbox(info, checkbox)
     self.marks:add(true, info.start_row, info.start_col, {
         end_row = info.end_row,
         end_col = info.end_col,
-        virt_text = { { inline and icon or str.pad_to(info.text, icon), highlight } },
+        virt_text = { { inline and icon or str.pad_to(info.text, icon) .. icon, highlight } },
         virt_text_pos = inline and 'inline' or 'overlay',
         conceal = inline and '' or nil,
     })

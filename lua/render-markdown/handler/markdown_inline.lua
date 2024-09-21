@@ -122,7 +122,7 @@ function Handler:checkbox(info, checkbox)
     local added = self.marks:add(true, info.start_row, info.start_col, {
         end_row = info.end_row,
         end_col = info.end_col,
-        virt_text = { { inline and icon or str.pad_to(info.text, icon), highlight } },
+        virt_text = { { inline and icon or str.pad_to(info.text, icon) .. icon, highlight } },
         virt_text_pos = 'inline',
         conceal = '',
     })

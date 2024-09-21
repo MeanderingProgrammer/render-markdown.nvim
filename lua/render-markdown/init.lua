@@ -51,7 +51,7 @@ local M = {}
 
 ---@alias render.md.table.Preset 'none'|'round'|'double'|'heavy'
 ---@alias render.md.table.Style 'full'|'normal'|'none'
----@alias render.md.table.Cell 'padded'|'raw'|'overlay'
+---@alias render.md.table.Cell 'trimmed'|'padded'|'raw'|'overlay'
 
 ---@class (exact) render.md.UserPipeTable
 ---@field public enabled? boolean
@@ -488,9 +488,10 @@ M.default_config = {
         -- Determines how individual cells of a table are rendered:
         --  overlay: writes completely over the table, removing conceal behavior and highlights
         --  raw:     replaces only the '|' characters in each row, leaving the cells unmodified
-        --  padded:  raw + cells are padded with inline extmarks to make up for any concealed text
+        --  padded:  raw + cells are padded to maximum visual width for each column
+        --  trimmed: padded except empty space is subtracted from visual width calculation
         cell = 'padded',
-        -- Minimum column width to use for padded cell
+        -- Minimum column width to use for padded or trimmed cell
         min_width = 0,
         -- Characters used to replace table border
         -- Correspond to top(3), delimiter(3), bottom(3), vertical, & horizontal
