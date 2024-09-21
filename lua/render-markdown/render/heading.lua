@@ -149,10 +149,10 @@ function Render:background(width)
             hl_eol = true,
         })
         if self.data.heading_width == 'block' then
-            -- Overwrite anything beyond width with Normal
+            -- Overwrite anything beyond width with padding highlight
             self.marks:add(true, row, 0, {
                 priority = 0,
-                virt_text = { { str.pad(vim.o.columns * 2), 'Normal' } },
+                virt_text = { { str.pad(vim.o.columns * 2), self.config.padding.highlight } },
                 virt_text_win_col = win_col,
             })
         end

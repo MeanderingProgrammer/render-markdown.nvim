@@ -119,6 +119,9 @@
 ---@field public backgrounds string[]
 ---@field public foregrounds string[]
 
+---@class (exact) render.md.Padding
+---@field public highlight string
+
 ---@class (exact) render.md.AntiConceal
 ---@field public enabled boolean
 ---@field public above integer
@@ -134,6 +137,7 @@
 ---@field public debounce integer
 ---@field public render_modes string[]|boolean
 ---@field public anti_conceal render.md.AntiConceal
+---@field public padding render.md.Padding
 ---@field public heading render.md.Heading
 ---@field public code render.md.Code
 ---@field public dash render.md.Dash

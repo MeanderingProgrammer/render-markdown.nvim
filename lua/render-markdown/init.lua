@@ -144,6 +144,9 @@ local M = {}
 ---@field public backgrounds? string[]
 ---@field public foregrounds? string[]
 
+---@class (exact) render.md.UserPadding
+---@field public highlight? string
+
 ---@class (exact) render.md.UserAntiConceal
 ---@field public enabled? boolean
 ---@field public above? integer
@@ -159,6 +162,7 @@ local M = {}
 ---@field public debounce? integer
 ---@field public render_modes? string[]|boolean
 ---@field public anti_conceal? render.md.UserAntiConceal
+---@field public padding? render.md.UserPadding
 ---@field public heading? render.md.UserHeading
 ---@field public code? render.md.UserCode
 ---@field public dash? render.md.UserDash
@@ -284,6 +288,10 @@ M.default_config = {
         above = 0,
         -- Number of lines below cursor to show
         below = 0,
+    },
+    padding = {
+        -- Highlight to use when adding whitespace, should match background
+        highlight = 'Normal',
     },
     latex = {
         -- Whether LaTeX should be rendered, mainly used for health check
@@ -608,12 +616,15 @@ M.default_config = {
     -- More granular configuration mechanism, allows different aspects of buffers
     -- to have their own behavior. Values default to the top level configuration
     -- if no override is provided. Supports the following fields:
-    --   enabled, max_file_size, debounce, render_modes, anti_conceal, heading, code,
+    --   enabled, max_file_size, debounce, render_modes, anti_conceal, padding, heading, code,
     --   dash, bullet, checkbox, quote, pipe_table, callout, link, sign, indent, win_options
     overrides = {
         -- Overrides for different buftypes, see :h 'buftype'
         buftype = {
-            nofile = { sign = { enabled = false } },
+            nofile = {
+                padding = { highlight = 'NormalFloat' },
+                sign = { enabled = false },
+            },
         },
         -- Overrides for different filetypes, see :h 'filetype'
         filetype = {},

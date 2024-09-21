@@ -95,6 +95,7 @@ function M.default_buffer_config()
         debounce = config.debounce,
         render_modes = config.render_modes,
         anti_conceal = config.anti_conceal,
+        padding = config.padding,
         heading = config.heading,
         code = config.code,
         dash = config.dash,
@@ -222,6 +223,13 @@ function M.validate()
                 enabled = { anti_conceal.enabled, 'boolean', nilable },
                 above = { anti_conceal.above, 'number', nilable },
                 below = { anti_conceal.below, 'number', nilable },
+            })
+        end
+
+        local padding = config.padding
+        if padding ~= nil then
+            append_errors(path .. '.padding', padding, {
+                highlight = { padding.highlight, 'string', nilable },
             })
         end
 
@@ -414,6 +422,7 @@ function M.validate()
         debounce = { config.debounce, 'number' },
         render_modes = string_array(config.render_modes, { 'boolean' }, false),
         anti_conceal = { config.anti_conceal, 'table' },
+        padding = { config.padding, 'table' },
         heading = { config.heading, 'table' },
         code = { config.code, 'table' },
         dash = { config.dash, 'table' },
@@ -471,6 +480,7 @@ function M.validate()
                 debounce = { override.debounce, 'number', true },
                 render_modes = string_array(override.render_modes, {}, true),
                 anti_conceal = { override.anti_conceal, 'table', true },
+                padding = { override.padding, 'table', true },
                 heading = { override.heading, 'table', true },
                 code = { override.code, 'table', true },
                 dash = { override.dash, 'table', true },

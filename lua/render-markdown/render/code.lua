@@ -163,10 +163,10 @@ function Render:background(icon_added)
             hl_eol = true,
         })
         if self.code.width == 'block' then
-            -- Overwrite anything beyond width with Normal
+            -- Overwrite anything beyond width with padding highlight
             self.marks:add(false, row, self.data.col, {
                 priority = 0,
-                virt_text = { { padding, 'Normal' } },
+                virt_text = { { padding, self.config.padding.highlight } },
                 virt_text_win_col = width + self.data.indent,
             })
         end
@@ -189,8 +189,9 @@ function Render:left_pad(add_background)
 
     -- Use low priority to include other marks in padding when code block is at edge
     local priority = self.data.col == 0 and 0 or nil
-    local outer_text = { str.pad(self.data.col), 'Normal' }
-    local left_text = { str.pad(self.code.left_pad), add_background and self.code.highlight or 'Normal' }
+    local outer_text = { str.pad(self.data.col), self.config.padding.highlight }
+    local background = add_background and self.code.highlight or self.config.padding.highlight
+    local left_text = { str.pad(self.code.left_pad), background }
 
     for row = self.data.start_row, self.data.end_row - 1 do
         local virt_text = {}

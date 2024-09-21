@@ -122,13 +122,13 @@ function Handler:list_marker(info)
         if bullet.left_pad > 0 then
             self.marks:add(false, info.start_row, 0, {
                 priority = 0,
-                virt_text = { { str.pad(bullet.left_pad), 'Normal' } },
+                virt_text = { { str.pad(bullet.left_pad), self.config.padding.highlight } },
                 virt_text_pos = 'inline',
             })
         end
         if bullet.right_pad > 0 then
             self.marks:add(true, info.start_row, info.end_col - 1, {
-                virt_text = { { str.pad(bullet.right_pad), 'Normal' } },
+                virt_text = { { str.pad(bullet.right_pad), self.config.padding.highlight } },
                 virt_text_pos = 'inline',
             })
         end

@@ -264,6 +264,10 @@ Full Default Configuration ~
             -- Number of lines below cursor to show
             below = 0,
         },
+        padding = {
+            -- Highlight to use when adding whitespace, should match background
+            highlight = 'Normal',
+        },
         latex = {
             -- Whether LaTeX should be rendered, mainly used for health check
             enabled = true,
@@ -587,12 +591,15 @@ Full Default Configuration ~
         -- More granular configuration mechanism, allows different aspects of buffers
         -- to have their own behavior. Values default to the top level configuration
         -- if no override is provided. Supports the following fields:
-        --   enabled, max_file_size, debounce, render_modes, anti_conceal, heading, code,
+        --   enabled, max_file_size, debounce, render_modes, anti_conceal, padding, heading, code,
         --   dash, bullet, checkbox, quote, pipe_table, callout, link, sign, indent, win_options
         overrides = {
             -- Overrides for different buftypes, see :h 'buftype'
             buftype = {
-                nofile = { sign = { enabled = false } },
+                nofile = {
+                    padding = { highlight = 'NormalFloat' },
+                    sign = { enabled = false },
+                },
             },
             -- Overrides for different filetypes, see :h 'filetype'
             filetype = {},
