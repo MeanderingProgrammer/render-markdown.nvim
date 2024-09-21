@@ -6,6 +6,8 @@
 
 - `pipe_table.cell` value `trimmed` [#175](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/175)
   [c686970](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c68697085441d03a20eee15d4d78e2e5a771569a)
+- configurable padding highlight [#176](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/176)
+  [095078d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/095078d931ce23b544face8ca7b845adf7fad7e9)
 
 ## 7.1.0 (2024-09-19)
 

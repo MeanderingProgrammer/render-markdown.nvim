@@ -1075,3 +1075,13 @@ The table below shows all the highlight groups with their default link
 - [Purpose](doc/purpose.md): Why this plugin exists
 - [Markdown Ecosystem](doc/markdown-ecosystem.md): Information about other `markdown`
   related plugins and how they co-exist
+
+<!-- panvimdoc-ignore-start -->
+
+# Donate
+
+I enjoy working on these projects and will continue to do so with the time I can
+find. Any support is appreciated including starring the repo and reporting issues.
+Money is also nice: [Donate via Stripe](https://donate.stripe.com/4gw2bSbwA5gw5s48ww).
+
+<!-- panvimdoc-ignore-end -->
