@@ -70,7 +70,7 @@ describe('state', function()
         )
 
         eq(
-            { prefix .. '.log_level: expected one of { "debug", "error" }, got invalid' },
+            { prefix .. '.log_level: expected one of { "debug", "info", "error" }, got invalid' },
             ---@diagnostic disable-next-line: assign-type-mismatch
             validate({ log_level = 'invalid' })
         )

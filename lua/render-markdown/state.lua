@@ -439,7 +439,7 @@ function M.validate()
         markdown_query = { config.markdown_query, 'string' },
         markdown_quote_query = { config.markdown_quote_query, 'string' },
         inline_query = { config.inline_query, 'string' },
-        log_level = one_of(config.log_level, { 'debug', 'error' }, {}, false),
+        log_level = one_of(config.log_level, { 'debug', 'info', 'error' }, {}, false),
         file_types = string_array(config.file_types, {}, false),
         injections = { config.injections, 'table' },
         latex = { config.latex, 'table' },

@@ -11,6 +11,12 @@ body:
       required: true
   - type: input
     attributes:
+      label: Neovim distribution
+      placeholder: N/A, LazyVim, NvChad
+    validations:
+      required: true
+  - type: input
+    attributes:
       label: Operating system
       placeholder: MacOS
     validations:

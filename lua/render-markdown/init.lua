@@ -177,7 +177,7 @@ local M = {}
 ---@field public win_options? table<string, render.md.UserWindowOption>
 
 ---@alias render.md.config.Preset 'none'|'lazy'|'obsidian'
----@alias render.md.config.LogLevel 'debug'|'error'
+---@alias render.md.config.LogLevel 'debug'|'info'|'error'
 
 ---@class (exact) render.md.UserConfig: render.md.UserBufferConfig
 ---@field public preset? render.md.config.Preset

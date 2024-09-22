@@ -133,7 +133,7 @@ function Context:query(root, query, callback)
     for id, node in query:iter_captures(root, self.buf, self.top, self.bottom) do
         local capture = query.captures[id]
         local info = NodeInfo.new(self.buf, node)
-        log.debug_node_info(capture, info)
+        log.node_info(capture, info)
         callback(capture, info)
     end
 end

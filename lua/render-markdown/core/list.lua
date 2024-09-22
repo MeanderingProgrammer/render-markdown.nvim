@@ -32,14 +32,14 @@ function Marks:add(conceal, start_row, start_col, opts)
         opts = opts,
     }
     if opts.virt_text_pos == 'inline' and not util.has_10 then
-        log.error('inline marks require neovim >= 0.10.0', mark)
+        log.add('error', 'inline marks require neovim >= 0.10.0', mark)
         return false
     end
     if opts.virt_text_repeat_linebreak ~= nil and not util.has_10 then
-        log.error('repeat linebreak marks require neovim >= 0.10.0', mark)
+        log.add('error', 'repeat linebreak marks require neovim >= 0.10.0', mark)
         return false
     end
-    log.debug('mark', mark)
+    log.add('debug', 'mark', mark)
     table.insert(self.marks, mark)
     return true
 end

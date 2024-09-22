@@ -3,6 +3,18 @@ description: Advice on how to do something
 title: "help: "
 labels: [question]
 body:
+  - type: input
+    attributes:
+      label: Neovim version (nvim -v)
+      placeholder: 0.10.0
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Neovim distribution
+      placeholder: N/A, LazyVim, NvChad
+    validations:
+      required: true
   - type: textarea
     attributes:
       label: Description

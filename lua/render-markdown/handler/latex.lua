@@ -19,12 +19,12 @@ function M.parse(root, buf)
         return {}
     end
     if vim.fn.executable(latex.converter) ~= 1 then
-        log.debug('executable not found', latex.converter)
+        log.add('debug', 'executable not found', latex.converter)
         return {}
     end
 
     local info = NodeInfo.new(buf, root)
-    log.debug_node_info('latex', info)
+    log.node_info('latex', info)
 
     local expressions = cache[info.text]
     if expressions == nil then

@@ -72,7 +72,7 @@ end
 ---@param event string
 ---@param change boolean
 function M.debounce_update(buf, win, event, change)
-    log.debug_buf('update', buf, string.format('event %s', event), string.format('change %s', change))
+    log.buf('info', 'update', buf, string.format('event %s', event), string.format('change %s', change))
     if not util.valid(buf, win) then
         return
     end
@@ -101,14 +101,12 @@ function M.update(buf, win, parse)
 
     local config, buffer_state = state.get(buf), Cache.get(buf)
     local mode, row = util.mode(), util.row(buf, win)
-
     local next_state = M.next_state(config, win, mode)
-    if next_state ~= buffer_state.state then
-        for name, value in pairs(config.win_options) do
-            util.set_win(win, name, value[next_state])
-        end
+
+    log.buf('info', 'state', buf, next_state)
+    for name, value in pairs(config.win_options) do
+        util.set_win(win, name, value[next_state])
     end
-    buffer_state.state = next_state
 
     if next_state == 'rendered' then
         if buffer_state.marks == nil or parse then
@@ -156,7 +154,7 @@ end
 function M.parse_buffer(buf, win)
     local has_parser, parser = pcall(vim.treesitter.get_parser, buf)
     if not has_parser then
-        log.error_buf('fail', buf, 'no treesitter parser found')
+        log.buf('error', 'fail', buf, 'no treesitter parser found')
         return {}
     end
     -- Reset buffer context
@@ -187,7 +185,7 @@ end
 ---@param root TSNode
 ---@return render.md.Mark[]
 function M.parse_tree(buf, language, root)
-    log.debug_buf('language', buf, language)
+    log.buf('debug', 'language', buf, language)
     if not Context.get(buf):contains_node(root) then
         return {}
     end
@@ -195,7 +193,7 @@ function M.parse_tree(buf, language, root)
     local marks = {}
     local user = state.custom_handlers[language]
     if user ~= nil then
-        log.debug_buf('running handler', buf, 'user')
+        log.buf('debug', 'running handler', buf, 'user')
         vim.list_extend(marks, user.parse(root, buf))
         if not user.extends then
             return marks
@@ -203,7 +201,7 @@ function M.parse_tree(buf, language, root)
     end
     local builtin = builtin_handlers[language]
     if builtin ~= nil then
-        log.debug_buf('running handler', buf, 'builtin')
+        log.buf('debug', 'running handler', buf, 'builtin')
         vim.list_extend(marks, builtin.parse(root, buf))
     end
     return marks
