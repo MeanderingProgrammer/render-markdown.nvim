@@ -75,42 +75,48 @@ end
 ---@private
 ---@return integer
 function Render:icon()
+    local icon, highlight = self.data.icon, { self.data.foreground, self.data.background }
+
     if not self.data.atx then
-        if self.data.icon == nil then
+        if icon == nil then
             return 0
         end
-        local added = self.marks:add(true, self.info.start_row, self.info.start_col, {
-            end_row = self.info.end_row,
-            end_col = self.info.end_col,
-            virt_text = { { self.data.icon, { self.data.foreground, self.data.background } } },
-            virt_text_pos = 'inline',
-        })
-        return added and str.width(self.data.icon) or 0
+        local added = true
+        for row = self.info.start_row, self.data.end_row - 1 do
+            added = added
+                and self.marks:add(true, row, self.info.start_col, {
+                    end_row = row,
+                    end_col = self.info.end_col,
+                    virt_text = { { row == self.info.start_row and icon or str.pad(str.width(icon)), highlight } },
+                    virt_text_pos = 'inline',
+                })
+        end
+        return added and str.width(icon) or 0
     end
 
     -- For atx headings available width is level + 1 - concealed, where level = number of
     -- `#` characters, one is added to account for the space after the last `#` but before
     -- the  heading title, and concealed text is subtracted since that space is not usable
     local width = self.data.level + 1 - self.context:concealed(self.info)
-    if self.data.icon == nil then
+    if icon == nil then
         return width
     end
 
-    local padding = width - str.width(self.data.icon)
+    local padding = width - str.width(icon)
     if self.heading.position == 'inline' or padding < 0 then
         local added = self.marks:add(true, self.info.start_row, self.info.start_col, {
             end_row = self.info.end_row,
             end_col = self.info.end_col,
-            virt_text = { { self.data.icon, { self.data.foreground, self.data.background } } },
+            virt_text = { { icon, highlight } },
             virt_text_pos = 'inline',
             conceal = '',
         })
-        return added and str.width(self.data.icon) or width
+        return added and str.width(icon) or width
     else
         self.marks:add(true, self.info.start_row, self.info.start_col, {
             end_row = self.info.end_row,
             end_col = self.info.end_col,
-            virt_text = { { str.pad(padding) .. self.data.icon, { self.data.foreground, self.data.background } } },
+            virt_text = { { str.pad(padding) .. icon, highlight } },
             virt_text_pos = 'overlay',
         })
         return width
@@ -122,16 +128,13 @@ end
 ---@return integer
 function Render:width(icon_width)
     if self.data.heading_width == 'block' then
-        local width = nil
+        local content_width = nil
         if self.data.atx then
-            width = icon_width + self.context:width(self.info:sibling('inline'))
+            content_width = self.context:width(self.info:sibling('inline'))
         else
-            -- Account for icon in first row
-            local widths = vim.tbl_map(str.width, self.info:lines())
-            widths[1] = widths[1] + icon_width
-            width = vim.fn.max(widths)
+            content_width = vim.fn.max(vim.tbl_map(str.width, self.info:lines()))
         end
-        width = self.heading.left_pad + width + self.heading.right_pad
+        local width = self.heading.left_pad + icon_width + content_width + self.heading.right_pad
         return math.max(width, self.heading.min_width)
     else
         return self.context:get_width()

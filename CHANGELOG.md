@@ -9,6 +9,11 @@
 - configurable padding highlight [#176](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/176)
   [095078d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/095078d931ce23b544face8ca7b845adf7fad7e9)
 
+### Bug Fixes
+
+- window options on alternate buffer switch [#177](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/177)
+  [f187721](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/f187721a5381f4443ef97ad1a7c0681a65511d28)
+
 ## 7.1.0 (2024-09-19)
 
 ### Features
