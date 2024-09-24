@@ -1,6 +1,6 @@
 ---@class render.md.Extmark
 ---@field private id? integer
----@field mark render.md.Mark
+---@field private mark render.md.Mark
 local Extmark = {}
 Extmark.__index = Extmark
 
@@ -11,6 +11,11 @@ function Extmark.new(mark)
     self.id = nil
     self.mark = mark
     return self
+end
+
+---@return render.md.Mark
+function Extmark:get_mark()
+    return self.mark
 end
 
 ---@param hidden Range2?

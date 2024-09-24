@@ -31,7 +31,7 @@ function Render:setup()
 end
 
 function Render:render()
-    self.context:query(self.info.node, state.markdown_quote_query, function(capture, info)
+    self.context:query(self.info:get_node(), state.markdown_quote_query, function(capture, info)
         if capture == 'quote_marker' then
             self:quote_marker(info)
         else

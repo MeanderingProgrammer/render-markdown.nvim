@@ -1,6 +1,6 @@
 ---@class render.md.NodeInfo
 ---@field private buf integer
----@field node TSNode
+---@field private node TSNode
 ---@field type string
 ---@field text string
 ---@field start_row integer
@@ -36,6 +36,11 @@ function NodeInfo.__lt(a, b)
     else
         return a.start_col < b.start_col
     end
+end
+
+---@return TSNode
+function NodeInfo:get_node()
+    return self.node
 end
 
 ---@return boolean

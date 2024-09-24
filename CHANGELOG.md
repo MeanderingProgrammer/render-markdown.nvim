@@ -8,6 +8,9 @@
   [c686970](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c68697085441d03a20eee15d4d78e2e5a771569a)
 - configurable padding highlight [#176](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/176)
   [095078d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/095078d931ce23b544face8ca7b845adf7fad7e9)
+- pad setext header lines [75a0a95](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/75a0a9596a91130fae43d3b7c0d6c651645ef1df)
+- center headings and code blocks [#179](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/179)
+  [0986638](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/0986638b381a4b01eb108bb946f3a67a9eb3d0ec)
 
 ### Bug Fixes
 

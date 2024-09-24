@@ -51,9 +51,9 @@ function M.get_row_marks(buf, win)
     assert(row ~= nil and hidden ~= nil, 'Row & range must be known to get marks')
 
     local marks = {}
-    for _, extmark in ipairs(buffer_state.marks or {}) do
+    for _, extmark in ipairs(buffer_state:get_marks()) do
         if extmark:overlaps(hidden) then
-            table.insert(marks, extmark.mark)
+            table.insert(marks, extmark:get_mark())
         end
     end
     return row, marks
@@ -64,7 +64,7 @@ end
 ---@param buffer_state render.md.BufferState
 function M.clear(buf, buffer_state)
     vim.api.nvim_buf_clear_namespace(buf, M.namespace, 0, -1)
-    buffer_state.marks = nil
+    buffer_state:set_marks(nil)
 end
 
 ---@param buf integer
@@ -109,13 +109,13 @@ function M.update(buf, win, parse)
     end
 
     if next_state == 'rendered' then
-        if buffer_state.marks == nil or parse then
+        if not buffer_state:has_marks() or parse then
             M.clear(buf, buffer_state)
-            buffer_state.marks = M.parse_buffer(buf, win)
+            buffer_state:set_marks(M.parse_buffer(buf, win))
         end
         local hidden = config:hidden(mode, row)
-        for _, extmark in ipairs(buffer_state.marks) do
-            if extmark.mark.conceal and extmark:overlaps(hidden) then
+        for _, extmark in ipairs(buffer_state:get_marks()) do
+            if extmark:get_mark().conceal and extmark:overlaps(hidden) then
                 extmark:hide(M.namespace, buf)
             else
                 extmark:show(M.namespace, buf)

@@ -17,9 +17,7 @@ function M.toggle()
 end
 
 function M.log()
-    local log = require('render-markdown.core.log')
-    log.flush()
-    vim.cmd.tabnew(log.file)
+    require('render-markdown.core.log').open()
 end
 
 function M.expand()

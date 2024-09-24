@@ -9,7 +9,7 @@ local util = require('render-markdown.core.util')
 ---@class render.md.Log
 ---@field private level render.md.config.LogLevel
 ---@field private entries render.md.log.Entry[]
----@field file string
+---@field private file string
 local M = {}
 
 ---@param level render.md.config.LogLevel
@@ -27,6 +27,11 @@ function M.setup(level)
     if util.file_size_mb(M.file) > 5 then
         assert(io.open(M.file, 'w')):close()
     end
+end
+
+function M.open()
+    M.flush()
+    vim.cmd.tabnew(M.file)
 end
 
 ---@param capture string
@@ -105,6 +110,7 @@ function M.level_value(level)
     end
 end
 
+---@private
 function M.flush()
     if #M.entries == 0 then
         return
