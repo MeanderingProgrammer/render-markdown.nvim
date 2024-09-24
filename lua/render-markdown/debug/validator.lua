@@ -66,16 +66,17 @@ function Spec:one_of(keys, values, input_types)
 end
 
 ---@param keys string|string[]
+---@param array_type type
 ---@param input_types? type|type[]
 ---@return render.md.debug.ValidatorSpec
-function Spec:string_array(keys, input_types)
+function Spec:array(keys, array_type, input_types)
     local types, suffix = self:handle_types(input_types)
     return self:add(keys, function(v)
         if vim.tbl_contains(types, type(v)) then
             return true
         elseif type(v) == 'table' then
             for i, item in ipairs(v) do
-                if type(item) ~= 'string' then
+                if type(item) ~= array_type then
                     return false, string.format('Index %d is %s', i, type(item))
                 end
             end
@@ -83,7 +84,7 @@ function Spec:string_array(keys, input_types)
         else
             return false
         end
-    end, 'string array' .. suffix)
+    end, array_type .. ' array' .. suffix)
 end
 
 ---@param keys string|string[]

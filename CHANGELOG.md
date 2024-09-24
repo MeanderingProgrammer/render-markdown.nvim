@@ -13,6 +13,9 @@
   [0986638](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/0986638b381a4b01eb108bb946f3a67a9eb3d0ec)
   [67288fe](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/67288febca78b7aac8fae9543ef8980237e27d2a)
 - integrate with lazy.nvim filetypes [cb9a5e2](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/cb9a5e2412d21c7a89627e0d6da5459acbc0eb9c)
+- bullet left & right padding on all lines of items [#181](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/181)
+  [3adb9d5](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/3adb9d539a016bc63fee83aa740e38fa4eeab094)
+
 
 ### Bug Fixes
 

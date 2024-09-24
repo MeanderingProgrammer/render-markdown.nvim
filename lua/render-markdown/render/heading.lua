@@ -10,7 +10,11 @@ local str = require('render-markdown.core.str')
 ---@field sign? string
 ---@field foreground string
 ---@field background string
----@field heading_width render.md.heading.Width
+---@field width render.md.heading.Width
+---@field left_margin number
+---@field left_pad number
+---@field right_pad number
+---@field min_width integer
 ---@field end_row integer
 
 ---@class render.md.width.Heading
@@ -47,11 +51,6 @@ function Render:setup()
         atx, level = true, str.width(self.info.text)
     end
 
-    local heading_width = self.heading.width
-    if type(heading_width) == 'table' then
-        heading_width = list.clamp(heading_width, level)
-    end
-
     self.data = {
         atx = atx,
         level = level,
@@ -59,11 +58,28 @@ function Render:setup()
         sign = list.cycle(self.heading.signs, level),
         foreground = list.clamp(self.heading.foregrounds, level),
         background = list.clamp(self.heading.backgrounds, level),
-        heading_width = heading_width,
+        width = Render.resolve(self.heading.width, level),
+        left_margin = Render.resolve(self.heading.left_margin, level),
+        left_pad = Render.resolve(self.heading.left_pad, level),
+        right_pad = Render.resolve(self.heading.right_pad, level),
+        min_width = Render.resolve(self.heading.min_width, level),
         end_row = self.info.end_row + (atx and 1 or 0),
     }
 
     return true
+end
+
+---@private
+---@generic T
+---@param values `T`|T[]
+---@param level integer
+---@return T
+function Render.resolve(values, level)
+    if type(values) == 'table' then
+        return list.clamp(values, level)
+    else
+        return values
+    end
 end
 
 function Render:render()
@@ -139,14 +155,14 @@ function Render:width(icon_width)
         text_width = vim.fn.max(vim.tbl_map(str.width, self.info:lines()))
     end
     local width = icon_width + text_width
-    local left_padding = self.context:resolve_offset(self.heading.left_pad, width)
-    local right_padding = self.context:resolve_offset(self.heading.right_pad, width)
-    width = math.max(left_padding + width + right_padding, self.heading.min_width)
+    local left_padding = self.context:resolve_offset(self.data.left_pad, width)
+    local right_padding = self.context:resolve_offset(self.data.right_pad, width)
+    width = math.max(left_padding + width + right_padding, self.data.min_width)
     ---@type render.md.width.Heading
     return {
-        margin = self.context:resolve_offset(self.heading.left_margin, width),
+        margin = self.context:resolve_offset(self.data.left_margin, width),
         padding = left_padding,
-        content = self.data.heading_width == 'block' and width or self.context:get_width(),
+        content = self.data.width == 'block' and width or self.context:get_width(),
     }
 end
 
@@ -154,7 +170,7 @@ end
 ---@param width render.md.width.Heading
 function Render:background(width)
     local win_col, padding = 0, {}
-    if self.data.heading_width == 'block' then
+    if self.data.width == 'block' then
         win_col = width.margin + width.content + self:indent(self.data.level)
         table.insert(padding, { str.pad(vim.o.columns * 2), self.config.padding.highlight })
     end
@@ -185,6 +201,7 @@ function Render:border(width)
 
     local foreground, background = self.data.foreground, colors.inverse_bg(self.data.background)
     local prefix = self.heading.border_prefix and self.data.level or 0
+    local virtual = self.heading.border_virtual
 
     ---@param icon string
     ---@return { [1]: string, [2]: string }[]
@@ -198,7 +215,7 @@ function Render:border(width)
     end
 
     local line_above = line(self.heading.above)
-    if str.width(self.info:line('above', 1)) == 0 and self.info.start_row - 1 ~= self.context.last_heading then
+    if not virtual and self:empty_line('above') and self.info.start_row - 1 ~= self.context.last_heading then
         self.marks:add(true, self.info.start_row - 1, 0, {
             virt_text = line_above,
             virt_text_pos = 'overlay',
@@ -211,7 +228,7 @@ function Render:border(width)
     end
 
     local line_below = line(self.heading.below)
-    if str.width(self.info:line('below', 1)) == 0 then
+    if not virtual and self:empty_line('below') then
         self.marks:add(true, self.info.end_row + 1, 0, {
             virt_text = line_below,
             virt_text_pos = 'overlay',
@@ -222,6 +239,13 @@ function Render:border(width)
             virt_lines = { self:indent_virt_line(line_below, self.data.level) },
         })
     end
+end
+
+---@private
+---@param position 'above'|'below'
+---@return boolean
+function Render:empty_line(position)
+    return str.width(self.info:line(position, 1)) == 0
 end
 
 ---@private

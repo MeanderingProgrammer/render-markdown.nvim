@@ -135,11 +135,12 @@ local M = {}
 ---@field public icons? string[]
 ---@field public signs? string[]
 ---@field public width? render.md.heading.Width|(render.md.heading.Width)[]
----@field public left_margin? number
----@field public left_pad? number
----@field public right_pad? number
----@field public min_width? integer
+---@field public left_margin? number|number[]
+---@field public left_pad? number|number[]
+---@field public right_pad? number|number[]
+---@field public min_width? integer|integer[]
 ---@field public border? boolean
+---@field public border_virtual? boolean
 ---@field public border_prefix? boolean
 ---@field public above? string
 ---@field public below? string
@@ -332,17 +333,23 @@ M.default_config = {
         -- Amount of margin to add to the left of headings
         -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
         -- Margin available space is computed after accounting for padding
+        -- Can also be an array of numbers in which case the 'level' is used to index into the array using a clamp
         left_margin = 0,
         -- Amount of padding to add to the left of headings
         -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
+        -- Can also be an array of numbers in which case the 'level' is used to index into the array using a clamp
         left_pad = 0,
         -- Amount of padding to add to the right of headings when width is 'block'
         -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
+        -- Can also be an array of numbers in which case the 'level' is used to index into the array using a clamp
         right_pad = 0,
         -- Minimum width to use for headings when width is 'block'
+        -- Can also be an array of integers in which case the 'level' is used to index into the array using a clamp
         min_width = 0,
         -- Determins if a border is added above and below headings
         border = false,
+        -- Alway use virtual lines for heading borders instead of attempting to use empty lines
+        border_virtual = false,
         -- Highlight the start of the border using the foreground highlight
         border_prefix = false,
         -- Used above heading for border
