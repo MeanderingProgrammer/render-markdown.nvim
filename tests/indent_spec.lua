@@ -24,6 +24,7 @@ local function border(row, level, position)
     local background = util.hl_inverse(string.format('H%dBg', level))
     local icon = position == 'above' and '▄' or '▀'
     local line = {
+        { '', 'Normal' },
         { '', background },
         { '', foreground },
         { icon:rep(vim.opt.columns:get()), background },

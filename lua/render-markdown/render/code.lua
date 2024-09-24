@@ -10,6 +10,9 @@ local str = require('render-markdown.core.str')
 ---@field code_info? render.md.NodeInfo
 ---@field language_info? render.md.NodeInfo
 ---@field language? string
+---@field margin integer
+---@field language_padding integer
+---@field padding integer
 ---@field max_width integer
 ---@field empty_rows integer[]
 ---@field indent integer
@@ -43,16 +46,20 @@ function Render:setup()
     local code_info = self.info:child('info_string')
     local language_info = code_info ~= nil and code_info:child('language') or nil
 
-    -- Account for language padding in first row
     local widths = vim.tbl_map(str.width, self.info:lines())
-    widths[1] = widths[1] + self.code.language_pad
-    local max_width = self.code.left_pad + vim.fn.max(widths) + self.code.right_pad
+
     local empty_rows = {}
     for row, width in ipairs(widths) do
         if width == 0 then
             table.insert(empty_rows, self.info.start_row + row - 1)
         end
     end
+
+    local max_width = vim.fn.max(widths)
+    local language_padding = self.context:resolve_offset(self.code.language_pad, max_width)
+    local left_padding = self.context:resolve_offset(self.code.left_pad, max_width)
+    local right_padding = self.context:resolve_offset(self.code.right_pad, max_width)
+    max_width = math.max(widths[1] + language_padding, left_padding + max_width + right_padding, self.code.min_width)
 
     self.data = {
         col = self.info.start_col,
@@ -61,7 +68,10 @@ function Render:setup()
         code_info = code_info,
         language_info = language_info,
         language = (language_info or {}).text,
-        max_width = math.max(max_width, self.code.min_width),
+        margin = self.context:resolve_offset(self.code.left_margin, max_width),
+        language_padding = language_padding,
+        padding = left_padding,
+        max_width = max_width,
         empty_rows = empty_rows,
         indent = self:indent(),
     }
@@ -77,10 +87,7 @@ function Render:render()
     if add_background then
         self:background(icon_added)
     end
-    if icon_added then
-        self.data.start_row = self.data.start_row + 1
-    end
-    self:left_pad(add_background)
+    self:left_pad(add_background, icon_added)
 end
 
 ---@private
@@ -111,7 +118,8 @@ function Render:language(add_background)
             -- Code blocks will pick up varying amounts of leading white space depending on the
             -- context they are in. This gets lumped into the delimiter node and as a result,
             -- after concealing, the extmark will be left shifted. Logic below accounts for this.
-            icon_text = str.pad(str.spaces('start', self.info.text) + self.code.language_pad) .. icon_text .. info.text
+            local padding = str.spaces('start', self.info.text) + self.data.language_padding
+            icon_text = str.pad(padding) .. icon_text .. info.text
         end
         return self.marks:add(true, info.start_row, info.start_col, {
             virt_text = { { icon_text, highlight } },
@@ -119,7 +127,7 @@ function Render:language(add_background)
         })
     elseif self.code.position == 'right' then
         local icon_text = icon .. ' ' .. info.text
-        local win_col = self.data.max_width - self.code.language_pad
+        local win_col = self.data.max_width - self.data.language_padding
         if self.code.width == 'block' then
             win_col = win_col - str.width(icon_text) + self.data.indent
         end
@@ -138,36 +146,46 @@ function Render:background(icon_added)
     local width = self.code.width == 'block' and self.data.max_width or self.context:get_width()
 
     if self.code.border == 'thin' then
-        local border_width = width - self.data.col
-        if not icon_added and self.context:hidden(self.data.code_info) and self:delim_hidden(self.data.start_row) then
-            self.marks:add(true, self.data.start_row, self.data.col, {
-                virt_text = { { self.code.above:rep(border_width), colors.inverse_bg(self.code.highlight) } },
+        ---@param row integer
+        ---@param icon string
+        local function add_border(row, icon)
+            local virt_text = {}
+            if self.data.margin > 0 then
+                table.insert(virt_text, { str.pad(self.data.margin), self.config.padding.highlight })
+            end
+            table.insert(virt_text, { icon:rep(width - self.data.col), colors.inverse_bg(self.code.highlight) })
+            self.marks:add(true, row, self.data.col, {
+                virt_text = virt_text,
                 virt_text_pos = 'overlay',
             })
+        end
+        if not icon_added and self.context:hidden(self.data.code_info) and self:delim_hidden(self.data.start_row) then
+            add_border(self.data.start_row, self.code.above)
             self.data.start_row = self.data.start_row + 1
         end
         if self:delim_hidden(self.data.end_row - 1) then
-            self.marks:add(true, self.data.end_row - 1, self.data.col, {
-                virt_text = { { self.code.below:rep(border_width), colors.inverse_bg(self.code.highlight) } },
-                virt_text_pos = 'overlay',
-            })
+            add_border(self.data.end_row - 1, self.code.below)
             self.data.end_row = self.data.end_row - 1
         end
     end
 
-    local padding = str.pad(vim.o.columns * 2)
+    local win_col, padding = 0, {}
+    if self.code.width == 'block' then
+        win_col = self.data.margin + width + self.data.indent
+        table.insert(padding, { str.pad(vim.o.columns * 2), self.config.padding.highlight })
+    end
     for row = self.data.start_row, self.data.end_row - 1 do
         self.marks:add(false, row, self.data.col, {
             end_row = row + 1,
             hl_group = self.code.highlight,
             hl_eol = true,
         })
-        if self.code.width == 'block' then
+        if win_col > 0 and #padding > 0 then
             -- Overwrite anything beyond width with padding highlight
             self.marks:add(false, row, self.data.col, {
                 priority = 0,
-                virt_text = { { padding, self.config.padding.highlight } },
-                virt_text_win_col = width + self.data.indent,
+                virt_text = padding,
+                virt_text_win_col = win_col,
             })
         end
     end
@@ -182,24 +200,31 @@ end
 
 ---@private
 ---@param add_background boolean
-function Render:left_pad(add_background)
-    if (self.data.col == 0 or #self.data.empty_rows == 0) and self.code.left_pad <= 0 then
+---@param icon_added boolean
+function Render:left_pad(add_background, icon_added)
+    local margin, padding = self.data.margin, self.data.padding
+    if (self.data.col == 0 or #self.data.empty_rows == 0) and margin <= 0 and padding <= 0 then
         return
     end
 
     -- Use low priority to include other marks in padding when code block is at edge
     local priority = self.data.col == 0 and 0 or nil
-    local outer_text = { str.pad(self.data.col), self.config.padding.highlight }
+    local fill_text = { str.pad(self.data.col), self.config.padding.highlight }
+    local margin_text = { str.pad(margin), self.config.padding.highlight }
     local background = add_background and self.code.highlight or self.config.padding.highlight
-    local left_text = { str.pad(self.code.left_pad), background }
+    local padding_text = { str.pad(padding), background }
 
     for row = self.data.start_row, self.data.end_row - 1 do
         local virt_text = {}
         if self.data.col > 0 and vim.tbl_contains(self.data.empty_rows, row) then
-            table.insert(virt_text, outer_text)
+            table.insert(virt_text, fill_text)
         end
-        if self.code.left_pad > 0 then
-            table.insert(virt_text, left_text)
+        if margin > 0 then
+            table.insert(virt_text, margin_text)
+        end
+        local skip_padding = row == self.data.start_row and icon_added
+        if not skip_padding and padding > 0 then
+            table.insert(virt_text, padding_text)
         end
         if #virt_text > 0 then
             self.marks:add(false, row, self.data.col, {

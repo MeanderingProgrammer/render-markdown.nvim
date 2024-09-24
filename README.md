@@ -256,9 +256,15 @@ require('render-markdown').setup({
         -- Can also be an array of the above values in which case the 'level' is used
         -- to index into the array using a clamp
         width = 'full',
+        -- Amount of margin to add to the left of headings
+        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
+        -- Margin available space is computed after accounting for padding
+        left_margin = 0,
         -- Amount of padding to add to the left of headings
+        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
         left_pad = 0,
         -- Amount of padding to add to the right of headings when width is 'block'
+        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
         right_pad = 0,
         -- Minimum width to use for headings when width is 'block'
         min_width = 0,
@@ -307,6 +313,7 @@ require('render-markdown').setup({
         --  left:  left side of code block
         position = 'left',
         -- Amount of padding to add around the language
+        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
         language_pad = 0,
         -- An array of language names for which background highlighting will be disabled
         -- Likely because that language has background highlights itself
@@ -315,9 +322,15 @@ require('render-markdown').setup({
         --  block: width of the code block
         --  full:  full width of the window
         width = 'full',
+        -- Amount of margin to add to the left of code blocks
+        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
+        -- Margin available space is computed after accounting for padding
+        left_margin = 0,
         -- Amount of padding to add to the left of code blocks
+        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
         left_pad = 0,
         -- Amount of padding to add to the right of code blocks when width is 'block'
+        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
         right_pad = 0,
         -- Minimum width to use for code blocks when width is 'block'
         min_width = 0,
@@ -601,9 +614,15 @@ require('render-markdown').setup({
         -- Can also be an array of the above values in which case the 'level' is used
         -- to index into the array using a clamp
         width = 'full',
+        -- Amount of margin to add to the left of headings
+        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
+        -- Margin available space is computed after accounting for padding
+        left_margin = 0,
         -- Amount of padding to add to the left of headings
+        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
         left_pad = 0,
         -- Amount of padding to add to the right of headings when width is 'block'
+        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
         right_pad = 0,
         -- Minimum width to use for headings when width is 'block'
         min_width = 0,
@@ -661,6 +680,7 @@ require('render-markdown').setup({
         --  left:  left side of code block
         position = 'left',
         -- Amount of padding to add around the language
+        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
         language_pad = 0,
         -- An array of language names for which background highlighting will be disabled
         -- Likely because that language has background highlights itself
@@ -669,9 +689,15 @@ require('render-markdown').setup({
         --  block: width of the code block
         --  full:  full width of the window
         width = 'full',
+        -- Amount of margin to add to the left of code blocks
+        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
+        -- Margin available space is computed after accounting for padding
+        left_margin = 0,
         -- Amount of padding to add to the left of code blocks
+        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
         left_pad = 0,
         -- Amount of padding to add to the right of code blocks when width is 'block'
+        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
         right_pad = 0,
         -- Minimum width to use for code blocks when width is 'block'
         min_width = 0,

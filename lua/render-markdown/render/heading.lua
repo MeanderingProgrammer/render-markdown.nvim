@@ -13,6 +13,11 @@ local str = require('render-markdown.core.str')
 ---@field heading_width render.md.heading.Width
 ---@field end_row integer
 
+---@class render.md.width.Heading
+---@field margin integer
+---@field padding integer
+---@field content integer
+
 ---@class render.md.render.Heading: render.md.Renderer
 ---@field private heading render.md.Heading
 ---@field private data render.md.data.Heading
@@ -68,7 +73,7 @@ function Render:render()
     end
     self:background(width)
     self:border(width)
-    self:left_pad()
+    self:left_pad(width)
     self:conceal_underline()
 end
 
@@ -111,7 +116,7 @@ function Render:icon()
             virt_text_pos = 'inline',
             conceal = '',
         })
-        return added and str.width(icon) or width
+        return added and str.width(icon) + 1 or width
     else
         self.marks:add(true, self.info.start_row, self.info.start_col, {
             end_row = self.info.end_row,
@@ -125,37 +130,45 @@ end
 
 ---@private
 ---@param icon_width integer
----@return integer
+---@return render.md.width.Heading
 function Render:width(icon_width)
-    if self.data.heading_width == 'block' then
-        local content_width = nil
-        if self.data.atx then
-            content_width = self.context:width(self.info:sibling('inline'))
-        else
-            content_width = vim.fn.max(vim.tbl_map(str.width, self.info:lines()))
-        end
-        local width = self.heading.left_pad + icon_width + content_width + self.heading.right_pad
-        return math.max(width, self.heading.min_width)
+    local text_width = nil
+    if self.data.atx then
+        text_width = self.context:width(self.info:sibling('inline'))
     else
-        return self.context:get_width()
+        text_width = vim.fn.max(vim.tbl_map(str.width, self.info:lines()))
     end
+    local width = icon_width + text_width
+    local left_padding = self.context:resolve_offset(self.heading.left_pad, width)
+    local right_padding = self.context:resolve_offset(self.heading.right_pad, width)
+    width = math.max(left_padding + width + right_padding, self.heading.min_width)
+    ---@type render.md.width.Heading
+    return {
+        margin = self.context:resolve_offset(self.heading.left_margin, width),
+        padding = left_padding,
+        content = self.data.heading_width == 'block' and width or self.context:get_width(),
+    }
 end
 
 ---@private
----@param width integer
+---@param width render.md.width.Heading
 function Render:background(width)
-    local win_col = width + self:indent(self.data.level)
+    local win_col, padding = 0, {}
+    if self.data.heading_width == 'block' then
+        win_col = width.margin + width.content + self:indent(self.data.level)
+        table.insert(padding, { str.pad(vim.o.columns * 2), self.config.padding.highlight })
+    end
     for row = self.info.start_row, self.data.end_row - 1 do
         self.marks:add(true, row, 0, {
             end_row = row + 1,
             hl_group = self.data.background,
             hl_eol = true,
         })
-        if self.data.heading_width == 'block' then
+        if win_col > 0 and #padding > 0 then
             -- Overwrite anything beyond width with padding highlight
             self.marks:add(true, row, 0, {
                 priority = 0,
-                virt_text = { { str.pad(vim.o.columns * 2), self.config.padding.highlight } },
+                virt_text = padding,
                 virt_text_win_col = win_col,
             })
         end
@@ -163,21 +176,28 @@ function Render:background(width)
 end
 
 ---@private
----@param width integer
+---@param width render.md.width.Heading
 function Render:border(width)
     -- Only atx headings support borders
     if not self.heading.border or not self.data.atx then
         return
     end
 
-    local background = colors.inverse_bg(self.data.background)
+    local foreground, background = self.data.foreground, colors.inverse_bg(self.data.background)
     local prefix = self.heading.border_prefix and self.data.level or 0
 
-    local line_above = {
-        { self.heading.above:rep(self.heading.left_pad), background },
-        { self.heading.above:rep(prefix), self.data.foreground },
-        { self.heading.above:rep(width - self.heading.left_pad - prefix), background },
-    }
+    ---@param icon string
+    ---@return { [1]: string, [2]: string }[]
+    local function line(icon)
+        return {
+            { str.pad(width.margin), self.config.padding.highlight },
+            { icon:rep(width.padding), background },
+            { icon:rep(prefix), foreground },
+            { icon:rep(width.content - width.padding - prefix), background },
+        }
+    end
+
+    local line_above = line(self.heading.above)
     if str.width(self.info:line('above', 1)) == 0 and self.info.start_row - 1 ~= self.context.last_heading then
         self.marks:add(true, self.info.start_row - 1, 0, {
             virt_text = line_above,
@@ -190,11 +210,7 @@ function Render:border(width)
         })
     end
 
-    local line_below = {
-        { self.heading.below:rep(self.heading.left_pad), background },
-        { self.heading.below:rep(prefix), self.data.foreground },
-        { self.heading.below:rep(width - self.heading.left_pad - prefix), background },
-    }
+    local line_below = line(self.heading.below)
     if str.width(self.info:line('below', 1)) == 0 then
         self.marks:add(true, self.info.end_row + 1, 0, {
             virt_text = line_below,
@@ -209,16 +225,23 @@ function Render:border(width)
 end
 
 ---@private
-function Render:left_pad()
-    if self.heading.left_pad <= 0 then
-        return
+---@param width render.md.width.Heading
+function Render:left_pad(width)
+    local virt_text = {}
+    if width.margin > 0 then
+        table.insert(virt_text, { str.pad(width.margin), self.config.padding.highlight })
     end
-    for row = self.info.start_row, self.data.end_row - 1 do
-        self.marks:add(false, row, 0, {
-            priority = 0,
-            virt_text = { { str.pad(self.heading.left_pad), self.data.background } },
-            virt_text_pos = 'inline',
-        })
+    if width.padding > 0 then
+        table.insert(virt_text, { str.pad(width.padding), self.data.background })
+    end
+    if #virt_text > 0 then
+        for row = self.info.start_row, self.data.end_row - 1 do
+            self.marks:add(false, row, 0, {
+                priority = 0,
+                virt_text = virt_text,
+                virt_text_pos = 'inline',
+            })
+        end
     end
 end
 

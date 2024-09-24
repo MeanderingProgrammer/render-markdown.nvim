@@ -97,6 +97,19 @@ function Context:get_offset(info)
     return result
 end
 
+---@param offset number
+---@param width integer
+---@return integer
+function Context:resolve_offset(offset, width)
+    if offset <= 0 then
+        return 0
+    elseif offset < 1 then
+        return math.floor(((self:get_width() - width) * offset) + 0.5)
+    else
+        return offset
+    end
+end
+
 ---@return integer
 function Context:get_width()
     return vim.api.nvim_win_get_width(self.win)
