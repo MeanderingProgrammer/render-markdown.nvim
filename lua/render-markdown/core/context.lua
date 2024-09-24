@@ -11,6 +11,7 @@ local util = require('render-markdown.core.util')
 ---@field private components table<integer, render.md.CustomComponent>
 ---@field private conceal? table<integer, [integer, integer][]>
 ---@field private links table<integer, [integer, integer, integer][]>
+---@field private window_width? integer
 ---@field last_heading integer
 local Context = {}
 Context.__index = Context
@@ -29,6 +30,7 @@ function Context.new(buf, win, offset)
     self.components = {}
     self.conceal = nil
     self.links = {}
+    self.window_width = nil
     self.last_heading = -1
     return self
 end
@@ -112,7 +114,14 @@ end
 
 ---@return integer
 function Context:get_width()
-    return vim.api.nvim_win_get_width(self.win)
+    if self.window_width == nil then
+        self.window_width = vim.api.nvim_win_get_width(self.win)
+        local window_info = vim.fn.getwininfo(self.win)
+        if #window_info == 1 then
+            self.window_width = self.window_width - window_info[1].textoff
+        end
+    end
+    return self.window_width
 end
 
 ---@param other render.md.Context
