@@ -119,7 +119,7 @@ Some of the more useful fields are discussed further down.
 
 <details>
 
-<summary>Full Default Configuration</summary>
+<summary>Default Configuration</summary>
 
 ```lua
 require('render-markdown').setup({
@@ -590,6 +590,10 @@ We use the following definitions when discussing indexing into arrays:
 
 [Wiki Page](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Headings)
 
+<details>
+
+<summary>Heading Configuration</summary>
+
 ```lua
 require('render-markdown').setup({
     heading = {
@@ -658,9 +662,15 @@ require('render-markdown').setup({
 })
 ```
 
+</details>
+
 ## Code Blocks
 
 [Wiki Page](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/CodeBlocks)
+
+<details>
+
+<summary>Code Block Configuration</summary>
 
 ```lua
 require('render-markdown').setup({
@@ -717,9 +727,15 @@ require('render-markdown').setup({
 })
 ```
 
+</details>
+
 ## Dashed Line
 
 [Wiki Page](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/DashedLine)
+
+<details>
+
+<summary>Dashed Line Configuration</summary>
 
 ```lua
 require('render-markdown').setup({
@@ -739,9 +755,15 @@ require('render-markdown').setup({
 })
 ```
 
+</details>
+
 ## List Bullets
 
 [Wiki Page](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/ListBullets)
+
+<details>
+
+<summary>Bullet Point Configuration</summary>
 
 ```lua
 require('render-markdown').setup({
@@ -763,9 +785,15 @@ require('render-markdown').setup({
 })
 ```
 
+</details>
+
 ## Checkboxes
 
 [Wiki Page](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Checkboxes)
+
+<details>
+
+<summary>Checkbox Configuration</summary>
 
 ```lua
 require('render-markdown').setup({
@@ -804,9 +832,15 @@ require('render-markdown').setup({
 })
 ```
 
+</details>
+
 ## Block Quotes
 
 [Wiki Page](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/BlockQuotes)
+
+<details>
+
+<summary>Block Quote Configuration</summary>
 
 ```lua
 require('render-markdown').setup({
@@ -827,9 +861,15 @@ require('render-markdown').setup({
 })
 ```
 
+</details>
+
 ## Tables
 
 [Wiki Page](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Tables)
+
+<details>
+
+<summary>Table Configuration</summary>
 
 ```lua
 require('render-markdown').setup({
@@ -876,9 +916,15 @@ require('render-markdown').setup({
 })
 ```
 
+</details>
+
 ## Callouts
 
 [Wiki Page](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Callouts)
+
+<details>
+
+<summary>Callout Configuration</summary>
 
 ```lua
 require('render-markdown').setup({
@@ -921,9 +967,15 @@ require('render-markdown').setup({
 })
 ```
 
+</details>
+
 ## Links
 
 [Wiki Page](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Links)
+
+<details>
+
+<summary>Link Configuration</summary>
 
 ```lua
 require('render-markdown').setup({
@@ -952,9 +1004,15 @@ require('render-markdown').setup({
 })
 ```
 
+</details>
+
 ## Signs
 
 [Wiki Page](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Signs)
+
+<details>
+
+<summary>Sign Configuration</summary>
 
 ```lua
 require('render-markdown').setup({
@@ -967,9 +1025,15 @@ require('render-markdown').setup({
 })
 ```
 
+</details>
+
 ## Indent
 
 [Wiki Page](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Indent)
+
+<details>
+
+<summary>Indent Configuration</summary>
 
 ```lua
 require('render-markdown').setup({
@@ -988,6 +1052,8 @@ require('render-markdown').setup({
     },
 })
 ```
+
+</details>
 
 # Colors
 

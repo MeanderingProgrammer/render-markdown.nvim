@@ -165,7 +165,7 @@ sense.
 
 Some of the more useful fields are discussed further down.
 
-Full Default Configuration ~
+Default Configuration ~
 
 >lua
     require('render-markdown').setup({
@@ -636,6 +636,8 @@ HEADINGS                                      *render-markdown-setup-headings*
 Wiki Page
 <https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Headings>
 
+Heading Configuration ~
+
 >lua
     require('render-markdown').setup({
         heading = {
@@ -710,6 +712,8 @@ CODE BLOCKS                                *render-markdown-setup-code-blocks*
 Wiki Page
 <https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/CodeBlocks>
 
+Code Block Configuration ~
+
 >lua
     require('render-markdown').setup({
         code = {
@@ -771,6 +775,8 @@ DASHED LINE                                *render-markdown-setup-dashed-line*
 Wiki Page
 <https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/DashedLine>
 
+Dashed Line Configuration ~
+
 >lua
     require('render-markdown').setup({
         dash = {
@@ -794,6 +800,8 @@ LIST BULLETS                              *render-markdown-setup-list-bullets*
 
 Wiki Page
 <https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/ListBullets>
+
+Bullet Point Configuration ~
 
 >lua
     require('render-markdown').setup({
@@ -820,6 +828,8 @@ CHECKBOXES                                  *render-markdown-setup-checkboxes*
 
 Wiki Page
 <https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Checkboxes>
+
+Checkbox Configuration ~
 
 >lua
     require('render-markdown').setup({
@@ -864,6 +874,8 @@ BLOCK QUOTES                              *render-markdown-setup-block-quotes*
 Wiki Page
 <https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/BlockQuotes>
 
+Block Quote Configuration ~
+
 >lua
     require('render-markdown').setup({
         quote = {
@@ -888,6 +900,8 @@ TABLES                                          *render-markdown-setup-tables*
 
 Wiki Page
 <https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Tables>
+
+Table Configuration ~
 
 >lua
     require('render-markdown').setup({
@@ -940,6 +954,8 @@ CALLOUTS                                      *render-markdown-setup-callouts*
 Wiki Page
 <https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Callouts>
 
+Callout Configuration ~
+
 >lua
     require('render-markdown').setup({
         -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'
@@ -987,6 +1003,8 @@ LINKS                                            *render-markdown-setup-links*
 Wiki Page
 <https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Links>
 
+Link Configuration ~
+
 >lua
     require('render-markdown').setup({
         link = {
@@ -1020,6 +1038,8 @@ SIGNS                                            *render-markdown-setup-signs*
 Wiki Page
 <https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Signs>
 
+Sign Configuration ~
+
 >lua
     require('render-markdown').setup({
         sign = {
@@ -1036,6 +1056,8 @@ INDENT                                          *render-markdown-setup-indent*
 
 Wiki Page
 <https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Indent>
+
+Indent Configuration ~
 
 >lua
     require('render-markdown').setup({
