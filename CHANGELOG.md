@@ -11,6 +11,7 @@
 - pad setext header lines [75a0a95](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/75a0a9596a91130fae43d3b7c0d6c651645ef1df)
 - center headings and code blocks [#179](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/179)
   [0986638](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/0986638b381a4b01eb108bb946f3a67a9eb3d0ec)
+  [67288fe](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/67288febca78b7aac8fae9543ef8980237e27d2a)
 - integrate with lazy.nvim filetypes [cb9a5e2](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/cb9a5e2412d21c7a89627e0d6da5459acbc0eb9c)
 
 ### Bug Fixes

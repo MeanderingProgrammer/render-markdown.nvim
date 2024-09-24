@@ -22,6 +22,7 @@ function Handler.new(buf)
     self.renderers = {
         code = require('render-markdown.render.code'),
         heading = require('render-markdown.render.heading'),
+        list_marker = require('render-markdown.render.list_marker'),
         quote = require('render-markdown.render.quote'),
         section = require('render-markdown.render.section'),
         table = require('render-markdown.render.table'),
@@ -41,8 +42,6 @@ function Handler:parse(root)
             end
         elseif capture == 'dash' then
             self:dash(info)
-        elseif capture == 'list_marker' then
-            self:list_marker(info)
         elseif capture == 'checkbox_unchecked' then
             self:checkbox(info, self.config.checkbox.unchecked)
         elseif capture == 'checkbox_checked' then
@@ -69,70 +68,6 @@ function Handler:dash(info)
         virt_text = { { dash.icon:rep(width), dash.highlight } },
         virt_text_pos = 'overlay',
     })
-end
-
----@private
----@param info render.md.NodeInfo
-function Handler:list_marker(info)
-    ---@return boolean
-    local function sibling_checkbox()
-        if not self.config.checkbox.enabled then
-            return false
-        end
-        if self.context:get_component(info) ~= nil then
-            return true
-        end
-        if info:sibling('task_list_marker_unchecked') ~= nil then
-            return true
-        end
-        if info:sibling('task_list_marker_checked') ~= nil then
-            return true
-        end
-        return false
-    end
-
-    -- List markers from tree-sitter should have leading spaces removed, however there are known
-    -- edge cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
-    -- As a result we account for leading spaces here, can remove if this gets fixed upstream
-    local leading_spaces = str.spaces('start', info.text)
-
-    if sibling_checkbox() then
-        -- Hide the list marker for checkboxes rather than replacing with a bullet point
-        self.marks:add(true, info.start_row, info.start_col + leading_spaces, {
-            end_row = info.end_row,
-            end_col = info.end_col,
-            conceal = '',
-        })
-    else
-        local bullet = self.config.bullet
-        if not bullet.enabled then
-            return
-        end
-        local level = info:level_in_section('list')
-        local icon = list.cycle(bullet.icons, level)
-        if icon == nil then
-            return
-        end
-        self.marks:add(true, info.start_row, info.start_col, {
-            end_row = info.end_row,
-            end_col = info.end_col,
-            virt_text = { { str.pad(leading_spaces) .. icon, bullet.highlight } },
-            virt_text_pos = 'overlay',
-        })
-        if bullet.left_pad > 0 then
-            self.marks:add(false, info.start_row, 0, {
-                priority = 0,
-                virt_text = { { str.pad(bullet.left_pad), self.config.padding.highlight } },
-                virt_text_pos = 'inline',
-            })
-        end
-        if bullet.right_pad > 0 then
-            self.marks:add(true, info.start_row, info.end_col - 1, {
-                virt_text = { { str.pad(bullet.right_pad), self.config.padding.highlight } },
-                virt_text_pos = 'inline',
-            })
-        end
-    end
 end
 
 ---@private
