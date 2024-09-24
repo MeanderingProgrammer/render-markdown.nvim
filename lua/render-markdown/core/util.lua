@@ -3,6 +3,31 @@ local M = {}
 
 M.has_10 = vim.fn.has('nvim-0.10') == 1
 
+---@param name string
+---@return string[]
+function M.lazy_file_types(name)
+    -- https://github.com/folke/lazydev.nvim/blob/main/lua/lazydev/pkg.lua -> get_plugin_path
+    if type(package.loaded.lazy) ~= 'table' then
+        return {}
+    end
+    local ok, lazy_config = pcall(require, 'lazy.core.config')
+    if not ok then
+        return {}
+    end
+    local plugin = lazy_config.spec.plugins[name]
+    if plugin == nil then
+        return {}
+    end
+    local file_types = plugin.ft
+    if type(file_types) == 'table' then
+        return file_types
+    elseif type(file_types) == 'string' then
+        return { file_types }
+    else
+        return {}
+    end
+end
+
 ---@param buf integer
 ---@param win integer
 ---@return boolean

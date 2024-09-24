@@ -32,6 +32,13 @@ function M.setup(default_config, user_config)
         config.code.position = 'right'
         config.checkbox.position = 'overlay'
     end
+    -- Use lazy.nvim file type configuration if available and no user value is specified
+    if user_config.file_types == nil then
+        local lazy_file_types = util.lazy_file_types('render-markdown.nvim')
+        if #lazy_file_types > 0 then
+            config.file_types = lazy_file_types
+        end
+    end
 
     M.config = config
     M.enabled = config.enabled

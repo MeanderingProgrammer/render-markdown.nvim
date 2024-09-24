@@ -42,8 +42,9 @@ Plugin to improve viewing Markdown files in Neovim
 - Contained: runs entirely inside Neovim with no external windows
 - Configurable: all components, padding, icons, and colors can be modified
 - File type agnostic: can render `markdown` injected into any file
+    - Automatically runs on lazy load file types defined in `lazy.nvim` `ft`
 - Injections: can directly manipulate treesitter to add logical `markdown` sections
-- Mode based rendering: changes between `rendered` and `raw` view based on mode
+- Modal rendering: changes between `rendered` and `raw` view based on mode
 - Anti-conceal: hides virtual text added by this plugin on cursor line
 - Window options: changes option values between `rendered` and `raw` view
 - Large files: only renders visisble range, can be entirely disabled based on size
