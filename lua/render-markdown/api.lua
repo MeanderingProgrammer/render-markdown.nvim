@@ -36,4 +36,13 @@ function M.debug()
     require('render-markdown.debug.marks').debug(row, marks)
 end
 
+function M.config()
+    local difference = state.difference(require('render-markdown').default_config)
+    if vim.tbl_count(difference) == 0 then
+        vim.print('Default Configuration')
+    else
+        vim.print(difference)
+    end
+end
+
 return M

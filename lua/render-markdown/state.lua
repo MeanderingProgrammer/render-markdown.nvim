@@ -60,6 +60,12 @@ function M.invalidate_cache()
     configs = {}
 end
 
+---@param default_config render.md.Config
+---@return table
+function M.difference(default_config)
+    return require('render-markdown.debug.diff').get(default_config, M.config)
+end
+
 ---@param amount integer
 function M.modify_anti_conceal(amount)
     ---@param anti_conceal render.md.AntiConceal

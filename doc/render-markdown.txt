@@ -1,4 +1,4 @@
-*render-markdown.txt*         For 0.10.0        Last change: 2024 September 24
+*render-markdown.txt*         For 0.10.0        Last change: 2024 September 25
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -150,6 +150,9 @@ PACKER.NVIM                              *render-markdown-install-packer.nvim*
 
   :RenderMarkdown debug      require('render-markdown').debug()      Prints information about marks
                                                                      on current line
+
+  :RenderMarkdown config     require('render-markdown').config()     Prints difference between
+                                                                     config and default
   -------------------------------------------------------------------------------------------------
 
 ==============================================================================

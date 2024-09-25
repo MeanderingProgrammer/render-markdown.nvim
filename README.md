@@ -106,6 +106,7 @@ use({
 | `:RenderMarkdown expand`   | `require('render-markdown').expand()`   | Increase anti-conceal margin above and below by 1 |
 | `:RenderMarkdown contract` | `require('render-markdown').contract()` | Decrease anti-conceal margin above and below by 1 |
 | `:RenderMarkdown debug`    | `require('render-markdown').debug()`    | Prints information about marks on current line    |
+| `:RenderMarkdown config`   | `require('render-markdown').config()`   | Prints difference between config and default      |
 
 # Setup
 

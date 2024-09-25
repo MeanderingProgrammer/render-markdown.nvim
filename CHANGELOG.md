@@ -15,12 +15,19 @@
 - integrate with lazy.nvim filetypes [cb9a5e2](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/cb9a5e2412d21c7a89627e0d6da5459acbc0eb9c)
 - bullet left & right padding on all lines of items [#181](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/181)
   [3adb9d5](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/3adb9d539a016bc63fee83aa740e38fa4eeab094)
-
+- heading margin / padding based on level [#182](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/182)
+  & border virtual option [#183](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/183)
+  [aad1a12](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/aad1a1220dc9da5757e3af3befbc7fc3869dd334)
 
 ### Bug Fixes
 
 - window options on alternate buffer switch [#177](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/177)
   [f187721](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/f187721a5381f4443ef97ad1a7c0681a65511d28)
+- update when window scrolled [#185](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/185)
+
+### Collaborator Shoutouts
+
+- @Bekaboo
 
 ## 7.1.0 (2024-09-19)
 

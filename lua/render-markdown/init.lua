@@ -194,7 +194,6 @@ local M = {}
 ---@field public overrides? render.md.UserConfigOverrides
 ---@field public custom_handlers? table<string, render.md.Handler>
 
----@private
 ---@type render.md.Config
 M.default_config = {
     -- Whether Markdown should be rendered by default or not
