@@ -52,7 +52,7 @@ function M.attach(buf)
         return
     end
     local config = state.get(buf)
-    local events = { 'BufWinEnter', 'BufLeave', 'CursorHold', 'CursorMoved' }
+    local events = { 'BufWinEnter', 'BufLeave', 'CursorHold', 'CursorMoved', 'WinScrolled' }
     local change_events = { 'DiffUpdated', 'ModeChanged', 'TextChanged' }
     if config:render('i') then
         vim.list_extend(events, { 'CursorHoldI', 'CursorMovedI' })
