@@ -1,4 +1,5 @@
 local NodeInfo = require('render-markdown.core.node_info')
+local Range = require('render-markdown.core.range')
 local log = require('render-markdown.core.log')
 local str = require('render-markdown.core.str')
 local util = require('render-markdown.core.util')
@@ -6,8 +7,7 @@ local util = require('render-markdown.core.util')
 ---@class render.md.Context
 ---@field private buf integer
 ---@field private win integer
----@field private top integer
----@field private bottom integer
+---@field private ranges render.md.Range[]
 ---@field private components table<integer, render.md.CustomComponent>
 ---@field private conceal? table<integer, [integer, integer][]>
 ---@field private links table<integer, [integer, integer, integer][]>
@@ -24,9 +24,15 @@ function Context.new(buf, win, offset)
     local self = setmetatable({}, Context)
     self.buf = buf
     self.win = win
-    local top = util.view(win).topline - 1
-    self.top = math.max(top - offset, 0)
-    self.bottom = self:compute_bottom(top, offset)
+
+    local ranges = { Context.compute_range(self.buf, self.win, offset) }
+    for _, window_id in ipairs(vim.fn.win_findbuf(buf)) do
+        if window_id ~= self.win then
+            table.insert(ranges, Context.compute_range(self.buf, window_id, offset))
+        end
+    end
+    self.ranges = Range.coalesce(ranges)
+
     self.components = {}
     self.conceal = nil
     self.links = {}
@@ -36,20 +42,25 @@ function Context.new(buf, win, offset)
 end
 
 ---@private
----@param top integer
+---@param buf integer
+---@param win integer
 ---@param offset integer
----@return integer
-function Context:compute_bottom(top, offset)
+---@return render.md.Range
+function Context.compute_range(buf, win, offset)
+    local top = util.view(win).topline - 1
+    top = math.max(top - offset, 0)
+
     local bottom = top
-    local lines = vim.api.nvim_buf_line_count(self.buf)
-    local target = vim.api.nvim_win_get_height(self.win) + offset
-    while bottom < lines and target > 0 do
+    local lines = vim.api.nvim_buf_line_count(buf)
+    local size = vim.api.nvim_win_get_height(win) + offset
+    while bottom < lines and size > 0 do
         bottom = bottom + 1
-        if util.visible(self.win, bottom) then
-            target = target - 1
+        if util.visible(win, bottom) then
+            size = size - 1
         end
     end
-    return bottom
+
+    return Range.new(top, bottom)
 end
 
 ---@param info render.md.NodeInfo
@@ -124,39 +135,62 @@ function Context:get_width()
     return self.window_width
 end
 
----@param other render.md.Context
+---@param win integer
 ---@return boolean
-function Context:contains_range(other)
-    return self.top <= other.top and self.bottom >= other.bottom
+function Context:contains_window(win)
+    local window_range = Context.compute_range(self.buf, win, 0)
+    for _, range in ipairs(self.ranges) do
+        if range:contains(window_range) then
+            return true
+        end
+    end
+    return false
 end
 
----@return Range2
-function Context:range()
-    return { self.top, self.bottom }
+---@private
+---@param top integer
+---@param bottom integer
+---@return boolean
+function Context:overlap(top, bottom)
+    for _, range in ipairs(self.ranges) do
+        if range:overlaps(top, bottom) then
+            return true
+        end
+    end
+    return false
 end
 
 ---@param node TSNode
 ---@return boolean
 function Context:contains_node(node)
     local top, _, bottom, _ = node:range()
-    return top < self.bottom and bottom >= self.top
+    return self:overlap(top, bottom)
 end
 
 ---@param info render.md.NodeInfo
 ---@return boolean
 function Context:contains_info(info)
-    return info.start_row < self.bottom and info.end_row >= self.top
+    return self:overlap(info.start_row, info.end_row)
+end
+
+---@param parser vim.treesitter.LanguageTree
+function Context:parse(parser)
+    for _, range in ipairs(self.ranges) do
+        parser:parse({ range.top, range.bottom })
+    end
 end
 
 ---@param root TSNode
 ---@param query vim.treesitter.Query
 ---@param callback fun(capture: string, node: render.md.NodeInfo)
 function Context:query(root, query, callback)
-    for id, node in query:iter_captures(root, self.buf, self.top, self.bottom) do
-        local capture = query.captures[id]
-        local info = NodeInfo.new(self.buf, node)
-        log.node_info(capture, info)
-        callback(capture, info)
+    for _, range in ipairs(self.ranges) do
+        for id, node in query:iter_captures(root, self.buf, range.top, range.bottom) do
+            local capture = query.captures[id]
+            local info = NodeInfo.new(self.buf, node)
+            log.node_info(capture, info)
+            callback(capture, info)
+        end
     end
 end
 
@@ -207,7 +241,7 @@ function Context:compute_conceal()
     end
     local ranges = {}
     local parser = vim.treesitter.get_parser(self.buf)
-    parser:parse(self:range())
+    self:parse(parser)
     parser:for_each_tree(function(tree, language_tree)
         local nodes = self:compute_conceal_nodes(language_tree:lang(), tree:root())
         for _, node in ipairs(nodes) do
@@ -237,9 +271,11 @@ function Context:compute_conceal_nodes(language, root)
         return {}
     end
     local nodes = {}
-    for _, node, metadata in query:iter_captures(root, self.buf, self.top, self.bottom) do
-        if metadata.conceal ~= nil then
-            table.insert(nodes, node)
+    for _, range in ipairs(self.ranges) do
+        for _, node, metadata in query:iter_captures(root, self.buf, range.top, range.bottom) do
+            if metadata.conceal ~= nil then
+                table.insert(nodes, node)
+            end
         end
     end
     return nodes
@@ -265,7 +301,7 @@ function M.contains_range(buf, win)
     if context == nil then
         return false
     end
-    return context:contains_range(Context.new(buf, win, 0))
+    return context:contains_window(win)
 end
 
 ---@param buf integer

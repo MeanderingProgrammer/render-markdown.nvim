@@ -160,7 +160,7 @@ function M.parse_buffer(buf, win)
     -- Reset buffer context
     Context.reset(buf, win)
     -- Make sure injections are processed
-    parser:parse(Context.get(buf):range())
+    Context.get(buf):parse(parser)
     -- Parse markdown after all other nodes to take advantage of state
     local marks, markdown_roots = {}, {}
     parser:for_each_tree(function(tree, language_tree)
