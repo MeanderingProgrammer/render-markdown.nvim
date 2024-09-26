@@ -1,6 +1,7 @@
 local BufferState = require('render-markdown.core.buffer_state')
 local Context = require('render-markdown.core.context')
 local Extmark = require('render-markdown.core.extmark')
+local Iter = require('render-markdown.core.iter')
 local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
 local util = require('render-markdown.core.util')
@@ -176,7 +177,7 @@ function M.parse_buffer(buf, win)
     for _, root in ipairs(markdown_roots) do
         vim.list_extend(marks, M.parse_tree(buf, 'markdown', root))
     end
-    return vim.tbl_map(Extmark.new, marks)
+    return Iter.list.map(marks, Extmark.new)
 end
 
 ---Run user & builtin handlers when available. User handler is always executed,

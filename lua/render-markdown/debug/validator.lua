@@ -66,17 +66,17 @@ function Spec:one_of(keys, values, input_types)
 end
 
 ---@param keys string|string[]
----@param array_type type
+---@param list_type type
 ---@param input_types? type|type[]
 ---@return render.md.debug.ValidatorSpec
-function Spec:array(keys, array_type, input_types)
+function Spec:list(keys, list_type, input_types)
     local types, suffix = self:handle_types(input_types)
     return self:add(keys, function(v)
         if vim.tbl_contains(types, type(v)) then
             return true
         elseif type(v) == 'table' then
             for i, item in ipairs(v) do
-                if type(item) ~= array_type then
+                if type(item) ~= list_type then
                     return false, string.format('Index %d is %s', i, type(item))
                 end
             end
@@ -84,14 +84,14 @@ function Spec:array(keys, array_type, input_types)
         else
             return false
         end
-    end, array_type .. ' array' .. suffix)
+    end, list_type .. ' list' .. suffix)
 end
 
 ---@param keys string|string[]
 ---@param values string[]
 ---@param input_types? type|type[]
 ---@return render.md.debug.ValidatorSpec
-function Spec:one_or_array_of(keys, values, input_types)
+function Spec:one_or_list_of(keys, values, input_types)
     local types, suffix = self:handle_types(input_types)
     return self:add(keys, function(v)
         if vim.tbl_contains(types, type(v)) then
@@ -108,7 +108,7 @@ function Spec:one_or_array_of(keys, values, input_types)
         else
             return false
         end
-    end, 'one or array of ' .. vim.inspect(values) .. suffix)
+    end, 'one or list of ' .. vim.inspect(values) .. suffix)
 end
 
 ---@private

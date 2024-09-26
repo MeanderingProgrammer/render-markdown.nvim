@@ -76,7 +76,7 @@ describe('state', function()
         )
 
         eq(
-            { prefix .. '.render_modes: expected string array or type { "boolean" }, got invalid' },
+            { prefix .. '.render_modes: expected string list or type { "boolean" }, got invalid' },
             ---@diagnostic disable-next-line: assign-type-mismatch
             validate({ render_modes = 'invalid' })
         )
@@ -84,7 +84,7 @@ describe('state', function()
         local int_render_modes = { 1, 2 }
         eq({
             prefix
-                .. '.render_modes: expected string array or type { "boolean" }, got '
+                .. '.render_modes: expected string list or type { "boolean" }, got '
                 .. tostring(int_render_modes)
                 .. '. Info: Index 1 is number',
         }, validate({ render_modes = int_render_modes }))

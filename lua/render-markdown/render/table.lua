@@ -1,4 +1,5 @@
 local Base = require('render-markdown.render.base')
+local Iter = require('render-markdown.core.iter')
 local log = require('render-markdown.core.log')
 local str = require('render-markdown.core.str')
 
@@ -196,7 +197,7 @@ end
 function Render:delimiter()
     local delim, border = self.data.delim, self.table.border
 
-    local sections = vim.tbl_map(function(column)
+    local sections = Iter.list.map(delim.columns, function(column)
         local indicator = self.table.alignment_indicator
         -- If column is small there's no good place to put the alignment indicator
         -- Alignment indicator must be exactly one character wide
@@ -214,7 +215,7 @@ function Render:delimiter()
         else
             return left .. indicator .. right
         end
-    end, delim.columns)
+    end)
 
     local text = str.pad(str.spaces('start', delim.info.text))
     text = text .. border[4] .. table.concat(sections, border[5]) .. border[6]
@@ -317,9 +318,9 @@ function Render:full()
         return
     end
 
-    local sections = vim.tbl_map(function(column)
+    local sections = Iter.list.map(delim.columns, function(column)
         return border[11]:rep(column.width)
-    end, delim.columns)
+    end)
 
     ---@param info render.md.NodeInfo
     ---@param above boolean

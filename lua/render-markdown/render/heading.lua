@@ -1,4 +1,5 @@
 local Base = require('render-markdown.render.base')
+local Iter = require('render-markdown.core.iter')
 local colors = require('render-markdown.colors')
 local list = require('render-markdown.core.list')
 local str = require('render-markdown.core.str')
@@ -152,7 +153,7 @@ function Render:width(icon_width)
     if self.data.atx then
         text_width = self.context:width(self.info:sibling('inline'))
     else
-        text_width = vim.fn.max(vim.tbl_map(str.width, self.info:lines()))
+        text_width = vim.fn.max(Iter.list.map(self.info:lines(), str.width))
     end
     local width = icon_width + text_width
     local left_padding = self.context:resolve_offset(self.data.left_pad, width)

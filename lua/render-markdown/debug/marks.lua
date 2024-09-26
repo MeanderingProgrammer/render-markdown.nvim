@@ -1,3 +1,5 @@
+local Iter = require('render-markdown.core.iter')
+
 ---@class render.md.debug.Mark
 ---@field conceal boolean
 ---@field opts vim.api.keyset.set_extmark
@@ -142,7 +144,7 @@ function M.debug(row, marks)
     if #marks == 0 then
         print('No decorations found')
     end
-    local debug_marks = vim.tbl_map(Mark.new, marks)
+    local debug_marks = Iter.list.map(marks, Mark.new)
     table.sort(debug_marks)
     for _, mark in ipairs(debug_marks) do
         print(mark)

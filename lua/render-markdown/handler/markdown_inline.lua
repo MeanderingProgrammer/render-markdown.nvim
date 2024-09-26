@@ -1,4 +1,5 @@
 local Context = require('render-markdown.core.context')
+local Iter = require('render-markdown.core.iter')
 local list = require('render-markdown.core.list')
 local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
@@ -204,10 +205,9 @@ end
 ---@param destination string
 ---@return render.md.LinkComponent?
 function Handler:link_component(destination)
-    ---@type render.md.LinkComponent[]
-    local link_components = vim.tbl_filter(function(link_component)
+    local link_components = Iter.table.filter(self.config.link.custom, function(link_component)
         return destination:find(link_component.pattern) ~= nil
-    end, self.config.link.custom)
+    end)
     table.sort(link_components, function(a, b)
         return str.width(a.pattern) < str.width(b.pattern)
     end)

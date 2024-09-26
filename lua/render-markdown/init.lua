@@ -318,32 +318,32 @@ M.default_config = {
         position = 'overlay',
         -- Replaces '#+' of 'atx_h._marker'
         -- The number of '#' in the heading determines the 'level'
-        -- The 'level' is used to index into the array using a cycle
+        -- The 'level' is used to index into the list using a cycle
         icons = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
         -- Added to the sign column if enabled
-        -- The 'level' is used to index into the array using a cycle
+        -- The 'level' is used to index into the list using a cycle
         signs = { '󰫎 ' },
         -- Width of the heading background:
         --  block: width of the heading text
         --  full:  full width of the window
-        -- Can also be an array of the above values in which case the 'level' is used
-        -- to index into the array using a clamp
+        -- Can also be a list of the above values in which case the 'level' is used
+        -- to index into the list using a clamp
         width = 'full',
         -- Amount of margin to add to the left of headings
         -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
         -- Margin available space is computed after accounting for padding
-        -- Can also be an array of numbers in which case the 'level' is used to index into the array using a clamp
+        -- Can also be a list of numbers in which case the 'level' is used to index into the list using a clamp
         left_margin = 0,
         -- Amount of padding to add to the left of headings
         -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
-        -- Can also be an array of numbers in which case the 'level' is used to index into the array using a clamp
+        -- Can also be a list of numbers in which case the 'level' is used to index into the list using a clamp
         left_pad = 0,
         -- Amount of padding to add to the right of headings when width is 'block'
         -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
-        -- Can also be an array of numbers in which case the 'level' is used to index into the array using a clamp
+        -- Can also be a list of numbers in which case the 'level' is used to index into the list using a clamp
         right_pad = 0,
         -- Minimum width to use for headings when width is 'block'
-        -- Can also be an array of integers in which case the 'level' is used to index into the array using a clamp
+        -- Can also be a list of integers in which case the 'level' is used to index into the list using a clamp
         min_width = 0,
         -- Determins if a border is added above and below headings
         border = false,
@@ -355,7 +355,7 @@ M.default_config = {
         above = '▄',
         -- Used below heading for border
         below = '▀',
-        -- The 'level' is used to index into the array using a clamp
+        -- The 'level' is used to index into the list using a clamp
         -- Highlight for the heading icon and extends through the entire line
         backgrounds = {
             'RenderMarkdownH1Bg',
@@ -365,7 +365,7 @@ M.default_config = {
             'RenderMarkdownH5Bg',
             'RenderMarkdownH6Bg',
         },
-        -- The 'level' is used to index into the array using a clamp
+        -- The 'level' is used to index into the list using a clamp
         -- Highlight for the heading and sign icons
         foregrounds = {
             'RenderMarkdownH1',
@@ -394,7 +394,7 @@ M.default_config = {
         -- Amount of padding to add around the language
         -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
         language_pad = 0,
-        -- An array of language names for which background highlighting will be disabled
+        -- A list of language names for which background highlighting will be disabled
         -- Likely because that language has background highlights itself
         disable_background = { 'diff' },
         -- Width of the code block background:
@@ -444,7 +444,7 @@ M.default_config = {
         enabled = true,
         -- Replaces '-'|'+'|'*' of 'list_item'
         -- How deeply nested the list is determines the 'level'
-        -- The 'level' is used to index into the array using a cycle
+        -- The 'level' is used to index into the list using a cycle
         -- If the item is a 'checkbox' a conceal is used to hide the bullet instead
         icons = { '●', '○', '◆', '◇' },
         -- Padding to add to the left of bullet point

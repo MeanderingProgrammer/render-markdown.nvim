@@ -1,4 +1,5 @@
 local Base = require('render-markdown.render.base')
+local Iter = require('render-markdown.core.iter')
 local colors = require('render-markdown.colors')
 local icons = require('render-markdown.core.icons')
 local str = require('render-markdown.core.str')
@@ -46,7 +47,7 @@ function Render:setup()
     local code_info = self.info:child('info_string')
     local language_info = code_info ~= nil and code_info:child('language') or nil
 
-    local widths = vim.tbl_map(str.width, self.info:lines())
+    local widths = Iter.list.map(self.info:lines(), str.width)
 
     local empty_rows = {}
     for row, width in ipairs(widths) do
