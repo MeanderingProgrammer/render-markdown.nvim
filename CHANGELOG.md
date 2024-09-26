@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 7.2.0 (2024-09-26)
+
 ### Features
 
 - `pipe_table.cell` value `trimmed` [#175](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/175)
