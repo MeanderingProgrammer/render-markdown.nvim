@@ -18,16 +18,6 @@ function Extmark:get_mark()
     return self.mark
 end
 
----@param hidden Range2?
----@return boolean
-function Extmark:overlaps(hidden)
-    if hidden == nil then
-        return false
-    end
-    local row = self.mark.start_row
-    return row >= hidden[1] and row <= hidden[2]
-end
-
 ---@param ns_id integer
 ---@param buf integer
 function Extmark:show(ns_id, buf)

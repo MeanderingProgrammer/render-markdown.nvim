@@ -25,10 +25,11 @@ function Range.__lt(a, b)
     end
 end
 
----@param other render.md.Range
+---@param top integer
+---@param bottom integer
 ---@return boolean
-function Range:contains(other)
-    return self.top <= other.top and self.bottom >= other.bottom
+function Range:contains(top, bottom)
+    return self.top <= top and self.bottom >= bottom
 end
 
 ---@param top integer

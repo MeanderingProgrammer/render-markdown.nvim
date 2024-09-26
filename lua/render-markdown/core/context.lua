@@ -140,20 +140,7 @@ end
 function Context:contains_window(win)
     local window_range = Context.compute_range(self.buf, win, 0)
     for _, range in ipairs(self.ranges) do
-        if range:contains(window_range) then
-            return true
-        end
-    end
-    return false
-end
-
----@private
----@param top integer
----@param bottom integer
----@return boolean
-function Context:overlap(top, bottom)
-    for _, range in ipairs(self.ranges) do
-        if range:overlaps(top, bottom) then
+        if range:contains(window_range.top, window_range.bottom) then
             return true
         end
     end
@@ -162,15 +149,14 @@ end
 
 ---@param node TSNode
 ---@return boolean
-function Context:contains_node(node)
+function Context:overlaps_node(node)
     local top, _, bottom, _ = node:range()
-    return self:overlap(top, bottom)
-end
-
----@param info render.md.NodeInfo
----@return boolean
-function Context:contains_info(info)
-    return self:overlap(info.start_row, info.end_row)
+    for _, range in ipairs(self.ranges) do
+        if range:overlaps(top, bottom) then
+            return true
+        end
+    end
+    return false
 end
 
 ---@param parser vim.treesitter.LanguageTree
@@ -260,7 +246,7 @@ end
 ---@param root TSNode
 ---@return TSNode[]
 function Context:compute_conceal_nodes(language, root)
-    if not self:contains_node(root) then
+    if not self:overlaps_node(root) then
         return {}
     end
     if not vim.tbl_contains({ 'markdown', 'markdown_inline' }, language) then

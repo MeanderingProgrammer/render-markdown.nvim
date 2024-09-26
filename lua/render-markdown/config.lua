@@ -1,3 +1,5 @@
+local Range = require('render-markdown.core.range')
+
 ---@class render.md.component.Config
 ---@field callout table<string, render.md.CustomComponent>
 ---@field checkbox table<string, render.md.CustomComponent>
@@ -42,7 +44,7 @@ end
 
 ---@param mode string
 ---@param row? integer
----@return Range2?
+---@return render.md.Range?
 function Config:hidden(mode, row)
     -- Anti-conceal is not enabled -> hide nothing
     -- Row is not known means buffer is not active -> hide nothing
@@ -51,9 +53,9 @@ function Config:hidden(mode, row)
     end
     if vim.tbl_contains({ 'v', 'V', '\22' }, mode) then
         local start = vim.fn.getpos('v')[2] - 1
-        return { math.min(row, start), math.max(row, start) }
+        return Range.new(math.min(row, start), math.max(row, start))
     else
-        return { row - self.anti_conceal.above, row + self.anti_conceal.below }
+        return Range.new(row - self.anti_conceal.above, row + self.anti_conceal.below)
     end
 end
 

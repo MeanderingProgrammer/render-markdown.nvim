@@ -19,6 +19,8 @@
   & border virtual option [#183](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/183)
   [aad1a12](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/aad1a1220dc9da5757e3af3befbc7fc3869dd334)
 - config command to debug configurations [a9643f4](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/a9643f4377f39f4abf943fbc73be69f33f5f2f1d)
+- same buffer in multiple windows [#184](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/184)
+  [767707e](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/767707e928389996e8860f03552cf962afb0bfb2)
 
 ### Bug Fixes
 

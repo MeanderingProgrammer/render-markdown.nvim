@@ -56,7 +56,7 @@ function Render:setup()
     self.info:for_each_child(function(row)
         if row.type == 'pipe_table_delimiter_row' then
             delim = self:parse_delim(row)
-        elseif self.context:contains_info(row) then
+        elseif self.context:overlaps_node(row:get_node()) then
             if vim.tbl_contains({ 'pipe_table_header', 'pipe_table_row' }, row.type) then
                 table.insert(table_rows, row)
             else

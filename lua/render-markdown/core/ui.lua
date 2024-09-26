@@ -52,8 +52,9 @@ function M.get_row_marks(buf, win)
 
     local marks = {}
     for _, extmark in ipairs(buffer_state:get_marks()) do
-        if extmark:overlaps(hidden) then
-            table.insert(marks, extmark:get_mark())
+        local mark = extmark:get_mark()
+        if hidden:contains(mark.start_row, mark.start_row) then
+            table.insert(marks, mark)
         end
     end
     return row, marks
@@ -115,7 +116,8 @@ function M.update(buf, win, parse)
         end
         local hidden = config:hidden(mode, row)
         for _, extmark in ipairs(buffer_state:get_marks()) do
-            if extmark:get_mark().conceal and extmark:overlaps(hidden) then
+            local mark = extmark:get_mark()
+            if mark.conceal and hidden ~= nil and hidden:contains(mark.start_row, mark.start_row) then
                 extmark:hide(M.namespace, buf)
             else
                 extmark:show(M.namespace, buf)
@@ -186,7 +188,7 @@ end
 ---@return render.md.Mark[]
 function M.parse_tree(buf, language, root)
     log.buf('debug', 'language', buf, language)
-    if not Context.get(buf):contains_node(root) then
+    if not Context.get(buf):overlaps_node(root) then
         return {}
     end
 
