@@ -52,21 +52,23 @@ end
 
 ---@param win integer
 ---@param name string
----@return number|string|boolean
+---@return render.md.option.Value
 function M.get_win(win, name)
     return vim.api.nvim_get_option_value(name, { scope = 'local', win = win })
 end
 
 ---@param win integer
 ---@param name string
----@param value number|string|boolean
+---@param value render.md.option.Value
 function M.set_win(win, name, value)
-    vim.api.nvim_set_option_value(name, value, { scope = 'local', win = win })
+    if value ~= M.get_win(win, name) then
+        vim.api.nvim_set_option_value(name, value, { scope = 'local', win = win })
+    end
 end
 
 ---@param buf integer
 ---@param name string
----@return number|string|boolean
+---@return render.md.option.Value
 function M.get_buf(buf, name)
     return vim.api.nvim_get_option_value(name, { buf = buf })
 end

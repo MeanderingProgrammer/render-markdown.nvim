@@ -12,8 +12,8 @@
 ---@field public query string
 
 ---@class (exact) render.md.WindowOption
----@field public default number|string|boolean
----@field public rendered number|string|boolean
+---@field public default render.md.option.Value
+---@field public rendered render.md.option.Value
 
 ---@class (exact) render.md.Indent
 ---@field public enabled boolean
