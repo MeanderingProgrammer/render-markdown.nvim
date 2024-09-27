@@ -90,12 +90,23 @@ end
 ---@return number
 function M.file_size_mb(file)
     local ok, stats = pcall(function()
-        return vim.uv.fs_stat(file)
+        return (vim.uv or vim.loop).fs_stat(file)
     end)
     if not (ok and stats) then
         return 0
     end
     return stats.size / (1024 * 1024)
+end
+
+---@param callback fun()
+---@return fun()
+function M.wrap_runtime(callback)
+    return function()
+        local start_time = (vim.uv or vim.loop).hrtime()
+        callback()
+        local end_time = (vim.uv or vim.loop).hrtime()
+        vim.print(string.format('Runtime (ms): %.1f', (end_time - start_time) / 1e+6))
+    end
 end
 
 return M

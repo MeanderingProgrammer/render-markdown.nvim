@@ -188,6 +188,7 @@ local M = {}
 ---@field public markdown_quote_query? string
 ---@field public inline_query? string
 ---@field public log_level? render.md.config.LogLevel
+---@field public log_runtime? boolean
 ---@field public file_types? string[]
 ---@field public injections? table<string, render.md.UserInjection>
 ---@field public latex? render.md.UserLatex
@@ -264,6 +265,9 @@ M.default_config = {
     -- The level of logs to write to file: vim.fn.stdpath('state') .. '/render-markdown.log'
     -- Only intended to be used for plugin development / debugging
     log_level = 'error',
+    -- Print runtime of main update method
+    -- Only intended to be used for plugin development / debugging
+    log_runtime = false,
     -- Filetypes this plugin will run on
     file_types = { 'markdown' },
     -- Out of the box language injections for known filetypes that allow markdown to be

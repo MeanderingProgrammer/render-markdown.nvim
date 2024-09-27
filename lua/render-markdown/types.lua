@@ -160,6 +160,7 @@
 ---@field public markdown_quote_query string
 ---@field public inline_query string
 ---@field public log_level render.md.config.LogLevel
+---@field public log_runtime boolean
 ---@field public file_types string[]
 ---@field public injections table<string, render.md.Injection>
 ---@field public latex render.md.Latex

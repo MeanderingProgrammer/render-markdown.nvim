@@ -81,14 +81,20 @@ function M.debounce_update(buf, win, event, change)
 
     local config, buffer_state = state.get(buf), Cache.get(buf)
 
-    if not change and Context.contains_range(buf, win) then
-        vim.schedule(function()
-            M.update(buf, win, false)
-        end)
+    -- Need to parse when things change or we have not parsed the visible range yet
+    local parse = change or not Context.contains_range(buf, win)
+
+    local update = function()
+        M.update(buf, win, parse)
+    end
+    if parse and state.log_runtime then
+        update = util.wrap_runtime(update)
+    end
+
+    if parse and config.debounce > 0 then
+        buffer_state:debounce(config.debounce, update)
     else
-        buffer_state:debounce(config.debounce, function()
-            M.update(buf, win, true)
-        end)
+        vim.schedule(update)
     end
 end
 

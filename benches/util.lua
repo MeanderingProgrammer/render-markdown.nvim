@@ -34,11 +34,11 @@ function M.insert_mode()
 end
 
 ---@private
----@param f fun()
+---@param callback fun()
 ---@return number
-function M.time(f)
+function M.time(callback)
     local start = vim.uv.hrtime()
-    f()
+    callback()
     vim.wait(0)
     return (vim.uv.hrtime() - start) / 1e+6
 end

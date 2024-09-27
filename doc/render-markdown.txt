@@ -1,4 +1,4 @@
-*render-markdown.txt*         For 0.10.0        Last change: 2024 September 26
+*render-markdown.txt*         For 0.10.0        Last change: 2024 September 27
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -241,6 +241,9 @@ Default Configuration ~
         -- The level of logs to write to file: vim.fn.stdpath('state') .. '/render-markdown.log'
         -- Only intended to be used for plugin development / debugging
         log_level = 'error',
+        -- Print runtime of main update method
+        -- Only intended to be used for plugin development / debugging
+        log_runtime = false,
         -- Filetypes this plugin will run on
         file_types = { 'markdown' },
         -- Out of the box language injections for known filetypes that allow markdown to be
