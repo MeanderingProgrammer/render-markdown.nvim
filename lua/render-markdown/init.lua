@@ -237,8 +237,10 @@ M.default_config = {
             (list_marker_star)
         ] @list_marker
 
-        (task_list_marker_unchecked) @checkbox_unchecked
-        (task_list_marker_checked) @checkbox_checked
+        [
+            (task_list_marker_unchecked)
+            (task_list_marker_checked)
+        ] @checkbox
 
         (block_quote) @quote
 
