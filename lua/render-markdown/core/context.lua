@@ -229,9 +229,9 @@ function Context:compute_conceal()
     local parser = vim.treesitter.get_parser(self.buf)
     self:parse(parser)
     parser:for_each_tree(function(tree, language_tree)
-        local nodes = self:compute_conceal_nodes(language_tree:lang(), tree:root())
-        for _, node in ipairs(nodes) do
-            local row, start_col, _, end_col = node:range()
+        local conceal_ranges = self:compute_conceal_ranges(language_tree:lang(), tree:root())
+        for _, conceal_range in ipairs(conceal_ranges) do
+            local row, start_col, end_col = unpack(conceal_range)
             if ranges[row] == nil then
                 ranges[row] = {}
             end
@@ -244,8 +244,8 @@ end
 ---@private
 ---@param language string
 ---@param root TSNode
----@return TSNode[]
-function Context:compute_conceal_nodes(language, root)
+---@return [integer, integer, integer][]
+function Context:compute_conceal_ranges(language, root)
     if not self:overlaps_node(root) then
         return {}
     end
@@ -256,15 +256,24 @@ function Context:compute_conceal_nodes(language, root)
     if query == nil then
         return {}
     end
-    local nodes = {}
+    local result = {}
     for _, range in ipairs(self.ranges) do
-        for _, node, metadata in query:iter_captures(root, self.buf, range.top, range.bottom) do
+        for id, node, metadata in query:iter_captures(root, self.buf, range.top, range.bottom) do
             if metadata.conceal ~= nil then
-                table.insert(nodes, node)
+                local node_range = metadata.range
+                if node_range == nil and metadata[id] ~= nil then
+                    node_range = metadata[id].range
+                end
+                if node_range == nil then
+                    ---@diagnostic disable-next-line: missing-fields
+                    node_range = { node:range() }
+                end
+                local row, start_col, _, end_col = unpack(node_range)
+                table.insert(result, { row, start_col, end_col })
             end
         end
     end
-    return nodes
+    return result
 end
 
 ---@type table<integer, render.md.Context>
