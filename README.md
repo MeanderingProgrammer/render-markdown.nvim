@@ -402,12 +402,16 @@ require('render-markdown').setup({
             icon = '󰄱 ',
             -- Highlight for the unchecked icon
             highlight = 'RenderMarkdownUnchecked',
+            -- Highlight for item associated with unchecked checkbox
+            scope_highlight = nil,
         },
         checked = {
             -- Replaces '[x]' of 'task_list_marker_checked'
             icon = '󰱒 ',
             -- Highligh for the checked icon
             highlight = 'RenderMarkdownChecked',
+            -- Highlight for item associated with checked checkbox
+            scope_highlight = nil,
         },
         -- Define custom checkbox states, more involved as they are not part of the markdown grammar
         -- As a result this requires neovim >= 0.10.0 since it relies on 'inline' extmarks
@@ -830,12 +834,16 @@ require('render-markdown').setup({
             icon = '󰄱 ',
             -- Highlight for the unchecked icon
             highlight = 'RenderMarkdownUnchecked',
+            -- Highlight for item associated with unchecked checkbox
+            scope_highlight = nil,
         },
         checked = {
             -- Replaces '[x]' of 'task_list_marker_checked'
             icon = '󰱒 ',
             -- Highligh for the checked icon
             highlight = 'RenderMarkdownChecked',
+            -- Highlight for item associated with checked checkbox
+            scope_highlight = nil,
         },
         -- Define custom checkbox states, more involved as they are not part of the markdown grammar
         -- As a result this requires neovim >= 0.10.0 since it relies on 'inline' extmarks
