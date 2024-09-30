@@ -228,7 +228,11 @@ M.default_config = {
         ] @heading)
         (setext_heading) @heading
 
-        (thematic_break) @dash
+        [
+            (thematic_break)
+            (minus_metadata)
+            (plus_metadata)
+        ] @dash
 
         (fenced_code_block) @code
 

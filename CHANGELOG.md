@@ -2,6 +2,10 @@
 
 ## Pre-release
 
+### Features
+
+- chechbox scope highlight [cb90caf](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/cb90caf64951b5b7515def7783b32e73883e374c)
+
 ### Bug Fixes
 
 - only set option value if it changes [#186](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/186)

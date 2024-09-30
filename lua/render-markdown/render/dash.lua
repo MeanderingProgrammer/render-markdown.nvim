@@ -26,11 +26,19 @@ end
 function Render:render()
     local width = self.dash.width
     width = type(width) == 'number' and width or self.context:get_width()
+    local virt_text = { self.dash.icon:rep(width), self.dash.highlight }
 
-    self.marks:add(true, self.info.start_row, 0, {
-        virt_text = { { self.dash.icon:rep(width), self.dash.highlight } },
+    local start_row, end_row = self.info.start_row, self.info.end_row - 1
+    self.marks:add(true, start_row, 0, {
+        virt_text = { virt_text },
         virt_text_pos = 'overlay',
     })
+    if end_row > start_row then
+        self.marks:add(true, end_row, 0, {
+            virt_text = { virt_text },
+            virt_text_pos = 'overlay',
+        })
+    end
 end
 
 return Render
