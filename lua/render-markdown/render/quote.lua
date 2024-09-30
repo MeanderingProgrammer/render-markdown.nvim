@@ -1,9 +1,10 @@
 local Base = require('render-markdown.render.base')
 local log = require('render-markdown.core.log')
-local state = require('render-markdown.state')
+local treesitter = require('render-markdown.core.treesitter')
 
 ---@class render.md.render.Quote: render.md.Renderer
 ---@field private quote render.md.Quote
+---@field private query vim.treesitter.Query
 ---@field private highlight string
 local Render = setmetatable({}, Base)
 Render.__index = Render
@@ -24,6 +25,16 @@ function Render:setup()
         return false
     end
 
+    self.query = treesitter.parse(
+        'markdown',
+        [[
+            [
+                (block_quote_marker)
+                (block_continuation)
+            ] @quote_marker
+        ]]
+    )
+
     local callout = self.context:get_component(self.info)
     self.highlight = callout ~= nil and callout.highlight or self.quote.highlight
 
@@ -31,7 +42,7 @@ function Render:setup()
 end
 
 function Render:render()
-    self.context:query(self.info:get_node(), state.markdown_quote_query, function(capture, info)
+    self.context:query(self.info:get_node(), self.query, function(capture, info)
         if capture == 'quote_marker' then
             self:quote_marker(info)
         else

@@ -302,19 +302,20 @@ function Render:full()
         end
     end
 
-    ---@param row render.md.table.Row
-    ---@return integer
-    local function get_spaces(row)
-        return math.max(str.spaces('start', row.info.text), row.info.start_col)
-    end
-
     local first, last = rows[1], rows[#rows]
     if not width_equal(first) or not width_equal(last) then
         return
     end
 
-    local spaces = get_spaces(first)
-    if spaces ~= get_spaces(last) then
+    ---@param info render.md.NodeInfo
+    ---@return integer
+    local function get_spaces(info)
+        return math.max(str.spaces('start', info:line('first', 0) or ''), info.start_col)
+    end
+
+    local first_info, last_info = first.info, #rows == 1 and delim.info or last.info
+    local spaces = get_spaces(first_info)
+    if spaces ~= get_spaces(last_info) then
         return
     end
 
@@ -335,8 +336,7 @@ function Render:full()
         })
     end
 
-    local last_info = #rows == 1 and delim.info or last.info
-    table_border(first.info, true, { border[1], border[2], border[3] })
+    table_border(first_info, true, { border[1], border[2], border[3] })
     table_border(last_info, false, { border[7], border[8], border[9] })
 end
 

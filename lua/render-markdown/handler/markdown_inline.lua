@@ -4,11 +4,13 @@ local list = require('render-markdown.core.list')
 local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
 local str = require('render-markdown.core.str')
+local treesitter = require('render-markdown.core.treesitter')
 
 ---@class render.md.handler.buf.MarkdownInline
 ---@field private marks render.md.Marks
 ---@field private config render.md.buffer.Config
 ---@field private context render.md.Context
+---@field private query vim.treesitter.Query
 local Handler = {}
 Handler.__index = Handler
 
@@ -19,13 +21,28 @@ function Handler.new(buf)
     self.marks = list.new_marks()
     self.config = state.get(buf)
     self.context = Context.get(buf)
+    self.query = treesitter.parse(
+        'markdown_inline',
+        [[
+            (code_span) @code
+
+            (shortcut_link) @shortcut
+
+            [
+                (image)
+                (email_autolink)
+                (inline_link)
+                (full_reference_link)
+            ] @link
+        ]]
+    )
     return self
 end
 
 ---@param root TSNode
 ---@return render.md.Mark[]
 function Handler:parse(root)
-    self.context:query(root, state.inline_query, function(capture, info)
+    self.context:query(root, self.query, function(capture, info)
         if capture == 'code' then
             self:code(info)
         elseif capture == 'shortcut' then

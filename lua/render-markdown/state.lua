@@ -14,9 +14,6 @@ local configs = {}
 ---@field file_types string[]
 ---@field latex render.md.Latex
 ---@field custom_handlers table<string, render.md.Handler>
----@field markdown_query vim.treesitter.Query
----@field markdown_quote_query vim.treesitter.Query
----@field inline_query vim.treesitter.Query
 local M = {}
 
 ---@return boolean
@@ -47,11 +44,6 @@ function M.setup(default_config, user_config)
     M.file_types = config.file_types
     M.latex = config.latex
     M.custom_handlers = config.custom_handlers
-    vim.schedule(function()
-        M.markdown_query = vim.treesitter.query.parse('markdown', treesitter.queries.markdown)
-        M.markdown_quote_query = vim.treesitter.query.parse('markdown', treesitter.queries.markdown_quote)
-        M.inline_query = vim.treesitter.query.parse('markdown_inline', treesitter.queries.inline)
-    end)
     log.setup(config.log_level)
     for _, language in ipairs(M.file_types) do
         treesitter.inject(language, config.injections[language])

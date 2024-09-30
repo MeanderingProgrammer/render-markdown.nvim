@@ -2,11 +2,13 @@ local Context = require('render-markdown.core.context')
 local list = require('render-markdown.core.list')
 local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
+local treesitter = require('render-markdown.core.treesitter')
 
 ---@class render.md.handler.buf.Markdown
 ---@field private marks render.md.Marks
 ---@field private config render.md.buffer.Config
 ---@field private context render.md.Context
+---@field private query vim.treesitter.Query
 ---@field private renderers table<string, render.md.Renderer>
 local Handler = {}
 Handler.__index = Handler
@@ -18,6 +20,45 @@ function Handler.new(buf)
     self.marks = list.new_marks()
     self.config = state.get(buf)
     self.context = Context.get(buf)
+    self.query = treesitter.parse(
+        'markdown',
+        [[
+            (section) @section
+
+            (atx_heading [
+                (atx_h1_marker)
+                (atx_h2_marker)
+                (atx_h3_marker)
+                (atx_h4_marker)
+                (atx_h5_marker)
+                (atx_h6_marker)
+            ] @heading)
+            (setext_heading) @heading
+
+            [
+                (thematic_break)
+                (minus_metadata)
+                (plus_metadata)
+            ] @dash
+
+            (fenced_code_block) @code
+
+            [
+                (list_marker_plus)
+                (list_marker_minus)
+                (list_marker_star)
+            ] @list_marker
+
+            [
+                (task_list_marker_unchecked)
+                (task_list_marker_checked)
+            ] @checkbox
+
+            (block_quote) @quote
+
+            (pipe_table) @table
+        ]]
+    )
     self.renderers = {
         checkbox = require('render-markdown.render.checkbox'),
         code = require('render-markdown.render.code'),
@@ -34,7 +75,7 @@ end
 ---@param root TSNode
 ---@return render.md.Mark[]
 function Handler:parse(root)
-    self.context:query(root, state.markdown_query, function(capture, info)
+    self.context:query(root, self.query, function(capture, info)
         local renderer = self.renderers[capture]
         if renderer ~= nil then
             local render = renderer:new(self.marks, self.config, self.context, info)
