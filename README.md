@@ -6,9 +6,9 @@ Plugin to improve viewing Markdown files in Neovim
 
 |           |         |
 | --------- | ------- |
-| ![Heading](https://github.com/user-attachments/assets/663a34c5-0438-4688-8204-332065f65835) | ![Table](https://github.com/user-attachments/assets/162986e1-91f0-4e13-a83f-6183d58b0fcb) |
-| ![Quote](https://github.com/user-attachments/assets/5343ca45-d5e1-4de0-9065-46499e1ed919)   | ![LaTeX](https://github.com/user-attachments/assets/9e8909e4-7256-45fc-b481-4aba8850ebc3) |
-| ![Callout](https://github.com/user-attachments/assets/4324ea72-a017-4175-9f9d-363da5e5f6ba) | |
+| ![Heading](https://github.com/user-attachments/assets/6d5ca2d3-3263-4ccd-beaf-b5795167d776) | ![Table](https://github.com/user-attachments/assets/7c7e6351-baff-4e72-b668-2e4fac76e276) |
+| ![Quote](https://github.com/user-attachments/assets/dba88e99-bff5-4b33-9017-ab55c1058d21)   | ![LaTeX](https://github.com/user-attachments/assets/85bac8f1-c7df-4078-9e9c-374de9b08e03) |
+| ![Callout](https://github.com/user-attachments/assets/bea7e1b9-d77f-4c3f-abf8-f6262b05fad2) | |
 
 <!-- panvimdoc-ignore-end -->
 
