@@ -157,9 +157,6 @@
 
 ---@class (exact) render.md.Config: render.md.BufferConfig
 ---@field public preset render.md.config.Preset
----@field public markdown_query string
----@field public markdown_quote_query string
----@field public inline_query string
 ---@field public log_level render.md.config.LogLevel
 ---@field public log_runtime boolean
 ---@field public file_types string[]

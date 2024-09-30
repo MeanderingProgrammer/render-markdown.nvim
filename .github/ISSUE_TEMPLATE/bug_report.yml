@@ -43,18 +43,21 @@ body:
     attributes:
       label: Healthcheck output
       description: Output of :checkhealth render-markdown
+      render: text
     validations:
       required: true
   - type: textarea
     attributes:
       label: Plugin configuration
       description: Your configuration for this plugin.
+      render: lua
     validations:
       required: true
   - type: textarea
     attributes:
       label: Plugin error log
       description: Error log (:RenderMarkdown log) if empty put N/A.
+      render: text
     validations:
       required: true
   - type: checkboxes

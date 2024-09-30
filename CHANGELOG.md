@@ -5,6 +5,7 @@
 ### Features
 
 - chechbox scope highlight [cb90caf](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/cb90caf64951b5b7515def7783b32e73883e374c)
+- plus / minus metadata dash rendering [35c37ca](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/35c37ca9f7955f9fa57eaee1c16edb3c80c40462)
 
 ### Bug Fixes
 
