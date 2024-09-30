@@ -246,7 +246,8 @@ end
 ---@param position 'above'|'below'
 ---@return boolean
 function Render:empty_line(position)
-    return str.width(self.info:line(position, 1)) == 0
+    local line = self.info:line(position, 1)
+    return line ~= nil and str.width(line) == 0
 end
 
 ---@private

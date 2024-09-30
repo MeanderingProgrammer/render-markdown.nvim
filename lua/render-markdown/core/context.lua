@@ -12,7 +12,7 @@ local util = require('render-markdown.core.util')
 ---@field private conceal? table<integer, [integer, integer][]>
 ---@field private links table<integer, [integer, integer, integer][]>
 ---@field private window_width? integer
----@field last_heading integer
+---@field last_heading? integer
 local Context = {}
 Context.__index = Context
 
@@ -37,7 +37,7 @@ function Context.new(buf, win, offset)
     self.conceal = nil
     self.links = {}
     self.window_width = nil
-    self.last_heading = -1
+    self.last_heading = nil
     return self
 end
 
