@@ -1,8 +1,8 @@
 local Range = require('render-markdown.core.range')
 
 ---@class render.md.component.Config
----@field callout table<string, render.md.CustomComponent>
----@field checkbox table<string, render.md.CustomComponent>
+---@field callout table<string, render.md.CustomCallout>
+---@field checkbox table<string, render.md.CustomCheckbox>
 
 ---@class render.md.buffer.Config: render.md.BufferConfig
 ---@field component render.md.component.Config
@@ -22,7 +22,9 @@ function Config.new(config)
 end
 
 ---@private
----@param components table<string, render.md.CustomComponent>
+---@generic T: render.md.CustomCallout|render.md.CustomCheckbox
+---@param components table<string, T>
+---@return table<string, T>
 function Config.normalize(components)
     local result = {}
     for _, component in pairs(components) do

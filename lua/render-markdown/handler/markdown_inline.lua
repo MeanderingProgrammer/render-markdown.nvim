@@ -94,7 +94,7 @@ end
 
 ---@private
 ---@param info render.md.NodeInfo
----@param callout render.md.CustomComponent
+---@param callout render.md.CustomCallout
 function Handler:callout(info, callout)
     if not self.config.quote.enabled then
         return
@@ -124,13 +124,13 @@ function Handler:callout(info, callout)
         conceal = conceal and '' or nil,
     })
     if added then
-        self.context:add_component(info, callout)
+        self.context:add_callout(info, callout)
     end
 end
 
 ---@private
 ---@param info render.md.NodeInfo
----@param checkbox render.md.CustomComponent
+---@param checkbox render.md.CustomCheckbox
 function Handler:checkbox(info, checkbox)
     if not self.config.checkbox.enabled then
         return
@@ -145,7 +145,7 @@ function Handler:checkbox(info, checkbox)
         conceal = '',
     })
     if added then
-        self.context:add_component(info, checkbox)
+        self.context:add_checkbox(info, checkbox)
     end
 end
 

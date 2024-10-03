@@ -51,6 +51,12 @@ local M = {}
 ---@field public highlight? string
 ---@field public custom? table<string, render.md.UserLinkComponent>
 
+---@class (exact) render.md.UserCustomCallout
+---@field public raw? string
+---@field public rendered? string
+---@field public highlight? string
+---@field public quote_icon? string
+
 ---@alias render.md.table.Preset 'none'|'round'|'double'|'heavy'
 ---@alias render.md.table.Style 'full'|'normal'|'none'
 ---@alias render.md.table.Cell 'trimmed'|'padded'|'raw'|'overlay'
@@ -73,7 +79,7 @@ local M = {}
 ---@field public repeat_linebreak? boolean
 ---@field public highlight? string
 
----@class (exact) render.md.UserCustomComponent
+---@class (exact) render.md.UserCustomCheckbox
 ---@field public raw? string
 ---@field public rendered? string
 ---@field public highlight? string
@@ -90,7 +96,7 @@ local M = {}
 ---@field public position? render.md.checkbox.Position
 ---@field public unchecked? render.md.UserCheckboxComponent
 ---@field public checked? render.md.UserCheckboxComponent
----@field public custom? table<string, render.md.UserCustomComponent>
+---@field public custom? table<string, render.md.UserCustomCheckbox>
 
 ---@class (exact) render.md.UserBullet
 ---@field public enabled? boolean
@@ -176,7 +182,7 @@ local M = {}
 ---@field public checkbox? render.md.UserCheckbox
 ---@field public quote? render.md.UserQuote
 ---@field public pipe_table? render.md.UserPipeTable
----@field public callout? table<string, render.md.UserCustomComponent>
+---@field public callout? table<string, render.md.UserCustomCallout>
 ---@field public link? render.md.UserLink
 ---@field public sign? render.md.UserSign
 ---@field public indent? render.md.UserIndent
@@ -500,9 +506,10 @@ M.default_config = {
     -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'
     -- Can specify as many additional values as you like following the pattern from any below, such as 'note'
     --   The key in this case 'note' is for healthcheck and to allow users to change its values
-    --   'raw':       Matched against the raw text of a 'shortcut_link', case insensitive
-    --   'rendered':  Replaces the 'raw' value when rendering
-    --   'highlight': Highlight for the 'rendered' text and quote markers
+    --   'raw':        Matched against the raw text of a 'shortcut_link', case insensitive
+    --   'rendered':   Replaces the 'raw' value when rendering
+    --   'highlight':  Highlight for the 'rendered' text and quote markers
+    --   'quote_icon': Optional override for quote.icon value for individual callout
     callout = {
         note = { raw = '[!NOTE]', rendered = '󰋽 Note', highlight = 'RenderMarkdownInfo' },
         tip = { raw = '[!TIP]', rendered = '󰌶 Tip', highlight = 'RenderMarkdownSuccess' },

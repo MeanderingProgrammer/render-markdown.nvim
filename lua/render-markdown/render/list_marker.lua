@@ -49,7 +49,7 @@ function Render:sibling_checkbox()
     if not self.config.checkbox.enabled then
         return false
     end
-    if self.context:get_component(self.info) ~= nil then
+    if self.context:get_checkbox(self.info) ~= nil then
         return true
     end
     if self.info:sibling('task_list_marker_unchecked') ~= nil then

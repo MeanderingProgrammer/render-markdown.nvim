@@ -35,7 +35,7 @@ class LuaClass:
             return []
         lines: list[str] = [self.name.replace("User", "")]
         for field in self.fields:
-            if "scope_highlight" in field:
+            if "scope_highlight" in field or "quote_icon" in field:
                 lines.append(field)
             elif "ConfigOverrides" in self.name:
                 lines.append(field.replace("?", ""))

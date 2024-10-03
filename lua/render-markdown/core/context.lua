@@ -8,7 +8,8 @@ local util = require('render-markdown.core.util')
 ---@field private buf integer
 ---@field private win integer
 ---@field private ranges render.md.Range[]
----@field private components table<integer, render.md.CustomComponent>
+---@field private callouts table<integer, render.md.CustomCallout>
+---@field private checkboxes table<integer, render.md.CustomCheckbox>
 ---@field private conceal? table<integer, [integer, integer][]>
 ---@field private links table<integer, [integer, integer, integer][]>
 ---@field private window_width? integer
@@ -33,7 +34,8 @@ function Context.new(buf, win, offset)
     end
     self.ranges = Range.coalesce(ranges)
 
-    self.components = {}
+    self.callouts = {}
+    self.checkboxes = {}
     self.conceal = nil
     self.links = {}
     self.window_width = nil
@@ -64,15 +66,27 @@ function Context.compute_range(buf, win, offset)
 end
 
 ---@param info render.md.NodeInfo
----@return render.md.CustomComponent?
-function Context:get_component(info)
-    return self.components[info.start_row]
+---@return render.md.CustomCallout?
+function Context:get_callout(info)
+    return self.callouts[info.start_row]
 end
 
 ---@param info render.md.NodeInfo
----@param component render.md.CustomComponent
-function Context:add_component(info, component)
-    self.components[info.start_row] = component
+---@param callout render.md.CustomCallout
+function Context:add_callout(info, callout)
+    self.callouts[info.start_row] = callout
+end
+
+---@param info render.md.NodeInfo
+---@return render.md.CustomCheckbox?
+function Context:get_checkbox(info)
+    return self.checkboxes[info.start_row]
+end
+
+---@param info render.md.NodeInfo
+---@param checkbox render.md.CustomCheckbox
+function Context:add_checkbox(info, checkbox)
+    self.checkboxes[info.start_row] = checkbox
 end
 
 ---@param info? render.md.NodeInfo

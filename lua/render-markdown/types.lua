@@ -38,6 +38,12 @@
 ---@field public highlight string
 ---@field public custom table<string, render.md.LinkComponent>
 
+---@class (exact) render.md.CustomCallout
+---@field public raw string
+---@field public rendered string
+---@field public highlight string
+---@field public quote_icon? string
+
 ---@class (exact) render.md.PipeTable
 ---@field public enabled boolean
 ---@field public preset render.md.table.Preset
@@ -56,7 +62,7 @@
 ---@field public repeat_linebreak boolean
 ---@field public highlight string
 
----@class (exact) render.md.CustomComponent
+---@class (exact) render.md.CustomCheckbox
 ---@field public raw string
 ---@field public rendered string
 ---@field public highlight string
@@ -71,7 +77,7 @@
 ---@field public position render.md.checkbox.Position
 ---@field public unchecked render.md.CheckboxComponent
 ---@field public checked render.md.CheckboxComponent
----@field public custom table<string, render.md.CustomComponent>
+---@field public custom table<string, render.md.CustomCheckbox>
 
 ---@class (exact) render.md.Bullet
 ---@field public enabled boolean
@@ -149,7 +155,7 @@
 ---@field public checkbox render.md.Checkbox
 ---@field public quote render.md.Quote
 ---@field public pipe_table render.md.PipeTable
----@field public callout table<string, render.md.CustomComponent>
+---@field public callout table<string, render.md.CustomCallout>
 ---@field public link render.md.Link
 ---@field public sign render.md.Sign
 ---@field public indent render.md.Indent

@@ -210,7 +210,7 @@ function M.validate()
             :check()
 
         validator:spec(path, config, 'callout', nilable):for_each(function(spec)
-            spec:type({ 'raw', 'rendered', 'highlight' }, 'string'):check()
+            spec:type({ 'raw', 'rendered', 'highlight' }, 'string'):type('quote_icon', { 'string', 'nil' }):check()
         end)
 
         validator
