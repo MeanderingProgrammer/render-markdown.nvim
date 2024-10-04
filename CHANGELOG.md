@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 7.3.0 (2024-10-04)
+
 ### Features
 
 - chechbox scope highlight [cb90caf](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/cb90caf64951b5b7515def7783b32e73883e374c)
