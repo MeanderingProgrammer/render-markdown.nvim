@@ -6,12 +6,18 @@
 
 - chechbox scope highlight [cb90caf](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/cb90caf64951b5b7515def7783b32e73883e374c)
 - plus / minus metadata dash rendering [35c37ca](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/35c37ca9f7955f9fa57eaee1c16edb3c80c40462)
+- callouts override quote icon [#194](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/194)
+  [1eb3b74](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/1eb3b74873d2dbb9d5a3635bf4a14e77e897d29f)
 
 ### Bug Fixes
 
 - only set option value if it changes [#186](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/186)
   [91ce0b5](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/91ce0b5a6314b091bcba1541f557f591c7ddfe06)
 - handle offset conceal nodes [0cab868](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/0cab868ce2b017ff9deccee87c289dc1915317be)
+- indented table border [#191](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/191)
+  [efb4c48](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/efb4c48c3b4de7cc3d01ec54d794a2509ae0c1c8)
+- heading border at start & end virtual text [#187](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/187)
+  [e91b042](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/e91b042b3865d2d040a0e21e0a3b13fb57f24094)
 
 ## 7.2.0 (2024-09-26)
 

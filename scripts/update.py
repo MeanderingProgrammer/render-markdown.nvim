@@ -9,9 +9,19 @@ class LuaClass:
     name: str
     fields: list[str]
 
+    def is_it(self, name: str) -> bool:
+        return name in self.name
+
+    def is_optional(self, field: str) -> bool:
+        optional_fields: list[str] = ["extends", "scope_highlight", "quote_icon"]
+        for optional_field in optional_fields:
+            if optional_field in field:
+                return True
+        return False
+
     def validate(self) -> None:
         for field in self.fields:
-            if "User" in self.name:
+            if self.is_it("User"):
                 self.validate_user_field(field)
             else:
                 self.validate_non_user_field(field)
@@ -22,23 +32,20 @@ class LuaClass:
 
     def validate_non_user_field(self, field: str) -> None:
         # Non user classes are expected to have mandatory fields with some exceptions
-        optional: bool = False
-        optional_fields: list[str] = ["extends"] if "Handler" in self.name else []
-        for optional_field in optional_fields:
-            if optional_field in field:
-                optional = True
-        if not optional:
+        if not self.is_optional(field):
             assert "?" not in field, f"Field must be mandatory: {field}"
 
     def to_public_lines(self) -> list[str]:
-        if "User" not in self.name:
+        if not self.is_it("User"):
             return []
-        lines: list[str] = [self.name.replace("User", "")]
+
+        lines: list[str] = []
+        lines.append(self.name.replace("User", ""))
         for field in self.fields:
-            if "scope_highlight" in field or "quote_icon" in field:
-                lines.append(field)
-            elif "ConfigOverrides" in self.name:
+            if self.is_it("ConfigOverrides"):
                 lines.append(field.replace("?", ""))
+            elif self.is_optional(field):
+                lines.append(field)
             else:
                 lines.append(field.replace("User", "").replace("?", ""))
         lines.append("")
@@ -98,14 +105,12 @@ def update_readme(init_file: Path, readme_file: Path) -> None:
 def update_custom_handlers(init_file: Path, handler_file: Path) -> None:
     class_name: str = "render.md.Handler"
     old = get_code_block(handler_file, class_name, 1)
-    new = "\n".join(
-        [
-            get_class(init_file, "render.md.Mark").to_str(),
-            "",
-            get_class(init_file, class_name).to_str(),
-        ]
-    )
-    text = handler_file.read_text().replace(old, new)
+    new = [
+        get_class(init_file, "render.md.Mark").to_str(),
+        "",
+        get_class(init_file, class_name).to_str(),
+    ]
+    text = handler_file.read_text().replace(old, "\n".join(new))
     handler_file.write_text(text)
 
 
