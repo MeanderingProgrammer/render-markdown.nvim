@@ -66,7 +66,7 @@ body:
       options:
       - label: I have updated this plugin to the latest version using my plugin manager
         required: true
-      - label: I have provided text for all screenshots & understand that my issue will be closed if I have not
+      - label: I have provided the text contained in all screenshots as raw text in this issue. This means if there is a screenshot below it is the copy pasted contents of the file in the screenshot. I understand that my issue will be closed if I have not.
         required: true
   - type: textarea
     attributes:

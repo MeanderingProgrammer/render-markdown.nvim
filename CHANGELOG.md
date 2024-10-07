@@ -6,7 +6,7 @@
 
 ### Features
 
-- chechbox scope highlight [cb90caf](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/cb90caf64951b5b7515def7783b32e73883e374c)
+- checkbox scope highlight [cb90caf](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/cb90caf64951b5b7515def7783b32e73883e374c)
 - plus / minus metadata dash rendering [35c37ca](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/35c37ca9f7955f9fa57eaee1c16edb3c80c40462)
 - callouts override quote icon [#194](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/194)
   [1eb3b74](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/1eb3b74873d2dbb9d5a3635bf4a14e77e897d29f)
