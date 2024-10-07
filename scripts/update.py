@@ -83,6 +83,7 @@ def update_readme(init_file: Path, readme_file: Path) -> None:
 
     parameters: list[str] = [
         "heading",
+        "paragraph",
         "code",
         "dash",
         "bullet",

@@ -110,6 +110,11 @@
 ---@field public highlight string
 ---@field public highlight_inline string
 
+---@class (exact) render.md.Paragraph
+---@field public enabled boolean
+---@field public left_margin number
+---@field public min_width integer
+
 ---@class (exact) render.md.Heading
 ---@field public enabled boolean
 ---@field public sign boolean
@@ -149,6 +154,7 @@
 ---@field public anti_conceal render.md.AntiConceal
 ---@field public padding render.md.Padding
 ---@field public heading render.md.Heading
+---@field public paragraph render.md.Paragraph
 ---@field public code render.md.Code
 ---@field public dash render.md.Dash
 ---@field public bullet render.md.Bullet

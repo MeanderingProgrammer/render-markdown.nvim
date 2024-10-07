@@ -64,12 +64,16 @@ function M.cycle(values, index)
 end
 
 ---@generic T
----@param values T[]
+---@param values `T`|T[]
 ---@param index integer
 ---@return T
 function M.clamp(values, index)
-    assert(#values >= 1, 'Must have at least one value')
-    return values[math.min(index, #values)]
+    if type(values) == 'table' then
+        assert(#values >= 1, 'Must have at least one value')
+        return values[math.min(index, #values)]
+    else
+        return values
+    end
 end
 
 return M

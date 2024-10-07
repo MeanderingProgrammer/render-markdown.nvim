@@ -134,6 +134,11 @@ local M = {}
 ---@field public highlight? string
 ---@field public highlight_inline? string
 
+---@class (exact) render.md.UserParagraph
+---@field public enabled? boolean
+---@field public left_margin? number
+---@field public min_width? integer
+
 ---@alias render.md.heading.Position 'overlay'|'inline'
 ---@alias render.md.heading.Width 'full'|'block'
 
@@ -176,6 +181,7 @@ local M = {}
 ---@field public anti_conceal? render.md.UserAntiConceal
 ---@field public padding? render.md.UserPadding
 ---@field public heading? render.md.UserHeading
+---@field public paragraph? render.md.UserParagraph
 ---@field public code? render.md.UserCode
 ---@field public dash? render.md.UserDash
 ---@field public bullet? render.md.UserBullet
@@ -334,6 +340,15 @@ M.default_config = {
             'RenderMarkdownH5',
             'RenderMarkdownH6',
         },
+    },
+    paragraph = {
+        -- Turn on / off paragraph rendering
+        enabled = true,
+        -- Amount of margin to add to the left of paragraphs
+        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
+        left_margin = 0,
+        -- Minimum width to use for paragraphs
+        min_width = 0,
     },
     code = {
         -- Turn on / off code block & inline code rendering
@@ -601,8 +616,9 @@ M.default_config = {
     -- More granular configuration mechanism, allows different aspects of buffers
     -- to have their own behavior. Values default to the top level configuration
     -- if no override is provided. Supports the following fields:
-    --   enabled, max_file_size, debounce, render_modes, anti_conceal, padding, heading, code,
-    --   dash, bullet, checkbox, quote, pipe_table, callout, link, sign, indent, win_options
+    --   enabled, max_file_size, debounce, render_modes, anti_conceal, padding,
+    --   heading, paragraph, code, dash, bullet, checkbox, quote, pipe_table,
+    --   callout, link, sign, indent, win_options
     overrides = {
         -- Overrides for different buftypes, see :h 'buftype'
         buftype = {

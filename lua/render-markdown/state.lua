@@ -104,6 +104,7 @@ function M.default_buffer_config()
         anti_conceal = config.anti_conceal,
         padding = config.padding,
         heading = config.heading,
+        paragraph = config.paragraph,
         code = config.code,
         dash = config.dash,
         bullet = config.bullet,
@@ -143,6 +144,12 @@ function M.validate()
             :list({ 'icons', 'signs', 'backgrounds', 'foregrounds' }, 'string')
             :one_of('position', { 'overlay', 'inline' })
             :one_or_list_of('width', { 'full', 'block' })
+            :check()
+
+        validator
+            :spec(path, config, 'paragraph', nilable)
+            :type('enabled', 'boolean')
+            :type({ 'left_margin', 'min_width' }, 'number')
             :check()
 
         validator
@@ -241,8 +248,9 @@ function M.validate()
         :spec('', config)
         :type('enabled', 'boolean')
         :type({ 'max_file_size', 'debounce' }, 'number')
-        :type({ 'anti_conceal', 'padding', 'heading', 'code', 'dash', 'bullet', 'checkbox' }, 'table')
-        :type({ 'quote', 'pipe_table', 'callout', 'link', 'sign', 'indent', 'win_options' }, 'table')
+        :type({ 'anti_conceal', 'padding', 'heading', 'paragraph', 'code' }, 'table')
+        :type({ 'dash', 'bullet', 'checkbox', 'quote', 'pipe_table' }, 'table')
+        :type({ 'callout', 'link', 'sign', 'indent', 'win_options' }, 'table')
         :list('render_modes', 'string', 'boolean')
         :type('log_runtime', 'boolean')
         :type({ 'injections', 'latex', 'overrides', 'custom_handlers' }, 'table')
@@ -270,8 +278,9 @@ function M.validate()
         override_spec:for_each(function(spec)
             spec:type('enabled', 'boolean')
                 :type({ 'max_file_size', 'debounce' }, 'number')
-                :type({ 'anti_conceal', 'padding', 'heading', 'code', 'dash', 'bullet', 'checkbox' }, 'table')
-                :type({ 'quote', 'pipe_table', 'callout', 'link', 'sign', 'indent', 'win_options' }, 'table')
+                :type({ 'anti_conceal', 'padding', 'heading', 'paragraph', 'code' }, 'table')
+                :type({ 'dash', 'bullet', 'checkbox', 'quote', 'pipe_table' }, 'table')
+                :type({ 'callout', 'link', 'sign', 'indent', 'win_options' }, 'table')
                 :list('render_modes', 'string', 'boolean')
                 :check()
             validate_buffer_config(spec:get_suffix(), spec:get_input(), true)

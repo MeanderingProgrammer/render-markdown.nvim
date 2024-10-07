@@ -259,6 +259,15 @@ require('render-markdown').setup({
             'RenderMarkdownH6',
         },
     },
+    paragraph = {
+        -- Turn on / off paragraph rendering
+        enabled = true,
+        -- Amount of margin to add to the left of paragraphs
+        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
+        left_margin = 0,
+        -- Minimum width to use for paragraphs
+        min_width = 0,
+    },
     code = {
         -- Turn on / off code block & inline code rendering
         enabled = true,
@@ -525,8 +534,9 @@ require('render-markdown').setup({
     -- More granular configuration mechanism, allows different aspects of buffers
     -- to have their own behavior. Values default to the top level configuration
     -- if no override is provided. Supports the following fields:
-    --   enabled, max_file_size, debounce, render_modes, anti_conceal, padding, heading, code,
-    --   dash, bullet, checkbox, quote, pipe_table, callout, link, sign, indent, win_options
+    --   enabled, max_file_size, debounce, render_modes, anti_conceal, padding,
+    --   heading, paragraph, code, dash, bullet, checkbox, quote, pipe_table,
+    --   callout, link, sign, indent, win_options
     overrides = {
         -- Overrides for different buftypes, see :h 'buftype'
         buftype = {
@@ -631,6 +641,30 @@ require('render-markdown').setup({
             'RenderMarkdownH5',
             'RenderMarkdownH6',
         },
+    },
+})
+```
+
+</details>
+
+## Paragraphs
+
+[Wiki Page](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Paragraphs)
+
+<details>
+
+<summary>Paragraph Configuration</summary>
+
+```lua
+require('render-markdown').setup({
+    paragraph = {
+        -- Turn on / off paragraph rendering
+        enabled = true,
+        -- Amount of margin to add to the left of paragraphs
+        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
+        left_margin = 0,
+        -- Minimum width to use for paragraphs
+        min_width = 0,
     },
 })
 ```

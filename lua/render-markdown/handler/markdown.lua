@@ -35,13 +35,15 @@ function Handler.new(buf)
             ] @heading)
             (setext_heading) @heading
 
+            (section (paragraph) @paragraph)
+
+            (fenced_code_block) @code
+
             [
                 (thematic_break)
                 (minus_metadata)
                 (plus_metadata)
             ] @dash
-
-            (fenced_code_block) @code
 
             [
                 (list_marker_plus)
@@ -65,6 +67,7 @@ function Handler.new(buf)
         dash = require('render-markdown.render.dash'),
         heading = require('render-markdown.render.heading'),
         list_marker = require('render-markdown.render.list_marker'),
+        paragraph = require('render-markdown.render.paragraph'),
         quote = require('render-markdown.render.quote'),
         section = require('render-markdown.render.section'),
         table = require('render-markdown.render.table'),

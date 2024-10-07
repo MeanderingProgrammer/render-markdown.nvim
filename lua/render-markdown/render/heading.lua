@@ -59,28 +59,15 @@ function Render:setup()
         sign = list.cycle(self.heading.signs, level),
         foreground = list.clamp(self.heading.foregrounds, level),
         background = list.clamp(self.heading.backgrounds, level),
-        width = Render.resolve(self.heading.width, level),
-        left_margin = Render.resolve(self.heading.left_margin, level),
-        left_pad = Render.resolve(self.heading.left_pad, level),
-        right_pad = Render.resolve(self.heading.right_pad, level),
-        min_width = Render.resolve(self.heading.min_width, level),
+        width = list.clamp(self.heading.width, level),
+        left_margin = list.clamp(self.heading.left_margin, level),
+        left_pad = list.clamp(self.heading.left_pad, level),
+        right_pad = list.clamp(self.heading.right_pad, level),
+        min_width = list.clamp(self.heading.min_width, level),
         end_row = self.info.end_row + (atx and 1 or 0),
     }
 
     return true
-end
-
----@private
----@generic T
----@param values `T`|T[]
----@param level integer
----@return T
-function Render.resolve(values, level)
-    if type(values) == 'table' then
-        return list.clamp(values, level)
-    else
-        return values
-    end
 end
 
 function Render:render()
