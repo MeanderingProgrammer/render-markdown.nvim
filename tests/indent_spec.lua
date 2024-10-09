@@ -12,6 +12,7 @@ local function indent(row, level)
         col = { 0 },
         virt_text = { { string.rep('  ', level or 1), 'Normal' } },
         virt_text_pos = 'inline',
+        priority = 0,
     }
 end
 

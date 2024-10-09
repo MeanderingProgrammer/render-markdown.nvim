@@ -40,6 +40,7 @@ end
 ---@field virt_lines_above? boolean
 ---@field sign_text? string
 ---@field sign_hl_group? string
+---@field priority? integer
 local MarkInfo = {}
 MarkInfo.__index = MarkInfo
 
@@ -62,6 +63,9 @@ function MarkInfo.new(row, col, details)
     self.virt_lines_above = details.virt_lines_above
     self.sign_text = details.sign_text
     self.sign_hl_group = details.sign_hl_group
+    if details.priority ~= 4096 then
+        self.priority = details.priority
+    end
     return self
 end
 
@@ -221,6 +225,7 @@ function M.code_hide(row, col, win_col)
         virt_text = { { string.rep(' ', vim.opt.columns:get() * 2), 'Normal' } },
         virt_text_pos = 'win_col',
         virt_text_win_col = win_col,
+        priority = 0,
     }
 end
 
@@ -339,6 +344,7 @@ function M.table_padding(row, col, spaces)
         col = { col },
         virt_text = { { string.rep(' ', spaces), M.hl('TableFill') } },
         virt_text_pos = 'inline',
+        priority = 0,
     }
 end
 
@@ -430,11 +436,7 @@ end
 function M.marks_are_equal(expected, actual)
     expected = vim.iter(expected)
         :map(function(mark_or_marks)
-            if vim.islist(mark_or_marks) then
-                return mark_or_marks
-            else
-                return { mark_or_marks }
-            end
+            return vim.islist(mark_or_marks) and mark_or_marks or { mark_or_marks }
         end)
         :flatten()
         :totable()

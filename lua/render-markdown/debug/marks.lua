@@ -118,6 +118,7 @@ function Mark:__tostring()
     append('hl_group', { { nil, self.opts.hl_group } })
     append('hl_eol', self.opts.hl_eol)
     append('hl_mode', self.opts.hl_mode)
+    append('priority', self.opts.priority)
     return table.concat(lines, '\n')
 end
 

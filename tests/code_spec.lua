@@ -6,8 +6,9 @@ local util = require('tests.util')
 ---@param col integer
 ---@param offset integer
 ---@param left integer
+---@param priority? integer
 ---@return render.md.MarkInfo
-local function padding(row, col, offset, left)
+local function padding(row, col, offset, left, priority)
     local virt_text = {}
     if offset > 0 then
         table.insert(virt_text, { string.rep(' ', offset), 'Normal' })
@@ -21,6 +22,7 @@ local function padding(row, col, offset, left)
         col = { col },
         virt_text = virt_text,
         virt_text_pos = 'inline',
+        priority = priority,
     }
 end
 
@@ -77,7 +79,7 @@ describe('code.md', function()
         table.insert(expected, util.code_language(row:increment(2), 0, 'rust', 34))
         for _ = 1, 3 do
             vim.list_extend(expected, {
-                padding(row:increment(), 0, 0, 2),
+                padding(row:increment(), 0, 0, 2, 0),
                 util.code_hide(row:get(), 0, 34),
                 util.code_row(row:get(), 0),
             })

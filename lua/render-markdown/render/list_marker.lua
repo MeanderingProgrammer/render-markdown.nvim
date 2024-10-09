@@ -102,20 +102,19 @@ function Render:padding(root_list)
 
     for row = list_item.start_row, end_row - 1 do
         local right_col = row == list_item.start_row and self.info.end_col - 1 or left_col
-        self:padding_mark(row, left_col, 0, self.bullet.left_pad)
-        self:padding_mark(row, right_col, nil, self.bullet.right_pad)
+        self:padding_mark(row, left_col, self.bullet.left_pad)
+        self:padding_mark(row, right_col, self.bullet.right_pad)
     end
 end
 
 ---@private
 ---@param row integer
 ---@param col integer
----@param priority? integer
 ---@param amount integer
-function Render:padding_mark(row, col, priority, amount)
+function Render:padding_mark(row, col, amount)
     if amount > 0 then
         self.marks:add(false, row, col, {
-            priority = priority,
+            priority = 0,
             virt_text = { { str.pad(amount), self.config.padding.highlight } },
             virt_text_pos = 'inline',
         })
