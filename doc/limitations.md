@@ -7,9 +7,9 @@
 `LaTeX` formula evaluations are placed above text rather than overlayed.
 
 A way around this is to use a separate plugin for `LaTeX` and disable that feature
-in this plugin.
+in this plugin. As examples you can use:
 
-As an example you can use [latex.nvim](https://github.com/ryleelyman/latex.nvim):
+[latex.nvim](https://github.com/ryleelyman/latex.nvim)
 
 ```lua
 {
@@ -20,7 +20,18 @@ As an example you can use [latex.nvim](https://github.com/ryleelyman/latex.nvim)
 }
 ```
 
-Then disable `LaTeX` from this plugin:
+[nabla.nvim](https://github.com/jbyuki/nabla.nvim)
+
+```lua
+{
+    'jbyuki/nabla.nvim',
+    config = function()
+        require('nabla').enable_virt({ autogen = true })
+    end,
+}
+```
+
+In both cases you'll need to disable `LaTeX` for this plugin:
 
 ```lua
 require('render-markdown').setup({
