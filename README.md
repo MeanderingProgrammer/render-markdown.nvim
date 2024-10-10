@@ -190,6 +190,10 @@ require('render-markdown').setup({
         -- Amount of empty lines below LaTeX blocks
         bottom_pad = 0,
     },
+    on = {
+        -- Called when plugin initially attaches to a buffer
+        attach = function() end,
+    },
     heading = {
         -- Turn on / off heading icon & background rendering
         enabled = true,

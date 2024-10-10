@@ -1,5 +1,8 @@
 ---@meta
 
+---@class (exact) render.md.Callback
+---@field public attach fun(buf: integer)
+
 ---@class (exact) render.md.Latex
 ---@field public enabled boolean
 ---@field public converter string
@@ -174,5 +177,6 @@
 ---@field public file_types string[]
 ---@field public injections table<string, render.md.Injection>
 ---@field public latex render.md.Latex
+---@field public on render.md.Callback
 ---@field public overrides render.md.ConfigOverrides
 ---@field public custom_handlers table<string, render.md.Handler>

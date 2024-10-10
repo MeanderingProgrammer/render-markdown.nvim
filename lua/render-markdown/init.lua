@@ -11,6 +11,9 @@ local M = {}
 ---@field public extends? boolean
 ---@field public parse fun(root: TSNode, buf: integer): render.md.Mark[]
 
+---@class (exact) render.md.UserCallback
+---@field public attach? fun(buf: integer)
+
 ---@class (exact) render.md.UserLatex
 ---@field public enabled? boolean
 ---@field public converter? string
@@ -204,6 +207,7 @@ local M = {}
 ---@field public file_types? string[]
 ---@field public injections? table<string, render.md.UserInjection>
 ---@field public latex? render.md.UserLatex
+---@field public on? render.md.UserCallback
 ---@field public overrides? render.md.UserConfigOverrides
 ---@field public custom_handlers? table<string, render.md.Handler>
 
@@ -271,6 +275,10 @@ M.default_config = {
         top_pad = 0,
         -- Amount of empty lines below LaTeX blocks
         bottom_pad = 0,
+    },
+    on = {
+        -- Called when plugin initially attaches to a buffer
+        attach = function() end,
     },
     heading = {
         -- Turn on / off heading icon & background rendering

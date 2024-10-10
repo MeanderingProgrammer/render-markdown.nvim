@@ -2,6 +2,16 @@
 
 ## Pre-release
 
+### Features
+
+- margin for paragraphs [#200](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/200)
+  [d20d19f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/d20d19fa54965f6eb94558c0b84fe9a942169fb4)
+
+### Bug Fixes
+
+- bullet point right padding priority [#199](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/199)
+  [b02c8ef](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b02c8ef72b10537a346556696b6e7fb354c8771f)
+
 ## 7.3.0 (2024-10-04)
 
 ### Features

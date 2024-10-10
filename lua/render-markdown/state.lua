@@ -13,6 +13,7 @@ local configs = {}
 ---@field log_runtime boolean
 ---@field file_types string[]
 ---@field latex render.md.Latex
+---@field on render.md.Callback
 ---@field custom_handlers table<string, render.md.Handler>
 local M = {}
 
@@ -43,6 +44,7 @@ function M.setup(default_config, user_config)
     M.log_runtime = config.log_runtime
     M.file_types = config.file_types
     M.latex = config.latex
+    M.on = config.on
     M.custom_handlers = config.custom_handlers
     log.setup(config.log_level)
     for _, language in ipairs(M.file_types) do
@@ -124,20 +126,21 @@ end
 function M.validate()
     local validator = require('render-markdown.debug.validator').new()
 
-    ---@param path string
     ---@param config render.md.BufferConfig|render.md.UserBufferConfig
     ---@param nilable boolean
-    local function validate_buffer_config(path, config, nilable)
-        validator
-            :spec(path, config, 'anti_conceal', nilable)
-            :type('enabled', 'boolean')
-            :type({ 'above', 'below' }, 'number')
-            :check()
+    ---@param path? string
+    local function validate_buffer_config(config, nilable, path)
+        ---@param key string|string[]
+        ---@return render.md.debug.ValidatorSpec
+        local function get_spec(key)
+            return validator:spec(config, nilable, key, path)
+        end
 
-        validator:spec(path, config, 'padding', nilable):type('highlight', 'string'):check()
+        get_spec('anti_conceal'):type('enabled', 'boolean'):type({ 'above', 'below' }, 'number'):check()
 
-        validator
-            :spec(path, config, 'heading', nilable)
+        get_spec('padding'):type('highlight', 'string'):check()
+
+        get_spec('heading')
             :type({ 'enabled', 'sign', 'border', 'border_virtual', 'border_prefix' }, 'boolean')
             :type({ 'above', 'below' }, 'string')
             :list({ 'left_margin', 'left_pad', 'right_pad', 'min_width' }, 'number', 'number')
@@ -146,14 +149,9 @@ function M.validate()
             :one_or_list_of('width', { 'full', 'block' })
             :check()
 
-        validator
-            :spec(path, config, 'paragraph', nilable)
-            :type('enabled', 'boolean')
-            :type({ 'left_margin', 'min_width' }, 'number')
-            :check()
+        get_spec('paragraph'):type('enabled', 'boolean'):type({ 'left_margin', 'min_width' }, 'number'):check()
 
-        validator
-            :spec(path, config, 'code', nilable)
+        get_spec('code')
             :type({ 'enabled', 'sign' }, 'boolean')
             :type({ 'language_pad', 'left_margin', 'left_pad', 'right_pad', 'min_width' }, 'number')
             :type({ 'above', 'below', 'highlight', 'highlight_inline' }, 'string')
@@ -164,49 +162,42 @@ function M.validate()
             :one_of('border', { 'thin', 'thick' })
             :check()
 
-        validator
-            :spec(path, config, 'dash', nilable)
+        get_spec('dash')
             :type('enabled', 'boolean')
             :type({ 'icon', 'highlight' }, 'string')
             :one_of('width', { 'full' }, 'number')
             :check()
 
-        validator
-            :spec(path, config, 'bullet', nilable)
+        get_spec('bullet')
             :type('enabled', 'boolean')
             :type({ 'left_pad', 'right_pad' }, 'number')
             :type('highlight', 'string')
             :list('icons', 'string')
             :check()
 
-        validator
-            :spec(path, config, 'checkbox', nilable)
+        get_spec('checkbox')
             :type('enabled', 'boolean')
             :type({ 'unchecked', 'checked', 'custom' }, 'table')
             :one_of('position', { 'overlay', 'inline' })
             :check()
-        validator
-            :spec(path, config, { 'checkbox', 'unchecked' }, nilable)
+        get_spec({ 'checkbox', 'unchecked' })
             :type({ 'icon', 'highlight' }, 'string')
             :type('scope_highlight', { 'string', 'nil' })
             :check()
-        validator
-            :spec(path, config, { 'checkbox', 'checked' }, nilable)
+        get_spec({ 'checkbox', 'checked' })
             :type({ 'icon', 'highlight' }, 'string')
             :type('scope_highlight', { 'string', 'nil' })
             :check()
-        validator:spec(path, config, { 'checkbox', 'custom' }, nilable):for_each(function(spec)
-            spec:type({ 'raw', 'rendered', 'highlight' }, 'string'):check()
+        get_spec({ 'checkbox', 'custom' }):for_each(false, function(spec)
+            spec:type({ 'raw', 'rendered', 'highlight' }, 'string')
         end)
 
-        validator
-            :spec(path, config, 'quote', nilable)
+        get_spec('quote')
             :type({ 'enabled', 'repeat_linebreak' }, 'boolean')
             :type({ 'icon', 'highlight' }, 'string')
             :check()
 
-        validator
-            :spec(path, config, 'pipe_table', nilable)
+        get_spec('pipe_table')
             :type('enabled', 'boolean')
             :type('min_width', 'number')
             :type({ 'alignment_indicator', 'head', 'row', 'filler' }, 'string')
@@ -216,36 +207,34 @@ function M.validate()
             :one_of('cell', { 'trimmed', 'padded', 'raw', 'overlay' })
             :check()
 
-        validator:spec(path, config, 'callout', nilable):for_each(function(spec)
-            spec:type({ 'raw', 'rendered', 'highlight' }, 'string'):type('quote_icon', { 'string', 'nil' }):check()
+        get_spec('callout'):for_each(false, function(spec)
+            spec:type({ 'raw', 'rendered', 'highlight' }, 'string'):type('quote_icon', { 'string', 'nil' })
         end)
 
-        validator
-            :spec(path, config, 'link', nilable)
+        get_spec('link')
             :type('enabled', 'boolean')
             :type({ 'image', 'email', 'hyperlink', 'highlight' }, 'string')
             :type('custom', 'table')
             :check()
-        validator:spec(path, config, { 'link', 'custom' }, nilable):for_each(function(spec)
-            spec:type({ 'pattern', 'icon', 'highlight' }, 'string'):check()
+        get_spec({ 'link', 'custom' }):for_each(false, function(spec)
+            spec:type({ 'pattern', 'icon', 'highlight' }, 'string')
         end)
 
-        validator:spec(path, config, 'sign', nilable):type('enabled', 'boolean'):type('highlight', 'string'):check()
+        get_spec('sign'):type('enabled', 'boolean'):type('highlight', 'string'):check()
 
-        validator
-            :spec(path, config, 'indent', nilable)
+        get_spec('indent')
             :type({ 'enabled', 'skip_heading' }, 'boolean')
             :type({ 'per_level', 'skip_level' }, 'number')
             :check()
 
-        validator:spec(path, config, 'win_options', nilable):for_each(function(spec)
-            spec:type({ 'default', 'rendered' }, { 'number', 'string', 'boolean' }):check()
+        get_spec('win_options'):for_each(false, function(spec)
+            spec:type({ 'default', 'rendered' }, { 'number', 'string', 'boolean' })
         end)
     end
 
     local config = M.config
     validator
-        :spec('', config)
+        :spec(config, false)
         :type('enabled', 'boolean')
         :type({ 'max_file_size', 'debounce' }, 'number')
         :type({ 'anti_conceal', 'padding', 'heading', 'paragraph', 'code' }, 'table')
@@ -253,42 +242,42 @@ function M.validate()
         :type({ 'callout', 'link', 'sign', 'indent', 'win_options' }, 'table')
         :list('render_modes', 'string', 'boolean')
         :type('log_runtime', 'boolean')
-        :type({ 'injections', 'latex', 'overrides', 'custom_handlers' }, 'table')
+        :type({ 'injections', 'latex', 'on', 'overrides', 'custom_handlers' }, 'table')
         :list('file_types', 'string')
         :one_of('preset', { 'none', 'lazy', 'obsidian' })
         :one_of('log_level', { 'debug', 'info', 'error' })
         :check()
 
-    validate_buffer_config('', config, false)
+    validate_buffer_config(config, false)
 
-    validator:spec('', config, 'injections'):for_each(function(spec)
-        spec:type('enabled', 'boolean'):type('query', 'string'):check()
+    validator:spec(config, false, 'injections'):for_each(false, function(spec)
+        spec:type('enabled', 'boolean'):type('query', 'string')
     end)
 
     validator
-        :spec('', config, 'latex')
+        :spec(config, false, 'latex')
         :type('enabled', 'boolean')
         :type({ 'top_pad', 'bottom_pad' }, 'number')
         :type({ 'converter', 'highlight' }, 'string')
         :check()
 
-    validator:spec('', config, 'overrides'):type({ 'buftype', 'filetype' }, 'table'):check()
+    validator:spec(config, false, 'on'):type('attach', 'function'):check()
 
-    validator:spec('', config, 'overrides'):for_each(function(override_spec)
-        override_spec:for_each(function(spec)
+    validator:spec(config, false, 'overrides'):type({ 'buftype', 'filetype' }, 'table'):check()
+    validator:spec(config, false, 'overrides'):for_each(false, function(override_spec)
+        override_spec:for_each(true, function(spec)
             spec:type('enabled', 'boolean')
                 :type({ 'max_file_size', 'debounce' }, 'number')
                 :type({ 'anti_conceal', 'padding', 'heading', 'paragraph', 'code' }, 'table')
                 :type({ 'dash', 'bullet', 'checkbox', 'quote', 'pipe_table' }, 'table')
                 :type({ 'callout', 'link', 'sign', 'indent', 'win_options' }, 'table')
                 :list('render_modes', 'string', 'boolean')
-                :check()
-            validate_buffer_config(spec:get_suffix(), spec:get_input(), true)
-        end, true)
+            validate_buffer_config(spec:get_config(), true, spec:get_path())
+        end)
     end)
 
-    validator:spec('', config, 'custom_handlers'):for_each(function(spec)
-        spec:type('extends', 'boolean'):type('parse', 'function'):check()
+    validator:spec(config, false, 'custom_handlers'):for_each(false, function(spec)
+        spec:type('extends', 'boolean'):type('parse', 'function')
     end)
 
     return validator:get_errors()

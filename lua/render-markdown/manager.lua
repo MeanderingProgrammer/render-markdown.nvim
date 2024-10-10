@@ -51,7 +51,10 @@ function M.attach(buf)
     if not M.should_attach(buf) then
         return
     end
+
     local config = state.get(buf)
+    state.on.attach(buf)
+
     local events = { 'BufWinEnter', 'BufLeave', 'CursorHold', 'CursorMoved', 'WinScrolled' }
     local change_events = { 'DiffUpdated', 'ModeChanged', 'TextChanged' }
     if config:render('i') then

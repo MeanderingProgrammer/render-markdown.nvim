@@ -1,49 +1,51 @@
 ---@class render.md.debug.ValidatorSpec
 ---@field private validator render.md.debug.Validator
----@field private nilable? boolean
----@field private suffix string
----@field private input? table<string, any>
+---@field private config? table<string, any>
+---@field private nilable boolean
+---@field private path string
 ---@field private opts table<string, vim.validate.Spec>
 local Spec = {}
 Spec.__index = Spec
 
 ---@param validator render.md.debug.Validator
----@param path string
----@param input table<string, any>
+---@param config table<string, any>
+---@param nilable boolean
 ---@param key? string|string[]
----@param nilable? boolean
+---@param path? string
 ---@return render.md.debug.ValidatorSpec
-function Spec.new(validator, path, input, key, nilable)
+function Spec.new(validator, config, nilable, key, path)
     local self = setmetatable({}, Spec)
     self.validator = validator
+    self.config = config
     self.nilable = nilable
-    self.suffix = path
-    self.input = input
+    self.path = path or ''
     self.opts = {}
     if key ~= nil then
         key = type(key) == 'table' and key or { key }
-        self.suffix = self.suffix .. '.' .. table.concat(key, '.')
-        self.input = vim.tbl_get(self.input, unpack(key))
-        assert(self.input ~= nil or self.nilable == true)
+        self.path = self.path .. '.' .. table.concat(key, '.')
+        self.config = vim.tbl_get(self.config, unpack(key))
+        assert(self.config ~= nil or self.nilable)
     end
     return self
 end
 
 ---@return string
-function Spec:get_suffix()
-    return self.suffix
+function Spec:get_path()
+    return self.path
 end
 
 ---@return table<string, any>
-function Spec:get_input()
-    return self.input
+function Spec:get_config()
+    return self.config
 end
 
+---@param nilable boolean
 ---@param f fun(spec: render.md.debug.ValidatorSpec)
----@param nilable? boolean
-function Spec:for_each(f, nilable)
-    for name in pairs(self.input or {}) do
-        f(Spec.new(self.validator, self.suffix, self.input, name, nilable))
+function Spec:for_each(nilable, f)
+    for name in pairs(self.config or {}) do
+        local spec = Spec.new(self.validator, self.config, nilable, name, self.path)
+        f(spec)
+        spec:check()
     end
 end
 
@@ -123,7 +125,7 @@ function Spec:handle_types(input_types)
     else
         types = input_types
     end
-    if self.nilable then
+    if self.nilable and not vim.tbl_contains(types, 'nil') then
         table.insert(types, 'nil')
     end
     return types, #types == 0 and '' or (' or type ' .. vim.inspect(types))
@@ -135,20 +137,24 @@ end
 ---@param message string?
 ---@return render.md.debug.ValidatorSpec
 function Spec:add(keys, logic, message)
-    if self.input ~= nil then
+    if self.config ~= nil then
         keys = type(keys) == 'table' and keys or { keys }
         for _, key in ipairs(keys) do
             ---@diagnostic disable-next-line: assign-type-mismatch
-            self.opts[key] = { self.input[key], logic, message or self.nilable }
+            self.opts[key] = { self.config[key], logic, message or self.nilable }
         end
     end
     return self
 end
 
 function Spec:check()
-    if self.input ~= nil then
-        self.validator:check(self.suffix, self.input, self.opts)
+    if self.config == nil then
+        return
     end
+    if vim.tbl_count(self.opts) == 0 then
+        return
+    end
+    self.validator:check(self.path, self.config, self.opts)
 end
 
 ---@class render.md.debug.Validator
@@ -165,25 +171,25 @@ function Validator.new()
     return self
 end
 
----@param path string
----@param input table<string, any>
+---@param config table<string, any>
+---@param nilable boolean
 ---@param key? string|string[]
----@param nilable? boolean
+---@param path? string
 ---@return render.md.debug.ValidatorSpec
-function Validator:spec(path, input, key, nilable)
-    return Spec.new(self, path, input, key, nilable)
+function Validator:spec(config, nilable, key, path)
+    return Spec.new(self, config, nilable, key, path)
 end
 
 ---@param suffix string
----@param input table<string, any>
+---@param config table<string, any>
 ---@param opts table<string, vim.validate.Spec>
-function Validator:check(suffix, input, opts)
+function Validator:check(suffix, config, opts)
     local path = self.prefix .. suffix
     local ok, err = pcall(vim.validate, opts)
     if not ok then
         table.insert(self.errors, path .. '.' .. err)
     end
-    for key, _ in pairs(input) do
+    for key, _ in pairs(config) do
         if opts[key] == nil then
             table.insert(self.errors, string.format('%s.%s: is not a valid key', path, key))
         end
