@@ -6,7 +6,7 @@ test:
   just busted "tests"
 
 bench:
-  just gen-medium
+  just generate
   just busted "benches"
 
 [private]
@@ -62,36 +62,5 @@ update:
 cat-log:
   cat ~/.local/state/nvim/render-markdown.log
 
-gen-medium:
-  just gen-headings "1000" "temp/medium.md"
-  just gen-table "50" "100" "temp/medium-table.md"
-
-gen-large:
-  just gen-headings "100000" "temp/large.md"
-
-[private]
-gen-headings lines path:
-  {{path_exists(path)}} || just gen-headings-content {{lines}} > {{path}}
-
-[private]
-gen-headings-content lines:
-  #!/usr/bin/env python
-  for i in range({{lines}}):
-    level = "#" * ((i % 6) + 1)
-    print(f"{level} Title {i}\n")
-
-[private]
-gen-table tables lines path:
-  {{path_exists(path)}} || just gen-table-contents {{tables}} {{lines}} > {{path}}
-
-[private]
-gen-table-contents tables lines:
-  #!/usr/bin/env python
-  for i in range({{tables}}):
-    print(f"# Table {i}")
-    print()
-    print(f"| `Column 1`     | **Column 2**     | *Column 3*     |")
-    print(f"| -------------- | :--------------- | -------------: |")
-    for j in range({{lines}}):
-      print(f"| Row {j:<4} Col 1 | `Row {j:<4} Col 2` | Row {j:<4} Col 3 |")
-    print()
+generate:
+  python scripts/generate.py
