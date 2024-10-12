@@ -7,6 +7,7 @@
 - margin for paragraphs [#200](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/200)
   [d20d19f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/d20d19fa54965f6eb94558c0b84fe9a942169fb4)
 - `on.attach` buffer callback [8b4149b](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/8b4149b122cfbf58b79a552ae89b3df2ddc39786)
+- allow empty lists for all heading properties [0c6de74](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/0c6de743a8d3c61b87bc7db9ab97dcda12ca6818)
 
 ### Bug Fixes
 

@@ -28,7 +28,12 @@ class LuaClass:
         # ---@field public start_row integer            -> start_row
         # ---@field public attach? fun(buf: integer)    -> attach
         field_name = field.split()[2].replace("?", "")
-        return field_name in ["extends", "scope_highlight", "quote_icon"]
+        return field_name in [
+            "extends",
+            "highlight_language",
+            "quote_icon",
+            "scope_highlight",
+        ]
 
     def validate(self) -> None:
         for field in self.fields:

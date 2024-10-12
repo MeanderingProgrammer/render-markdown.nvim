@@ -1,4 +1,4 @@
-*render-markdown.txt*          For 0.10.0         Last change: 2024 October 11
+*render-markdown.txt*          For 0.10.0         Last change: 2024 October 12
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -370,6 +370,8 @@ Default Configuration ~
             highlight = 'RenderMarkdownCode',
             -- Highlight for inline code
             highlight_inline = 'RenderMarkdownCodeInline',
+            -- Highlight for language, overrides icon provider value
+            highlight_language = nil,
         },
         dash = {
             -- Turn on / off thematic break rendering
@@ -537,6 +539,8 @@ Default Configuration ~
             hyperlink = '󰌹 ',
             -- Applies to the fallback inlined icon
             highlight = 'RenderMarkdownLink',
+            -- Applies to WikiLink elements
+            wiki = { icon = '󱗖 ', highlight = 'RenderMarkdownWikiLink' },
             -- Define custom destination patterns so icons can quickly inform you of what a link
             -- contains. Applies to 'inline_link' and wikilink nodes.
             -- Can specify as many additional values as you like following the 'web' pattern below
@@ -777,6 +781,8 @@ Code Block Configuration ~
             highlight = 'RenderMarkdownCode',
             -- Highlight for inline code
             highlight_inline = 'RenderMarkdownCodeInline',
+            -- Highlight for language, overrides icon provider value
+            highlight_language = nil,
         },
     })
 <
@@ -1035,6 +1041,8 @@ Link Configuration ~
             hyperlink = '󰌹 ',
             -- Applies to the fallback inlined icon
             highlight = 'RenderMarkdownLink',
+            -- Applies to WikiLink elements
+            wiki = { icon = '󱗖 ', highlight = 'RenderMarkdownWikiLink' },
             -- Define custom destination patterns so icons can quickly inform you of what a link
             -- contains. Applies to 'inline_link' and wikilink nodes.
             -- Can specify as many additional values as you like following the 'web' pattern below
@@ -1139,13 +1147,15 @@ The table below shows all the highlight groups with their default link
 
   RenderMarkdownDash         LineNr                               Thematic break line
 
-  RenderMarkdownLink         @markup.link.label.markdown_inline   Image & hyperlink
-                                                                  icons
-
   RenderMarkdownSign         SignColumn                           Sign column
                                                                   background
 
   RenderMarkdownMath         @markup.math                         LaTeX lines
+
+  RenderMarkdownLink         @markup.link.label.markdown_inline   Image & hyperlink
+                                                                  icons
+
+  RenderMarkdownWikiLink     RenderMarkdownLink                   WikiLink icon & text
 
   RenderMarkdownUnchecked    @markup.list.unchecked               Unchecked checkbox
 

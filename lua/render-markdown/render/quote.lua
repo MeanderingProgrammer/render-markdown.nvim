@@ -1,5 +1,4 @@
 local Base = require('render-markdown.render.base')
-local log = require('render-markdown.core.log')
 local treesitter = require('render-markdown.core.treesitter')
 
 ---@class render.md.data.Quote
@@ -51,11 +50,8 @@ end
 
 function Render:render()
     self.context:query(self.info:get_node(), self.data.query, function(capture, info)
-        if capture == 'quote_marker' then
-            self:quote_marker(info)
-        else
-            log.unhandled_capture('markdown quote', capture)
-        end
+        assert(capture == 'quote_marker', 'Unhandled quote capture: ' .. capture)
+        self:quote_marker(info)
     end)
 end
 

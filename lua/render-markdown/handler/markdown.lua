@@ -1,6 +1,5 @@
 local Context = require('render-markdown.core.context')
 local list = require('render-markdown.core.list')
-local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
 local treesitter = require('render-markdown.core.treesitter')
 
@@ -80,13 +79,10 @@ end
 function Handler:parse(root)
     self.context:query(root, self.query, function(capture, info)
         local renderer = self.renderers[capture]
-        if renderer ~= nil then
-            local render = renderer:new(self.marks, self.config, self.context, info)
-            if render:setup() then
-                render:render()
-            end
-        else
-            log.unhandled_capture('markdown', capture)
+        assert(renderer ~= nil, 'Unhandled markdown capture: ' .. capture)
+        local render = renderer:new(self.marks, self.config, self.context, info)
+        if render:setup() then
+            render:render()
         end
     end)
     return self.marks:get()

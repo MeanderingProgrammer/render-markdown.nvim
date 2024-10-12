@@ -321,6 +321,8 @@ require('render-markdown').setup({
         highlight = 'RenderMarkdownCode',
         -- Highlight for inline code
         highlight_inline = 'RenderMarkdownCodeInline',
+        -- Highlight for language, overrides icon provider value
+        highlight_language = nil,
     },
     dash = {
         -- Turn on / off thematic break rendering
@@ -488,6 +490,8 @@ require('render-markdown').setup({
         hyperlink = '󰌹 ',
         -- Applies to the fallback inlined icon
         highlight = 'RenderMarkdownLink',
+        -- Applies to WikiLink elements
+        wiki = { icon = '󱗖 ', highlight = 'RenderMarkdownWikiLink' },
         -- Define custom destination patterns so icons can quickly inform you of what a link
         -- contains. Applies to 'inline_link' and wikilink nodes.
         -- Can specify as many additional values as you like following the 'web' pattern below
@@ -734,6 +738,8 @@ require('render-markdown').setup({
         highlight = 'RenderMarkdownCode',
         -- Highlight for inline code
         highlight_inline = 'RenderMarkdownCodeInline',
+        -- Highlight for language, overrides icon provider value
+        highlight_language = nil,
     },
 })
 ```
@@ -1006,6 +1012,8 @@ require('render-markdown').setup({
         hyperlink = '󰌹 ',
         -- Applies to the fallback inlined icon
         highlight = 'RenderMarkdownLink',
+        -- Applies to WikiLink elements
+        wiki = { icon = '󱗖 ', highlight = 'RenderMarkdownWikiLink' },
         -- Define custom destination patterns so icons can quickly inform you of what a link
         -- contains. Applies to 'inline_link' and wikilink nodes.
         -- Can specify as many additional values as you like following the 'web' pattern below
@@ -1094,9 +1102,10 @@ The table below shows all the highlight groups with their default link
 | RenderMarkdownBullet     | Normal                             | List item bullet points   |
 | RenderMarkdownQuote      | @markup.quote                      | Block quote marker        |
 | RenderMarkdownDash       | LineNr                             | Thematic break line       |
-| RenderMarkdownLink       | @markup.link.label.markdown_inline | Image & hyperlink icons   |
 | RenderMarkdownSign       | SignColumn                         | Sign column background    |
 | RenderMarkdownMath       | @markup.math                       | LaTeX lines               |
+| RenderMarkdownLink       | @markup.link.label.markdown_inline | Image & hyperlink icons   |
+| RenderMarkdownWikiLink   | RenderMarkdownLink                 | WikiLink icon & text      |
 | RenderMarkdownUnchecked  | @markup.list.unchecked             | Unchecked checkbox        |
 | RenderMarkdownChecked    | @markup.list.checked               | Checked checkbox          |
 | RenderMarkdownTodo       | @markup.raw                        | Todo custom checkbox      |

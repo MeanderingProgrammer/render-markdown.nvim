@@ -45,13 +45,6 @@ function M.node_info(capture, info)
     })
 end
 
----Encountered if user provides custom capture
----@param group string
----@param capture string
-function M.unhandled_capture(group, capture)
-    M.add('error', 'unhandled capture', string.format('%s -> %s', group, capture))
-end
-
 ---Encountered if new type is seen for a particular group
 ---@param language string
 ---@param group string

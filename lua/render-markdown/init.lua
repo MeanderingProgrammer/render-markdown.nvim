@@ -46,12 +46,17 @@ local M = {}
 ---@field public icon? string
 ---@field public highlight? string
 
+---@class (exact) render.md.UserWikiLink
+---@field public icon? string
+---@field public highlight? string
+
 ---@class (exact) render.md.UserLink
 ---@field public enabled? boolean
 ---@field public image? string
 ---@field public email? string
 ---@field public hyperlink? string
 ---@field public highlight? string
+---@field public wiki? render.md.UserWikiLink
 ---@field public custom? table<string, render.md.UserLinkComponent>
 
 ---@class (exact) render.md.UserCustomCallout
@@ -136,6 +141,7 @@ local M = {}
 ---@field public below? string
 ---@field public highlight? string
 ---@field public highlight_inline? string
+---@field public highlight_language? string
 
 ---@class (exact) render.md.UserParagraph
 ---@field public enabled? boolean
@@ -407,6 +413,8 @@ M.default_config = {
         highlight = 'RenderMarkdownCode',
         -- Highlight for inline code
         highlight_inline = 'RenderMarkdownCodeInline',
+        -- Highlight for language, overrides icon provider value
+        highlight_language = nil,
     },
     dash = {
         -- Turn on / off thematic break rendering
@@ -574,6 +582,8 @@ M.default_config = {
         hyperlink = '󰌹 ',
         -- Applies to the fallback inlined icon
         highlight = 'RenderMarkdownLink',
+        -- Applies to WikiLink elements
+        wiki = { icon = '󱗖 ', highlight = 'RenderMarkdownWikiLink' },
         -- Define custom destination patterns so icons can quickly inform you of what a link
         -- contains. Applies to 'inline_link' and wikilink nodes.
         -- Can specify as many additional values as you like following the 'web' pattern below

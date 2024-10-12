@@ -35,9 +35,11 @@ M.colors = {
     Bullet     = 'Normal',
     Quote      = '@markup.quote',
     Dash       = 'LineNr',
-    Link       = '@markup.link.label.markdown_inline',
     Sign       = 'SignColumn',
     Math       = '@markup.math',
+    -- Links
+    Link       = '@markup.link.label.markdown_inline',
+    WikiLink   = 'RenderMarkdownLink',
     -- Checkboxes
     Unchecked  = '@markup.list.unchecked',
     Checked    = '@markup.list.checked',

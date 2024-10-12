@@ -16,7 +16,7 @@ function M.config_preset(name)
     if name == 'obsidian' then
         ---@type render.md.UserConfig
         return {
-            render_modes = { 'n', 'v', 'i', 'c' },
+            render_modes = true,
         }
     elseif name == 'lazy' then
         ---https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/extras/lang/markdown.lua

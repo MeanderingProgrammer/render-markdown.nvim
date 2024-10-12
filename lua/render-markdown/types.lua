@@ -33,12 +33,17 @@
 ---@field public icon string
 ---@field public highlight string
 
+---@class (exact) render.md.WikiLink
+---@field public icon string
+---@field public highlight string
+
 ---@class (exact) render.md.Link
 ---@field public enabled boolean
 ---@field public image string
 ---@field public email string
 ---@field public hyperlink string
 ---@field public highlight string
+---@field public wiki render.md.WikiLink
 ---@field public custom table<string, render.md.LinkComponent>
 
 ---@class (exact) render.md.CustomCallout
@@ -112,6 +117,7 @@
 ---@field public below string
 ---@field public highlight string
 ---@field public highlight_inline string
+---@field public highlight_language? string
 
 ---@class (exact) render.md.Paragraph
 ---@field public enabled boolean

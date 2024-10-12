@@ -103,6 +103,9 @@ function Render:language(add_background)
         return false
     end
     local icon, icon_highlight = icons.get(info.text)
+    if self.code.highlight_language ~= nil then
+        icon_highlight = self.code.highlight_language
+    end
     if icon == nil or icon_highlight == nil then
         return false
     end

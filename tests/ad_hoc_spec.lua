@@ -32,14 +32,15 @@ end
 ---@param row integer
 ---@param length integer
 ---@param link_text string
+---@param highlight 'Link'|'WikiLink'
 ---@param conceal string?
 ---@return render.md.MarkInfo[]
-local function bullet_link(row, length, link_text, conceal)
+local function bullet_link(row, length, link_text, highlight, conceal)
     ---@type render.md.MarkInfo
     local link = {
         row = { row, row },
         col = { 2, 2 + length },
-        virt_text = { { link_text, util.hl('Link') } },
+        virt_text = { { link_text, util.hl(highlight) } },
         virt_text_pos = 'inline',
         conceal = conceal,
     }
@@ -64,10 +65,10 @@ describe('ad_hoc.md', function()
 
         vim.list_extend(expected, {
             util.bullet(row:increment(2), 0, 1),
-            bullet_link(row:increment(), 13, '󰌹 Basic One', ''),
-            bullet_link(row:increment(), 23, '󰌹 With Alias', ''),
-            bullet_link(row:increment(), 18, '󰀓 test@example.com', ''),
-            bullet_link(row:increment(), 59, ' ', nil),
+            bullet_link(row:increment(), 13, '󱗖 Basic One', 'WikiLink', ''),
+            bullet_link(row:increment(), 23, '󱗖 With Alias', 'WikiLink', ''),
+            bullet_link(row:increment(), 18, '󰀓 test@example.com', 'Link', ''),
+            bullet_link(row:increment(), 59, ' ', 'Link', nil),
         })
 
         local actual = util.get_actual_marks()
