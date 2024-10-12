@@ -275,7 +275,7 @@ function M.code_below(row, col, width)
     return {
         row = { row },
         col = { col },
-        virt_text = { { string.rep('▀', width), M.hl_inverse('Code') } },
+        virt_text = { { string.rep('▀', width), M.hl_bg_to_fg('Code') } },
         virt_text_pos = 'overlay',
     }
 end
@@ -408,8 +408,8 @@ end
 
 ---@param base string
 ---@return string
-function M.hl_inverse(base)
-    return M.hl('_Inverse_' .. M.hl(base))
+function M.hl_bg_to_fg(base)
+    return M.hl('_bgtofg_' .. M.hl(base))
 end
 
 ---@param suffix string

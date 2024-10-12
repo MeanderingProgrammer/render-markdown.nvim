@@ -9,8 +9,8 @@ local str = require('render-markdown.core.str')
 ---@field level integer
 ---@field icon? string
 ---@field sign? string
----@field foreground string
----@field background string
+---@field foreground? string
+---@field background? string
 ---@field width render.md.heading.Width
 ---@field left_margin number
 ---@field left_pad number
@@ -59,11 +59,11 @@ function Render:setup()
         sign = list.cycle(self.heading.signs, level),
         foreground = list.clamp(self.heading.foregrounds, level),
         background = list.clamp(self.heading.backgrounds, level),
-        width = list.clamp(self.heading.width, level),
-        left_margin = list.clamp(self.heading.left_margin, level),
-        left_pad = list.clamp(self.heading.left_pad, level),
-        right_pad = list.clamp(self.heading.right_pad, level),
-        min_width = list.clamp(self.heading.min_width, level),
+        width = list.clamp(self.heading.width, level) or 'full',
+        left_margin = list.clamp(self.heading.left_margin, level) or 0,
+        left_pad = list.clamp(self.heading.left_pad, level) or 0,
+        right_pad = list.clamp(self.heading.right_pad, level) or 0,
+        min_width = list.clamp(self.heading.min_width, level) or 0,
         end_row = self.info.end_row + (atx and 1 or 0),
     }
 
@@ -84,10 +84,16 @@ end
 ---@private
 ---@return integer
 function Render:icon()
-    local icon, highlight = self.data.icon, { self.data.foreground, self.data.background }
+    local icon, highlight = self.data.icon, {}
+    if self.data.foreground ~= nil then
+        table.insert(highlight, self.data.foreground)
+    end
+    if self.data.background ~= nil then
+        table.insert(highlight, self.data.background)
+    end
 
     if not self.data.atx then
-        if icon == nil then
+        if icon == nil or #highlight == 0 then
             return 0
         end
         local added = true
@@ -107,7 +113,7 @@ function Render:icon()
     -- `#` characters, one is added to account for the space after the last `#` but before
     -- the  heading title, and concealed text is subtracted since that space is not usable
     local width = self.data.level + 1 - self.context:concealed(self.info)
-    if icon == nil then
+    if icon == nil or #highlight == 0 then
         return width
     end
 
@@ -157,6 +163,10 @@ end
 ---@private
 ---@param width render.md.width.Heading
 function Render:background(width)
+    local highlight = self.data.background
+    if highlight == nil then
+        return
+    end
     local win_col, padding = 0, {}
     if self.data.width == 'block' then
         win_col = width.margin + width.content + self:indent(self.data.level)
@@ -165,7 +175,7 @@ function Render:background(width)
     for row = self.info.start_row, self.data.end_row - 1 do
         self.marks:add(true, row, 0, {
             end_row = row + 1,
-            hl_group = self.data.background,
+            hl_group = highlight,
             hl_eol = true,
         })
         if win_col > 0 and #padding > 0 then
@@ -187,18 +197,29 @@ function Render:border(width)
         return
     end
 
-    local foreground, background = self.data.foreground, colors.inverse_bg(self.data.background)
+    local foreground = self.data.foreground
+    local background = self.data.background and colors.bg_to_fg(self.data.background)
     local prefix = self.heading.border_prefix and self.data.level or 0
     local virtual = self.heading.border_virtual
 
     ---@param icon string
     ---@return { [1]: string, [2]: string }[]
     local function line(icon)
+        ---@param size integer
+        ---@param highlight? string
+        ---@return { [1]: string, [2]: string }
+        local function section(size, highlight)
+            if highlight ~= nil then
+                return { icon:rep(size), highlight }
+            else
+                return { str.pad(size), self.config.padding.highlight }
+            end
+        end
         return {
-            { str.pad(width.margin), self.config.padding.highlight },
-            { icon:rep(width.padding), background },
-            { icon:rep(prefix), foreground },
-            { icon:rep(width.content - width.padding - prefix), background },
+            section(width.margin, nil),
+            section(width.padding, background),
+            section(prefix, foreground),
+            section(width.content - width.padding - prefix, background),
         }
     end
 
@@ -241,12 +262,15 @@ end
 ---@param width render.md.width.Heading
 function Render:left_pad(width)
     local virt_text = {}
-    if width.margin > 0 then
-        table.insert(virt_text, { str.pad(width.margin), self.config.padding.highlight })
+    ---@param size integer
+    ---@param highlight? string
+    local function append(size, highlight)
+        if size > 0 then
+            table.insert(virt_text, { str.pad(size), highlight or self.config.padding.highlight })
+        end
     end
-    if width.padding > 0 then
-        table.insert(virt_text, { str.pad(width.padding), self.data.background })
-    end
+    append(width.margin, nil)
+    append(width.padding, self.data.background)
     if #virt_text > 0 then
         for row = self.info.start_row, self.data.end_row - 1 do
             self.marks:add(false, row, 0, {

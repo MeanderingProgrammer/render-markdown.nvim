@@ -22,7 +22,7 @@ end
 ---@return render.md.MarkInfo
 local function border(row, level, position)
     local foreground = util.hl(string.format('H%d', level))
-    local background = util.hl_inverse(string.format('H%dBg', level))
+    local background = util.hl_bg_to_fg(string.format('H%dBg', level))
     local icon = position == 'above' and '▄' or '▀'
     local line = {
         { '', 'Normal' },

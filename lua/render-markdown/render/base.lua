@@ -27,15 +27,19 @@ end
 
 ---@protected
 ---@param text? string
----@param highlight string
+---@param highlight? string
 function Base:sign(text, highlight)
     local sign = self.config.sign
     if not sign.enabled or text == nil then
         return
     end
+    local sign_highlight = sign.highlight
+    if highlight ~= nil then
+        sign_highlight = colors.combine(highlight, sign_highlight)
+    end
     self.marks:add(false, self.info.start_row, self.info.start_col, {
         sign_text = text,
-        sign_hl_group = colors.combine(highlight, sign.highlight),
+        sign_hl_group = sign_highlight,
     })
 end
 

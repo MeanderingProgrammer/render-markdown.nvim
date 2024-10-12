@@ -1,9 +1,9 @@
 ---@class render.md.cache.Colors
 ---@field combine table<string, { fg: string, bg: string }>
----@field inverse table<string, { hl: string }>
+---@field bg_to_fg table<string, { hl: string }>
 local Cache = {
     combine = {},
-    inverse = {},
+    bg_to_fg = {},
 }
 
 ---@class render.md.Colors
@@ -71,8 +71,8 @@ function M.reload()
     for _, color in pairs(Cache.combine) do
         M.combine(color.fg, color.bg, true)
     end
-    for _, color in pairs(Cache.inverse) do
-        M.inverse_bg(color.hl, true)
+    for _, color in pairs(Cache.bg_to_fg) do
+        M.bg_to_fg(color.hl, true)
     end
 end
 
@@ -100,16 +100,16 @@ end
 ---@param highlight string
 ---@param force? boolean
 ---@return string
-function M.inverse_bg(highlight, force)
-    local name = string.format('%s_Inverse_%s', M.prefix, highlight)
-    if Cache.inverse[name] == nil or force then
+function M.bg_to_fg(highlight, force)
+    local name = string.format('%s_bgtofg_%s', M.prefix, highlight)
+    if Cache.bg_to_fg[name] == nil or force then
         local hl = M.get_hl(highlight)
         vim.api.nvim_set_hl(0, name, {
             fg = hl.bg,
             ---@diagnostic disable-next-line: undefined-field
             ctermfg = hl.ctermbg,
         })
-        Cache.inverse[name] = { hl = highlight }
+        Cache.bg_to_fg[name] = { hl = highlight }
     end
     return name
 end

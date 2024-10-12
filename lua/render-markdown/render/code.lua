@@ -154,7 +154,7 @@ function Render:background(icon_added)
             if self.data.margin > 0 then
                 table.insert(virt_text, { str.pad(self.data.margin), self.config.padding.highlight })
             end
-            table.insert(virt_text, { icon:rep(width - self.data.col), colors.inverse_bg(self.code.highlight) })
+            table.insert(virt_text, { icon:rep(width - self.data.col), colors.bg_to_fg(self.code.highlight) })
             self.marks:add(true, row, self.data.col, {
                 virt_text = virt_text,
                 virt_text_pos = 'overlay',
