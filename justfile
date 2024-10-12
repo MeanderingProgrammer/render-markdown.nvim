@@ -2,6 +2,16 @@ init := "tests/minimal_init.lua"
 
 default: update test health
 
+update:
+  # Updates types.lua & README.md
+  python scripts/update.py
+  # https://pandoc.org/
+  # https://github.com/kdheepak/panvimdoc
+  ../../open-source/panvimdoc/panvimdoc.sh \
+    --project-name render-markdown \
+    --input-file README.md \
+    --vim-version 0.10.0
+
 test:
   just busted "tests"
 
@@ -14,8 +24,14 @@ busted directory:
   nvim --headless --noplugin -u {{init}} \
     -c "PlenaryBustedDirectory {{directory}} { minimal_init = '{{init}}', sequential = true, keep_going = false }"
 
+generate:
+  python scripts/generate.py
+
 health:
   nvim -c "checkhealth render-markdown" -- .
+
+cat-log:
+  cat ~/.local/state/nvim/render-markdown.log
 
 demo: demo-heading demo-list demo-box demo-latex demo-callout
 
@@ -48,19 +64,3 @@ demo-callout:
     --name "callout" \
     --height "750" \
     --content ""
-
-update:
-  # Updates types.lua & README.md
-  python -Wignore scripts/update.py
-  # https://pandoc.org/
-  # https://github.com/kdheepak/panvimdoc
-  ../../open-source/panvimdoc/panvimdoc.sh \
-    --project-name render-markdown \
-    --input-file README.md \
-    --vim-version 0.10.0
-
-cat-log:
-  cat ~/.local/state/nvim/render-markdown.log
-
-generate:
-  python scripts/generate.py
