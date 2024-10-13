@@ -59,7 +59,7 @@ Plugin to improve viewing Markdown files in Neovim
     - Checkboxes: icon, color, user defined states 
     - Block quotes: icon, color, line breaks 
     - Callouts: icon, color, user defined values, Github & Obsidian defaults
-    - Tables: border, color, alignment indicator, auto align cells always to left 
+    - Tables: border, color, alignment indicator, auto align cells 
     - Links : icon, color, user defined destinations
     - `LaTeX` blocks : renders formulas
     - Org indent mode : per level padding
@@ -480,6 +480,8 @@ Default Configuration ~
             --  padded:  raw + cells are padded to maximum visual width for each column
             --  trimmed: padded except empty space is subtracted from visual width calculation
             cell = 'padded',
+            -- Amount of space to put between cell contents and border
+            padding = 1,
             -- Minimum column width to use for padded or trimmed cell
             min_width = 0,
             -- Characters used to replace table border
@@ -958,6 +960,8 @@ Table Configuration ~
             --  padded:  raw + cells are padded to maximum visual width for each column
             --  trimmed: padded except empty space is subtracted from visual width calculation
             cell = 'padded',
+            -- Amount of space to put between cell contents and border
+            padding = 1,
             -- Minimum column width to use for padded or trimmed cell
             min_width = 0,
             -- Characters used to replace table border

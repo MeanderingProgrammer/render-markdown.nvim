@@ -6,7 +6,7 @@ Plugin to improve viewing Markdown files in Neovim
 
 |           |         |
 | --------- | ------- |
-| ![Heading](https://github.com/user-attachments/assets/6d5ca2d3-3263-4ccd-beaf-b5795167d776) | ![Table](https://github.com/user-attachments/assets/7c7e6351-baff-4e72-b668-2e4fac76e276) |
+| ![Heading](https://github.com/user-attachments/assets/6d5ca2d3-3263-4ccd-beaf-b5795167d776) | ![Table](https://github.com/user-attachments/assets/b071b31f-fc17-4665-bf75-2e533eae4686) |
 | ![Quote](https://github.com/user-attachments/assets/dba88e99-bff5-4b33-9017-ab55c1058d21)   | ![LaTeX](https://github.com/user-attachments/assets/85bac8f1-c7df-4078-9e9c-374de9b08e03) |
 | ![Callout](https://github.com/user-attachments/assets/bea7e1b9-d77f-4c3f-abf8-f6262b05fad2) | |
 
@@ -33,7 +33,7 @@ Plugin to improve viewing Markdown files in Neovim
   - Checkboxes: icon, color, user defined states [^1]
   - Block quotes: icon, color, line breaks [^1]
   - Callouts: icon, color, user defined values, Github & Obsidian defaults
-  - Tables: border, color, alignment indicator, auto align cells always to left [^1]
+  - Tables: border, color, alignment indicator, auto align cells [^1]
   - Links [^1]: icon, color, user defined destinations
   - `LaTeX` blocks [^3]: renders formulas
   - Org indent mode [^1]: per level padding
@@ -431,6 +431,8 @@ require('render-markdown').setup({
         --  padded:  raw + cells are padded to maximum visual width for each column
         --  trimmed: padded except empty space is subtracted from visual width calculation
         cell = 'padded',
+        -- Amount of space to put between cell contents and border
+        padding = 1,
         -- Minimum column width to use for padded or trimmed cell
         min_width = 0,
         -- Characters used to replace table border
@@ -925,6 +927,8 @@ require('render-markdown').setup({
         --  padded:  raw + cells are padded to maximum visual width for each column
         --  trimmed: padded except empty space is subtracted from visual width calculation
         cell = 'padded',
+        -- Amount of space to put between cell contents and border
+        padding = 1,
         -- Minimum column width to use for padded or trimmed cell
         min_width = 0,
         -- Characters used to replace table border

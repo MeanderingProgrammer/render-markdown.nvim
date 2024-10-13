@@ -210,7 +210,7 @@ function M.validate()
 
         get_spec('pipe_table')
             :type('enabled', 'boolean')
-            :type('min_width', 'number')
+            :type({ 'padding', 'min_width' }, 'number')
             :type({ 'alignment_indicator', 'head', 'row', 'filler' }, 'string')
             :list('border', 'string')
             :one_of('preset', { 'none', 'round', 'double', 'heavy' })

@@ -349,54 +349,52 @@ function M.table_padding(row, col, spaces)
 end
 
 ---@param row integer
----@param section 'above'|'delimiter'|'below'
+---@param above boolean
 ---@param lengths integer[]
 ---@param indent? integer
----@param suffix? integer
 ---@return render.md.MarkInfo
-function M.table_border(row, section, lengths, indent, suffix)
-    local border
-    local highlight
-    if section == 'above' then
-        border = { '┌', '┬', '┐' }
-        highlight = 'TableHead'
-    elseif section == 'delimiter' then
-        border = { '├', '┼', '┤' }
-        highlight = 'TableHead'
-    elseif section == 'below' then
-        border = { '└', '┴', '┘' }
-        highlight = 'TableRow'
-    end
-
-    local parts = vim.tbl_map(function(length)
-        return string.rep('─', length)
-    end, lengths)
-    local value = border[1] .. table.concat(parts, border[2]) .. border[3]
-    value = value .. string.rep(' ', suffix or 0)
-
+function M.table_border(row, above, lengths, indent)
     local line = {}
     if indent ~= nil then
         table.insert(line, { string.rep(' ', indent), 'Normal' })
     end
-    table.insert(line, { value, M.hl(highlight) })
-
-    if vim.tbl_contains({ 'above', 'below' }, section) then
-        ---@type render.md.MarkInfo
-        return {
-            row = { row },
-            col = { 0 },
-            virt_lines = { line },
-            virt_lines_above = section == 'above',
-        }
+    local parts = vim.tbl_map(function(length)
+        return string.rep('─', length)
+    end, lengths)
+    if above then
+        table.insert(line, { '┌' .. table.concat(parts, '┬') .. '┐', M.hl('TableHead') })
     else
-        ---@type render.md.MarkInfo
-        return {
-            row = { row, row },
-            col = { 0, vim.fn.strdisplaywidth(value) },
-            virt_text = line,
-            virt_text_pos = 'overlay',
-        }
+        table.insert(line, { '└' .. table.concat(parts, '┴') .. '┘', M.hl('TableRow') })
     end
+    ---@type render.md.MarkInfo
+    return {
+        row = { row },
+        col = { 0 },
+        virt_lines = { line },
+        virt_lines_above = above,
+    }
+end
+
+---@param row integer
+---@param sections (integer|integer[])[]
+---@param suffix? integer
+---@return render.md.MarkInfo
+function M.table_delimiter(row, sections, suffix)
+    local parts = vim.tbl_map(function(width_or_widths)
+        local widths = vim.islist(width_or_widths) and width_or_widths or { width_or_widths }
+        local section = vim.tbl_map(function(width)
+            return width == 1 and '━' or string.rep('─', width)
+        end, widths)
+        return table.concat(section, '')
+    end, sections)
+    local value = '├' .. table.concat(parts, '┼') .. '┤' .. string.rep(' ', suffix or 0)
+    ---@type render.md.MarkInfo
+    return {
+        row = { row, row },
+        col = { 0, vim.fn.strdisplaywidth(value) },
+        virt_text = { { value, M.hl('TableHead') } },
+        virt_text_pos = 'overlay',
+    }
 end
 
 ---@private

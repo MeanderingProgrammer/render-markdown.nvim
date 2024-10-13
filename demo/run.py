@@ -2,14 +2,24 @@ import subprocess
 from argparse import ArgumentParser
 from pathlib import Path
 
+INFO: dict[str, tuple[int, str]] = dict(
+    heading_code=(550, "## Heading 2"),
+    list_table=(550, ""),
+    box_dash_quote=(250, ""),
+    latex=(250, ""),
+    callout=(750, ""),
+)
 
-def main(name: str, height: int, content: str):
+
+def main(name: str) -> None:
     in_file = Path(f"demo/{name}.md")
     assert in_file.exists()
 
     out_file = Path(f"demo/{name}.gif")
     if out_file.exists():
         out_file.unlink()
+
+    height, content = INFO[name]
 
     tape = Path("demo/demo.tape")
     tape.write_text(tape_content(in_file, out_file, height, content))
@@ -52,8 +62,6 @@ def get_move(in_file: Path) -> str:
 
 if __name__ == "__main__":
     parser = ArgumentParser(description="Generate a demo recording using vhs")
-    parser.add_argument("--name", type=str, required=True)
-    parser.add_argument("--height", type=int, required=True)
-    parser.add_argument("--content", type=str, required=True)
+    parser.add_argument("--name", type=str, required=True, choices=INFO.keys())
     args = parser.parse_args()
-    main(args.name, args.height, args.content)
+    main(args.name)

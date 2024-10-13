@@ -5,9 +5,10 @@ local str = require('render-markdown.core.str')
 
 ---@class render.md.table.Column
 ---@field row integer
----@field col integer
+---@field start_col integer
+---@field end_col integer
 ---@field width integer
----@field free integer
+---@field space { left: integer, right: integer }
 
 ---@class render.md.table.Row
 ---@field info render.md.NodeInfo
@@ -80,9 +81,13 @@ function Render:setup()
     end
     -- Store the max width information in the delimiter
     for _, row in ipairs(rows) do
-        for i, r_column in ipairs(row.columns) do
-            local d_column = delim.columns[i]
-            d_column.width = math.max(d_column.width, r_column.width)
+        for i, column in ipairs(row.columns) do
+            local delim_column, width = delim.columns[i], column.width
+            if self.table.cell == 'trimmed' then
+                local space_available = column.space.left + column.space.right - (2 * self.table.padding)
+                width = width - math.max(space_available, 0)
+            end
+            delim_column.width = math.max(delim_column.width, width)
         end
     end
 
@@ -143,19 +148,26 @@ function Render:parse_row(row, num_columns)
     end
     local columns = {}
     for i, cell in ipairs(cells) do
-        local width = pipes[i + 1].start_col - pipes[i].end_col
-        -- Account for double width glyphs by replacing cell spacing with width
+        local start_col, end_col = pipes[i].end_col, pipes[i + 1].start_col
+        -- Account for double width glyphs by replacing cell range with width
+        local width = end_col - start_col
         width = width - (cell.end_col - cell.start_col) + self.context:width(cell)
-        local free = 0
-        if self.table.cell == 'trimmed' then
-            -- Remove trailing spaces from width calculation except for 1
-            free = math.max(str.spaces('end', cell.text) - 1, 0)
-            width = width - free
-        end
+        local space = {
+            -- Left space comes from the gap between the node start and the pipe start
+            left = math.max(cell.start_col - start_col, 0),
+            -- Right space is attached to the node itself
+            right = math.max(str.spaces('end', cell.text), 0),
+        }
         if width < 0 then
             return nil
         end
-        table.insert(columns, { row = cell.start_row, col = cell.end_col, width = width, free = free })
+        table.insert(columns, {
+            row = cell.start_row,
+            start_col = cell.start_col,
+            end_col = cell.end_col,
+            width = width,
+            space = space,
+        })
     end
     return { info = row, pipes = pipes, columns = columns }
 end
@@ -198,22 +210,19 @@ function Render:delimiter()
     local delim, border = self.data.delim, self.table.border
 
     local sections = Iter.list.map(delim.columns, function(column)
-        local indicator = self.table.alignment_indicator
+        local indicator, box = self.table.alignment_indicator, border[11]
         -- If column is small there's no good place to put the alignment indicator
         -- Alignment indicator must be exactly one character wide
         -- Do not put an indicator for default alignment
-        if column.width < 4 or str.width(indicator) ~= 1 or column.alignment == 'default' then
-            return border[11]:rep(column.width)
+        if column.width < 3 or str.width(indicator) ~= 1 or column.alignment == 'default' then
+            return box:rep(column.width)
         end
-        -- Handle the various alignmnet possibilities
-        local left = border[11]:rep(math.floor(column.width / 2))
-        local right = border[11]:rep(math.ceil(column.width / 2) - 1)
         if column.alignment == 'left' then
-            return indicator .. left .. right
+            return indicator .. box:rep(column.width - 1)
         elseif column.alignment == 'right' then
-            return left .. right .. indicator
+            return box:rep(column.width - 1) .. indicator
         else
-            return left .. indicator .. right
+            return indicator .. box:rep(column.width - 2) .. indicator
         end
     end)
 
@@ -246,22 +255,22 @@ function Render:row(row)
         end
     end
 
-    -- Use low priority to include pipe marks
     if vim.tbl_contains({ 'trimmed', 'padded' }, self.table.cell) then
         for i, column in ipairs(row.columns) do
-            local offset = delim.columns[i].width - column.width - column.free
-            if offset > 0 then
-                self.marks:add(true, column.row, column.col, {
-                    priority = 0,
-                    virt_text = { { str.pad(offset), self.table.filler } },
-                    virt_text_pos = 'inline',
-                })
-            elseif offset < 0 then
-                self.marks:add(true, column.row, column.col + offset, {
-                    priority = 0,
-                    end_col = column.col,
-                    conceal = '',
-                })
+            local delim_column = delim.columns[i]
+            local filler = delim_column.width - column.width
+            if delim_column.alignment == 'center' then
+                local shift = math.floor((filler + column.space.right - column.space.left) / 2)
+                self:shift(column, 'left', shift)
+                self:shift(column, 'right', filler - shift)
+            elseif delim_column.alignment == 'right' then
+                local shift = column.space.right - self.table.padding
+                self:shift(column, 'left', filler + shift)
+                self:shift(column, 'right', -shift)
+            else
+                local shift = column.space.left - self.table.padding
+                self:shift(column, 'left', -shift)
+                self:shift(column, 'right', filler + shift)
             end
         end
     end
@@ -272,6 +281,28 @@ function Render:row(row)
             end_col = row.info.end_col,
             virt_text = { { row.info.text:gsub('|', border[10]), highlight } },
             virt_text_pos = 'overlay',
+        })
+    end
+end
+
+---Use low priority to include pipe marks
+---@private
+---@param column render.md.table.Column
+---@param side 'left'|'right'
+---@param amount integer
+function Render:shift(column, side, amount)
+    local col = side == 'left' and column.start_col or column.end_col
+    if amount > 0 then
+        self.marks:add(true, column.row, col, {
+            priority = 0,
+            virt_text = { { str.pad(amount), self.table.filler } },
+            virt_text_pos = 'inline',
+        })
+    elseif amount < 0 then
+        self.marks:add(true, column.row, col + amount, {
+            priority = 0,
+            end_col = col,
+            conceal = '',
         })
     end
 end

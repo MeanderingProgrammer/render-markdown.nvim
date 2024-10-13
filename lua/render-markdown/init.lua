@@ -74,6 +74,7 @@ local M = {}
 ---@field public preset? render.md.table.Preset
 ---@field public style? render.md.table.Style
 ---@field public cell? render.md.table.Cell
+---@field public padding? integer
 ---@field public min_width? integer
 ---@field public border? string[]
 ---@field public alignment_indicator? string
@@ -542,6 +543,8 @@ M.default_config = {
         --  padded:  raw + cells are padded to maximum visual width for each column
         --  trimmed: padded except empty space is subtracted from visual width calculation
         cell = 'padded',
+        -- Amount of space to put between cell contents and border
+        padding = 1,
         -- Minimum column width to use for padded or trimmed cell
         min_width = 0,
         -- Characters used to replace table border

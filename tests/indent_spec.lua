@@ -62,14 +62,14 @@ describe('indent.md', function()
             border(row:get(), 2, 'below'),
         })
         vim.list_extend(expected, {
-            util.table_border(row:increment(), 'above', { 5, 5 }, 2),
+            util.table_border(row:increment(), true, { 5, 5 }, 2),
             indent(row:get()),
             util.table_pipe(row:get(), 0, true),
             util.table_pipe(row:get(), 6, true),
             util.table_pipe(row:get(), 12, true),
             indent(row:increment()),
-            util.table_border(row:get(), 'delimiter', { 5, 5 }),
-            util.table_border(row:get(), 'below', { 5, 5 }, 2),
+            util.table_delimiter(row:get(), { 5, 5 }),
+            util.table_border(row:get(), false, { 5, 5 }, 2),
         })
 
         vim.list_extend(expected, {

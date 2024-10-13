@@ -36,31 +36,16 @@ cat-log:
 demo: demo-heading demo-list demo-box demo-latex demo-callout
 
 demo-heading:
-  python demo/run.py \
-    --name "heading_code" \
-    --height "550" \
-    --content "## Heading 2"
+  python demo/run.py --name "heading_code"
 
 demo-list:
-  python demo/run.py \
-    --name "list_table" \
-    --height "550" \
-    --content ""
+  python demo/run.py --name "list_table"
 
 demo-box:
-  python demo/run.py \
-    --name "box_dash_quote" \
-    --height "250" \
-    --content ""
+  python demo/run.py --name "box_dash_quote"
 
 demo-latex:
-  python demo/run.py \
-    --name "latex" \
-    --height "250" \
-    --content ""
+  python demo/run.py --name "latex"
 
 demo-callout:
-  python demo/run.py \
-    --name "callout" \
-    --height "750" \
-    --content ""
+  python demo/run.py --name "callout"

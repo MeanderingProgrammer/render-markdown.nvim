@@ -2,29 +2,6 @@
 
 local util = require('tests.util')
 
----@param row integer
----@param sections integer[][]
----@return render.md.MarkInfo
-local function delimiter(row, sections)
-    local text = vim.iter(sections)
-        :map(function(widths)
-            return vim.iter(widths)
-                :map(function(width)
-                    return width == 1 and '━' or string.rep('─', width)
-                end)
-                :join('')
-        end)
-        :join('┼')
-
-    ---@type render.md.MarkInfo
-    return {
-        row = { row, row },
-        col = { 0, vim.fn.strdisplaywidth(text) + 2 },
-        virt_text = { { '├' .. text .. '┤', util.hl('TableHead') } },
-        virt_text_pos = 'overlay',
-    }
-end
-
 describe('list_table.md', function()
     it('default', function()
         util.setup('demo/list_table.md')
@@ -52,23 +29,24 @@ describe('list_table.md', function()
         vim.list_extend(expected, util.heading(row:increment(5), 1))
 
         vim.list_extend(expected, {
-            util.table_border(row:increment(2), 'above', { 8, 15, 7, 6 }),
+            util.table_border(row:increment(2), true, { 8, 15, 7, 6 }),
             util.table_pipe(row:get(), 0, true),
             util.inline_code(row:get(), 2, 8),
             util.table_padding(row:get(), 9, 2),
             util.table_pipe(row:get(), 9, true),
-            util.table_padding(row:get(), 25, 2),
+            util.table_padding(row:get(), 11, 3),
+            util.conceal(row:get(), 24, 25),
             util.table_pipe(row:get(), 25, true),
             util.table_pipe(row:get(), 33, true),
             util.table_pipe(row:get(), 40, true),
         })
-        table.insert(expected, delimiter(row:increment(), { { 1, 7 }, { 7, 1, 7 }, { 6, 1 }, { 6 } }))
+        table.insert(expected, util.table_delimiter(row:increment(), { { 1, 7 }, { 1, 13, 1 }, { 6, 1 }, 6 }))
         vim.list_extend(expected, {
             util.table_pipe(row:increment(), 0, false),
             util.inline_code(row:get(), 2, 8),
             util.table_padding(row:get(), 9, 2),
             util.table_pipe(row:get(), 9, false),
-            util.table_padding(row:get(), 25, 4),
+            util.table_padding(row:get(), 11, 4),
             util.table_pipe(row:get(), 25, false),
             util.table_pipe(row:get(), 33, false),
             util.table_pipe(row:get(), 40, false),
@@ -76,12 +54,15 @@ describe('list_table.md', function()
         vim.list_extend(expected, {
             util.table_pipe(row:increment(), 0, false),
             util.table_pipe(row:get(), 9, false),
+            util.table_padding(row:get(), 11, 3),
             util.link(row:get(), 11, 24, 'link'),
-            util.table_padding(row:get(), 25, 7),
+            util.table_padding(row:get(), 25, 4),
             util.table_pipe(row:get(), 25, false),
+            util.table_padding(row:get(), 27, 1),
+            util.conceal(row:get(), 32, 33),
             util.table_pipe(row:get(), 33, false),
             util.table_pipe(row:get(), 40, false),
-            util.table_border(row:get(), 'below', { 8, 15, 7, 6 }),
+            util.table_border(row:get(), false, { 8, 15, 7, 6 }),
         })
 
         local actual = util.get_actual_marks()
