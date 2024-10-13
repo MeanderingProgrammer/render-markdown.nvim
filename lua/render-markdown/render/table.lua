@@ -368,7 +368,9 @@ function Render:full()
     end
 
     table_border(first_info, true, { border[1], border[2], border[3] })
-    table_border(last_info, false, { border[7], border[8], border[9] })
+    if #rows > 1 then
+        table_border(last_info, false, { border[7], border[8], border[9] })
+    end
 end
 
 return Render

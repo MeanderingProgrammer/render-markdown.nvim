@@ -69,7 +69,6 @@ describe('indent.md', function()
             util.table_pipe(row:get(), 12, true),
             indent(row:increment()),
             util.table_delimiter(row:get(), { 5, 5 }),
-            util.table_border(row:get(), false, { 5, 5 }, 2),
         })
 
         vim.list_extend(expected, {
