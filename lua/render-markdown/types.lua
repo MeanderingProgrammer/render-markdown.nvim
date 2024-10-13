@@ -149,6 +149,7 @@
 
 ---@class (exact) render.md.AntiConceal
 ---@field public enabled boolean
+---@field public ignore table<render.md.Element, boolean>
 ---@field public above integer
 ---@field public below integer
 

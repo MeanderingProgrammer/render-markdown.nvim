@@ -63,7 +63,7 @@ end
 
 ---@private
 function Render:hide_marker()
-    self.marks:add(true, self.info.start_row, self.info.start_col + self.leading_spaces, {
+    self.marks:add('check_icon', self.info.start_row, self.info.start_col + self.leading_spaces, {
         end_row = self.info.end_row,
         end_col = self.info.end_col,
         conceal = '',
@@ -77,7 +77,7 @@ function Render:icon(level)
     if icon == nil then
         return
     end
-    self.marks:add(true, self.info.start_row, self.info.start_col, {
+    self.marks:add('bullet', self.info.start_row, self.info.start_col, {
         end_row = self.info.end_row,
         end_col = self.info.end_col,
         virt_text = { { str.pad(self.leading_spaces) .. icon, self.bullet.highlight } },

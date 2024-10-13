@@ -38,7 +38,7 @@ function Base:sign(text, highlight)
     if highlight ~= nil then
         sign_highlight = colors.combine(highlight, sign_highlight)
     end
-    self.marks:add(false, self.info.start_row, self.info.start_col, {
+    self.marks:add('sign', self.info.start_row, self.info.start_col, {
         sign_text = text,
         sign_hl_group = sign_highlight,
     })

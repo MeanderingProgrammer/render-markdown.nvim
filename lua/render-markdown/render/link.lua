@@ -46,7 +46,7 @@ function Render:setup()
 end
 
 function Render:render()
-    local added = self.marks:add(true, self.info.start_row, self.info.start_col, {
+    local added = self.marks:add('link', self.info.start_row, self.info.start_col, {
         end_row = self.info.end_row,
         end_col = self.info.end_col,
         virt_text = { { self.data.text, self.data.highlight } },

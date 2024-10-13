@@ -174,8 +174,26 @@ local M = {}
 ---@class (exact) render.md.UserPadding
 ---@field public highlight? string
 
+---@alias render.md.Element
+---| 'head_icon'
+---| 'head_background'
+---| 'head_border'
+---| 'code_language'
+---| 'code_background'
+---| 'code_border'
+---| 'dash'
+---| 'bullet'
+---| 'check_icon'
+---| 'check_scope'
+---| 'quote'
+---| 'table_border'
+---| 'callout'
+---| 'link'
+---| 'sign'
+
 ---@class (exact) render.md.UserAntiConceal
 ---@field public enabled? boolean
+---@field public ignore? table<render.md.Element, boolean>
 ---@field public above? integer
 ---@field public below? integer
 
@@ -262,6 +280,13 @@ M.default_config = {
     anti_conceal = {
         -- This enables hiding any added text on the line the cursor is on
         enabled = true,
+        -- Which elements to always show, ignoring anti conceal behavior. Possible values are:
+        --  head_icon, head_background, head_border, code_language, code_background, code_border
+        --  dash, bullet, check_icon, check_scope, quote, table_border, callout, link, sign
+        ignore = {
+            code_background = true,
+            sign = true,
+        },
         -- Number of lines above cursor to show
         above = 0,
         -- Number of lines below cursor to show

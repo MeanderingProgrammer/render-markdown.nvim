@@ -47,7 +47,7 @@ function Render:callout(callout)
     end
 
     local text, conceal = self:callout_title(callout)
-    local added = self.marks:add(true, self.info.start_row, self.info.start_col, {
+    local added = self.marks:add('callout', self.info.start_row, self.info.start_col, {
         end_row = self.info.end_row,
         end_col = self.info.end_col,
         virt_text = { { text, callout.highlight } },
@@ -86,7 +86,7 @@ function Render:checkbox(checkbox)
 
     local inline = self.config.checkbox.position == 'inline'
     local icon, highlight = checkbox.rendered, checkbox.highlight
-    local added = self.marks:add(true, self.info.start_row, self.info.start_col, {
+    local added = self.marks:add('check_icon', self.info.start_row, self.info.start_col, {
         end_row = self.info.end_row,
         end_col = self.info.end_col,
         virt_text = { { inline and icon or str.pad_to(self.info.text, icon) .. icon, highlight } },
@@ -112,7 +112,7 @@ function Render:wiki_link()
         icon, highlight = link_component.icon, link_component.highlight
     end
     local link_text = icon .. parts[#parts]
-    local added = self.marks:add(true, self.info.start_row, self.info.start_col - 1, {
+    local added = self.marks:add('link', self.info.start_row, self.info.start_col - 1, {
         end_row = self.info.end_row,
         end_col = self.info.end_col + 1,
         virt_text = { { link_text, highlight } },

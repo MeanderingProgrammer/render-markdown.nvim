@@ -2,13 +2,16 @@ local log = require('render-markdown.core.log')
 local util = require('render-markdown.core.util')
 
 ---@class render.md.Marks
+---@field private ignore table<render.md.Element, boolean>
 ---@field private marks render.md.Mark[]
 local Marks = {}
 Marks.__index = Marks
 
+---@param ignore table<render.md.Element, boolean>
 ---@return render.md.Marks
-function Marks.new()
+function Marks.new(ignore)
     local self = setmetatable({}, Marks)
+    self.ignore = ignore
     self.marks = {}
     return self
 end
@@ -18,15 +21,15 @@ function Marks:get()
     return self.marks
 end
 
----@param conceal boolean
+---@param element boolean|render.md.Element
 ---@param start_row integer
 ---@param start_col integer
 ---@param opts vim.api.keyset.set_extmark
 ---@return boolean
-function Marks:add(conceal, start_row, start_col, opts)
+function Marks:add(element, start_row, start_col, opts)
     ---@type render.md.Mark
     local mark = {
-        conceal = conceal,
+        conceal = self:conceal(element),
         start_row = start_row,
         start_col = start_col,
         opts = opts,
@@ -44,12 +47,24 @@ function Marks:add(conceal, start_row, start_col, opts)
     return true
 end
 
+---@private
+---@param element boolean|render.md.Element
+---@return boolean
+function Marks:conceal(element)
+    if type(element) == 'boolean' then
+        return element
+    else
+        return self.ignore[element] ~= true
+    end
+end
+
 ---@class render.md.ListHelper
 local M = {}
 
+---@param ignore? table<render.md.Element, boolean>
 ---@return render.md.Marks
-function M.new_marks()
-    return Marks.new()
+function M.new_marks(ignore)
+    return Marks.new(ignore or {})
 end
 
 ---@generic T

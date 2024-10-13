@@ -10,6 +10,8 @@
 - allow empty lists for all heading properties [0c6de74](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/0c6de743a8d3c61b87bc7db9ab97dcda12ca6818)
 - wiki link config & language highlight [#205](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/205)
   [965c222](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/965c222076b2d289ed498730845d533780f3c7c7)
+- code language name [#205](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/205)
+  [18c7ef7](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/18c7ef71fb4b8d83cb0160adc9127fc4d65ca42e)
 
 ### Bug Fixes
 

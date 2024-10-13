@@ -29,12 +29,12 @@ function Render:render()
     local virt_text = { self.dash.icon:rep(width), self.dash.highlight }
 
     local start_row, end_row = self.info.start_row, self.info.end_row - 1
-    self.marks:add(true, start_row, 0, {
+    self.marks:add('dash', start_row, 0, {
         virt_text = { virt_text },
         virt_text_pos = 'overlay',
     })
     if end_row > start_row then
-        self.marks:add(true, end_row, 0, {
+        self.marks:add('dash', end_row, 0, {
             virt_text = { virt_text },
             virt_text_pos = 'overlay',
         })

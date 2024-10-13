@@ -99,7 +99,7 @@ function Render:icon()
         local added = true
         for row = self.info.start_row, self.data.end_row - 1 do
             added = added
-                and self.marks:add(true, row, self.info.start_col, {
+                and self.marks:add('head_icon', row, self.info.start_col, {
                     end_row = row,
                     end_col = self.info.end_col,
                     virt_text = { { row == self.info.start_row and icon or str.pad(str.width(icon)), highlight } },
@@ -119,7 +119,7 @@ function Render:icon()
 
     local padding = width - str.width(icon)
     if self.heading.position == 'inline' or padding < 0 then
-        local added = self.marks:add(true, self.info.start_row, self.info.start_col, {
+        local added = self.marks:add('head_icon', self.info.start_row, self.info.start_col, {
             end_row = self.info.end_row,
             end_col = self.info.end_col,
             virt_text = { { icon, highlight } },
@@ -128,7 +128,7 @@ function Render:icon()
         })
         return added and str.width(icon) + 1 or width
     else
-        self.marks:add(true, self.info.start_row, self.info.start_col, {
+        self.marks:add('head_icon', self.info.start_row, self.info.start_col, {
             end_row = self.info.end_row,
             end_col = self.info.end_col,
             virt_text = { { str.pad(padding) .. icon, highlight } },
@@ -173,14 +173,14 @@ function Render:background(width)
         table.insert(padding, { str.pad(vim.o.columns * 2), self.config.padding.highlight })
     end
     for row = self.info.start_row, self.data.end_row - 1 do
-        self.marks:add(true, row, 0, {
+        self.marks:add('head_background', row, 0, {
             end_row = row + 1,
             hl_group = highlight,
             hl_eol = true,
         })
         if win_col > 0 and #padding > 0 then
             -- Overwrite anything beyond width with padding highlight
-            self.marks:add(true, row, 0, {
+            self.marks:add('head_background', row, 0, {
                 priority = 0,
                 virt_text = padding,
                 virt_text_win_col = win_col,
@@ -225,7 +225,7 @@ function Render:border(width)
 
     local line_above = line(self.heading.above)
     if not virtual and self:empty_line('above') and self.info.start_row - 1 ~= self.context.last_heading then
-        self.marks:add(true, self.info.start_row - 1, 0, {
+        self.marks:add('head_border', self.info.start_row - 1, 0, {
             virt_text = line_above,
             virt_text_pos = 'overlay',
         })
@@ -238,7 +238,7 @@ function Render:border(width)
 
     local line_below = line(self.heading.below)
     if not virtual and self:empty_line('below') then
-        self.marks:add(true, self.info.end_row + 1, 0, {
+        self.marks:add('head_border', self.info.end_row + 1, 0, {
             virt_text = line_below,
             virt_text_pos = 'overlay',
         })

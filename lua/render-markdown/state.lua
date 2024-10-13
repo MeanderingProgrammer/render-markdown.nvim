@@ -136,7 +136,17 @@ function M.validate()
             return validator:spec(config, nilable, key, path)
         end
 
-        get_spec('anti_conceal'):type('enabled', 'boolean'):type({ 'above', 'below' }, 'number'):check()
+        get_spec('anti_conceal')
+            :type('enabled', 'boolean')
+            :type({ 'above', 'below' }, 'number')
+            :type('ignore', 'table')
+            :check()
+        get_spec({ 'anti_conceal', 'ignore' })
+            :type({ 'head_icon', 'head_background', 'head_border' }, { 'boolean', 'nil' })
+            :type({ 'code_language', 'code_background', 'code_border' }, { 'boolean', 'nil' })
+            :type({ 'dash', 'bullet', 'check_icon', 'check_scope' }, { 'boolean', 'nil' })
+            :type({ 'quote', 'table_border', 'callout', 'link', 'sign' }, { 'boolean', 'nil' })
+            :check()
 
         get_spec('padding'):type('highlight', 'string'):check()
 

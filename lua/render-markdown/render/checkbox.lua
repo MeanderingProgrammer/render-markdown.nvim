@@ -46,7 +46,7 @@ end
 function Render:icon()
     local icon = self.checkbox.icon
     local text = self.inline and icon or str.pad_to(self.info.text, icon) .. icon
-    self.marks:add(true, self.info.start_row, self.info.start_col, {
+    self.marks:add('check_icon', self.info.start_row, self.info.start_col, {
         end_row = self.info.end_row,
         end_col = self.info.end_col,
         virt_text = { { text, self.checkbox.highlight } },
@@ -65,7 +65,7 @@ function Render:highlight_scope()
     if paragraph == nil then
         return
     end
-    self.marks:add(true, paragraph.start_row, paragraph.start_col, {
+    self.marks:add('check_scope', paragraph.start_row, paragraph.start_col, {
         end_row = paragraph.end_row,
         end_col = paragraph.end_col,
         hl_group = highlight,

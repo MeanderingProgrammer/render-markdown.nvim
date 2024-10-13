@@ -221,7 +221,7 @@ function Render:delimiter()
     text = text .. border[4] .. table.concat(sections, border[5]) .. border[6]
     text = text .. str.pad_to(delim.info.text, text)
 
-    self.marks:add(true, delim.info.start_row, delim.info.start_col, {
+    self.marks:add('table_border', delim.info.start_row, delim.info.start_col, {
         end_row = delim.info.end_row,
         end_col = delim.info.end_col,
         virt_text = { { text, self.table.head } },
@@ -237,7 +237,7 @@ function Render:row(row)
 
     if vim.tbl_contains({ 'trimmed', 'padded', 'raw' }, self.table.cell) then
         for _, pipe in ipairs(row.pipes) do
-            self.marks:add(true, pipe.start_row, pipe.start_col, {
+            self.marks:add('table_border', pipe.start_row, pipe.start_col, {
                 end_row = pipe.end_row,
                 end_col = pipe.end_col,
                 virt_text = { { border[10], highlight } },
@@ -267,7 +267,7 @@ function Render:row(row)
     end
 
     if self.table.cell == 'overlay' then
-        self.marks:add(true, row.info.start_row, row.info.start_col, {
+        self.marks:add('table_border', row.info.start_row, row.info.start_col, {
             end_row = row.info.end_row,
             end_col = row.info.end_col,
             virt_text = { { row.info.text:gsub('|', border[10]), highlight } },

@@ -58,7 +58,7 @@ end
 ---@private
 ---@param info render.md.NodeInfo
 function Render:quote_marker(info)
-    self.marks:add(true, info.start_row, info.start_col, {
+    self.marks:add('quote', info.start_row, info.start_col, {
         end_row = info.end_row,
         end_col = info.end_col,
         virt_text = { { info.text:gsub('>', self.data.icon), self.data.highlight } },

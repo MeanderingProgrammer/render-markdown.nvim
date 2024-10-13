@@ -4,9 +4,9 @@ local state = require('render-markdown.state')
 local treesitter = require('render-markdown.core.treesitter')
 
 ---@class render.md.handler.buf.Markdown
----@field private marks render.md.Marks
 ---@field private config render.md.buffer.Config
 ---@field private context render.md.Context
+---@field private marks render.md.Marks
 ---@field private query vim.treesitter.Query
 ---@field private renderers table<string, render.md.Renderer>
 local Handler = {}
@@ -16,9 +16,9 @@ Handler.__index = Handler
 ---@return render.md.handler.buf.Markdown
 function Handler.new(buf)
     local self = setmetatable({}, Handler)
-    self.marks = list.new_marks()
     self.config = state.get(buf)
     self.context = Context.get(buf)
+    self.marks = list.new_marks(self.config.anti_conceal.ignore)
     self.query = treesitter.parse(
         'markdown',
         [[

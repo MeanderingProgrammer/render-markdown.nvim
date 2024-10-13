@@ -125,7 +125,7 @@ function Render:language(add_background)
             local padding = str.spaces('start', self.info.text) + self.data.language_padding
             icon_text = str.pad(padding) .. icon_text .. info.text
         end
-        return self.marks:add(true, info.start_row, info.start_col, {
+        return self.marks:add('code_language', info.start_row, info.start_col, {
             virt_text = { { icon_text, highlight } },
             virt_text_pos = 'inline',
         })
@@ -137,7 +137,7 @@ function Render:language(add_background)
         if self.code.width == 'block' then
             win_col = win_col - str.width(icon_text) + self.data.indent
         end
-        return self.marks:add(true, info.start_row, 0, {
+        return self.marks:add('code_language', info.start_row, 0, {
             virt_text = { { icon_text, highlight } },
             virt_text_win_col = win_col,
         })
@@ -160,7 +160,7 @@ function Render:background(icon_added)
                 table.insert(virt_text, { str.pad(self.data.margin), self.config.padding.highlight })
             end
             table.insert(virt_text, { icon:rep(width - self.data.col), colors.bg_to_fg(self.code.highlight) })
-            self.marks:add(true, row, self.data.col, {
+            self.marks:add('code_border', row, self.data.col, {
                 virt_text = virt_text,
                 virt_text_pos = 'overlay',
             })
@@ -181,14 +181,14 @@ function Render:background(icon_added)
         table.insert(padding, { str.pad(vim.o.columns * 2), self.config.padding.highlight })
     end
     for row = self.data.start_row, self.data.end_row - 1 do
-        self.marks:add(false, row, self.data.col, {
+        self.marks:add('code_background', row, self.data.col, {
             end_row = row + 1,
             hl_group = self.code.highlight,
             hl_eol = true,
         })
         if win_col > 0 and #padding > 0 then
             -- Overwrite anything beyond width with padding highlight
-            self.marks:add(false, row, self.data.col, {
+            self.marks:add('code_background', row, self.data.col, {
                 priority = 0,
                 virt_text = padding,
                 virt_text_win_col = win_col,
