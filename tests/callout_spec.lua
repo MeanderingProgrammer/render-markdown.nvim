@@ -75,7 +75,12 @@ describe('callout.md', function()
             util.quote(row:increment(), '%s ', error),
         })
 
-        vim.list_extend(expected, util.heading(row:increment(2), 1))
+        vim.list_extend(expected, {
+            util.heading(row:increment(2), 1),
+            util.quote(row:increment(2), '%s ', error),
+            callout(row:get(), 2, 8, '󰨰 Bug', error),
+            util.quote(row:increment(), '%s ', error),
+        })
 
         local actual = util.get_actual_marks()
         util.marks_are_equal(expected, actual)

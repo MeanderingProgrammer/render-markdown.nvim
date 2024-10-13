@@ -49,12 +49,11 @@ end
 ---@param offset integer
 ---@return render.md.Range
 function Context.compute_range(buf, win, offset)
-    local top = util.view(win).topline - 1
-    top = math.max(top - offset, 0)
+    local top = math.max(util.view(win).topline - 1 - offset, 0)
 
     local bottom = top
     local lines = vim.api.nvim_buf_line_count(buf)
-    local size = vim.api.nvim_win_get_height(win) + offset
+    local size = vim.api.nvim_win_get_height(win) + (2 * offset)
     while bottom < lines and size > 0 do
         bottom = bottom + 1
         if util.visible(win, bottom) then

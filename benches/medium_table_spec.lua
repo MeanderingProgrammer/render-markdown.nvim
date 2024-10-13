@@ -4,7 +4,7 @@ local util = require('benches.util')
 
 describe('medium-table.md', function()
     it('default', function()
-        local base_marks = 180
+        local base_marks = 240
         util.less_than(util.setup('temp/medium-table.md'), 110)
         util.num_marks(base_marks)
 
