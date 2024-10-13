@@ -106,6 +106,7 @@
 ---@field public style render.md.code.Style
 ---@field public position render.md.code.Position
 ---@field public language_pad number
+---@field public language_name boolean
 ---@field public disable_background string[]
 ---@field public width render.md.code.Width
 ---@field public left_margin number

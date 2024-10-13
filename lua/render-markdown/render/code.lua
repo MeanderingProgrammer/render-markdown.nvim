@@ -116,9 +116,9 @@ function Render:language(add_background)
     if add_background then
         table.insert(highlight, self.code.highlight)
     end
+    local icon_text = icon .. ' '
     if self.code.position == 'left' then
-        local icon_text = icon .. ' '
-        if self.context:hidden(info) then
+        if self.code.language_name and self.context:hidden(info) then
             -- Code blocks will pick up varying amounts of leading white space depending on the
             -- context they are in. This gets lumped into the delimiter node and as a result,
             -- after concealing, the extmark will be left shifted. Logic below accounts for this.
@@ -130,7 +130,9 @@ function Render:language(add_background)
             virt_text_pos = 'inline',
         })
     elseif self.code.position == 'right' then
-        local icon_text = icon .. ' ' .. info.text
+        if self.code.language_name then
+            icon_text = icon_text .. info.text
+        end
         local win_col = self.data.max_width - self.data.language_padding
         if self.code.width == 'block' then
             win_col = win_col - str.width(icon_text) + self.data.indent

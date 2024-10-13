@@ -152,7 +152,7 @@ function M.validate()
         get_spec('paragraph'):type('enabled', 'boolean'):type({ 'left_margin', 'min_width' }, 'number'):check()
 
         get_spec('code')
-            :type({ 'enabled', 'sign' }, 'boolean')
+            :type({ 'enabled', 'sign', 'language_name' }, 'boolean')
             :type({ 'language_pad', 'left_margin', 'left_pad', 'right_pad', 'min_width' }, 'number')
             :type({ 'above', 'below', 'highlight', 'highlight_inline' }, 'string')
             :type('highlight_language', { 'string', 'nil' })
