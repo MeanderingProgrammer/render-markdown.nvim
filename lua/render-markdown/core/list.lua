@@ -2,15 +2,18 @@ local log = require('render-markdown.core.log')
 local util = require('render-markdown.core.util')
 
 ---@class render.md.Marks
----@field private ignore table<render.md.Element, boolean>
+---@field private mode string
+---@field private ignore render.md.config.conceal.Ignore
 ---@field private marks render.md.Mark[]
 local Marks = {}
 Marks.__index = Marks
 
----@param ignore table<render.md.Element, boolean>
+---@param mode string
+---@param ignore render.md.config.conceal.Ignore
 ---@return render.md.Marks
-function Marks.new(ignore)
+function Marks.new(mode, ignore)
     local self = setmetatable({}, Marks)
+    self.mode = mode
     self.ignore = ignore
     self.marks = {}
     return self
@@ -53,18 +56,25 @@ end
 function Marks:conceal(element)
     if type(element) == 'boolean' then
         return element
+    end
+    local value = self.ignore[element]
+    if value == nil then
+        return true
+    elseif type(value) == 'boolean' then
+        return not value
     else
-        return self.ignore[element] ~= true
+        return not vim.tbl_contains(value, self.mode)
     end
 end
 
 ---@class render.md.ListHelper
 local M = {}
 
----@param ignore? table<render.md.Element, boolean>
+---@param mode? string
+---@param ignore? render.md.config.conceal.Ignore
 ---@return render.md.Marks
-function M.new_marks(ignore)
-    return Marks.new(ignore or {})
+function M.new_marks(mode, ignore)
+    return Marks.new(mode or util.mode(), ignore or {})
 end
 
 ---@generic T

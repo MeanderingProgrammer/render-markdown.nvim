@@ -18,7 +18,7 @@ function Handler.new(buf)
     local self = setmetatable({}, Handler)
     self.config = state.get(buf)
     self.context = Context.get(buf)
-    self.marks = list.new_marks(self.config.anti_conceal.ignore)
+    self.marks = list.new_marks(self.context.mode, self.config.anti_conceal.ignore)
     self.query = treesitter.parse(
         'markdown_inline',
         [[

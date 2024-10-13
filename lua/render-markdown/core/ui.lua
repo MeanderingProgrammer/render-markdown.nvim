@@ -119,7 +119,7 @@ function M.update(buf, win, parse)
     if next_state == 'rendered' then
         if not buffer_state:has_marks() or parse then
             M.clear(buf, buffer_state)
-            buffer_state:set_marks(M.parse_buffer(buf, win))
+            buffer_state:set_marks(M.parse_buffer(buf, win, mode))
         end
         local hidden = config:hidden(mode, row)
         for _, extmark in ipairs(buffer_state:get_marks()) do
@@ -159,15 +159,16 @@ end
 ---@private
 ---@param buf integer
 ---@param win integer
+---@param mode string
 ---@return render.md.Extmark[]
-function M.parse_buffer(buf, win)
+function M.parse_buffer(buf, win, mode)
     local has_parser, parser = pcall(vim.treesitter.get_parser, buf)
     if not has_parser then
         log.buf('error', 'fail', buf, 'no treesitter parser found')
         return {}
     end
     -- Reset buffer context
-    Context.reset(buf, win)
+    Context.reset(buf, win, mode)
     -- Make sure injections are processed
     Context.get(buf):parse(parser)
     -- Parse markdown after all other nodes to take advantage of state

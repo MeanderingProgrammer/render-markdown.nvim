@@ -13,15 +13,17 @@ local util = require('render-markdown.core.util')
 ---@field private conceal? table<integer, [integer, integer][]>
 ---@field private links table<integer, [integer, integer, integer][]>
 ---@field private window_width? integer
+---@field mode string
 ---@field last_heading? integer
 local Context = {}
 Context.__index = Context
 
 ---@param buf integer
 ---@param win integer
+---@param mode string
 ---@param offset integer
 ---@return render.md.Context
-function Context.new(buf, win, offset)
+function Context.new(buf, win, mode, offset)
     local self = setmetatable({}, Context)
     self.buf = buf
     self.win = win
@@ -39,6 +41,7 @@ function Context.new(buf, win, offset)
     self.conceal = nil
     self.links = {}
     self.window_width = nil
+    self.mode = mode
     self.last_heading = nil
     return self
 end
@@ -297,8 +300,9 @@ local M = {}
 
 ---@param buf integer
 ---@param win integer
-function M.reset(buf, win)
-    cache[buf] = Context.new(buf, win, 10)
+---@param mode string
+function M.reset(buf, win, mode)
+    cache[buf] = Context.new(buf, win, mode, 10)
 end
 
 ---@param buf integer

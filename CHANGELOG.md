@@ -14,6 +14,7 @@
   [18c7ef7](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/18c7ef71fb4b8d83cb0160adc9127fc4d65ca42e)
 - anti conceal per component [#204](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/204)
   [fb6b3d1](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/fb6b3d145e5e12b838c0b84124354802f381b1af)
+- align table cells according to indicators [c0082b7](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c0082b7d9e33408ba4e451741d8aca2b1f5ed823)
 
 ### Bug Fixes
 
