@@ -33,19 +33,19 @@ health:
 cat-log:
   cat ~/.local/state/nvim/render-markdown.log
 
-demo: demo-heading demo-list demo-box demo-latex demo-callout
+demo: heading table box latex callout
 
-demo-heading:
+heading:
   python demo/run.py --name "heading_code"
 
-demo-list:
+table:
   python demo/run.py --name "list_table"
 
-demo-box:
+box:
   python demo/run.py --name "box_dash_quote"
 
-demo-latex:
+latex:
   python demo/run.py --name "latex"
 
-demo-callout:
+callout:
   python demo/run.py --name "callout"

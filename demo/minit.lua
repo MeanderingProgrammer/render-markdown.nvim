@@ -1,8 +1,9 @@
--- Color settings
+-- General settings
 vim.opt.termguicolors = true
 vim.opt.cursorline = true
 
--- Line number settings
+-- Line settings
+vim.opt.wrap = false
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.statuscolumn = '%s%=%{v:relnum?v:relnum:v:lnum} '
@@ -46,7 +47,7 @@ require('lazy').setup({
                 require('lualine').setup({
                     sections = {
                         lualine_a = { 'mode' },
-                        lualine_b = { { 'filename', path = 1 } },
+                        lualine_b = { { 'filename', path = 0 } },
                         lualine_c = {},
                         lualine_x = {},
                         lualine_y = {},
