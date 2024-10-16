@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 7.4.0 (2024-10-16)
+
 ### Features
 
 - margin for paragraphs [#200](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/200)
