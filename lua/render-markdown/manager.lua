@@ -25,6 +25,9 @@ function M.setup()
     vim.api.nvim_create_autocmd('WinResized', {
         group = M.group,
         callback = function(args)
+            if not state.enabled then
+                return
+            end
             for _, win in ipairs(vim.v.event.windows) do
                 local buf = vim.fn.winbufnr(win)
                 if vim.tbl_contains(buffers, buf) then
@@ -65,6 +68,9 @@ function M.attach(buf)
         group = M.group,
         buffer = buf,
         callback = function(args)
+            if not state.enabled then
+                return
+            end
             local event, win = args.event, vim.api.nvim_get_current_win()
             if buf == vim.fn.winbufnr(win) then
                 ui.debounce_update(buf, win, event, vim.tbl_contains(change_events, event))
