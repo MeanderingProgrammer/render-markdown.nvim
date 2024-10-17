@@ -200,7 +200,7 @@ function M.validate()
             :type('scope_highlight', { 'string', 'nil' })
             :check()
         get_spec({ 'checkbox', 'custom' }):for_each(false, function(spec)
-            spec:type({ 'raw', 'rendered', 'highlight' }, 'string')
+            spec:type({ 'raw', 'rendered', 'highlight' }, 'string'):type('scope_highlight', { 'string', 'nil' })
         end)
 
         get_spec('quote')

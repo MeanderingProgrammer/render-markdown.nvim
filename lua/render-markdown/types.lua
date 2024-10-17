@@ -75,6 +75,7 @@
 ---@field public raw string
 ---@field public rendered string
 ---@field public highlight string
+---@field public scope_highlight? string
 
 ---@class (exact) render.md.CheckboxComponent
 ---@field public icon string

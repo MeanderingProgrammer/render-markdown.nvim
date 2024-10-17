@@ -2,9 +2,13 @@ local Base = require('render-markdown.render.base')
 local list = require('render-markdown.core.list')
 local str = require('render-markdown.core.str')
 
+---@class render.md.data.ListMarker
+---@field leading_spaces integer
+---@field checkbox? render.md.CustomCheckbox
+
 ---@class render.md.render.ListMarker: render.md.Renderer
 ---@field private bullet render.md.Bullet
----@field private leading_spaces integer
+---@field private data render.md.data.ListMarker
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
@@ -21,10 +25,13 @@ end
 function Render:setup()
     self.bullet = self.config.bullet
 
-    -- List markers from tree-sitter should have leading spaces removed, however there are edge
-    -- cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
-    -- As a result we account for leading spaces here, can remove if this gets fixed upstream
-    self.leading_spaces = str.spaces('start', self.info.text)
+    self.data = {
+        -- List markers from tree-sitter should have leading spaces removed, however there are edge
+        -- cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
+        -- As a result we account for leading spaces here, can remove if this gets fixed upstream
+        leading_spaces = str.spaces('start', self.info.text),
+        checkbox = self.context:get_checkbox(self.info),
+    }
 
     return true
 end
@@ -33,6 +40,7 @@ function Render:render()
     if self:sibling_checkbox() then
         -- Hide the list marker for checkboxes rather than replacing with a bullet point
         self:hide_marker()
+        self:highlight_scope()
     else
         if not self.bullet.enabled then
             return
@@ -49,7 +57,7 @@ function Render:sibling_checkbox()
     if not self.config.checkbox.enabled then
         return false
     end
-    if self.context:get_checkbox(self.info) ~= nil then
+    if self.data.checkbox ~= nil then
         return true
     end
     if self.info:sibling('task_list_marker_unchecked') ~= nil then
@@ -63,11 +71,19 @@ end
 
 ---@private
 function Render:hide_marker()
-    self.marks:add('check_icon', self.info.start_row, self.info.start_col + self.leading_spaces, {
+    self.marks:add('check_icon', self.info.start_row, self.info.start_col + self.data.leading_spaces, {
         end_row = self.info.end_row,
         end_col = self.info.end_col,
         conceal = '',
     })
+end
+
+---@private
+function Render:highlight_scope()
+    if self.data.checkbox == nil then
+        return
+    end
+    self:checkbox_scope(self.data.checkbox.scope_highlight)
 end
 
 ---@private
@@ -80,7 +96,7 @@ function Render:icon(level)
     self.marks:add('bullet', self.info.start_row, self.info.start_col, {
         end_row = self.info.end_row,
         end_col = self.info.end_col,
-        virt_text = { { str.pad(self.leading_spaces) .. icon, self.bullet.highlight } },
+        virt_text = { { str.pad(self.data.leading_spaces) .. icon, self.bullet.highlight } },
         virt_text_pos = 'overlay',
     })
 end

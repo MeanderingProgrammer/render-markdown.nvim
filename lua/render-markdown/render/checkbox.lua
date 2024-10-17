@@ -39,7 +39,7 @@ end
 
 function Render:render()
     self:icon()
-    self:highlight_scope()
+    self:checkbox_scope(self.checkbox.scope_highlight)
 end
 
 ---@private
@@ -52,23 +52,6 @@ function Render:icon()
         virt_text = { { text, self.checkbox.highlight } },
         virt_text_pos = self.inline and 'inline' or 'overlay',
         conceal = self.inline and '' or nil,
-    })
-end
-
----@private
-function Render:highlight_scope()
-    local highlight = self.checkbox.scope_highlight
-    if highlight == nil then
-        return
-    end
-    local paragraph = self.info:sibling('paragraph')
-    if paragraph == nil then
-        return
-    end
-    self.marks:add('check_scope', paragraph.start_row, paragraph.start_col, {
-        end_row = paragraph.end_row,
-        end_col = paragraph.end_col,
-        hl_group = highlight,
     })
 end
 

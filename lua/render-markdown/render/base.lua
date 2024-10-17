@@ -45,6 +45,27 @@ function Base:sign(text, highlight)
 end
 
 ---@protected
+---@param highlight? string
+function Base:checkbox_scope(highlight)
+    if highlight == nil then
+        return
+    end
+    local paragraph = self.info:sibling('paragraph')
+    if paragraph == nil then
+        return
+    end
+    paragraph = paragraph:child('inline')
+    if paragraph == nil then
+        return
+    end
+    self.marks:add('check_scope', paragraph.start_row, paragraph.start_col, {
+        end_row = paragraph.end_row,
+        end_col = paragraph.end_col,
+        hl_group = highlight,
+    })
+end
+
+---@protected
 ---@param destination string
 ---@return render.md.LinkComponent?
 function Base:link_component(destination)
