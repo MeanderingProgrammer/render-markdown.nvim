@@ -2,6 +2,16 @@
 
 ## Pre-release
 
+### Features
+
+- custom checkbox scope_highlight [#207](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/207)
+  [2f36ac1](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/2f36ac16df20e0c6512f14e2793f7b2ba235989c)
+
+### Bug Fixes
+
+- skip updates when state is disabled [#208](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/208)
+  [bea6f20](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/bea6f2078e34abdf5c2632f593651bb13205477f)
+
 ## 7.4.0 (2024-10-16)
 
 ### Features

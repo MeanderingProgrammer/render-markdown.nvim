@@ -147,7 +147,7 @@ function M.next_state(config, win, mode)
     if util.get_win(win, 'diff') then
         return 'default'
     end
-    if not util.view(win).leftcol == 0 then
+    if util.view(win).leftcol ~= 0 then
         return 'default'
     end
     if not config:render(mode) then
