@@ -72,9 +72,7 @@ function M.attach(buf)
                 return
             end
             local event, win = args.event, vim.api.nvim_get_current_win()
-            if buf == vim.fn.winbufnr(win) then
-                ui.debounce_update(buf, win, event, vim.tbl_contains(change_events, event))
-            end
+            ui.debounce_update(buf, win, event, vim.tbl_contains(change_events, event))
         end,
     })
 end

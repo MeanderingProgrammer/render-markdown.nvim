@@ -8,13 +8,13 @@ local util = require('render-markdown.core.util')
 local Marks = {}
 Marks.__index = Marks
 
----@param mode string
----@param ignore render.md.config.conceal.Ignore
+---@param mode? string
+---@param ignore? render.md.config.conceal.Ignore
 ---@return render.md.Marks
 function Marks.new(mode, ignore)
     local self = setmetatable({}, Marks)
-    self.mode = mode
-    self.ignore = ignore
+    self.mode = mode or util.mode()
+    self.ignore = ignore or {}
     self.marks = {}
     return self
 end
@@ -70,12 +70,7 @@ end
 ---@class render.md.ListHelper
 local M = {}
 
----@param mode? string
----@param ignore? render.md.config.conceal.Ignore
----@return render.md.Marks
-function M.new_marks(mode, ignore)
-    return Marks.new(mode or util.mode(), ignore or {})
-end
+M.new_marks = Marks.new
 
 ---@generic T
 ---@param values T[]

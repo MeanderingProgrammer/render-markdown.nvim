@@ -171,14 +171,7 @@ function Validator.new()
     return self
 end
 
----@param config table<string, any>
----@param nilable boolean
----@param key? string|string[]
----@param path? string
----@return render.md.debug.ValidatorSpec
-function Validator:spec(config, nilable, key, path)
-    return Spec.new(self, config, nilable, key, path)
-end
+Validator.spec = Spec.new
 
 ---@param suffix string
 ---@param config table<string, any>

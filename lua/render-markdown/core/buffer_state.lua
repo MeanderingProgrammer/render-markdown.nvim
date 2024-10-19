@@ -1,16 +1,13 @@
 ---@class render.md.BufferState
----@field private buf integer
 ---@field private timer uv_timer_t
 ---@field private running boolean
 ---@field private marks? render.md.Extmark[]
 local BufferState = {}
 BufferState.__index = BufferState
 
----@param buf integer
 ---@return render.md.BufferState
-function BufferState.new(buf)
+function BufferState.new()
     local self = setmetatable({}, BufferState)
-    self.buf = buf
     self.timer = (vim.uv or vim.loop).new_timer()
     self.running = false
     self.marks = nil

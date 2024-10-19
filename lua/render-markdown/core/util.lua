@@ -32,7 +32,13 @@ end
 ---@param win integer
 ---@return boolean
 function M.valid(buf, win)
-    return vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_win_is_valid(win)
+    if not vim.api.nvim_buf_is_valid(buf) then
+        return false
+    end
+    if not vim.api.nvim_win_is_valid(win) then
+        return false
+    end
+    return buf == vim.fn.winbufnr(win)
 end
 
 ---@return string
@@ -75,17 +81,24 @@ end
 
 ---@param win integer
 ---@return vim.fn.winsaveview.ret
-function M.view(win)
+function M.win_view(win)
     return vim.api.nvim_win_call(win, vim.fn.winsaveview)
 end
 
 ---@param win integer
 ---@param row integer
 ---@return boolean
-function M.visible(win, row)
+function M.win_visible(win, row)
     return vim.api.nvim_win_call(win, function()
         return vim.fn.foldclosed(row) == -1
     end)
+end
+
+---@param win integer
+---@return integer
+function M.win_textoff(win)
+    local infos = vim.fn.getwininfo(win)
+    return #infos == 1 and infos[1].textoff or 0
 end
 
 ---@param file string

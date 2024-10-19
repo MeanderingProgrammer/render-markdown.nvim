@@ -24,7 +24,7 @@ local Cache = {
 function Cache.get(buf)
     local buffer_state = Cache.states[buf]
     if buffer_state == nil then
-        buffer_state = BufferState.new(buf)
+        buffer_state = BufferState.new()
         Cache.states[buf] = buffer_state
     end
     return buffer_state
@@ -144,13 +144,13 @@ function M.next_state(config, win, mode)
     if not state.enabled then
         return 'default'
     end
+    if not config:render(mode) then
+        return 'default'
+    end
     if util.get_win(win, 'diff') then
         return 'default'
     end
-    if util.view(win).leftcol ~= 0 then
-        return 'default'
-    end
-    if not config:render(mode) then
+    if util.win_view(win).leftcol ~= 0 then
         return 'default'
     end
     return 'rendered'

@@ -115,10 +115,7 @@ function M.setup(file, opts)
     vim.wait(0)
 end
 
----@return render.md.test.Row
-function M.row()
-    return Row.new()
-end
+M.row = Row.new
 
 ---@param row integer
 ---@param level integer

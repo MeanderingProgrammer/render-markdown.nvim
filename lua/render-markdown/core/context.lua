@@ -52,14 +52,14 @@ end
 ---@param offset integer
 ---@return render.md.Range
 function Context.compute_range(buf, win, offset)
-    local top = math.max(util.view(win).topline - 1 - offset, 0)
+    local top = math.max(util.win_view(win).topline - 1 - offset, 0)
 
     local bottom = top
     local lines = vim.api.nvim_buf_line_count(buf)
     local size = vim.api.nvim_win_get_height(win) + (2 * offset)
     while bottom < lines and size > 0 do
         bottom = bottom + 1
-        if util.visible(win, bottom) then
+        if util.win_visible(win, bottom) then
             size = size - 1
         end
     end
@@ -142,11 +142,7 @@ end
 ---@return integer
 function Context:get_width()
     if self.window_width == nil then
-        self.window_width = vim.api.nvim_win_get_width(self.win)
-        local window_info = vim.fn.getwininfo(self.win)
-        if #window_info == 1 then
-            self.window_width = self.window_width - window_info[1].textoff
-        end
+        self.window_width = vim.api.nvim_win_get_width(self.win) - util.win_textoff(self.win)
     end
     return self.window_width
 end
