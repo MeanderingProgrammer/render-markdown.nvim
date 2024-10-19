@@ -1,7 +1,7 @@
 local Base = require('render-markdown.render.base')
-local Iter = require('render-markdown.core.iter')
+local Iter = require('render-markdown.lib.iter')
+local Str = require('render-markdown.lib.str')
 local log = require('render-markdown.core.log')
-local str = require('render-markdown.core.str')
 
 ---@class render.md.table.Column
 ---@field row integer
@@ -11,8 +11,8 @@ local str = require('render-markdown.core.str')
 ---@field space { left: integer, right: integer }
 
 ---@class render.md.table.Row
----@field info render.md.NodeInfo
----@field pipes render.md.NodeInfo[]
+---@field node render.md.Node
+---@field pipes render.md.Node[]
 ---@field columns render.md.table.Column[]
 
 ---@alias render.md.table.Alignment 'left'|'right'|'center'|'default'
@@ -22,7 +22,7 @@ local str = require('render-markdown.core.str')
 ---@field alignment render.md.table.Alignment
 
 ---@class render.md.table.DelimRow
----@field info render.md.NodeInfo
+---@field node render.md.Node
 ---@field columns render.md.table.DelimColumn[]
 
 ---@class render.md.data.Table
@@ -41,15 +41,15 @@ function Render:setup()
     if not self.table.enabled or self.table.style == 'none' then
         return false
     end
-    if self.info:has_error() then
+    if self.node:has_error() then
         return false
     end
 
     local delim, table_rows = nil, {}
-    self.info:for_each_child(function(row)
+    self.node:for_each_child(function(row)
         if row.type == 'pipe_table_delimiter_row' then
             delim = self:parse_delim(row)
-        elseif self.context:overlaps_node(row:get_node()) then
+        elseif self.context:overlaps_node(row:get()) then
             if vim.tbl_contains({ 'pipe_table_header', 'pipe_table_row' }, row.type) then
                 table.insert(table_rows, row)
             else
@@ -88,7 +88,7 @@ function Render:setup()
 end
 
 ---@private
----@param row render.md.NodeInfo
+---@param row render.md.Node
 ---@return render.md.table.DelimRow?
 function Render:parse_delim(row)
     local pipes, cells = Render.parse_row_data(row, 'pipe_table_delimiter_cell')
@@ -108,11 +108,11 @@ function Render:parse_delim(row)
         end
         table.insert(columns, { width = width, alignment = Render.alignment(cell) })
     end
-    return { info = row, columns = columns }
+    return { node = row, columns = columns }
 end
 
 ---@private
----@param cell render.md.NodeInfo
+---@param cell render.md.Node
 ---@return render.md.table.Alignment
 function Render.alignment(cell)
     local align_left = cell:child('pipe_table_align_left') ~= nil
@@ -129,7 +129,7 @@ function Render.alignment(cell)
 end
 
 ---@private
----@param row render.md.NodeInfo
+---@param row render.md.Node
 ---@param num_columns integer
 ---@return render.md.table.Row?
 function Render:parse_row(row, num_columns)
@@ -147,7 +147,7 @@ function Render:parse_row(row, num_columns)
             -- Left space comes from the gap between the node start and the pipe start
             left = math.max(cell.start_col - start_col, 0),
             -- Right space is attached to the node itself
-            right = math.max(str.spaces('end', cell.text), 0),
+            right = math.max(Str.spaces('end', cell.text), 0),
         }
         if width < 0 then
             return nil
@@ -160,13 +160,13 @@ function Render:parse_row(row, num_columns)
             space = space,
         })
     end
-    return { info = row, pipes = pipes, columns = columns }
+    return { node = row, pipes = pipes, columns = columns }
 end
 
 ---@private
----@param row render.md.NodeInfo
+---@param row render.md.Node
 ---@param cell_type string
----@return render.md.NodeInfo[]?, render.md.NodeInfo[]?
+---@return render.md.Node[]?, render.md.Node[]?
 function Render.parse_row_data(row, cell_type)
     local pipes, cells = {}, {}
     row:for_each_child(function(cell)
@@ -205,7 +205,7 @@ function Render:delimiter()
         -- If column is small there's no good place to put the alignment indicator
         -- Alignment indicator must be exactly one character wide
         -- Do not put an indicator for default alignment
-        if column.width < 3 or str.width(indicator) ~= 1 or column.alignment == 'default' then
+        if column.width < 3 or Str.width(indicator) ~= 1 or column.alignment == 'default' then
             return box:rep(column.width)
         end
         if column.alignment == 'left' then
@@ -217,13 +217,13 @@ function Render:delimiter()
         end
     end)
 
-    local text = str.pad(str.spaces('start', delim.info.text))
+    local text = Str.pad(Str.spaces('start', delim.node.text))
     text = text .. border[4] .. table.concat(sections, border[5]) .. border[6]
-    text = text .. str.pad_to(delim.info.text, text)
+    text = text .. Str.pad_to(delim.node.text, text)
 
-    self.marks:add('table_border', delim.info.start_row, delim.info.start_col, {
-        end_row = delim.info.end_row,
-        end_col = delim.info.end_col,
+    self.marks:add('table_border', delim.node.start_row, delim.node.start_col, {
+        end_row = delim.node.end_row,
+        end_col = delim.node.end_col,
         virt_text = { { text, self.table.head } },
         virt_text_pos = 'overlay',
     })
@@ -233,7 +233,7 @@ end
 ---@param row render.md.table.Row
 function Render:row(row)
     local delim, border = self.data.delim, self.table.border
-    local highlight = row.info.type == 'pipe_table_header' and self.table.head or self.table.row
+    local highlight = row.node.type == 'pipe_table_header' and self.table.head or self.table.row
 
     if vim.tbl_contains({ 'trimmed', 'padded', 'raw' }, self.table.cell) then
         for _, pipe in ipairs(row.pipes) do
@@ -267,10 +267,10 @@ function Render:row(row)
     end
 
     if self.table.cell == 'overlay' then
-        self.marks:add('table_border', row.info.start_row, row.info.start_col, {
-            end_row = row.info.end_row,
-            end_col = row.info.end_col,
-            virt_text = { { row.info.text:gsub('|', border[10]), highlight } },
+        self.marks:add('table_border', row.node.start_row, row.node.start_col, {
+            end_row = row.node.end_row,
+            end_col = row.node.end_col,
+            virt_text = { { row.node.text:gsub('|', border[10]), highlight } },
             virt_text_pos = 'overlay',
         })
     end
@@ -286,7 +286,7 @@ function Render:shift(column, side, amount)
     if amount > 0 then
         self.marks:add(true, column.row, col, {
             priority = 0,
-            virt_text = { { str.pad(amount), self.table.filler } },
+            virt_text = { { Str.pad(amount), self.table.filler } },
             virt_text_pos = 'inline',
         })
     elseif amount < 0 then
@@ -318,7 +318,7 @@ function Render:full()
             return true
         elseif self.table.cell == 'overlay' then
             -- Want the underlying text widths to match
-            return str.width(delim.info.text) == str.width(row.info.text)
+            return Str.width(delim.node.text) == Str.width(row.node.text)
         else
             return false
         end
@@ -329,15 +329,15 @@ function Render:full()
         return
     end
 
-    ---@param info render.md.NodeInfo
+    ---@param node render.md.Node
     ---@return integer
-    local function get_spaces(info)
-        return math.max(str.spaces('start', info:line('first', 0) or ''), info.start_col)
+    local function get_spaces(node)
+        return math.max(Str.spaces('start', node:line('first', 0) or ''), node.start_col)
     end
 
-    local first_info, last_info = first.info, #rows == 1 and delim.info or last.info
-    local spaces = get_spaces(first_info)
-    if spaces ~= get_spaces(last_info) then
+    local first_node, last_node = first.node, #rows == 1 and delim.node or last.node
+    local spaces = get_spaces(first_node)
+    if spaces ~= get_spaces(last_node) then
         return
     end
 
@@ -345,22 +345,22 @@ function Render:full()
         return border[11]:rep(column.width)
     end)
 
-    ---@param info render.md.NodeInfo
+    ---@param node render.md.Node
     ---@param above boolean
     ---@param chars { [1]: string, [2]: string, [3]: string }
-    local function table_border(info, above, chars)
-        local line = spaces > 0 and { { str.pad(spaces), self.config.padding.highlight } } or {}
+    local function table_border(node, above, chars)
+        local line = spaces > 0 and { { Str.pad(spaces), self.config.padding.highlight } } or {}
         local highlight = above and self.table.head or self.table.row
         table.insert(line, { chars[1] .. table.concat(sections, chars[2]) .. chars[3], highlight })
-        self.marks:add(false, info.start_row, info.start_col, {
+        self.marks:add(false, node.start_row, node.start_col, {
             virt_lines_above = above,
             virt_lines = { self:indent_virt_line(line) },
         })
     end
 
-    table_border(first_info, true, { border[1], border[2], border[3] })
+    table_border(first_node, true, { border[1], border[2], border[3] })
     if #rows > 1 then
-        table_border(last_info, false, { border[7], border[8], border[9] })
+        table_border(last_node, false, { border[7], border[8], border[9] })
     end
 end
 

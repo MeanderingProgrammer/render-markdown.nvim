@@ -35,13 +35,13 @@ function M.open()
 end
 
 ---@param capture string
----@param info render.md.NodeInfo
-function M.node_info(capture, info)
-    M.add('debug', 'node info', {
+---@param node render.md.Node
+function M.node(capture, node)
+    M.add('debug', 'node', {
         capture = capture,
-        text = info.text,
-        rows = { info.start_row, info.end_row },
-        cols = { info.start_col, info.end_col },
+        text = node.text,
+        rows = { node.start_row, node.end_row },
+        cols = { node.start_col, node.end_col },
     })
 end
 

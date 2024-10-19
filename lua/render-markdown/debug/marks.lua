@@ -1,4 +1,4 @@
-local Iter = require('render-markdown.core.iter')
+local Iter = require('render-markdown.lib.iter')
 
 ---@class render.md.debug.Mark
 ---@field conceal boolean

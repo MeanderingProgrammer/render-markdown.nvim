@@ -1,7 +1,7 @@
-local NodeInfo = require('render-markdown.core.node_info')
+local Node = require('render-markdown.lib.node')
 local Range = require('render-markdown.core.range')
+local Str = require('render-markdown.lib.str')
 local log = require('render-markdown.core.log')
-local str = require('render-markdown.core.str')
 local util = require('render-markdown.core.util')
 
 ---@class render.md.Context
@@ -29,9 +29,9 @@ function Context.new(buf, win, mode, offset)
     self.win = win
 
     local ranges = { Context.compute_range(self.buf, self.win, offset) }
-    for _, window_id in ipairs(vim.fn.win_findbuf(buf)) do
-        if window_id ~= self.win then
-            table.insert(ranges, Context.compute_range(self.buf, window_id, offset))
+    for _, buf_win in ipairs(vim.fn.win_findbuf(buf)) do
+        if buf_win ~= self.win then
+            table.insert(ranges, Context.compute_range(self.buf, buf_win, offset))
         end
     end
     self.ranges = Range.coalesce(ranges)
@@ -52,14 +52,14 @@ end
 ---@param offset integer
 ---@return render.md.Range
 function Context.compute_range(buf, win, offset)
-    local top = math.max(util.win_view(win).topline - 1 - offset, 0)
+    local top = math.max(util.view(win).topline - 1 - offset, 0)
 
     local bottom = top
     local lines = vim.api.nvim_buf_line_count(buf)
     local size = vim.api.nvim_win_get_height(win) + (2 * offset)
     while bottom < lines and size > 0 do
         bottom = bottom + 1
-        if util.win_visible(win, bottom) then
+        if util.row_visible(win, bottom) then
             size = size - 1
         end
     end
@@ -67,59 +67,59 @@ function Context.compute_range(buf, win, offset)
     return Range.new(top, bottom)
 end
 
----@param info render.md.NodeInfo
+---@param node render.md.Node
 ---@return render.md.CustomCallout?
-function Context:get_callout(info)
-    return self.callouts[info.start_row]
+function Context:get_callout(node)
+    return self.callouts[node.start_row]
 end
 
----@param info render.md.NodeInfo
+---@param node render.md.Node
 ---@param callout render.md.CustomCallout
-function Context:add_callout(info, callout)
-    self.callouts[info.start_row] = callout
+function Context:add_callout(node, callout)
+    self.callouts[node.start_row] = callout
 end
 
----@param info render.md.NodeInfo
+---@param node render.md.Node
 ---@return render.md.CustomCheckbox?
-function Context:get_checkbox(info)
-    return self.checkboxes[info.start_row]
+function Context:get_checkbox(node)
+    return self.checkboxes[node.start_row]
 end
 
----@param info render.md.NodeInfo
+---@param node render.md.Node
 ---@param checkbox render.md.CustomCheckbox
-function Context:add_checkbox(info, checkbox)
-    self.checkboxes[info.start_row] = checkbox
+function Context:add_checkbox(node, checkbox)
+    self.checkboxes[node.start_row] = checkbox
 end
 
----@param info? render.md.NodeInfo
+---@param node? render.md.Node
 ---@return integer
-function Context:width(info)
-    if info == nil then
+function Context:width(node)
+    if node == nil then
         return 0
     end
-    return str.width(info.text) + self:get_offset(info) - self:concealed(info)
+    return Str.width(node.text) + self:get_offset(node) - self:concealed(node)
 end
 
----@param info render.md.NodeInfo
+---@param node render.md.Node
 ---@param amount integer
-function Context:add_offset(info, amount)
+function Context:add_offset(node, amount)
     if amount == 0 then
         return
     end
-    local row = info.start_row
+    local row = node.start_row
     if self.links[row] == nil then
         self.links[row] = {}
     end
-    table.insert(self.links[row], { info.start_col, info.end_col, amount })
+    table.insert(self.links[row], { node.start_col, node.end_col, amount })
 end
 
 ---@private
----@param info render.md.NodeInfo
+---@param node render.md.Node
 ---@return integer
-function Context:get_offset(info)
+function Context:get_offset(node)
     local result = 0
-    for _, offset_range in ipairs(self.links[info.start_row] or {}) do
-        if info.start_col < offset_range[2] and info.end_col > offset_range[1] then
+    for _, offset_range in ipairs(self.links[node.start_row] or {}) do
+        if node.start_col < offset_range[2] and node.end_col > offset_range[1] then
             result = result + offset_range[3]
         end
     end
@@ -142,7 +142,7 @@ end
 ---@return integer
 function Context:get_width()
     if self.window_width == nil then
-        self.window_width = vim.api.nvim_win_get_width(self.win) - util.win_textoff(self.win)
+        self.window_width = vim.api.nvim_win_get_width(self.win) - util.textoff(self.win)
     end
     return self.window_width
 end
@@ -180,38 +180,38 @@ end
 
 ---@param root TSNode
 ---@param query vim.treesitter.Query
----@param callback fun(capture: string, node: render.md.NodeInfo)
+---@param callback fun(capture: string, node: render.md.Node)
 function Context:query(root, query, callback)
     for _, range in ipairs(self.ranges) do
-        for id, node in query:iter_captures(root, self.buf, range.top, range.bottom) do
+        for id, ts_node in query:iter_captures(root, self.buf, range.top, range.bottom) do
             local capture = query.captures[id]
-            local info = NodeInfo.new(self.buf, node)
-            log.node_info(capture, info)
-            callback(capture, info)
+            local node = Node.new(self.buf, ts_node)
+            log.node(capture, node)
+            callback(capture, node)
         end
     end
 end
 
----@param info? render.md.NodeInfo
+---@param node? render.md.Node
 ---@return boolean
-function Context:hidden(info)
-    return info == nil or str.width(info.text) == self:concealed(info)
+function Context:hidden(node)
+    return node == nil or Str.width(node.text) == self:concealed(node)
 end
 
----@param info render.md.NodeInfo
+---@param node render.md.Node
 ---@return integer
-function Context:concealed(info)
-    local ranges = self:get_conceal(info.start_row)
+function Context:concealed(node)
+    local ranges = self:get_conceal(node.start_row)
     if #ranges == 0 then
         return 0
     end
-    local result, col = 0, info.start_col
-    for _, index in ipairs(vim.fn.str2list(info.text)) do
+    local result, col = 0, node.start_col
+    for _, index in ipairs(vim.fn.str2list(node.text)) do
         local ch = vim.fn.nr2char(index)
         for _, range in ipairs(ranges) do
             -- Essentially vim.treesitter.is_in_node_range but only care about column
             if col >= range[1] and col + 1 <= range[2] then
-                result = result + str.width(ch)
+                result = result + Str.width(ch)
             end
         end
         col = col + #ch
@@ -233,7 +233,7 @@ end
 ---@private
 ---@return table<integer, [integer, integer][]>
 function Context:compute_conceal()
-    local conceallevel = util.get_win(self.win, 'conceallevel')
+    local conceallevel = util.get('win', self.win, 'conceallevel')
     if conceallevel == 0 then
         return {}
     end
@@ -270,7 +270,7 @@ function Context:compute_conceal_ranges(language, root)
     end
     local result = {}
     for _, range in ipairs(self.ranges) do
-        for id, node, metadata in query:iter_captures(root, self.buf, range.top, range.bottom) do
+        for id, ts_node, metadata in query:iter_captures(root, self.buf, range.top, range.bottom) do
             if metadata.conceal ~= nil then
                 local node_range = metadata.range
                 if node_range == nil and metadata[id] ~= nil then
@@ -278,7 +278,7 @@ function Context:compute_conceal_ranges(language, root)
                 end
                 if node_range == nil then
                     ---@diagnostic disable-next-line: missing-fields
-                    node_range = { node:range() }
+                    node_range = { ts_node:range() }
                 end
                 local row, start_col, _, end_col = unpack(node_range)
                 table.insert(result, { row, start_col, end_col })
@@ -306,10 +306,7 @@ end
 ---@return boolean
 function M.contains_range(buf, win)
     local context = cache[buf]
-    if context == nil then
-        return false
-    end
-    return context:contains_window(win)
+    return context ~= nil and context:contains_window(win)
 end
 
 ---@param buf integer

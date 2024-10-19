@@ -1,4 +1,4 @@
----@class render.md.NodeInfo
+---@class render.md.Node
 ---@field private buf integer
 ---@field private node TSNode
 ---@field type string
@@ -7,14 +7,14 @@
 ---@field start_col integer
 ---@field end_row integer
 ---@field end_col integer
-local NodeInfo = {}
-NodeInfo.__index = NodeInfo
+local Node = {}
+Node.__index = Node
 
 ---@param buf integer
 ---@param node TSNode
----@return render.md.NodeInfo
-function NodeInfo.new(buf, node)
-    local self = setmetatable({}, NodeInfo)
+---@return render.md.Node
+function Node.new(buf, node)
+    local self = setmetatable({}, Node)
     self.buf = buf
     self.node = node
     self.type = node:type()
@@ -27,10 +27,10 @@ function NodeInfo.new(buf, node)
     return self
 end
 
----@param a render.md.NodeInfo
----@param b render.md.NodeInfo
+---@param a render.md.Node
+---@param b render.md.Node
 ---@return boolean
-function NodeInfo.__lt(a, b)
+function Node.__lt(a, b)
     if a.start_row ~= b.start_row then
         return a.start_row < b.start_row
     else
@@ -39,24 +39,24 @@ function NodeInfo.__lt(a, b)
 end
 
 ---@return TSNode
-function NodeInfo:get_node()
+function Node:get()
     return self.node
 end
 
 ---@return boolean
-function NodeInfo:has_error()
+function Node:has_error()
     return self.node:has_error()
 end
 
 ---@param parent boolean
 ---@return integer
-function NodeInfo:heading_level(parent)
-    local info = not parent and self or self:parent('section')
-    if info == nil then
+function Node:heading_level(parent)
+    local section = not parent and self or self:parent('section')
+    if section == nil then
         return 0
     end
-    assert(info.type == 'section', 'Node must be a section')
-    local heading = info:child('atx_heading')
+    assert(section.type == 'section', 'Node must be a section')
+    local heading = section:child('atx_heading')
     local node = heading ~= nil and heading.node:child(0) or nil
     -- Counts the number of hashtags in the heading marker
     return node ~= nil and #vim.treesitter.get_node_text(node, self.buf) or 0
@@ -64,8 +64,8 @@ end
 
 ---Walk through parent nodes, count the number of target nodes
 ---@param target string
----@return integer, render.md.NodeInfo?
-function NodeInfo:level_in_section(target)
+---@return integer, render.md.Node?
+function Node:level_in_section(target)
     local parent, level, root = self.node:parent(), 0, nil
     while parent ~= nil and parent:type() ~= 'section' do
         if parent:type() == target then
@@ -74,16 +74,16 @@ function NodeInfo:level_in_section(target)
         end
         parent = parent:parent()
     end
-    return level, root ~= nil and NodeInfo.new(self.buf, root) or nil
+    return level, root ~= nil and Node.new(self.buf, root) or nil
 end
 
 ---@param target string
----@return render.md.NodeInfo?
-function NodeInfo:parent(target)
+---@return render.md.Node?
+function Node:parent(target)
     local parent = self.node:parent()
     while parent ~= nil do
         if parent:type() == target then
-            return NodeInfo.new(self.buf, parent)
+            return Node.new(self.buf, parent)
         end
         parent = parent:parent()
     end
@@ -91,12 +91,12 @@ function NodeInfo:parent(target)
 end
 
 ---@param target string
----@return render.md.NodeInfo?
-function NodeInfo:sibling(target)
+---@return render.md.Node?
+function Node:sibling(target)
     local sibling = self.node:next_sibling()
     while sibling ~= nil do
         if sibling:type() == target then
-            return NodeInfo.new(self.buf, sibling)
+            return Node.new(self.buf, sibling)
         end
         sibling = sibling:next_sibling()
     end
@@ -105,29 +105,29 @@ end
 
 ---@param target_type string
 ---@param target_row? integer
----@return render.md.NodeInfo?
-function NodeInfo:child(target_type, target_row)
+---@return render.md.Node?
+function Node:child(target_type, target_row)
     for child in self.node:iter_children() do
         if child:type() == target_type then
             if target_row == nil or child:range() == target_row then
-                return NodeInfo.new(self.buf, child)
+                return Node.new(self.buf, child)
             end
         end
     end
     return nil
 end
 
----@param callback fun(node: render.md.NodeInfo)
-function NodeInfo:for_each_child(callback)
+---@param callback fun(node: render.md.Node)
+function Node:for_each_child(callback)
     for child in self.node:iter_children() do
-        callback(NodeInfo.new(self.buf, child))
+        callback(Node.new(self.buf, child))
     end
 end
 
 ---@param position 'above'|'first'|'below'|'last'
 ---@param by integer
 ---@return string?
-function NodeInfo:line(position, by)
+function Node:line(position, by)
     local one_line, row = self.start_row == self.end_row, nil
     if position == 'above' then
         row = self.start_row - by
@@ -142,8 +142,8 @@ function NodeInfo:line(position, by)
 end
 
 ---@return string[]
-function NodeInfo:lines()
+function Node:lines()
     return vim.api.nvim_buf_get_lines(self.buf, self.start_row, self.end_row, false)
 end
 
-return NodeInfo
+return Node

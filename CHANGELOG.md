@@ -11,6 +11,9 @@
 
 - skip updates when state is disabled [#208](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/208)
   [bea6f20](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/bea6f2078e34abdf5c2632f593651bb13205477f)
+- disable rendering when left column is > 0 [1871dc4](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/1871dc4ced6fd775591a63df8e4c343ebaf1a2d2)
+- skip updates when buffer in window changes [#209](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/209)
+  [c6b59a2](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c6b59a263cffbd6bf463fff03b28a35ad9f1a8e6)
 
 ## 7.4.0 (2024-10-16)
 

@@ -1,6 +1,6 @@
 local Base = require('render-markdown.render.base')
-local Iter = require('render-markdown.core.iter')
-local str = require('render-markdown.core.str')
+local Iter = require('render-markdown.lib.iter')
+local Str = require('render-markdown.lib.str')
 
 ---@class render.md.render.Paragraph: render.md.Renderer
 ---@field private paragraph render.md.Paragraph
@@ -14,15 +14,15 @@ function Render:setup()
 end
 
 function Render:render()
-    local width = vim.fn.max(Iter.list.map(self.info:lines(), str.width))
+    local width = vim.fn.max(Iter.list.map(self.node:lines(), Str.width))
     width = math.max(width, self.paragraph.min_width)
     local margin = self.context:resolve_offset(self.paragraph.left_margin, width)
     if margin <= 0 then
         return
     end
 
-    local virt_text = { { str.pad(margin), self.config.padding.highlight } }
-    for row = self.info.start_row, self.info.end_row - 1 do
+    local virt_text = { { Str.pad(margin), self.config.padding.highlight } }
+    for row = self.node.start_row, self.node.end_row - 1 do
         self.marks:add(false, row, 0, {
             priority = 0,
             virt_text = virt_text,

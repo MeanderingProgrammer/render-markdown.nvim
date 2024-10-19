@@ -1,5 +1,5 @@
 local Context = require('render-markdown.core.context')
-local list = require('render-markdown.core.list')
+local List = require('render-markdown.lib.list')
 local state = require('render-markdown.state')
 local treesitter = require('render-markdown.core.treesitter')
 
@@ -18,7 +18,7 @@ function Handler.new(buf)
     local self = setmetatable({}, Handler)
     self.config = state.get(buf)
     self.context = Context.get(buf)
-    self.marks = list.new_marks(self.context.mode, self.config.anti_conceal.ignore)
+    self.marks = List.new_marks(self.context.mode, self.config.anti_conceal.ignore)
     self.query = treesitter.parse(
         'markdown_inline',
         [[
@@ -45,10 +45,10 @@ end
 ---@param root TSNode
 ---@return render.md.Mark[]
 function Handler:parse(root)
-    self.context:query(root, self.query, function(capture, info)
+    self.context:query(root, self.query, function(capture, node)
         local renderer = self.renderers[capture]
         assert(renderer ~= nil, 'Unhandled inline capture: ' .. capture)
-        local render = renderer:new(self.marks, self.config, self.context, info)
+        local render = renderer:new(self.marks, self.config, self.context, node)
         if render:setup() then
             render:render()
         end

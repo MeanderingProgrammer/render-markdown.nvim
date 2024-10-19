@@ -15,9 +15,9 @@ function Render:setup()
 end
 
 function Render:render()
-    self.marks:add('code_background', self.info.start_row, self.info.start_col, {
-        end_row = self.info.end_row,
-        end_col = self.info.end_col,
+    self.marks:add('code_background', self.node.start_row, self.node.start_col, {
+        end_row = self.node.end_row,
+        end_col = self.node.end_col,
         hl_group = self.code.highlight_inline,
     })
 end

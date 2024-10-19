@@ -1,9 +1,9 @@
-local Iter = require('render-markdown.core.iter')
-local NodeInfo = require('render-markdown.core.node_info')
-local list = require('render-markdown.core.list')
+local Iter = require('render-markdown.lib.iter')
+local List = require('render-markdown.lib.list')
+local Node = require('render-markdown.lib.node')
+local Str = require('render-markdown.lib.str')
 local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
-local str = require('render-markdown.core.str')
 
 ---@type table<string, string>
 local cache = {}
@@ -24,18 +24,18 @@ function M.parse(root, buf)
         return {}
     end
 
-    local info = NodeInfo.new(buf, root)
-    log.node_info('latex', info)
+    local node = Node.new(buf, root)
+    log.node('latex', node)
 
-    local raw_expression = cache[info.text]
+    local raw_expression = cache[node.text]
     if raw_expression == nil then
-        raw_expression = vim.fn.system(latex.converter, info.text)
-        cache[info.text] = raw_expression
+        raw_expression = vim.fn.system(latex.converter, node.text)
+        cache[node.text] = raw_expression
     end
 
-    local expressions = str.split(raw_expression, '\n')
+    local expressions = Str.split(raw_expression, '\n')
     for i = 1, #expressions do
-        expressions[i] = str.pad(info.start_col) .. expressions[i]
+        expressions[i] = Str.pad(node.start_col) .. expressions[i]
     end
     for _ = 1, latex.top_pad do
         table.insert(expressions, 1, '')
@@ -48,10 +48,10 @@ function M.parse(root, buf)
         return { { expression, latex.highlight } }
     end)
 
-    local marks = list.new_marks()
-    marks:add(false, info.start_row, info.start_col, {
-        end_row = info.end_row,
-        end_col = info.end_col,
+    local marks = List.new_marks()
+    marks:add(false, node.start_row, node.start_col, {
+        end_row = node.end_row,
+        end_col = node.end_col,
         virt_lines = latex_lines,
         virt_lines_above = true,
     })

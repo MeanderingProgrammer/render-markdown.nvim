@@ -19,7 +19,7 @@ function Render:render()
     width = type(width) == 'number' and width or self.context:get_width()
     local virt_text = { self.dash.icon:rep(width), self.dash.highlight }
 
-    local start_row, end_row = self.info.start_row, self.info.end_row - 1
+    local start_row, end_row = self.node.start_row, self.node.end_row - 1
     self.marks:add('dash', start_row, 0, {
         virt_text = { virt_text },
         virt_text_pos = 'overlay',

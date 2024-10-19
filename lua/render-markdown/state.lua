@@ -82,7 +82,7 @@ function M.get(buf)
     if config == nil then
         local buf_config = M.default_buffer_config()
         for _, name in ipairs({ 'buftype', 'filetype' }) do
-            local override = M.config.overrides[name][util.get_buf(buf, name)]
+            local override = M.config.overrides[name][util.get('buf', buf, name)]
             if override ~= nil then
                 buf_config = vim.tbl_deep_extend('force', buf_config, override)
             end

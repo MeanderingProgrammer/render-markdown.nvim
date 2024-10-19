@@ -1,8 +1,8 @@
 local Base = require('render-markdown.render.base')
-local Iter = require('render-markdown.core.iter')
+local Iter = require('render-markdown.lib.iter')
+local List = require('render-markdown.lib.list')
+local Str = require('render-markdown.lib.str')
 local colors = require('render-markdown.colors')
-local list = require('render-markdown.core.list')
-local str = require('render-markdown.core.str')
 
 ---@class render.md.data.Heading
 ---@field atx boolean
@@ -37,25 +37,25 @@ function Render:setup()
     end
 
     local atx, level = nil, nil
-    if self.info.type == 'setext_heading' then
-        atx, level = false, self.info:child('setext_h1_underline') ~= nil and 1 or 2
+    if self.node.type == 'setext_heading' then
+        atx, level = false, self.node:child('setext_h1_underline') ~= nil and 1 or 2
     else
-        atx, level = true, str.width(self.info.text)
+        atx, level = true, Str.width(self.node.text)
     end
 
     self.data = {
         atx = atx,
         level = level,
-        icon = list.cycle(self.heading.icons, level),
-        sign = list.cycle(self.heading.signs, level),
-        foreground = list.clamp(self.heading.foregrounds, level),
-        background = list.clamp(self.heading.backgrounds, level),
-        width = list.clamp(self.heading.width, level) or 'full',
-        left_margin = list.clamp(self.heading.left_margin, level) or 0,
-        left_pad = list.clamp(self.heading.left_pad, level) or 0,
-        right_pad = list.clamp(self.heading.right_pad, level) or 0,
-        min_width = list.clamp(self.heading.min_width, level) or 0,
-        end_row = self.info.end_row + (atx and 1 or 0),
+        icon = List.cycle(self.heading.icons, level),
+        sign = List.cycle(self.heading.signs, level),
+        foreground = List.clamp(self.heading.foregrounds, level),
+        background = List.clamp(self.heading.backgrounds, level),
+        width = List.clamp(self.heading.width, level) or 'full',
+        left_margin = List.clamp(self.heading.left_margin, level) or 0,
+        left_pad = List.clamp(self.heading.left_pad, level) or 0,
+        right_pad = List.clamp(self.heading.right_pad, level) or 0,
+        min_width = List.clamp(self.heading.min_width, level) or 0,
+        end_row = self.node.end_row + (atx and 1 or 0),
     }
 
     return true
@@ -88,41 +88,41 @@ function Render:icon()
             return 0
         end
         local added = true
-        for row = self.info.start_row, self.data.end_row - 1 do
+        for row = self.node.start_row, self.data.end_row - 1 do
             added = added
-                and self.marks:add('head_icon', row, self.info.start_col, {
+                and self.marks:add('head_icon', row, self.node.start_col, {
                     end_row = row,
-                    end_col = self.info.end_col,
-                    virt_text = { { row == self.info.start_row and icon or str.pad(str.width(icon)), highlight } },
+                    end_col = self.node.end_col,
+                    virt_text = { { row == self.node.start_row and icon or Str.pad(Str.width(icon)), highlight } },
                     virt_text_pos = 'inline',
                 })
         end
-        return added and str.width(icon) or 0
+        return added and Str.width(icon) or 0
     end
 
     -- For atx headings available width is level + 1 - concealed, where level = number of
     -- `#` characters, one is added to account for the space after the last `#` but before
     -- the  heading title, and concealed text is subtracted since that space is not usable
-    local width = self.data.level + 1 - self.context:concealed(self.info)
+    local width = self.data.level + 1 - self.context:concealed(self.node)
     if icon == nil or #highlight == 0 then
         return width
     end
 
-    local padding = width - str.width(icon)
+    local padding = width - Str.width(icon)
     if self.heading.position == 'inline' or padding < 0 then
-        local added = self.marks:add('head_icon', self.info.start_row, self.info.start_col, {
-            end_row = self.info.end_row,
-            end_col = self.info.end_col,
+        local added = self.marks:add('head_icon', self.node.start_row, self.node.start_col, {
+            end_row = self.node.end_row,
+            end_col = self.node.end_col,
             virt_text = { { icon, highlight } },
             virt_text_pos = 'inline',
             conceal = '',
         })
-        return added and str.width(icon) + 1 or width
+        return added and Str.width(icon) + 1 or width
     else
-        self.marks:add('head_icon', self.info.start_row, self.info.start_col, {
-            end_row = self.info.end_row,
-            end_col = self.info.end_col,
-            virt_text = { { str.pad(padding) .. icon, highlight } },
+        self.marks:add('head_icon', self.node.start_row, self.node.start_col, {
+            end_row = self.node.end_row,
+            end_col = self.node.end_col,
+            virt_text = { { Str.pad(padding) .. icon, highlight } },
             virt_text_pos = 'overlay',
         })
         return width
@@ -135,9 +135,9 @@ end
 function Render:width(icon_width)
     local text_width = nil
     if self.data.atx then
-        text_width = self.context:width(self.info:sibling('inline'))
+        text_width = self.context:width(self.node:sibling('inline'))
     else
-        text_width = vim.fn.max(Iter.list.map(self.info:lines(), str.width))
+        text_width = vim.fn.max(Iter.list.map(self.node:lines(), Str.width))
     end
     local width = icon_width + text_width
     local left_padding = self.context:resolve_offset(self.data.left_pad, width)
@@ -161,9 +161,9 @@ function Render:background(width)
     local win_col, padding = 0, {}
     if self.data.width == 'block' then
         win_col = width.margin + width.content + self:indent(self.data.level)
-        table.insert(padding, { str.pad(vim.o.columns * 2), self.config.padding.highlight })
+        table.insert(padding, { Str.pad(vim.o.columns * 2), self.config.padding.highlight })
     end
-    for row = self.info.start_row, self.data.end_row - 1 do
+    for row = self.node.start_row, self.data.end_row - 1 do
         self.marks:add('head_background', row, 0, {
             end_row = row + 1,
             hl_group = highlight,
@@ -203,7 +203,7 @@ function Render:border(width)
             if highlight ~= nil then
                 return { icon:rep(size), highlight }
             else
-                return { str.pad(size), self.config.padding.highlight }
+                return { Str.pad(size), self.config.padding.highlight }
             end
         end
         return {
@@ -215,13 +215,13 @@ function Render:border(width)
     end
 
     local line_above = line(self.heading.above)
-    if not virtual and self:empty_line('above') and self.info.start_row - 1 ~= self.context.last_heading then
-        self.marks:add('head_border', self.info.start_row - 1, 0, {
+    if not virtual and self:empty_line('above') and self.node.start_row - 1 ~= self.context.last_heading then
+        self.marks:add('head_border', self.node.start_row - 1, 0, {
             virt_text = line_above,
             virt_text_pos = 'overlay',
         })
     else
-        self.marks:add(false, self.info.start_row, 0, {
+        self.marks:add(false, self.node.start_row, 0, {
             virt_lines = { self:indent_virt_line(line_above, self.data.level) },
             virt_lines_above = true,
         })
@@ -229,13 +229,13 @@ function Render:border(width)
 
     local line_below = line(self.heading.below)
     if not virtual and self:empty_line('below') then
-        self.marks:add('head_border', self.info.end_row + 1, 0, {
+        self.marks:add('head_border', self.node.end_row + 1, 0, {
             virt_text = line_below,
             virt_text_pos = 'overlay',
         })
-        self.context.last_heading = self.info.end_row + 1
+        self.context.last_heading = self.node.end_row + 1
     else
-        self.marks:add(false, self.info.end_row, 0, {
+        self.marks:add(false, self.node.end_row, 0, {
             virt_lines = { self:indent_virt_line(line_below, self.data.level) },
         })
     end
@@ -245,8 +245,8 @@ end
 ---@param position 'above'|'below'
 ---@return boolean
 function Render:empty_line(position)
-    local line = self.info:line(position, 1)
-    return line ~= nil and str.width(line) == 0
+    local line = self.node:line(position, 1)
+    return line ~= nil and Str.width(line) == 0
 end
 
 ---@private
@@ -257,13 +257,13 @@ function Render:left_pad(width)
     ---@param highlight? string
     local function append(size, highlight)
         if size > 0 then
-            table.insert(virt_text, { str.pad(size), highlight or self.config.padding.highlight })
+            table.insert(virt_text, { Str.pad(size), highlight or self.config.padding.highlight })
         end
     end
     append(width.margin, nil)
     append(width.padding, self.data.background)
     if #virt_text > 0 then
-        for row = self.info.start_row, self.data.end_row - 1 do
+        for row = self.node.start_row, self.data.end_row - 1 do
             self.marks:add(false, row, 0, {
                 priority = 0,
                 virt_text = virt_text,
@@ -278,13 +278,13 @@ function Render:conceal_underline()
     if self.data.atx then
         return
     end
-    local info = self.info:child(string.format('setext_h%d_underline', self.data.level))
-    if info == nil then
+    local node = self.node:child(string.format('setext_h%d_underline', self.data.level))
+    if node == nil then
         return
     end
-    self.marks:add(true, info.start_row, info.start_col, {
-        end_row = info.end_row,
-        end_col = info.end_col,
+    self.marks:add(true, node.start_row, node.start_col, {
+        end_row = node.end_row,
+        end_col = node.end_col,
         conceal = '',
     })
 end

@@ -19,7 +19,7 @@ function Render:setup()
         return false
     end
 
-    local callout = self.context:get_callout(self.info)
+    local callout = self.context:get_callout(self.node)
 
     self.data = {
         query = treesitter.parse(
@@ -40,19 +40,19 @@ function Render:setup()
 end
 
 function Render:render()
-    self.context:query(self.info:get_node(), self.data.query, function(capture, info)
+    self.context:query(self.node:get(), self.data.query, function(capture, node)
         assert(capture == 'quote_marker', 'Unhandled quote capture: ' .. capture)
-        self:quote_marker(info)
+        self:quote_marker(node)
     end)
 end
 
 ---@private
----@param info render.md.NodeInfo
-function Render:quote_marker(info)
-    self.marks:add('quote', info.start_row, info.start_col, {
-        end_row = info.end_row,
-        end_col = info.end_col,
-        virt_text = { { info.text:gsub('>', self.data.icon), self.data.highlight } },
+---@param node render.md.Node
+function Render:quote_marker(node)
+    self.marks:add('quote', node.start_row, node.start_col, {
+        end_row = node.end_row,
+        end_col = node.end_col,
+        virt_text = { { node.text:gsub('>', self.data.icon), self.data.highlight } },
         virt_text_pos = 'overlay',
         virt_text_repeat_linebreak = self.data.repeat_linebreak,
     })

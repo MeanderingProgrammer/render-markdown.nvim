@@ -31,7 +31,7 @@ function M.setup()
             for _, win in ipairs(vim.v.event.windows) do
                 local buf = vim.fn.winbufnr(win)
                 if vim.tbl_contains(buffers, buf) then
-                    ui.debounce_update(buf, win, args.event, true)
+                    ui.update(buf, win, args.event, true)
                 end
             end
         end,
@@ -41,10 +41,10 @@ end
 ---@param enabled boolean
 function M.set_all(enabled)
     -- Attempt to attach current buffer in case this is from a lazy load
-    M.attach(vim.api.nvim_get_current_buf())
+    M.attach(util.current('buf'))
     state.enabled = enabled
     for _, buf in ipairs(buffers) do
-        ui.debounce_update(buf, vim.fn.bufwinid(buf), 'UserCommand', true)
+        ui.update(buf, vim.fn.bufwinid(buf), 'UserCommand', true)
     end
 end
 
@@ -58,7 +58,7 @@ function M.attach(buf)
     local config = state.get(buf)
     state.on.attach(buf)
 
-    local events = { 'BufWinEnter', 'BufLeave', 'CursorHold', 'CursorMoved', 'WinScrolled' }
+    local events = { 'BufWinEnter', 'BufLeave', 'CmdlineChanged', 'CursorHold', 'CursorMoved', 'WinScrolled' }
     local change_events = { 'DiffUpdated', 'ModeChanged', 'TextChanged' }
     if config:render('i') then
         vim.list_extend(events, { 'CursorHoldI', 'CursorMovedI' })
@@ -72,7 +72,7 @@ function M.attach(buf)
                 return
             end
             local event, win = args.event, vim.api.nvim_get_current_win()
-            ui.debounce_update(buf, win, event, vim.tbl_contains(change_events, event))
+            ui.update(buf, win, event, vim.tbl_contains(change_events, event))
         end,
     })
 end
@@ -90,7 +90,7 @@ function M.should_attach(buf)
         return false
     end
 
-    local file_type, file_types = util.get_buf(buf, 'filetype'), state.file_types
+    local file_type, file_types = util.get('buf', buf, 'filetype'), state.file_types
     if not vim.tbl_contains(file_types, file_type) then
         local reason = string.format('%s /∈ %s', file_type, vim.inspect(file_types))
         log.buf('info', log_name, buf, 'skip', 'file type', reason)

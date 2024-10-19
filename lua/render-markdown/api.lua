@@ -1,5 +1,6 @@
 local manager = require('render-markdown.manager')
 local state = require('render-markdown.state')
+local util = require('render-markdown.core.util')
 
 ---@class render.md.Api
 local M = {}
@@ -31,7 +32,7 @@ function M.contract()
 end
 
 function M.debug()
-    local buf, win = vim.api.nvim_get_current_buf(), vim.api.nvim_get_current_win()
+    local buf, win = util.current('buf'), util.current('win')
     local row, marks = require('render-markdown.core.ui').get_row_marks(buf, win)
     require('render-markdown.debug.marks').debug(row, marks)
 end

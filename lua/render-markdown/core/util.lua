@@ -50,45 +50,58 @@ end
 ---@param win integer
 ---@return integer?
 function M.row(buf, win)
-    if vim.api.nvim_get_current_buf() ~= buf then
+    if M.current('buf') ~= buf then
         return nil
     end
     return vim.api.nvim_win_get_cursor(win)[1] - 1
 end
 
----@param win integer
----@param name string
----@return render.md.option.Value
-function M.get_win(win, name)
-    return vim.api.nvim_get_option_value(name, { scope = 'local', win = win })
-end
-
----@param win integer
----@param name string
----@param value render.md.option.Value
-function M.set_win(win, name, value)
-    if value ~= M.get_win(win, name) then
-        vim.api.nvim_set_option_value(name, value, { scope = 'local', win = win })
+---@param variant 'buf'|'win'
+---@return integer
+function M.current(variant)
+    if variant == 'buf' then
+        return vim.api.nvim_get_current_buf()
+    else
+        return vim.api.nvim_get_current_win()
     end
 end
 
----@param buf integer
+---@param variant 'buf'|'win'
+---@param id integer
 ---@param name string
 ---@return render.md.option.Value
-function M.get_buf(buf, name)
-    return vim.api.nvim_get_option_value(name, { buf = buf })
+function M.get(variant, id, name)
+    if variant == 'buf' then
+        return vim.api.nvim_get_option_value(name, { buf = id })
+    else
+        return vim.api.nvim_get_option_value(name, { scope = 'local', win = id })
+    end
+end
+
+---@param variant 'buf'|'win'
+---@param id integer
+---@param name string
+---@param value render.md.option.Value
+function M.set(variant, id, name, value)
+    if value ~= M.get(variant, id, name) then
+        if variant == 'buf' then
+            vim.api.nvim_set_option_value(name, value, { buf = id })
+        else
+            vim.api.nvim_set_option_value(name, value, { scope = 'local', win = id })
+        end
+    end
 end
 
 ---@param win integer
 ---@return vim.fn.winsaveview.ret
-function M.win_view(win)
+function M.view(win)
     return vim.api.nvim_win_call(win, vim.fn.winsaveview)
 end
 
 ---@param win integer
 ---@param row integer
 ---@return boolean
-function M.win_visible(win, row)
+function M.row_visible(win, row)
     return vim.api.nvim_win_call(win, function()
         return vim.fn.foldclosed(row) == -1
     end)
@@ -96,7 +109,7 @@ end
 
 ---@param win integer
 ---@return integer
-function M.win_textoff(win)
+function M.textoff(win)
     local infos = vim.fn.getwininfo(win)
     return #infos == 1 and infos[1].textoff or 0
 end

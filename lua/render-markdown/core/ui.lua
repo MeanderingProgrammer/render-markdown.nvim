@@ -1,7 +1,7 @@
 local BufferState = require('render-markdown.core.buffer_state')
 local Context = require('render-markdown.core.context')
 local Extmark = require('render-markdown.core.extmark')
-local Iter = require('render-markdown.core.iter')
+local Iter = require('render-markdown.lib.iter')
 local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
 local util = require('render-markdown.core.util')
@@ -73,7 +73,7 @@ end
 ---@param win integer
 ---@param event string
 ---@param change boolean
-function M.debounce_update(buf, win, event, change)
+function M.update(buf, win, event, change)
     log.buf('info', 'update', buf, string.format('event %s', event), string.format('change %s', change))
     if not util.valid(buf, win) then
         return
@@ -85,7 +85,7 @@ function M.debounce_update(buf, win, event, change)
     local parse = change or not Context.contains_range(buf, win)
 
     local update = function()
-        M.update(buf, win, parse)
+        M.run_update(buf, win, parse)
     end
     if parse and state.log_runtime then
         update = util.wrap_runtime(update)
@@ -102,7 +102,7 @@ end
 ---@param buf integer
 ---@param win integer
 ---@param parse boolean
-function M.update(buf, win, parse)
+function M.run_update(buf, win, parse)
     if not util.valid(buf, win) then
         return
     end
@@ -113,7 +113,7 @@ function M.update(buf, win, parse)
 
     log.buf('info', 'state', buf, next_state)
     for name, value in pairs(config.win_options) do
-        util.set_win(win, name, value[next_state])
+        util.set('win', win, name, value[next_state])
     end
 
     if next_state == 'rendered' then
@@ -147,10 +147,10 @@ function M.next_state(config, win, mode)
     if not config:render(mode) then
         return 'default'
     end
-    if util.get_win(win, 'diff') then
+    if util.get('win', win, 'diff') then
         return 'default'
     end
-    if util.win_view(win).leftcol ~= 0 then
+    if util.view(win).leftcol ~= 0 then
         return 'default'
     end
     return 'rendered'

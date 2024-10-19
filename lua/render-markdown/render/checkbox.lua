@@ -1,5 +1,5 @@
 local Base = require('render-markdown.render.base')
-local str = require('render-markdown.core.str')
+local Str = require('render-markdown.lib.str')
 
 ---@class render.md.render.Checkbox: render.md.Renderer
 ---@field private checkbox render.md.CheckboxComponent
@@ -18,7 +18,7 @@ function Render:setup()
         task_list_marker_unchecked = checkbox.unchecked,
         task_list_marker_checked = checkbox.checked,
     }
-    self.checkbox = type_mapping[self.info.type]
+    self.checkbox = type_mapping[self.node.type]
     if self.checkbox == nil then
         return false
     end
@@ -36,10 +36,10 @@ end
 ---@private
 function Render:icon()
     local icon = self.checkbox.icon
-    local text = self.inline and icon or str.pad_to(self.info.text, icon) .. icon
-    self.marks:add('check_icon', self.info.start_row, self.info.start_col, {
-        end_row = self.info.end_row,
-        end_col = self.info.end_col,
+    local text = self.inline and icon or Str.pad_to(self.node.text, icon) .. icon
+    self.marks:add('check_icon', self.node.start_row, self.node.start_col, {
+        end_row = self.node.end_row,
+        end_col = self.node.end_col,
         virt_text = { { text, self.checkbox.highlight } },
         virt_text_pos = self.inline and 'inline' or 'overlay',
         conceal = self.inline and '' or nil,
