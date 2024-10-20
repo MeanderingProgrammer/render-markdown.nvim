@@ -71,7 +71,9 @@ function M.attach(buf)
             if not state.enabled then
                 return
             end
-            local event, win = args.event, vim.api.nvim_get_current_win()
+            local win, wins = util.current('win'), vim.fn.win_findbuf(buf)
+            win = vim.tbl_contains(wins, win) and win or wins[1]
+            local event = args.event
             ui.update(buf, win, event, vim.tbl_contains(change_events, event))
         end,
     })
