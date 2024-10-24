@@ -4,7 +4,7 @@
 
 [ISSUE #6](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/6)
 
-`LaTeX` formula evaluations are placed above text rather than overlayed.
+`LaTeX` formula evaluations are placed above text rather than overlaid.
 
 A way around this is to use a separate plugin for `LaTeX` and disable that feature
 in this plugin. Different plugins will have different setups, below are some examples:

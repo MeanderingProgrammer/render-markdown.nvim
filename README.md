@@ -22,7 +22,7 @@ Plugin to improve viewing Markdown files in Neovim
 - Modal rendering: changes between `rendered` and `raw` view based on mode
 - Anti-conceal: hides virtual text added by this plugin on cursor line
 - Window options: changes option values between `rendered` and `raw` view
-- Large files: only renders visisble range, can be entirely disabled based on size
+- Large files: only renders visible range, can be entirely disabled based on size
 - Custom rendering: provides extension point where user can add anything
 - Renders the following `markdown` components out of the box:
   - Headings: icon, color, border, padding [^1], width
@@ -164,7 +164,7 @@ require('render-markdown').setup({
         },
     },
     -- Vim modes that will show a rendered view of the markdown file
-    -- All other modes will be uneffected by this plugin
+    -- All other modes will be unaffected by this plugin
     render_modes = { 'n', 'c' },
     anti_conceal = {
         -- This enables hiding any added text on the line the cursor is on
@@ -241,9 +241,9 @@ require('render-markdown').setup({
         -- Minimum width to use for headings when width is 'block'
         -- Can also be a list of integers in which case the 'level' is used to index into the list using a clamp
         min_width = 0,
-        -- Determins if a border is added above and below headings
+        -- Determines if a border is added above and below headings
         border = false,
-        -- Alway use virtual lines for heading borders instead of attempting to use empty lines
+        -- Always use virtual lines for heading borders instead of attempting to use empty lines
         border_virtual = false,
         -- Highlight the start of the border using the foreground highlight
         border_prefix = false,
@@ -320,7 +320,7 @@ require('render-markdown').setup({
         right_pad = 0,
         -- Minimum width to use for code blocks when width is 'block'
         min_width = 0,
-        -- Determins how the top / bottom of code block are rendered:
+        -- Determines how the top / bottom of code block are rendered:
         --  thick: use the same highlight as the code body
         --  thin:  when lines are empty overlay the above & below icons
         border = 'thin',
@@ -383,7 +383,7 @@ require('render-markdown').setup({
         checked = {
             -- Replaces '[x]' of 'task_list_marker_checked'
             icon = '󰱒 ',
-            -- Highligh for the checked icon
+            -- Highlight for the checked icon
             highlight = 'RenderMarkdownChecked',
             -- Highlight for item associated with checked checkbox
             scope_highlight = nil,
@@ -447,7 +447,7 @@ require('render-markdown').setup({
             '└', '┴', '┘',
             '│', '─',
         },
-        -- Gets placed in delimiter row for each column, position is based on alignmnet
+        -- Gets placed in delimiter row for each column, position is based on alignment
         alignment_indicator = '━',
         -- Highlight for table heading, delimiter, and the line above
         head = 'RenderMarkdownTableHead',
@@ -633,9 +633,9 @@ require('render-markdown').setup({
         -- Minimum width to use for headings when width is 'block'
         -- Can also be a list of integers in which case the 'level' is used to index into the list using a clamp
         min_width = 0,
-        -- Determins if a border is added above and below headings
+        -- Determines if a border is added above and below headings
         border = false,
-        -- Alway use virtual lines for heading borders instead of attempting to use empty lines
+        -- Always use virtual lines for heading borders instead of attempting to use empty lines
         border_virtual = false,
         -- Highlight the start of the border using the foreground highlight
         border_prefix = false,
@@ -742,7 +742,7 @@ require('render-markdown').setup({
         right_pad = 0,
         -- Minimum width to use for code blocks when width is 'block'
         min_width = 0,
-        -- Determins how the top / bottom of code block are rendered:
+        -- Determines how the top / bottom of code block are rendered:
         --  thick: use the same highlight as the code body
         --  thin:  when lines are empty overlay the above & below icons
         border = 'thin',
@@ -850,7 +850,7 @@ require('render-markdown').setup({
         checked = {
             -- Replaces '[x]' of 'task_list_marker_checked'
             icon = '󰱒 ',
-            -- Highligh for the checked icon
+            -- Highlight for the checked icon
             highlight = 'RenderMarkdownChecked',
             -- Highlight for item associated with checked checkbox
             scope_highlight = nil,
@@ -944,7 +944,7 @@ require('render-markdown').setup({
             '└', '┴', '┘',
             '│', '─',
         },
-        -- Gets placed in delimiter row for each column, position is based on alignmnet
+        -- Gets placed in delimiter row for each column, position is based on alignment
         alignment_indicator = '━',
         -- Highlight for table heading, delimiter, and the line above
         head = 'RenderMarkdownTableHead',
