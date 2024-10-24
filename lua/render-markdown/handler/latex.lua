@@ -30,6 +30,10 @@ function M.parse(root, buf)
     local raw_expression = cache[node.text]
     if raw_expression == nil then
         raw_expression = vim.fn.system(latex.converter, node.text)
+        if vim.v.shell_error == 1 then
+            log.add('error', latex.converter, raw_expression)
+            raw_expression = 'error'
+        end
         cache[node.text] = raw_expression
     end
 
