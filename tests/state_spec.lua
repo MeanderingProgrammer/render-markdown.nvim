@@ -86,7 +86,7 @@ describe('state', function()
             prefix
                 .. '.render_modes: expected string list or type { "boolean" }, got '
                 .. tostring(int_render_modes)
-                .. '. Info: Index 1 is number',
+                .. '. Info: [1] is number',
         }, validate({ render_modes = int_render_modes }))
 
         eq(

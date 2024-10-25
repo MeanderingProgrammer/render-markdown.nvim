@@ -110,7 +110,7 @@ local M = {}
 
 ---@class (exact) render.md.UserBullet
 ---@field public enabled? boolean
----@field public icons? string[]
+---@field public icons? (string|string[])[]
 ---@field public left_pad? integer
 ---@field public right_pad? integer
 ---@field public highlight? string

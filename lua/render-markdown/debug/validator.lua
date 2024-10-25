@@ -79,7 +79,7 @@ function Spec:list(keys, list_type, input_types)
         elseif type(v) == 'table' then
             for i, item in ipairs(v) do
                 if type(item) ~= list_type then
-                    return false, string.format('Index %d is %s', i, type(item))
+                    return false, string.format('[%d] is %s', i, type(item))
                 end
             end
             return true
@@ -87,6 +87,34 @@ function Spec:list(keys, list_type, input_types)
             return false
         end
     end, list_type .. ' list' .. suffix)
+end
+
+---@param keys string|string[]
+---@param list_type type
+---@param input_types? type|type[]
+---@return render.md.debug.ValidatorSpec
+function Spec:list_or_list_of_list(keys, list_type, input_types)
+    local types, suffix = self:handle_types(input_types)
+    return self:add(keys, function(v)
+        if vim.tbl_contains(types, type(v)) then
+            return true
+        elseif type(v) == 'table' then
+            for i, item in ipairs(v) do
+                if type(item) == 'table' then
+                    for j, nested in ipairs(item) do
+                        if type(nested) ~= list_type then
+                            return false, string.format('[%d][%d] is %s', i, j, type(nested))
+                        end
+                    end
+                elseif type(item) ~= list_type then
+                    return false, string.format('[%d] is %s', i, type(item))
+                end
+            end
+            return true
+        else
+            return false
+        end
+    end, list_type .. ' list or list of list' .. suffix)
 end
 
 ---@param keys string|string[]
@@ -103,7 +131,7 @@ function Spec:one_or_list_of(keys, values, input_types)
         elseif type(v) == 'table' then
             for i, item in ipairs(v) do
                 if not vim.tbl_contains(values, item) then
-                    return false, string.format('Index %d is %s', i, item)
+                    return false, string.format('[%d] is %s', i, item)
                 end
             end
             return true

@@ -2,6 +2,8 @@ import subprocess
 from argparse import ArgumentParser
 from pathlib import Path
 
+from PIL import Image
+
 INFO: dict[str, tuple[int, str]] = dict(
     heading_code=(550, "## Heading 2"),
     list_table=(550, ""),
@@ -12,31 +14,58 @@ INFO: dict[str, tuple[int, str]] = dict(
 
 
 def main(name: str) -> None:
-    in_file = Path(f"demo/{name}.md")
-    assert in_file.exists()
+    file = Path(f"demo/{name}.md")
+    assert file.exists()
 
-    out_file = Path(f"demo/{name}.gif")
-    if out_file.exists():
-        out_file.unlink()
+    create_gif(name, file)
+    create_screenshot(name)
+
+
+def create_gif(name: str, file: Path) -> None:
+    gif = Path(f"demo/{name}.gif")
+    if gif.exists():
+        gif.unlink()
 
     height, content = INFO[name]
 
     tape = Path("demo/demo.tape")
-    tape.write_text(tape_content(in_file, out_file, height, content))
+    tape.write_text(tape_content(file, gif, height, content))
     result = subprocess.run(["vhs", tape])
     assert result.returncode == 0
     tape.unlink()
 
 
-def tape_content(in_file: Path, out_file: Path, height: int, to_write: str) -> str:
-    content = Path("demo/format.tape").read_text()
-    content = content.replace("INPUT", str(in_file))
-    content = content.replace("OUTPUT", str(out_file))
-    content = content.replace("WIDTH", str(550))
-    content = content.replace("HEIGHT", str(height))
-    content = content.replace("WRITE", get_write(to_write))
-    content = content.replace("MOVE", get_move(in_file))
-    return content
+def create_screenshot(name: str) -> None:
+    screenshot = Path(f"demo/{name}.png")
+    if screenshot.exists():
+        screenshot.unlink()
+
+    default, rendered = Path("default.png"), Path("rendered.png")
+    assert default.exists() and rendered.exists()
+
+    left, right = Image.open(default), Image.open(rendered)
+
+    mode, width, height = left.mode, left.width, left.height
+    assert mode == right.mode and width == right.width and height == right.height
+
+    combined = Image.new(mode, (2 * width, height))
+    combined.paste(left, (0, 0))
+    combined.paste(right, (width, 0))
+    combined.save(screenshot)
+
+    default.unlink()
+    rendered.unlink()
+
+
+def tape_content(file: Path, gif: Path, height: int, content: str) -> str:
+    result = Path("demo/format.tape").read_text()
+    result = result.replace("INPUT", str(file))
+    result = result.replace("OUTPUT", str(gif))
+    result = result.replace("WIDTH", str(550))
+    result = result.replace("HEIGHT", str(height))
+    result = result.replace("WRITE", get_write(content))
+    result = result.replace("MOVE", get_move(file))
+    return result
 
 
 def get_write(content: str) -> str:
@@ -49,10 +78,10 @@ def get_write(content: str) -> str:
     return "\n".join(write)
 
 
-def get_move(in_file: Path) -> str:
+def get_move(file: Path) -> str:
     move: list[str] = []
-    # Get lines so we know how to scroll down, account for starting on first line
-    lines: list[str] = Path(in_file).read_text().splitlines()[1:]
+    # Get lines so we know how to scroll down, account for starting on second line
+    lines: list[str] = file.read_text().splitlines()[2:]
     for line in lines:
         skip = ("    ", "def", "if")
         duration = 0.1 if line == "" or line.startswith(skip) else 0.75

@@ -3,7 +3,7 @@ local List = require('render-markdown.lib.list')
 local Str = require('render-markdown.lib.str')
 
 ---@class render.md.data.ListMarker
----@field leading_spaces integer
+---@field spaces integer
 ---@field checkbox? render.md.CustomCheckbox
 
 ---@class render.md.render.ListMarker: render.md.Renderer
@@ -20,7 +20,7 @@ function Render:setup()
         -- List markers from tree-sitter should have leading spaces removed, however there are edge
         -- cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
         -- As a result we account for leading spaces here, can remove if this gets fixed upstream
-        leading_spaces = Str.spaces('start', self.node.text),
+        spaces = Str.spaces('start', self.node.text),
         checkbox = self.context:get_checkbox(self.node),
     }
 
@@ -62,7 +62,7 @@ end
 
 ---@private
 function Render:hide_marker()
-    self.marks:add('check_icon', self.node.start_row, self.node.start_col + self.data.leading_spaces, {
+    self.marks:add('check_icon', self.node.start_row, self.node.start_col + self.data.spaces, {
         end_row = self.node.end_row,
         end_col = self.node.end_col,
         conceal = '',
@@ -81,14 +81,27 @@ end
 ---@param level integer
 function Render:icon(level)
     local icon = List.cycle(self.bullet.icons, level)
+    if type(icon) == 'table' then
+        local item = self.node:parent('list_item')
+        if item == nil then
+            return
+        end
+        icon = List.clamp(icon, item:sibling_count('list_item'))
+    end
     if icon == nil then
         return
+    end
+    local text = Str.pad(self.data.spaces) .. icon
+    local position, conceal = 'overlay', nil
+    if Str.width(text) > Str.width(self.node.text) then
+        position, conceal = 'inline', ''
     end
     self.marks:add('bullet', self.node.start_row, self.node.start_col, {
         end_row = self.node.end_row,
         end_col = self.node.end_col,
-        virt_text = { { Str.pad(self.data.leading_spaces) .. icon, self.bullet.highlight } },
-        virt_text_pos = 'overlay',
+        virt_text = { { text, self.bullet.highlight } },
+        virt_text_pos = position,
+        conceal = conceal,
     })
 end
 

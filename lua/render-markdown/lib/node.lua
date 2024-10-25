@@ -103,6 +103,17 @@ function Node:sibling(target)
     return nil
 end
 
+---@param target string
+---@return integer
+function Node:sibling_count(target)
+    local count, sibling = 1, self.node:prev_sibling()
+    while sibling ~= nil and sibling:type() == target do
+        count = count + 1
+        sibling = sibling:prev_sibling()
+    end
+    return count
+end
+
 ---@param target_type string
 ---@param target_row? integer
 ---@return render.md.Node?

@@ -17,8 +17,11 @@ Sleep 2s
 
 WRITE
 
-Type "i" Sleep 1s
-Escape Sleep 1s
+Down
+Type "i" Sleep 0.5s
+Screenshot default.png Sleep 0.5s
+Escape Sleep 0.5s
+Screenshot rendered.png Sleep 0.5s
 
 MOVE
 
@@ -26,7 +29,7 @@ Type "i" Sleep 1s
 Escape Sleep 1s
 
 # Close without editing
-Type ":q!"
 Hide
+Type ":q!"
 Enter
 Sleep 100ms
