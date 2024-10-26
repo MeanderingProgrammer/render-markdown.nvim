@@ -44,11 +44,7 @@ function Handler.new(buf)
                 (plus_metadata)
             ] @dash
 
-            [
-                (list_marker_plus)
-                (list_marker_minus)
-                (list_marker_star)
-            ] @list_marker
+            (list_item) @list_item
 
             [
                 (task_list_marker_unchecked)
@@ -65,7 +61,7 @@ function Handler.new(buf)
         code = require('render-markdown.render.code'),
         dash = require('render-markdown.render.dash'),
         heading = require('render-markdown.render.heading'),
-        list_marker = require('render-markdown.render.list_marker'),
+        list_item = require('render-markdown.render.list_item'),
         paragraph = require('render-markdown.render.paragraph'),
         quote = require('render-markdown.render.quote'),
         section = require('render-markdown.render.section'),

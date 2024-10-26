@@ -111,6 +111,7 @@ local M = {}
 ---@class (exact) render.md.UserBullet
 ---@field public enabled? boolean
 ---@field public icons? (string|string[])[]
+---@field public ordered_icons? (string|string[])[]
 ---@field public left_pad? integer
 ---@field public right_pad? integer
 ---@field public highlight? string
@@ -471,6 +472,10 @@ M.default_config = {
         -- The 'level' is used to index into the list using a cycle
         -- If the item is a 'checkbox' a conceal is used to hide the bullet instead
         icons = { '●', '○', '◆', '◇' },
+        -- Replaces 'n.'|'n)' of 'list_item'
+        -- How deeply nested the list is determines the 'level'
+        -- The 'level' is used to index into the list using a cycle
+        ordered_icons = {},
         -- Padding to add to the left of bullet point
         left_pad = 0,
         -- Padding to add to the right of bullet point

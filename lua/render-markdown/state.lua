@@ -183,7 +183,7 @@ function M.validate()
             :type('enabled', 'boolean')
             :type({ 'left_pad', 'right_pad' }, 'number')
             :type('highlight', 'string')
-            :list_or_list_of_list('icons', 'string')
+            :list_or_list_of_list({ 'icons', 'ordered_icons' }, 'string')
             :check()
 
         get_spec('checkbox')

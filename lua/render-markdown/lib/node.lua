@@ -69,8 +69,7 @@ function Node:level_in_section(target)
     local parent, level, root = self.node:parent(), 0, nil
     while parent ~= nil and parent:type() ~= 'section' do
         if parent:type() == target then
-            level = level + 1
-            root = parent
+            level, root = level + 1, parent
         end
         parent = parent:parent()
     end
@@ -112,6 +111,13 @@ function Node:sibling_count(target)
         sibling = sibling:prev_sibling()
     end
     return count
+end
+
+---@param index integer
+---@return render.md.Node?
+function Node:child_at(index)
+    local node = self.node:named_child(index)
+    return node ~= nil and Node.new(self.buf, node) or nil
 end
 
 ---@param target_type string

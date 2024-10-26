@@ -3,6 +3,8 @@ local List = require('render-markdown.lib.list')
 local Str = require('render-markdown.lib.str')
 
 ---@class render.md.data.ListMarker
+---@field marker render.md.Node
+---@field ordered boolean
 ---@field spaces integer
 ---@field checkbox? render.md.CustomCheckbox
 
@@ -16,11 +18,18 @@ Render.__index = Render
 function Render:setup()
     self.bullet = self.config.bullet
 
+    local marker = self.node:child_at(0)
+    if marker == nil then
+        return false
+    end
+
     self.data = {
+        marker = marker,
+        ordered = vim.tbl_contains({ 'list_marker_dot', 'list_marker_parenthesis' }, marker.type),
         -- List markers from tree-sitter should have leading spaces removed, however there are edge
         -- cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
         -- As a result we account for leading spaces here, can remove if this gets fixed upstream
-        spaces = Str.spaces('start', self.node.text),
+        spaces = Str.spaces('start', marker.text),
         checkbox = self.context:get_checkbox(self.node),
     }
 
@@ -28,7 +37,7 @@ function Render:setup()
 end
 
 function Render:render()
-    if self:sibling_checkbox() then
+    if self:has_checkbox() then
         -- Hide the list marker for checkboxes rather than replacing with a bullet point
         self:hide_marker()
         self:highlight_scope()
@@ -36,25 +45,25 @@ function Render:render()
         if not self.bullet.enabled then
             return
         end
-        local level, root_list = self.node:level_in_section('list')
+        local level, root = self.node:level_in_section('list')
         self:icon(level)
-        self:padding(root_list)
+        self:padding(root)
     end
 end
 
 ---@private
 ---@return boolean
-function Render:sibling_checkbox()
+function Render:has_checkbox()
     if not self.config.checkbox.enabled then
         return false
     end
     if self.data.checkbox ~= nil then
         return true
     end
-    if self.node:sibling('task_list_marker_unchecked') ~= nil then
+    if self.data.marker:sibling('task_list_marker_unchecked') ~= nil then
         return true
     end
-    if self.node:sibling('task_list_marker_checked') ~= nil then
+    if self.data.marker:sibling('task_list_marker_checked') ~= nil then
         return true
     end
     return false
@@ -62,9 +71,10 @@ end
 
 ---@private
 function Render:hide_marker()
-    self.marks:add('check_icon', self.node.start_row, self.node.start_col + self.data.spaces, {
-        end_row = self.node.end_row,
-        end_col = self.node.end_col,
+    local node = self.data.marker
+    self.marks:add('check_icon', node.start_row, node.start_col + self.data.spaces, {
+        end_row = node.end_row,
+        end_col = node.end_col,
         conceal = '',
     })
 end
@@ -74,31 +84,29 @@ function Render:highlight_scope()
     if self.data.checkbox == nil then
         return
     end
-    self:checkbox_scope(self.data.checkbox.scope_highlight)
+    self:checkbox_scope(self.node:child('paragraph'), self.data.checkbox.scope_highlight)
 end
 
 ---@private
 ---@param level integer
 function Render:icon(level)
-    local icon = List.cycle(self.bullet.icons, level)
+    local icons = self.data.ordered and self.bullet.ordered_icons or self.bullet.icons
+    local icon = List.cycle(icons, level)
     if type(icon) == 'table' then
-        local item = self.node:parent('list_item')
-        if item == nil then
-            return
-        end
-        icon = List.clamp(icon, item:sibling_count('list_item'))
+        icon = List.clamp(icon, self.node:sibling_count('list_item'))
     end
     if icon == nil then
         return
     end
+    local node = self.data.marker
     local text = Str.pad(self.data.spaces) .. icon
     local position, conceal = 'overlay', nil
-    if Str.width(text) > Str.width(self.node.text) then
+    if Str.width(text) > Str.width(node.text) then
         position, conceal = 'inline', ''
     end
-    self.marks:add('bullet', self.node.start_row, self.node.start_col, {
-        end_row = self.node.end_row,
-        end_col = self.node.end_col,
+    self.marks:add('bullet', node.start_row, node.start_col, {
+        end_row = node.end_row,
+        end_col = node.end_col,
         virt_text = { { text, self.bullet.highlight } },
         virt_text_pos = position,
         conceal = conceal,
@@ -106,22 +114,18 @@ function Render:icon(level)
 end
 
 ---@private
----@param root_list? render.md.Node
-function Render:padding(root_list)
+---@param root? render.md.Node
+function Render:padding(root)
     if self.bullet.left_pad <= 0 and self.bullet.right_pad <= 0 then
         return
     end
-    local list_item = self.node:parent('list_item')
-    if list_item == nil then
-        return
-    end
-    local left_col = root_list ~= nil and root_list.start_col or list_item.start_col
+    local left_col = root ~= nil and root.start_col or self.node.start_col
 
-    local next_list = list_item:child('list')
-    local end_row = next_list ~= nil and next_list.start_row or list_item.end_row
+    local next_list = self.node:child('list')
+    local end_row = next_list ~= nil and next_list.start_row or self.node.end_row
 
-    for row = list_item.start_row, end_row - 1 do
-        local right_col = row == list_item.start_row and self.node.end_col - 1 or left_col
+    for row = self.node.start_row, end_row - 1 do
+        local right_col = row == self.node.start_row and self.data.marker.end_col - 1 or left_col
         self:padding_mark(row, left_col, self.bullet.left_pad)
         self:padding_mark(row, right_col, self.bullet.right_pad)
     end

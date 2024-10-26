@@ -45,13 +45,10 @@ function Base:sign(text, highlight)
 end
 
 ---@protected
+---@param paragraph render.md.Node?
 ---@param highlight? string
-function Base:checkbox_scope(highlight)
-    if highlight == nil then
-        return
-    end
-    local paragraph = self.node:sibling('paragraph')
-    if paragraph == nil then
+function Base:checkbox_scope(paragraph, highlight)
+    if paragraph == nil or highlight == nil then
         return
     end
     paragraph = paragraph:child('inline')
