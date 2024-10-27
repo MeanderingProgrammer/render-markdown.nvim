@@ -354,13 +354,13 @@ require('render-markdown').setup({
         -- Turn on / off list bullet rendering
         enabled = true,
         -- Replaces '-'|'+'|'*' of 'list_item'
-        -- How deeply nested the list is determines the 'level'
-        -- The 'level' is used to index into the list using a cycle
+        -- How deeply nested the list is determines the 'level' which is used to index into the list using a cycle
+        -- The item number in the list is used to index into the value using a clamp if the value is also a list
         -- If the item is a 'checkbox' a conceal is used to hide the bullet instead
         icons = { '●', '○', '◆', '◇' },
         -- Replaces 'n.'|'n)' of 'list_item'
-        -- How deeply nested the list is determines the 'level'
-        -- The 'level' is used to index into the list using a cycle
+        -- How deeply nested the list is determines the 'level' which is used to index into the list using a cycle
+        -- The item number in the list is used to index into the value using a clamp if the value is also a list
         ordered_icons = {},
         -- Padding to add to the left of bullet point
         left_pad = 0,
@@ -810,13 +810,13 @@ require('render-markdown').setup({
         -- Turn on / off list bullet rendering
         enabled = true,
         -- Replaces '-'|'+'|'*' of 'list_item'
-        -- How deeply nested the list is determines the 'level'
-        -- The 'level' is used to index into the list using a cycle
+        -- How deeply nested the list is determines the 'level' which is used to index into the list using a cycle
+        -- The item number in the list is used to index into the value using a clamp if the value is also a list
         -- If the item is a 'checkbox' a conceal is used to hide the bullet instead
         icons = { '●', '○', '◆', '◇' },
         -- Replaces 'n.'|'n)' of 'list_item'
-        -- How deeply nested the list is determines the 'level'
-        -- The 'level' is used to index into the list using a cycle
+        -- How deeply nested the list is determines the 'level' which is used to index into the list using a cycle
+        -- The item number in the list is used to index into the value using a clamp if the value is also a list
         ordered_icons = {},
         -- Padding to add to the left of bullet point
         left_pad = 0,

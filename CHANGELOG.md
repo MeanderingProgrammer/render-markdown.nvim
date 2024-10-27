@@ -6,6 +6,10 @@
 
 - custom checkbox scope_highlight [#207](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/207)
   [2f36ac1](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/2f36ac16df20e0c6512f14e2793f7b2ba235989c)
+- handle and log latex converter errors [34044cd](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/34044cdfcc90b87f32eb962f1fcd9119fc1a62a5)
+- bullet icons list of lists [#217](https://github.com/MeanderingProgrammer/render-markdown.nvim/discussions/217)
+  [04e75a3](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/04e75a35900d9e6bc53eb0f18e2aeee140d6c5ae)
+- icons for ordered lists [14673b0](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/14673b03963ef9bb9365474133306266fd4864f6)
 
 ### Bug Fixes
 
@@ -14,6 +18,8 @@
 - disable rendering when left column is > 0 [1871dc4](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/1871dc4ced6fd775591a63df8e4c343ebaf1a2d2)
 - skip updates when buffer in window changes [#209](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/209)
   [c6b59a2](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c6b59a263cffbd6bf463fff03b28a35ad9f1a8e6)
+- use first window if buffer is not current window [#210](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/210)
+  [5137b5e](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/5137b5e198ddff8a26f88df7000ff8ca336e6fcd)
 
 ## 7.4.0 (2024-10-16)
 
