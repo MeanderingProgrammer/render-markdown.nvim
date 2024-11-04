@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 7.5.0 (2024-11-04)
+
 ### Features
 
 - custom checkbox scope_highlight [#207](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/207)
