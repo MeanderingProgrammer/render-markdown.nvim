@@ -46,7 +46,8 @@ Plugin to improve viewing Markdown files in Neovim
 
 # Requirements
 
-- neovim `>= 0.9.0` (minimum) `>= 0.10.0` (recommended)
+- Neovim `>= 0.9.0` (minimum) `>= 0.10.0` (recommended)
+- Nerd font symbols: [more details](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Fonts)
 - [treesitter](https://github.com/nvim-treesitter/nvim-treesitter) parsers:
   - [markdown & markdown_inline](https://github.com/tree-sitter-grammars/tree-sitter-markdown):
     Used to parse `markdown` files
