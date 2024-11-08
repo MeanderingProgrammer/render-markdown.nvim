@@ -24,5 +24,5 @@ fn main() {
 - No language
 
 ```
-print('Hello, World!')
+	print('Hello, World!')
 ```

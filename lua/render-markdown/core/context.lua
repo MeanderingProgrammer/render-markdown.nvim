@@ -91,6 +91,11 @@ function Context:add_checkbox(node, checkbox)
     self.checkboxes[node.start_row] = checkbox
 end
 
+---@return integer
+function Context:tab_size()
+    return util.get('buf', self.buf, 'tabstop') --[[@as integer]]
+end
+
 ---@param node? render.md.Node
 ---@return integer
 function Context:width(node)

@@ -46,9 +46,9 @@ function Render:setup()
     end
 
     local max_width = vim.fn.max(widths)
-    local language_padding = self.context:resolve_offset(self.code.language_pad, max_width)
-    local left_padding = self.context:resolve_offset(self.code.left_pad, max_width)
-    local right_padding = self.context:resolve_offset(self.code.right_pad, max_width)
+    local language_padding = self:offset(self.code.language_pad, max_width, self.code.position)
+    local left_padding = self:offset(self.code.left_pad, max_width, 'left')
+    local right_padding = self:offset(self.code.right_pad, max_width, 'right')
     max_width = math.max(widths[1] + language_padding, left_padding + max_width + right_padding, self.code.min_width)
 
     self.data = {
@@ -56,7 +56,7 @@ function Render:setup()
         code_node = code_node,
         language_node = language_node,
         language = (language_node or {}).text,
-        margin = self.context:resolve_offset(self.code.left_margin, max_width),
+        margin = self:offset(self.code.left_margin, max_width, 'left'),
         language_padding = language_padding,
         padding = left_padding,
         max_width = max_width,
@@ -65,6 +65,24 @@ function Render:setup()
     }
 
     return true
+end
+
+---@private
+---@param offset integer
+---@param width integer
+---@param position render.md.code.Position
+---@return integer
+function Render:offset(offset, width, position)
+    if offset <= 0 then
+        return 0
+    end
+    local result = self.context:resolve_offset(offset, width)
+    if position == 'left' and self.node.text:find('\t') ~= nil then
+        local tab_size = self.context:tab_size()
+        -- Rounds to the next multiple of tab_size
+        result = math.ceil(result / tab_size) * tab_size
+    end
+    return result
 end
 
 function Render:render()
