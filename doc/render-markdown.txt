@@ -1,4 +1,4 @@
-*render-markdown.txt*         For 0.10.0         Last change: 2024 November 05
+*render-markdown.txt*         For 0.10.0         Last change: 2024 November 07
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -353,6 +353,8 @@ Default Configuration ~
             language_name = true,
             -- A list of language names for which background highlighting will be disabled
             -- Likely because that language has background highlights itself
+            -- Or a boolean to make behavior apply to all languages
+            -- Borders above & below blocks will continue to be rendered
             disable_background = { 'diff' },
             -- Width of the code block background:
             --  block: width of the code block
@@ -773,6 +775,8 @@ Code Block Configuration ~
             language_name = true,
             -- A list of language names for which background highlighting will be disabled
             -- Likely because that language has background highlights itself
+            -- Or a boolean to make behavior apply to all languages
+            -- Borders above & below blocks will continue to be rendered
             disable_background = { 'diff' },
             -- Width of the code block background:
             --  block: width of the code block

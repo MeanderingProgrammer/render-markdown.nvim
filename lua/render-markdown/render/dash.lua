@@ -16,7 +16,7 @@ end
 
 function Render:render()
     local width = self.dash.width
-    width = type(width) == 'number' and width or self.context:get_width()
+    width = type(width) == 'number' and width or vim.o.columns
     local virt_text = { self.dash.icon:rep(width), self.dash.highlight }
 
     local start_row, end_row = self.node.start_row, self.node.end_row - 1

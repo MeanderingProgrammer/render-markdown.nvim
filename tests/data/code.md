@@ -20,3 +20,9 @@ fn main() {
 
   print('world')
   ```
+
+- No language
+
+```
+print('Hello, World!')
+```

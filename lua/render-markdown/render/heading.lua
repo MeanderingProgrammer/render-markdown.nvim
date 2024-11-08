@@ -147,7 +147,7 @@ function Render:width(icon_width)
     return {
         margin = self.context:resolve_offset(self.data.left_margin, width),
         padding = left_padding,
-        content = self.data.width == 'block' and width or self.context:get_width(),
+        content = width,
     }
 end
 
@@ -161,7 +161,7 @@ function Render:background(width)
     local win_col, padding = 0, {}
     if self.data.width == 'block' then
         win_col = width.margin + width.content + self:indent(self.data.level)
-        table.insert(padding, { Str.pad(vim.o.columns * 2), self.config.padding.highlight })
+        table.insert(padding, self:padding_text(vim.o.columns * 2))
     end
     for row = self.node.start_row, self.data.end_row - 1 do
         self.marks:add('head_background', row, 0, {
@@ -203,14 +203,15 @@ function Render:border(width)
             if highlight ~= nil then
                 return { icon:rep(size), highlight }
             else
-                return { Str.pad(size), self.config.padding.highlight }
+                return self:padding_text(size)
             end
         end
+        local content_width = self.data.width == 'block' and width.content or vim.o.columns
         return {
             section(width.margin, nil),
             section(width.padding, background),
             section(prefix, foreground),
-            section(width.content - width.padding - prefix, background),
+            section(content_width - width.padding - prefix, background),
         }
     end
 
@@ -253,15 +254,12 @@ end
 ---@param width render.md.width.Heading
 function Render:left_pad(width)
     local virt_text = {}
-    ---@param size integer
-    ---@param highlight? string
-    local function append(size, highlight)
-        if size > 0 then
-            table.insert(virt_text, { Str.pad(size), highlight or self.config.padding.highlight })
-        end
+    if width.margin > 0 then
+        table.insert(virt_text, self:padding_text(width.margin))
     end
-    append(width.margin, nil)
-    append(width.padding, self.data.background)
+    if width.padding > 0 then
+        table.insert(virt_text, self:padding_text(width.padding, self.data.background))
+    end
     if #virt_text > 0 then
         for row = self.node.start_row, self.data.end_row - 1 do
             self.marks:add(false, row, 0, {

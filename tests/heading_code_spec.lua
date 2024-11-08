@@ -22,7 +22,7 @@ describe('heading_code.md', function()
         for _ = 13, 21 do
             table.insert(expected, util.code_row(row:increment(), 0))
         end
-        table.insert(expected, util.code_below(row:increment(), 0))
+        table.insert(expected, util.code_border(row:increment(), 0, false))
 
         local actual = util.get_actual_marks()
         util.marks_are_equal(expected, actual)

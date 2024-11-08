@@ -139,7 +139,7 @@ function Render:padding_mark(row, col, amount)
     if amount > 0 then
         self.marks:add(false, row, col, {
             priority = 0,
-            virt_text = { { Str.pad(amount), self.config.padding.highlight } },
+            virt_text = { self:padding_text(amount) },
             virt_text_pos = 'inline',
         })
     end

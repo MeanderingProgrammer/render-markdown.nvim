@@ -6,7 +6,7 @@ local util = require('tests.util')
 ---@param col integer
 ---@param offset integer
 ---@param left integer
----@param priority? integer
+---@param priority integer
 ---@return render.md.MarkInfo
 local function padding(row, col, offset, left, priority)
     local virt_text = {}
@@ -38,7 +38,7 @@ describe('code.md', function()
         for _ = 1, 3 do
             table.insert(expected, util.code_row(row:increment(), 0))
         end
-        table.insert(expected, util.code_below(row:increment(), 0))
+        table.insert(expected, util.code_border(row:increment(), 0, false))
 
         vim.list_extend(expected, {
             util.bullet(row:increment(2), 0, 1),
@@ -47,7 +47,7 @@ describe('code.md', function()
         for _ = 1, 2 do
             table.insert(expected, util.code_row(row:increment(), 2))
         end
-        table.insert(expected, util.code_below(row:increment(), 2))
+        table.insert(expected, util.code_border(row:increment(), 2, false))
 
         vim.list_extend(expected, {
             util.bullet(row:increment(2), 0, 1),
@@ -55,13 +55,20 @@ describe('code.md', function()
         })
         for _, col in ipairs({ 2, 0, 2 }) do
             if col == 0 then
-                table.insert(expected, padding(row:increment(), 0, 2, 0))
+                table.insert(expected, padding(row:increment(), 0, 2, 0, 1000))
                 table.insert(expected, util.code_row(row:get(), col))
             else
                 table.insert(expected, util.code_row(row:increment(), col))
             end
         end
-        table.insert(expected, util.code_below(row:increment(), 2))
+        table.insert(expected, util.code_border(row:increment(), 2, false))
+
+        vim.list_extend(expected, {
+            util.bullet(row:increment(2), 0, 1),
+            util.code_border(row:increment(2), 0, true),
+            util.code_row(row:increment(), 0),
+            util.code_border(row:increment(), 0, false),
+        })
 
         local actual = util.get_actual_marks()
         util.marks_are_equal(expected, actual)
@@ -84,7 +91,7 @@ describe('code.md', function()
                 util.code_row(row:get(), 0),
             })
         end
-        table.insert(expected, util.code_below(row:increment(), 0, 34))
+        table.insert(expected, util.code_border(row:increment(), 0, false, 34))
 
         vim.list_extend(expected, {
             util.bullet(row:increment(2), 0, 1),
@@ -92,12 +99,12 @@ describe('code.md', function()
         })
         for _ = 1, 2 do
             vim.list_extend(expected, {
-                padding(row:increment(), 2, 0, 2),
+                padding(row:increment(), 2, 0, 2, 1000),
                 util.code_hide(row:get(), 2, 20),
                 util.code_row(row:get(), 2),
             })
         end
-        table.insert(expected, util.code_below(row:increment(), 2, 20))
+        table.insert(expected, util.code_border(row:increment(), 2, false, 20))
 
         vim.list_extend(expected, {
             util.bullet(row:increment(2), 0, 1),
@@ -105,12 +112,21 @@ describe('code.md', function()
         })
         for _, col in ipairs({ 2, 0, 2 }) do
             vim.list_extend(expected, {
-                padding(row:increment(), col, 2 - col, 2),
+                padding(row:increment(), col, 2 - col, 2, 1000),
                 util.code_hide(row:get(), col, 20),
                 util.code_row(row:get(), col),
             })
         end
-        table.insert(expected, util.code_below(row:increment(), 2, 20))
+        table.insert(expected, util.code_border(row:increment(), 2, false, 20))
+
+        vim.list_extend(expected, {
+            util.bullet(row:increment(2), 0, 1),
+            util.code_border(row:increment(2), 0, true, 26),
+            padding(row:increment(), 0, 0, 2, 0),
+            util.code_hide(row:get(), 0, 26),
+            util.code_row(row:get(), 0),
+            util.code_border(row:increment(), 0, false, 26),
+        })
 
         local actual = util.get_actual_marks()
         util.marks_are_equal(expected, actual)

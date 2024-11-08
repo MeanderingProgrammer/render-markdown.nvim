@@ -47,6 +47,12 @@ function M.mode()
 end
 
 ---@param buf integer
+---@return integer[]
+function M.windows(buf)
+    return vim.fn.win_findbuf(buf)
+end
+
+---@param buf integer
 ---@param win integer
 ---@return integer?
 function M.row(buf, win)

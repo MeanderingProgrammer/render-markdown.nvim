@@ -349,7 +349,7 @@ function Render:full()
     ---@param above boolean
     ---@param chars { [1]: string, [2]: string, [3]: string }
     local function table_border(node, above, chars)
-        local line = spaces > 0 and { { Str.pad(spaces), self.config.padding.highlight } } or {}
+        local line = spaces > 0 and { self:padding_text(spaces) } or {}
         local highlight = above and self.table.head or self.table.row
         table.insert(line, { chars[1] .. table.concat(sections, chars[2]) .. chars[3], highlight })
         self.marks:add(false, node.start_row, node.start_col, {

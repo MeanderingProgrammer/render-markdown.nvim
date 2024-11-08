@@ -48,7 +48,7 @@ describe('callout.md', function()
             util.quote(row:increment(), '%s ', ok),
             util.code_row(row:get(), 2),
             util.quote(row:increment(), '%s ', ok),
-            util.code_below(row:get(), 2),
+            util.code_border(row:get(), 2, false),
         })
 
         local hint = 'Hint'

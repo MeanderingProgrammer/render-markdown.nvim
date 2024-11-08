@@ -29,9 +29,9 @@ function Context.new(buf, win, mode, offset)
     self.win = win
 
     local ranges = { Context.compute_range(self.buf, self.win, offset) }
-    for _, buf_win in ipairs(vim.fn.win_findbuf(buf)) do
-        if buf_win ~= self.win then
-            table.insert(ranges, Context.compute_range(self.buf, buf_win, offset))
+    for _, window in ipairs(util.windows(buf)) do
+        if window ~= self.win then
+            table.insert(ranges, Context.compute_range(self.buf, window, offset))
         end
     end
     self.ranges = Range.coalesce(ranges)
@@ -139,6 +139,7 @@ function Context:resolve_offset(offset, width)
     end
 end
 
+---@private
 ---@return integer
 function Context:get_width()
     if self.window_width == nil then

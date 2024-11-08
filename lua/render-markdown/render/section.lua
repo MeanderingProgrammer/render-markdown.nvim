@@ -55,7 +55,7 @@ function Render:render()
     for row = start_row, end_row do
         self.marks:add(false, row, 0, {
             priority = 0,
-            virt_text = { { Str.pad(self.indent.per_level * self.level_change), self.config.padding.highlight } },
+            virt_text = { self:padding_text(self.indent.per_level * self.level_change) },
             virt_text_pos = 'inline',
         })
     end

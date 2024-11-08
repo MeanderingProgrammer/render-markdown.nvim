@@ -265,14 +265,16 @@ end
 
 ---@param row integer
 ---@param col integer
+---@param above boolean
 ---@param width? integer
-function M.code_below(row, col, width)
+function M.code_border(row, col, above, width)
     width = (width or vim.opt.columns:get()) - col
+    local icon = above and '▄' or '▀'
     ---@type render.md.MarkInfo
     return {
         row = { row },
         col = { col },
-        virt_text = { { string.rep('▀', width), M.hl_bg_to_fg('Code') } },
+        virt_text = { { icon:rep(width), M.hl_bg_to_fg('Code') } },
         virt_text_pos = 'overlay',
     }
 end
