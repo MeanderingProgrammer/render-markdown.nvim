@@ -65,7 +65,33 @@ describe('list_table.md', function()
             util.table_border(row:get(), false, { 8, 15, 7, 6 }),
         })
 
-        local actual = util.get_actual_marks()
-        util.marks_are_equal(expected, actual)
+        util.assert_view(expected, {
+            '󰫎   1 󰲡 Unordered List',
+            '    2',
+            '    3 ● List Item 1: with 󰖟 link',
+            '    4 ● List Item 2: with inline code',
+            '    5     ○ Nested List 1 Item 1',
+            '    6     ○ Nested List 1 Item 2',
+            '    7       ◆ Nested List 2 Item 1',
+            '    8         ◇ Nested List 3 Item 1',
+            '    9           ● Nested List 4 Item 1',
+            '   10 ● List Item 3: with 󰌹 reference link',
+            '   11',
+            '󰫎  12 󰲡 Ordered List',
+            '   13',
+            '   14 1. Item 1',
+            '   15 2. Item 2',
+            '   16',
+            '󰫎  17 󰲡 Table',
+            '   18',
+            '      ┌────────┬───────────────┬───────┬──────┐',
+            '   19 │ Left   │    Center     │ Right │ None │',
+            '   20 ├━───────┼━─────────────━┼──────━┼──────┤',
+            '   21 │ Code   │     Bold      │ Plain │ Item │',
+            '   22 │ Item   │    󰌹 link     │  Item │ Item │',
+            '      └────────┴───────────────┴───────┴──────┘',
+            '   23',
+            '   24 [example]: https://example.com',
+        })
     end)
 end)

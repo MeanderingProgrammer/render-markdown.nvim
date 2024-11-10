@@ -3,6 +3,7 @@
 local stub = require('luassert.stub')
 local util = require('tests.util')
 local eq = assert.are.same
+local truthy = assert.truthy
 
 ---@param start_row integer
 ---@param end_row integer
@@ -33,15 +34,22 @@ local function set_responses(converter, responses)
     end)
     stub.new(vim.fn, 'system', function(cmd, input)
         eq(converter, cmd)
-        return responses[input]
+        local result = responses[input]
+        truthy(result, 'No output for: ' .. input)
+        return result
     end)
 end
 
 describe('latex.md', function()
     it('default', function()
+        local in_inline = '$\\sqrt{3x-1}+(1+x)^2$'
+        local out_inline = '√(3x-1)+(1+x)^2'
+        local in_block = { 'f(x,y) = x + \\sqrt{y}', 'f(x,y) = \\sqrt{y} + \\frac{x^2}{4y}' }
+        local out_block = { '    f(x,y) = x + √(y)', '    f(x,y) = √(y) + x^2/4y' }
+
         set_responses('latex2text', {
-            ['$\\sqrt{3x-1}+(1+x)^2$'] = '√(3x-1)+(1+x)^2\n',
-            ['$$\nf(x,y) = x + \\sqrt{y}\nf(x,y) = \\sqrt{y} + \\frac{x^2}{4y}\n$$'] = '\n    f(x,y) = x + √(y)\n    f(x,y) = √(y) + x^2/4y\n\n',
+            [in_inline] = out_inline .. '\n',
+            ['$$\n' .. table.concat(in_block, '\n') .. '\n$$'] = '\n' .. table.concat(out_block, '\n') .. '\n\n',
         })
         util.setup('demo/latex.md')
 
@@ -50,11 +58,22 @@ describe('latex.md', function()
         vim.list_extend(expected, util.heading(row:get(), 1))
 
         vim.list_extend(expected, {
-            latex(row:increment(2), 2, 21, { '√(3x-1)+(1+x)^2' }), -- Inline
-            latex(row:increment(2), 7, 2, { '    f(x,y) = x + √(y)', '    f(x,y) = √(y) + x^2/4y' }), -- Block
+            latex(row:increment(2), 2, 21, { out_inline }),
+            latex(row:increment(2), 7, 2, out_block),
         })
 
-        local actual = util.get_actual_marks()
-        util.marks_are_equal(expected, actual)
+        util.assert_view(expected, {
+            '󰫎   1 󰲡 LaTeX',
+            '    2',
+            '      ' .. out_inline,
+            '    3 ' .. in_inline,
+            '    4',
+            '      ' .. out_block[1],
+            '      ' .. out_block[2],
+            '    5 $$',
+            '    6 ' .. in_block[1],
+            '    7 ' .. in_block[2],
+            '    8 $$',
+        })
     end)
 end)

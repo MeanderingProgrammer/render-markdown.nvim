@@ -22,6 +22,11 @@ local function ensure_installed(required_parsers)
     end
 end
 
+-- Settings
+vim.opt.lines = 40
+vim.opt.columns = 80
+vim.opt.number = true
+
 -- Source dependencies first
 source_plugin('nvim-treesitter')
 add_runtime('nvim-treesitter.lua')

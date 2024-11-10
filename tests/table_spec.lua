@@ -41,8 +41,23 @@ describe('table.md', function()
             util.table_border(row:get(), false, { 11, 11 }),
         })
 
-        local actual = util.get_actual_marks()
-        util.marks_are_equal(expected, actual)
+        util.assert_view(expected, {
+            '󰫎   1 󰲡 Table with Inline',
+            '    2',
+            '      ┌───────────┬────────────────────────┐',
+            '    3 │ Heading 1 │              Heading 2 │',
+            '    4 ├───────────┼───────────────────────━┤',
+            '    5 │ Item 行   │                 󰖟 link │',
+            '      └───────────┴────────────────────────┘',
+            '    6',
+            '󰫎   7 󰲡 Table no Inline',
+            '    8',
+            '      ┌───────────┬───────────┐',
+            '    9 │ Heading 1 │ Heading 2 │',
+            '   10 ├───────────┼───────────┤',
+            '   11 │ Item 1    │ Item 2    │',
+            '      └───────────┴───────────┘',
+        })
     end)
 
     it('trimmed', function()
@@ -82,8 +97,23 @@ describe('table.md', function()
             util.table_border(row:get(), false, { 11, 11 }),
         })
 
-        local actual = util.get_actual_marks()
-        util.marks_are_equal(expected, actual)
+        util.assert_view(expected, {
+            '󰫎   1 󰲡 Table with Inline',
+            '    2',
+            '      ┌───────────┬───────────┐',
+            '    3 │ Heading 1 │ Heading 2 │',
+            '    4 ├───────────┼──────────━┤',
+            '    5 │ Item 行   │    󰖟 link │',
+            '      └───────────┴───────────┘',
+            '    6',
+            '󰫎   7 󰲡 Table no Inline',
+            '    8',
+            '      ┌───────────┬───────────┐',
+            '    9 │ Heading 1 │ Heading 2 │',
+            '   10 ├───────────┼───────────┤',
+            '   11 │ Item 1    │ Item 2    │',
+            '      └───────────┴───────────┘',
+        })
     end)
 
     it('raw', function()
@@ -118,8 +148,21 @@ describe('table.md', function()
             util.table_border(row:get(), false, { 11, 11 }),
         })
 
-        local actual = util.get_actual_marks()
-        util.marks_are_equal(expected, actual)
+        util.assert_view(expected, {
+            '󰫎   1 󰲡 Table with Inline',
+            '    2',
+            '    3 │ Heading 1 │ Heading 2            │',
+            '    4 ├───────────┼───────────────────────━┤',
+            '    5 │ Item 行 │ 󰖟 link │',
+            '    6',
+            '󰫎   7 󰲡 Table no Inline',
+            '    8',
+            '      ┌───────────┬───────────┐',
+            '    9 │ Heading 1 │ Heading 2 │',
+            '   10 ├───────────┼───────────┤',
+            '   11 │ Item 1    │ Item 2    │',
+            '      └───────────┴───────────┘',
+        })
     end)
 
     it('overlay', function()
@@ -164,7 +207,22 @@ describe('table.md', function()
             util.table_border(row:get(), false, { 11, 11 }),
         })
 
-        local actual = util.get_actual_marks()
-        util.marks_are_equal(expected, actual)
+        util.assert_view(expected, {
+            '󰫎   1 󰲡 Table with Inline',
+            '    2',
+            '      ┌───────────┬────────────────────────┐',
+            '    3 │ Heading 1 │ `Heading 2`            │',
+            '    4 ├───────────┼───────────────────────━┤',
+            '    5 │ `Item 行` │ [link](https://行.com) │',
+            '      └───────────┴────────────────────────┘',
+            '    6',
+            '󰫎   7 󰲡 Table no Inline',
+            '    8',
+            '      ┌───────────┬───────────┐',
+            '    9 │ Heading 1 │ Heading 2 │',
+            '   10 ├───────────┼───────────┤',
+            '   11 │ Item 1    │ Item 2    │',
+            '      └───────────┴───────────┘',
+        })
     end)
 end)

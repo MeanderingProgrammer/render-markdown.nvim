@@ -95,8 +95,17 @@ describe('custom_handler.md', function()
             {}, -- No backslash escapes
         })
 
-        local actual = util.get_actual_marks()
-        util.marks_are_equal(expected, actual)
+        util.assert_view(expected, {
+            '󰫎   1 󰲡 Heading',
+            '    2',
+            '    3 Inline code',
+            '    4',
+            '    5 \\$1.50 \\$3.55',
+            '    6',
+            '    7 Some ==highlighted text== line',
+            '    8 Across ==multiple',
+            '    9 lines== of text',
+        })
     end)
 
     it('custom conceal override', function()
@@ -113,8 +122,17 @@ describe('custom_handler.md', function()
             { util.conceal(row:increment(4), 0, 1), util.conceal(row:get(), 7, 8) }, -- Backslash escapes
         })
 
-        local actual = util.get_actual_marks()
-        util.marks_are_equal(expected, actual)
+        util.assert_view(expected, {
+            '󰫎   1 󰲡 Heading',
+            '    2',
+            '    3 Inline code',
+            '    4',
+            '    5 $1.50 $3.55',
+            '    6',
+            '    7 Some ==highlighted text== line',
+            '    8 Across ==multiple',
+            '    9 lines== of text',
+        })
     end)
 
     it('custom conceal extend', function()
@@ -131,8 +149,17 @@ describe('custom_handler.md', function()
             { util.conceal(row:increment(2), 0, 1), util.conceal(row:get(), 7, 8) }, -- Backslash escapes
         })
 
-        local actual = util.get_actual_marks()
-        util.marks_are_equal(expected, actual)
+        util.assert_view(expected, {
+            '󰫎   1 󰲡 Heading',
+            '    2',
+            '    3 Inline code',
+            '    4',
+            '    5 $1.50 $3.55',
+            '    6',
+            '    7 Some ==highlighted text== line',
+            '    8 Across ==multiple',
+            '    9 lines== of text',
+        })
     end)
 
     it('custom highlight extend', function()
@@ -152,7 +179,16 @@ describe('custom_handler.md', function()
             highlight_equals({ row:increment(), row:increment() }, { 7, 7 }), -- Highlight equals 2
         })
 
-        local actual = util.get_actual_marks()
-        util.marks_are_equal(expected, actual)
+        util.assert_view(expected, {
+            '󰫎   1 󰲡 Heading',
+            '    2',
+            '    3 Inline code',
+            '    4',
+            '    5 $1.50 $3.55',
+            '    6',
+            '    7 Some highlighted text line',
+            '    8 Across multiple',
+            '    9 lines of text',
+        })
     end)
 end)

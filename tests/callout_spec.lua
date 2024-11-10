@@ -82,7 +82,42 @@ describe('callout.md', function()
             util.quote(row:increment(), '%s ', error),
         })
 
-        local actual = util.get_actual_marks()
-        util.marks_are_equal(expected, actual)
+        util.assert_view(expected, {
+            '󰫎   1 󰲡 Note',
+            '    2',
+            '    3 ▋ 󰋽 Note',
+            '    4 ▋',
+            '    5 ▋ A regular note',
+            '    6 ▋',
+            '    7 ▋ With a second paragraph',
+            '    8',
+            '󰫎   9 󰲡 Tip',
+            '   10',
+            '   11 ▋ 󰌶 Tip',
+            '   12 ▋',
+            '󰢱  13 ▋ 󰢱 lua',
+            "   14 ▋ print('Standard tip')",
+            '   15 ▋ ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
+            '   16',
+            '󰫎  17 󰲡 Important',
+            '   18',
+            '   19 ▋ 󰅾 Important',
+            '   20 ▋ Exceptional info',
+            '   21',
+            '󰫎  22 󰲡 Warning',
+            '   23',
+            '   24 ▋ 󰀪 Custom Title',
+            '   25 ▋ Dastardly surprise',
+            '   26',
+            '󰫎  27 󰲡 Caution',
+            '   28',
+            '   29 ▋ 󰳦 Caution',
+            '   30 ▋ Cautionary tale',
+            '   31',
+            '󰫎  32 󰲡 Bug',
+            '   33',
+            '   34 ▋ 󰨰 Bug',
+            '   35 ▋ Custom bug',
+        })
     end)
 end)

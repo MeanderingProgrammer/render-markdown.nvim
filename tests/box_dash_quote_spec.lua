@@ -25,7 +25,7 @@ local function dash(row)
     return {
         row = { row },
         col = { 0 },
-        virt_text = { { string.rep('─', vim.opt.columns:get()), util.hl('Dash') } },
+        virt_text = { { string.rep('─', vim.o.columns), util.hl('Dash') } },
         virt_text_pos = 'overlay',
     }
 end
@@ -52,7 +52,18 @@ describe('box_dash_quote.md', function()
             util.quote(row:increment(), '  %s ', 'Quote'),
         })
 
-        local actual = util.get_actual_marks()
-        util.marks_are_equal(expected, actual)
+        util.assert_view(expected, {
+            '󰫎   1 󰲡 Checkbox / Dash / Quote',
+            '    2',
+            '    3 󰄱  Unchecked Checkbox',
+            '    4 󰱒  Checked Checkbox',
+            '    5 󰥔  Todo Checkbox',
+            '    6 ● Regular List Item',
+            '    7',
+            '    8 ──────────────────────────────────────────────────────────────────────────',
+            '    9',
+            '   10   ▋ Quote line 1',
+            '   11   ▋ Quote line 2',
+        })
     end)
 end)
