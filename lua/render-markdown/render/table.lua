@@ -45,7 +45,10 @@ function Render:setup()
         return false
     end
 
-    local delim, table_rows = nil, {}
+    ---@type render.md.table.DelimRow?
+    local delim = nil
+    ---@type render.md.Node[]
+    local table_rows = {}
     self.node:for_each_child(function(row)
         if row.type == 'pipe_table_delimiter_row' then
             delim = self:parse_delim(row)
@@ -57,11 +60,13 @@ function Render:setup()
             end
         end
     end)
+
     -- Ensure delimiter and rows exist for table
     if delim == nil or #table_rows == 0 then
         return false
     end
 
+    ---@type render.md.table.Row[]
     local rows = {}
     table.sort(table_rows)
     for _, table_row in ipairs(table_rows) do
@@ -70,14 +75,16 @@ function Render:setup()
             table.insert(rows, row)
         end
     end
-    -- Store the max width information in the delimiter
+
+    -- Store the max width in the delimiter
     for _, row in ipairs(rows) do
         for i, column in ipairs(row.columns) do
-            local delim_column, width = delim.columns[i], column.width
+            local width = column.width
             if self.table.cell == 'trimmed' then
                 local space_available = column.space.left + column.space.right - (2 * self.table.padding)
                 width = width - math.max(space_available, 0)
             end
+            local delim_column = delim.columns[i]
             delim_column.width = math.max(delim_column.width, width)
         end
     end
@@ -95,6 +102,7 @@ function Render:parse_delim(row)
     if pipes == nil or cells == nil then
         return nil
     end
+    ---@type render.md.table.DelimColumn[]
     local columns = {}
     for i, cell in ipairs(cells) do
         local width = pipes[i + 1].start_col - pipes[i].end_col
@@ -106,22 +114,25 @@ function Render:parse_delim(row)
         elseif self.table.cell == 'trimmed' then
             width = self.table.min_width
         end
-        table.insert(columns, { width = width, alignment = Render.alignment(cell) })
+        ---@type render.md.table.DelimColumn
+        local column = { width = width, alignment = Render.alignment(cell) }
+        table.insert(columns, column)
     end
+    ---@type render.md.table.DelimRow
     return { node = row, columns = columns }
 end
 
 ---@private
----@param cell render.md.Node
+---@param node render.md.Node
 ---@return render.md.table.Alignment
-function Render.alignment(cell)
-    local align_left = cell:child('pipe_table_align_left') ~= nil
-    local align_right = cell:child('pipe_table_align_right') ~= nil
-    if align_left and align_right then
+function Render.alignment(node)
+    local has_left = node:child('pipe_table_align_left') ~= nil
+    local has_right = node:child('pipe_table_align_right') ~= nil
+    if has_left and has_right then
         return 'center'
-    elseif align_left then
+    elseif has_left then
         return 'left'
-    elseif align_right then
+    elseif has_right then
         return 'right'
     else
         return 'default'
@@ -137,6 +148,7 @@ function Render:parse_row(row, num_columns)
     if pipes == nil or cells == nil or #cells ~= num_columns then
         return nil
     end
+    ---@type render.md.table.Column[]
     local columns = {}
     for i, cell in ipairs(cells) do
         local start_col, end_col = pipes[i].end_col, pipes[i + 1].start_col
@@ -152,14 +164,17 @@ function Render:parse_row(row, num_columns)
         if width < 0 then
             return nil
         end
-        table.insert(columns, {
+        ---@type render.md.table.Column
+        local column = {
             row = cell.start_row,
             start_col = cell.start_col,
             end_col = cell.end_col,
             width = width,
             space = space,
-        })
+        }
+        table.insert(columns, column)
     end
+    ---@type render.md.table.Row
     return { node = row, pipes = pipes, columns = columns }
 end
 
@@ -200,20 +215,20 @@ end
 function Render:delimiter()
     local delim, border = self.data.delim, self.table.border
 
+    local indicator, icon = self.table.alignment_indicator, border[11]
     local sections = Iter.list.map(delim.columns, function(column)
-        local indicator, box = self.table.alignment_indicator, border[11]
         -- If column is small there's no good place to put the alignment indicator
         -- Alignment indicator must be exactly one character wide
         -- Do not put an indicator for default alignment
         if column.width < 3 or Str.width(indicator) ~= 1 or column.alignment == 'default' then
-            return box:rep(column.width)
+            return icon:rep(column.width)
         end
         if column.alignment == 'left' then
-            return indicator .. box:rep(column.width - 1)
+            return indicator .. icon:rep(column.width - 1)
         elseif column.alignment == 'right' then
-            return box:rep(column.width - 1) .. indicator
+            return icon:rep(column.width - 1) .. indicator
         else
-            return indicator .. box:rep(column.width - 2) .. indicator
+            return indicator .. icon:rep(column.width - 2) .. indicator
         end
     end)
 
@@ -250,7 +265,10 @@ function Render:row(row)
         for i, column in ipairs(row.columns) do
             local delim_column = delim.columns[i]
             local filler = delim_column.width - column.width
-            if delim_column.alignment == 'center' then
+            if not self.context.conceal.enabled then
+                -- Without concealing it is impossible to do full alignment
+                self:shift(column, 'right', filler)
+            elseif delim_column.alignment == 'center' then
                 local shift = math.floor((filler + column.space.right - column.space.left) / 2)
                 self:shift(column, 'left', shift)
                 self:shift(column, 'right', filler - shift)
@@ -290,6 +308,7 @@ function Render:shift(column, side, amount)
             virt_text_pos = 'inline',
         })
     elseif amount < 0 then
+        amount = amount - self.context.conceal.block
         self.marks:add(true, column.row, col + amount, {
             priority = 0,
             end_col = col,

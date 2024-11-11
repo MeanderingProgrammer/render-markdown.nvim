@@ -4,16 +4,21 @@ local Str = require('render-markdown.lib.str')
 local log = require('render-markdown.core.log')
 local util = require('render-markdown.core.util')
 
+---@class render.md.context.Conceal
+---@field enabled boolean
+---@field block integer
+---@field rows? table<integer, [integer, integer][]>
+
 ---@class render.md.Context
 ---@field private buf integer
 ---@field private win integer
 ---@field private ranges render.md.Range[]
 ---@field private callouts table<integer, render.md.CustomCallout>
 ---@field private checkboxes table<integer, render.md.CustomCheckbox>
----@field private conceal? table<integer, [integer, integer][]>
 ---@field private links table<integer, [integer, integer, integer][]>
 ---@field private window_width? integer
 ---@field mode string
+---@field conceal render.md.context.Conceal
 ---@field last_heading? integer
 local Context = {}
 Context.__index = Context
@@ -28,20 +33,26 @@ function Context.new(buf, win, mode, offset)
     self.buf = buf
     self.win = win
 
-    local ranges = { Context.compute_range(self.buf, self.win, offset) }
+    local ranges = {}
     for _, window in ipairs(util.windows(buf)) do
-        if window ~= self.win then
-            table.insert(ranges, Context.compute_range(self.buf, window, offset))
-        end
+        table.insert(ranges, Context.compute_range(self.buf, window, offset))
     end
     self.ranges = Range.coalesce(ranges)
 
     self.callouts = {}
     self.checkboxes = {}
-    self.conceal = nil
     self.links = {}
     self.window_width = nil
     self.mode = mode
+
+    local conceal_level = util.get('win', self.win, 'conceallevel')
+    self.conceal = {
+        enabled = conceal_level > 0,
+        -- At conceal level 1 each block is replaced with one character
+        block = conceal_level == 1 and 1 or 0,
+        rows = nil,
+    }
+
     self.last_heading = nil
     return self
 end
@@ -93,7 +104,7 @@ end
 
 ---@return integer
 function Context:tab_size()
-    return util.get('buf', self.buf, 'tabstop') --[[@as integer]]
+    return util.get('buf', self.buf, 'tabstop')
 end
 
 ---@param node? render.md.Node
@@ -215,9 +226,12 @@ function Context:concealed(node)
     for _, index in ipairs(vim.fn.str2list(node.text)) do
         local ch = vim.fn.nr2char(index)
         for _, range in ipairs(ranges) do
-            -- Essentially vim.treesitter.is_in_node_range but only care about column
+            -- Column level implementation of vim.treesitter.is_in_node_range
             if col >= range[1] and col + 1 <= range[2] then
                 result = result + Str.width(ch)
+                if col == range[1] then
+                    result = result - self.conceal.block
+                end
             end
         end
         col = col + #ch
@@ -229,18 +243,17 @@ end
 ---@param row integer
 ---@return [integer, integer][]
 function Context:get_conceal(row)
-    if self.conceal == nil then
-        self.conceal = self:compute_conceal()
+    if self.conceal.rows == nil then
+        self.conceal.rows = self:compute_conceal()
     end
-    return self.conceal[row] or {}
+    return self.conceal.rows[row] or {}
 end
 
 ---Cached row level implementation of vim.treesitter.get_captures_at_pos
 ---@private
 ---@return table<integer, [integer, integer][]>
 function Context:compute_conceal()
-    local conceallevel = util.get('win', self.win, 'conceallevel')
-    if conceallevel == 0 then
+    if not self.conceal.enabled then
         return {}
     end
     local ranges = {}

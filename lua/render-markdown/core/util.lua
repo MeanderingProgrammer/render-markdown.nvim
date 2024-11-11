@@ -76,6 +76,11 @@ end
 ---@param id integer
 ---@param name string
 ---@return render.md.option.Value
+---@overload fun(variant: 'buf', id: integer, name: 'buftype'): string
+---@overload fun(variant: 'buf', id: integer, name: 'filetype'): string
+---@overload fun(variant: 'buf', id: integer, name: 'tabstop'): integer
+---@overload fun(variant: 'win', id: integer, name: 'conceallevel'): integer
+---@overload fun(variant: 'win', id: integer, name: 'diff'): boolean
 function M.get(variant, id, name)
     if variant == 'buf' then
         return vim.api.nvim_get_option_value(name, { buf = id })

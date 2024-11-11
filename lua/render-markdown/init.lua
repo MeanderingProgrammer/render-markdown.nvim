@@ -25,7 +25,7 @@ local M = {}
 ---@field public enabled? boolean
 ---@field public query? string
 
----@alias render.md.option.Value number|string|boolean
+---@alias render.md.option.Value number|integer|string|boolean
 
 ---@class (exact) render.md.UserWindowOption
 ---@field public default? render.md.option.Value

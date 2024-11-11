@@ -225,4 +225,48 @@ describe('table.md', function()
             '      └───────────┴───────────┘',
         })
     end)
+
+    it('conceallevel 0', function()
+        util.setup('tests/data/table.md', { win_options = { conceallevel = { rendered = 0 } } })
+
+        util.assert_screen({
+            '󰫎   1 󰲡 Table with Inline',
+            '    2',
+            '      ┌───────────┬──────────────────────────┐',
+            '    3 │ Heading 1 │ `Heading 2`              │',
+            '    4 ├───────────┼─────────────────────────━┤',
+            '    5 │ `Item 行` │ 󰖟 [link](https://行.com) │',
+            '      └───────────┴──────────────────────────┘',
+            '    6',
+            '󰫎   7 󰲡 Table no Inline',
+            '    8',
+            '      ┌───────────┬───────────┐',
+            '    9 │ Heading 1 │ Heading 2 │',
+            '   10 ├───────────┼───────────┤',
+            '   11 │ Item 1    │ Item 2    │',
+            '      └───────────┴───────────┘',
+        })
+    end)
+
+    it('conceallevel 1', function()
+        util.setup('tests/data/table.md', { win_options = { conceallevel = { rendered = 1 } } })
+
+        util.assert_screen({
+            '󰫎   1 󰲡 Table with Inline',
+            '    2',
+            '      ┌───────────┬────────────────────────┐',
+            '    3 │ Heading 1 │             Heading 2  │',
+            '    4 ├───────────┼───────────────────────━┤',
+            '    5 │  Item 行  │            󰖟  link     │',
+            '      └───────────┴────────────────────────┘',
+            '    6',
+            '󰫎   7 󰲡 Table no Inline',
+            '    8',
+            '      ┌───────────┬───────────┐',
+            '    9 │ Heading 1 │ Heading 2 │',
+            '   10 ├───────────┼───────────┤',
+            '   11 │ Item 1    │ Item 2    │',
+            '      └───────────┴───────────┘',
+        })
+    end)
 end)
