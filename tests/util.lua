@@ -225,17 +225,17 @@ end
 
 ---@param row integer
 ---@param col integer
----@param name 'python'|'lua'|'rust'
+---@param name 'python'|'py'|'rust'|'rs'|'lua'
 ---@param win_col? integer
 ---@return render.md.MarkInfo[]
 function M.code_language(row, col, name, win_col)
     local icon, highlight
-    if name == 'python' then
+    if name == 'python' or name == 'py' then
         icon, highlight = '󰌠 ', 'MiniIconsYellow'
+    elseif name == 'rust' or name == 'rs' then
+        icon, highlight = '󱘗 ', 'MiniIconsOrange'
     elseif name == 'lua' then
         icon, highlight = '󰢱 ', 'MiniIconsAzure'
-    elseif name == 'rust' then
-        icon, highlight = '󱘗 ', 'MiniIconsOrange'
     end
 
     ---@type render.md.MarkInfo

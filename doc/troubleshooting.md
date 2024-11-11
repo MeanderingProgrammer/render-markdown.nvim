@@ -31,29 +31,7 @@ the `filetype` of the current buffer and make sure it is in that list:
 :lua vim.print(vim.bo.filetype)
 ```
 
-## Generating debug logs
-
-If all else fails hopefully the logs can provide some insight. This plugin
-ships with logging, however it only includes errors by default.
-
-To help debug your issue you'll need to go through the following steps:
-
-1. Update the log level to `debug`
-2. Create a test file
-3. Generate logs from the test file
-4. Provide the logs in the issue
-
-### Update the log level to `debug`
-
-Change the plugin configuration to:
-
-```lua
-require('render-markdown').setup({
-    log_level = 'debug',
-})
-```
-
-### Create a test file
+## Validate Parse Tree
 
 Create a new `markdown` file locally with the following content:
 
@@ -61,22 +39,77 @@ Create a new `markdown` file locally with the following content:
 # Heading
 
 - Item
-  - Nested
 
 > [!NOTE]
 > A note
 
-- [ ] Unchecked
 - [x] Checked
 ```
 
-### Generate logs from the test file
+Run `:InspectTree` which should output the following:
 
-To do this restart Neovim and open the `markdown` file from the previous step.
+```text
+(document ; [0, 0] - [8, 0]
+  (section ; [0, 0] - [8, 0]
+    (atx_heading ; [0, 0] - [1, 0]
+      (atx_h1_marker) ; [0, 0] - [0, 1]
+      heading_content: (inline ; [0, 2] - [0, 9]
+        (inline))) ; [0, 2] - [0, 9]
+    (list ; [2, 0] - [4, 0]
+      (list_item ; [2, 0] - [4, 0]
+        (list_marker_minus) ; [2, 0] - [2, 2]
+        (paragraph ; [2, 2] - [3, 0]
+          (inline ; [2, 2] - [2, 6]
+            (inline)) ; [2, 2] - [2, 6]
+          (block_continuation)))) ; [3, 0] - [3, 0]
+    (block_quote ; [4, 0] - [6, 0]
+      (block_quote_marker) ; [4, 0] - [4, 2]
+      (paragraph ; [4, 2] - [6, 0]
+        (inline ; [4, 2] - [5, 8]
+          (inline ; [4, 2] - [5, 8]
+            (shortcut_link ; [4, 2] - [4, 9]
+              (link_text))) ; [4, 3] - [4, 8]
+          (block_continuation)))) ; [5, 0] - [5, 2]
+    (list ; [7, 0] - [8, 0]
+      (list_item ; [7, 0] - [8, 0]
+        (list_marker_minus) ; [7, 0] - [7, 2]
+        (task_list_marker_checked) ; [7, 2] - [7, 5]
+        (paragraph ; [7, 6] - [8, 0]
+          (inline ; [7, 6] - [7, 13]
+            (inline))))))) ; [7, 6] - [7, 13]
+```
 
-This should trigger the render function by default, then close Neovim.
+If this is not what you see you likely need to update `nvim-treesitter` and your
+treesitter parsers.
 
-### Provide the logs in the issue
+## Generate Debug Logs
+
+If all else fails hopefully the logs can provide some insight. This plugin
+ships with logging, however it only includes errors by default.
+
+To help debug your issue you'll need to go through the following steps:
+
+### 1) Create a Test File
+
+Use the same file from [Validate Parse Tree](#validate-parse-tree).
+
+### 2) Update Log Level
+
+Change plugin configuration to output `debug` logs:
+
+```lua
+require('render-markdown').setup({
+    log_level = 'debug',
+})
+```
+
+### 3) Generate Logs
+
+To do this restart Neovim and open the `markdown` file from the first step.
+
+This should trigger the rendering logic, then close Neovim.
+
+### 4) Provide Logs in Issue
 
 Logs are written to a file typically located at: `~/.local/state/nvim/render-markdown.log`.
 

@@ -42,7 +42,7 @@ describe('code.md', function()
 
         vim.list_extend(expected, {
             util.bullet(row:increment(2), 0, 1),
-            util.code_language(row:increment(2), 2, 'lua'),
+            util.code_language(row:increment(2), 2, 'py'),
         })
         for _ = 1, 2 do
             table.insert(expected, util.code_row(row:increment(), 2))
@@ -81,9 +81,9 @@ describe('code.md', function()
             '    8',
             '    9 ● Nested code',
             '   10',
-            '󰢱  11   󰢱 lua',
-            "   12   print('hello')",
-            "   13   print('world')",
+            '󰌠  11   󰌠 py',
+            '   12   print("hello")',
+            '   13   print("world")',
             '   14   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
             '   15',
             '   16 ● Nested code with blank',
@@ -125,7 +125,7 @@ describe('code.md', function()
         local width_2 = 20
         vim.list_extend(expected, {
             util.bullet(row:increment(2), 0, 1),
-            util.code_language(row:increment(2), 2, 'lua', width_2),
+            util.code_language(row:increment(2), 2, 'py', width_2),
         })
         for _ = 1, 2 do
             vim.list_extend(expected, {
@@ -171,9 +171,9 @@ describe('code.md', function()
             '    8',
             '    9 ● Nested code',
             '   10',
-            '󰢱  11   󰢱 lua',
-            "   12     print('hello')",
-            "   13     print('world')",
+            '󰌠  11   󰌠 py',
+            '   12     print("hello")',
+            '   13     print("world")',
             '   14   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
             '   15',
             '   16 ● Nested code with blank',

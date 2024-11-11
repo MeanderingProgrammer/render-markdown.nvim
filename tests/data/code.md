@@ -8,9 +8,9 @@ fn main() {
 
 - Nested code
 
-  ```lua
-  print('hello')
-  print('world')
+  ```py
+  print("hello")
+  print("world")
   ```
 
 - Nested code with blank
