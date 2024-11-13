@@ -8,6 +8,8 @@
   [bee16b2](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/bee16b21bf47b64ceda8c9bb281d4b576d329c0f)
 - table support for all conceal levels [3da1bfc](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/3da1bfc4bd3a13fee57551f0b705ebcf2614d7a2)
 - roll own type validation to remove vim.validate [d69a885](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/d69a885e1bf21cb329d2eafe56fd80b6de627216)
+- code block language icon from extension [#233](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/233)
+  [78a2eb7](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/78a2eb7fc273f36790aa390262f390a3265eedff)
 
 ### Bug Fixes
 
