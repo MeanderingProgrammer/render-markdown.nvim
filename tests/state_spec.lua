@@ -82,7 +82,7 @@ describe('state', function()
                 'render-markdown.debounce: expected type number, got table',
                 'render-markdown.enabled: expected type boolean, got string',
                 'render-markdown.heading.enabled: expected type boolean, got string',
-                'render-markdown.log_level: expected one of { "debug", "info", "error" }, got string',
+                'render-markdown.log_level: expected one of { "off", "debug", "info", "error" }, got string',
                 'render-markdown.log_runtime: expected type boolean, got string',
                 'render-markdown.max_file_size: expected type number, got boolean',
                 'render-markdown.overrides.buftype.nofile.sign.highlight: expected type string or nil, got boolean',

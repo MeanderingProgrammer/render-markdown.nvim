@@ -125,9 +125,20 @@ function M.textoff(win)
     return #infos == 1 and infos[1].textoff or 0
 end
 
----@param file string
+---@param buf integer
+---@return string
+function M.file_name(buf)
+    local file = vim.api.nvim_buf_get_name(buf)
+    return vim.fn.fnamemodify(file, ':t')
+end
+
+---@param source string|integer
 ---@return number
-function M.file_size_mb(file)
+function M.file_size_mb(source)
+    local file = source
+    if type(file) == 'number' then
+        file = vim.api.nvim_buf_get_name(file)
+    end
     local ok, stats = pcall(function()
         return (vim.uv or vim.loop).fs_stat(file)
     end)

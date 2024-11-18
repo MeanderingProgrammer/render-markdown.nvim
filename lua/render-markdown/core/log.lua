@@ -58,7 +58,7 @@ end
 ---@param buf integer
 ---@param ... any
 function M.buf(level, name, buf, ...)
-    M.add(level, string.format('%s %d', name, buf), ...)
+    M.add(level, string.format('%s|%s|%d', name, util.file_name(buf), buf), ...)
 end
 
 ---@param level render.md.config.LogLevel
@@ -98,6 +98,8 @@ function M.level_value(level)
         return 2
     elseif level == 'error' then
         return 3
+    elseif level == 'off' then
+        return 4
     else
         return 0
     end

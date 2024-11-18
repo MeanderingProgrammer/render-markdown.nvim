@@ -269,7 +269,7 @@ function M.validate()
         :type('log_runtime', 'boolean')
         :list('file_types', 'string')
         :one_of('preset', { 'none', 'lazy', 'obsidian' })
-        :one_of('log_level', { 'debug', 'info', 'error' })
+        :one_of('log_level', { 'off', 'debug', 'info', 'error' })
         :nested('injections', function(injections)
             injections
                 :nested('ALL', function(injection)

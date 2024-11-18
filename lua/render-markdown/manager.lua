@@ -83,36 +83,34 @@ end
 ---@param buf integer
 ---@return boolean
 function M.should_attach(buf)
-    local file = vim.api.nvim_buf_get_name(buf)
-    local log_name = string.format('attach %s', vim.fn.fnamemodify(file, ':t'))
-    log.buf('info', log_name, buf, 'start')
+    log.buf('info', 'attach', buf, 'start')
 
     if vim.tbl_contains(buffers, buf) then
-        log.buf('info', log_name, buf, 'skip', 'already attached')
+        log.buf('info', 'attach', buf, 'skip', 'already attached')
         return false
     end
 
     local file_type, file_types = util.get('buf', buf, 'filetype'), state.file_types
     if not vim.tbl_contains(file_types, file_type) then
         local reason = string.format('%s /∈ %s', file_type, vim.inspect(file_types))
-        log.buf('info', log_name, buf, 'skip', 'file type', reason)
+        log.buf('info', 'attach', buf, 'skip', 'file type', reason)
         return false
     end
 
     local config = state.get(buf)
     if not config.enabled then
-        log.buf('info', log_name, buf, 'skip', 'state disabled')
+        log.buf('info', 'attach', buf, 'skip', 'state disabled')
         return false
     end
 
-    local file_size, max_file_size = util.file_size_mb(file), config.max_file_size
+    local file_size, max_file_size = util.file_size_mb(buf), config.max_file_size
     if file_size > max_file_size then
         local reason = string.format('%f > %f', file_size, max_file_size)
-        log.buf('info', log_name, buf, 'skip', 'file size', reason)
+        log.buf('info', 'attach', buf, 'skip', 'file size', reason)
         return false
     end
 
-    log.buf('info', log_name, buf, 'success')
+    log.buf('info', 'attach', buf, 'success')
     table.insert(buffers, buf)
     return true
 end
