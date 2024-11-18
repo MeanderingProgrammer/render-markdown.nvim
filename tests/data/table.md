@@ -6,6 +6,6 @@
 
 # Table no Inline
 
-| Heading 1 | Heading 2 |
+| &lt;Heading 1&gt; | Heading 2 |
 | --------- | --------- |
 | Item 1    | Item 2    |

@@ -32,8 +32,8 @@ describe('table.md', function()
             util.heading(row:increment(2), 1),
             util.table_border(row:increment(2), true, { 11, 11 }),
             util.table_pipe(row:get(), 0, true),
-            util.table_pipe(row:get(), 12, true),
-            util.table_pipe(row:get(), 24, true),
+            util.table_pipe(row:get(), 20, true),
+            util.table_pipe(row:get(), 32, true),
             util.table_delimiter(row:increment(), { 11, 11 }),
             util.table_pipe(row:increment(), 0, false),
             util.table_pipe(row:get(), 12, false),
@@ -88,8 +88,8 @@ describe('table.md', function()
             util.heading(row:increment(2), 1),
             util.table_border(row:increment(2), true, { 11, 11 }),
             util.table_pipe(row:get(), 0, true),
-            util.table_pipe(row:get(), 12, true),
-            util.table_pipe(row:get(), 24, true),
+            util.table_pipe(row:get(), 20, true),
+            util.table_pipe(row:get(), 32, true),
             util.table_delimiter(row:increment(), { 11, 11 }),
             util.table_pipe(row:increment(), 0, false),
             util.table_pipe(row:get(), 12, false),
@@ -139,8 +139,8 @@ describe('table.md', function()
             util.heading(row:increment(2), 1),
             util.table_border(row:increment(2), true, { 11, 11 }),
             util.table_pipe(row:get(), 0, true),
-            util.table_pipe(row:get(), 12, true),
-            util.table_pipe(row:get(), 24, true),
+            util.table_pipe(row:get(), 20, true),
+            util.table_pipe(row:get(), 32, true),
             util.table_delimiter(row:increment(), { 11, 11 }),
             util.table_pipe(row:increment(), 0, false),
             util.table_pipe(row:get(), 12, false),
@@ -200,11 +200,9 @@ describe('table.md', function()
 
         vim.list_extend(expected, {
             util.heading(row:increment(2), 1),
-            util.table_border(row:increment(2), true, { 11, 11 }),
-            table_row(row:get(), 25, '│ Heading 1 │ Heading 2 │', true),
+            table_row(row:increment(2), 33, '│ &lt;Heading 1&gt; │ Heading 2 │', true),
             util.table_delimiter(row:increment(), { 11, 11 }),
             table_row(row:increment(), 25, '│ Item 1    │ Item 2    │', false),
-            util.table_border(row:get(), false, { 11, 11 }),
         })
 
         util.assert_view(expected, {
@@ -218,11 +216,9 @@ describe('table.md', function()
             '    6',
             '󰫎   7 󰲡 Table no Inline',
             '    8',
-            '      ┌───────────┬───────────┐',
-            '    9 │ Heading 1 │ Heading 2 │',
+            '    9 │ &lt;Heading 1&gt; │ Heading 2 │',
             '   10 ├───────────┼───────────┤',
             '   11 │ Item 1    │ Item 2    │',
-            '      └───────────┴───────────┘',
         })
     end)
 
@@ -240,11 +236,11 @@ describe('table.md', function()
             '    6',
             '󰫎   7 󰲡 Table no Inline',
             '    8',
-            '      ┌───────────┬───────────┐',
-            '    9 │ Heading 1 │ Heading 2 │',
-            '   10 ├───────────┼───────────┤',
-            '   11 │ Item 1    │ Item 2    │',
-            '      └───────────┴───────────┘',
+            '      ┌───────────────────┬───────────┐',
+            '    9 │ &lt;Heading 1&gt; │ Heading 2 │',
+            '   10 ├───────────────────┼───────────┤',
+            '   11 │ Item 1            │ Item 2    │',
+            '      └───────────────────┴───────────┘',
         })
     end)
 
@@ -262,11 +258,33 @@ describe('table.md', function()
             '    6',
             '󰫎   7 󰲡 Table no Inline',
             '    8',
-            '      ┌───────────┬───────────┐',
-            '    9 │ Heading 1 │ Heading 2 │',
-            '   10 ├───────────┼───────────┤',
-            '   11 │ Item 1    │ Item 2    │',
-            '      └───────────┴───────────┘',
+            '      ┌─────────────┬───────────┐',
+            '    9 │ <Heading 1> │ Heading 2 │',
+            '   10 ├─────────────┼───────────┤',
+            '   11 │ Item 1      │ Item 2    │',
+            '      └─────────────┴───────────┘',
+        })
+    end)
+
+    it('conceallevel 2', function()
+        util.setup('tests/data/table.md', { win_options = { conceallevel = { rendered = 2 } } })
+
+        util.assert_screen({
+            '󰫎   1 󰲡 Table with Inline',
+            '    2',
+            '      ┌───────────┬────────────────────────┐',
+            '    3 │ Heading 1 │              Heading 2 │',
+            '    4 ├───────────┼───────────────────────━┤',
+            '    5 │ Item 行   │                 󰖟 link │',
+            '      └───────────┴────────────────────────┘',
+            '    6',
+            '󰫎   7 󰲡 Table no Inline',
+            '    8',
+            '      ┌─────────────┬───────────┐',
+            '    9 │ <Heading 1> │ Heading 2 │',
+            '   10 ├─────────────┼───────────┤',
+            '   11 │ Item 1      │ Item 2    │',
+            '      └─────────────┴───────────┘',
         })
     end)
 end)

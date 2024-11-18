@@ -7,7 +7,8 @@ local util = require('render-markdown.core.util')
 ---@class render.md.context.Conceal
 ---@field enabled boolean
 ---@field block integer
----@field rows? table<integer, [integer, integer][]>
+---@field char boolean
+---@field rows? table<integer, [integer, integer, integer][]>
 
 ---@class render.md.Context
 ---@field private buf integer
@@ -50,6 +51,8 @@ function Context.new(buf, win, mode, offset)
         enabled = conceal_level > 0,
         -- At conceal level 1 each block is replaced with one character
         block = conceal_level == 1 and 1 or 0,
+        -- At conceal level 2 replacement character width is used
+        char = conceal_level == 2,
         rows = nil,
     }
 
@@ -230,7 +233,7 @@ function Context:concealed(node)
             if col >= range[1] and col + 1 <= range[2] then
                 result = result + Str.width(ch)
                 if col == range[1] then
-                    result = result - self.conceal.block
+                    result = result - self.conceal.block - range[3]
                 end
             end
         end
@@ -251,7 +254,7 @@ end
 
 ---Cached row level implementation of vim.treesitter.get_captures_at_pos
 ---@private
----@return table<integer, [integer, integer][]>
+---@return table<integer, [integer, integer, integer][]>
 function Context:compute_conceal()
     if not self.conceal.enabled then
         return {}
@@ -262,11 +265,11 @@ function Context:compute_conceal()
     parser:for_each_tree(function(tree, language_tree)
         local conceal_ranges = self:compute_conceal_ranges(language_tree:lang(), tree:root())
         for _, conceal_range in ipairs(conceal_ranges) do
-            local row, start_col, end_col = unpack(conceal_range)
+            local row, start_col, end_col, char = unpack(conceal_range)
             if ranges[row] == nil then
                 ranges[row] = {}
             end
-            table.insert(ranges[row], { start_col, end_col })
+            table.insert(ranges[row], { start_col, end_col, self.conceal.char and Str.width(char) or 0 })
         end
     end)
     return ranges
@@ -275,7 +278,7 @@ end
 ---@private
 ---@param language string
 ---@param root TSNode
----@return [integer, integer, integer][]
+---@return [integer, integer, integer, string][]
 function Context:compute_conceal_ranges(language, root)
     if not self:overlaps_node(root) then
         return {}
@@ -300,7 +303,7 @@ function Context:compute_conceal_ranges(language, root)
                     node_range = { ts_node:range() }
                 end
                 local row, start_col, _, end_col = unpack(node_range)
-                table.insert(result, { row, start_col, end_col })
+                table.insert(result, { row, start_col, end_col, metadata.conceal })
             end
         end
     end
