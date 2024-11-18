@@ -10,6 +10,8 @@
 - roll own type validation to remove vim.validate [d69a885](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/d69a885e1bf21cb329d2eafe56fd80b6de627216)
 - code block language icon from extension [#233](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/233)
   [78a2eb7](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/78a2eb7fc273f36790aa390262f390a3265eedff)
+- log_level off [#235](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/235)
+  [48a52dd](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/48a52dd5c847c59eac6ae5b96ff0123acd1a394d)
 
 ### Bug Fixes
 

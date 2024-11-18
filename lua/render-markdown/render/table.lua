@@ -76,6 +76,11 @@ function Render:setup()
         end
     end
 
+    -- Double check rows still exist after parsing
+    if #rows == 0 then
+        return false
+    end
+
     -- Store the max width in the delimiter
     for _, row in ipairs(rows) do
         for i, column in ipairs(row.columns) do
