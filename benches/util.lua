@@ -1,9 +1,5 @@
 ---@module 'luassert'
 
-local ui = require('render-markdown.core.ui')
-local eq = assert.are.same
-local truthy = assert.truthy
-
 ---@class render.md.bench.Util
 local M = {}
 
@@ -53,13 +49,14 @@ end
 ---@param actual number
 ---@param max number
 function M.less_than(actual, max)
-    truthy(actual < max, string.format('expected %f < %f', actual, max))
+    assert.truthy(actual < max, string.format('expected %f < %f', actual, max))
 end
 
 ---@param expected integer
 function M.num_marks(expected)
-    local marks = vim.api.nvim_buf_get_extmarks(0, ui.namespace, 0, -1, {})
-    eq(expected, #marks)
+    local namespace = require('render-markdown.core.ui').namespace
+    local marks = vim.api.nvim_buf_get_extmarks(0, namespace, 0, -1, {})
+    assert.are.same(expected, #marks)
 end
 
 return M

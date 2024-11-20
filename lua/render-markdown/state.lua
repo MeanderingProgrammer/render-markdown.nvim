@@ -25,7 +25,8 @@ end
 ---@param default_config render.md.Config
 ---@param user_config render.md.UserConfig
 function M.setup(default_config, user_config)
-    local config = vim.tbl_deep_extend('force', default_config, presets.get(user_config), user_config)
+    local preset_config = presets.get(user_config)
+    local config = vim.tbl_deep_extend('force', default_config, preset_config, user_config)
     -- Override settings that require neovim >= 0.10.0 and have compatible alternatives
     if not util.has_10 then
         config.code.position = 'right'

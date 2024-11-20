@@ -1,7 +1,6 @@
 ---@module 'luassert'
 
 local state = require('render-markdown.state')
-local eq = assert.are.same
 
 ---@param opts? render.md.UserConfig
 ---@return string[]
@@ -12,14 +11,14 @@ end
 
 describe('state', function()
     it('valid', function()
-        eq(0, #validate())
+        assert.are.same(0, #validate())
         vim.bo.buftype = ''
-        eq(true, state.get(0).sign.enabled)
+        assert.are.same(true, state.get(0).sign.enabled)
         state.invalidate_cache()
         vim.bo.buftype = 'nofile'
-        eq(false, state.get(0).sign.enabled)
+        assert.are.same(false, state.get(0).sign.enabled)
 
-        eq(0, #validate({
+        assert.are.same(0, #validate({
             callout = {
                 note = { raw = 'value' },
                 new = { raw = 'value', rendered = 'value', highlight = 'value' },
@@ -49,7 +48,7 @@ describe('state', function()
     end)
 
     it('extra', function()
-        eq(
+        assert.are.same(
             {
                 'render-markdown.additional: is not a valid key',
                 'render-markdown.anti_conceal.ignore.additional: is not a valid key',
@@ -72,7 +71,7 @@ describe('state', function()
 
     it('type', function()
         ---@diagnostic disable: assign-type-mismatch
-        eq(
+        assert.are.same(
             {
                 'render-markdown.anti_conceal.ignore.sign: expected string list or type boolean or nil, got string',
                 'render-markdown.callout.a.highlight: expected type string, got nil',
@@ -118,7 +117,7 @@ describe('state', function()
             })
         )
 
-        eq(
+        assert.are.same(
             {
                 'render-markdown.checkbox: expected type table, got string',
                 'render-markdown.render_modes: expected string list or type boolean, got table, info: [1] is number',

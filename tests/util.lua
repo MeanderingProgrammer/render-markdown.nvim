@@ -1,8 +1,5 @@
 ---@module 'luassert'
 
-local ui = require('render-markdown.core.ui')
-local eq = assert.are.same
-
 ---@class render.md.test.Row
 ---@field private value integer
 local Row = {}
@@ -448,17 +445,18 @@ function M.assert_marks(expected)
         :totable()
 
     for i = 1, math.min(#expected, #actual) do
-        eq(expected[i], actual[i], string.format('Marks at index %d mismatch', i))
+        assert.are.same(expected[i], actual[i], string.format('Marks at index %d mismatch', i))
     end
-    eq(#expected, #actual, 'Different number of marks found')
+    assert.are.same(#expected, #actual, 'Different number of marks found')
 end
 
 ---@private
 ---@return render.md.MarkInfo[]
 function M.actual_marks()
+    local namespace = require('render-markdown.core.ui').namespace
+    local marks = vim.api.nvim_buf_get_extmarks(0, namespace, 0, -1, { details = true })
     ---@type render.md.MarkInfo[]
     local actual = {}
-    local marks = vim.api.nvim_buf_get_extmarks(0, ui.namespace, 0, -1, { details = true })
     for _, mark in ipairs(marks) do
         local _, row, col, details = unpack(mark)
         table.insert(actual, MarkInfo.new(row, col, details))
@@ -470,7 +468,7 @@ end
 ---@param expected string[]
 function M.assert_screen(expected)
     local actual = M.actual_screen()
-    eq(expected, actual)
+    assert.are.same(expected, actual)
 end
 
 ---@private
