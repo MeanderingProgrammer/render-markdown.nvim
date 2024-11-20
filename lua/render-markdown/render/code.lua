@@ -123,7 +123,7 @@ function Render:language()
     local icon_text = icon .. ' '
     local highlight = { icon_highlight, self.code.highlight }
     if self.code.position == 'left' then
-        if self.code.language_name and self.context:hidden(node) then
+        if self.code.language_name and self.context:width(node) == 0 then
             -- Code blocks will pick up varying amounts of leading white space depending on the
             -- context they are in. This gets lumped into the delimiter node and as a result,
             -- after concealing, the extmark will be left shifted. Logic below accounts for this.
@@ -158,7 +158,7 @@ function Render:border(icon)
     ---@param border string
     ---@param context_hidden boolean
     local function add_border(row, border, context_hidden)
-        local delim_hidden = self.context:hidden(self.node:child('fenced_code_block_delimiter', row))
+        local delim_hidden = self.context:width(self.node:child('fenced_code_block_delimiter', row)) == 0
         if self.code.border == 'thin' and context_hidden and delim_hidden then
             local width = self.code.width == 'block' and self.data.max_width or vim.o.columns
             self.marks:add('code_border', row, self.data.col, {
@@ -170,7 +170,7 @@ function Render:border(icon)
         end
     end
 
-    add_border(self.node.start_row, self.code.above, not icon and self.context:hidden(self.data.code_node))
+    add_border(self.node.start_row, self.code.above, not icon and self.context:width(self.data.code_node) == 0)
     add_border(self.node.end_row - 1, self.code.below, true)
 end
 

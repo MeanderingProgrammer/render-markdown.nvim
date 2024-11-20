@@ -109,6 +109,7 @@ local M = {}
 ---@param file string
 ---@param opts? render.md.UserConfig
 function M.setup(file, opts)
+    require('luassert.assert'):set_parameter('TableFormatLevel', 4)
     require('luassert.assert'):set_parameter('TableErrorHighlightColor', 'none')
     require('render-markdown').setup(opts)
     vim.cmd('e ' .. file)
@@ -192,6 +193,21 @@ function M.inline_code(row, start_col, end_col)
         hl_eol = false,
         hl_group = M.hl('CodeInline'),
     }
+end
+
+---@param row integer
+---@param start_col integer
+---@param end_col integer
+---@return render.md.MarkInfo[]
+function M.inline_highlight(row, start_col, end_col)
+    ---@type render.md.MarkInfo
+    local mark = {
+        row = { row, row },
+        col = { start_col, end_col },
+        hl_eol = false,
+        hl_group = M.hl('InlineHighlight'),
+    }
+    return { M.conceal(row, start_col, start_col + 2), mark, M.conceal(row, end_col - 2, end_col) }
 end
 
 ---@param row integer

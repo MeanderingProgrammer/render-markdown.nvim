@@ -116,6 +116,7 @@ function M.default_buffer_config()
         callout = config.callout,
         link = config.link,
         sign = config.sign,
+        inline_highlight = config.inline_highlight,
         indent = config.indent,
         win_options = config.win_options,
     }
@@ -246,6 +247,9 @@ function M.validate()
                     :check()
             end)
             :nested('sign', function(sign)
+                sign:type('enabled', 'boolean'):type('highlight', 'string'):check()
+            end)
+            :nested('inline_highlight', function(sign)
                 sign:type('enabled', 'boolean'):type('highlight', 'string'):check()
             end)
             :nested('indent', function(indent)

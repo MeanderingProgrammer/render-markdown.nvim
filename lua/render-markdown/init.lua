@@ -37,6 +37,10 @@ local M = {}
 ---@field public skip_level? integer
 ---@field public skip_heading? boolean
 
+---@class (exact) render.md.UserInlineHighlight
+---@field public enabled? boolean
+---@field public highlight? string
+
 ---@class (exact) render.md.UserSign
 ---@field public enabled? boolean
 ---@field public highlight? string
@@ -134,7 +138,7 @@ local M = {}
 ---@field public position? render.md.code.Position
 ---@field public language_pad? number
 ---@field public language_name? boolean
----@field public disable_background? string[]|boolean
+---@field public disable_background? boolean|string[]
 ---@field public width? render.md.code.Width
 ---@field public left_margin? number
 ---@field public left_pad? number
@@ -194,7 +198,7 @@ local M = {}
 ---| 'link'
 ---| 'sign'
 
----@alias render.md.config.conceal.Ignore table<render.md.Element, string[]|boolean>
+---@alias render.md.config.conceal.Ignore table<render.md.Element, boolean|string[]>
 
 ---@class (exact) render.md.UserAntiConceal
 ---@field public enabled? boolean
@@ -210,7 +214,7 @@ local M = {}
 ---@field public enabled? boolean
 ---@field public max_file_size? number
 ---@field public debounce? integer
----@field public render_modes? string[]|boolean
+---@field public render_modes? boolean|string[]
 ---@field public anti_conceal? render.md.UserAntiConceal
 ---@field public padding? render.md.UserPadding
 ---@field public heading? render.md.UserHeading
@@ -224,6 +228,7 @@ local M = {}
 ---@field public callout? table<string, render.md.UserCustomCallout>
 ---@field public link? render.md.UserLink
 ---@field public sign? render.md.UserSign
+---@field public inline_highlight? render.md.UserInlineHighlight
 ---@field public indent? render.md.UserIndent
 ---@field public win_options? table<string, render.md.UserWindowOption>
 
@@ -644,6 +649,14 @@ M.default_config = {
         enabled = true,
         -- Applies to background of sign text
         highlight = 'RenderMarkdownSign',
+    },
+    -- Mimics Obsidian inline highlights when content is surrounded by double equals
+    -- The equals on both ends are concealed and the inner content is highlighted
+    inline_highlight = {
+        -- Turn on / off inline highlight rendering
+        enabled = true,
+        -- Applies to background of surrounded text
+        highlight = 'RenderMarkdownInlineHighlight',
     },
     -- Mimic org-indent-mode behavior by indenting everything under a heading based on the
     -- level of the heading. Indenting starts from level 2 headings onward.

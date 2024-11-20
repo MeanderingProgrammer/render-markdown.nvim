@@ -52,10 +52,8 @@ function M.parse(root, buf)
         return { { expression, latex.highlight } }
     end)
 
-    local marks = List.new_marks()
-    marks:add(false, node.start_row, node.start_col, {
-        end_row = node.end_row,
-        end_col = node.end_col,
+    local marks = List.new_marks(buf, nil)
+    marks:add_over(false, node, {
         virt_lines = latex_lines,
         virt_lines_above = true,
     })

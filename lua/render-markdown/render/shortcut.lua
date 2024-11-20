@@ -38,17 +38,12 @@ function Render:callout(callout)
     end
 
     local text, conceal = self:callout_title(callout)
-    local added = self.marks:add('callout', self.node.start_row, self.node.start_col, {
-        end_row = self.node.end_row,
-        end_col = self.node.end_col,
+    self.marks:add_over('callout', self.node, {
         virt_text = { { text, callout.highlight } },
         virt_text_pos = 'overlay',
         conceal = conceal and '' or nil,
     })
-
-    if added then
-        self.context:add_callout(self.node, callout)
-    end
+    self.context:add_callout(self.node.start_row, callout)
 end
 
 ---@private
@@ -77,16 +72,14 @@ function Render:checkbox(checkbox)
 
     local inline = self.config.checkbox.position == 'inline'
     local icon, highlight = checkbox.rendered, checkbox.highlight
-    local added = self.marks:add('check_icon', self.node.start_row, self.node.start_col, {
-        end_row = self.node.end_row,
-        end_col = self.node.end_col,
+    local added = self.marks:add_over('check_icon', self.node, {
         virt_text = { { inline and icon or Str.pad_to(self.node.text, icon) .. icon, highlight } },
         virt_text_pos = 'inline',
         conceal = '',
     })
 
     if added then
-        self.context:add_checkbox(self.node, checkbox)
+        self.context:add_checkbox(self.node.start_row, checkbox)
     end
 end
 
@@ -103,17 +96,13 @@ function Render:wiki_link()
         icon, highlight = link_component.icon, link_component.highlight
     end
     local link_text = icon .. parts[#parts]
-    local added = self.marks:add('link', self.node.start_row, self.node.start_col - 1, {
+    self.marks:add('link', self.node.start_row, self.node.start_col - 1, {
         end_row = self.node.end_row,
         end_col = self.node.end_col + 1,
         virt_text = { { link_text, highlight } },
         virt_text_pos = 'inline',
         conceal = '',
     })
-
-    if added then
-        self.context:add_offset(self.node, Str.width(link_text) - Str.width(self.node.text))
-    end
 end
 
 return Render

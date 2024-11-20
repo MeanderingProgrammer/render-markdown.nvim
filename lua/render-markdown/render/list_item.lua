@@ -30,7 +30,7 @@ function Render:setup()
         -- cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
         -- As a result we account for leading spaces here, can remove if this gets fixed upstream
         spaces = Str.spaces('start', marker.text),
-        checkbox = self.context:get_checkbox(self.node),
+        checkbox = self.context:get_checkbox(self.node.start_row),
     }
 
     return true
@@ -104,9 +104,7 @@ function Render:icon(level)
     if Str.width(text) > Str.width(node.text) then
         position, conceal = 'inline', ''
     end
-    self.marks:add('bullet', node.start_row, node.start_col, {
-        end_row = node.end_row,
-        end_col = node.end_col,
+    self.marks:add_over('bullet', node, {
         virt_text = { { text, self.bullet.highlight } },
         virt_text_pos = position,
         conceal = conceal,

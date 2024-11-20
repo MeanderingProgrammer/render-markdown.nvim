@@ -1,5 +1,4 @@
 local Base = require('render-markdown.render.base')
-local Str = require('render-markdown.lib.str')
 
 ---@class render.md.data.Link
 ---@field text string
@@ -37,16 +36,11 @@ function Render:setup()
 end
 
 function Render:render()
-    local added = self.marks:add('link', self.node.start_row, self.node.start_col, {
-        end_row = self.node.end_row,
-        end_col = self.node.end_col,
+    self.marks:add_over('link', self.node, {
         virt_text = { { self.data.text, self.data.highlight } },
         virt_text_pos = 'inline',
         conceal = self.data.conceal and '' or nil,
     })
-    if not self.data.conceal and added then
-        self.context:add_offset(self.node, Str.width(self.data.text))
-    end
 end
 
 return Render

@@ -241,9 +241,7 @@ function Render:delimiter()
     text = text .. border[4] .. table.concat(sections, border[5]) .. border[6]
     text = text .. Str.pad_to(delim.node.text, text)
 
-    self.marks:add('table_border', delim.node.start_row, delim.node.start_col, {
-        end_row = delim.node.end_row,
-        end_col = delim.node.end_col,
+    self.marks:add_over('table_border', delim.node, {
         virt_text = { { text, self.table.head } },
         virt_text_pos = 'overlay',
     })
@@ -257,9 +255,7 @@ function Render:row(row)
 
     if vim.tbl_contains({ 'trimmed', 'padded', 'raw' }, self.table.cell) then
         for _, pipe in ipairs(row.pipes) do
-            self.marks:add('table_border', pipe.start_row, pipe.start_col, {
-                end_row = pipe.end_row,
-                end_col = pipe.end_col,
+            self.marks:add_over('table_border', pipe, {
                 virt_text = { { border[10], highlight } },
                 virt_text_pos = 'overlay',
             })
@@ -270,7 +266,7 @@ function Render:row(row)
         for i, column in ipairs(row.columns) do
             local delim_column = delim.columns[i]
             local filler = delim_column.width - column.width
-            if not self.context.conceal.enabled then
+            if not self.context.conceal:enabled() then
                 -- Without concealing it is impossible to do full alignment
                 self:shift(column, 'right', filler)
             elseif delim_column.alignment == 'center' then
@@ -290,9 +286,7 @@ function Render:row(row)
     end
 
     if self.table.cell == 'overlay' then
-        self.marks:add('table_border', row.node.start_row, row.node.start_col, {
-            end_row = row.node.end_row,
-            end_col = row.node.end_col,
+        self.marks:add_over('table_border', row.node, {
             virt_text = { { row.node.text:gsub('|', border[10]), highlight } },
             virt_text_pos = 'overlay',
         })
@@ -313,7 +307,7 @@ function Render:shift(column, side, amount)
             virt_text_pos = 'inline',
         })
     elseif amount < 0 then
-        amount = amount - self.context.conceal.block
+        amount = self.context.conceal:adjust(amount, nil)
         self.marks:add(true, column.row, col + amount, {
             priority = 0,
             end_col = col,

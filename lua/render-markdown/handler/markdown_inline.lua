@@ -18,7 +18,7 @@ function Handler.new(buf)
     local self = setmetatable({}, Handler)
     self.config = state.get(buf)
     self.context = Context.get(buf)
-    self.marks = List.new_marks(self.context.mode, self.config.anti_conceal.ignore)
+    self.marks = List.new_marks(buf, self.config.anti_conceal.ignore)
     self.query = treesitter.parse(
         'markdown_inline',
         [[
@@ -32,10 +32,14 @@ function Handler.new(buf)
                 (image)
                 (inline_link)
             ] @link
+
+            ((inline) @inline_highlight
+                (#lua-match? @inline_highlight "==[^=]+=="))
         ]]
     )
     self.renderers = {
         code_inline = require('render-markdown.render.code_inline'),
+        inline_highlight = require('render-markdown.render.inline_highlight'),
         link = require('render-markdown.render.link'),
         shortcut = require('render-markdown.render.shortcut'),
     }

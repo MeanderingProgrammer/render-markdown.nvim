@@ -100,28 +100,22 @@ function Render:icon()
         return added and Str.width(icon) or 0
     end
 
-    -- For atx headings available width is level + 1 - concealed, where level = number of
-    -- `#` characters, one is added to account for the space after the last `#` but before
-    -- the  heading title, and concealed text is subtracted since that space is not usable
-    local width = self.data.level + 1 - self.context:concealed(self.node)
+    -- For atx headings we add 1 to the available width to account for the space after the last `#`
+    local width = self.context:width(self.node) + 1
     if icon == nil or #highlight == 0 then
         return width
     end
 
     local padding = width - Str.width(icon)
     if self.heading.position == 'inline' or padding < 0 then
-        local added = self.marks:add('head_icon', self.node.start_row, self.node.start_col, {
-            end_row = self.node.end_row,
-            end_col = self.node.end_col,
+        local added = self.marks:add_over('head_icon', self.node, {
             virt_text = { { icon, highlight } },
             virt_text_pos = 'inline',
             conceal = '',
         })
         return added and Str.width(icon) + 1 or width
     else
-        self.marks:add('head_icon', self.node.start_row, self.node.start_col, {
-            end_row = self.node.end_row,
-            end_col = self.node.end_col,
+        self.marks:add_over('head_icon', self.node, {
             virt_text = { { Str.pad(padding) .. icon, highlight } },
             virt_text_pos = 'overlay',
         })
@@ -280,9 +274,7 @@ function Render:conceal_underline()
     if node == nil then
         return
     end
-    self.marks:add(true, node.start_row, node.start_col, {
-        end_row = node.end_row,
-        end_col = node.end_col,
+    self.marks:add_over(true, node, {
         conceal = '',
     })
 end

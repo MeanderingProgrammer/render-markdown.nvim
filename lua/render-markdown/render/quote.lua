@@ -19,7 +19,7 @@ function Render:setup()
         return false
     end
 
-    local callout = self.context:get_callout(self.node)
+    local callout = self.context:get_callout(self.node.start_row)
 
     self.data = {
         query = treesitter.parse(
@@ -49,9 +49,7 @@ end
 ---@private
 ---@param node render.md.Node
 function Render:quote_marker(node)
-    self.marks:add('quote', node.start_row, node.start_col, {
-        end_row = node.end_row,
-        end_col = node.end_col,
+    self.marks:add_over('quote', node, {
         virt_text = { { node.text:gsub('>', self.data.icon), self.data.highlight } },
         virt_text_pos = 'overlay',
         virt_text_repeat_linebreak = self.data.repeat_linebreak,

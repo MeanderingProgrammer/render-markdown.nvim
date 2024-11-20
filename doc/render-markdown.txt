@@ -1,4 +1,4 @@
-*render-markdown.txt*         For 0.10.0         Last change: 2024 November 18
+*render-markdown.txt*         For 0.10.0         Last change: 2024 November 20
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -579,6 +579,14 @@ Default Configuration ~
             -- Applies to background of sign text
             highlight = 'RenderMarkdownSign',
         },
+        -- Mimics Obsidian inline highlights when content is surrounded by double equals
+        -- The equals on both ends are concealed and the inner content is highlighted
+        inline_highlight = {
+            -- Turn on / off inline highlight rendering
+            enabled = true,
+            -- Applies to background of surrounded text
+            highlight = 'RenderMarkdownInlineHighlight',
+        },
         -- Mimic org-indent-mode behavior by indenting everything under a heading based on the
         -- level of the heading. Indenting starts from level 2 headings onward.
         indent = {
@@ -1140,82 +1148,88 @@ Indent Configuration ~
 
 The table below shows all the highlight groups with their default link
 
-  -------------------------------------------------------------------------------------
-  Highlight Group            Default Group                        Description
-  -------------------------- ------------------------------------ ---------------------
-  RenderMarkdownH1           @markup.heading.1.markdown           H1 icons
+  -----------------------------------------------------------------------------------------
+  Highlight Group                 Default Group                        Description
+  ------------------------------- ------------------------------------ --------------------
+  RenderMarkdownH1                @markup.heading.1.markdown           H1 icons
 
-  RenderMarkdownH2           @markup.heading.2.markdown           H2 icons
+  RenderMarkdownH2                @markup.heading.2.markdown           H2 icons
 
-  RenderMarkdownH3           @markup.heading.3.markdown           H3 icons
+  RenderMarkdownH3                @markup.heading.3.markdown           H3 icons
 
-  RenderMarkdownH4           @markup.heading.4.markdown           H4 icons
+  RenderMarkdownH4                @markup.heading.4.markdown           H4 icons
 
-  RenderMarkdownH5           @markup.heading.5.markdown           H5 icons
+  RenderMarkdownH5                @markup.heading.5.markdown           H5 icons
 
-  RenderMarkdownH6           @markup.heading.6.markdown           H6 icons
+  RenderMarkdownH6                @markup.heading.6.markdown           H6 icons
 
-  RenderMarkdownH1Bg         DiffAdd                              H1 background line
+  RenderMarkdownH1Bg              DiffAdd                              H1 background line
 
-  RenderMarkdownH2Bg         DiffChange                           H2 background line
+  RenderMarkdownH2Bg              DiffChange                           H2 background line
 
-  RenderMarkdownH3Bg         DiffDelete                           H3 background line
+  RenderMarkdownH3Bg              DiffDelete                           H3 background line
 
-  RenderMarkdownH4Bg         DiffDelete                           H4 background line
+  RenderMarkdownH4Bg              DiffDelete                           H4 background line
 
-  RenderMarkdownH5Bg         DiffDelete                           H5 background line
+  RenderMarkdownH5Bg              DiffDelete                           H5 background line
 
-  RenderMarkdownH6Bg         DiffDelete                           H6 background line
+  RenderMarkdownH6Bg              DiffDelete                           H6 background line
 
-  RenderMarkdownCode         ColorColumn                          Code block background
+  RenderMarkdownCode              ColorColumn                          Code block
+                                                                       background
 
-  RenderMarkdownCodeInline   RenderMarkdownCode                   Inline code
-                                                                  background
+  RenderMarkdownCodeInline        RenderMarkdownCode                   Inline code
+                                                                       background
 
-  RenderMarkdownBullet       Normal                               List item bullet
-                                                                  points
+  RenderMarkdownInlineHighlight   RenderMarkdownCodeInline             Inline highlights
+                                                                       contents
 
-  RenderMarkdownQuote        @markup.quote                        Block quote marker
+  RenderMarkdownBullet            Normal                               List item bullet
+                                                                       points
 
-  RenderMarkdownDash         LineNr                               Thematic break line
+  RenderMarkdownQuote             @markup.quote                        Block quote marker
 
-  RenderMarkdownSign         SignColumn                           Sign column
-                                                                  background
+  RenderMarkdownDash              LineNr                               Thematic break line
 
-  RenderMarkdownMath         @markup.math                         LaTeX lines
+  RenderMarkdownSign              SignColumn                           Sign column
+                                                                       background
 
-  RenderMarkdownLink         @markup.link.label.markdown_inline   Image & hyperlink
-                                                                  icons
+  RenderMarkdownMath              @markup.math                         LaTeX lines
 
-  RenderMarkdownWikiLink     RenderMarkdownLink                   WikiLink icon & text
+  RenderMarkdownLink              @markup.link.label.markdown_inline   Image & hyperlink
+                                                                       icons
 
-  RenderMarkdownUnchecked    @markup.list.unchecked               Unchecked checkbox
+  RenderMarkdownWikiLink          RenderMarkdownLink                   WikiLink icon & text
 
-  RenderMarkdownChecked      @markup.list.checked                 Checked checkbox
+  RenderMarkdownUnchecked         @markup.list.unchecked               Unchecked checkbox
 
-  RenderMarkdownTodo         @markup.raw                          Todo custom checkbox
+  RenderMarkdownChecked           @markup.list.checked                 Checked checkbox
 
-  RenderMarkdownTableHead    @markup.heading                      Pipe table heading
-                                                                  rows
+  RenderMarkdownTodo              @markup.raw                          Todo custom checkbox
 
-  RenderMarkdownTableRow     Normal                               Pipe table body rows
+  RenderMarkdownTableHead         @markup.heading                      Pipe table heading
+                                                                       rows
 
-  RenderMarkdownTableFill    Conceal                              Pipe table inline
-                                                                  padding
+  RenderMarkdownTableRow          Normal                               Pipe table body rows
 
-  RenderMarkdownSuccess      DiagnosticOk                         Success related
-                                                                  callouts
+  RenderMarkdownTableFill         Conceal                              Pipe table inline
+                                                                       padding
 
-  RenderMarkdownInfo         DiagnosticInfo                       Info related callouts
+  RenderMarkdownSuccess           DiagnosticOk                         Success related
+                                                                       callouts
 
-  RenderMarkdownHint         DiagnosticHint                       Hint related callouts
+  RenderMarkdownInfo              DiagnosticInfo                       Info related
+                                                                       callouts
 
-  RenderMarkdownWarn         DiagnosticWarn                       Warning related
-                                                                  callouts
+  RenderMarkdownHint              DiagnosticHint                       Hint related
+                                                                       callouts
 
-  RenderMarkdownError        DiagnosticError                      Error related
-                                                                  callouts
-  -------------------------------------------------------------------------------------
+  RenderMarkdownWarn              DiagnosticWarn                       Warning related
+                                                                       callouts
+
+  RenderMarkdownError             DiagnosticError                      Error related
+                                                                       callouts
+  -----------------------------------------------------------------------------------------
 
 ==============================================================================
 8. Info                                                 *render-markdown-info*

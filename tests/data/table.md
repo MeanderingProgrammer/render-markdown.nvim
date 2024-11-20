@@ -3,9 +3,10 @@
 | Heading 1 | `Heading 2`            |
 | --------- | ---------------------: |
 | `Item 行` | [link](https://行.com) |
+| &lt;1&gt; | ==Item 2==             |
 
 # Table no Inline
 
-| &lt;Heading 1&gt; | Heading 2 |
+| Heading 1 | Heading 2 |
 | --------- | --------- |
 | Item 1    | Item 2    |

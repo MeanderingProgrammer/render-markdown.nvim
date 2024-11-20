@@ -37,9 +37,7 @@ end
 function Render:icon()
     local icon = self.checkbox.icon
     local text = self.inline and icon or Str.pad_to(self.node.text, icon) .. icon
-    self.marks:add('check_icon', self.node.start_row, self.node.start_col, {
-        end_row = self.node.end_row,
-        end_col = self.node.end_col,
+    self.marks:add_over('check_icon', self.node, {
         virt_text = { { text, self.checkbox.highlight } },
         virt_text_pos = self.inline and 'inline' or 'overlay',
         conceal = self.inline and '' or nil,

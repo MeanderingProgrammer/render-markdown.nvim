@@ -1,19 +1,21 @@
+local Context = require('render-markdown.core.context')
+local Str = require('render-markdown.lib.str')
 local log = require('render-markdown.core.log')
 local util = require('render-markdown.core.util')
 
 ---@class render.md.Marks
----@field private mode string
+---@field private context render.md.Context
 ---@field private ignore render.md.config.conceal.Ignore
 ---@field private marks render.md.Mark[]
 local Marks = {}
 Marks.__index = Marks
 
----@param mode? string
+---@param buf integer
 ---@param ignore? render.md.config.conceal.Ignore
 ---@return render.md.Marks
-function Marks.new(mode, ignore)
+function Marks.new(buf, ignore)
     local self = setmetatable({}, Marks)
-    self.mode = mode or util.mode()
+    self.context = Context.get(buf)
     self.ignore = ignore or {}
     self.marks = {}
     return self
@@ -22,6 +24,16 @@ end
 ---@return render.md.Mark[]
 function Marks:get()
     return self.marks
+end
+
+---@param element boolean|render.md.Element
+---@param node render.md.Node
+---@param opts vim.api.keyset.set_extmark
+---@return boolean
+function Marks:add_over(element, node, opts)
+    opts.end_row = node.end_row
+    opts.end_col = node.end_col
+    return self:add(element, node.start_row, node.start_col, opts)
 end
 
 ---@param element boolean|render.md.Element
@@ -46,6 +58,7 @@ function Marks:add(element, start_row, start_col, opts)
         return false
     end
     log.add('debug', 'mark', mark)
+    self:update_context(mark)
     table.insert(self.marks, mark)
     return true
 end
@@ -63,7 +76,27 @@ function Marks:conceal(element)
     elseif type(value) == 'boolean' then
         return not value
     else
-        return not vim.tbl_contains(value, self.mode)
+        return not vim.tbl_contains(value, self.context.mode)
+    end
+end
+
+---@private
+---@param mark render.md.Mark
+function Marks:update_context(mark)
+    local end_col = mark.opts.end_col
+    if end_col == nil then
+        return
+    end
+    local row, start_col = mark.start_row, mark.start_col
+    if mark.opts.conceal ~= nil then
+        self.context.conceal:add(row, start_col, end_col, end_col - start_col)
+    end
+    if mark.opts.virt_text_pos == 'inline' then
+        local amount = 0
+        for _, text in ipairs(mark.opts.virt_text or {}) do
+            amount = amount + Str.width(text[1])
+        end
+        self.context:add_offset(row, start_col, end_col, amount)
     end
 end
 

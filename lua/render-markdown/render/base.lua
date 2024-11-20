@@ -55,9 +55,7 @@ function Base:checkbox_scope(paragraph, highlight)
     if paragraph == nil then
         return
     end
-    self.marks:add('check_scope', paragraph.start_row, paragraph.start_col, {
-        end_row = paragraph.end_row,
-        end_col = paragraph.end_col,
+    self.marks:add_over('check_scope', paragraph, {
         hl_group = highlight,
     })
 end
