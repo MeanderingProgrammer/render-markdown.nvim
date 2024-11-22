@@ -16,6 +16,7 @@ local colors = require('render-markdown.colors')
 ---@field left_pad number
 ---@field right_pad number
 ---@field min_width integer
+---@field border boolean
 ---@field end_row integer
 
 ---@class render.md.width.Heading
@@ -55,6 +56,7 @@ function Render:setup()
         left_pad = List.clamp(self.heading.left_pad, level) or 0,
         right_pad = List.clamp(self.heading.right_pad, level) or 0,
         min_width = List.clamp(self.heading.min_width, level) or 0,
+        border = List.clamp(self.heading.border, level) or false,
         end_row = self.node.end_row + (atx and 1 or 0),
     }
 
@@ -178,7 +180,7 @@ end
 ---@param width render.md.width.Heading
 function Render:border(width)
     -- Only atx headings support borders
-    if not self.heading.border or not self.data.atx then
+    if not self.data.border or not self.data.atx then
         return
     end
 

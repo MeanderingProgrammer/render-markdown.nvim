@@ -170,7 +170,7 @@ local M = {}
 ---@field public left_pad? number|number[]
 ---@field public right_pad? number|number[]
 ---@field public min_width? integer|integer[]
----@field public border? boolean
+---@field public border? boolean|boolean[]
 ---@field public border_virtual? boolean
 ---@field public border_prefix? boolean
 ---@field public above? string
@@ -363,6 +363,7 @@ M.default_config = {
         -- Can also be a list of integers in which case the 'level' is used to index into the list using a clamp
         min_width = 0,
         -- Determines if a border is added above and below headings
+        -- Can also be a list of booleans in which case the 'level' is used to index into the list using a clamp
         border = false,
         -- Always use virtual lines for heading borders instead of attempting to use empty lines
         border_virtual = false,

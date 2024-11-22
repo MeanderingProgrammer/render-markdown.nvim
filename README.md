@@ -245,6 +245,7 @@ require('render-markdown').setup({
         -- Can also be a list of integers in which case the 'level' is used to index into the list using a clamp
         min_width = 0,
         -- Determines if a border is added above and below headings
+        -- Can also be a list of booleans in which case the 'level' is used to index into the list using a clamp
         border = false,
         -- Always use virtual lines for heading borders instead of attempting to use empty lines
         border_virtual = false,
@@ -651,6 +652,7 @@ require('render-markdown').setup({
         -- Can also be a list of integers in which case the 'level' is used to index into the list using a clamp
         min_width = 0,
         -- Determines if a border is added above and below headings
+        -- Can also be a list of booleans in which case the 'level' is used to index into the list using a clamp
         border = false,
         -- Always use virtual lines for heading borders instead of attempting to use empty lines
         border_virtual = false,
