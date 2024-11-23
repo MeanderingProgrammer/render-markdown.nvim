@@ -3,12 +3,16 @@ local Iter = require('render-markdown.lib.iter')
 local Str = require('render-markdown.lib.str')
 local log = require('render-markdown.core.log')
 
+---@class render.md.table.Space
+---@field left integer
+---@field right integer
+
 ---@class render.md.table.Column
 ---@field row integer
 ---@field start_col integer
 ---@field end_col integer
 ---@field width integer
----@field space { left: integer, right: integer }
+---@field space render.md.table.Space
 
 ---@class render.md.table.Row
 ---@field node render.md.Node
@@ -160,12 +164,6 @@ function Render:parse_row(row, num_columns)
         -- Account for double width glyphs by replacing cell range with width
         local width = end_col - start_col
         width = width - (cell.end_col - cell.start_col) + self.context:width(cell)
-        local space = {
-            -- Left space comes from the gap between the node start and the pipe start
-            left = math.max(cell.start_col - start_col, 0),
-            -- Right space is attached to the node itself
-            right = math.max(Str.spaces('end', cell.text), 0),
-        }
         if width < 0 then
             return nil
         end
@@ -175,7 +173,12 @@ function Render:parse_row(row, num_columns)
             start_col = cell.start_col,
             end_col = cell.end_col,
             width = width,
-            space = space,
+            space = {
+                -- Left space comes from the gap between the node start and the pipe start
+                left = math.max(cell.start_col - start_col, 0),
+                -- Right space is attached to the node itself
+                right = math.max(Str.spaces('end', cell.text), 0),
+            },
         }
         table.insert(columns, column)
     end

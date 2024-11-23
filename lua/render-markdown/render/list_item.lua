@@ -71,12 +71,9 @@ end
 
 ---@private
 function Render:hide_marker()
-    local node = self.data.marker
-    self.marks:add('check_icon', node.start_row, node.start_col + self.data.spaces, {
-        end_row = node.end_row,
-        end_col = node.end_col,
+    self.marks:add_over('check_icon', self.data.marker, {
         conceal = '',
-    })
+    }, { 0, self.data.spaces, 0, 0 })
 end
 
 ---@private

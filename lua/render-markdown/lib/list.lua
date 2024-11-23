@@ -32,11 +32,13 @@ end
 ---@param element boolean|render.md.Element
 ---@param node render.md.Node
 ---@param opts vim.api.keyset.set_extmark
+---@param offset? Range4
 ---@return boolean
-function Marks:add_over(element, node, opts)
-    opts.end_row = node.end_row
-    opts.end_col = node.end_col
-    return self:add(element, node.start_row, node.start_col, opts)
+function Marks:add_over(element, node, opts, offset)
+    offset = offset or { 0, 0, 0, 0 }
+    opts.end_row = node.end_row + offset[3]
+    opts.end_col = node.end_col + offset[4]
+    return self:add(element, node.start_row + offset[1], node.start_col + offset[2], opts)
 end
 
 ---@param element boolean|render.md.Element

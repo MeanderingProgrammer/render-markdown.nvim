@@ -96,13 +96,11 @@ function Render:wiki_link()
         icon, highlight = link_component.icon, link_component.highlight
     end
     local link_text = icon .. parts[#parts]
-    self.marks:add('link', self.node.start_row, self.node.start_col - 1, {
-        end_row = self.node.end_row,
-        end_col = self.node.end_col + 1,
+    self.marks:add_over('link', self.node, {
         virt_text = { { link_text, highlight } },
         virt_text_pos = 'inline',
         conceal = '',
-    })
+    }, { 0, -1, 0, 1 })
 end
 
 return Render
