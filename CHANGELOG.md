@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 7.6.0 (2024-11-25)
+
 ### Features
 
 - disabling background for code now keeps border [#220](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/220)
@@ -24,6 +26,7 @@
   [d80acb3](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/d80acb3f4ccc88052f65fa0a26e46c106b328bbe)
 - check table rows after parsing [7f0143e](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7f0143e9adf7140c8e3fa33a5bdf193d7a8f0429)
 - conceal level 2 entities in tables [430a671](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/430a671655ac84a63f41cd3e940caebdd0a99434)
+- ignore anti conceal for inline heading icons [017f370](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/017f370369f205b02331838b56c4a68eef0b317d)
 
 ## 7.5.0 (2024-11-04)
 
