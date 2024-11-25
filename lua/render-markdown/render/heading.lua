@@ -115,7 +115,7 @@ function Render:icon()
         else
             local padding = width - Str.width(icon)
             if self.heading.position == 'inline' or padding < 0 then
-                local added = self.marks:add_over(true, marker, {
+                local added = self.marks:add_over('head_icon', marker, {
                     virt_text = { { icon, highlight } },
                     virt_text_pos = 'inline',
                     conceal = '',

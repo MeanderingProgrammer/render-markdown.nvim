@@ -12,11 +12,18 @@
   [78a2eb7](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/78a2eb7fc273f36790aa390262f390a3265eedff)
 - log_level off [#235](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/235)
   [48a52dd](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/48a52dd5c847c59eac6ae5b96ff0123acd1a394d)
+- highlighting in double equals [d6a82d7](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/d6a82d70765aa238b7ea48d257a1d57a92501423)
+- heading border per level [#240](https://github.com/MeanderingProgrammer/render-markdown.nvim/discussions/240)
+  [c83fc56](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c83fc5694cd19c576af188f5f3313513bf467272)
+- heading position right [#238](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/238)
+  [e1879e0](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/e1879e0ea3d5cee295b48335fc90e76ae8a63081)
 
 ### Bug Fixes
 
 - padding & margin for code blocks indented with tabs [#230](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/230)
   [d80acb3](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/d80acb3f4ccc88052f65fa0a26e46c106b328bbe)
+- check table rows after parsing [7f0143e](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7f0143e9adf7140c8e3fa33a5bdf193d7a8f0429)
+- conceal level 2 entities in tables [430a671](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/430a671655ac84a63f41cd3e940caebdd0a99434)
 
 ## 7.5.0 (2024-11-04)
 
