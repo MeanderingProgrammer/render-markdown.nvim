@@ -19,7 +19,7 @@ function Render:render()
     ---@type integer|nil
     local index = 1
     while index ~= nil do
-        local start_index, end_index = self.node.text:find('(=)=[^=]+=(=)', index)
+        local start_index, end_index = self.node.text:find('==[^=]+==', index)
         if start_index == nil or end_index == nil then
             index = nil
         else

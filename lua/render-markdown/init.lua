@@ -54,8 +54,12 @@ local M = {}
 ---@field public icon? string
 ---@field public highlight? string
 
+---@class (exact) render.md.UserFootnote
+---@field public superscript? boolean
+
 ---@class (exact) render.md.UserLink
 ---@field public enabled? boolean
+---@field public footnote? render.md.UserFootnote
 ---@field public image? string
 ---@field public email? string
 ---@field public hyperlink? string
@@ -625,6 +629,11 @@ M.default_config = {
     link = {
         -- Turn on / off inline link icon rendering
         enabled = true,
+        -- How to handle footnote links, start with a '^'
+        footnote = {
+            -- Replace value with superscript equivalent
+            superscript = true,
+        },
         -- Inlined with 'image' elements
         image = '󰥶 ',
         -- Inlined with 'email_autolink' elements

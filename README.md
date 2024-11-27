@@ -507,6 +507,11 @@ require('render-markdown').setup({
     link = {
         -- Turn on / off inline link icon rendering
         enabled = true,
+        -- How to handle footnote links, start with a '^'
+        footnote = {
+            -- Replace value with superscript equivalent
+            superscript = true,
+        },
         -- Inlined with 'image' elements
         image = '󰥶 ',
         -- Inlined with 'email_autolink' elements
@@ -1050,6 +1055,11 @@ require('render-markdown').setup({
     link = {
         -- Turn on / off inline link icon rendering
         enabled = true,
+        -- How to handle footnote links, start with a '^'
+        footnote = {
+            -- Replace value with superscript equivalent
+            superscript = true,
+        },
         -- Inlined with 'image' elements
         image = '󰥶 ',
         -- Inlined with 'email_autolink' elements

@@ -41,8 +41,12 @@
 ---@field public icon string
 ---@field public highlight string
 
+---@class (exact) render.md.Footnote
+---@field public superscript boolean
+
 ---@class (exact) render.md.Link
 ---@field public enabled boolean
+---@field public footnote render.md.Footnote
 ---@field public image string
 ---@field public email string
 ---@field public hyperlink string

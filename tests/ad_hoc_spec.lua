@@ -30,21 +30,21 @@ local function setext_heading(start_row, end_row, level)
 end
 
 ---@param row integer
----@param length integer
+---@param start_col integer
+---@param end_col integer
 ---@param link_text string
 ---@param highlight 'Link'|'WikiLink'
 ---@param conceal string?
----@return render.md.MarkInfo[]
-local function bullet_link(row, length, link_text, highlight, conceal)
+---@return render.md.MarkInfo
+local function link(row, start_col, end_col, link_text, highlight, conceal)
     ---@type render.md.MarkInfo
-    local link = {
+    return {
         row = { row, row },
-        col = { 2, 2 + length },
+        col = { start_col, end_col },
         virt_text = { { link_text, util.hl(highlight) } },
         virt_text_pos = 'inline',
         conceal = conceal,
     }
-    return { util.bullet(row, 0, 1), link }
 end
 
 describe('ad_hoc.md', function()
@@ -63,12 +63,32 @@ describe('ad_hoc.md', function()
 
         vim.list_extend(expected, setext_heading(row:increment(2), row:increment(2), 2))
 
+        vim.list_extend(expected, { util.bullet(row:increment(2), 0, 1) })
+
         vim.list_extend(expected, {
-            util.bullet(row:increment(2), 0, 1),
-            bullet_link(row:increment(), 13, '󱗖 Basic One', 'WikiLink', ''),
-            bullet_link(row:increment(), 23, '󱗖 With Alias', 'WikiLink', ''),
-            bullet_link(row:increment(), 18, '󰀓 test@example.com', 'Link', ''),
-            bullet_link(row:increment(), 59, ' ', 'Link', nil),
+            util.bullet(row:increment(), 0, 1),
+            link(row:get(), 2, 15, '󱗖 Basic One', 'WikiLink', ''),
+        })
+
+        vim.list_extend(expected, {
+            util.bullet(row:increment(), 0, 1),
+            link(row:get(), 2, 25, '󱗖 With Alias', 'WikiLink', ''),
+        })
+
+        vim.list_extend(expected, {
+            util.bullet(row:increment(), 0, 1),
+            link(row:get(), 2, 20, '󰀓 test@example.com', 'Link', ''),
+        })
+
+        vim.list_extend(expected, {
+            util.bullet(row:increment(), 0, 1),
+            link(row:get(), 2, 61, ' ', 'Link', nil),
+        })
+
+        vim.list_extend(expected, {
+            util.bullet(row:increment(), 0, 1),
+            link(row:get(), 16, 25, '⁽¹ ᴵⁿᶠᵒ⁾', 'Link', ''),
+            link(row:increment(2), 0, 9, '⁽¹ ᴵⁿᶠᵒ⁾', 'Link', ''),
         })
 
         util.assert_view(expected, {
@@ -83,6 +103,9 @@ describe('ad_hoc.md', function()
             '    9 ● 󱗖 With Alias Something important',
             '   10 ● 󰀓 test@example.com Email',
             '   11 ●  Youtube Link',
+            '   12 ● Footnote Link ⁽¹ ᴵⁿᶠᵒ⁾',
+            '   13',
+            '   14 ⁽¹ ᴵⁿᶠᵒ⁾: Some Info',
         })
     end)
 end)
