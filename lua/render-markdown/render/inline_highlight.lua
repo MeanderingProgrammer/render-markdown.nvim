@@ -47,7 +47,7 @@ end
 function Render:row_col(index, offset)
     local lines = Str.split(self.node.text:sub(1, index), '\n')
     local row = self.node.start_row + #lines - 1
-    local col = Str.width(lines[#lines]) - offset
+    local col = #lines[#lines] - offset
     if row == self.node.start_row then
         col = col + self.node.start_col
     end
