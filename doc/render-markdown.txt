@@ -1,4 +1,4 @@
-*render-markdown.txt*         For 0.10.0         Last change: 2024 November 27
+*render-markdown.txt*         For 0.10.0         Last change: 2024 November 30
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -558,6 +558,10 @@ Default Configuration ~
             footnote = {
                 -- Replace value with superscript equivalent
                 superscript = true,
+                -- Added before link content when converting to superscript
+                prefix = '',
+                -- Added after link content when converting to superscript
+                suffix = '',
             },
             -- Inlined with 'image' elements
             image = '󰥶 ',
@@ -1086,6 +1090,10 @@ Link Configuration ~
             footnote = {
                 -- Replace value with superscript equivalent
                 superscript = true,
+                -- Added before link content when converting to superscript
+                prefix = '',
+                -- Added after link content when converting to superscript
+                suffix = '',
             },
             -- Inlined with 'image' elements
             image = '󰥶 ',

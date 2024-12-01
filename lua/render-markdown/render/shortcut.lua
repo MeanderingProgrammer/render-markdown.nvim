@@ -115,11 +115,12 @@ end
 ---@private
 ---@param text string
 function Render:footnote(text)
-    if not self.link.enabled or not self.link.footnote.superscript then
+    local footnote = self.link.footnote
+    if not self.link.enabled or not footnote.superscript then
         return
     end
 
-    local value = Converter.to_superscript('(' .. text .. ')')
+    local value = Converter.to_superscript(footnote.prefix .. text .. footnote.suffix)
     if value == nil then
         return
     end

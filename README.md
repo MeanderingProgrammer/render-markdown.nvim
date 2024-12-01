@@ -511,6 +511,10 @@ require('render-markdown').setup({
         footnote = {
             -- Replace value with superscript equivalent
             superscript = true,
+            -- Added before link content when converting to superscript
+            prefix = '',
+            -- Added after link content when converting to superscript
+            suffix = '',
         },
         -- Inlined with 'image' elements
         image = '󰥶 ',
@@ -1059,6 +1063,10 @@ require('render-markdown').setup({
         footnote = {
             -- Replace value with superscript equivalent
             superscript = true,
+            -- Added before link content when converting to superscript
+            prefix = '',
+            -- Added after link content when converting to superscript
+            suffix = '',
         },
         -- Inlined with 'image' elements
         image = '󰥶 ',

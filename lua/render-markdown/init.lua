@@ -56,6 +56,8 @@ local M = {}
 
 ---@class (exact) render.md.UserFootnote
 ---@field public superscript? boolean
+---@field public prefix? string
+---@field public suffix? string
 
 ---@class (exact) render.md.UserLink
 ---@field public enabled? boolean
@@ -633,6 +635,10 @@ M.default_config = {
         footnote = {
             -- Replace value with superscript equivalent
             superscript = true,
+            -- Added before link content when converting to superscript
+            prefix = '',
+            -- Added after link content when converting to superscript
+            suffix = '',
         },
         -- Inlined with 'image' elements
         image = '󰥶 ',

@@ -87,8 +87,8 @@ describe('ad_hoc.md', function()
 
         vim.list_extend(expected, {
             util.bullet(row:increment(), 0, 1),
-            link(row:get(), 16, 25, '⁽¹ ᴵⁿᶠᵒ⁾', 'Link', ''),
-            link(row:increment(2), 0, 9, '⁽¹ ᴵⁿᶠᵒ⁾', 'Link', ''),
+            link(row:get(), 16, 25, '¹ ᴵⁿᶠᵒ', 'Link', ''),
+            link(row:increment(2), 0, 9, '¹ ᴵⁿᶠᵒ', 'Link', ''),
         })
 
         util.assert_view(expected, {
@@ -103,9 +103,9 @@ describe('ad_hoc.md', function()
             '    9 ● 󱗖 With Alias Something important',
             '   10 ● 󰀓 test@example.com Email',
             '   11 ●  Youtube Link',
-            '   12 ● Footnote Link ⁽¹ ᴵⁿᶠᵒ⁾',
+            '   12 ● Footnote Link ¹ ᴵⁿᶠᵒ',
             '   13',
-            '   14 ⁽¹ ᴵⁿᶠᵒ⁾: Some Info',
+            '   14 ¹ ᴵⁿᶠᵒ: Some Info',
         })
     end)
 end)

@@ -43,6 +43,8 @@
 
 ---@class (exact) render.md.Footnote
 ---@field public superscript boolean
+---@field public prefix string
+---@field public suffix string
 
 ---@class (exact) render.md.Link
 ---@field public enabled boolean
