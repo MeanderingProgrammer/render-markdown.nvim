@@ -2,6 +2,17 @@
 
 ## Pre-release
 
+### Features
+
+- footnote text superscript rendering [#241](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/241)
+  [634acd5](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/634acd5da964c32f6947cd0c7802d7a116662665)
+  [1b5d117](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/1b5d11734122d9451d2e5e2e567fd61a62822293)
+
+### Bug Fixes
+
+- highlight index width calculation [#212](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/212)
+  [3a319cd](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/3a319cdbefebf0079a7012dab6b1bfc18ca5b97f)
+
 ## 7.6.0 (2024-11-25)
 
 ### Features

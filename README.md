@@ -328,6 +328,7 @@ require('render-markdown').setup({
         -- Minimum width to use for code blocks when width is 'block'
         min_width = 0,
         -- Determines how the top / bottom of code block are rendered:
+        --  none:  do not render a border
         --  thick: use the same highlight as the code body
         --  thin:  when lines are empty overlay the above & below icons
         border = 'thin',
@@ -775,6 +776,7 @@ require('render-markdown').setup({
         -- Minimum width to use for code blocks when width is 'block'
         min_width = 0,
         -- Determines how the top / bottom of code block are rendered:
+        --  none:  do not render a border
         --  thick: use the same highlight as the code body
         --  thin:  when lines are empty overlay the above & below icons
         border = 'thin',

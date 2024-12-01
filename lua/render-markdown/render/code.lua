@@ -106,10 +106,12 @@ function Render:language()
     if not vim.tbl_contains({ 'language', 'full' }, self.code.style) then
         return false
     end
+
     local node = self.data.language_node
     if node == nil then
         return false
     end
+
     local icon, icon_highlight = Icons.get(node.text)
     if self.code.highlight_language ~= nil then
         icon_highlight = self.code.highlight_language
@@ -117,13 +119,19 @@ function Render:language()
     if icon == nil or icon_highlight == nil then
         return false
     end
+
     if self.code.sign then
         self:sign(icon, icon_highlight)
     end
+
     local icon_text = icon .. ' '
-    local highlight = { icon_highlight, self.code.highlight }
+    local highlight = { icon_highlight }
+    if self.code.border ~= 'none' then
+        table.insert(highlight, self.code.highlight)
+    end
+
     if self.code.position == 'left' then
-        if self.code.language_name and self.context:width(node) == 0 then
+        if self.code.language_name and self:hidden(node) then
             -- Code blocks will pick up varying amounts of leading white space depending on the
             -- context they are in. This gets lumped into the delimiter node and as a result,
             -- after concealing, the extmark will be left shifted. Logic below accounts for this.
@@ -154,12 +162,16 @@ end
 ---@private
 ---@param icon boolean
 function Render:border(icon)
+    if self.code.border == 'none' then
+        return
+    end
+
     ---@param row integer
     ---@param border string
     ---@param context_hidden boolean
     local function add_border(row, border, context_hidden)
-        local delim_hidden = self.context:width(self.node:child('fenced_code_block_delimiter', row)) == 0
-        if self.code.border == 'thin' and context_hidden and delim_hidden then
+        local delim_node = self.node:child('fenced_code_block_delimiter', row)
+        if self.code.border == 'thin' and context_hidden and self:hidden(delim_node) then
             local width = self.code.width == 'block' and self.data.max_width or vim.o.columns
             self.marks:add('code_border', row, self.data.col, {
                 virt_text = { { border:rep(width - self.data.col), colors.bg_to_fg(self.code.highlight) } },
@@ -170,8 +182,15 @@ function Render:border(icon)
         end
     end
 
-    add_border(self.node.start_row, self.code.above, not icon and self.context:width(self.data.code_node) == 0)
+    add_border(self.node.start_row, self.code.above, not icon and self:hidden(self.data.code_node))
     add_border(self.node.end_row - 1, self.code.below, true)
+end
+
+---@private
+---@param node? render.md.Node
+---@return boolean
+function Render:hidden(node)
+    return self.context:width(node) == 0
 end
 
 ---@private

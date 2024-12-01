@@ -135,7 +135,7 @@ local M = {}
 ---@alias render.md.code.Style 'full'|'normal'|'language'|'none'
 ---@alias render.md.code.Position 'left'|'right'
 ---@alias render.md.code.Width 'full'|'block'
----@alias render.md.code.Border 'thin'|'thick'
+---@alias render.md.code.Border 'thin'|'thick'|'none'
 
 ---@class (exact) render.md.UserCode
 ---@field public enabled? boolean
@@ -452,6 +452,7 @@ M.default_config = {
         -- Minimum width to use for code blocks when width is 'block'
         min_width = 0,
         -- Determines how the top / bottom of code block are rendered:
+        --  none:  do not render a border
         --  thick: use the same highlight as the code body
         --  thin:  when lines are empty overlay the above & below icons
         border = 'thin',
