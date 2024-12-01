@@ -24,16 +24,20 @@ class LuaClass:
         return self.class_name.startswith("User")
 
     def is_optional(self, field: str) -> bool:
+        class_to_optional: dict[str, list[str]] = {
+            "Handler": ["extends"],
+            "UserCode": ["highlight_language"],
+            "UserCustomCheckbox": ["scope_highlight"],
+            "UserCheckboxComponent": ["scope_highlight"],
+            "UserCustomCallout": ["quote_icon"],
+            "UserLinkComponent": ["highlight"],
+        }
+
         # ---@field public extends? boolean             -> extends
         # ---@field public start_row integer            -> start_row
         # ---@field public attach? fun(buf: integer)    -> attach
         field_name = field.split()[2].replace("?", "")
-        return field_name in [
-            "extends",
-            "highlight_language",
-            "quote_icon",
-            "scope_highlight",
-        ]
+        return field_name in class_to_optional.get(self.class_name, [])
 
     def validate(self) -> None:
         for field in self.fields:

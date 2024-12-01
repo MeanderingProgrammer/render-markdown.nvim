@@ -243,7 +243,10 @@ function M.validate()
                     :nested('custom', function(patterns)
                         patterns
                             :nested('ALL', function(pattern)
-                                pattern:type({ 'pattern', 'icon', 'highlight' }, 'string'):check()
+                                pattern
+                                    :type({ 'pattern', 'icon' }, 'string')
+                                    :type('highlight', { 'string', 'nil' })
+                                    :check()
                             end, false)
                             :check()
                     end)

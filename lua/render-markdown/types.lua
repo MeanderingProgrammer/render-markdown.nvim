@@ -35,7 +35,7 @@
 ---@class (exact) render.md.LinkComponent
 ---@field public pattern string
 ---@field public icon string
----@field public highlight string
+---@field public highlight? string
 
 ---@class (exact) render.md.WikiLink
 ---@field public icon string

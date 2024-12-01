@@ -18,7 +18,7 @@ function Render:setup()
         return false
     end
 
-    local text, highlight, conceal = self.link.hyperlink, self.link.highlight, false
+    local text, highlight, conceal = self.link.hyperlink, nil, false
     if self.node.type == 'email_autolink' then
         text, conceal = self.link.email .. self.node.text:sub(2, -2), true
     elseif self.node.type == 'image' then
@@ -30,7 +30,7 @@ function Render:setup()
             text, highlight = link_component.icon, link_component.highlight
         end
     end
-    self.data = { text = text, highlight = highlight, conceal = conceal }
+    self.data = { text = text, highlight = highlight or self.link.highlight, conceal = conceal }
 
     return true
 end

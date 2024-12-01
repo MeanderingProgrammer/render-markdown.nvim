@@ -523,7 +523,7 @@ require('render-markdown').setup({
         email = '󰀓 ',
         -- Fallback icon for 'inline_link' elements
         hyperlink = '󰌹 ',
-        -- Applies to the fallback inlined icon
+        -- Applies to the inlined icon as a fallback
         highlight = 'RenderMarkdownLink',
         -- Applies to WikiLink elements
         wiki = { icon = '󱗖 ', highlight = 'RenderMarkdownWikiLink' },
@@ -533,9 +533,15 @@ require('render-markdown').setup({
         --   The key in this case 'web' is for healthcheck and to allow users to change its values
         --   'pattern':   Matched against the destination text see :h lua-pattern
         --   'icon':      Gets inlined before the link text
-        --   'highlight': Highlight for the 'icon'
+        --   'highlight': Optional highlight for the 'icon', uses fallback highlight if not provided
         custom = {
-            web = { pattern = '^http[s]?://', icon = '󰖟 ', highlight = 'RenderMarkdownLink' },
+            web = { pattern = '^http', icon = '󰖟 ' },
+            youtube = { pattern = 'youtube%.com', icon = '󰗃 ' },
+            github = { pattern = 'github%.com', icon = '󰊤 ' },
+            neovim = { pattern = 'neovim%.io', icon = ' ' },
+            stackoverflow = { pattern = 'stackoverflow%.com', icon = '󰓌 ' },
+            discord = { pattern = 'discord%.com', icon = '󰙯 ' },
+            reddit = { pattern = 'reddit%.com', icon = '󰑍 ' },
         },
     },
     sign = {
@@ -1076,7 +1082,7 @@ require('render-markdown').setup({
         email = '󰀓 ',
         -- Fallback icon for 'inline_link' elements
         hyperlink = '󰌹 ',
-        -- Applies to the fallback inlined icon
+        -- Applies to the inlined icon as a fallback
         highlight = 'RenderMarkdownLink',
         -- Applies to WikiLink elements
         wiki = { icon = '󱗖 ', highlight = 'RenderMarkdownWikiLink' },
@@ -1086,9 +1092,15 @@ require('render-markdown').setup({
         --   The key in this case 'web' is for healthcheck and to allow users to change its values
         --   'pattern':   Matched against the destination text see :h lua-pattern
         --   'icon':      Gets inlined before the link text
-        --   'highlight': Highlight for the 'icon'
+        --   'highlight': Optional highlight for the 'icon', uses fallback highlight if not provided
         custom = {
-            web = { pattern = '^http[s]?://', icon = '󰖟 ', highlight = 'RenderMarkdownLink' },
+            web = { pattern = '^http', icon = '󰖟 ' },
+            youtube = { pattern = 'youtube%.com', icon = '󰗃 ' },
+            github = { pattern = 'github%.com', icon = '󰊤 ' },
+            neovim = { pattern = 'neovim%.io', icon = ' ' },
+            stackoverflow = { pattern = 'stackoverflow%.com', icon = '󰓌 ' },
+            discord = { pattern = 'discord%.com', icon = '󰙯 ' },
+            reddit = { pattern = 'reddit%.com', icon = '󰑍 ' },
         },
     },
 })
