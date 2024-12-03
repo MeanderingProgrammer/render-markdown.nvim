@@ -290,9 +290,9 @@ M.default_config = {
             ]],
         },
     },
-    -- Vim modes that will show a rendered view of the markdown file
+    -- Vim modes that will show a rendered view of the markdown file, :h mode()
     -- All other modes will be unaffected by this plugin
-    render_modes = { 'n', 'c' },
+    render_modes = { 'n', 'c', 't' },
     anti_conceal = {
         -- This enables hiding any added text on the line the cursor is on
         enabled = true,
