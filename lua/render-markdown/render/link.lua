@@ -18,19 +18,52 @@ function Render:setup()
         return false
     end
 
-    local text, highlight, conceal = self.link.hyperlink, nil, false
     if self.node.type == 'email_autolink' then
-        text, conceal = self.link.email .. self.node.text:sub(2, -2), true
+        local email = self.node.text:sub(2, -2)
+        self.data = {
+            text = self.link.email .. email,
+            highlight = self.link.highlight,
+            conceal = true,
+        }
+    elseif self.node.type == 'full_reference_link' then
+        self.data = {
+            text = self.link.hyperlink,
+            highlight = self.link.highlight,
+            conceal = false,
+        }
     elseif self.node.type == 'image' then
-        text = self.link.image
+        self.data = {
+            text = self.link.image,
+            highlight = self.link.highlight,
+            conceal = false,
+        }
     elseif self.node.type == 'inline_link' then
         local destination = self.node:child('link_destination')
-        local link_component = destination ~= nil and self:link_component(destination.text) or nil
-        if link_component ~= nil then
-            text, highlight = link_component.icon, link_component.highlight
+        local component = destination ~= nil and self:link_component(destination.text) or nil
+        local text, highlight = self.link.hyperlink, nil
+        if component ~= nil then
+            text, highlight = component.icon, component.highlight
         end
+        self.data = {
+            text = text,
+            highlight = highlight or self.link.highlight,
+            conceal = false,
+        }
+    elseif self.node.type == 'uri_autolink' then
+        local destination = self.node.text:sub(2, -2)
+        local component = self:link_component(destination)
+        local text, highlight = self.link.hyperlink, nil
+        if component ~= nil then
+            text, highlight = component.icon, component.highlight
+        end
+        self.data = {
+            text = text .. destination,
+            highlight = highlight or self.link.highlight,
+            conceal = true,
+        }
+    else
+        return false
     end
-    self.data = { text = text, highlight = highlight or self.link.highlight, conceal = conceal }
 
     return true
 end

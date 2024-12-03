@@ -76,6 +76,11 @@ describe('ad_hoc.md', function()
 
         vim.list_extend(expected, {
             util.bullet(row:increment(), 0, 1),
+            link(row:get(), 2, 26, '󰊤 http://www.github.com/', 'Link', ''),
+        })
+
+        vim.list_extend(expected, {
+            util.bullet(row:increment(), 0, 1),
             link(row:get(), 2, 61, '󰗃 ', 'Link', nil),
         })
 
@@ -96,10 +101,11 @@ describe('ad_hoc.md', function()
             '    8 ● 󱗖 Basic One Then normal text',
             '    9 ● 󱗖 With Alias Something important',
             '   10 ● 󰀓 test@example.com Email',
-            '   11 ● 󰗃 Youtube Link',
-            '   12 ● Footnote Link ¹ ᴵⁿᶠᵒ',
-            '   13',
-            '   14 ¹ ᴵⁿᶠᵒ: Some Info',
+            '   11 ● 󰊤 http://www.github.com/ Bare URL',
+            '   12 ● 󰗃 Youtube Link',
+            '   13 ● Footnote Link ¹ ᴵⁿᶠᵒ',
+            '   14',
+            '   15 ¹ ᴵⁿᶠᵒ: Some Info',
         })
     end)
 end)

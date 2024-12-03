@@ -7,6 +7,10 @@
 - footnote text superscript rendering [#241](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/241)
   [634acd5](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/634acd5da964c32f6947cd0c7802d7a116662665)
   [1b5d117](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/1b5d11734122d9451d2e5e2e567fd61a62822293)
+- code border none [#246](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/246)
+  [f3cda24](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/f3cda24c71261f6a52f5ddafb95786684d862d87)
+- expand default custom links [#245](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/245)
+  [61850bf](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/61850bf7df4af8398e97559a35b62378ba8435b1)
 
 ### Bug Fixes
 

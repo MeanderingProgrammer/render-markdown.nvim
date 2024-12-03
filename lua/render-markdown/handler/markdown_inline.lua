@@ -31,6 +31,7 @@ function Handler.new(buf)
                 (full_reference_link)
                 (image)
                 (inline_link)
+                (uri_autolink)
             ] @link
 
             ((inline) @inline_highlight
