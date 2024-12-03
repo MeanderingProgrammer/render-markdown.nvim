@@ -11,6 +11,8 @@
   [f3cda24](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/f3cda24c71261f6a52f5ddafb95786684d862d87)
 - expand default custom links [#245](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/245)
   [61850bf](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/61850bf7df4af8398e97559a35b62378ba8435b1)
+- bare URLs in angle brackets [#244](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/244)
+  [401a6c9](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/401a6c9c4cf39e22b8487503dd7dfe37fc7fb064)
 
 ### Bug Fixes
 
