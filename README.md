@@ -53,6 +53,8 @@ Plugin to improve viewing Markdown files in Neovim
     Used to parse `markdown` files
   - [latex](https://github.com/latex-lsp/tree-sitter-latex) (Optional):
     Used to get `LaTeX` blocks from `markdown` files
+  - [html](https://github.com/tree-sitter/tree-sitter-html) (Optional):
+    Used to conceal `HTML` comments
 - Icon provider plugin (Optional): Used for icon above code blocks
   - [mini.icons](https://github.com/echasnovski/mini.nvim/blob/main/readmes/mini-icons.md)
   - [nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons)
@@ -201,6 +203,12 @@ require('render-markdown').setup({
         top_pad = 0,
         -- Amount of empty lines below LaTeX blocks
         bottom_pad = 0,
+    },
+    html = {
+        -- Turn on / off all HTML rendering
+        enabled = true,
+        -- Whether HTML comments should be concealed or not
+        conceal_comments = true,
     },
     on = {
         -- Called when plugin initially attaches to a buffer

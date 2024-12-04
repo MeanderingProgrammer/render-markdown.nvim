@@ -14,6 +14,10 @@ local M = {}
 ---@class (exact) render.md.UserCallback
 ---@field public attach? fun(buf: integer)
 
+---@class (exact) render.md.UserHtml
+---@field public enabled? boolean
+---@field public conceal_comments? boolean
+
 ---@class (exact) render.md.UserLatex
 ---@field public enabled? boolean
 ---@field public converter? string
@@ -248,6 +252,7 @@ local M = {}
 ---@field public file_types? string[]
 ---@field public injections? table<string, render.md.UserInjection>
 ---@field public latex? render.md.UserLatex
+---@field public html? render.md.UserHtml
 ---@field public on? render.md.UserCallback
 ---@field public overrides? render.md.UserConfigOverrides
 ---@field public custom_handlers? table<string, render.md.Handler>
@@ -325,6 +330,12 @@ M.default_config = {
         top_pad = 0,
         -- Amount of empty lines below LaTeX blocks
         bottom_pad = 0,
+    },
+    html = {
+        -- Turn on / off all HTML rendering
+        enabled = true,
+        -- Whether HTML comments should be concealed or not
+        conceal_comments = true,
     },
     on = {
         -- Called when plugin initially attaches to a buffer

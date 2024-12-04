@@ -13,6 +13,7 @@ local configs = {}
 ---@field log_runtime boolean
 ---@field file_types string[]
 ---@field latex render.md.Latex
+---@field html render.md.Html
 ---@field on render.md.Callback
 ---@field custom_handlers table<string, render.md.Handler>
 local M = {}
@@ -45,6 +46,7 @@ function M.setup(default_config, user_config)
     M.log_runtime = config.log_runtime
     M.file_types = config.file_types
     M.latex = config.latex
+    M.html = config.html
     M.on = config.on
     M.custom_handlers = config.custom_handlers
     log.setup(config.log_level)
@@ -293,6 +295,9 @@ function M.validate()
                 :type({ 'top_pad', 'bottom_pad' }, 'number')
                 :type({ 'converter', 'highlight' }, 'string')
                 :check()
+        end)
+        :nested('html', function(html)
+            html:type({ 'enabled', 'conceal_comments' }, 'boolean'):check()
         end)
         :nested('on', function(on)
             on:type('attach', 'function'):check()

@@ -8,9 +8,10 @@ local util = require('render-markdown.core.util')
 
 ---@type table<string, render.md.Handler>
 local builtin_handlers = {
+    html = require('render-markdown.handler.html'),
+    latex = require('render-markdown.handler.latex'),
     markdown = require('render-markdown.handler.markdown'),
     markdown_inline = require('render-markdown.handler.markdown_inline'),
-    latex = require('render-markdown.handler.latex'),
 }
 
 ---@class render.md.cache.Ui
@@ -69,6 +70,7 @@ function M.clear(buf, buffer_state)
     buffer_state:set_marks(nil)
 end
 
+---Used directly by fzf-lua: https://github.com/ibhagwan/fzf-lua/blob/main/lua/fzf-lua/previewer/builtin.lua
 ---@param buf integer
 ---@param win integer
 ---@param event string

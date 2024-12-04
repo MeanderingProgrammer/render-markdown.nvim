@@ -101,6 +101,7 @@ describe('ad_hoc.md', function()
         vim.list_extend(expected, {
             util.bullet(row:increment(), 0, 1),
             link(row:get(), 16, 25, '¹ ᴵⁿᶠᵒ', 'Link', ''),
+            util.conceal(row:increment(2), 0, 16),
             link(row:increment(2), 0, 9, '¹ ᴵⁿᶠᵒ', 'Link', ''),
         })
 
@@ -119,7 +120,9 @@ describe('ad_hoc.md', function()
             '   12 ● 󰗃 Youtube Link',
             '   13 ● Footnote Link ¹ ᴵⁿᶠᵒ',
             '   14',
-            '   15 ¹ ᴵⁿᶠᵒ: Some Info',
+            '   15',
+            '   16',
+            '   17 ¹ ᴵⁿᶠᵒ: Some Info',
         })
     end)
 end)
