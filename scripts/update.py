@@ -31,6 +31,7 @@ class LuaClass:
             "UserCheckboxComponent": ["scope_highlight"],
             "UserCustomCallout": ["quote_icon"],
             "UserLinkComponent": ["highlight"],
+            "UserHtmlComment": ["text"],
         }
 
         # ---@field public extends? boolean             -> extends

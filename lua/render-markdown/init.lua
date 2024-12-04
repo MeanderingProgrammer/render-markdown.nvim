@@ -14,10 +14,6 @@ local M = {}
 ---@class (exact) render.md.UserCallback
 ---@field public attach? fun(buf: integer)
 
----@class (exact) render.md.UserHtml
----@field public enabled? boolean
----@field public conceal_comments? boolean
-
 ---@class (exact) render.md.UserLatex
 ---@field public enabled? boolean
 ---@field public converter? string
@@ -34,6 +30,15 @@ local M = {}
 ---@class (exact) render.md.UserWindowOption
 ---@field public default? render.md.option.Value
 ---@field public rendered? render.md.option.Value
+
+---@class (exact) render.md.UserHtmlComment
+---@field public conceal? boolean
+---@field public text? string
+---@field public highlight? string
+
+---@class (exact) render.md.UserHtml
+---@field public enabled? boolean
+---@field public comment? render.md.UserHtmlComment
 
 ---@class (exact) render.md.UserIndent
 ---@field public enabled? boolean
@@ -240,6 +245,7 @@ local M = {}
 ---@field public sign? render.md.UserSign
 ---@field public inline_highlight? render.md.UserInlineHighlight
 ---@field public indent? render.md.UserIndent
+---@field public html? render.md.UserHtml
 ---@field public win_options? table<string, render.md.UserWindowOption>
 
 ---@alias render.md.config.Preset 'none'|'lazy'|'obsidian'
@@ -252,7 +258,6 @@ local M = {}
 ---@field public file_types? string[]
 ---@field public injections? table<string, render.md.UserInjection>
 ---@field public latex? render.md.UserLatex
----@field public html? render.md.UserHtml
 ---@field public on? render.md.UserCallback
 ---@field public overrides? render.md.UserConfigOverrides
 ---@field public custom_handlers? table<string, render.md.Handler>
@@ -330,12 +335,6 @@ M.default_config = {
         top_pad = 0,
         -- Amount of empty lines below LaTeX blocks
         bottom_pad = 0,
-    },
-    html = {
-        -- Turn on / off all HTML rendering
-        enabled = true,
-        -- Whether HTML comments should be concealed or not
-        conceal_comments = true,
     },
     on = {
         -- Called when plugin initially attaches to a buffer
@@ -707,6 +706,18 @@ M.default_config = {
         -- Do not indent heading titles, only the body
         skip_heading = false,
     },
+    html = {
+        -- Turn on / off all HTML rendering
+        enabled = true,
+        comment = {
+            -- Turn on / off HTML comment concealing
+            conceal = true,
+            -- Optional text to inline before the concealed comment
+            text = nil,
+            -- Highlight for the inlined text
+            highlight = 'RenderMarkdownHtmlComment',
+        },
+    },
     -- Window options to use that change between rendered and raw view
     win_options = {
         -- See :h 'conceallevel'
@@ -729,7 +740,7 @@ M.default_config = {
     -- if no override is provided. Supports the following fields:
     --   enabled, max_file_size, debounce, render_modes, anti_conceal, padding,
     --   heading, paragraph, code, dash, bullet, checkbox, quote, pipe_table,
-    --   callout, link, sign, indent, win_options
+    --   callout, link, sign, indent, html, win_options
     overrides = {
         -- Overrides for different buftypes, see :h 'buftype'
         buftype = {

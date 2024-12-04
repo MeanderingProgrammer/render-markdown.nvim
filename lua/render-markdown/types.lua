@@ -3,10 +3,6 @@
 ---@class (exact) render.md.Callback
 ---@field public attach fun(buf: integer)
 
----@class (exact) render.md.Html
----@field public enabled boolean
----@field public conceal_comments boolean
-
 ---@class (exact) render.md.Latex
 ---@field public enabled boolean
 ---@field public converter string
@@ -21,6 +17,15 @@
 ---@class (exact) render.md.WindowOption
 ---@field public default render.md.option.Value
 ---@field public rendered render.md.option.Value
+
+---@class (exact) render.md.HtmlComment
+---@field public conceal boolean
+---@field public text? string
+---@field public highlight string
+
+---@class (exact) render.md.Html
+---@field public enabled boolean
+---@field public comment render.md.HtmlComment
 
 ---@class (exact) render.md.Indent
 ---@field public enabled boolean
@@ -194,6 +199,7 @@
 ---@field public sign render.md.Sign
 ---@field public inline_highlight render.md.InlineHighlight
 ---@field public indent render.md.Indent
+---@field public html render.md.Html
 ---@field public win_options table<string, render.md.WindowOption>
 
 ---@class (exact) render.md.Config: render.md.BufferConfig
@@ -203,7 +209,6 @@
 ---@field public file_types string[]
 ---@field public injections table<string, render.md.Injection>
 ---@field public latex render.md.Latex
----@field public html render.md.Html
 ---@field public on render.md.Callback
 ---@field public overrides render.md.ConfigOverrides
 ---@field public custom_handlers table<string, render.md.Handler>

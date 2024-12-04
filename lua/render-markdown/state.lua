@@ -13,7 +13,6 @@ local configs = {}
 ---@field log_runtime boolean
 ---@field file_types string[]
 ---@field latex render.md.Latex
----@field html render.md.Html
 ---@field on render.md.Callback
 ---@field custom_handlers table<string, render.md.Handler>
 local M = {}
@@ -46,7 +45,6 @@ function M.setup(default_config, user_config)
     M.log_runtime = config.log_runtime
     M.file_types = config.file_types
     M.latex = config.latex
-    M.html = config.html
     M.on = config.on
     M.custom_handlers = config.custom_handlers
     log.setup(config.log_level)
@@ -121,6 +119,7 @@ function M.default_buffer_config()
         sign = config.sign,
         inline_highlight = config.inline_highlight,
         indent = config.indent,
+        html = config.html,
         win_options = config.win_options,
     }
     return vim.deepcopy(buffer_config)
@@ -266,6 +265,17 @@ function M.validate()
                     :type({ 'per_level', 'skip_level' }, 'number')
                     :check()
             end)
+            :nested('html', function(html)
+                html:type('enabled', 'boolean')
+                    :nested('comment', function(comment)
+                        comment
+                            :type('conceal', 'boolean')
+                            :type('highlight', 'string')
+                            :type('text', { 'string', 'nil' })
+                            :check()
+                    end)
+                    :check()
+            end)
             :nested('win_options', function(win_options)
                 win_options
                     :nested('ALL', function(win_option)
@@ -295,9 +305,6 @@ function M.validate()
                 :type({ 'top_pad', 'bottom_pad' }, 'number')
                 :type({ 'converter', 'highlight' }, 'string')
                 :check()
-        end)
-        :nested('html', function(html)
-            html:type({ 'enabled', 'conceal_comments' }, 'boolean'):check()
         end)
         :nested('on', function(on)
             on:type('attach', 'function'):check()
