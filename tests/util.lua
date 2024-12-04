@@ -142,8 +142,8 @@ function M.heading(row, level)
     local background_mark = {
         row = { row, row + 1 },
         col = { 0, 0 },
-        hl_group = background,
         hl_eol = true,
+        hl_group = background,
     }
     return { sign_mark, icon_mark, background_mark }
 end
@@ -181,14 +181,15 @@ end
 ---@param row integer
 ---@param start_col integer
 ---@param end_col integer
+---@param highlight string
 ---@return render.md.MarkInfo
-function M.inline_code(row, start_col, end_col)
+function M.highlight(row, start_col, end_col, highlight)
     ---@type render.md.MarkInfo
     return {
         row = { row, row },
         col = { start_col, end_col },
         hl_eol = false,
-        hl_group = M.hl('CodeInline'),
+        hl_group = M.hl(highlight),
     }
 end
 
@@ -197,14 +198,11 @@ end
 ---@param end_col integer
 ---@return render.md.MarkInfo[]
 function M.inline_highlight(row, start_col, end_col)
-    ---@type render.md.MarkInfo
-    local mark = {
-        row = { row, row },
-        col = { start_col, end_col },
-        hl_eol = false,
-        hl_group = M.hl('InlineHighlight'),
+    return {
+        M.conceal(row, start_col, start_col + 2),
+        M.highlight(row, start_col, end_col, 'InlineHighlight'),
+        M.conceal(row, end_col - 2, end_col),
     }
-    return { M.conceal(row, start_col, start_col + 2), mark, M.conceal(row, end_col - 2, end_col) }
 end
 
 ---@param row integer

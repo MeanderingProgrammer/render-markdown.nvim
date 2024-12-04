@@ -26,7 +26,7 @@ describe('custom_handler.md', function()
         local expected, row = {}, util.row()
         vim.list_extend(expected, {
             util.heading(row:get(), 1), -- Heading
-            util.inline_code(row:increment(2), 0, 8), -- Inline code
+            util.highlight(row:increment(2), 0, 8, 'CodeInline'), -- Inline code
             {}, -- No backslash escapes
         })
 
@@ -72,7 +72,7 @@ describe('custom_handler.md', function()
         local expected, row = {}, util.row()
         vim.list_extend(expected, {
             util.heading(row:get(), 1), -- Heading
-            util.inline_code(row:increment(2), 0, 8), -- Inline code
+            util.highlight(row:increment(2), 0, 8, 'CodeInline'), -- Inline code
             { util.conceal(row:increment(2), 0, 1), util.conceal(row:get(), 7, 8) }, -- Backslash escapes
         })
 

@@ -32,18 +32,32 @@ end
 ---@param row integer
 ---@param start_col integer
 ---@param end_col integer
----@param link_text string
+---@param text string
 ---@param highlight 'Link'|'WikiLink'
----@param conceal string?
+---@param conceal? string
 ---@return render.md.MarkInfo
-local function link(row, start_col, end_col, link_text, highlight, conceal)
+local function link(row, start_col, end_col, text, highlight, conceal)
     ---@type render.md.MarkInfo
     return {
         row = { row, row },
         col = { start_col, end_col },
-        virt_text = { { link_text, util.hl(highlight) } },
+        virt_text = { { text, util.hl(highlight) } },
         virt_text_pos = 'inline',
         conceal = conceal,
+    }
+end
+
+---@param row integer
+---@param start_col integer
+---@param end_col integer
+---@param icon string
+---@return render.md.MarkInfo[]
+local function auto_link(row, start_col, end_col, icon)
+    return {
+        util.conceal(row, start_col, start_col + 1),
+        link(row, start_col, end_col, icon, 'Link', nil),
+        util.highlight(row, start_col, end_col, 'Link'),
+        util.conceal(row, end_col - 1, end_col),
     }
 end
 
@@ -71,12 +85,12 @@ describe('ad_hoc.md', function()
 
         vim.list_extend(expected, {
             util.bullet(row:increment(), 0, 1),
-            link(row:get(), 2, 20, '󰀓 test@example.com', 'Link', ''),
+            auto_link(row:get(), 2, 20, '󰀓 '),
         })
 
         vim.list_extend(expected, {
             util.bullet(row:increment(), 0, 1),
-            link(row:get(), 2, 26, '󰊤 http://www.github.com/', 'Link', ''),
+            auto_link(row:get(), 2, 26, '󰊤 '),
         })
 
         vim.list_extend(expected, {

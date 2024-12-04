@@ -61,17 +61,19 @@ function Base:checkbox_scope(paragraph, highlight)
 end
 
 ---@protected
+---@param icon string
+---@param highlight string
 ---@param destination string
----@return render.md.LinkComponent?
-function Base:link_component(destination)
-    local link = self.config.link
-    local link_components = Iter.table.filter(link.custom, function(link_component)
-        return destination:find(link_component.pattern) ~= nil
+---@return string, string
+function Base:from_destination(icon, highlight, destination)
+    local components = Iter.table.filter(self.config.link.custom, function(component)
+        return destination:find(component.pattern) ~= nil
     end)
-    table.sort(link_components, function(a, b)
+    table.sort(components, function(a, b)
         return Str.width(a.pattern) < Str.width(b.pattern)
     end)
-    return link_components[#link_components]
+    local component = components[#components] or {}
+    return component.icon or icon, component.highlight or highlight
 end
 
 ---@protected
