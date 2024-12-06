@@ -166,6 +166,20 @@ function M.bullet(row, col, level, spaces)
 end
 
 ---@param row integer
+---@param col integer
+---@param text string
+---@return render.md.MarkInfo
+function M.ordered(row, col, text)
+    ---@type render.md.MarkInfo
+    return {
+        row = { row, row },
+        col = { col, col + 3 },
+        virt_text = { { text, M.hl('Bullet') } },
+        virt_text_pos = 'overlay',
+    }
+end
+
+---@param row integer
 ---@param start_col integer
 ---@param end_col integer
 ---@return render.md.MarkInfo

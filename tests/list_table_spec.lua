@@ -26,7 +26,12 @@ describe('list_table.md', function()
 
         vim.list_extend(expected, util.heading(row:increment(2), 1))
 
-        vim.list_extend(expected, util.heading(row:increment(5), 1))
+        vim.list_extend(expected, {
+            util.ordered(row:increment(2), 0, '1.'),
+            util.ordered(row:increment(1), 0, '2.'),
+        })
+
+        vim.list_extend(expected, util.heading(row:increment(2), 1))
 
         vim.list_extend(expected, {
             util.table_border(row:increment(2), true, { 8, 15, 7, 6 }),

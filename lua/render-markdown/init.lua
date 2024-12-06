@@ -127,10 +127,12 @@ local M = {}
 ---@field public checked? render.md.UserCheckboxComponent
 ---@field public custom? table<string, render.md.UserCustomCheckbox>
 
+---@alias render.md.bullet.Icons string[]|string[][]|fun(level: integer, index: integer): string?
+
 ---@class (exact) render.md.UserBullet
 ---@field public enabled? boolean
----@field public icons? (string|string[])[]
----@field public ordered_icons? (string|string[])[]
+---@field public icons? render.md.bullet.Icons
+---@field public ordered_icons? render.md.bullet.Icons
 ---@field public left_pad? integer
 ---@field public right_pad? integer
 ---@field public highlight? string
@@ -494,14 +496,20 @@ M.default_config = {
         -- Turn on / off list bullet rendering
         enabled = true,
         -- Replaces '-'|'+'|'*' of 'list_item'
-        -- How deeply nested the list is determines the 'level' which is used to index into the list using a cycle
-        -- The item number in the list is used to index into the value using a clamp if the value is also a list
+        -- How deeply nested the list is determines the 'level', how far down at that level determines the 'index'
+        -- If a function is provided both of these values are passed in using 1 based indexing
+        -- If a list is provided we index into it using a cycle based on the level
+        -- If the value at that level is also a list we further index into it using a clamp based on the index
         -- If the item is a 'checkbox' a conceal is used to hide the bullet instead
         icons = { '●', '○', '◆', '◇' },
         -- Replaces 'n.'|'n)' of 'list_item'
-        -- How deeply nested the list is determines the 'level' which is used to index into the list using a cycle
-        -- The item number in the list is used to index into the value using a clamp if the value is also a list
-        ordered_icons = {},
+        -- How deeply nested the list is determines the 'level', how far down at that level determines the 'index'
+        -- If a function is provided both of these values are passed in using 1 based indexing
+        -- If a list is provided we index into it using a cycle based on the level
+        -- If the value at that level is also a list we further index into it using a clamp based on the index
+        ordered_icons = function(level, index)
+            return string.format('%d.', index)
+        end,
         -- Padding to add to the left of bullet point
         left_pad = 0,
         -- Padding to add to the right of bullet point

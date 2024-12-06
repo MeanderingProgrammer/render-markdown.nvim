@@ -1,4 +1,4 @@
-*render-markdown.txt*         For 0.10.0         Last change: 2024 December 04
+*render-markdown.txt*         For 0.10.0         Last change: 2024 December 05
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -409,14 +409,20 @@ Default Configuration ~
             -- Turn on / off list bullet rendering
             enabled = true,
             -- Replaces '-'|'+'|'*' of 'list_item'
-            -- How deeply nested the list is determines the 'level' which is used to index into the list using a cycle
-            -- The item number in the list is used to index into the value using a clamp if the value is also a list
+            -- How deeply nested the list is determines the 'level', how far down at that level determines the 'index'
+            -- If a function is provided both of these values are passed in using 1 based indexing
+            -- If a list is provided we index into it using a cycle based on the level
+            -- If the value at that level is also a list we further index into it using a clamp based on the index
             -- If the item is a 'checkbox' a conceal is used to hide the bullet instead
             icons = { '●', '○', '◆', '◇' },
             -- Replaces 'n.'|'n)' of 'list_item'
-            -- How deeply nested the list is determines the 'level' which is used to index into the list using a cycle
-            -- The item number in the list is used to index into the value using a clamp if the value is also a list
-            ordered_icons = {},
+            -- How deeply nested the list is determines the 'level', how far down at that level determines the 'index'
+            -- If a function is provided both of these values are passed in using 1 based indexing
+            -- If a list is provided we index into it using a cycle based on the level
+            -- If the value at that level is also a list we further index into it using a clamp based on the index
+            ordered_icons = function(level, index)
+                return string.format('%d.', index)
+            end,
             -- Padding to add to the left of bullet point
             left_pad = 0,
             -- Padding to add to the right of bullet point
@@ -896,14 +902,20 @@ Bullet Point Configuration ~
             -- Turn on / off list bullet rendering
             enabled = true,
             -- Replaces '-'|'+'|'*' of 'list_item'
-            -- How deeply nested the list is determines the 'level' which is used to index into the list using a cycle
-            -- The item number in the list is used to index into the value using a clamp if the value is also a list
+            -- How deeply nested the list is determines the 'level', how far down at that level determines the 'index'
+            -- If a function is provided both of these values are passed in using 1 based indexing
+            -- If a list is provided we index into it using a cycle based on the level
+            -- If the value at that level is also a list we further index into it using a clamp based on the index
             -- If the item is a 'checkbox' a conceal is used to hide the bullet instead
             icons = { '●', '○', '◆', '◇' },
             -- Replaces 'n.'|'n)' of 'list_item'
-            -- How deeply nested the list is determines the 'level' which is used to index into the list using a cycle
-            -- The item number in the list is used to index into the value using a clamp if the value is also a list
-            ordered_icons = {},
+            -- How deeply nested the list is determines the 'level', how far down at that level determines the 'index'
+            -- If a function is provided both of these values are passed in using 1 based indexing
+            -- If a list is provided we index into it using a cycle based on the level
+            -- If the value at that level is also a list we further index into it using a clamp based on the index
+            ordered_icons = function(level, index)
+                return string.format('%d.', index)
+            end,
             -- Padding to add to the left of bullet point
             left_pad = 0,
             -- Padding to add to the right of bullet point

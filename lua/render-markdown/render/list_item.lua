@@ -87,10 +87,16 @@ end
 ---@private
 ---@param level integer
 function Render:icon(level)
+    local index = self.node:sibling_count('list_item')
     local icons = self.data.ordered and self.bullet.ordered_icons or self.bullet.icons
-    local icon = List.cycle(icons, level)
-    if type(icon) == 'table' then
-        icon = List.clamp(icon, self.node:sibling_count('list_item'))
+    local icon = nil
+    if type(icons) == 'function' then
+        icon = icons(level, index)
+    else
+        icon = List.cycle(icons, level)
+        if type(icon) == 'table' then
+            icon = List.clamp(icon, index)
+        end
     end
     if icon == nil then
         return
