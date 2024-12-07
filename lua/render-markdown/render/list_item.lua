@@ -87,11 +87,12 @@ end
 ---@private
 ---@param level integer
 function Render:icon(level)
+    local node = self.data.marker
     local index = self.node:sibling_count('list_item')
     local icons = self.data.ordered and self.bullet.ordered_icons or self.bullet.icons
     local icon = nil
     if type(icons) == 'function' then
-        icon = icons(level, index)
+        icon = icons(level, index, node.text)
     else
         icon = List.cycle(icons, level)
         if type(icon) == 'table' then
@@ -101,7 +102,6 @@ function Render:icon(level)
     if icon == nil then
         return
     end
-    local node = self.data.marker
     local text = Str.pad(self.data.spaces) .. icon
     local position, conceal = 'overlay', nil
     if Str.width(text) > Str.width(node.text) then
