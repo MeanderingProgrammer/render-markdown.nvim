@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 7.7.0 (2024-12-07)
+
 ### Features
 
 - footnote text superscript rendering [#241](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/241)
@@ -13,11 +15,26 @@
   [61850bf](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/61850bf7df4af8398e97559a35b62378ba8435b1)
 - bare URLs in angle brackets [#244](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/244)
   [401a6c9](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/401a6c9c4cf39e22b8487503dd7dfe37fc7fb064)
+  [b6b903c](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b6b903cc09df1441602fc04665fb12cef576a914)
+- conceal html comments [#244](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/244)
+  [558310a](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/558310ae07b7bf0dffc478160513bb5c845f263c)
+  [7674543](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7674543331701d05dc9f878e1fe62d1107dc2f5e)
+- after render callback [#248](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/248)
+  [c89e5e0](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c89e5e0719d07e1e2c0d3942b564ac916b6ffe9c)
+- ordered list auto indexing [#250](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/250)
+  [a7097f3](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/a7097f372ba8f8866cda5e98d5bc828f2856c96c)
+  [#254](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/254)
+  [4ac2804](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4ac28048b492d351b70ded7b58d3f1a816e6c0a2)
 
 ### Bug Fixes
 
 - highlight index width calculation [#212](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/212)
   [3a319cd](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/3a319cdbefebf0079a7012dab6b1bfc18ca5b97f)
+
+### Awesome Things
+
+- fzf-lua integration [#1546](https://github.com/ibhagwan/fzf-lua/discussions/1546)
+  [da70762](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/da707623447752ca8eb00b7606b8ffe7dac18ce0)
 
 ## 7.6.0 (2024-11-25)
 
