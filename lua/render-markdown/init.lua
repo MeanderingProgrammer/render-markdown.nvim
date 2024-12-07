@@ -13,6 +13,7 @@ local M = {}
 
 ---@class (exact) render.md.UserCallback
 ---@field public attach? fun(buf: integer)
+---@field public render? fun(buf: integer)
 
 ---@class (exact) render.md.UserLatex
 ---@field public enabled? boolean
@@ -341,6 +342,8 @@ M.default_config = {
     on = {
         -- Called when plugin initially attaches to a buffer
         attach = function() end,
+        -- Called after plugin renders a buffer
+        render = function() end,
     },
     heading = {
         -- Turn on / off heading icon & background rendering

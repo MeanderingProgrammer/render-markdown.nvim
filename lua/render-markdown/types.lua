@@ -2,6 +2,7 @@
 
 ---@class (exact) render.md.Callback
 ---@field public attach fun(buf: integer)
+---@field public render fun(buf: integer)
 
 ---@class (exact) render.md.Latex
 ---@field public enabled boolean

@@ -1,4 +1,4 @@
-*render-markdown.txt*         For 0.10.0         Last change: 2024 December 05
+*render-markdown.txt*         For 0.10.0         Last change: 2024 December 06
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -254,6 +254,8 @@ Default Configuration ~
         on = {
             -- Called when plugin initially attaches to a buffer
             attach = function() end,
+            -- Called after plugin renders a buffer
+            render = function() end,
         },
         heading = {
             -- Turn on / off heading icon & background rendering

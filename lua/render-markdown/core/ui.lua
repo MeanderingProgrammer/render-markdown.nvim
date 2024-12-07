@@ -134,6 +134,7 @@ function M.run_update(buf, win, parse)
                 extmark:show(M.namespace, buf)
             end
         end
+        state.on.render(buf)
     else
         M.clear(buf, buffer_state)
     end

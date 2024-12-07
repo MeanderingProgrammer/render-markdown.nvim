@@ -307,7 +307,7 @@ function M.validate()
                 :check()
         end)
         :nested('on', function(on)
-            on:type('attach', 'function'):check()
+            on:type({ 'attach', 'render' }, 'function'):check()
         end)
         :nested('overrides', function(overrides)
             overrides
