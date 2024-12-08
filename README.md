@@ -115,6 +115,37 @@ use({
 | `:RenderMarkdown debug`    | `require('render-markdown').debug()`    | Prints information about marks on current line    |
 | `:RenderMarkdown config`   | `require('render-markdown').config()`   | Prints difference between config and default      |
 
+# Completions
+
+This plugin provides completions for both checkboxes and callouts provided you follow
+the relevant setup.
+
+## nvim-cmp
+
+```lua
+local cmp = require('cmp')
+cmp.setup({
+    sources = cmp.config.sources({
+        { name = 'render-markdown' },
+    }),
+})
+```
+
+## blink.cmp
+
+```lua
+require('blink.cmp').setup({
+    sources = {
+        completion = {
+            enabled_providers = { 'lsp', 'path', 'snippets', 'buffer', 'markdown' },
+        },
+        providers = {
+            markdown = { name = 'RenderMarkdown', module = 'render-markdown.integ.blink' },
+        },
+    },
+})
+```
+
 # Setup
 
 Checkout the [Wiki](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki)

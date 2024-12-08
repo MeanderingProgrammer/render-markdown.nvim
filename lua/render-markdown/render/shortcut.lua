@@ -14,13 +14,13 @@ function Render:setup()
 end
 
 function Render:render()
-    local callout = self.config.component.callout[self.node.text:lower()]
+    local callout = self.config:get_callout(self.node)
     if callout ~= nil then
         self:callout(callout)
         return
     end
 
-    local checkbox = self.config.component.checkbox[self.node.text:lower()]
+    local checkbox = self.config:get_checkbox(self.node)
     if checkbox ~= nil then
         self:checkbox(checkbox)
         return

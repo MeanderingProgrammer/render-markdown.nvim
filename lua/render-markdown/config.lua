@@ -5,7 +5,7 @@ local Range = require('render-markdown.core.range')
 ---@field checkbox table<string, render.md.CustomCheckbox>
 
 ---@class render.md.buffer.Config: render.md.BufferConfig
----@field component render.md.component.Config
+---@field private component render.md.component.Config
 local Config = {}
 Config.__index = Config
 
@@ -42,6 +42,18 @@ function Config:render(mode)
     else
         return modes
     end
+end
+
+---@param node render.md.Node
+---@return render.md.CustomCallout?
+function Config:get_callout(node)
+    return self.component.callout[node.text:lower()]
+end
+
+---@param node render.md.Node
+---@return render.md.CustomCheckbox?
+function Config:get_checkbox(node)
+    return self.component.checkbox[node.text:lower()]
 end
 
 ---@param mode string

@@ -1,4 +1,4 @@
-*render-markdown.txt*         For 0.10.0         Last change: 2024 December 07
+*render-markdown.txt*         For 0.10.0         Last change: 2024 December 08
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -11,7 +11,10 @@ Table of Contents                          *render-markdown-table-of-contents*
   - rocks.nvim                            |render-markdown-install-rocks.nvim|
   - packer.nvim                          |render-markdown-install-packer.nvim|
 5. Commands                                         |render-markdown-commands|
-6. Setup                                               |render-markdown-setup|
+6. Completions                                   |render-markdown-completions|
+  - nvim-cmp                            |render-markdown-completions-nvim-cmp|
+  - blink.cmp                          |render-markdown-completions-blink.cmp|
+7. Setup                                               |render-markdown-setup|
   - Headings                                  |render-markdown-setup-headings|
   - Paragraphs                              |render-markdown-setup-paragraphs|
   - Code Blocks                            |render-markdown-setup-code-blocks|
@@ -24,8 +27,8 @@ Table of Contents                          *render-markdown-table-of-contents*
   - Links                                        |render-markdown-setup-links|
   - Signs                                        |render-markdown-setup-signs|
   - Indent                                      |render-markdown-setup-indent|
-7. Colors                                             |render-markdown-colors|
-8. Info                                                 |render-markdown-info|
+8. Colors                                             |render-markdown-colors|
+9. Info                                                 |render-markdown-info|
   - vimwiki                                     |render-markdown-info-vimwiki|
   - obsidian.nvim                         |render-markdown-info-obsidian.nvim|
   - Images                                       |render-markdown-info-images|
@@ -162,7 +165,42 @@ PACKER.NVIM                              *render-markdown-install-packer.nvim*
   -------------------------------------------------------------------------------------------------
 
 ==============================================================================
-6. Setup                                               *render-markdown-setup*
+6. Completions                                   *render-markdown-completions*
+
+This plugin provides completions for both checkboxes and callouts provided you
+follow the relevant setup.
+
+
+NVIM-CMP                                *render-markdown-completions-nvim-cmp*
+
+>lua
+    local cmp = require('cmp')
+    cmp.setup({
+        sources = cmp.config.sources({
+            { name = 'render-markdown' },
+        }),
+    })
+<
+
+
+BLINK.CMP                              *render-markdown-completions-blink.cmp*
+
+>lua
+    require('blink.cmp').setup({
+        sources = {
+            completion = {
+                enabled_providers = { 'lsp', 'path', 'snippets', 'buffer', 'markdown' },
+            },
+            providers = {
+                markdown = { name = 'RenderMarkdown', module = 'render-markdown.integ.blink' },
+            },
+        },
+    })
+<
+
+
+==============================================================================
+7. Setup                                               *render-markdown-setup*
 
 Checkout the Wiki
 <https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki> for
@@ -1214,7 +1252,7 @@ Indent Configuration ~
 
 
 ==============================================================================
-7. Colors                                             *render-markdown-colors*
+8. Colors                                             *render-markdown-colors*
 
 The table below shows all the highlight groups with their default link
 
@@ -1305,7 +1343,7 @@ The table below shows all the highlight groups with their default link
   -----------------------------------------------------------------------------------------
 
 ==============================================================================
-8. Info                                                 *render-markdown-info*
+9. Info                                                 *render-markdown-info*
 
 
 VIMWIKI                                         *render-markdown-info-vimwiki*
