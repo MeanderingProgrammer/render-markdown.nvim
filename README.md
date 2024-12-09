@@ -146,6 +146,12 @@ require('blink.cmp').setup({
 })
 ```
 
+## coq_nvim
+
+```lua
+require("render-markdown.integ.coq").setup()
+```
+
 # Setup
 
 Checkout the [Wiki](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki)
