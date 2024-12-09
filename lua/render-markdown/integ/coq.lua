@@ -22,7 +22,7 @@ local function complete(args, callback)
         if not source.enabled() then
             return nil
         end
-        local character = args.line:sub(#args.line, #args.line)
+        local character = args.line:sub(args.pos[2], args.pos[2])
         if not vim.tbl_contains(source.trigger_characters(), character) then
             return nil
         end
