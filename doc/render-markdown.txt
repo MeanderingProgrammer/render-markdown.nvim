@@ -14,6 +14,7 @@ Table of Contents                          *render-markdown-table-of-contents*
 6. Completions                                   |render-markdown-completions|
   - nvim-cmp                            |render-markdown-completions-nvim-cmp|
   - blink.cmp                          |render-markdown-completions-blink.cmp|
+  - coq_nvim                            |render-markdown-completions-coq_nvim|
 7. Setup                                               |render-markdown-setup|
   - Headings                                  |render-markdown-setup-headings|
   - Paragraphs                              |render-markdown-setup-paragraphs|
@@ -196,6 +197,13 @@ BLINK.CMP                              *render-markdown-completions-blink.cmp*
             },
         },
     })
+<
+
+
+COQ_NVIM                                *render-markdown-completions-coq_nvim*
+
+>lua
+    require('render-markdown.integ.coq').setup()
 <
 
 

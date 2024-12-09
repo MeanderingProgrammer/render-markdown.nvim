@@ -149,7 +149,7 @@ require('blink.cmp').setup({
 ## coq_nvim
 
 ```lua
-require("render-markdown.integ.coq").setup()
+require('render-markdown.integ.coq').setup()
 ```
 
 # Setup
