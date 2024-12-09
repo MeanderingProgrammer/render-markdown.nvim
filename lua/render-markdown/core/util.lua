@@ -32,10 +32,10 @@ end
 ---@param win integer
 ---@return boolean
 function M.valid(buf, win)
-    if buf == nil or not vim.api.nvim_buf_is_valid(buf) then
+    if not vim.api.nvim_buf_is_valid(buf) then
         return false
     end
-    if win == nil or not vim.api.nvim_win_is_valid(win) then
+    if not vim.api.nvim_win_is_valid(win) then
         return false
     end
     return buf == vim.fn.winbufnr(win)

@@ -79,6 +79,9 @@ function M.attach(buf)
             end
             local win, windows = util.current('win'), util.windows(buf)
             win = vim.tbl_contains(windows, win) and win or windows[1]
+            if win == nil then
+                return
+            end
             local event = args.event
             ui.update(buf, win, event, vim.tbl_contains(change_events, event))
         end,
