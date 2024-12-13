@@ -128,8 +128,12 @@ end
 ---@param buf integer
 ---@return string
 function M.file_name(buf)
-    local file = vim.api.nvim_buf_get_name(buf)
-    return vim.fn.fnamemodify(file, ':t')
+    if vim.api.nvim_buf_is_valid(buf) then
+        local file = vim.api.nvim_buf_get_name(buf)
+        return vim.fn.fnamemodify(file, ':t')
+    else
+        return 'INVALID'
+    end
 end
 
 ---@param source string|integer
