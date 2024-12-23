@@ -393,7 +393,11 @@ require('render-markdown').setup({
         -- Width of the generated line:
         --  <integer>: a hard coded width value
         --  full:      full width of the window
+        --  string:    a percentage of the available window space, e.g. '50%'
         width = 'full',
+        -- alignment style:
+        --  left | center | right
+        align = 'center',
         -- Highlight for the whole line generated from the icon
         highlight = 'RenderMarkdownDash',
     },
