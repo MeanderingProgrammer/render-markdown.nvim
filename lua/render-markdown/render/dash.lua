@@ -16,8 +16,22 @@ end
 
 function Render:render()
     local width = self.dash.width
-    width = type(width) == 'number' and width or vim.o.columns
-    local virt_text = { self.dash.icon:rep(width), self.dash.highlight }
+    local win_width = vim.api.nvim_win_get_width(0)
+    if type(width) == 'string' then
+        if width == 'full' then
+            width = win_width
+        else
+            width = width:gsub('%%', '')
+            width = tonumber(width) / 100 * win_width
+        end
+    end
+    local indent = ''
+    if self.dash.align == 'center' then
+        indent = string.rep(' ', (win_width - width) / 2)
+    end
+    local text = indent .. self.dash.icon:rep(width)
+
+    local virt_text = { text, self.dash.highlight }
 
     local start_row, end_row = self.node.start_row, self.node.end_row - 1
     self.marks:add('dash', start_row, 0, {
