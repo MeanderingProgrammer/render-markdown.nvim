@@ -28,6 +28,8 @@ function Render:render()
     local indent = ''
     if self.dash.align == 'center' then
         indent = string.rep(' ', (win_width - width) / 2)
+    elseif self.dash.align == 'right' then
+        indent = string.rep(' ', win_width - width)
     end
     local text = indent .. self.dash.icon:rep(width)
 
