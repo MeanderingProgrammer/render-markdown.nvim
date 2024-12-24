@@ -7,17 +7,21 @@
 - nvim-cmp completion source [3d2dc15](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/3d2dc15542e56671dd14dfbfff63434ec21d8fcd)
 - blink.cmp completion source [3d2dc15](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/3d2dc15542e56671dd14dfbfff63434ec21d8fcd)
 - coq_nvim completion source [#258](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/258)
-  [75cdf9d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/75cdf9d2b049f0e27440bd78cc52b39acd15cd6e)
+  [#259](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/259) [75cdf9d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/75cdf9d2b049f0e27440bd78cc52b39acd15cd6e)
+- dash width and margin percent [#272](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/272)
 
 ### Bug Fixes
 
 - nil check for window [#257](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/257)
   [eb8fdac](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/eb8fdace39e6eab96037539aace272f14e40fd80)
+- check buffer is valid when getting name [#260](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/260)
+  [0022a57](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/0022a579ac7355966be5ade77699b88c76b6a549)
 
 ### Collaborator Shoutouts
 
 - @argizuno
 - @TheLeoP
+- @Kurama622
 
 ## 7.7.0 (2024-12-07)
 

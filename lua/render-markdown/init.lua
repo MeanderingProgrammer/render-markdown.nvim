@@ -144,7 +144,8 @@ local M = {}
 ---@class (exact) render.md.UserDash
 ---@field public enabled? boolean
 ---@field public icon? string
----@field public width? 'full'|integer
+---@field public width? 'full'|number
+---@field public left_margin? number
 ---@field public highlight? string
 
 ---@alias render.md.code.Style 'full'|'normal'|'language'|'none'
@@ -492,9 +493,13 @@ M.default_config = {
         -- The icon gets repeated across the window's width
         icon = '─',
         -- Width of the generated line:
-        --  <integer>: a hard coded width value
-        --  full:      full width of the window
+        --  <number>: a hard coded width value, if a floating point value < 1 is provided it is
+        --            treated as a percentage of the available window space
+        --  full:     full width of the window
         width = 'full',
+        -- Amount of margin to add to the left of dash
+        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
+        left_margin = 0,
         -- Highlight for the whole line generated from the icon
         highlight = 'RenderMarkdownDash',
     },
