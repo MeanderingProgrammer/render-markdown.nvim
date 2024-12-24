@@ -120,8 +120,8 @@
 ---@class (exact) render.md.Dash
 ---@field public enabled boolean
 ---@field public icon string
----@field public width 'full'|integer|string @ Can also be a percentage string like '80%', '50%', etc.
----@field public align 'left'|'center'|'right'
+---@field public width 'full'|number
+---@field public left_margin number
 ---@field public highlight string
 
 ---@class (exact) render.md.Code
