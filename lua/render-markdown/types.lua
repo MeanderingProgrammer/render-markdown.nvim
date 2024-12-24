@@ -120,7 +120,8 @@
 ---@class (exact) render.md.Dash
 ---@field public enabled boolean
 ---@field public icon string
----@field public width 'full'|integer
+---@field public width 'full'|number
+---@field public left_margin number
 ---@field public highlight string
 
 ---@class (exact) render.md.Code

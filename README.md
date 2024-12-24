@@ -391,9 +391,13 @@ require('render-markdown').setup({
         -- The icon gets repeated across the window's width
         icon = '─',
         -- Width of the generated line:
-        --  <integer>: a hard coded width value
-        --  full:      full width of the window
+        --  full:     full width of the window
+        --  <number>: a hard coded width value
+        --            If a floating point value < 1 is provided it is treated as a percentage of the available window space
         width = 'full',
+        -- Amount of margin to add to the left of dash
+        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
+        left_margin = 0,
         -- Highlight for the whole line generated from the icon
         highlight = 'RenderMarkdownDash',
     },
