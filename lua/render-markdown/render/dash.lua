@@ -17,7 +17,6 @@ end
 function Render:render()
     local width = self.dash.width
     width = type(width) == 'number' and self.context:resolve_offset(width, 0) or vim.o.columns
-    self.dash.left_margin = self.dash.left_margin or 0
     local margin = self.context:resolve_offset(self.dash.left_margin, width)
 
     local virt_text = {}
