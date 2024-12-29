@@ -1,4 +1,4 @@
-*render-markdown.txt*         For 0.10.0         Last change: 2024 December 24
+*render-markdown.txt*         For 0.10.0         Last change: 2024 December 29
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -189,11 +189,13 @@ BLINK.CMP                              *render-markdown-completions-blink.cmp*
 >lua
     require('blink.cmp').setup({
         sources = {
-            completion = {
-                enabled_providers = { 'lsp', 'path', 'snippets', 'buffer', 'markdown' },
-            },
+            default = { 'lsp', 'path', 'snippets', 'buffer', 'markdown' },
             providers = {
-                markdown = { name = 'RenderMarkdown', module = 'render-markdown.integ.blink' },
+                markdown = {
+                    name = 'RenderMarkdown',
+                    module = 'render-markdown.integ.blink',
+                    fallbacks = { 'lsp' },
+                },
             },
         },
     })

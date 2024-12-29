@@ -1,10 +1,11 @@
+local Icons = require('render-markdown.lib.icons')
 local state = require('render-markdown.state')
 
 ---@class render.md.Health
 local M = {}
 
 ---@private
-M.version = '7.7.5'
+M.version = '7.7.6'
 
 function M.check()
     M.start('version')
@@ -36,6 +37,14 @@ function M.check()
         end
     else
         vim.health.error('not installed')
+    end
+
+    M.start('icons')
+    local provider = Icons.provider()
+    if provider ~= nil then
+        vim.health.ok('using: ' .. provider)
+    else
+        vim.health.warn('none installed')
     end
 
     M.start('executables')

@@ -28,7 +28,7 @@ generate:
   python scripts/generate.py
 
 health:
-  nvim -c "checkhealth render-markdown" -- .
+  nvim -c "checkhealth render-markdown" -- -
 
 cat-log:
   cat ~/.local/state/nvim/render-markdown.log

@@ -20,4 +20,15 @@ function M.get(language)
     end
 end
 
+---@return string?
+function M.provider()
+    if has_mini_icons then
+        return 'mini.icons'
+    elseif has_devicons then
+        return 'nvim-web-devicons'
+    else
+        return nil
+    end
+end
+
 return M

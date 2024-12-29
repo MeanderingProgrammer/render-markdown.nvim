@@ -136,11 +136,13 @@ cmp.setup({
 ```lua
 require('blink.cmp').setup({
     sources = {
-        completion = {
-            enabled_providers = { 'lsp', 'path', 'snippets', 'buffer', 'markdown' },
-        },
+        default = { 'lsp', 'path', 'snippets', 'buffer', 'markdown' },
         providers = {
-            markdown = { name = 'RenderMarkdown', module = 'render-markdown.integ.blink' },
+            markdown = {
+                name = 'RenderMarkdown',
+                module = 'render-markdown.integ.blink',
+                fallbacks = { 'lsp' },
+            },
         },
     },
 })
