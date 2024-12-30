@@ -4,8 +4,10 @@
 ---@field public attach fun(buf: integer)
 ---@field public render fun(buf: integer)
 
----@class (exact) render.md.Latex
+---@class (exact) render.md.BaseComponent
 ---@field public enabled boolean
+
+---@class (exact) render.md.Latex: render.md.BaseComponent
 ---@field public converter string
 ---@field public highlight string
 ---@field public top_pad integer
@@ -24,22 +26,18 @@
 ---@field public text? string
 ---@field public highlight string
 
----@class (exact) render.md.Html
----@field public enabled boolean
+---@class (exact) render.md.Html: render.md.BaseComponent
 ---@field public comment render.md.HtmlComment
 
----@class (exact) render.md.Indent
----@field public enabled boolean
+---@class (exact) render.md.Indent: render.md.BaseComponent
 ---@field public per_level integer
 ---@field public skip_level integer
 ---@field public skip_heading boolean
 
----@class (exact) render.md.InlineHighlight
----@field public enabled boolean
+---@class (exact) render.md.InlineHighlight: render.md.BaseComponent
 ---@field public highlight string
 
----@class (exact) render.md.Sign
----@field public enabled boolean
+---@class (exact) render.md.Sign: render.md.BaseComponent
 ---@field public highlight string
 
 ---@class (exact) render.md.LinkComponent
@@ -56,8 +54,7 @@
 ---@field public prefix string
 ---@field public suffix string
 
----@class (exact) render.md.Link
----@field public enabled boolean
+---@class (exact) render.md.Link: render.md.BaseComponent
 ---@field public footnote render.md.Footnote
 ---@field public image string
 ---@field public email string
@@ -72,8 +69,7 @@
 ---@field public highlight string
 ---@field public quote_icon? string
 
----@class (exact) render.md.PipeTable
----@field public enabled boolean
+---@class (exact) render.md.PipeTable: render.md.BaseComponent
 ---@field public preset render.md.table.Preset
 ---@field public style render.md.table.Style
 ---@field public cell render.md.table.Cell
@@ -85,8 +81,7 @@
 ---@field public row string
 ---@field public filler string
 
----@class (exact) render.md.Quote
----@field public enabled boolean
+---@class (exact) render.md.Quote: render.md.BaseComponent
 ---@field public icon string
 ---@field public repeat_linebreak boolean
 ---@field public highlight string
@@ -102,30 +97,26 @@
 ---@field public highlight string
 ---@field public scope_highlight? string
 
----@class (exact) render.md.Checkbox
----@field public enabled boolean
+---@class (exact) render.md.Checkbox: render.md.BaseComponent
 ---@field public position render.md.checkbox.Position
 ---@field public unchecked render.md.CheckboxComponent
 ---@field public checked render.md.CheckboxComponent
 ---@field public custom table<string, render.md.CustomCheckbox>
 
----@class (exact) render.md.Bullet
----@field public enabled boolean
+---@class (exact) render.md.Bullet: render.md.BaseComponent
 ---@field public icons render.md.bullet.Icons
 ---@field public ordered_icons render.md.bullet.Icons
 ---@field public left_pad integer
 ---@field public right_pad integer
 ---@field public highlight string
 
----@class (exact) render.md.Dash
----@field public enabled boolean
+---@class (exact) render.md.Dash: render.md.BaseComponent
 ---@field public icon string
 ---@field public width 'full'|number
 ---@field public left_margin number
 ---@field public highlight string
 
----@class (exact) render.md.Code
----@field public enabled boolean
+---@class (exact) render.md.Code: render.md.BaseComponent
 ---@field public sign boolean
 ---@field public style render.md.code.Style
 ---@field public position render.md.code.Position
@@ -144,13 +135,11 @@
 ---@field public highlight_inline string
 ---@field public highlight_language? string
 
----@class (exact) render.md.Paragraph
----@field public enabled boolean
+---@class (exact) render.md.Paragraph: render.md.BaseComponent
 ---@field public left_margin number
 ---@field public min_width integer
 
----@class (exact) render.md.Heading
----@field public enabled boolean
+---@class (exact) render.md.Heading: render.md.BaseComponent
 ---@field public sign boolean
 ---@field public position render.md.heading.Position
 ---@field public icons string[]

@@ -15,8 +15,10 @@ local M = {}
 ---@field public attach? fun(buf: integer)
 ---@field public render? fun(buf: integer)
 
----@class (exact) render.md.UserLatex
+---@class (exact) render.md.UserBaseComponent
 ---@field public enabled? boolean
+
+---@class (exact) render.md.UserLatex: render.md.UserBaseComponent
 ---@field public converter? string
 ---@field public highlight? string
 ---@field public top_pad? integer
@@ -37,22 +39,18 @@ local M = {}
 ---@field public text? string
 ---@field public highlight? string
 
----@class (exact) render.md.UserHtml
----@field public enabled? boolean
+---@class (exact) render.md.UserHtml: render.md.UserBaseComponent
 ---@field public comment? render.md.UserHtmlComment
 
----@class (exact) render.md.UserIndent
----@field public enabled? boolean
+---@class (exact) render.md.UserIndent: render.md.UserBaseComponent
 ---@field public per_level? integer
 ---@field public skip_level? integer
 ---@field public skip_heading? boolean
 
----@class (exact) render.md.UserInlineHighlight
----@field public enabled? boolean
+---@class (exact) render.md.UserInlineHighlight: render.md.UserBaseComponent
 ---@field public highlight? string
 
----@class (exact) render.md.UserSign
----@field public enabled? boolean
+---@class (exact) render.md.UserSign: render.md.UserBaseComponent
 ---@field public highlight? string
 
 ---@class (exact) render.md.UserLinkComponent
@@ -69,8 +67,7 @@ local M = {}
 ---@field public prefix? string
 ---@field public suffix? string
 
----@class (exact) render.md.UserLink
----@field public enabled? boolean
+---@class (exact) render.md.UserLink: render.md.UserBaseComponent
 ---@field public footnote? render.md.UserFootnote
 ---@field public image? string
 ---@field public email? string
@@ -89,8 +86,7 @@ local M = {}
 ---@alias render.md.table.Style 'full'|'normal'|'none'
 ---@alias render.md.table.Cell 'trimmed'|'padded'|'raw'|'overlay'
 
----@class (exact) render.md.UserPipeTable
----@field public enabled? boolean
+---@class (exact) render.md.UserPipeTable: render.md.UserBaseComponent
 ---@field public preset? render.md.table.Preset
 ---@field public style? render.md.table.Style
 ---@field public cell? render.md.table.Cell
@@ -102,8 +98,7 @@ local M = {}
 ---@field public row? string
 ---@field public filler? string
 
----@class (exact) render.md.UserQuote
----@field public enabled? boolean
+---@class (exact) render.md.UserQuote: render.md.UserBaseComponent
 ---@field public icon? string
 ---@field public repeat_linebreak? boolean
 ---@field public highlight? string
@@ -121,8 +116,7 @@ local M = {}
 
 ---@alias render.md.checkbox.Position 'overlay'|'inline'
 
----@class (exact) render.md.UserCheckbox
----@field public enabled? boolean
+---@class (exact) render.md.UserCheckbox: render.md.UserBaseComponent
 ---@field public position? render.md.checkbox.Position
 ---@field public unchecked? render.md.UserCheckboxComponent
 ---@field public checked? render.md.UserCheckboxComponent
@@ -133,16 +127,14 @@ local M = {}
 ---| string[][]
 ---| fun(level: integer, index: integer, value: string): string?
 
----@class (exact) render.md.UserBullet
----@field public enabled? boolean
+---@class (exact) render.md.UserBullet: render.md.UserBaseComponent
 ---@field public icons? render.md.bullet.Icons
 ---@field public ordered_icons? render.md.bullet.Icons
 ---@field public left_pad? integer
 ---@field public right_pad? integer
 ---@field public highlight? string
 
----@class (exact) render.md.UserDash
----@field public enabled? boolean
+---@class (exact) render.md.UserDash: render.md.UserBaseComponent
 ---@field public icon? string
 ---@field public width? 'full'|number
 ---@field public left_margin? number
@@ -153,8 +145,7 @@ local M = {}
 ---@alias render.md.code.Width 'full'|'block'
 ---@alias render.md.code.Border 'thin'|'thick'|'none'
 
----@class (exact) render.md.UserCode
----@field public enabled? boolean
+---@class (exact) render.md.UserCode: render.md.UserBaseComponent
 ---@field public sign? boolean
 ---@field public style? render.md.code.Style
 ---@field public position? render.md.code.Position
@@ -173,16 +164,14 @@ local M = {}
 ---@field public highlight_inline? string
 ---@field public highlight_language? string
 
----@class (exact) render.md.UserParagraph
----@field public enabled? boolean
+---@class (exact) render.md.UserParagraph: render.md.UserBaseComponent
 ---@field public left_margin? number
 ---@field public min_width? integer
 
 ---@alias render.md.heading.Position 'overlay'|'inline'|'right'
 ---@alias render.md.heading.Width 'full'|'block'
 
----@class (exact) render.md.UserHeading
----@field public enabled? boolean
+---@class (exact) render.md.UserHeading: render.md.UserBaseComponent
 ---@field public sign? boolean
 ---@field public position? render.md.heading.Position
 ---@field public icons? string[]
