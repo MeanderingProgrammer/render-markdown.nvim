@@ -132,8 +132,9 @@
 ---@field public above string
 ---@field public below string
 ---@field public highlight string
----@field public highlight_inline string
 ---@field public highlight_language? string
+---@field public inline_pad integer
+---@field public highlight_inline string
 
 ---@class (exact) render.md.Paragraph: render.md.BaseComponent
 ---@field public left_margin number

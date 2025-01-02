@@ -90,11 +90,8 @@ end
 ---@private
 ---@param mark render.md.Mark
 function Marks:update_context(mark)
-    local end_col = mark.opts.end_col
-    if end_col == nil then
-        return
-    end
     local row, start_col = mark.start_row, mark.start_col
+    local end_col = mark.opts.end_col or start_col
     if mark.opts.conceal ~= nil then
         self.context.conceal:add(row, start_col, end_col, end_col - start_col)
     end

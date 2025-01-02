@@ -381,10 +381,12 @@ require('render-markdown').setup({
         below = '▀',
         -- Highlight for code blocks
         highlight = 'RenderMarkdownCode',
-        -- Highlight for inline code
-        highlight_inline = 'RenderMarkdownCodeInline',
         -- Highlight for language, overrides icon provider value
         highlight_language = nil,
+        -- Padding to add to the left & right of inline code
+        inline_pad = 0,
+        -- Highlight for inline code
+        highlight_inline = 'RenderMarkdownCodeInline',
     },
     dash = {
         -- Turn on / off thematic break rendering
@@ -860,10 +862,12 @@ require('render-markdown').setup({
         below = '▀',
         -- Highlight for code blocks
         highlight = 'RenderMarkdownCode',
-        -- Highlight for inline code
-        highlight_inline = 'RenderMarkdownCodeInline',
         -- Highlight for language, overrides icon provider value
         highlight_language = nil,
+        -- Padding to add to the left & right of inline code
+        inline_pad = 0,
+        -- Highlight for inline code
+        highlight_inline = 'RenderMarkdownCodeInline',
     },
 })
 ```

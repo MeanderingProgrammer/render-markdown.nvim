@@ -21,7 +21,7 @@ function M.setup()
             M.attach(args.buf)
         end,
     })
-    -- Window resizing is not buffer specific so is managed more globablly
+    -- Window resizing is not buffer specific so is managed more globally
     vim.api.nvim_create_autocmd('WinResized', {
         group = M.group,
         callback = function(args)

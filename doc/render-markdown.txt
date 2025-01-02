@@ -1,4 +1,4 @@
-*render-markdown.txt*         For 0.10.0         Last change: 2024 December 29
+*render-markdown.txt*          For 0.10.0         Last change: 2025 January 02
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -437,10 +437,12 @@ Default Configuration ~
             below = '▀',
             -- Highlight for code blocks
             highlight = 'RenderMarkdownCode',
-            -- Highlight for inline code
-            highlight_inline = 'RenderMarkdownCodeInline',
             -- Highlight for language, overrides icon provider value
             highlight_language = nil,
+            -- Padding to add to the left & right of inline code
+            inline_pad = 0,
+            -- Highlight for inline code
+            highlight_inline = 'RenderMarkdownCodeInline',
         },
         dash = {
             -- Turn on / off thematic break rendering
@@ -910,10 +912,12 @@ Code Block Configuration ~
             below = '▀',
             -- Highlight for code blocks
             highlight = 'RenderMarkdownCode',
-            -- Highlight for inline code
-            highlight_inline = 'RenderMarkdownCodeInline',
             -- Highlight for language, overrides icon provider value
             highlight_language = nil,
+            -- Padding to add to the left & right of inline code
+            inline_pad = 0,
+            -- Highlight for inline code
+            highlight_inline = 'RenderMarkdownCodeInline',
         },
     })
 <

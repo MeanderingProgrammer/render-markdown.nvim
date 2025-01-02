@@ -38,15 +38,17 @@ end
 ---@field sign_text? string
 ---@field sign_hl_group? string
 ---@field priority? integer
-local MarkInfo = {}
-MarkInfo.__index = MarkInfo
+
+---@class render.md.MarkDetails: render.md.MarkInfo
+local MarkDetails = {}
+MarkDetails.__index = MarkDetails
 
 ---@param row integer
 ---@param col integer
 ---@param details vim.api.keyset.extmark_details
----@return render.md.MarkInfo
-function MarkInfo.new(row, col, details)
-    local self = setmetatable({}, MarkInfo)
+---@return render.md.MarkDetails
+function MarkDetails.new(row, col, details)
+    local self = setmetatable({}, MarkDetails)
     self.row = { row, details.end_row }
     self.col = { col, details.end_col }
     self.hl_eol = details.hl_eol
@@ -67,7 +69,7 @@ function MarkInfo.new(row, col, details)
 end
 
 ---@return integer[]
-function MarkInfo:priorities()
+function MarkDetails:priorities()
     local result = {}
 
     local row_offset = 0
@@ -87,10 +89,10 @@ function MarkInfo:priorities()
     return result
 end
 
----@param a render.md.MarkInfo
----@param b render.md.MarkInfo
+---@param a render.md.MarkDetails
+---@param b render.md.MarkDetails
 ---@return boolean
-function MarkInfo.__lt(a, b)
+function MarkDetails.__lt(a, b)
     local as, bs = a:priorities(), b:priorities()
     for i = 1, math.max(#as, #bs) do
         if as[i] ~= bs[i] then
@@ -467,11 +469,11 @@ end
 function M.actual_marks()
     local namespace = require('render-markdown.core.ui').namespace
     local marks = vim.api.nvim_buf_get_extmarks(0, namespace, 0, -1, { details = true })
-    ---@type render.md.MarkInfo[]
+    ---@type render.md.MarkDetails[]
     local actual = {}
     for _, mark in ipairs(marks) do
         local _, row, col, details = unpack(mark)
-        table.insert(actual, MarkInfo.new(row, col, details))
+        table.insert(actual, MarkDetails.new(row, col, details))
     end
     table.sort(actual)
     return actual

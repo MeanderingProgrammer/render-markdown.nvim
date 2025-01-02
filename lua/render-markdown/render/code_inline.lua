@@ -18,6 +18,22 @@ function Render:render()
     self.marks:add_over('code_background', self.node, {
         hl_group = self.code.highlight_inline,
     })
+    self:side_padding(self.node.start_row, self.node.start_col)
+    self:side_padding(self.node.end_row, self.node.end_col)
+end
+
+---@private
+---@param row integer
+---@param col integer
+function Render:side_padding(row, col)
+    local padding = self.code.inline_pad
+    if padding > 0 then
+        self.marks:add(true, row, col, {
+            priority = 0,
+            virt_text = { self:padding_text(padding) },
+            virt_text_pos = 'inline',
+        })
+    end
 end
 
 return Render

@@ -127,7 +127,7 @@ function Context:get_offset(node)
     local result = 0
     local ranges = self.offsets[node.start_row] or {}
     for _, range in ipairs(ranges) do
-        if node.start_col < range[2] and node.end_col > range[1] then
+        if node.start_col <= range[2] and node.end_col > range[1] then
             result = result + range[3]
         end
     end

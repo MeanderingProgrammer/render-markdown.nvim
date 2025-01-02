@@ -161,8 +161,9 @@ local M = {}
 ---@field public above? string
 ---@field public below? string
 ---@field public highlight? string
----@field public highlight_inline? string
 ---@field public highlight_language? string
+---@field public inline_pad? integer
+---@field public highlight_inline? string
 
 ---@class (exact) render.md.UserParagraph: render.md.UserBaseComponent
 ---@field public left_margin? number
@@ -470,10 +471,12 @@ M.default_config = {
         below = '▀',
         -- Highlight for code blocks
         highlight = 'RenderMarkdownCode',
-        -- Highlight for inline code
-        highlight_inline = 'RenderMarkdownCodeInline',
         -- Highlight for language, overrides icon provider value
         highlight_language = nil,
+        -- Padding to add to the left & right of inline code
+        inline_pad = 0,
+        -- Highlight for inline code
+        highlight_inline = 'RenderMarkdownCodeInline',
     },
     dash = {
         -- Turn on / off thematic break rendering
