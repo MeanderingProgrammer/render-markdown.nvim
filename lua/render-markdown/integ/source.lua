@@ -70,12 +70,11 @@ function M.items(buf, row, col)
         end
     elseif node:type() == 'list_item' or vim.tbl_contains(list_markers, node:type()) then
         local last_marker = M.list_prefix(row, node)
-        print(last_marker)
         local checkbox = config.checkbox
         table.insert(items, M.item(last_marker .. '[ ] ', checkbox.unchecked.icon, 'unchecked'))
         table.insert(items, M.item(last_marker .. '[x] ', checkbox.checked.icon, 'checked'))
         for name, component in pairs(checkbox.custom) do
-            table.insert(items, M.item(component.raw, component.rendered, name))
+            table.insert(items, M.item(list_prefix .. component.raw .. ' ', component.rendered, name))
         end
     end
     return items
