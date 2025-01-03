@@ -23,11 +23,7 @@ end
 function Source:complete(params, callback)
     local context = params.context
     local items = source.items(context.bufnr, context.cursor.row - 1, context.cursor.col - 1)
-    if items == nil then
-        callback(nil)
-    else
-        callback(items)
-    end
+    callback(items)
 end
 
 ---@class render.md.integ.Cmp
