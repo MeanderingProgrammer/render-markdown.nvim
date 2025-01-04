@@ -9,7 +9,7 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     self.highlight = self.config.inline_highlight
-    if not self.highlight.enabled then
+    if self.context:skip(self.highlight) then
         return false
     end
     return true

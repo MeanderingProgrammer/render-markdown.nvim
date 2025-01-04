@@ -10,7 +10,13 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     self.paragraph = self.config.paragraph
-    return self.paragraph.enabled and self.paragraph.left_margin > 0
+    if self.context:skip(self.paragraph) then
+        return false
+    end
+    if self.paragraph.left_margin <= 0 then
+        return false
+    end
+    return true
 end
 
 function Render:render()

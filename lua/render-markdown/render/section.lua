@@ -10,7 +10,7 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     self.indent = self.config.indent
-    if not self.indent.enabled then
+    if self.context:skip(self.indent) then
         return false
     end
 

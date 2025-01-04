@@ -15,7 +15,7 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     local quote = self.config.quote
-    if not quote.enabled then
+    if self.context:skip(quote) then
         return false
     end
 

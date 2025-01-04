@@ -77,13 +77,11 @@ function Marks:conceal(element)
     if type(element) == 'boolean' then
         return element
     end
-    local value = self.ignore[element]
-    if value == nil then
+    local modes = self.ignore[element]
+    if modes == nil then
         return true
-    elseif type(value) == 'boolean' then
-        return not value
     else
-        return not vim.tbl_contains(value, self.context.mode)
+        return not util.in_modes(modes, self.context.mode)
     end
 end
 

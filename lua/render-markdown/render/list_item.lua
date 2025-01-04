@@ -42,7 +42,7 @@ function Render:render()
         self:hide_marker()
         self:highlight_scope()
     else
-        if not self.bullet.enabled then
+        if self.context:skip(self.bullet) then
             return
         end
         local level, root = self.node:level_in_section('list')
@@ -54,7 +54,7 @@ end
 ---@private
 ---@return boolean
 function Render:has_checkbox()
-    if not self.config.checkbox.enabled then
+    if self.context:skip(self.config.checkbox) then
         return false
     end
     if self.data.checkbox ~= nil then

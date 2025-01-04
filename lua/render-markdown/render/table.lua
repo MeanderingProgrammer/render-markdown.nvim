@@ -42,7 +42,10 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     self.table = self.config.pipe_table
-    if not self.table.enabled or self.table.style == 'none' then
+    if self.context:skip(self.table) then
+        return false
+    end
+    if self.table.style == 'none' then
         return false
     end
     if self.node:has_error() then

@@ -8,7 +8,7 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     self.dash = self.config.dash
-    if not self.dash.enabled then
+    if self.context:skip(self.dash) then
         return false
     end
     return true

@@ -4,15 +4,6 @@
 ---@field public attach fun(buf: integer)
 ---@field public render fun(buf: integer)
 
----@class (exact) render.md.BaseComponent
----@field public enabled boolean
-
----@class (exact) render.md.Latex: render.md.BaseComponent
----@field public converter string
----@field public highlight string
----@field public top_pad integer
----@field public bottom_pad integer
-
 ---@class (exact) render.md.Injection
 ---@field public enabled boolean
 ---@field public query string
@@ -20,6 +11,10 @@
 ---@class (exact) render.md.WindowOption
 ---@field public default render.md.option.Value
 ---@field public rendered render.md.option.Value
+
+---@class (exact) render.md.BaseComponent
+---@field public enabled boolean
+---@field public render_modes render.md.Modes
 
 ---@class (exact) render.md.HtmlComment
 ---@field public conceal boolean
@@ -29,6 +24,12 @@
 ---@class (exact) render.md.Html: render.md.BaseComponent
 ---@field public comment render.md.HtmlComment
 
+---@class (exact) render.md.Latex: render.md.BaseComponent
+---@field public converter string
+---@field public highlight string
+---@field public top_pad integer
+---@field public bottom_pad integer
+
 ---@class (exact) render.md.Indent: render.md.BaseComponent
 ---@field public per_level integer
 ---@field public skip_level integer
@@ -37,7 +38,8 @@
 ---@class (exact) render.md.InlineHighlight: render.md.BaseComponent
 ---@field public highlight string
 
----@class (exact) render.md.Sign: render.md.BaseComponent
+---@class (exact) render.md.Sign
+---@field public enabled boolean
 ---@field public highlight string
 
 ---@class (exact) render.md.LinkComponent
@@ -173,9 +175,9 @@
 
 ---@class (exact) render.md.BufferConfig
 ---@field public enabled boolean
+---@field public render_modes render.md.Modes
 ---@field public max_file_size number
 ---@field public debounce integer
----@field public render_modes boolean|string[]
 ---@field public anti_conceal render.md.AntiConceal
 ---@field public padding render.md.Padding
 ---@field public heading render.md.Heading
@@ -191,6 +193,7 @@
 ---@field public sign render.md.Sign
 ---@field public inline_highlight render.md.InlineHighlight
 ---@field public indent render.md.Indent
+---@field public latex render.md.Latex
 ---@field public html render.md.Html
 ---@field public win_options table<string, render.md.WindowOption>
 
@@ -200,7 +203,6 @@
 ---@field public log_runtime boolean
 ---@field public file_types string[]
 ---@field public injections table<string, render.md.Injection>
----@field public latex render.md.Latex
 ---@field public on render.md.Callback
 ---@field public overrides render.md.ConfigOverrides
 ---@field public custom_handlers table<string, render.md.Handler>

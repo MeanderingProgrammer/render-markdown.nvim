@@ -12,7 +12,6 @@ local configs = {}
 ---@field enabled boolean
 ---@field log_runtime boolean
 ---@field file_types string[]
----@field latex render.md.Latex
 ---@field on render.md.Callback
 ---@field custom_handlers table<string, render.md.Handler>
 local M = {}
@@ -44,7 +43,6 @@ function M.setup(default_config, user_config)
     M.enabled = config.enabled
     M.log_runtime = config.log_runtime
     M.file_types = config.file_types
-    M.latex = config.latex
     M.on = config.on
     M.custom_handlers = config.custom_handlers
     log.setup(config.log_level)
@@ -119,6 +117,7 @@ function M.default_buffer_config()
         sign = config.sign,
         inline_highlight = config.inline_highlight,
         indent = config.indent,
+        latex = config.latex,
         html = config.html,
         win_options = config.win_options,
     }
@@ -130,7 +129,7 @@ function M.validate()
     ---@param component render.md.debug.ValidatorSpec
     ---@return render.md.debug.ValidatorSpec
     local function component_rules(component)
-        return component:type('enabled', 'boolean')
+        return component:type('enabled', 'boolean'):list('render_modes', 'string', 'boolean')
     end
 
     ---@param buffer render.md.debug.ValidatorSpec
@@ -263,7 +262,7 @@ function M.validate()
                     :check()
             end)
             :nested('sign', function(sign)
-                component_rules(sign):type('highlight', 'string'):check()
+                sign:type('enabled', 'boolean'):type('highlight', 'string'):check()
             end)
             :nested('inline_highlight', function(inline_highlight)
                 component_rules(inline_highlight):type('highlight', 'string'):check()
@@ -272,6 +271,12 @@ function M.validate()
                 component_rules(indent)
                     :type('skip_heading', 'boolean')
                     :type({ 'per_level', 'skip_level' }, 'number')
+                    :check()
+            end)
+            :nested('latex', function(latex)
+                component_rules(latex)
+                    :type({ 'top_pad', 'bottom_pad' }, 'number')
+                    :type({ 'converter', 'highlight' }, 'string')
                     :check()
             end)
             :nested('html', function(html)
@@ -306,12 +311,6 @@ function M.validate()
                 :nested('ALL', function(injection)
                     injection:type('enabled', 'boolean'):type('query', 'string'):check()
                 end)
-                :check()
-        end)
-        :nested('latex', function(latex)
-            component_rules(latex)
-                :type({ 'top_pad', 'bottom_pad' }, 'number')
-                :type({ 'converter', 'highlight' }, 'string')
                 :check()
         end)
         :nested('on', function(on)

@@ -123,7 +123,12 @@ function M.run_update(buf, win, parse)
     if next_state == 'rendered' then
         if not buffer_state:has_marks() or parse then
             M.clear(buf, buffer_state)
-            buffer_state:set_marks(M.parse_buffer(buf, win, mode))
+            buffer_state:set_marks(M.parse_buffer({
+                buf = buf,
+                win = win,
+                mode = mode,
+                top_level_mode = util.in_modes(config.render_modes, mode),
+            }))
         end
         local hidden = config:hidden(mode, row)
         for _, extmark in ipairs(buffer_state:get_marks()) do
@@ -162,18 +167,17 @@ function M.next_state(config, win, mode)
 end
 
 ---@private
----@param buf integer
----@param win integer
----@param mode string
+---@param props render.md.context.Props
 ---@return render.md.Extmark[]
-function M.parse_buffer(buf, win, mode)
+function M.parse_buffer(props)
+    local buf = props.buf
     local has_parser, parser = pcall(vim.treesitter.get_parser, buf)
     if not has_parser then
         log.buf('error', 'fail', buf, 'no treesitter parser found')
         return {}
     end
     -- Reset buffer context
-    Context.reset(buf, win, mode)
+    Context.reset(props)
     -- Make sure injections are processed
     Context.get(buf):parse(parser)
     -- Parse markdown after all other nodes to take advantage of state

@@ -46,6 +46,17 @@ function M.mode()
     return vim.fn.mode(true)
 end
 
+---@param modes render.md.Modes
+---@param mode string
+---@return boolean
+function M.in_modes(modes, mode)
+    if type(modes) == 'boolean' then
+        return modes
+    else
+        return vim.tbl_contains(modes, mode)
+    end
+end
+
 ---@param buf integer
 ---@return integer[]
 function M.windows(buf)

@@ -5,7 +5,7 @@ local state = require('render-markdown.state')
 local M = {}
 
 ---@private
-M.version = '7.7.9'
+M.version = '7.7.10'
 
 function M.check()
     M.start('version')
@@ -21,7 +21,7 @@ function M.check()
         vim.health.error(message)
     end
 
-    local latex = state.latex
+    local latex = state.get(0).latex
     local latex_advice = 'Disable LaTeX support to avoid this warning by setting { latex = { enabled = false } }'
 
     M.start('nvim-treesitter')

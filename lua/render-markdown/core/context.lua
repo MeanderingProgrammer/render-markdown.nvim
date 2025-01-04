@@ -5,6 +5,12 @@ local Str = require('render-markdown.lib.str')
 local log = require('render-markdown.core.log')
 local util = require('render-markdown.core.util')
 
+---@class render.md.context.Props
+---@field buf integer
+---@field win integer
+---@field mode string
+---@field top_level_mode boolean
+
 ---@class render.md.Context
 ---@field private buf integer
 ---@field private win integer
@@ -14,23 +20,22 @@ local util = require('render-markdown.core.util')
 ---@field private offsets table<integer, [integer, integer, integer][]>
 ---@field private window_width? integer
 ---@field mode string
+---@field top_level_mode boolean
 ---@field conceal render.md.Conceal
 ---@field last_heading? integer
 local Context = {}
 Context.__index = Context
 
----@param buf integer
----@param win integer
----@param mode string
+---@param props render.md.context.Props
 ---@param offset integer
 ---@return render.md.Context
-function Context.new(buf, win, mode, offset)
+function Context.new(props, offset)
     local self = setmetatable({}, Context)
-    self.buf = buf
-    self.win = win
+    self.buf = props.buf
+    self.win = props.win
 
     local ranges = {}
-    for _, window in ipairs(util.windows(buf)) do
+    for _, window in ipairs(util.windows(self.buf)) do
         table.insert(ranges, Context.compute_range(self.buf, window, offset))
     end
     self.ranges = Range.coalesce(ranges)
@@ -40,8 +45,9 @@ function Context.new(buf, win, mode, offset)
     self.offsets = {}
     self.window_width = nil
 
-    self.mode = mode
-    self.conceal = Conceal.new(self.buf, util.get('win', win, 'conceallevel'))
+    self.mode = props.mode
+    self.top_level_mode = props.top_level_mode
+    self.conceal = Conceal.new(self.buf, util.get('win', self.win, 'conceallevel'))
     self.last_heading = nil
 
     return self
@@ -66,6 +72,21 @@ function Context.compute_range(buf, win, offset)
     end
 
     return Range.new(top, bottom)
+end
+
+---@param component render.md.BaseComponent
+---@return boolean
+function Context:skip(component)
+    -- Skip disabled components regardless of mode
+    if not component.enabled then
+        return true
+    end
+    -- Enabled components in top level modes should not be skipped
+    if self.top_level_mode then
+        return false
+    end
+    -- Enabled components in component modes should not be skipped
+    return not util.in_modes(component.render_modes, self.mode)
 end
 
 ---@param row integer
@@ -212,11 +233,9 @@ local cache = {}
 ---@class render.md.ContextManager
 local M = {}
 
----@param buf integer
----@param win integer
----@param mode string
-function M.reset(buf, win, mode)
-    cache[buf] = Context.new(buf, win, mode, 10)
+---@param props render.md.context.Props
+function M.reset(props)
+    cache[props.buf] = Context.new(props, 10)
 end
 
 ---@param buf integer

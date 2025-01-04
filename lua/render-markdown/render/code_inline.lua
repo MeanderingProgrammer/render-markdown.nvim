@@ -8,7 +8,10 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     self.code = self.config.code
-    if not self.code.enabled or not vim.tbl_contains({ 'normal', 'full' }, self.code.style) then
+    if self.context:skip(self.code) then
+        return false
+    end
+    if not vim.tbl_contains({ 'normal', 'full' }, self.code.style) then
         return false
     end
     return true

@@ -13,7 +13,7 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     local link = self.config.link
-    if not link.enabled then
+    if self.context:skip(link) then
         return false
     end
 

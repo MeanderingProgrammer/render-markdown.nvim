@@ -29,7 +29,7 @@ end
 ---@param root TSNode
 ---@return render.md.Mark[]
 function Handler:parse(root)
-    if not self.config.html.enabled then
+    if self.context:skip(self.config.html) then
         return {}
     end
     self.context:query(root, self.query, function(capture, node)

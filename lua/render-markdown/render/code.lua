@@ -25,7 +25,10 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     self.code = self.config.code
-    if not self.code.enabled or self.code.style == 'none' then
+    if self.context:skip(self.code) then
+        return false
+    end
+    if self.code.style == 'none' then
         return false
     end
     -- Do not attempt to render single line code block

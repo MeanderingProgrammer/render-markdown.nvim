@@ -1,3 +1,4 @@
+local Context = require('render-markdown.core.context')
 local Iter = require('render-markdown.lib.iter')
 local List = require('render-markdown.lib.list')
 local Node = require('render-markdown.lib.node')
@@ -15,8 +16,8 @@ local M = {}
 ---@param buf integer
 ---@return render.md.Mark[]
 function M.parse(root, buf)
-    local latex = state.latex
-    if not latex.enabled then
+    local latex = state.get(buf).latex
+    if Context.get(buf):skip(latex) then
         return {}
     end
     if vim.fn.executable(latex.converter) ~= 1 then

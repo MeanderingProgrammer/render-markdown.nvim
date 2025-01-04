@@ -42,7 +42,7 @@ end
 ---@private
 ---@param callout render.md.CustomCallout
 function Render:callout(callout)
-    if not self.config.quote.enabled then
+    if self.context:skip(self.config.quote) then
         return
     end
 
@@ -75,7 +75,7 @@ end
 ---@private
 ---@param checkbox render.md.CustomCheckbox
 function Render:checkbox(checkbox)
-    if not self.config.checkbox.enabled then
+    if self.context:skip(self.config.checkbox) then
         return
     end
 
@@ -94,7 +94,7 @@ end
 
 ---@private
 function Render:wiki_link()
-    if not self.link.enabled then
+    if self.context:skip(self.link) then
         return
     end
 
@@ -110,8 +110,12 @@ end
 ---@private
 ---@param text string
 function Render:footnote(text)
+    if self.context:skip(self.link) then
+        return
+    end
+
     local footnote = self.link.footnote
-    if not self.link.enabled or not footnote.superscript then
+    if not footnote.superscript then
         return
     end
 

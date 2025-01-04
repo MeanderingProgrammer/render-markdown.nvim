@@ -10,7 +10,7 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     local checkbox = self.config.checkbox
-    if not checkbox.enabled then
+    if self.context:skip(checkbox) then
         return false
     end
 

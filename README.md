@@ -173,6 +173,10 @@ Some of the more useful fields are discussed further down.
 require('render-markdown').setup({
     -- Whether Markdown should be rendered by default or not
     enabled = true,
+    -- Vim modes that will show a rendered view of the markdown file, :h mode(), for
+    -- all enabled components. Individual components can be enabled for other modes.
+    -- Remaining modes will be unaffected by this plugin.
+    render_modes = { 'n', 'c', 't' },
     -- Maximum file size (in MB) that this plugin will attempt to render
     -- Any file larger than this will effectively be ignored
     max_file_size = 10.0,
@@ -207,9 +211,6 @@ require('render-markdown').setup({
             ]],
         },
     },
-    -- Vim modes that will show a rendered view of the markdown file, :h mode()
-    -- All other modes will be unaffected by this plugin
-    render_modes = { 'n', 'c', 't' },
     anti_conceal = {
         -- This enables hiding any added text on the line the cursor is on
         enabled = true,
@@ -234,6 +235,8 @@ require('render-markdown').setup({
     latex = {
         -- Whether LaTeX should be rendered, mainly used for health check
         enabled = true,
+        -- Additional modes to render LaTeX
+        render_modes = false,
         -- Executable used to convert latex formula to rendered unicode
         converter = 'latex2text',
         -- Highlight for LaTeX blocks
@@ -252,6 +255,8 @@ require('render-markdown').setup({
     heading = {
         -- Turn on / off heading icon & background rendering
         enabled = true,
+        -- Additional modes to render headings
+        render_modes = false,
         -- Turn on / off any sign column related rendering
         sign = true,
         -- Determines how icons fill the available space:
@@ -323,6 +328,8 @@ require('render-markdown').setup({
     paragraph = {
         -- Turn on / off paragraph rendering
         enabled = true,
+        -- Additional modes to render paragraphs
+        render_modes = false,
         -- Amount of margin to add to the left of paragraphs
         -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
         left_margin = 0,
@@ -332,6 +339,8 @@ require('render-markdown').setup({
     code = {
         -- Turn on / off code block & inline code rendering
         enabled = true,
+        -- Additional modes to render code blocks
+        render_modes = false,
         -- Turn on / off any sign column related rendering
         sign = true,
         -- Determines how code blocks & inline code are rendered:
@@ -391,6 +400,8 @@ require('render-markdown').setup({
     dash = {
         -- Turn on / off thematic break rendering
         enabled = true,
+        -- Additional modes to render dash
+        render_modes = false,
         -- Replaces '---'|'***'|'___'|'* * *' of 'thematic_break'
         -- The icon gets repeated across the window's width
         icon = '─',
@@ -408,6 +419,8 @@ require('render-markdown').setup({
     bullet = {
         -- Turn on / off list bullet rendering
         enabled = true,
+        -- Additional modes to render list bullets
+        render_modes = false,
         -- Replaces '-'|'+'|'*' of 'list_item'
         -- How deeply nested the list is determines the 'level', how far down at that level determines the 'index'
         -- If a function is provided both of these values are passed in using 1 based indexing
@@ -437,6 +450,8 @@ require('render-markdown').setup({
     checkbox = {
         -- Turn on / off checkbox state rendering
         enabled = true,
+        -- Additional modes to render checkboxes
+        render_modes = false,
         -- Determines how icons fill the available space:
         --  inline:  underlying text is concealed resulting in a left aligned icon
         --  overlay: result is left padded with spaces to hide any additional text
@@ -472,6 +487,8 @@ require('render-markdown').setup({
     quote = {
         -- Turn on / off block quote & callout rendering
         enabled = true,
+        -- Additional modes to render quotes
+        render_modes = false,
         -- Replaces '>' of 'block_quote'
         icon = '▋',
         -- Whether to repeat icon on wrapped lines. Requires neovim >= 0.10. This will obscure text if
@@ -486,6 +503,8 @@ require('render-markdown').setup({
     pipe_table = {
         -- Turn on / off pipe table rendering
         enabled = true,
+        -- Additional modes to render pipe tables
+        render_modes = false,
         -- Pre configured settings largely for setting table border easier
         --  heavy:  use thicker border characters
         --  double: use double line border characters
@@ -565,6 +584,8 @@ require('render-markdown').setup({
     link = {
         -- Turn on / off inline link icon rendering
         enabled = true,
+        -- Additional modes to render links
+        render_modes = false,
         -- How to handle footnote links, start with a '^'
         footnote = {
             -- Replace value with superscript equivalent
@@ -613,6 +634,8 @@ require('render-markdown').setup({
     inline_highlight = {
         -- Turn on / off inline highlight rendering
         enabled = true,
+        -- Additional modes to render inline highlights
+        render_modes = false,
         -- Applies to background of surrounded text
         highlight = 'RenderMarkdownInlineHighlight',
     },
@@ -621,6 +644,8 @@ require('render-markdown').setup({
     indent = {
         -- Turn on / off org-indent-mode
         enabled = false,
+        -- Additional modes to render indents
+        render_modes = false,
         -- Amount of additional padding added for each heading level
         per_level = 2,
         -- Heading levels <= this value will not be indented
@@ -632,6 +657,8 @@ require('render-markdown').setup({
     html = {
         -- Turn on / off all HTML rendering
         enabled = true,
+        -- Additional modes to render HTML
+        render_modes = false,
         comment = {
             -- Turn on / off HTML comment concealing
             conceal = true,
@@ -663,7 +690,7 @@ require('render-markdown').setup({
     -- if no override is provided. Supports the following fields:
     --   enabled, max_file_size, debounce, render_modes, anti_conceal, padding,
     --   heading, paragraph, code, dash, bullet, checkbox, quote, pipe_table,
-    --   callout, link, sign, indent, html, win_options
+    --   callout, link, sign, indent, latex, html, win_options
     overrides = {
         -- Overrides for different buftypes, see :h 'buftype'
         buftype = {
@@ -703,6 +730,8 @@ require('render-markdown').setup({
     heading = {
         -- Turn on / off heading icon & background rendering
         enabled = true,
+        -- Additional modes to render headings
+        render_modes = false,
         -- Turn on / off any sign column related rendering
         sign = true,
         -- Determines how icons fill the available space:
@@ -789,6 +818,8 @@ require('render-markdown').setup({
     paragraph = {
         -- Turn on / off paragraph rendering
         enabled = true,
+        -- Additional modes to render paragraphs
+        render_modes = false,
         -- Amount of margin to add to the left of paragraphs
         -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
         left_margin = 0,
@@ -813,6 +844,8 @@ require('render-markdown').setup({
     code = {
         -- Turn on / off code block & inline code rendering
         enabled = true,
+        -- Additional modes to render code blocks
+        render_modes = false,
         -- Turn on / off any sign column related rendering
         sign = true,
         -- Determines how code blocks & inline code are rendered:
@@ -887,6 +920,8 @@ require('render-markdown').setup({
     dash = {
         -- Turn on / off thematic break rendering
         enabled = true,
+        -- Additional modes to render dash
+        render_modes = false,
         -- Replaces '---'|'***'|'___'|'* * *' of 'thematic_break'
         -- The icon gets repeated across the window's width
         icon = '─',
@@ -919,6 +954,8 @@ require('render-markdown').setup({
     bullet = {
         -- Turn on / off list bullet rendering
         enabled = true,
+        -- Additional modes to render list bullets
+        render_modes = false,
         -- Replaces '-'|'+'|'*' of 'list_item'
         -- How deeply nested the list is determines the 'level', how far down at that level determines the 'index'
         -- If a function is provided both of these values are passed in using 1 based indexing
@@ -963,6 +1000,8 @@ require('render-markdown').setup({
     checkbox = {
         -- Turn on / off checkbox state rendering
         enabled = true,
+        -- Additional modes to render checkboxes
+        render_modes = false,
         -- Determines how icons fill the available space:
         --  inline:  underlying text is concealed resulting in a left aligned icon
         --  overlay: result is left padded with spaces to hide any additional text
@@ -1013,6 +1052,8 @@ require('render-markdown').setup({
     quote = {
         -- Turn on / off block quote & callout rendering
         enabled = true,
+        -- Additional modes to render quotes
+        render_modes = false,
         -- Replaces '>' of 'block_quote'
         icon = '▋',
         -- Whether to repeat icon on wrapped lines. Requires neovim >= 0.10. This will obscure text if
@@ -1042,6 +1083,8 @@ require('render-markdown').setup({
     pipe_table = {
         -- Turn on / off pipe table rendering
         enabled = true,
+        -- Additional modes to render pipe tables
+        render_modes = false,
         -- Pre configured settings largely for setting table border easier
         --  heavy:  use thicker border characters
         --  double: use double line border characters
@@ -1151,6 +1194,8 @@ require('render-markdown').setup({
     link = {
         -- Turn on / off inline link icon rendering
         enabled = true,
+        -- Additional modes to render links
+        render_modes = false,
         -- How to handle footnote links, start with a '^'
         footnote = {
             -- Replace value with superscript equivalent
@@ -1229,6 +1274,8 @@ require('render-markdown').setup({
     indent = {
         -- Turn on / off org-indent-mode
         enabled = false,
+        -- Additional modes to render indents
+        render_modes = false,
         -- Amount of additional padding added for each heading level
         per_level = 2,
         -- Heading levels <= this value will not be indented

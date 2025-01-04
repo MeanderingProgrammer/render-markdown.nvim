@@ -33,7 +33,7 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     self.heading = self.config.heading
-    if not self.heading.enabled then
+    if self.context:skip(self.heading) then
         return false
     end
 

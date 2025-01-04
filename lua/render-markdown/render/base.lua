@@ -93,7 +93,7 @@ end
 ---@return integer
 function Base:indent(level)
     local indent = self.config.indent
-    if not indent.enabled then
+    if self.context:skip(indent) then
         return 0
     end
     if level == nil then
