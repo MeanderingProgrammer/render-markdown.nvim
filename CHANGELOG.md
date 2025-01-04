@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 7.8.0 (2025-01-04)
+
 ### Features
 
 - individual components can all specify render modes [#269](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/269)
