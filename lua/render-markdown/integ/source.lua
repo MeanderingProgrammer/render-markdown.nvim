@@ -11,6 +11,36 @@ local list_markers = {
 ---@class render.md.Source
 local M = {}
 
+---@private
+---@param row integer
+---@param node TSNode
+---@return string
+function M.list_prefix(row, node)
+    local marker = node:named_child(0)
+    if not marker then
+        return ''
+    end
+
+    local marker_row = marker:range()
+    if marker_row == row then
+        return '' -- Don't run if on the same line, entry should already have a list marker.
+    end
+
+    -- Retrieve the line from the buffer
+    local marker_line = vim.api.nvim_buf_get_lines(0, marker_row, marker_row + 1, false)[1]
+
+    if not marker_line or #marker_line == 0 then
+        return '' -- Return empty if the line is empty or doesn't exist
+    end
+
+    -- Define valid list markers
+    local valid_markers = { ['-'] = true, ['+'] = true, ['*'] = true }
+    local first_char = marker_line:match('%S')
+
+    -- Return corresponding marker if valid, otherwise default to empty string
+    return valid_markers[first_char] and first_char .. ' ' or ''
+end
+
 ---@return boolean
 function M.enabled()
     return manager.is_attached(util.current('buf'))
@@ -38,11 +68,12 @@ function M.items(buf, row, col)
             table.insert(items, M.item(component.raw, component.rendered, nil))
         end
     elseif node:type() == 'list_item' or vim.tbl_contains(list_markers, node:type()) then
+        local list_prefix = M.list_prefix(row, node)
         local checkbox = config.checkbox
-        table.insert(items, M.item('[ ]', checkbox.unchecked.icon, 'unchecked'))
-        table.insert(items, M.item('[x]', checkbox.checked.icon, 'checked'))
+        table.insert(items, M.item(list_prefix .. '[ ] ', checkbox.unchecked.icon, 'unchecked'))
+        table.insert(items, M.item(list_prefix .. '[x] ', checkbox.checked.icon, 'checked'))
         for name, component in pairs(checkbox.custom) do
-            table.insert(items, M.item(component.raw, component.rendered, name))
+            table.insert(items, M.item(list_prefix .. component.raw .. ' ', component.rendered, name))
         end
     end
     return items
