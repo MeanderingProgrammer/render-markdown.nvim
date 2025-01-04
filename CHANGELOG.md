@@ -4,11 +4,18 @@
 
 ### Features
 
+- individual components can all specify render modes [#269](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/269)
+  [4d8e991](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4d8e991d0c6e5298b79a6fb5ee44a7925e88180d)
 - nvim-cmp completion source [3d2dc15](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/3d2dc15542e56671dd14dfbfff63434ec21d8fcd)
 - blink.cmp completion source [3d2dc15](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/3d2dc15542e56671dd14dfbfff63434ec21d8fcd)
 - coq_nvim completion source [#258](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/258)
   [#259](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/259) [75cdf9d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/75cdf9d2b049f0e27440bd78cc52b39acd15cd6e)
 - dash width and margin percent [#272](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/272)
+- include icon provider warning in health check [032c640](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/032c6401b6f076adeb704bb8a3ac174fb813fbdb)
+- inline code padding [#274](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/274)
+  [65b263d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/65b263d6fc578131747f681d22f0b3a757e75443)
+- handle more list types for completions [c00cc1e](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c00cc1e2cbd5a55ca0c6c2e27fcf4a02ff731434)
+- include markers in completion items based on context [#277](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/277)
 
 ### Bug Fixes
 
@@ -22,6 +29,7 @@
 - @argizuno
 - @TheLeoP
 - @Kurama622
+- @AlexandreDoucet
 
 ## 7.7.0 (2024-12-07)
 
