@@ -26,9 +26,8 @@ function M.list_prefix(row, node)
         return '' -- Don't run if on the same line, entry should already have a list marker.
     end
 
-    local start_row = select(1, marker:range())
     -- Retrieve the line from the buffer
-    local marker_line = vim.api.nvim_buf_get_lines(0, start_row, start_row + 1, false)[1]
+    local marker_line = vim.api.nvim_buf_get_lines(0, marker_row, marker_row + 1, false)[1]
 
     if not marker_line or #marker_line == 0 then
         return '' -- Return empty if the line is empty or doesn't exist
