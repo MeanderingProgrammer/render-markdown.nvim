@@ -52,11 +52,18 @@ function Render:setup()
         return false
     end
 
+    local icon, icons = nil, self.heading.icons
+    if type(icons) == 'function' then
+        icon = icons(self.node:sections())
+    else
+        icon = List.cycle(icons, level)
+    end
+
     self.data = {
         atx = atx,
         marker = marker,
         level = level,
-        icon = List.cycle(self.heading.icons, level),
+        icon = icon,
         sign = List.cycle(self.heading.signs, level),
         foreground = List.clamp(self.heading.foregrounds, level),
         background = List.clamp(self.heading.backgrounds, level),

@@ -48,6 +48,17 @@ function Node:has_error()
     return self.node:has_error()
 end
 
+---@return integer[]
+function Node:sections()
+    local result, section = {}, self:parent('section')
+    while section ~= nil do
+        local count = section:sibling_count('section')
+        table.insert(result, 1, count)
+        section = section:parent('section')
+    end
+    return result
+end
+
 ---@param parent boolean
 ---@return integer
 function Node:heading_level(parent)

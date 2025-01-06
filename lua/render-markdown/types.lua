@@ -144,8 +144,8 @@
 
 ---@class (exact) render.md.Heading: render.md.BaseComponent
 ---@field public sign boolean
+---@field public icons render.md.heading.Icons
 ---@field public position render.md.heading.Position
----@field public icons string[]
 ---@field public signs string[]
 ---@field public width render.md.heading.Width|(render.md.heading.Width)[]
 ---@field public left_margin number|number[]

@@ -171,13 +171,16 @@ local M = {}
 ---@field public left_margin? number
 ---@field public min_width? integer
 
+---@alias render.md.heading.Icons
+---| string[]
+---| fun(sections: integer[]): string?
 ---@alias render.md.heading.Position 'overlay'|'inline'|'right'
 ---@alias render.md.heading.Width 'full'|'block'
 
 ---@class (exact) render.md.UserHeading: render.md.UserBaseComponent
 ---@field public sign? boolean
+---@field public icons? render.md.heading.Icons
 ---@field public position? render.md.heading.Position
----@field public icons? string[]
 ---@field public signs? string[]
 ---@field public width? render.md.heading.Width|(render.md.heading.Width)[]
 ---@field public left_margin? number|number[]
@@ -353,15 +356,16 @@ M.default_config = {
         render_modes = false,
         -- Turn on / off any sign column related rendering
         sign = true,
+        -- Replaces '#+' of 'atx_h._marker'
+        -- The number of '#' in the heading determines the 'level'
+        -- The 'level' is used to index into the list using a cycle
+        -- If the value is a function the input is the nesting level of the heading within sections
+        icons = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
         -- Determines how icons fill the available space:
         --  right:   '#'s are concealed and icon is appended to right side
         --  inline:  '#'s are concealed and icon is inlined on left side
         --  overlay: icon is left padded with spaces and inserted on left hiding any additional '#'
         position = 'overlay',
-        -- Replaces '#+' of 'atx_h._marker'
-        -- The number of '#' in the heading determines the 'level'
-        -- The 'level' is used to index into the list using a cycle
-        icons = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
         -- Added to the sign column if enabled
         -- The 'level' is used to index into the list using a cycle
         signs = { '󰫎 ' },
