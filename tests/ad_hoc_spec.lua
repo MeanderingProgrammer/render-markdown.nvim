@@ -47,20 +47,6 @@ local function link(row, start_col, end_col, text, highlight, conceal)
     }
 end
 
----@param row integer
----@param start_col integer
----@param end_col integer
----@param icon string
----@return render.md.MarkInfo[]
-local function auto_link(row, start_col, end_col, icon)
-    return {
-        util.conceal(row, start_col, start_col + 1),
-        link(row, start_col, end_col, icon, 'Link', nil),
-        util.highlight(row, start_col, end_col, 'Link'),
-        util.conceal(row, end_col - 1, end_col),
-    }
-end
-
 describe('ad_hoc.md', function()
     it('custom', function()
         util.setup('tests/data/ad_hoc.md')
@@ -75,22 +61,33 @@ describe('ad_hoc.md', function()
 
         vim.list_extend(expected, {
             util.bullet(row:increment(), 0, 1),
-            link(row:get(), 2, 15, '󱗖 Basic One', 'WikiLink', ''),
+            util.conceal(row:get(), 2, 3),
+            link(row:get(), 3, 14, '󱗖 ', 'WikiLink', nil),
+            util.conceal(row:get(), 14, 15),
         })
 
         vim.list_extend(expected, {
             util.bullet(row:increment(), 0, 1),
-            link(row:get(), 2, 25, '󱗖 With Alias', 'WikiLink', ''),
+            util.conceal(row:get(), 2, 3),
+            link(row:get(), 3, 24, '󱗖 ', 'WikiLink', nil),
+            util.conceal(row:get(), 4, 13),
+            util.conceal(row:get(), 24, 25),
         })
 
         vim.list_extend(expected, {
             util.bullet(row:increment(), 0, 1),
-            auto_link(row:get(), 2, 20, '󰀓 '),
+            util.conceal(row:get(), 2, 3),
+            link(row:get(), 2, 20, '󰀓 ', 'Link', nil),
+            util.highlight(row:get(), 2, 20, 'Link'),
+            util.conceal(row:get(), 19, 20),
         })
 
         vim.list_extend(expected, {
             util.bullet(row:increment(), 0, 1),
-            auto_link(row:get(), 2, 26, '󰊤 '),
+            util.conceal(row:get(), 2, 3),
+            link(row:get(), 2, 26, '󰊤 ', 'Link', nil),
+            util.highlight(row:get(), 2, 26, 'Link'),
+            util.conceal(row:get(), 25, 26),
         })
 
         vim.list_extend(expected, {

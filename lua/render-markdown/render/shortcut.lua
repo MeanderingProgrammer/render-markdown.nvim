@@ -98,13 +98,37 @@ function Render:wiki_link()
         return
     end
 
-    local parts = Str.split(self.node.text:sub(2, -2), '|')
-    local icon, highlight = self:from_destination(self.link.wiki.icon, self.link.wiki.highlight, parts[1])
+    local wiki = self.link.wiki
+    local start_col, end_col = self.node.start_col, self.node.end_col
+    local values = Str.split(self.node.text:sub(2, -2), '|')
+
+    -- Hide opening outer bracket
+    self:hide(start_col - 1, start_col)
+
+    -- Add icon
+    local icon, highlight = self:from_destination(wiki.icon, wiki.highlight, values[1])
     self.marks:add_over('link', self.node, {
-        virt_text = { { icon .. parts[#parts], highlight } },
+        virt_text = { { icon, highlight } },
         virt_text_pos = 'inline',
+    })
+
+    -- Hide destination if there is an alias
+    if #values > 1 then
+        self:hide(start_col + 1, start_col + 1 + #values[1] + 1)
+    end
+
+    -- Hide closing outer bracket
+    self:hide(end_col, end_col + 1)
+end
+
+---@private
+---@param start_col integer
+---@param end_col integer
+function Render:hide(start_col, end_col)
+    self.marks:add(true, self.node.start_row, start_col, {
+        end_col = end_col,
         conceal = '',
-    }, { 0, -1, 0, 1 })
+    })
 end
 
 ---@private
