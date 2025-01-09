@@ -693,14 +693,16 @@ require('render-markdown').setup({
     --   heading, paragraph, code, dash, bullet, checkbox, quote, pipe_table,
     --   callout, link, sign, indent, latex, html, win_options
     overrides = {
-        -- Overrides for different buftypes, see :h 'buftype'
+        -- Override for different buflisted values, see :h 'buflisted'
+        buflisted = {},
+        -- Override for different buftype values, see :h 'buftype'
         buftype = {
             nofile = {
                 padding = { highlight = 'NormalFloat' },
                 sign = { enabled = false },
             },
         },
-        -- Overrides for different filetypes, see :h 'filetype'
+        -- Override for different filetype values, see :h 'filetype'
         filetype = {},
     },
     -- Mapping from treesitter language to user defined handlers

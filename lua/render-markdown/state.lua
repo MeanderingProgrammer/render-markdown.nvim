@@ -80,8 +80,9 @@ function M.get(buf)
     local config = configs[buf]
     if config == nil then
         local buf_config = M.default_buffer_config()
-        for _, name in ipairs({ 'buftype', 'filetype' }) do
-            local override = M.config.overrides[name][util.get('buf', buf, name)]
+        for _, name in ipairs({ 'buflisted', 'buftype', 'filetype' }) do
+            local value = util.get('buf', buf, name)
+            local override = M.config.overrides[name][value]
             if override ~= nil then
                 buf_config = vim.tbl_deep_extend('force', buf_config, override)
             end
@@ -319,7 +320,7 @@ function M.validate()
         end)
         :nested('overrides', function(overrides)
             overrides
-                :nested({ 'buftype', 'filetype' }, function(override)
+                :nested({ 'buflisted', 'buftype', 'filetype' }, function(override)
                     override
                         :nested('ALL', function(buffer)
                             buffer_rules(buffer):check()

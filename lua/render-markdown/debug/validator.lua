@@ -1,3 +1,5 @@
+local Iter = require('render-markdown.lib.iter')
+
 ---@class render.md.debug.Spec
 ---@field message string
 ---@field validation fun(value: any): boolean, string?
@@ -14,22 +16,22 @@ Spec.__index = Spec
 ---@param validator render.md.debug.Validator
 ---@param config? table<string, any>
 ---@param nilable boolean
----@param key? string|string[]
 ---@param path? string
+---@param key any
 ---@return render.md.debug.ValidatorSpec
-function Spec.new(validator, config, nilable, key, path)
+function Spec.new(validator, config, nilable, path, key)
     local self = setmetatable({}, Spec)
     self.validator = validator
     self.config = config
     self.nilable = nilable
     self.path = path or ''
-    self.specs = {}
     if self.config ~= nil and key ~= nil then
-        key = type(key) == 'table' and key or { key }
-        self.path = self.path .. '.' .. table.concat(key, '.')
-        self.config = vim.tbl_get(self.config, unpack(key))
+        local keys = type(key) == 'table' and key or { key }
+        self.config = vim.tbl_get(self.config, unpack(keys))
         self.config = type(self.config) == 'table' and self.config or nil
+        self.path = self.path .. '.' .. table.concat(Iter.list.map(keys, tostring), '.')
     end
+    self.specs = {}
     return self
 end
 
@@ -48,7 +50,7 @@ function Spec:nested(keys, f, nilable)
     end
     for _, key in ipairs(keys) do
         self:type(key, 'table')
-        f(Spec.new(self.validator, self.config, nilable, key, self.path))
+        f(Spec.new(self.validator, self.config, nilable, self.path, key))
     end
     return self
 end

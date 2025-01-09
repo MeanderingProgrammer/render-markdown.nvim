@@ -170,6 +170,7 @@
 ---@field public below integer
 
 ---@class (exact) render.md.ConfigOverrides
+---@field public buflisted table<boolean, render.md.UserBufferConfig>
 ---@field public buftype table<string, render.md.UserBufferConfig>
 ---@field public filetype table<string, render.md.UserBufferConfig>
 

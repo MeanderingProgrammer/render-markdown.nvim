@@ -2,6 +2,18 @@
 
 ## Pre-release
 
+### Features
+
+- improve wiki link rendering [#284](https://github.com/MeanderingProgrammer/render-markdown.nvim/discussions/284)
+  [7b1b15f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7b1b15fc8891a62aeb3a0f75d0f7b1ec7fb98090)
+- heading icons function value [#286](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/286)
+  [bab0663](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/bab0663ecdb06b0ff846969764d6c67719ab0fcb)
+
+### Bug Fixes
+
+- ensure space for table cell padding [#287](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/287)
+  [786d643](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/786d643ac7a691515d401930b8850f596992725d)
+
 ## 7.8.0 (2025-01-04)
 
 ### Features
