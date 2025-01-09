@@ -97,10 +97,10 @@ function Base:indent(level)
         return 0
     end
     if level == nil then
-        level = self.node:heading_level(true)
+        level = self.node:level(true)
     elseif indent.skip_heading then
         local parent = self.node:parent('section')
-        level = parent ~= nil and parent:heading_level(true) or 0
+        level = parent ~= nil and parent:level(true) or 0
     end
     level = level - indent.skip_level
     if level <= 0 then

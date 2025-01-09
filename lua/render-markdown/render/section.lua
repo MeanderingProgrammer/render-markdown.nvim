@@ -14,8 +14,8 @@ function Render:setup()
         return false
     end
 
-    local current_level = self.node:heading_level(false)
-    local parent_level = math.max(self.node:heading_level(true), self.indent.skip_level)
+    local current_level = self.node:level(false)
+    local parent_level = math.max(self.node:level(true), self.indent.skip_level)
     self.level_change = current_level - parent_level
 
     -- Nothing to do if there is not a change in level
