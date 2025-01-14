@@ -121,15 +121,29 @@ function Render:padding(root)
         return
     end
     local left_col = root ~= nil and root.start_col or self.node.start_col
-
-    local next_list = self.node:child('list')
-    local end_row = next_list ~= nil and next_list.start_row or self.node.end_row
-
-    for row = self.node.start_row, end_row - 1 do
+    for row = self.node.start_row, self:end_row(root) - 1 do
         local right_col = row == self.node.start_row and self.data.marker.end_col - 1 or left_col
         self:padding_mark(row, left_col, self.bullet.left_pad)
         self:padding_mark(row, right_col, self.bullet.right_pad)
     end
+end
+
+---@private
+---@param root? render.md.Node
+---@return integer
+function Render:end_row(root)
+    local next_list = self.node:child('list')
+    if next_list ~= nil then
+        return next_list.start_row
+    end
+    local end_row = self.node.end_row
+    -- On the last item of the root list ignore the last line if it is empty
+    if root ~= nil and root.end_row == end_row then
+        if Str.width(self.node:line('last', 0)) == 0 then
+            return end_row - 1
+        end
+    end
+    return end_row
 end
 
 ---@private
