@@ -35,7 +35,7 @@ function M.setup()
     if not has_cmp then
         return
     end
-    cmp.register_source(Source:get_debug_name(), Source)
+    pcall(cmp.register_source, Source:get_debug_name(), Source)
 end
 
 return M
