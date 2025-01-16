@@ -86,6 +86,9 @@ function Conceal:compute(context)
     if not self:enabled() then
         return
     end
+    if vim.treesitter.highlighter.active[self.buf] == nil then
+        return
+    end
     local parser = vim.treesitter.get_parser(self.buf)
     context:parse(parser)
     parser:for_each_tree(function(tree, language_tree)
