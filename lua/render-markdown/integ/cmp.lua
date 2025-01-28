@@ -22,7 +22,10 @@ end
 ---@param callback fun(response?: lsp.CompletionItem[])
 function Source:complete(params, callback)
     local context = params.context
-    local items = source.items(context.bufnr, context.cursor.row - 1, context.cursor.col - 1)
+    -- nvim_win_get_cursor: (1,0)-indexed
+    -- nvim-cmp col + 1   : (1,1)-indexed
+    local cursor = context.cursor
+    local items = source.items(context.bufnr, cursor.row - 1, cursor.col - 1)
     callback(items)
 end
 

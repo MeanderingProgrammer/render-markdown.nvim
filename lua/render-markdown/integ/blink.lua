@@ -24,7 +24,9 @@ end
 ---@param context blink.cmp.Context
 ---@param callback fun(response?: blink.cmp.CompletionResponse)
 function Source:get_completions(context, callback)
-    local items = source.items(context.bufnr, context.cursor[1] - 1, context.cursor[2] - 1)
+    -- nvim_win_get_cursor: (1,0)-indexed
+    local cursor = context.cursor
+    local items = source.items(context.bufnr, cursor[1] - 1, cursor[2])
     if items == nil then
         callback(nil)
     else
