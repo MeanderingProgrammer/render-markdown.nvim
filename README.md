@@ -616,12 +616,15 @@ require('render-markdown').setup({
         --   'highlight': Optional highlight for the 'icon', uses fallback highlight if not provided
         custom = {
             web = { pattern = '^http', icon = '󰖟 ' },
-            youtube = { pattern = 'youtube%.com', icon = '󰗃 ' },
-            github = { pattern = 'github%.com', icon = '󰊤 ' },
-            neovim = { pattern = 'neovim%.io', icon = ' ' },
-            stackoverflow = { pattern = 'stackoverflow%.com', icon = '󰓌 ' },
             discord = { pattern = 'discord%.com', icon = '󰙯 ' },
+            github = { pattern = 'github%.com', icon = '󰊤 ' },
+            gitlab = { pattern = 'gitlab%.com', icon = '󰮠 ' },
+            google = { pattern = 'google%.com', icon = '󰊭 ' },
+            neovim = { pattern = 'neovim%.io', icon = ' ' },
             reddit = { pattern = 'reddit%.com', icon = '󰑍 ' },
+            stackoverflow = { pattern = 'stackoverflow%.com', icon = '󰓌 ' },
+            wikipedia = { pattern = 'wikipedia%.org', icon = '󰖬 ' },
+            youtube = { pattern = 'youtube%.com', icon = '󰗃 ' },
         },
     },
     sign = {
@@ -1229,12 +1232,15 @@ require('render-markdown').setup({
         --   'highlight': Optional highlight for the 'icon', uses fallback highlight if not provided
         custom = {
             web = { pattern = '^http', icon = '󰖟 ' },
-            youtube = { pattern = 'youtube%.com', icon = '󰗃 ' },
-            github = { pattern = 'github%.com', icon = '󰊤 ' },
-            neovim = { pattern = 'neovim%.io', icon = ' ' },
-            stackoverflow = { pattern = 'stackoverflow%.com', icon = '󰓌 ' },
             discord = { pattern = 'discord%.com', icon = '󰙯 ' },
+            github = { pattern = 'github%.com', icon = '󰊤 ' },
+            gitlab = { pattern = 'gitlab%.com', icon = '󰮠 ' },
+            google = { pattern = 'google%.com', icon = '󰊭 ' },
+            neovim = { pattern = 'neovim%.io', icon = ' ' },
             reddit = { pattern = 'reddit%.com', icon = '󰑍 ' },
+            stackoverflow = { pattern = 'stackoverflow%.com', icon = '󰓌 ' },
+            wikipedia = { pattern = 'wikipedia%.org', icon = '󰖬 ' },
+            youtube = { pattern = 'youtube%.com', icon = '󰗃 ' },
         },
     },
 })

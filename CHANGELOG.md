@@ -8,11 +8,22 @@
   [7b1b15f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7b1b15fc8891a62aeb3a0f75d0f7b1ec7fb98090)
 - heading icons function value [#286](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/286)
   [bab0663](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/bab0663ecdb06b0ff846969764d6c67719ab0fcb)
+  [cfe5746](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/cfe57468a4ab44b745eddfbe90b63b9777ba7223)
+- override based on `buflisted` [#285](https://github.com/MeanderingProgrammer/render-markdown.nvim/discussions/285)
+  [873bdee](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/873bdee806e381864a55f692bcbfe23269c8dc9d)
+- completions provide space after marker [#292](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/292)
+  [d7b646f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/d7b646f2e6136d963e1bd3abbb9e2ac3fa90837a)
 
 ### Bug Fixes
 
 - ensure space for table cell padding [#287](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/287)
   [786d643](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/786d643ac7a691515d401930b8850f596992725d)
+- bullet padding + heading borders [#297](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/297)
+  [f0eb589](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/f0eb5893556200e9f945c0f0ea3c83bbd20dd963)
+- wrap nvim-cmp `register_source` in pcall [#298](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/298)
+  [be3e3ab](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/be3e3ab807059ddd247a802e8253b0cd3edef5a3)
+- check highlighter status when computing concealed regions [#300](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/300)
+  [ad05586](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/ad055861d17afe058bd835e82292e14a64b51b1d)
 
 ## 7.8.0 (2025-01-04)
 
