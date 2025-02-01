@@ -15,7 +15,7 @@ M.group = vim.api.nvim_create_augroup('RenderMarkdown', { clear = true })
 ---Should only be called from plugin directory
 function M.setup()
     -- Lazy Loading: ignores current buffer as FileType event already executed
-    M.attach(util.current('buf'))
+    M.schedule_attach()
     -- Attempt to attach to all buffers, cannot use pattern to support plugin directory
     vim.api.nvim_create_autocmd('FileType', {
         group = M.group,
@@ -43,7 +43,7 @@ end
 ---@param enabled boolean
 function M.set_all(enabled)
     -- Lazy Loading: all previously opened buffers have been ignored
-    M.attach(util.current('buf'))
+    M.schedule_attach()
     state.enabled = enabled
     for _, buf in ipairs(buffers) do
         ui.update(buf, vim.fn.bufwinid(buf), 'UserCommand', true)
@@ -54,6 +54,14 @@ end
 ---@return boolean
 function M.is_attached(buf)
     return vim.tbl_contains(buffers, buf)
+end
+
+---@private
+function M.schedule_attach()
+    local buf = util.current('buf')
+    vim.schedule(function()
+        M.attach(buf)
+    end)
 end
 
 ---@private
