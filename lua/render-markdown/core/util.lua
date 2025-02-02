@@ -3,9 +3,9 @@ local M = {}
 
 M.has_10 = vim.fn.has('nvim-0.10') == 1
 
----@param name string
+---@param key 'ft'|'cmd'
 ---@return string[]
-function M.lazy_file_types(name)
+function M.lazy(key)
     -- https://github.com/folke/lazydev.nvim/blob/main/lua/lazydev/pkg.lua -> get_plugin_path
     if type(package.loaded.lazy) ~= 'table' then
         return {}
@@ -14,15 +14,16 @@ function M.lazy_file_types(name)
     if not ok then
         return {}
     end
+    local name = 'render-markdown.nvim'
     local plugin = lazy_config.spec.plugins[name]
     if plugin == nil then
         return {}
     end
-    local file_types = plugin.ft
-    if type(file_types) == 'table' then
-        return file_types
-    elseif type(file_types) == 'string' then
-        return { file_types }
+    local values = plugin[key]
+    if type(values) == 'table' then
+        return values
+    elseif type(values) == 'string' then
+        return { values }
     else
         return {}
     end
