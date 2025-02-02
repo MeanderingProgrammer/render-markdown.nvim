@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 7.9.0 (2025-02-02)
+
 ### Features
 
 - improve wiki link rendering [#284](https://github.com/MeanderingProgrammer/render-markdown.nvim/discussions/284)
@@ -13,6 +15,10 @@
   [873bdee](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/873bdee806e381864a55f692bcbfe23269c8dc9d)
 - completions provide space after marker [#292](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/292)
   [d7b646f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/d7b646f2e6136d963e1bd3abbb9e2ac3fa90837a)
+- more default link icons [#307](https://github.com/MeanderingProgrammer/render-markdown.nvim/discussions/307)
+  [8004461](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/800446143a2f06612da76c59d7e1daee82963d50)
+- buffer level commands for enable, disable, & toggle [#313](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/313)
+  [d15a144](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/d15a144fe1966b5c4e5b35cf86e1039d4fdc5749)
 
 ### Bug Fixes
 
@@ -24,6 +30,15 @@
   [be3e3ab](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/be3e3ab807059ddd247a802e8253b0cd3edef5a3)
 - check highlighter status when computing concealed regions [#300](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/300)
   [ad05586](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/ad055861d17afe058bd835e82292e14a64b51b1d)
+- difference in `nvim-cmp` and `blink.cmp` cursor [#310](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/310)
+  [c85d682](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c85d682dce1ef3453868b91672bb2e65d0d95c68)
+- many fixes to handle lazy loading from different plugin managers, and fixes for
+  those fixes [#309](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/309)
+  [1ba6fb7](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/1ba6fb7998985736ca3480366c9792be05b93ad7)
+  [#315](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/315)
+  [b9c98ff](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b9c98ff7d47dfe2a972f1b08340850c92e6ca9bc)
+  [#317](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/317)
+  [4645c18](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4645c1856933ac325911e468ab14de1c02e979b2)
 
 ## 7.8.0 (2025-01-04)
 
