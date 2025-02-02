@@ -9,12 +9,24 @@ function M.enable()
     manager.set_all(true)
 end
 
+function M.buf_enable()
+    manager.set_current(true)
+end
+
 function M.disable()
     manager.set_all(false)
 end
 
+function M.buf_disable()
+    manager.set_current(false)
+end
+
 function M.toggle()
-    manager.set_all(not state.enabled)
+    manager.set_all()
+end
+
+function M.buf_toggle()
+    manager.set_current()
 end
 
 function M.log()

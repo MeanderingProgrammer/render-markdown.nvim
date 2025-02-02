@@ -29,19 +29,19 @@ end
 ---@private
 ---@param opts { fargs: string[] }
 function M.command(opts)
-    local args, error_message = opts.fargs, nil
+    local args, message = opts.fargs, nil
     if #args == 0 or #args == 1 then
         local command = #args == 0 and api.enable or api[args[1]]
         if command ~= nil then
             command()
         else
-            error_message = string.format('unexpected command: %s', args[1])
+            message = string.format('unexpected command: %s', args[1])
         end
     else
-        error_message = string.format('unexpected # arguments: %d', #args)
+        message = string.format('unexpected # arguments: %d', #args)
     end
-    if error_message ~= nil then
-        vim.notify(string.format('%s: %s', M.plugin, error_message), vim.log.levels.ERROR)
+    if message ~= nil then
+        vim.notify(string.format('%s: %s', M.plugin, message), vim.log.levels.ERROR)
     end
 end
 

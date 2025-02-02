@@ -42,27 +42,51 @@ function M.setup()
     })
 end
 
----@param enabled boolean
-function M.set_all(enabled)
-    -- Lazy Loading: all previously opened buffers have been ignored
-    if #util.lazy('cmd') > 0 then
-        M.attach_current()
-    end
-    state.enabled = enabled
-    for _, buf in ipairs(buffers) do
-        ui.update(buf, vim.fn.bufwinid(buf), 'UserCommand', true)
-    end
-end
-
 ---@param buf integer
 ---@return boolean
 function M.is_attached(buf)
     return vim.tbl_contains(buffers, buf)
 end
 
+---@param enabled? boolean
+function M.set_all(enabled)
+    -- Lazy Loading: all previously opened buffers have been ignored
+    if #util.lazy('cmd') > 0 then
+        M.attach_current()
+    end
+    if enabled ~= nil then
+        state.enabled = enabled
+    else
+        state.enabled = not state.enabled
+    end
+    for _, buf in ipairs(buffers) do
+        M.trigger_update(buf)
+    end
+end
+
+---@param enabled? boolean
+function M.set_current(enabled)
+    local buf = util.current('buf')
+    if M.is_attached(buf) then
+        local config = state.get(buf)
+        if enabled ~= nil then
+            config.enabled = enabled
+        else
+            config.enabled = not config.enabled
+        end
+        M.trigger_update(buf)
+    end
+end
+
 ---@private
 function M.attach_current()
     M.attach(util.current('buf'))
+end
+
+---@private
+---@param buf integer
+function M.trigger_update(buf)
+    ui.update(buf, vim.fn.bufwinid(buf), 'UserCommand', true)
 end
 
 ---@private

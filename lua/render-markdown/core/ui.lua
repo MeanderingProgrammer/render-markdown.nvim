@@ -154,6 +154,9 @@ function M.next_state(config, win, mode)
     if not state.enabled then
         return 'default'
     end
+    if not config.enabled then
+        return 'default'
+    end
     if not config:render(mode) then
         return 'default'
     end
