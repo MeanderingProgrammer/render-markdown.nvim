@@ -39,4 +39,23 @@ function M.pad_to(target, s)
     return M.pad(M.width(target) - M.width(s))
 end
 
+---@param s string
+---@param pattern string
+---@return Range2[]
+function M.find_all(s, pattern)
+    local result = {}
+    ---@type integer?
+    local index = 1
+    while index ~= nil do
+        local start_index, end_index = s:find(pattern, index)
+        if start_index == nil or end_index == nil then
+            index = nil
+        else
+            table.insert(result, { start_index, end_index })
+            index = end_index + 1
+        end
+    end
+    return result
+end
+
 return M

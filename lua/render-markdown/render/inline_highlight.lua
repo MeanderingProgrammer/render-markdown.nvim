@@ -16,27 +16,19 @@ function Render:setup()
 end
 
 function Render:render()
-    ---@type integer|nil
-    local index = 1
-    while index ~= nil do
-        local start_index, end_index = self.node.text:find('==[^=]+==', index)
-        if start_index == nil or end_index == nil then
-            index = nil
-        else
-            local start_row, start_col = self:row_col(start_index, 1)
-            local end_row, end_col = self:row_col(end_index, 0)
-            -- Hide first 2 equal signs
-            self:hide_equals(start_row, start_col)
-            -- Highlight contents
-            self.marks:add(false, start_row, start_col, {
-                end_row = end_row,
-                end_col = end_col,
-                hl_group = self.highlight.highlight,
-            })
-            -- Hide last 2 equal signs
-            self:hide_equals(end_row, end_col - 2)
-            index = end_index + 1
-        end
+    for _, range in ipairs(Str.find_all(self.node.text, '==[^=]+==')) do
+        local start_row, start_col = self:row_col(range[1], 1)
+        local end_row, end_col = self:row_col(range[2], 0)
+        -- Hide first 2 equal signs
+        self:hide_equals(start_row, start_col)
+        -- Highlight contents
+        self.marks:add(false, start_row, start_col, {
+            end_row = end_row,
+            end_col = end_col,
+            hl_group = self.highlight.highlight,
+        })
+        -- Hide last 2 equal signs
+        self:hide_equals(end_row, end_col - 2)
     end
 end
 
