@@ -97,7 +97,7 @@ function M.attach(buf)
     end
 
     local config = state.get(buf)
-    state.on.attach(buf)
+    state.on.attach({ buf = buf })
 
     local events = { 'BufWinEnter', 'BufLeave', 'CmdlineChanged', 'CursorHold', 'CursorMoved', 'WinScrolled' }
     local change_events = { 'DiffUpdated', 'ModeChanged', 'TextChanged' }

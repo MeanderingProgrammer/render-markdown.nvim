@@ -92,7 +92,7 @@ function Render:icon(level)
     local icons = self.data.ordered and self.bullet.ordered_icons or self.bullet.icons
     local icon = nil
     if type(icons) == 'function' then
-        icon = icons(level, index, node.text)
+        icon = icons({ level = level, index = index, value = node.text })
     else
         icon = List.cycle(icons, level)
         if type(icon) == 'table' then

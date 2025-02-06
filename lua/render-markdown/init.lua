@@ -7,13 +7,20 @@ local M = {}
 ---@field public start_col integer
 ---@field public opts vim.api.keyset.set_extmark
 
+---@class (exact) render.md.HandlerContext
+---@field public buf integer
+---@field public root TSNode
+
 ---@class (exact) render.md.Handler
 ---@field public extends? boolean
----@field public parse fun(root: TSNode, buf: integer): render.md.Mark[]
+---@field public parse fun(ctx: render.md.HandlerContext): render.md.Mark[]
+
+---@class (exact) render.md.CallbackContext
+---@field public buf integer
 
 ---@class (exact) render.md.UserCallback
----@field public attach? fun(buf: integer)
----@field public render? fun(buf: integer)
+---@field public attach? fun(ctx: render.md.CallbackContext)
+---@field public render? fun(ctx: render.md.CallbackContext)
 
 ---@class (exact) render.md.UserInjection
 ---@field public enabled? boolean
@@ -124,10 +131,15 @@ local M = {}
 ---@field public checked? render.md.UserCheckboxComponent
 ---@field public custom? table<string, render.md.UserCustomCheckbox>
 
+---@class (exact) render.md.BulletContext
+---@field public level integer
+---@field public index integer
+---@field public value string
+
 ---@alias render.md.bullet.Icons
 ---| string[]
 ---| string[][]
----| fun(level: integer, index: integer, value: string): string?
+---| fun(ctx: render.md.BulletContext): string?
 
 ---@class (exact) render.md.UserBullet: render.md.UserBaseComponent
 ---@field public icons? render.md.bullet.Icons
@@ -171,9 +183,12 @@ local M = {}
 ---@field public left_margin? number
 ---@field public min_width? integer
 
+---@class (exact) render.md.HeadingContext
+---@field public sections integer[]
+
 ---@alias render.md.heading.Icons
 ---| string[]
----| fun(sections: integer[]): string?
+---| fun(ctx: render.md.HeadingContext): string?
 ---@alias render.md.heading.Position 'overlay'|'inline'|'right'
 ---@alias render.md.heading.Width 'full'|'block'
 
@@ -360,7 +375,7 @@ M.default_config = {
         -- Replaces '#+' of 'atx_h._marker'
         -- The number of '#' in the heading determines the 'level'
         -- The 'level' is used to index into the list using a cycle
-        -- If the value is a function the input is the nesting level of the heading within sections
+        -- If the value is a function the input context contains the nesting level of the heading within sections
         icons = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
         -- Determines how icons fill the available space:
         --  right:   '#'s are concealed and icon is appended to right side
@@ -522,20 +537,20 @@ M.default_config = {
         render_modes = false,
         -- Replaces '-'|'+'|'*' of 'list_item'
         -- How deeply nested the list is determines the 'level', how far down at that level determines the 'index'
-        -- If a function is provided both of these values are passed in using 1 based indexing
+        -- If a function is provided both of these values are provided in the context using 1 based indexing
         -- If a list is provided we index into it using a cycle based on the level
         -- If the value at that level is also a list we further index into it using a clamp based on the index
         -- If the item is a 'checkbox' a conceal is used to hide the bullet instead
         icons = { '●', '○', '◆', '◇' },
         -- Replaces 'n.'|'n)' of 'list_item'
         -- How deeply nested the list is determines the 'level', how far down at that level determines the 'index'
-        -- If a function is provided both of these values are passed in using 1 based indexing
+        -- If a function is provided both of these values are provided in the context using 1 based indexing
         -- If a list is provided we index into it using a cycle based on the level
         -- If the value at that level is also a list we further index into it using a clamp based on the index
-        ordered_icons = function(level, index, value)
-            value = vim.trim(value)
-            local value_index = tonumber(value:sub(1, #value - 1))
-            return string.format('%d.', value_index > 1 and value_index or index)
+        ordered_icons = function(ctx)
+            local value = vim.trim(ctx.value)
+            local index = tonumber(value:sub(1, #value - 1))
+            return string.format('%d.', index > 1 and index or ctx.index)
         end,
         -- Padding to add to the left of bullet point
         left_pad = 0,

@@ -139,7 +139,7 @@ function M.run_update(buf, win, parse)
                 extmark:show(M.namespace, buf)
             end
         end
-        state.on.render(buf)
+        state.on.render({ buf = buf })
     else
         M.clear(buf, buffer_state)
     end
@@ -190,11 +190,11 @@ function M.parse_buffer(props)
         if language == 'markdown' then
             table.insert(markdown_roots, tree:root())
         else
-            vim.list_extend(marks, M.parse_tree(buf, language, tree:root()))
+            vim.list_extend(marks, M.parse_tree({ buf = buf, root = tree:root() }, language))
         end
     end)
     for _, root in ipairs(markdown_roots) do
-        vim.list_extend(marks, M.parse_tree(buf, 'markdown', root))
+        vim.list_extend(marks, M.parse_tree({ buf = buf, root = root }, 'markdown'))
     end
     return Iter.list.map(marks, Extmark.new)
 end
@@ -202,29 +202,28 @@ end
 ---Run user & builtin handlers when available. User handler is always executed,
 ---builtin handler is skipped if user handler does not specify extends.
 ---@private
----@param buf integer
+---@param ctx render.md.HandlerContext
 ---@param language string
----@param root TSNode
 ---@return render.md.Mark[]
-function M.parse_tree(buf, language, root)
-    log.buf('debug', 'language', buf, language)
-    if not Context.get(buf):overlaps_node(root) then
+function M.parse_tree(ctx, language)
+    log.buf('debug', 'language', ctx.buf, language)
+    if not Context.get(ctx.buf):overlaps_node(ctx.root) then
         return {}
     end
 
     local marks = {}
     local user = state.custom_handlers[language]
     if user ~= nil then
-        log.buf('debug', 'running handler', buf, 'user')
-        vim.list_extend(marks, user.parse(root, buf))
+        log.buf('debug', 'running handler', ctx.buf, 'user')
+        vim.list_extend(marks, user.parse(ctx))
         if not user.extends then
             return marks
         end
     end
     local builtin = builtin_handlers[language]
     if builtin ~= nil then
-        log.buf('debug', 'running handler', buf, 'builtin')
-        vim.list_extend(marks, builtin.parse(root, buf))
+        log.buf('debug', 'running handler', ctx.buf, 'builtin')
+        vim.list_extend(marks, builtin.parse(ctx))
     end
     return marks
 end

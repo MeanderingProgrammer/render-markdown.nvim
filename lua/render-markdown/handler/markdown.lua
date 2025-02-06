@@ -82,11 +82,10 @@ end
 ---@class render.md.handler.Markdown: render.md.Handler
 local M = {}
 
----@param root TSNode
----@param buf integer
+---@param ctx render.md.HandlerContext
 ---@return render.md.Mark[]
-function M.parse(root, buf)
-    return Handler.new(buf):parse(root)
+function M.parse(ctx)
+    return Handler.new(ctx.buf):parse(ctx.root)
 end
 
 return M

@@ -18,15 +18,19 @@ Each handler must conform to the following interface:
 ---@field public start_col integer
 ---@field public opts vim.api.keyset.set_extmark
 
+---@class (exact) render.md.HandlerContext
+---@field public buf integer
+---@field public root TSNode
+
 ---@class (exact) render.md.Handler
 ---@field public extends? boolean
----@field public parse fun(root: TSNode, buf: integer): render.md.Mark[]
+---@field public parse fun(ctx: render.md.HandlerContext): render.md.Mark[]
 ```
 
-The `parse` function parameters are:
+The `parse` function takes a `ctx` parameter whose fields are:
 
-- `root`: The root treesitter node for the specified language
 - `buf`: The buffer containing the root node
+- `root`: The root treesitter node for the specified language
 
 The `extends` parameter defines whether the builtin handler should still be run in
 conjunction with this one. Defaults to `false`.
@@ -71,9 +75,9 @@ This will require a treesitter query and using the range values of nodes.
 ```lua
 -- Parse query outside of the function to avoid doing it for each call
 local query = vim.treesitter.query.parse('python', '(function_definition) @def')
-local function parse_python(root, buf)
+local function parse_python(ctx)
     local marks = {}
-    for id, node in query:iter_captures(root, buf) do
+    for id, node in query:iter_captures(ctx.root, ctx.buf) do
         local capture = query.captures[id]
         local start_row, _, _, _ = node:range()
         if capture == 'def' then

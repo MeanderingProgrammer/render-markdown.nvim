@@ -12,12 +12,11 @@ local cache = {}
 ---@class render.md.handler.Latex: render.md.Handler
 local M = {}
 
----@param root TSNode
----@param buf integer
+---@param ctx render.md.HandlerContext
 ---@return render.md.Mark[]
-function M.parse(root, buf)
-    local latex = state.get(buf).latex
-    if Context.get(buf):skip(latex) then
+function M.parse(ctx)
+    local latex = state.get(ctx.buf).latex
+    if Context.get(ctx.buf):skip(latex) then
         return {}
     end
     if vim.fn.executable(latex.converter) ~= 1 then
@@ -25,7 +24,7 @@ function M.parse(root, buf)
         return {}
     end
 
-    local node = Node.new(buf, root)
+    local node = Node.new(ctx.buf, ctx.root)
     log.node('latex', node)
 
     local raw_expression = cache[node.text]
@@ -53,7 +52,7 @@ function M.parse(root, buf)
         return { { expression, latex.highlight } }
     end)
 
-    local marks = List.new_marks(buf, true)
+    local marks = List.new_marks(ctx.buf, true)
     marks:add_over(false, node, {
         virt_lines = latex_lines,
         virt_lines_above = true,

@@ -2,12 +2,11 @@
 
 local util = require('tests.util')
 
----@param root TSNode
----@param buf integer
+---@param ctx render.md.HandlerContext
 ---@return render.md.Mark[]
-local function conceal_escape(root, buf)
+local function conceal_escape(ctx)
     local marks, query = {}, vim.treesitter.query.parse('markdown_inline', '(backslash_escape) @escape')
-    for _, node in query:iter_captures(root, buf) do
+    for _, node in query:iter_captures(ctx.root, ctx.buf) do
         local start_row, start_col, end_row, _ = node:range()
         table.insert(marks, {
             conceal = true,

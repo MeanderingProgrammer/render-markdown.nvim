@@ -116,12 +116,12 @@ def update_readme() -> None:
 
 
 def update_handlers() -> None:
-    name_to_lua = {lua.class_name: lua for lua in get_classes()}
-    mark = name_to_lua["Mark"]
-    handler = name_to_lua["Handler"]
+    name_lua = {lua.class_name: lua for lua in get_classes()}
+    names = ["Mark", "HandlerContext", "Handler"]
+    lua_classes = [name_lua[name] for name in names]
 
-    old = get_code_block(HANDLERS_MD, mark.name, 1)
-    new = "\n".join([mark.to_str(), "", handler.to_str(), ""])
+    old = get_code_block(HANDLERS_MD, lua_classes[0].name, 1)
+    new = "\n".join([lua.to_str() + "\n" for lua in lua_classes])
     text = HANDLERS_MD.read_text().replace(old, new)
     HANDLERS_MD.write_text(text)
 
