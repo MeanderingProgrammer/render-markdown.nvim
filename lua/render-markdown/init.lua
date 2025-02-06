@@ -183,6 +183,12 @@ local M = {}
 ---@field public left_margin? number
 ---@field public min_width? integer
 
+---@class (exact) render.md.HeadingCustom
+---@field public pattern string
+---@field public icon? string
+---@field public background? string
+---@field public foreground? string
+
 ---@class (exact) render.md.HeadingContext
 ---@field public sections integer[]
 
@@ -209,6 +215,7 @@ local M = {}
 ---@field public below? string
 ---@field public backgrounds? string[]
 ---@field public foregrounds? string[]
+---@field public custom? table<string, render.md.HeadingCustom>
 
 ---@class (exact) render.md.UserPadding
 ---@field public highlight? string
@@ -438,6 +445,14 @@ M.default_config = {
             'RenderMarkdownH5',
             'RenderMarkdownH6',
         },
+        -- Define custom heading patterns which allow you to override various properties
+        -- based on the contents of a heading. Each entry should consist of a string key,
+        -- which is used mostly as an identifier, and a table value with:
+        --   'pattern':    Matched against the heading text see :h lua-pattern
+        --   'icon':       Optional override for the icon
+        --   'background': Optional override for the background
+        --   'foreground': Optional override for the foreground
+        custom = {},
     },
     paragraph = {
         -- Turn on / off paragraph rendering

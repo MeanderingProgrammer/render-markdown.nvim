@@ -52,6 +52,8 @@ function Render:setup()
         return false
     end
 
+    local custom = self:custom()
+
     local icon, icons = nil, self.heading.icons
     if type(icons) == 'function' then
         icon = icons({ sections = self.node:sections() })
@@ -63,10 +65,10 @@ function Render:setup()
         atx = atx,
         marker = marker,
         level = level,
-        icon = icon,
+        icon = custom.icon or icon,
         sign = List.cycle(self.heading.signs, level),
-        foreground = List.clamp(self.heading.foregrounds, level),
-        background = List.clamp(self.heading.backgrounds, level),
+        foreground = custom.foreground or List.clamp(self.heading.foregrounds, level),
+        background = custom.background or List.clamp(self.heading.backgrounds, level),
         width = List.clamp(self.heading.width, level) or 'full',
         left_margin = List.clamp(self.heading.left_margin, level) or 0,
         left_pad = List.clamp(self.heading.left_pad, level) or 0,
@@ -76,6 +78,17 @@ function Render:setup()
     }
 
     return true
+end
+
+---@private
+---@return render.md.HeadingCustom
+function Render:custom()
+    for _, custom in pairs(self.heading.custom) do
+        if self.node.text:find(custom.pattern) ~= nil then
+            return custom
+        end
+    end
+    return {}
 end
 
 function Render:render()

@@ -159,6 +159,7 @@
 ---@field public below string
 ---@field public backgrounds string[]
 ---@field public foregrounds string[]
+---@field public custom table<string, render.md.HeadingCustom>
 
 ---@class (exact) render.md.Padding
 ---@field public highlight string

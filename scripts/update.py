@@ -26,6 +26,7 @@ class LuaClass:
     def is_optional(self, field: str) -> bool:
         class_to_optional: dict[str, list[str]] = {
             "Handler": ["extends"],
+            "HeadingCustom": ["icon", "background", "foreground"],
             "UserCode": ["highlight_language"],
             "UserCustomCheckbox": ["scope_highlight"],
             "UserCheckboxComponent": ["scope_highlight"],

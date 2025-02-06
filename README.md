@@ -328,6 +328,14 @@ require('render-markdown').setup({
             'RenderMarkdownH5',
             'RenderMarkdownH6',
         },
+        -- Define custom heading patterns which allow you to override various properties
+        -- based on the contents of a heading. Each entry should consist of a string key,
+        -- which is used mostly as an identifier, and a table value with:
+        --   'pattern':    Matched against the heading text see :h lua-pattern
+        --   'icon':       Optional override for the icon
+        --   'background': Optional override for the background
+        --   'foreground': Optional override for the foreground
+        custom = {},
     },
     paragraph = {
         -- Turn on / off paragraph rendering
@@ -809,6 +817,14 @@ require('render-markdown').setup({
             'RenderMarkdownH5',
             'RenderMarkdownH6',
         },
+        -- Define custom heading patterns which allow you to override various properties
+        -- based on the contents of a heading. Each entry should consist of a string key,
+        -- which is used mostly as an identifier, and a table value with:
+        --   'pattern':    Matched against the heading text see :h lua-pattern
+        --   'icon':       Optional override for the icon
+        --   'background': Optional override for the background
+        --   'foreground': Optional override for the foreground
+        custom = {},
     },
 })
 ```
