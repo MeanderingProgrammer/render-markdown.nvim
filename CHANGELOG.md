@@ -2,6 +2,59 @@
 
 ## Pre-release
 
+## 8.0.0 (2025-02-06)
+
+### ⚠ BREAKING CHANGES
+
+This release includes only a single change which breaks any function values in user
+configurations. Rather than passing a list of arguments to the functions we now
+provide a single context table with the same information [591e256](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/591e2561a7236501a7e9ae88ebd9362d07a8c4a3).
+
+The fix to any errors is straightforward as the fields of the context continue to
+have the same names. So if you have an existing function like:
+
+```lua
+function(param1, param2)
+    vim.print(param1)
+    vim.print(param2)
+end
+```
+
+The fixed version would be:
+
+```lua
+function(ctx)
+    vim.print(ctx.param1)
+    vim.print(ctx.param2)
+end
+```
+
+If you use the same parameters many times in the function and don't want to add the
+`ctx.` prefix everywhere you can add a line at the top to define local variables
+with the same name as before and keep the rest of the function body unchanged:
+
+```lua
+function(ctx)
+    local param1, param2 = ctx.param1, ctx.param2
+    vim.print(param1)
+    vim.print(param2)
+end
+```
+
+The fields impacted are:
+
+- The `parse` functions in `custom_handlers`:
+  - `buf` -> `ctx.buf`
+  - `root` -> `ctx.root`
+- The callbacks in `on`: `on.attach` & `on.render`:
+  - `buf` -> `ctx.buf`
+- `bullet.icons` & `bullet.ordered_icons` if a non-default function was set:
+  - `level` -> `ctx.level`
+  - `index` -> `ctx.index`
+  - `value` -> `ctx.value`
+- `heading.icons` if a function was set:
+  - `sections` -> `ctx.sections`
+
 ## 7.9.0 (2025-02-02)
 
 ### Features
