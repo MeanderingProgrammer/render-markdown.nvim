@@ -829,6 +829,7 @@ M.default_config = {
         -- Override for different buftype values, see :h 'buftype'
         buftype = {
             nofile = {
+                render_modes = true,
                 padding = { highlight = 'NormalFloat' },
                 sign = { enabled = false },
             },
