@@ -32,6 +32,8 @@ function M.check()
         M.check_parser('latex', latex_advice)
     end
 
+    M.check_highlight('markdown')
+
     M.start('icons')
     local provider = Icons.provider()
     if provider ~= nil then
@@ -89,6 +91,29 @@ function M.check_parser(language, advice)
         vim.health.error(language .. ': parser not installed')
     else
         vim.health.warn(language .. ': parser not installed', advice)
+    end
+end
+
+---@private
+---@param language string
+function M.check_highlight(language)
+    --
+    -- As the markdown parser is part of Neovim, and nvim-treesitter no longer provides
+    -- .is_enabled() for the main branch, create a markdown buffer and check the state.
+    --
+    -- See: https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/322#discussion_r1947393569
+    local bufnr = vim.api.nvim_create_buf(false, true)
+
+    vim.bo[bufnr].filetype = language
+
+    local has_highlighter = vim.treesitter.highlighter.active[bufnr] ~= nil
+
+    vim.api.nvim_buf_delete(bufnr, { force = true })
+
+    if has_highlighter then
+        vim.health.ok(language .. ': highlight enabled')
+    else
+        vim.health.error(language .. ': highlight not enabled')
     end
 end
 
