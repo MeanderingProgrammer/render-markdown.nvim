@@ -5,7 +5,7 @@ local state = require('render-markdown.state')
 local M = {}
 
 ---@private
-M.version = '8.0.2'
+M.version = '8.0.3'
 
 function M.check()
     M.start('version')
@@ -21,17 +21,15 @@ function M.check()
         vim.health.error(message)
     end
 
-    M.start('treesitter')
-    M.check_parser('markdown')
-    M.check_parser('markdown_inline')
-
     local latex = state.get(0).latex
     local latex_advice = 'Disable LaTeX support to avoid this warning by setting { latex = { enabled = false } }'
 
+    M.start('treesitter')
+    M.check_parser('markdown')
+    M.check_parser('markdown_inline')
     if latex.enabled then
         M.check_parser('latex', latex_advice)
     end
-
     M.check_highlight('markdown')
 
     M.start('icons')
@@ -83,8 +81,7 @@ end
 ---@param language string
 ---@param advice? string
 function M.check_parser(language, advice)
-    local has_parser, _ = pcall(vim.treesitter.get_parser, 0, language, { error = false })
-
+    local has_parser = pcall(vim.treesitter.get_parser, 0, language)
     if has_parser then
         vim.health.ok(language .. ': parser installed')
     elseif advice == nil then
@@ -95,25 +92,18 @@ function M.check_parser(language, advice)
 end
 
 ---@private
----@param language string
-function M.check_highlight(language)
-    --
-    -- As the markdown parser is part of Neovim, and nvim-treesitter no longer provides
-    -- .is_enabled() for the main branch, create a markdown buffer and check the state.
-    --
-    -- See: https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/322#discussion_r1947393569
+---@param filetype string
+function M.check_highlight(filetype)
+    -- As nvim-treesitter is removing module support it cannot be used to check
+    -- if highlights are enabled, so we create a buffer and check the state
     local bufnr = vim.api.nvim_create_buf(false, true)
-
-    vim.bo[bufnr].filetype = language
-
+    vim.bo[bufnr].filetype = filetype
     local has_highlighter = vim.treesitter.highlighter.active[bufnr] ~= nil
-
     vim.api.nvim_buf_delete(bufnr, { force = true })
-
     if has_highlighter then
-        vim.health.ok(language .. ': highlight enabled')
+        vim.health.ok(filetype .. ': highlight enabled')
     else
-        vim.health.error(language .. ': highlight not enabled')
+        vim.health.error(filetype .. ': highlight not enabled')
     end
 end
 
