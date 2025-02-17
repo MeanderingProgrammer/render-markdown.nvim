@@ -22,7 +22,7 @@ function M.config_preset(name)
         ---https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/extras/lang/markdown.lua
         ---@type render.md.UserConfig
         return {
-            file_types = { 'markdown', 'norg', 'rmd', 'org' },
+            file_types = { 'markdown', 'norg', 'rmd', 'org', 'codecompanion' },
             code = {
                 sign = false,
                 width = 'block',
@@ -32,8 +32,12 @@ function M.config_preset(name)
                 sign = false,
                 icons = {},
             },
+            checkbox = {
+                enabled = false,
+            },
         }
     else
+        ---@type render.md.UserConfig
         return {}
     end
 end
@@ -77,6 +81,7 @@ function M.pipe_table_preset(name)
             },
         }
     else
+        ---@type render.md.UserPipeTable
         return {}
     end
 end
