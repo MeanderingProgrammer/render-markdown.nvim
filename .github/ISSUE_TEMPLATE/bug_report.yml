@@ -49,7 +49,7 @@ body:
   - type: textarea
     attributes:
       label: Plugin configuration
-      description: Your configuration for this plugin.
+      description: Your configuration for this plugin (:RenderMarkdown config).
       render: lua
     validations:
       required: true

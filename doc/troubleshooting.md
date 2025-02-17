@@ -31,6 +31,16 @@ the `filetype` of the current buffer and make sure it is in that list:
 :lua vim.print(vim.bo.filetype)
 ```
 
+## Validate Configuration
+
+This is only a potential issue if you are using a distribution, as opposed to your
+own configuration. The configuration for this plugin could be set by the distribution
+to some default the author prefers. So the settings you think you are using are not
+necessarily the only ones be used.
+
+Run `:RenderMarkdown config`, which will output only the non-default values being
+used, you might be surprised what you find.
+
 ## Validate Parse Tree
 
 Create a new `markdown` file locally with the following content:
@@ -111,6 +121,6 @@ This should trigger the rendering logic, then close Neovim.
 
 ### 4) Provide Logs in Issue
 
-Logs are written to a file typically located at: `~/.local/state/nvim/render-markdown.log`.
+Logs can be retrieved by running `:RenderMarkdown log`.
 
-Copy the contents of that file and paste it into the issue.
+Copy the contents and paste them into the issue.
