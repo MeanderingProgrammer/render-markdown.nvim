@@ -23,6 +23,7 @@
 
 ---@class (exact) render.md.Html: render.md.BaseComponent
 ---@field public comment render.md.HtmlComment
+---@field public tag table<string, render.md.HtmlTag>
 
 ---@class (exact) render.md.Latex: render.md.BaseComponent
 ---@field public converter string

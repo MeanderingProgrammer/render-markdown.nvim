@@ -682,6 +682,11 @@ require('render-markdown').setup({
             -- Highlight for the inlined text
             highlight = 'RenderMarkdownHtmlComment',
         },
+        -- HTML tags whose start and end will be hidden and icon shown
+        --   The key is matched against the tag name
+        --   'icon':      Gets inlined at the start
+        --   'highlight': Highlight for the icon
+        tag = {},
     },
     -- Window options to use that change between rendered and raw view
     win_options = {

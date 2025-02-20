@@ -19,9 +19,16 @@ function Handler.new(buf)
     self.config = state.get(buf)
     self.context = Context.get(buf)
     self.marks = List.new_marks(buf, true)
-    self.query = treesitter.parse('html', '(comment) @comment')
+    self.query = treesitter.parse(
+        'html',
+        [[
+            (comment) @comment
+            (element) @tag
+        ]]
+    )
     self.renderers = {
         comment = require('render-markdown.render.html_comment'),
+        tag = require('render-markdown.render.html_tag'),
     }
     return self
 end

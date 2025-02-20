@@ -41,8 +41,13 @@ local M = {}
 ---@field public text? string
 ---@field public highlight? string
 
+---@class (exact) render.md.HtmlTag
+---@field public icon string
+---@field public highlight string
+
 ---@class (exact) render.md.UserHtml: render.md.UserBaseComponent
 ---@field public comment? render.md.UserHtmlComment
+---@field public tag? table<string, render.md.HtmlTag>
 
 ---@class (exact) render.md.UserLatex: render.md.UserBaseComponent
 ---@field public converter? string
@@ -799,6 +804,11 @@ M.default_config = {
             -- Highlight for the inlined text
             highlight = 'RenderMarkdownHtmlComment',
         },
+        -- HTML tags whose start and end will be hidden and icon shown
+        --   The key is matched against the tag name
+        --   'icon':      Gets inlined at the start
+        --   'highlight': Highlight for the icon
+        tag = {},
     },
     -- Window options to use that change between rendered and raw view
     win_options = {
