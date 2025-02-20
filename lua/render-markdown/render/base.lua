@@ -38,7 +38,7 @@ function Base:sign(text, highlight)
     if highlight ~= nil then
         sign_highlight = colors.combine(highlight, sign_highlight)
     end
-    self.marks:add('sign', self.node.start_row, self.node.start_col, {
+    self.marks:add_start('sign', self.node, {
         sign_text = text,
         sign_hl_group = sign_highlight,
     })
@@ -55,9 +55,7 @@ function Base:checkbox_scope(paragraph, highlight)
     if paragraph == nil then
         return
     end
-    self.marks:add_over('check_scope', paragraph, {
-        hl_group = highlight,
-    })
+    self.marks:add_over('check_scope', paragraph, { hl_group = highlight })
 end
 
 ---@protected

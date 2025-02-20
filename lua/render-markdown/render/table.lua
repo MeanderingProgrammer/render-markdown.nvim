@@ -293,9 +293,7 @@ function Render:row(row)
                 self:shift(column, 'right', filler + shift)
             end
         end
-    end
-
-    if self.table.cell == 'overlay' then
+    elseif self.table.cell == 'overlay' then
         self.marks:add_over('table_border', row.node, {
             virt_text = { { row.node.text:gsub('|', border[10]), highlight } },
             virt_text_pos = 'overlay',
@@ -380,7 +378,7 @@ function Render:full()
         local line = spaces > 0 and { self:padding_text(spaces) } or {}
         local highlight = above and self.table.head or self.table.row
         table.insert(line, { chars[1] .. table.concat(sections, chars[2]) .. chars[3], highlight })
-        self.marks:add(false, node.start_row, node.start_col, {
+        self.marks:add_start(false, node, {
             virt_lines_above = above,
             virt_lines = { self:indent_virt_line(line) },
         })

@@ -123,9 +123,7 @@ function Render:icon()
             return width
         end
         if self.heading.position == 'right' then
-            self.marks:add_over(true, marker, {
-                conceal = '',
-            }, { 0, 0, 0, 1 })
+            self.marks:add_over(true, marker, { conceal = '' }, { 0, 0, 0, 1 })
             self.marks:add_over('head_icon', marker, {
                 priority = 1000,
                 virt_text = { { icon, highlight } },
@@ -320,9 +318,7 @@ end
 
 ---@private
 function Render:conceal_underline()
-    self.marks:add_over(true, self.data.marker, {
-        conceal = '',
-    })
+    self.marks:add_over(true, self.data.marker, { conceal = '' })
 end
 
 return Render

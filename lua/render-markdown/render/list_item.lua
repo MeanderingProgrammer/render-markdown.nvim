@@ -71,9 +71,7 @@ end
 
 ---@private
 function Render:hide_marker()
-    self.marks:add_over('check_icon', self.data.marker, {
-        conceal = '',
-    }, { 0, self.data.spaces, 0, 0 })
+    self.marks:add_over('check_icon', self.data.marker, { conceal = '' }, { 0, self.data.spaces, 0, 0 })
 end
 
 ---@private

@@ -135,13 +135,13 @@ function Render:language()
 
     if self.code.position == 'left' then
         if self.code.language_name and self:hidden(node) then
-            -- Code blocks will pick up varying amounts of leading white space depending on the
-            -- context they are in. This gets lumped into the delimiter node and as a result,
-            -- after concealing, the extmark will be left shifted. Logic below accounts for this.
+            -- Code blocks pick up varying amounts of leading white space depending
+            -- on the context they are in. This is lumped into the delimiter node and
+            -- as a result, after concealing, the extmark would be shifted.
             local padding = Str.spaces('start', self.node.text) + self.data.language_padding
             icon_text = Str.pad(padding) .. icon_text .. node.text
         end
-        return self.marks:add('code_language', node.start_row, node.start_col, {
+        return self.marks:add_start('code_language', node, {
             virt_text = { { icon_text, highlight } },
             virt_text_pos = 'inline',
         })

@@ -45,9 +45,7 @@ function Render:render()
     })
     if self.data.autolink then
         self:hide_bracket(self.node.start_col)
-        self.marks:add_over('link', self.node, {
-            hl_group = self.data.highlight,
-        })
+        self.marks:add_over('link', self.node, { hl_group = self.data.highlight })
         self:hide_bracket(self.node.end_col - 1)
     end
 end

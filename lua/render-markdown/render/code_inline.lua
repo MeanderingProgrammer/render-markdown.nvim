@@ -18,18 +18,18 @@ function Render:setup()
 end
 
 function Render:render()
-    self.marks:add_over('code_background', self.node, {
-        hl_group = self.code.highlight_inline,
-    })
-    self:side_padding(self.node.start_row, self.node.start_col)
-    self:side_padding(self.node.end_row, self.node.end_col)
+    local highlight = self.code.highlight_inline
+    self.marks:add_over('code_background', self.node, { hl_group = highlight })
+    self:side_padding(highlight, self.node.start_row, self.node.start_col)
+    self:side_padding(highlight, self.node.end_row, self.node.end_col)
 end
 
 ---@private
+---@param highlight string
 ---@param row integer
 ---@param col integer
-function Render:side_padding(row, col)
-    local padding, highlight = self.code.inline_pad, self.code.highlight_inline
+function Render:side_padding(highlight, row, col)
+    local padding = self.code.inline_pad
     if padding > 0 then
         self.marks:add(true, row, col, {
             priority = 0,

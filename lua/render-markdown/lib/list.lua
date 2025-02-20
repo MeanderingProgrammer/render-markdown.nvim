@@ -32,6 +32,14 @@ end
 ---@param element boolean|render.md.Element
 ---@param node render.md.Node
 ---@param opts vim.api.keyset.set_extmark
+---@return boolean
+function Marks:add_start(element, node, opts)
+    return self:add(element, node.start_row, node.start_col, opts)
+end
+
+---@param element boolean|render.md.Element
+---@param node render.md.Node
+---@param opts vim.api.keyset.set_extmark
 ---@param offset? Range4
 ---@return boolean
 function Marks:add_over(element, node, opts, offset)
