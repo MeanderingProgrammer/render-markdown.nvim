@@ -75,7 +75,8 @@ local M = {}
 ---@class (exact) render.md.UserWikiLink
 ---@field public icon? string
 ---@field public highlight? string
----@field public fetch_from_diagnostics? boolean
+---@field public diagnostic_severity? vim.diagnostic.Severity
+---@field public diagnostic_source? string
 
 ---@class (exact) render.md.UserFootnote
 ---@field public superscript? boolean
