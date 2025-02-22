@@ -229,7 +229,7 @@ end
 
 --- Gets the first diagnostic of the node of the given source and severity, if any
 ---@param node render.md.Node
----@param severity? string
+---@param severity? vim.diagnostic.Severity
 ---@param source? string
 ---@return string? message
 function Context:get_diagnostic(node, severity, source)
