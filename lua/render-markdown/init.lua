@@ -75,6 +75,7 @@ local M = {}
 ---@class (exact) render.md.UserWikiLink
 ---@field public icon? string
 ---@field public highlight? string
+---@field public fetch_from_diagnostics? boolean
 
 ---@class (exact) render.md.UserFootnote
 ---@field public superscript? boolean
@@ -738,7 +739,16 @@ M.default_config = {
         -- Applies to the inlined icon as a fallback
         highlight = 'RenderMarkdownLink',
         -- Applies to WikiLink elements
-        wiki = { icon = '󱗖 ', highlight = 'RenderMarkdownWikiLink' },
+        wiki = {
+            icon = '󱗖 ',
+            highlight = 'RenderMarkdownWikiLink',
+            -- render any diagnostics on the WikiLink of this severity. `nil` to ignore diagnostics, Example:
+            -- diagnostic_severity = vim.diagnostic.severity.HINT,
+            diagnostic_severity = nil,
+            -- only render diagnostics from this source. Example:
+            -- diagnostic_source = "zk",
+            diagnostic_source = nil,
+        },
         -- Define custom destination patterns so icons can quickly inform you of what a link
         -- contains. Applies to 'inline_link', 'uri_autolink', and wikilink nodes. When multiple
         -- patterns match a link the one with the longer pattern is used.

@@ -106,16 +106,27 @@ function Render:wiki_link()
     self:hide(start_col - 1, start_col)
 
     -- Add icon
-    local icon, highlight = self:from_destination(wiki.icon, wiki.highlight, values[1])
-    self.marks:add_over('link', self.node, {
-        virt_text = { { icon, highlight } },
-        virt_text_pos = 'inline',
-    })
+    local text, highlight = self:from_destination(wiki.icon, wiki.highlight, values[1])
 
     -- Hide destination if there is an alias
     if #values > 1 then
         self:hide(start_col + 1, start_col + 1 + #values[1] + 1)
+    elseif self.config.link.wiki.diagnostic_severity then
+        local diagnostic = self.context:get_diagnostic(
+            self.node,
+            self.config.link.wiki.diagnostic_severity,
+            self.config.link.wiki.diagnostic_source
+        )
+        if diagnostic then
+            self:hide(start_col + 1, end_col)
+            text = text .. diagnostic
+        end
     end
+
+    self.marks:add_over('link', self.node, {
+        virt_text = { { text, highlight } },
+        virt_text_pos = 'inline',
+    })
 
     -- Hide closing outer bracket
     self:hide(end_col, end_col + 1)

@@ -227,6 +227,28 @@ function Context:for_each(callback)
     return false
 end
 
+--- Gets the first diagnostic of the node of the given source and severity, if any
+---@param node render.md.Node
+---@param severity? string
+---@param source? string
+---@return string? message
+function Context:get_diagnostic(node, severity, source)
+    local buf = self.buf
+    local col = node.start_col - 1
+    local row = node.start_row
+    local diagnostic = vim.diagnostic.get(buf)
+    for _, value in pairs(diagnostic) do
+        if value['col'] == col and value['lnum'] == row then
+            if severity == nil or value['severity'] == severity then
+                if source == nil or value['source'] == source then
+                    return value['message']
+                end
+            end
+        end
+    end
+    return nil
+end
+
 ---@type table<integer, render.md.Context>
 local cache = {}
 

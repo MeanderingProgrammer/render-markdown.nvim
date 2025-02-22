@@ -51,6 +51,8 @@
 ---@class (exact) render.md.WikiLink
 ---@field public icon string
 ---@field public highlight string
+---@field public diagnostic_severity? vim.diagnostic.Severity
+---@field public diagnostic_source? string
 
 ---@class (exact) render.md.Footnote
 ---@field public superscript boolean
