@@ -98,35 +98,49 @@ function Render:wiki_link()
         return
     end
 
+    local sections = Str.split(self.node.text:sub(2, -2), '|')
+    ---@type render.md.LinkContext
+    local ctx = {
+        buf = self.context:get_buf(),
+        row = self.node.start_row,
+        start_col = self.node.start_col - 1,
+        end_col = self.node.end_col + 1,
+        destination = sections[1],
+    }
+
+    -- Hide opening & closing outer brackets
+    self:hide(ctx.start_col, 1)
+    self:hide(ctx.end_col - 1, 1)
+
     local wiki = self.link.wiki
-    local start_col, end_col = self.node.start_col, self.node.end_col
-    local values = Str.split(self.node.text:sub(2, -2), '|')
-
-    -- Hide opening outer bracket
-    self:hide(start_col - 1, start_col)
-
-    -- Add icon
-    local icon, highlight = self:from_destination(wiki.icon, wiki.highlight, values[1])
-    self.marks:add_over('link', self.node, {
-        virt_text = { { icon, highlight } },
-        virt_text_pos = 'inline',
-    })
-
-    -- Hide destination if there is an alias
-    if #values > 1 then
-        self:hide(start_col + 1, start_col + 1 + #values[1] + 1)
+    local icon, highlight = self:from_destination(wiki.icon, wiki.highlight, ctx.destination)
+    local body = wiki.body(ctx)
+    if body == nil then
+        -- Add icon
+        self.marks:add_over('link', self.node, {
+            virt_text = { { icon, highlight } },
+            virt_text_pos = 'inline',
+        })
+        -- Hide destination if there is an alias
+        if #sections > 1 then
+            self:hide(ctx.start_col + 2, #ctx.destination + 1)
+        end
+    else
+        -- Inline icon & body, hide original text
+        self.marks:add_over('link', self.node, {
+            virt_text = { { icon .. body, highlight } },
+            virt_text_pos = 'inline',
+            conceal = '',
+        }, { 0, 1, 0, -1 })
     end
-
-    -- Hide closing outer bracket
-    self:hide(end_col, end_col + 1)
 end
 
 ---@private
----@param start_col integer
----@param end_col integer
-function Render:hide(start_col, end_col)
-    self.marks:add(true, self.node.start_row, start_col, {
-        end_col = end_col,
+---@param col integer
+---@param length integer
+function Render:hide(col, length)
+    self.marks:add(true, self.node.start_row, col, {
+        end_col = col + length,
         conceal = '',
     })
 end

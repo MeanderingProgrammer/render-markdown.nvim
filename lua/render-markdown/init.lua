@@ -72,8 +72,16 @@ local M = {}
 ---@field public icon? string
 ---@field public highlight? string
 
+---@class (exact) render.md.LinkContext
+---@field public buf integer
+---@field public row integer
+---@field public start_col integer
+---@field public end_col integer
+---@field public destination string
+
 ---@class (exact) render.md.UserWikiLink
 ---@field public icon? string
+---@field public body? fun(ctx: render.md.LinkContext): string?
 ---@field public highlight? string
 
 ---@class (exact) render.md.UserFootnote
@@ -289,6 +297,7 @@ local M = {}
 ---@field public log_level? render.md.config.LogLevel
 ---@field public log_runtime? boolean
 ---@field public file_types? string[]
+---@field public change_events? string[]
 ---@field public injections? table<string, render.md.UserInjection>
 ---@field public on? render.md.UserCallback
 ---@field public overrides? render.md.UserConfigOverrides
@@ -322,6 +331,8 @@ M.default_config = {
     log_runtime = false,
     -- Filetypes this plugin will run on
     file_types = { 'markdown' },
+    -- Additional events that will trigger this plugin's render loop
+    change_events = {},
     -- Out of the box language injections for known filetypes that allow markdown to be
     -- interpreted in specified locations, see :h treesitter-language-injections
     -- Set enabled to false in order to disable
@@ -738,7 +749,13 @@ M.default_config = {
         -- Applies to the inlined icon as a fallback
         highlight = 'RenderMarkdownLink',
         -- Applies to WikiLink elements
-        wiki = { icon = '󱗖 ', highlight = 'RenderMarkdownWikiLink' },
+        wiki = {
+            icon = '󱗖 ',
+            body = function()
+                return nil
+            end,
+            highlight = 'RenderMarkdownWikiLink',
+        },
         -- Define custom destination patterns so icons can quickly inform you of what a link
         -- contains. Applies to 'inline_link', 'uri_autolink', and wikilink nodes. When multiple
         -- patterns match a link the one with the longer pattern is used.

@@ -50,6 +50,7 @@
 
 ---@class (exact) render.md.WikiLink
 ---@field public icon string
+---@field public body fun(ctx: render.md.LinkContext): string?
 ---@field public highlight string
 
 ---@class (exact) render.md.Footnote
@@ -205,6 +206,7 @@
 ---@field public log_level render.md.config.LogLevel
 ---@field public log_runtime boolean
 ---@field public file_types string[]
+---@field public change_events string[]
 ---@field public injections table<string, render.md.Injection>
 ---@field public on render.md.Callback
 ---@field public overrides render.md.ConfigOverrides

@@ -89,6 +89,11 @@ function Context:skip(component)
     return not util.in_modes(component.render_modes, self.mode)
 end
 
+---@return integer
+function Context:get_buf()
+    return self.buf
+end
+
 ---@param row integer
 ---@return render.md.CustomCallout?
 function Context:get_callout(row)

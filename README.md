@@ -200,6 +200,8 @@ require('render-markdown').setup({
     log_runtime = false,
     -- Filetypes this plugin will run on
     file_types = { 'markdown' },
+    -- Additional events that will trigger this plugin's render loop
+    change_events = {},
     -- Out of the box language injections for known filetypes that allow markdown to be
     -- interpreted in specified locations, see :h treesitter-language-injections
     -- Set enabled to false in order to disable
@@ -616,7 +618,13 @@ require('render-markdown').setup({
         -- Applies to the inlined icon as a fallback
         highlight = 'RenderMarkdownLink',
         -- Applies to WikiLink elements
-        wiki = { icon = '󱗖 ', highlight = 'RenderMarkdownWikiLink' },
+        wiki = {
+            icon = '󱗖 ',
+            body = function()
+                return nil
+            end,
+            highlight = 'RenderMarkdownWikiLink',
+        },
         -- Define custom destination patterns so icons can quickly inform you of what a link
         -- contains. Applies to 'inline_link', 'uri_autolink', and wikilink nodes. When multiple
         -- patterns match a link the one with the longer pattern is used.
@@ -1246,7 +1254,13 @@ require('render-markdown').setup({
         -- Applies to the inlined icon as a fallback
         highlight = 'RenderMarkdownLink',
         -- Applies to WikiLink elements
-        wiki = { icon = '󱗖 ', highlight = 'RenderMarkdownWikiLink' },
+        wiki = {
+            icon = '󱗖 ',
+            body = function()
+                return nil
+            end,
+            highlight = 'RenderMarkdownWikiLink',
+        },
         -- Define custom destination patterns so icons can quickly inform you of what a link
         -- contains. Applies to 'inline_link', 'uri_autolink', and wikilink nodes. When multiple
         -- patterns match a link the one with the longer pattern is used.

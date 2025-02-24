@@ -38,7 +38,7 @@ class LuaClass:
         # ---@field public extends? boolean             -> extends
         # ---@field public start_row integer            -> start_row
         # ---@field public attach? fun(buf: integer)    -> attach
-        field_name = field.split()[2].replace("?", "")
+        field_name = field.split()[2].replace("?", "", 1)
         return field_name in class_to_optional.get(self.class_name, [])
 
     def validate(self) -> None:
@@ -53,11 +53,11 @@ class LuaClass:
         lines: list[str] = [self.name.replace("User", "")]
         for field in self.fields:
             if self.class_name == "UserConfigOverrides":
-                lines.append(field.replace("?", ""))
+                lines.append(field.replace("?", "", 1))
             elif self.is_optional(field):
                 lines.append(field)
             else:
-                lines.append(field.replace("User", "").replace("?", ""))
+                lines.append(field.replace("User", "").replace("?", "", 1))
         return "\n".join(lines)
 
     def to_str(self) -> str:
