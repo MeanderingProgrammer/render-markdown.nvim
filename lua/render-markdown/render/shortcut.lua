@@ -106,6 +106,7 @@ function Render:wiki_link()
         start_col = self.node.start_col - 1,
         end_col = self.node.end_col + 1,
         destination = sections[1],
+        alias = sections[2],
     }
 
     -- Hide opening & closing outer brackets

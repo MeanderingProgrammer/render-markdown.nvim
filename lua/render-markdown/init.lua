@@ -83,6 +83,7 @@ local M = {}
 ---@field public start_col integer
 ---@field public end_col integer
 ---@field public destination string
+---@field public alias? string
 
 ---@class (exact) render.md.UserWikiLink
 ---@field public icon? string
