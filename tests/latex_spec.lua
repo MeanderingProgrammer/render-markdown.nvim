@@ -3,26 +3,6 @@
 local stub = require('luassert.stub')
 local util = require('tests.util')
 
----@param start_row integer
----@param end_row integer
----@param col integer
----@param lines string[]
----@return render.md.MarkInfo
-local function latex(start_row, end_row, col, lines)
-    local virt_lines = vim.iter(lines)
-        :map(function(line)
-            return { { line, util.hl('Math') } }
-        end)
-        :totable()
-    ---@type render.md.MarkInfo
-    return {
-        row = { start_row, end_row },
-        col = { 0, col },
-        virt_lines = virt_lines,
-        virt_lines_above = true,
-    }
-end
-
 ---@param converter string
 ---@param responses table<string, string>
 local function set_responses(converter, responses)
@@ -38,16 +18,52 @@ local function set_responses(converter, responses)
     end)
 end
 
+---@param row integer
+---@param lines string[]
+---@return render.md.MarkInfo
+local function latex(row, lines)
+    local virt_lines = vim.iter(lines)
+        :map(function(line)
+            return { { line, util.hl('Math') } }
+        end)
+        :totable()
+    ---@type render.md.MarkInfo
+    return {
+        row = { row },
+        col = { 0 },
+        virt_lines = virt_lines,
+        virt_lines_above = true,
+    }
+end
+
+---@param lines string[]
+---@param prefix string
+---@param suffix string
+---@return string
+local function text(lines, prefix, suffix)
+    return prefix .. table.concat(lines, '\n') .. suffix
+end
+
 describe('latex.md', function()
     it('default', function()
-        local in_inline = '$\\sqrt{3x-1}+(1+x)^2$'
-        local out_inline = '√(3x-1)+(1+x)^2'
-        local in_block = { 'f(x,y) = x + \\sqrt{y}', 'f(x,y) = \\sqrt{y} + \\frac{x^2}{4y}' }
-        local out_block = { '    f(x,y) = x + √(y)', '    f(x,y) = √(y) + x^2/4y' }
+        local inline = {
+            raw = { '$\\sqrt{3x-1}+(1+x)^2$' },
+            out = { '√(3x-1)+(1+x)^2' },
+        }
+        local block = {
+            raw = {
+                'f(x,y) = x + \\sqrt{y}',
+                'f(x,y) = \\sqrt{y} + \\frac{x^2}{4y}',
+            },
+            out = {
+                '    f(x,y) = x + √(y)',
+                '    f(x,y) = √(y) + x^2/4y',
+            },
+        }
 
         set_responses('latex2text', {
-            [in_inline] = out_inline .. '\n',
-            ['$$\n' .. table.concat(in_block, '\n') .. '\n$$'] = '\n' .. table.concat(out_block, '\n') .. '\n\n',
+            [text(inline.raw, '', '')] = text(inline.out, '', '\n'),
+            [text(block.raw, '$$\n', '\n$$')] = text(block.out, '\n', '\n\n'),
         })
         util.setup('demo/latex.md')
 
@@ -56,21 +72,21 @@ describe('latex.md', function()
         vim.list_extend(expected, util.heading(row:get(), 1))
 
         vim.list_extend(expected, {
-            latex(row:increment(2), 2, 21, { out_inline }),
-            latex(row:increment(2), 7, 2, out_block),
+            latex(row:increment(2), inline.out),
+            latex(row:increment(2), block.out),
         })
 
         util.assert_view(expected, {
             '󰫎   1 󰲡 LaTeX',
             '    2',
-            '      ' .. out_inline,
-            '    3 ' .. in_inline,
+            '      ' .. inline.out[1],
+            '    3 ' .. inline.raw[1],
             '    4',
-            '      ' .. out_block[1],
-            '      ' .. out_block[2],
+            '      ' .. block.out[1],
+            '      ' .. block.out[2],
             '    5 $$',
-            '    6 ' .. in_block[1],
-            '    7 ' .. in_block[2],
+            '    6 ' .. block.raw[1],
+            '    7 ' .. block.raw[2],
             '    8 $$',
         })
     end)

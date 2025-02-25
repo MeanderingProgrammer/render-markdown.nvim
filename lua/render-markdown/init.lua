@@ -49,9 +49,12 @@ local M = {}
 ---@field public comment? render.md.UserHtmlComment
 ---@field public tag? table<string, render.md.HtmlTag>
 
+---@alias render.md.latex.Position 'above'|'below'
+
 ---@class (exact) render.md.UserLatex: render.md.UserBaseComponent
 ---@field public converter? string
 ---@field public highlight? string
+---@field public position? render.md.latex.Position
 ---@field public top_pad? integer
 ---@field public bottom_pad? integer
 
@@ -377,6 +380,10 @@ M.default_config = {
         converter = 'latex2text',
         -- Highlight for LaTeX blocks
         highlight = 'RenderMarkdownMath',
+        -- Determines where latex formula is rendered relative to block:
+        --  above: above latex block
+        --  below: below latex block
+        position = 'above',
         -- Amount of empty lines above LaTeX blocks
         top_pad = 0,
         -- Amount of empty lines below LaTeX blocks

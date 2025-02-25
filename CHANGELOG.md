@@ -8,6 +8,8 @@
   [5c2440d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/5c2440d932a4ba96840e5ce5a7bd40f0624bdaa2)
 - allow html tags to be replaced with icons [#336](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/336)
   [6d446de](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/6d446de33937633bc2104f45c943f4fae632b822)
+- `autocommand` events and wiki link `body` customization [#228](https://github.com/MeanderingProgrammer/render-markdown.nvim/discussions/228)
+  [#345](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/345) [0df6719](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/0df6719abc3b547bc5b7111a750d8d7e035a7234)
 - use default `render_modes = true` (all) for LSP docs [#326](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/326)
   [17a7746](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/17a77463f945c4b9e4f371c752efd90e3e1bf604)
 - update troubleshooting doc [f6c9e18](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/f6c9e1841cf644a258eb037dae587e3cf407d696)
@@ -21,6 +23,7 @@
 ### Collaborator Shoutouts
 
 - @dsully
+- @mcDevnagh
 
 ## 8.0.0 (2025-02-06)
 

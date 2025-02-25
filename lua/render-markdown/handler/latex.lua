@@ -52,10 +52,13 @@ function M.parse(ctx)
         return { { expression, latex.highlight } }
     end)
 
+    local above = latex.position == 'above'
+    local row = above and node.start_row or node.end_row
+
     local marks = List.new_marks(ctx.buf, true)
-    marks:add_over(false, node, {
+    marks:add(false, row, 0, {
         virt_lines = latex_lines,
-        virt_lines_above = true,
+        virt_lines_above = above,
     })
     return marks:get()
 end

@@ -28,6 +28,7 @@
 ---@class (exact) render.md.Latex: render.md.BaseComponent
 ---@field public converter string
 ---@field public highlight string
+---@field public position render.md.latex.Position
 ---@field public top_pad integer
 ---@field public bottom_pad integer
 
