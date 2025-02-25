@@ -95,11 +95,11 @@ function Base:indent_line(virtual, level)
         local indent = self.config.indent
         local icon_width = Str.width(indent.icon)
         if icon_width == 0 then
-            table.insert(line, self:padding_text(indent.per_level * level))
+            table.insert(line, self:pad(indent.per_level * level))
         else
             for _ = 1, level do
                 table.insert(line, { indent.icon, indent.highlight })
-                table.insert(line, self:padding_text(indent.per_level - icon_width))
+                table.insert(line, self:pad(indent.per_level - icon_width))
             end
         end
     end
@@ -139,7 +139,7 @@ end
 ---@param width integer
 ---@param highlight? string
 ---@return render.md.line.Text
-function Base:padding_text(width, highlight)
+function Base:pad(width, highlight)
     return { Str.pad(width), highlight or self.config.padding.highlight }
 end
 

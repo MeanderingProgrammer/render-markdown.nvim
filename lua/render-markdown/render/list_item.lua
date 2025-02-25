@@ -46,8 +46,17 @@ function Render:render()
             return
         end
         local level, root = self.node:level_in_section('list')
-        self:icon(level)
-        self:padding(root)
+        ---@type render.md.BulletContext
+        local ctx = {
+            level = level,
+            index = self.node:sibling_count('list_item'),
+            value = self.data.marker.text,
+        }
+        local icon = self:get_icon(ctx)
+        local left_pad = self:get_padding(ctx, self.bullet.left_pad)
+        local right_pad = self:get_padding(ctx, self.bullet.right_pad)
+        self:add_icon(icon)
+        self:add_padding(left_pad, right_pad, root)
     end
 end
 
@@ -83,46 +92,63 @@ function Render:highlight_scope()
 end
 
 ---@private
----@param level integer
-function Render:icon(level)
-    local node = self.data.marker
-    local index = self.node:sibling_count('list_item')
+---@param ctx render.md.BulletContext
+---@return string?
+function Render:get_icon(ctx)
     local icons = self.data.ordered and self.bullet.ordered_icons or self.bullet.icons
-    local icon = nil
     if type(icons) == 'function' then
-        icon = icons({ level = level, index = index, value = node.text })
+        return icons(ctx)
     else
-        icon = List.cycle(icons, level)
+        local icon = List.cycle(icons, ctx.level)
         if type(icon) == 'table' then
-            icon = List.clamp(icon, index)
+            return List.clamp(icon, ctx.index)
+        else
+            return icon
         end
     end
+end
+
+---@private
+---@param ctx render.md.BulletContext
+---@param pad render.md.bullet.Padding
+---@return integer
+function Render:get_padding(ctx, pad)
+    if type(pad) == 'function' then
+        return pad(ctx)
+    else
+        return pad
+    end
+end
+
+---@private
+---@param icon string?
+function Render:add_icon(icon)
     if icon == nil then
         return
     end
     local text = Str.pad(self.data.spaces) .. icon
-    local position, conceal = 'overlay', nil
-    if Str.width(text) > Str.width(node.text) then
-        position, conceal = 'inline', ''
-    end
-    self.marks:add_over('bullet', node, {
+    local overflow = Str.width(text) > Str.width(self.data.marker.text)
+    self.marks:add_over('bullet', self.data.marker, {
         virt_text = { { text, self.bullet.highlight } },
-        virt_text_pos = position,
-        conceal = conceal,
+        virt_text_pos = overflow and 'inline' or 'overlay',
+        conceal = overflow and '' or nil,
     })
 end
 
 ---@private
+---@param left_pad integer
+---@param right_pad integer
 ---@param root? render.md.Node
-function Render:padding(root)
-    if self.bullet.left_pad <= 0 and self.bullet.right_pad <= 0 then
+function Render:add_padding(left_pad, right_pad, root)
+    if left_pad <= 0 and right_pad <= 0 then
         return
     end
-    local left_col = root ~= nil and root.start_col or self.node.start_col
-    for row = self.node.start_row, self:end_row(root) - 1 do
-        local right_col = row == self.node.start_row and self.data.marker.end_col - 1 or left_col
-        self:padding_mark(row, left_col, self.bullet.left_pad)
-        self:padding_mark(row, right_col, self.bullet.right_pad)
+    local start_row, end_row = self.node.start_row, self:end_row(root)
+    for row = start_row, end_row - 1 do
+        local left_col = root ~= nil and root.start_col or self.node.start_col
+        local right_col = row == start_row and self.data.marker.end_col - 1 or left_col
+        self:side_padding(row, left_col, left_pad)
+        self:side_padding(row, right_col, right_pad)
     end
 end
 
@@ -133,26 +159,26 @@ function Render:end_row(root)
     local next_list = self.node:child('list')
     if next_list ~= nil then
         return next_list.start_row
-    end
-    local end_row = self.node.end_row
-    -- On the last item of the root list ignore the last line if it is empty
-    if root ~= nil and root.end_row == end_row then
-        if Str.width(self.node:line('last', 0)) == 0 then
-            return end_row - 1
+    else
+        local row = self.node.end_row
+        -- On the last item of the root list ignore the last line if it is empty
+        if root ~= nil and root.end_row == row and Str.width(root:line('last', 0)) == 0 then
+            return row - 1
+        else
+            return row
         end
     end
-    return end_row
 end
 
 ---@private
 ---@param row integer
 ---@param col integer
 ---@param amount integer
-function Render:padding_mark(row, col, amount)
+function Render:side_padding(row, col, amount)
     if amount > 0 then
         self.marks:add(false, row, col, {
             priority = 0,
-            virt_text = { self:padding_text(amount) },
+            virt_text = { self:pad(amount) },
             virt_text_pos = 'inline',
         })
     end

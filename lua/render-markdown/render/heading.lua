@@ -207,7 +207,7 @@ function Render:background(width)
     local win_col, padding = 0, {}
     if self.data.width == 'block' then
         win_col = width.margin + width.content + self:indent_size(self.data.level)
-        table.insert(padding, self:padding_text(vim.o.columns * 2))
+        table.insert(padding, self:pad(vim.o.columns * 2))
     end
     for row = self.node.start_row, self.node.end_row - 1 do
         self.marks:add('head_background', row, 0, {
@@ -238,11 +238,11 @@ function Render:border(width, position, icon, row)
 
     local foreground = self.data.foreground
     local background = self.data.background and colors.bg_to_fg(self.data.background)
-    local total_width = self.data.width == 'block' and width.content or vim.o.columns
     local prefix = self.heading.border_prefix and self.data.level or 0
+    local total_width = self.data.width == 'block' and width.content or vim.o.columns
 
     local line = {
-        self:padding_text(width.margin),
+        self:pad(width.margin),
         { icon:rep(width.padding), background },
         { icon:rep(prefix), foreground },
         { icon:rep(total_width - width.padding - prefix), background },
@@ -271,10 +271,10 @@ end
 function Render:left_pad(width)
     local virt_text = {}
     if width.margin > 0 then
-        table.insert(virt_text, self:padding_text(width.margin))
+        table.insert(virt_text, self:pad(width.margin))
     end
     if width.padding > 0 then
-        table.insert(virt_text, self:padding_text(width.padding, self.data.background))
+        table.insert(virt_text, self:pad(width.padding, self.data.background))
     end
     if #virt_text == 0 then
         return

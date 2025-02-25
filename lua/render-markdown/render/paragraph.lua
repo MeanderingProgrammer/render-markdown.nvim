@@ -27,7 +27,7 @@ function Render:render()
         return
     end
 
-    local virt_text = { self:padding_text(margin) }
+    local virt_text = { self:pad(margin) }
     for row = self.node.start_row, self.node.end_row - 1 do
         self.marks:add(false, row, 0, {
             priority = 0,

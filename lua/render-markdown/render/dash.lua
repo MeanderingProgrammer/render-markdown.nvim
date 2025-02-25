@@ -21,7 +21,7 @@ function Render:render()
 
     local virt_text = {}
     if margin > 0 then
-        table.insert(virt_text, self:padding_text(margin))
+        table.insert(virt_text, self:pad(margin))
     end
     table.insert(virt_text, { self.dash.icon:rep(width), self.dash.highlight })
 

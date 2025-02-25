@@ -113,8 +113,8 @@
 ---@class (exact) render.md.Bullet: render.md.BaseComponent
 ---@field public icons render.md.bullet.Icons
 ---@field public ordered_icons render.md.bullet.Icons
----@field public left_pad integer
----@field public right_pad integer
+---@field public left_pad render.md.bullet.Padding
+---@field public right_pad render.md.bullet.Padding
 ---@field public highlight string
 
 ---@class (exact) render.md.Dash: render.md.BaseComponent

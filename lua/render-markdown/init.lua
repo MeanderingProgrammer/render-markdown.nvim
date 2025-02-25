@@ -159,11 +159,15 @@ local M = {}
 ---| string[][]
 ---| fun(ctx: render.md.BulletContext): string?
 
+---@alias render.md.bullet.Padding
+---| integer
+---| fun(ctx: render.md.BulletContext): integer
+
 ---@class (exact) render.md.UserBullet: render.md.UserBaseComponent
 ---@field public icons? render.md.bullet.Icons
 ---@field public ordered_icons? render.md.bullet.Icons
----@field public left_pad? integer
----@field public right_pad? integer
+---@field public left_pad? render.md.bullet.Padding
+---@field public right_pad? render.md.bullet.Padding
 ---@field public highlight? string
 
 ---@class (exact) render.md.UserDash: render.md.UserBaseComponent
