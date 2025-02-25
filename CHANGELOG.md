@@ -10,6 +10,8 @@
   [6d446de](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/6d446de33937633bc2104f45c943f4fae632b822)
 - `autocommand` events and wiki link `body` customization [#228](https://github.com/MeanderingProgrammer/render-markdown.nvim/discussions/228)
   [#345](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/345) [0df6719](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/0df6719abc3b547bc5b7111a750d8d7e035a7234)
+- indent mode icon support [#343](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/343)
+  [21623a9](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/21623a9ded5a5f3d1fbd8626a69c174fbeb0543e)
 - use default `render_modes = true` (all) for LSP docs [#326](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/326)
   [17a7746](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/17a77463f945c4b9e4f371c752efd90e3e1bf604)
 - update troubleshooting doc [f6c9e18](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/f6c9e1841cf644a258eb037dae587e3cf407d696)

@@ -76,15 +76,24 @@ function MarkDetails:priorities()
     if self.virt_lines ~= nil then
         row_offset = self.virt_lines_above and -0.5 or 0.5
     end
-    vim.list_extend(result, { self.row[1] + row_offset, (self.row[2] or self.row[1]) + row_offset })
+    table.insert(result, self.row[1] + row_offset)
+    table.insert(result, (self.row[2] or self.row[1]) + row_offset)
 
     local col = self.virt_text_win_col or 0
-    vim.list_extend(result, { math.max(self.col[1], col), math.max((self.col[2] or self.col[1]), col) })
+    table.insert(result, math.max(self.col[1], col))
+    table.insert(result, math.max((self.col[2] or self.col[1]), col))
 
-    vim.list_extend(result, {
-        self.virt_text_pos == 'inline' and 0 or 1, -- Inline text comes first
-        self.sign_text == nil and 0 or 1, -- Signs come later
-    })
+    -- Inline text comes first
+    table.insert(result, self.virt_text_pos == 'inline' and 0 or 1)
+    -- Signs come later
+    table.insert(result, self.sign_text == nil and 0 or 1)
+
+    -- Fewer text entries comes first
+    local text = #(self.virt_text or {})
+    for _, line in ipairs(self.virt_lines or {}) do
+        text = text + #line
+    end
+    table.insert(result, text)
 
     return result
 end
@@ -375,16 +384,12 @@ end
 ---@param row integer
 ---@param above boolean
 ---@param lengths integer[]
----@param indent? integer
 ---@return render.md.MarkInfo
-function M.table_border(row, above, lengths, indent)
-    local line = {}
-    if indent ~= nil then
-        table.insert(line, { string.rep(' ', indent), 'Normal' })
-    end
+function M.table_border(row, above, lengths)
     local parts = vim.tbl_map(function(length)
         return string.rep('─', length)
     end, lengths)
+    local line = {}
     if above then
         table.insert(line, { '┌' .. table.concat(parts, '┬') .. '┐', M.hl('TableHead') })
     else
