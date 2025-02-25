@@ -27,6 +27,7 @@ class LuaClass:
         class_to_optional: dict[str, list[str]] = {
             "Handler": ["extends"],
             "HeadingCustom": ["icon", "background", "foreground"],
+            "LinkContext": ["alias"],
             "UserCode": ["highlight_language"],
             "UserCustomCheckbox": ["scope_highlight"],
             "UserCheckboxComponent": ["scope_highlight"],
