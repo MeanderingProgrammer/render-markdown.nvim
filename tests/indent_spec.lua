@@ -70,10 +70,10 @@ local function indent_mark(mark, lengths)
 end
 
 describe('indent.md', function()
-    it('with heading border', function()
+    it('with heading border & no icon', function()
         util.setup('tests/data/indent.md', {
             heading = { border = true },
-            indent = { enabled = true },
+            indent = { enabled = true, icon = '' },
         })
 
         local expected, row = {}, util.row()
@@ -131,9 +131,9 @@ describe('indent.md', function()
         })
     end)
 
-    it('with per_level, skip_level & icon', function()
+    it('with per_level & skip_level', function()
         util.setup('tests/data/indent.md', {
-            indent = { enabled = true, per_level = 4, skip_level = 0, icon = '▎' },
+            indent = { enabled = true, per_level = 4, skip_level = 0 },
         })
 
         local expected, row = {}, util.row()

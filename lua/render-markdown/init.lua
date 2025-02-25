@@ -817,7 +817,7 @@ M.default_config = {
         -- Do not indent heading titles, only the body
         skip_heading = false,
         -- Prefix added when indenting, one per level
-        icon = '',
+        icon = '▎',
         -- Applied to icon
         highlight = 'RenderMarkdownIndent',
     },
