@@ -30,10 +30,10 @@ end
 ---@field hl_eol? boolean
 ---@field hl_group? string
 ---@field conceal? string
----@field virt_text? { [1]: string, [2]: string|string[] }[]
+---@field virt_text? render.md.Line
 ---@field virt_text_pos? string
 ---@field virt_text_win_col? integer
----@field virt_lines? { [1]: string, [2]: string }[][]
+---@field virt_lines? render.md.Line[]
 ---@field virt_lines_above? boolean
 ---@field sign_text? string
 ---@field sign_hl_group? string

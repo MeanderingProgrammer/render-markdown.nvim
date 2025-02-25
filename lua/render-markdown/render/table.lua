@@ -379,8 +379,8 @@ function Render:full()
         local highlight = above and self.table.head or self.table.row
         table.insert(line, { chars[1] .. table.concat(sections, chars[2]) .. chars[3], highlight })
         self.marks:add_start(false, node, {
+            virt_lines = { vim.list_extend(self:indent_line(true), line) },
             virt_lines_above = above,
-            virt_lines = { self:indent_virt_line(line) },
         })
     end
 

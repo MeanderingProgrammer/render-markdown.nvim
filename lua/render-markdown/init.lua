@@ -62,6 +62,8 @@ local M = {}
 ---@field public per_level? integer
 ---@field public skip_level? integer
 ---@field public skip_heading? boolean
+---@field public icon? string
+---@field public highlight? string
 
 ---@class (exact) render.md.UserInlineHighlight: render.md.UserBaseComponent
 ---@field public highlight? string
@@ -814,6 +816,10 @@ M.default_config = {
         skip_level = 1,
         -- Do not indent heading titles, only the body
         skip_heading = false,
+        -- Prefix added when indenting, one per level
+        icon = '',
+        -- Applied to icon
+        highlight = 'RenderMarkdownIndent',
     },
     html = {
         -- Turn on / off all HTML rendering

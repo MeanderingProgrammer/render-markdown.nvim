@@ -99,7 +99,8 @@ function Render:render()
     self:background(width)
     self:left_pad(width)
     if self.data.atx then
-        self:border(width)
+        self:border(width, 'above', self.heading.above, self.node.start_row - 1)
+        self:border(width, 'below', self.heading.below, self.node.end_row)
     else
         self:conceal_underline()
     end
@@ -205,7 +206,7 @@ function Render:background(width)
     end
     local win_col, padding = 0, {}
     if self.data.width == 'block' then
-        win_col = width.margin + width.content + self:indent(self.data.level)
+        win_col = width.margin + width.content + self:indent_size(self.data.level)
         table.insert(padding, self:padding_text(vim.o.columns * 2))
     end
     for row = self.node.start_row, self.node.end_row - 1 do
@@ -227,71 +228,42 @@ end
 
 ---@private
 ---@param width render.md.width.Heading
-function Render:border(width)
+---@param position 'above'|'below'
+---@param icon string
+---@param row integer
+function Render:border(width, position, icon, row)
     if not self.data.border then
         return
     end
 
     local foreground = self.data.foreground
     local background = self.data.background and colors.bg_to_fg(self.data.background)
+    local total_width = self.data.width == 'block' and width.content or vim.o.columns
     local prefix = self.heading.border_prefix and self.data.level or 0
+
+    local line = {
+        self:padding_text(width.margin),
+        { icon:rep(width.padding), background },
+        { icon:rep(prefix), foreground },
+        { icon:rep(total_width - width.padding - prefix), background },
+    }
+
     local virtual = self.heading.border_virtual
+    local target_line = self.node:line(position, 1)
+    local line_available = target_line ~= nil and Str.width(target_line) == 0
 
-    ---@param icon string
-    ---@return { [1]: string, [2]: string }[]
-    local function line(icon)
-        ---@param size integer
-        ---@param highlight? string
-        ---@return { [1]: string, [2]: string }
-        local function section(size, highlight)
-            if highlight ~= nil then
-                return { icon:rep(size), highlight }
-            else
-                return self:padding_text(size)
-            end
-        end
-        local content_width = self.data.width == 'block' and width.content or vim.o.columns
-        return {
-            section(width.margin, nil),
-            section(width.padding, background),
-            section(prefix, foreground),
-            section(content_width - width.padding - prefix, background),
-        }
-    end
-
-    local line_above = line(self.heading.above)
-    if not virtual and self:empty_line('above') and self.node.start_row - 1 ~= self.context.last_heading then
-        self.marks:add('head_border', self.node.start_row - 1, 0, {
-            virt_text = line_above,
+    if not virtual and line_available and row ~= self.context.last_heading then
+        self.marks:add('head_border', row, 0, {
+            virt_text = line,
             virt_text_pos = 'overlay',
         })
+        self.context.last_heading = row
     else
         self.marks:add(false, self.node.start_row, 0, {
-            virt_lines = { self:indent_virt_line(line_above, self.data.level) },
-            virt_lines_above = true,
+            virt_lines = { vim.list_extend(self:indent_line(true, self.data.level), line) },
+            virt_lines_above = position == 'above',
         })
     end
-
-    local line_below = line(self.heading.below)
-    if not virtual and self:empty_line('below') then
-        self.marks:add('head_border', self.node.end_row, 0, {
-            virt_text = line_below,
-            virt_text_pos = 'overlay',
-        })
-        self.context.last_heading = self.node.end_row
-    else
-        self.marks:add(false, self.node.start_row, 0, {
-            virt_lines = { self:indent_virt_line(line_below, self.data.level) },
-        })
-    end
-end
-
----@private
----@param position 'above'|'below'
----@return boolean
-function Render:empty_line(position)
-    local line = self.node:line(position, 1)
-    return line ~= nil and Str.width(line) == 0
 end
 
 ---@private

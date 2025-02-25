@@ -14,6 +14,8 @@
   [17a7746](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/17a77463f945c4b9e4f371c752efd90e3e1bf604)
 - update troubleshooting doc [f6c9e18](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/f6c9e1841cf644a258eb037dae587e3cf407d696)
 - update `lazy` preset to match `LazyVim` [4a28c13](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4a28c135bc3548e398ba38178fec3f705cb26fe6)
+- latex position below [#347](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/347)
+  [43a971e](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/43a971e7da82e5622797b36450424ebd66cc9046)
 
 ### Bug Fixes
 

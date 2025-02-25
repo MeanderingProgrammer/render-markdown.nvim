@@ -64,7 +64,7 @@ function Render:setup()
         padding = left_padding,
         max_width = max_width,
         empty_rows = empty_rows,
-        indent = self:indent(),
+        indent = self:indent_size(),
     }
 
     return true

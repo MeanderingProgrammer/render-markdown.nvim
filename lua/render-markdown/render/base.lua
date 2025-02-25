@@ -2,6 +2,12 @@ local Iter = require('render-markdown.lib.iter')
 local Str = require('render-markdown.lib.str')
 local colors = require('render-markdown.colors')
 
+---@class render.md.line.Text
+---@field [1] string text
+---@field [2] string|string[] highlights
+
+---@alias render.md.Line render.md.line.Text[]
+
 ---@class render.md.Renderer
 ---@field protected marks render.md.Marks
 ---@field protected config render.md.buffer.Config
@@ -75,13 +81,27 @@ function Base:from_destination(icon, highlight, destination)
 end
 
 ---@protected
----@param line { [1]: string, [2]: string }[]
+---@param virtual boolean
 ---@param level? integer
----@return { [1]: string, [2]: string }[]
-function Base:indent_virt_line(line, level)
-    local amount = self:indent(level)
-    if amount > 0 then
-        table.insert(line, 1, self:padding_text(amount))
+---@return render.md.Line
+function Base:indent_line(virtual, level)
+    if virtual then
+        level = self:indent_level(level)
+    else
+        assert(level ~= nil, 'Level must be known for real lines')
+    end
+    local line = {}
+    if level > 0 then
+        local indent = self.config.indent
+        local icon_width = Str.width(indent.icon)
+        if icon_width == 0 then
+            table.insert(line, self:padding_text(indent.per_level * level))
+        else
+            for _ = 1, level do
+                table.insert(line, { indent.icon, indent.highlight })
+                table.insert(line, self:padding_text(indent.per_level - icon_width))
+            end
+        end
     end
     return line
 end
@@ -89,28 +109,36 @@ end
 ---@protected
 ---@param level? integer
 ---@return integer
-function Base:indent(level)
+function Base:indent_size(level)
+    return self.config.indent.per_level * self:indent_level(level)
+end
+
+---@private
+---@param level? integer
+---@return integer
+function Base:indent_level(level)
     local indent = self.config.indent
     if self.context:skip(indent) then
         return 0
     end
     if level == nil then
+        -- Level is not known, get it from the closest parent section
         level = self.node:level(true)
-    elseif indent.skip_heading then
-        local parent = self.node:parent('section')
-        level = parent ~= nil and parent:level(true) or 0
+    else
+        -- Level is known, must be a heading
+        if indent.skip_heading then
+            -- Account for ability to skip headings
+            local parent = self.node:parent('section')
+            level = parent ~= nil and parent:level(true) or 0
+        end
     end
-    level = level - indent.skip_level
-    if level <= 0 then
-        return 0
-    end
-    return indent.per_level * level
+    return math.max(level - indent.skip_level, 0)
 end
 
 ---@protected
 ---@param width integer
 ---@param highlight? string
----@return { [1]: string, [2]: string }
+---@return render.md.line.Text
 function Base:padding_text(width, highlight)
     return { Str.pad(width), highlight or self.config.padding.highlight }
 end

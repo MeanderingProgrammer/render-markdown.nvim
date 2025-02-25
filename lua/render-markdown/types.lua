@@ -36,6 +36,8 @@
 ---@field public per_level integer
 ---@field public skip_level integer
 ---@field public skip_heading boolean
+---@field public icon string
+---@field public highlight string
 
 ---@class (exact) render.md.InlineHighlight: render.md.BaseComponent
 ---@field public highlight string

@@ -741,6 +741,10 @@ Default Configuration ~
             skip_level = 1,
             -- Do not indent heading titles, only the body
             skip_heading = false,
+            -- Prefix added when indenting, one per level
+            icon = '',
+            -- Applied to icon
+            highlight = 'RenderMarkdownIndent',
         },
         html = {
             -- Turn on / off all HTML rendering
@@ -1373,6 +1377,10 @@ Indent Configuration ~
             skip_level = 1,
             -- Do not indent heading titles, only the body
             skip_heading = false,
+            -- Prefix added when indenting, one per level
+            icon = '',
+            -- Applied to icon
+            highlight = 'RenderMarkdownIndent',
         },
     })
 <
@@ -1430,6 +1438,8 @@ The table below shows all the highlight groups with their default link
                                                                        background
 
   RenderMarkdownMath              @markup.math                         LaTeX lines
+
+  RenderMarkdownIndent            Whitespace                           Indent icon
 
   RenderMarkdownHtmlComment       @comment                             HTML comment inline
                                                                        text

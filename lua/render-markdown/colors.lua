@@ -38,6 +38,7 @@ M.colors = {
     Dash            = 'LineNr',
     Sign            = 'SignColumn',
     Math            = '@markup.math',
+    Indent          = 'Whitespace',
     HtmlComment     = '@comment',
     -- Links
     Link            = '@markup.link.label.markdown_inline',

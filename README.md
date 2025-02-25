@@ -680,6 +680,10 @@ require('render-markdown').setup({
         skip_level = 1,
         -- Do not indent heading titles, only the body
         skip_heading = false,
+        -- Prefix added when indenting, one per level
+        icon = '',
+        -- Applied to icon
+        highlight = 'RenderMarkdownIndent',
     },
     html = {
         -- Turn on / off all HTML rendering
@@ -1336,6 +1340,10 @@ require('render-markdown').setup({
         skip_level = 1,
         -- Do not indent heading titles, only the body
         skip_heading = false,
+        -- Prefix added when indenting, one per level
+        icon = '',
+        -- Applied to icon
+        highlight = 'RenderMarkdownIndent',
     },
 })
 ```
@@ -1368,6 +1376,7 @@ The table below shows all the highlight groups with their default link
 | RenderMarkdownDash            | LineNr                             | Thematic break line        |
 | RenderMarkdownSign            | SignColumn                         | Sign column background     |
 | RenderMarkdownMath            | @markup.math                       | LaTeX lines                |
+| RenderMarkdownIndent          | Whitespace                         | Indent icon                |
 | RenderMarkdownHtmlComment     | @comment                           | HTML comment inline text   |
 | RenderMarkdownLink            | @markup.link.label.markdown_inline | Image & hyperlink icons    |
 | RenderMarkdownWikiLink        | RenderMarkdownLink                 | WikiLink icon & text       |
