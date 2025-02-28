@@ -2,6 +2,7 @@
 local M = {}
 
 M.has_10 = vim.fn.has('nvim-0.10') == 1
+M.has_11 = vim.fn.has('nvim-0.11') == 1
 
 ---@param key 'ft'|'cmd'
 ---@return string[]

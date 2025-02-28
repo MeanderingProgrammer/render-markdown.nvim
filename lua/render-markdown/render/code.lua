@@ -96,9 +96,11 @@ function Render:render()
     local background = vim.tbl_contains({ 'normal', 'full' }, self.code.style) and not disabled_language
 
     local icon = self:language()
-    self:border(icon)
+    local start_row, end_row = self.node.start_row, self.node.end_row - 1
+    self:border(start_row, self.code.above, not icon and self:hidden(self.data.code_node))
+    self:border(end_row, self.code.below, true)
     if background then
-        self:background(self.node.start_row + 1, self.node.end_row - 2)
+        self:background(start_row + 1, end_row - 1)
     end
     self:left_pad(background)
 end
@@ -127,7 +129,7 @@ function Render:language()
         self:sign(icon, icon_highlight)
     end
 
-    local icon_text = icon .. ' '
+    local text = icon .. ' '
     local highlight = { icon_highlight }
     if self.code.border ~= 'none' then
         table.insert(highlight, self.code.highlight)
@@ -136,25 +138,25 @@ function Render:language()
     if self.code.position == 'left' then
         if self.code.language_name and self:hidden(node) then
             -- Code blocks pick up varying amounts of leading white space depending
-            -- on the context they are in. This is lumped into the delimiter node and
-            -- as a result, after concealing, the extmark would be shifted.
+            -- on the context they are in. This is lumped into the delimiter node
+            -- and as a result, after concealing, the extmark would be shifted.
             local padding = Str.spaces('start', self.node.text) + self.data.language_padding
-            icon_text = Str.pad(padding) .. icon_text .. node.text
+            text = Str.pad(padding) .. text .. node.text
         end
         return self.marks:add_start('code_language', node, {
-            virt_text = { { icon_text, highlight } },
+            virt_text = { { text, highlight } },
             virt_text_pos = 'inline',
         })
     elseif self.code.position == 'right' then
         if self.code.language_name then
-            icon_text = icon_text .. node.text
+            text = text .. node.text
         end
         local win_col = self.data.max_width - self.data.language_padding
         if self.code.width == 'block' then
-            win_col = win_col - Str.width(icon_text) + self.data.indent
+            win_col = win_col - Str.width(text) + self.data.indent
         end
         return self.marks:add('code_language', node.start_row, 0, {
-            virt_text = { { icon_text, highlight } },
+            virt_text = { { text, highlight } },
             virt_text_win_col = win_col,
         })
     else
@@ -163,36 +165,45 @@ function Render:language()
 end
 
 ---@private
----@param icon boolean
-function Render:border(icon)
+---@param row integer
+---@param border string
+---@param context_hidden boolean
+function Render:border(row, border, context_hidden)
     if self.code.border == 'none' then
         return
     end
-
-    ---@param row integer
-    ---@param border string
-    ---@param context_hidden boolean
-    local function add_border(row, border, context_hidden)
-        local delim_node = self.node:child('fenced_code_block_delimiter', row)
-        if self.code.border == 'thin' and context_hidden and self:hidden(delim_node) then
-            local width = self.code.width == 'block' and self.data.max_width or vim.o.columns
-            self.marks:add('code_border', row, self.data.col, {
-                virt_text = { { border:rep(width - self.data.col), colors.bg_to_fg(self.code.highlight) } },
-                virt_text_pos = 'overlay',
-            })
-        else
-            self:background(row, row)
-        end
+    local delim_node = self.node:child('fenced_code_block_delimiter', row)
+    if self.code.border == 'thin' and context_hidden and self:hidden(delim_node) then
+        local width = self.code.width == 'block' and self.data.max_width or vim.o.columns
+        local line = { { border:rep(width - self.data.col), colors.bg_to_fg(self.code.highlight) } }
+        self.marks:add('code_border', row, self.data.col, {
+            virt_text = line,
+            virt_text_pos = 'overlay',
+        })
+    else
+        self:background(row, row)
     end
-
-    add_border(self.node.start_row, self.code.above, not icon and self:hidden(self.data.code_node))
-    add_border(self.node.end_row - 1, self.code.below, true)
 end
 
 ---@private
 ---@param node? render.md.Node
 ---@return boolean
 function Render:hidden(node)
+    -- TODO(0.11): handle conceal_lines
+    -- - Use self.context:hidden(node) to determine if a node is hidden
+    -- - Default highlights remove the fenced code block delimiter lines along with
+    --   any extmarks we add there.
+    -- - To account for this we'll need add back the lines, likely using virt_lines.
+    -- - For top delimiter
+    --   - Add extmark above the top row with virt_lines_above = false
+    --   - By doing this we'll add a line just above the fenced code block
+    --   - We likely need to handle the sign column here as well
+    -- - For bottom delimiter
+    --   - Add extmark below the bottom row with virt_lines_above = true
+    --   - By doing this we'll add a line just below the fenced code block
+    -- - For both of these we'll need to do something that does anti_conceal via an
+    --   offset such that the cursor going over the concealed line naturally shows
+    --   the raw text and the virtual line disappears
     return self.context:width(node) == 0
 end
 

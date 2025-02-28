@@ -1,10 +1,21 @@
 local Str = require('render-markdown.lib.str')
+local util = require('render-markdown.core.util')
+
+---@class render.md.conceal.Section
+---@field start_col integer
+---@field end_col integer
+---@field width integer
+---@field character? string
+
+---@class render.md.conceal.Line
+---@field hidden boolean
+---@field sections render.md.conceal.Section[]
 
 ---@class render.md.Conceal
 ---@field private buf integer
 ---@field private level integer
 ---@field private computed boolean
----@field private rows table<integer, [integer, integer, integer][]>
+---@field private lines table<integer, render.md.conceal.Line>
 local Conceal = {}
 Conceal.__index = Conceal
 
@@ -16,7 +27,7 @@ function Conceal.new(buf, level)
     self.buf = buf
     self.level = level
     self.computed = false
-    self.rows = {}
+    self.lines = {}
     return self
 end
 
@@ -26,57 +37,81 @@ function Conceal:enabled()
 end
 
 ---@param row integer
----@param start_col integer
----@param end_col integer
----@param amount integer
----@param character? string
-function Conceal:add(row, start_col, end_col, amount, character)
-    if not self:enabled() or amount == 0 then
+---@param entry boolean|render.md.conceal.Section
+function Conceal:add(row, entry)
+    if not self:enabled() then
         return
     end
-    if self.rows[row] == nil then
-        self.rows[row] = {}
+    if self.lines[row] == nil then
+        self.lines[row] = { hidden = false, sections = {} }
     end
-    -- If the range is already concealed by another don't add it
-    for _, range in ipairs(self.rows[row]) do
-        if range[1] <= start_col and range[2] >= end_col then
+    local line = self.lines[row]
+    if type(entry) == 'boolean' then
+        line.hidden = entry
+    else
+        if entry.width <= 0 then
             return
         end
+        -- If the section is covered by an existing one don't add it
+        for _, section in ipairs(line.sections) do
+            if section.start_col <= entry.start_col and section.end_col >= entry.end_col then
+                return
+            end
+        end
+        table.insert(line.sections, entry)
     end
-    table.insert(self.rows[row], { start_col, end_col, self:adjust(amount, character) })
 end
 
----@param amount integer
+---@param width integer
 ---@param character? string
 ---@return integer
-function Conceal:adjust(amount, character)
+function Conceal:adjust(width, character)
     if self.level == 1 then
-        -- Level 1: each block is replaced with one character
-        amount = amount - 1
+        -- each block is replaced with one character
+        return width - 1
     elseif self.level == 2 then
-        -- Level 2: replacement character width is used
-        amount = amount - Str.width(character)
+        -- replacement character width is used
+        return width - Str.width(character)
+    else
+        return width
     end
-    return amount
+end
+
+---@param context render.md.Context
+---@param node render.md.Node
+---@return boolean
+function Conceal:hidden(context, node)
+    -- conceal lines metadata require neovim >= 0.11.0 to function
+    return util.has_11 and self:line(context, node).hidden
 end
 
 ---@param context render.md.Context
 ---@param node render.md.Node
 ---@return integer
 function Conceal:get(context, node)
-    if not self.computed then
-        self.computed = true
-        self:compute(context)
-    end
-
     local result = 0
-    local ranges = self.rows[node.start_row] or {}
-    for _, range in ipairs(ranges) do
-        if node.start_col < range[2] and node.end_col > range[1] then
-            result = result + range[3]
+    for _, section in ipairs(self:line(context, node).sections) do
+        if node.start_col < section.end_col and node.end_col > section.start_col then
+            local amount = self:adjust(section.width, section.character)
+            result = result + amount
         end
     end
     return result
+end
+
+---@private
+---@param context render.md.Context
+---@param node render.md.Node
+function Conceal:line(context, node)
+    if not self.computed then
+        self:compute(context)
+        self.computed = true
+    end
+    local line = self.lines[node.start_row]
+    if line == nil then
+        line = { hidden = false, sections = {} }
+    end
+    return line
 end
 
 ---Cached row level implementation of vim.treesitter.get_captures_at_pos
@@ -116,21 +151,40 @@ function Conceal:compute_tree(context, language, root)
     end
     context:for_each(function(range)
         for id, node, metadata in query:iter_captures(root, self.buf, range.top, range.bottom) do
+            if metadata.conceal_lines ~= nil then
+                local node_range = self:node_range(id, node, metadata)
+                local row = unpack(node_range)
+                self:add(row, true)
+            end
             if metadata.conceal ~= nil then
-                local node_range = metadata.range
-                if node_range == nil and metadata[id] ~= nil then
-                    node_range = metadata[id].range
-                end
-                if node_range == nil then
-                    ---@diagnostic disable-next-line: missing-fields
-                    node_range = { node:range() }
-                end
+                local node_range = self:node_range(id, node, metadata)
                 local row, start_col, _, end_col = unpack(node_range)
-                local amount = Str.width(vim.treesitter.get_node_text(node, self.buf))
-                self:add(row, start_col, end_col, amount, metadata.conceal)
+                self:add(row, {
+                    start_col = start_col,
+                    end_col = end_col,
+                    width = Str.width(vim.treesitter.get_node_text(node, self.buf)),
+                    character = metadata.conceal,
+                })
             end
         end
     end)
+end
+
+---@private
+---@param id integer
+---@param node TSNode
+---@param metadata vim.treesitter.query.TSMetadata
+---@return Range
+function Conceal:node_range(id, node, metadata)
+    local range = metadata.range
+    if range ~= nil then
+        return range
+    end
+    range = metadata[id] ~= nil and metadata[id].range or nil
+    if range ~= nil then
+        return range
+    end
+    return { node:range() }
 end
 
 return Conceal

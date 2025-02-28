@@ -124,6 +124,15 @@ function Context:tab_size()
 end
 
 ---@param node? render.md.Node
+---@return boolean
+function Context:hidden(node)
+    if node == nil then
+        return false
+    end
+    return self.conceal:hidden(self, node)
+end
+
+---@param node? render.md.Node
 ---@return integer
 function Context:width(node)
     if node == nil then

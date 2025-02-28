@@ -99,7 +99,12 @@ function Marks:update_context(mark)
     local row, start_col = mark.start_row, mark.start_col
     local end_col = mark.opts.end_col or start_col
     if mark.opts.conceal ~= nil then
-        self.context.conceal:add(row, start_col, end_col, end_col - start_col)
+        self.context.conceal:add(row, {
+            start_col = start_col,
+            end_col = end_col,
+            width = end_col - start_col,
+            character = mark.opts.conceal,
+        })
     end
     if mark.opts.virt_text_pos == 'inline' then
         local amount = 0

@@ -5,7 +5,7 @@ local state = require('render-markdown.state')
 local M = {}
 
 ---@private
-M.version = '8.0.13'
+M.version = '8.0.14'
 
 function M.check()
     M.start('version')

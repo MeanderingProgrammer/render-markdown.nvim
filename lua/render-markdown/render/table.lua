@@ -168,7 +168,7 @@ function Render:parse_row(row, num_columns)
     local columns = {}
     for i, cell in ipairs(cells) do
         local start_col, end_col = pipes[i].end_col, pipes[i + 1].start_col
-        -- Account for double width glyphs by replacing cell range with width
+        -- Account for double width glyphs by replacing cell range with its width
         local width = end_col - start_col
         width = width - (cell.end_col - cell.start_col) + self.context:width(cell)
         if width < 0 then
@@ -315,7 +315,7 @@ function Render:shift(column, side, amount)
             virt_text_pos = 'inline',
         })
     elseif amount < 0 then
-        amount = self.context.conceal:adjust(amount, nil)
+        amount = self.context.conceal:adjust(amount, '')
         self.marks:add(true, column.row, col + amount, {
             priority = 0,
             end_col = col,

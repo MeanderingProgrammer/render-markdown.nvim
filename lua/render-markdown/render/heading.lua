@@ -36,6 +36,9 @@ function Render:setup()
     if self.context:skip(self.heading) then
         return false
     end
+    if self.context:hidden(self.node) then
+        return false
+    end
 
     local atx = nil
     local marker = nil
