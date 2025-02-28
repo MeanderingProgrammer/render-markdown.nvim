@@ -90,6 +90,9 @@ function Conceal:compute(context)
         return
     end
     local parser = vim.treesitter.get_parser(self.buf)
+    if parser == nil then
+        return
+    end
     context:parse(parser)
     parser:for_each_tree(function(tree, language_tree)
         self:compute_tree(context, language_tree:lang(), tree:root())

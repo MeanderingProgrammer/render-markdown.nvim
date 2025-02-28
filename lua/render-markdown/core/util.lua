@@ -148,11 +148,10 @@ function M.file_name(buf)
     end
 end
 
----@param source string|integer
+---@param file string|integer
 ---@return number
-function M.file_size_mb(source)
-    local file = source
-    if type(file) == 'number' then
+function M.file_size_mb(file)
+    if type(file) ~= 'string' then
         file = vim.api.nvim_buf_get_name(file)
     end
     local ok, stats = pcall(function()

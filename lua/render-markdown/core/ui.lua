@@ -81,13 +81,11 @@ function M.update(buf, win, event, change)
         return
     end
 
+    local parse = M.parse(buf, win, change)
     local config, buffer_state = state.get(buf), Cache.get(buf)
 
-    -- Need to parse when things change or we have not parsed the visible range yet
-    local parse = change or not Context.contains_range(buf, win)
-
     local update = function()
-        M.run_update(buf, win, parse)
+        M.run_update(buf, win, change)
     end
     if parse and state.log_runtime then
         update = util.wrap_runtime(update)
@@ -103,12 +101,23 @@ end
 ---@private
 ---@param buf integer
 ---@param win integer
----@param parse boolean
-function M.run_update(buf, win, parse)
+---@param change boolean
+---@return boolean
+function M.parse(buf, win, change)
+    -- Need to parse when things change or we have not parsed the visible range yet
+    return change or not Context.contains_range(buf, win)
+end
+
+---@private
+---@param buf integer
+---@param win integer
+---@param change boolean
+function M.run_update(buf, win, change)
     if not util.valid(buf, win) then
         return
     end
 
+    local parse = M.parse(buf, win, change)
     local config, buffer_state = state.get(buf), Cache.get(buf)
     local mode, row = util.mode(), util.row(buf, win)
     local next_state = M.next_state(config, win, mode)
@@ -131,7 +140,8 @@ function M.run_update(buf, win, parse)
             }))
         end
         local hidden = config:hidden(mode, row)
-        for _, extmark in ipairs(buffer_state:get_marks()) do
+        local extmarks = buffer_state:get_marks()
+        for _, extmark in ipairs(extmarks) do
             local mark = extmark:get_mark()
             if mark.conceal and hidden ~= nil and hidden:contains(mark.start_row, mark.start_row) then
                 extmark:hide(M.namespace, buf)
@@ -175,7 +185,7 @@ end
 function M.parse_buffer(props)
     local buf = props.buf
     local has_parser, parser = pcall(vim.treesitter.get_parser, buf)
-    if not has_parser then
+    if not has_parser or parser == nil then
         log.buf('error', 'fail', buf, 'no treesitter parser found')
         return {}
     end

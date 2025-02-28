@@ -16,7 +16,7 @@ M.group = vim.api.nvim_create_augroup('RenderMarkdown', { clear = true })
 function M.setup()
     -- Lazy Loading: ignores current buffer as FileType event already executed
     if #util.lazy('ft') == 0 and #util.lazy('cmd') == 0 then
-        M.attach_current()
+        M.attach(util.current('buf'))
     end
     -- Attempt to attach to all buffers, cannot use pattern to support plugin directory
     vim.api.nvim_create_autocmd('FileType', {
@@ -52,7 +52,7 @@ end
 function M.set_all(enabled)
     -- Lazy Loading: all previously opened buffers have been ignored
     if #util.lazy('cmd') > 0 then
-        M.attach_current()
+        M.attach(util.current('buf'))
     end
     if enabled ~= nil then
         state.enabled = enabled
@@ -60,7 +60,7 @@ function M.set_all(enabled)
         state.enabled = not state.enabled
     end
     for _, buf in ipairs(buffers) do
-        M.trigger_update(buf)
+        M.update(buf, 'UserCommand')
     end
 end
 
@@ -74,19 +74,8 @@ function M.set_current(enabled)
         else
             config.enabled = not config.enabled
         end
-        M.trigger_update(buf)
+        M.update(buf, 'UserCommand')
     end
-end
-
----@private
-function M.attach_current()
-    M.attach(util.current('buf'))
-end
-
----@private
----@param buf integer
-function M.trigger_update(buf)
-    ui.update(buf, vim.fn.bufwinid(buf), 'UserCommand', true)
 end
 
 ---@private
@@ -122,6 +111,15 @@ function M.attach(buf)
             ui.update(buf, win, event, vim.tbl_contains(change_events, event))
         end,
     })
+
+    M.update(buf, 'Initial')
+end
+
+---@private
+---@param buf integer
+---@param event string
+function M.update(buf, event)
+    ui.update(buf, vim.fn.bufwinid(buf), event, true)
 end
 
 ---@private

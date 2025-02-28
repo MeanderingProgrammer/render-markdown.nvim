@@ -92,8 +92,10 @@ function M.combine(foreground, background, force)
         vim.api.nvim_set_hl(0, name, {
             fg = fg.fg,
             bg = bg.bg,
+            -- TODO(0.11): remove
             ---@diagnostic disable-next-line: undefined-field
             ctermfg = fg.ctermfg,
+            -- TODO(0.11): remove
             ---@diagnostic disable-next-line: undefined-field
             ctermbg = bg.ctermbg,
         })
@@ -111,6 +113,7 @@ function M.bg_to_fg(highlight, force)
         local hl = M.get_hl(highlight)
         vim.api.nvim_set_hl(0, name, {
             fg = hl.bg,
+            -- TODO(0.11): remove
             ---@diagnostic disable-next-line: undefined-field
             ctermfg = hl.ctermbg,
         })
@@ -123,6 +126,7 @@ end
 ---@param name string
 ---@return vim.api.keyset.hl_info
 function M.get_hl(name)
+    -- TODO(0.11): return vim.api.keyset.get_hl_info
     return vim.api.nvim_get_hl(0, { name = name, link = false })
 end
 

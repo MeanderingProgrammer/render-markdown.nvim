@@ -28,7 +28,7 @@ end
 ---@return lsp.CompletionItem[]?
 function M.items(buf, row, col)
     local has_parser, parser = pcall(vim.treesitter.get_parser, buf)
-    if not has_parser then
+    if not has_parser or parser == nil then
         return nil
     end
 
