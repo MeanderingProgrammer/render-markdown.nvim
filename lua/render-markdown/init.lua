@@ -21,6 +21,7 @@ local M = {}
 ---@class (exact) render.md.UserCallback
 ---@field public attach? fun(ctx: render.md.CallbackContext)
 ---@field public render? fun(ctx: render.md.CallbackContext)
+---@field public clear? fun(ctx: render.md.CallbackContext)
 
 ---@class (exact) render.md.UserInjection
 ---@field public enabled? boolean
@@ -401,6 +402,8 @@ M.default_config = {
         attach = function() end,
         -- Called after plugin renders a buffer
         render = function() end,
+        -- Called after plugin clears a buffer
+        clear = function() end,
     },
     heading = {
         -- Turn on / off heading icon & background rendering

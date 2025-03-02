@@ -3,6 +3,7 @@
 ---@class (exact) render.md.Callback
 ---@field public attach fun(ctx: render.md.CallbackContext)
 ---@field public render fun(ctx: render.md.CallbackContext)
+---@field public clear fun(ctx: render.md.CallbackContext)
 
 ---@class (exact) render.md.Injection
 ---@field public enabled boolean

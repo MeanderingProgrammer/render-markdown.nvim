@@ -260,6 +260,8 @@ require('render-markdown').setup({
         attach = function() end,
         -- Called after plugin renders a buffer
         render = function() end,
+        -- Called after plugin clears a buffer
+        clear = function() end,
     },
     heading = {
         -- Turn on / off heading icon & background rendering
