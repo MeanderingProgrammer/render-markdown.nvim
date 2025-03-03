@@ -127,9 +127,15 @@ function Render:wiki_link()
             self:hide(ctx.start_col + 2, #ctx.destination + 1)
         end
     else
+        local line = {}
+        if type(body) == 'string' then
+            table.insert(line, { icon .. body, highlight })
+        else
+            table.insert(line, { icon .. body[1], body[2] })
+        end
         -- Inline icon & body, hide original text
         self.marks:add_over('link', self.node, {
-            virt_text = { { icon .. body, highlight } },
+            virt_text = line,
             virt_text_pos = 'inline',
             conceal = '',
         }, { 0, 1, 0, -1 })

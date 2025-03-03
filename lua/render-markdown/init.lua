@@ -15,6 +15,10 @@ local M = {}
 ---@field public extends? boolean
 ---@field public parse fun(ctx: render.md.HandlerContext): render.md.Mark[]
 
+---@class render.md.Text
+---@field [1] string text
+---@field [2] string|string[] highlights
+
 ---@class (exact) render.md.CallbackContext
 ---@field public buf integer
 
@@ -88,7 +92,7 @@ local M = {}
 
 ---@class (exact) render.md.UserWikiLink
 ---@field public icon? string
----@field public body? fun(ctx: render.md.LinkContext): string?
+---@field public body? fun(ctx: render.md.LinkContext): render.md.Text|string?
 ---@field public highlight? string
 
 ---@class (exact) render.md.UserFootnote

@@ -2,11 +2,7 @@ local Iter = require('render-markdown.lib.iter')
 local Str = require('render-markdown.lib.str')
 local colors = require('render-markdown.colors')
 
----@class render.md.line.Text
----@field [1] string text
----@field [2] string|string[] highlights
-
----@alias render.md.Line render.md.line.Text[]
+---@alias render.md.Line render.md.Text[]
 
 ---@class render.md.Renderer
 ---@field protected marks render.md.Marks

@@ -54,7 +54,7 @@
 
 ---@class (exact) render.md.WikiLink
 ---@field public icon string
----@field public body fun(ctx: render.md.LinkContext): string?
+---@field public body fun(ctx: render.md.LinkContext): render.md.Text|string?
 ---@field public highlight string
 
 ---@class (exact) render.md.Footnote
