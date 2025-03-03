@@ -2,7 +2,7 @@ local Config = require('render-markdown.config')
 local Env = require('render-markdown.lib.env')
 local log = require('render-markdown.core.log')
 local presets = require('render-markdown.presets')
-local treesitter = require('render-markdown.core.treesitter')
+local ts = require('render-markdown.integ.ts')
 
 ---@type table<integer, render.md.buffer.Config>
 local configs = {}
@@ -13,6 +13,7 @@ local configs = {}
 ---@field log_runtime boolean
 ---@field file_types string[]
 ---@field change_events string[]
+---@field patterns table<string, render.md.Pattern>
 ---@field on render.md.Callback
 ---@field completions render.md.Completions
 ---@field custom_handlers table<string, render.md.Handler>
@@ -28,10 +29,12 @@ end
 function M.setup(default_config, user_config)
     local preset_config = presets.get(user_config)
     local config = vim.tbl_deep_extend('force', default_config, preset_config, user_config)
+
     -- Override settings that require neovim >= 0.10.0 and have compatible alternatives
     if not Env.has_10 then
         config.code.position = 'right'
     end
+
     -- Use lazy.nvim file type configuration if available and no user value is specified
     if user_config.file_types == nil then
         local lazy_file_types = Env.lazy('ft')
@@ -45,12 +48,13 @@ function M.setup(default_config, user_config)
     M.log_runtime = config.log_runtime
     M.file_types = config.file_types
     M.change_events = config.change_events
+    M.patterns = config.patterns
     M.on = config.on
     M.completions = config.completions
     M.custom_handlers = config.custom_handlers
     log.setup(config.log_level)
     for _, language in ipairs(M.file_types) do
-        treesitter.inject(language, config.injections[language])
+        ts.inject(language, config.injections[language])
     end
 end
 
@@ -197,7 +201,7 @@ function M.validate()
                     :one_of('style', { 'full', 'normal', 'language', 'none' })
                     :one_of('position', { 'left', 'right' })
                     :one_of('width', { 'full', 'block' })
-                    :one_of('border', { 'thin', 'thick', 'none' })
+                    :one_of('border', { 'hide', 'thin', 'thick', 'none' })
                     :check()
             end)
             :nested('dash', function(dash)
@@ -334,6 +338,20 @@ function M.validate()
             injections
                 :nested('ALL', function(injection)
                     injection:type('enabled', 'boolean'):type('query', 'string'):check()
+                end)
+                :check()
+        end)
+        :nested('patterns', function(patterns)
+            patterns
+                :nested('ALL', function(pattern)
+                    pattern
+                        :type('disable', 'boolean')
+                        :nested('directives', function(directives)
+                            directives:nested('ALL', function(directive)
+                                directive:type('id', 'number'):type('name', 'string'):check()
+                            end)
+                        end)
+                        :check()
                 end)
                 :check()
         end)

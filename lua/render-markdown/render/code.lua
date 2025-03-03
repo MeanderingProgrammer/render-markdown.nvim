@@ -6,15 +6,12 @@ local colors = require('render-markdown.colors')
 
 ---@class render.md.data.Code
 ---@field col integer
----@field code_node? render.md.Node
----@field language_node? render.md.Node
----@field language? string
----@field margin integer
----@field language_padding integer
----@field padding integer
 ---@field width integer
 ---@field max_width integer
 ---@field empty_rows integer[]
+---@field language_padding integer
+---@field padding integer
+---@field margin integer
 ---@field indent integer
 
 ---@class render.md.render.Code: render.md.Renderer
@@ -37,11 +34,8 @@ function Render:setup()
         return false
     end
 
-    local code_node = self.node:child('info_string')
-    local language_node = code_node ~= nil and code_node:child('language') or nil
-
     local widths = Iter.list.map(self.node:lines(), Str.width)
-
+    local max_width = vim.fn.max(widths)
     local empty_rows = {}
     for row, width in ipairs(widths) do
         if width == 0 then
@@ -49,7 +43,6 @@ function Render:setup()
         end
     end
 
-    local max_width = vim.fn.max(widths)
     local language_padding = self:offset(self.code.language_pad, max_width, self.code.position)
     local left_padding = self:offset(self.code.left_pad, max_width, 'left')
     local right_padding = self:offset(self.code.right_pad, max_width, 'right')
@@ -57,15 +50,12 @@ function Render:setup()
 
     self.data = {
         col = self.node.start_col,
-        code_node = code_node,
-        language_node = language_node,
-        language = (language_node or {}).text,
-        margin = self:offset(self.code.left_margin, max_width, 'left'),
-        language_padding = language_padding,
-        padding = left_padding,
         width = self.code.width == 'block' and max_width or vim.o.columns,
         max_width = max_width,
         empty_rows = empty_rows,
+        language_padding = language_padding,
+        padding = left_padding,
+        margin = self:offset(self.code.left_margin, max_width, 'left'),
         indent = self:indent_size(),
     }
 
@@ -91,16 +81,24 @@ function Render:offset(offset, width, position)
 end
 
 function Render:render()
-    local disabled_language = self.code.disable_background
-    if type(disabled_language) == 'table' then
-        disabled_language = vim.tbl_contains(disabled_language, self.data.language)
-    end
-    local background = vim.tbl_contains({ 'normal', 'full' }, self.code.style) and not disabled_language
+    local info = self.node:child('info_string')
+    local language = info ~= nil and info:child('language') or nil
+    self.marks:over(true, language, { conceal = '' })
 
-    local icon = self:language()
-    local start_row, end_row = self.node.start_row, self.node.end_row - 1
-    self:border(start_row, true, not icon and self.context:width(self.data.code_node) == 0)
-    self:border(end_row, false, true)
+    local start_row = self.node.start_row
+    local top = self.node:child('fenced_code_block_delimiter', start_row)
+    self.marks:over(true, top, { conceal = '' })
+
+    local end_row = self.node.end_row - 1
+    local bottom = self.node:child('fenced_code_block_delimiter', end_row)
+    self.marks:over(true, bottom, { conceal = '' })
+
+    local icon = self:language(language, top)
+    local more_info = info ~= nil and language ~= nil and info.end_col > language.end_col
+    self:border(top, true, not icon and not more_info)
+    self:border(bottom, false, true)
+
+    local background = self:background_enabled(language)
     if background then
         self:background(start_row + 1, end_row - 1)
     end
@@ -108,19 +106,20 @@ function Render:render()
 end
 
 ---@private
+---@param language? render.md.Node
+---@param delim? render.md.Node
 ---@return boolean
-function Render:language()
+function Render:language(language, delim)
     if not vim.tbl_contains({ 'language', 'full' }, self.code.style) then
         return false
     end
-
-    local delim = self.node:child('fenced_code_block_delimiter', self.node.start_row)
-    local node, padding = self.data.language_node, self.data.language_padding
-    if delim == nil or node == nil then
+    if language == nil or delim == nil then
         return false
     end
 
-    local icon, icon_highlight = Icons.get(node.text)
+    local padding = self.data.language_padding
+
+    local icon, icon_highlight = Icons.get(language.text)
     if self.code.highlight_language ~= nil then
         icon_highlight = self.code.highlight_language
     end
@@ -132,37 +131,26 @@ function Render:language()
         text = text .. icon .. ' '
     end
     if self.code.language_name then
-        text = text .. node.text
+        text = text .. language.text
     end
     if #text == 0 then
         return false
     end
 
     local highlight = { icon_highlight or self.code.highlight_fallback }
-    if self.code.border ~= 'none' then
-        table.insert(highlight, self.code.highlight)
-    end
-
-    -- TODO(0.11): handle conceal_lines
-    -- - Use self.context:hidden(node) to determine if a node is hidden
-    -- - Default highlights remove the fenced code block delimiter lines along with
-    --   any extmarks we add there.
-    -- - To account for this we'll need add back the lines, likely using virt_lines.
-    -- - For top delimiter
-    --   - Add extmark above the second row with virt_lines_above = true
-    --   - By doing this we'll add a line just above the fenced code block
-    --   - We likely need to handle the sign column here as well
-    -- - For bottom delimiter
-    --   - Add extmark below the second to last row with virt_lines_above = false
-    --   - By doing this we'll add a line just below the fenced code block
+    table.insert(highlight, self.code.highlight)
 
     if self.code.position == 'left' then
         text = Str.pad(padding) .. text
         -- Code blocks can pick up varying amounts of leading white space.
         -- This is lumped into the delimiter node and needs to be handled.
         local spaces = Str.spaces('start', delim.text)
-        text = Str.pad(spaces - self.context:width(delim)) .. text
-        return self.marks:start('code_language', node, {
+        local width = self.context:width(delim)
+        if self.context.conceal:enabled() then
+            width = self.context.conceal:width('')
+        end
+        text = Str.pad(spaces - width) .. text
+        return self.marks:start('code_language', language, {
             virt_text = { { text, highlight } },
             virt_text_pos = 'inline',
         })
@@ -171,7 +159,7 @@ function Render:language()
         if self.code.width == 'block' then
             start = start - Str.width(text)
         end
-        return self.marks:add('code_language', node.start_row, 0, {
+        return self.marks:add('code_language', language.start_row, 0, {
             virt_text = { { text, highlight } },
             virt_text_win_col = start + self.data.indent,
         })
@@ -179,27 +167,39 @@ function Render:language()
 end
 
 ---@private
----@param row integer
+---@param delim? render.md.Node
 ---@param above boolean
 ---@param empty boolean
-function Render:border(row, above, empty)
-    if self.code.border == 'none' then
-        return
-    end
-    local delim = self.node:child('fenced_code_block_delimiter', row)
-    if delim == nil then
-        return
-    end
-    local width, highlight = self.data.width - self.data.col, self.code.highlight
-    local border = above and self.code.above or self.code.below
-    if self.code.border == 'thin' and empty then
+function Render:border(delim, above, empty)
+    if self.code.border == 'none' or delim == nil then
+        -- skip
+    elseif self.code.border == 'thick' or not empty then
+        self:background(delim.start_row, delim.start_row)
+    elseif self.code.border == 'hide' and self.marks:over(true, delim, { conceal_lines = '' }) then
+        -- successfully added
+    else
+        local width, highlight = self.data.width - self.data.col, self.code.highlight
+        local border = above and self.code.above or self.code.below
         local line = { { border:rep(width), colors.bg_to_fg(highlight) } }
-        self.marks:add('code_border', row, self.data.col, {
+        self.marks:add('code_border', delim.start_row, self.data.col, {
             virt_text = line,
             virt_text_pos = 'overlay',
         })
+    end
+end
+
+---@private
+---@param language? render.md.Node
+---@return boolean
+function Render:background_enabled(language)
+    if not vim.tbl_contains({ 'normal', 'full' }, self.code.style) then
+        return false
+    end
+    local disable = self.code.disable_background
+    if type(disable) == 'table' then
+        return language == nil or not vim.tbl_contains(disable, language.text)
     else
-        self:background(row, row)
+        return not disable
     end
 end
 

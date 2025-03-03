@@ -1,7 +1,7 @@
 local Context = require('render-markdown.core.context')
 local Marks = require('render-markdown.lib.marks')
 local state = require('render-markdown.state')
-local treesitter = require('render-markdown.core.treesitter')
+local ts = require('render-markdown.integ.ts')
 
 ---@class render.md.handler.buf.Html
 ---@field private config render.md.buffer.Config
@@ -19,7 +19,7 @@ function Handler.new(buf)
     self.config = state.get(buf)
     self.context = Context.get(buf)
     self.marks = Marks.new(buf, true)
-    self.query = treesitter.parse(
+    self.query = ts.parse(
         'html',
         [[
             (comment) @comment

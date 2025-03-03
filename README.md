@@ -220,6 +220,16 @@ require('render-markdown').setup({
             ]],
         },
     },
+    -- Highlight patterns to disable for filetypes, i.e. lines concealed around code blocks
+    patterns = {
+        markdown = {
+            disable = true,
+            directives = {
+                { id = 17, name = 'conceal_lines' },
+                { id = 18, name = 'conceal_lines' },
+            },
+        },
+    },
     anti_conceal = {
         -- This enables hiding any added text on the line the cursor is on.
         enabled = true,
@@ -427,7 +437,8 @@ require('render-markdown').setup({
         -- | none  | do not render a border                               |
         -- | thick | use the same highlight as the code body              |
         -- | thin  | when lines are empty overlay the above & below icons |
-        border = 'thin',
+        -- | hide  | conceal lines unless language name or icon is added  |
+        border = 'hide',
         -- Used above code blocks for thin border.
         above = '▄',
         -- Used below code blocks for thin border.
@@ -978,7 +989,8 @@ require('render-markdown').setup({
         -- | none  | do not render a border                               |
         -- | thick | use the same highlight as the code body              |
         -- | thin  | when lines are empty overlay the above & below icons |
-        border = 'thin',
+        -- | hide  | conceal lines unless language name or icon is added  |
+        border = 'hide',
         -- Used above code blocks for thin border.
         above = '▄',
         -- Used below code blocks for thin border.

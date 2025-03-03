@@ -315,7 +315,7 @@ function Render:shift(column, side, amount)
             virt_text_pos = 'inline',
         })
     elseif amount < 0 then
-        amount = self.context.conceal:adjust(amount, '')
+        amount = amount - self.context.conceal:width('')
         self.marks:add(true, column.row, col + amount, {
             priority = 0,
             end_col = col,

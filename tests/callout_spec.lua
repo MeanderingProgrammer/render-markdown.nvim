@@ -40,12 +40,15 @@ describe('callout.md', function()
             :add(row:inc(), row:get(), 0, 1, util.quote('%s', ok))
             :add(row:inc(), row:get(), 0, 2, util.quote('%s ', ok))
             :add(row:get(), nil, 2, nil, util.code.sign('lua'))
+            :add(row:get(), row:get(), 2, 5, util.conceal())
             :add(row:get(), nil, 5, nil, util.code.icon('lua'))
+            :add(row:get(), row:get(), 5, 8, util.conceal())
             :add(row:get(), row:inc(), 2, 0, util.code.bg())
             :add(row:get(), row:get(), 0, 2, util.quote('%s ', ok))
             :add(row:get(), row:inc(), 2, 0, util.code.bg())
             :add(row:get(), row:get(), 0, 2, util.quote('%s ', ok))
-            :add(row:get(), nil, 2, nil, util.code.border(false, vim.o.columns - 2))
+            :add(row:get(), row:get(), 2, 5, util.conceal())
+            :add(row:get(), row:get(), 2, 5, util.conceal_lines())
 
         marks
             :add(row:inc(2), nil, 0, nil, util.heading.sign(1))
@@ -116,9 +119,8 @@ describe('callout.md', function()
             '',
             '  ▋ 󰌶 Tip',
             '  ▋',
-            -- '󰢱 ▋ 󰢱 lua',
+            '󰢱 ▋ 󰢱 lua',
             "  ▋ print('Standard tip')",
-            -- '  ▋ ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
             '',
             '󰫎 󰲡 Important',
             '',

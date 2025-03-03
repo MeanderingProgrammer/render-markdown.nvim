@@ -47,6 +47,14 @@ local M = {}
 ---@field render? fun(ctx: render.md.CallbackContext)
 ---@field clear? fun(ctx: render.md.CallbackContext)
 
+---@class (exact) render.md.UserDirective
+---@field id? integer
+---@field name? string
+
+---@class (exact) render.md.UserPattern
+---@field disable? boolean
+---@field directives? render.md.UserDirective[]
+
 ---@class (exact) render.md.UserInjection
 ---@field enabled? boolean
 ---@field query? string
@@ -207,7 +215,7 @@ local M = {}
 ---@alias render.md.code.Style 'full'|'normal'|'language'|'none'
 ---@alias render.md.code.Position 'left'|'right'
 ---@alias render.md.code.Width 'full'|'block'
----@alias render.md.code.Border 'thin'|'thick'|'none'
+---@alias render.md.code.Border 'hide'|'thin'|'thick'|'none'
 
 ---@class (exact) render.md.UserCode: render.md.UserBaseComponent
 ---@field sign? boolean
@@ -340,6 +348,7 @@ local M = {}
 ---@field file_types? string[]
 ---@field change_events? string[]
 ---@field injections? table<string, render.md.UserInjection>
+---@field patterns? table<string, render.md.UserPattern>
 ---@field on? render.md.UserCallback
 ---@field completions? render.md.UserCompletions
 ---@field overrides? render.md.UserConfigOverrides
@@ -387,6 +396,16 @@ M.default_config = {
                     (#set! injection.include-children)
                     (#set! injection.language "markdown"))
             ]],
+        },
+    },
+    -- Highlight patterns to disable for filetypes, i.e. lines concealed around code blocks
+    patterns = {
+        markdown = {
+            disable = true,
+            directives = {
+                { id = 17, name = 'conceal_lines' },
+                { id = 18, name = 'conceal_lines' },
+            },
         },
     },
     anti_conceal = {
@@ -596,7 +615,8 @@ M.default_config = {
         -- | none  | do not render a border                               |
         -- | thick | use the same highlight as the code body              |
         -- | thin  | when lines are empty overlay the above & below icons |
-        border = 'thin',
+        -- | hide  | conceal lines unless language name or icon is added  |
+        border = 'hide',
         -- Used above code blocks for thin border.
         above = '▄',
         -- Used below code blocks for thin border.

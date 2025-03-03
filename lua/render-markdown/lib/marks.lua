@@ -7,19 +7,19 @@ local state = require('render-markdown.state')
 ---@class render.md.Marks
 ---@field private context render.md.Context
 ---@field private ignore render.md.config.conceal.Ignore
----@field private update boolean
+---@field private inline boolean
 ---@field private marks render.md.Mark[]
 local Marks = {}
 Marks.__index = Marks
 
 ---@param buf integer
----@param update boolean
+---@param inline boolean
 ---@return render.md.Marks
-function Marks.new(buf, update)
+function Marks.new(buf, inline)
     local self = setmetatable({}, Marks)
     self.context = Context.get(buf)
     self.ignore = state.get(buf).anti_conceal.ignore
-    self.update = update
+    self.inline = inline
     self.marks = {}
     return self
 end
@@ -38,11 +38,14 @@ function Marks:start(element, node, opts)
 end
 
 ---@param element render.md.mark.Element
----@param node render.md.Node
+---@param node? render.md.Node
 ---@param opts render.md.MarkOpts
 ---@param offset? Range4
 ---@return boolean
 function Marks:over(element, node, opts, offset)
+    if node == nil then
+        return false
+    end
     offset = offset or { 0, 0, 0, 0 }
     opts.end_row = node.end_row + offset[3]
     opts.end_col = node.end_col + offset[4]
@@ -68,9 +71,7 @@ function Marks:add(element, start_row, start_col, opts)
         return false
     end
     log.add('debug', 'mark', mark)
-    if self.update then
-        self:update_context(mark)
-    end
+    self:update(mark)
     table.insert(self.marks, mark)
     return true
 end
@@ -108,7 +109,10 @@ end
 
 ---@private
 ---@param mark render.md.Mark
-function Marks:update_context(mark)
+function Marks:update(mark)
+    if not self.inline then
+        return
+    end
     local row, start_col = mark.start_row, mark.start_col
     if mark.opts.conceal ~= nil then
         local end_col = assert(mark.opts.end_col)

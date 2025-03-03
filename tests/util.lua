@@ -66,6 +66,12 @@ function M.conceal()
     return { conceal = '' }
 end
 
+---@return vim.api.keyset.set_extmark
+function M.conceal_lines()
+    ---@type vim.api.keyset.set_extmark
+    return { conceal_lines = '' }
+end
+
 ---@param kind 'code'|'inline'|'link'
 ---@return vim.api.keyset.set_extmark
 function M.highlight(kind)

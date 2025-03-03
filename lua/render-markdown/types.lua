@@ -18,6 +18,14 @@
 ---@field render fun(ctx: render.md.CallbackContext)
 ---@field clear fun(ctx: render.md.CallbackContext)
 
+---@class (exact) render.md.Directive
+---@field id integer
+---@field name string
+
+---@class (exact) render.md.Pattern
+---@field disable boolean
+---@field directives render.md.Directive[]
+
 ---@class (exact) render.md.Injection
 ---@field enabled boolean
 ---@field query string
@@ -230,6 +238,7 @@
 ---@field file_types string[]
 ---@field change_events string[]
 ---@field injections table<string, render.md.Injection>
+---@field patterns table<string, render.md.Pattern>
 ---@field on render.md.Callback
 ---@field completions render.md.Completions
 ---@field overrides render.md.ConfigOverrides

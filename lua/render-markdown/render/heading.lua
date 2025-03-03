@@ -106,7 +106,7 @@ function Render:render()
         self:border(width, 'above', self.heading.above, self.node.start_row - 1)
         self:border(width, 'below', self.heading.below, self.node.end_row)
     else
-        self:conceal_underline()
+        self.marks:over(true, self.data.marker, { conceal = '' })
     end
 end
 
@@ -282,11 +282,6 @@ function Render:left_pad(width)
             virt_text_pos = 'inline',
         })
     end
-end
-
----@private
-function Render:conceal_underline()
-    self.marks:over(true, self.data.marker, { conceal = '' })
 end
 
 return Render

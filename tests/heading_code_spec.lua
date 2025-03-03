@@ -35,12 +35,16 @@ describe('heading_code.md', function()
 
         marks:add(row:inc(), nil, 0, nil, util.link('image'))
 
-        marks:add(row:inc(2), nil, 0, nil, util.code.sign('python'))
-        marks:add(row:get(), nil, 3, nil, util.code.icon('python'))
+        marks
+            :add(row:inc(2), nil, 0, nil, util.code.sign('python'))
+            :add(row:get(), row:get(), 0, 3, util.conceal())
+            :add(row:get(), nil, 3, nil, util.code.icon('python'))
+            :add(row:get(), row:get(), 3, 9, util.conceal())
         for _ = 13, 22 do
             marks:add(row:get(), row:inc(), 0, 0, util.code.bg())
         end
-        marks:add(row:get(), nil, 0, nil, util.code.border(false, vim.o.columns))
+        marks:add(row:get(), row:get(), 0, 3, util.conceal())
+        marks:add(row:get(), row:get(), 0, 3, util.conceal_lines())
 
         util.assert_view(marks, {
             '󰫎 󰲡 Heading 1',
@@ -55,7 +59,7 @@ describe('heading_code.md', function()
             '',
             '  󰥶 Image',
             '',
-            -- '󰌠 󰌠 python {filename="demo.py"}',
+            '󰌠 󰌠 python {filename="demo.py"}',
             '  def main() -> None:',
             '      sum = 0',
             '      for i in range(10):',
@@ -65,7 +69,6 @@ describe('heading_code.md', function()
             '',
             '  if __name__ == "__main__":',
             '      main()',
-            -- '  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
         })
     end)
 end)

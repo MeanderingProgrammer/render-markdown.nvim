@@ -97,11 +97,7 @@ function Base:scope(element, node, highlight)
     if node == nil or highlight == nil then
         return
     end
-    local inline = node:child('inline')
-    if inline == nil then
-        return
-    end
-    self.marks:over(element, inline, { hl_group = highlight })
+    self.marks:over(element, node:child('inline'), { hl_group = highlight })
 end
 
 ---@protected

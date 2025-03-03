@@ -72,18 +72,18 @@ function Conceal:has(line, entry)
     return false
 end
 
----@param width integer
 ---@param character? string
 ---@return integer
-function Conceal:adjust(width, character)
+function Conceal:width(character)
     if self.level == 1 then
         -- each block is replaced with one character
-        return width - 1
+        return 1
     elseif self.level == 2 then
         -- replacement character width is used
-        return width - Str.width(character)
+        return Str.width(character)
     else
-        return width
+        -- text is completely hidden
+        return 0
     end
 end
 
@@ -100,7 +100,7 @@ function Conceal:get(node)
     local result = 0
     for _, section in ipairs(self:line(node).sections) do
         if node.start_col < section.end_col and node.end_col > section.start_col then
-            local width = self:adjust(section.width, section.character)
+            local width = section.width - self:width(section.character)
             result = result + width
         end
     end

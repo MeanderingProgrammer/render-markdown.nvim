@@ -17,6 +17,8 @@ function MarkDetails.new(row, col, details)
     end
     ---@diagnostic disable-next-line: assign-type-mismatch
     self.conceal = details.conceal
+    ---@diagnostic disable-next-line: undefined-field
+    self.conceal_lines = details.conceal_lines
     self.virt_text = details.virt_text
     if self.virt_text ~= nil then
         for _, text in ipairs(self.virt_text) do
@@ -95,6 +97,9 @@ function MarkDetails:priorities()
         self.virt_text_pos == 'inline' and 0 or 1,
         -- text width
         width,
+        -- conceal
+        self.conceal ~= nil and 0 or 1,
+        self.conceal_lines ~= nil and 0 or 1,
     }
 end
 

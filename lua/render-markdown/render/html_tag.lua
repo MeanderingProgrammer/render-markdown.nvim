@@ -20,21 +20,12 @@ function Render:setup()
 end
 
 function Render:render()
-    self:hide('start_tag')
-    self:hide('end_tag')
+    self.marks:over(true, self.node:child('start_tag'), { conceal = '' })
+    self.marks:over(true, self.node:child('end_tag'), { conceal = '' })
     self.marks:start(false, self.node, {
         virt_text = { { self.tag.icon, self.tag.highlight } },
         virt_text_pos = 'inline',
     })
-end
-
----@private
----@param child string
-function Render:hide(child)
-    local node = self.node:child(child)
-    if node ~= nil then
-        self.marks:over(true, node, { conceal = '' })
-    end
 end
 
 return Render
