@@ -135,7 +135,7 @@ end
 ---@protected
 ---@param width integer
 ---@param highlight? string|string[]
----@return render.md.line.Text
+---@return render.md.Text
 function Base:pad(width, highlight)
     return { Str.pad(width), highlight or self.config.padding.highlight }
 end
