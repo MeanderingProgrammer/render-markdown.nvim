@@ -44,7 +44,7 @@ function Base:sign(text, highlight)
     if highlight ~= nil then
         sign_highlight = colors.combine(highlight, sign_highlight)
     end
-    self.marks:add_start('sign', self.node, {
+    self.marks:add('sign', self.node.start_row, self.node.start_col, {
         sign_text = text,
         sign_hl_group = sign_highlight,
     })
@@ -137,7 +137,7 @@ end
 
 ---@protected
 ---@param width integer
----@param highlight? string
+---@param highlight? string|string[]
 ---@return render.md.line.Text
 function Base:pad(width, highlight)
     return { Str.pad(width), highlight or self.config.padding.highlight }

@@ -5,7 +5,7 @@ local state = require('render-markdown.state')
 local M = {}
 
 ---@private
-M.version = '8.0.14'
+M.version = '8.0.15'
 
 function M.check()
     M.start('version')
@@ -21,15 +21,15 @@ function M.check()
         vim.health.error(message)
     end
 
-    local latex = state.get(0).latex
-    local latex_advice = 'Disable LaTeX support to avoid this warning by setting { latex = { enabled = false } }'
+    local config = state.get(0)
+    local latex, latex_advice = config.latex, M.disable_advice('latex')
+    local html, html_advice = config.html, M.disable_advice('html')
 
     M.start('treesitter')
-    M.check_parser('markdown')
-    M.check_parser('markdown_inline')
-    if latex.enabled then
-        M.check_parser('latex', latex_advice)
-    end
+    M.check_parser('markdown', true)
+    M.check_parser('markdown_inline', true)
+    M.check_parser('latex', latex.enabled, latex_advice)
+    M.check_parser('html', html.enabled, html_advice)
     M.check_highlight('markdown')
 
     M.start('icons')
@@ -41,14 +41,11 @@ function M.check()
     end
 
     M.start('executables')
-    if latex.enabled then
-        M.check_executable(latex.converter, latex_advice)
-    else
-        vim.health.ok('none to check')
-    end
+    M.check_executable(latex.converter, latex.enabled, latex_advice)
 
     M.start('conflicts')
     M.check_plugin('headlines')
+    M.check_plugin('markview')
     M.check_plugin('obsidian', function(obsidian)
         if obsidian.get_client().opts.ui.enable == false then
             return nil
@@ -79,15 +76,31 @@ end
 
 ---@private
 ---@param language string
----@param advice? string
-function M.check_parser(language, advice)
+---@return string[]
+function M.disable_advice(language)
+    return {
+        string.format('Disable %s support to avoid this warning', language),
+        string.format('Set { %s = { enabled = false } }', language),
+    }
+end
+
+---@private
+---@param language string
+---@param required boolean
+---@param advice? string[]
+function M.check_parser(language, required, advice)
     local has_parser = pcall(vim.treesitter.get_parser, 0, language)
     if has_parser then
         vim.health.ok(language .. ': parser installed')
-    elseif advice == nil then
-        vim.health.error(language .. ': parser not installed')
     else
-        vim.health.warn(language .. ': parser not installed', advice)
+        local message = language .. ': parser not installed'
+        if not required then
+            vim.health.ok(message)
+        elseif advice ~= nil then
+            vim.health.warn(message, advice)
+        else
+            vim.health.error(message)
+        end
     end
 end
 
@@ -109,14 +122,20 @@ end
 
 ---@private
 ---@param name string
----@param advice? string
-function M.check_executable(name, advice)
+---@param required boolean
+---@param advice? string[]
+function M.check_executable(name, required, advice)
     if vim.fn.executable(name) == 1 then
         vim.health.ok(name .. ': installed')
-    elseif advice == nil then
-        vim.health.error(name .. ': not installed')
     else
-        vim.health.warn(name .. ': not installed', advice)
+        local message = name .. ': not installed'
+        if not required then
+            vim.health.ok(message)
+        elseif advice ~= nil then
+            vim.health.warn(message, advice)
+        else
+            vim.health.error(message)
+        end
     end
 end
 

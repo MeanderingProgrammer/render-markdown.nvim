@@ -54,8 +54,8 @@ end
 
 ---@param expected integer
 function M.num_marks(expected)
-    local namespace = require('render-markdown.core.ui').namespace
-    local marks = vim.api.nvim_buf_get_extmarks(0, namespace, 0, -1, {})
+    local ui = require('render-markdown.core.ui')
+    local marks = vim.api.nvim_buf_get_extmarks(0, ui.ns, 0, -1, {})
     assert.are.same(expected, #marks)
 end
 

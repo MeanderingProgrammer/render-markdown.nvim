@@ -48,7 +48,7 @@ function M.parse(ctx)
         table.insert(expressions, '')
     end
 
-    local latex_lines = Iter.list.map(expressions, function(expression)
+    local lines = Iter.list.map(expressions, function(expression)
         return { { expression, latex.highlight } }
     end)
 
@@ -57,7 +57,7 @@ function M.parse(ctx)
 
     local marks = List.new_marks(ctx.buf, true)
     marks:add(false, row, 0, {
-        virt_lines = latex_lines,
+        virt_lines = lines,
         virt_lines_above = above,
     })
     return marks:get()

@@ -129,8 +129,7 @@ function Render:language()
         self:sign(icon, icon_highlight)
     end
 
-    local text = icon .. ' '
-    local highlight = { icon_highlight }
+    local text, highlight = icon .. ' ', { icon_highlight }
     if self.code.border ~= 'none' then
         table.insert(highlight, self.code.highlight)
     end
@@ -140,10 +139,11 @@ function Render:language()
             -- Code blocks pick up varying amounts of leading white space depending
             -- on the context they are in. This is lumped into the delimiter node
             -- and as a result, after concealing, the extmark would be shifted.
-            local padding = Str.spaces('start', self.node.text) + self.data.language_padding
-            text = Str.pad(padding) .. text .. node.text
+            local spaces = Str.spaces('start', self.node.text)
+            local padding = Str.pad(spaces + self.data.language_padding)
+            text = padding .. text .. node.text
         end
-        return self.marks:add_start('code_language', node, {
+        return self.marks:add('code_language', node.start_row, node.start_col, {
             virt_text = { { text, highlight } },
             virt_text_pos = 'inline',
         })

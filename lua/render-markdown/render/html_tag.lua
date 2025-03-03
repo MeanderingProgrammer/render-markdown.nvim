@@ -22,7 +22,7 @@ end
 function Render:render()
     self:hide('start_tag')
     self:hide('end_tag')
-    self.marks:add_start(false, self.node, {
+    self.marks:add(false, self.node.start_row, self.node.start_col, {
         virt_text = { { self.tag.icon, self.tag.highlight } },
         virt_text_pos = 'inline',
     })

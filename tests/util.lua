@@ -472,8 +472,8 @@ end
 ---@private
 ---@return render.md.MarkInfo[]
 function M.actual_marks()
-    local namespace = require('render-markdown.core.ui').namespace
-    local marks = vim.api.nvim_buf_get_extmarks(0, namespace, 0, -1, { details = true })
+    local ui = require('render-markdown.core.ui')
+    local marks = vim.api.nvim_buf_get_extmarks(0, ui.ns, 0, -1, { details = true })
     ---@type render.md.MarkDetails[]
     local actual = {}
     for _, mark in ipairs(marks) do

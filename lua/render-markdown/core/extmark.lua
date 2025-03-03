@@ -14,25 +14,35 @@ function Extmark.new(mark)
 end
 
 ---@return render.md.Mark
-function Extmark:get_mark()
+function Extmark:get()
     return self.mark
 end
 
----@param ns_id integer
+---@param range? render.md.Range
+---@return boolean
+function Extmark:inside(range)
+    if range == nil then
+        return false
+    end
+    local row = self.mark.start_row
+    return range:contains(row, row)
+end
+
+---@param ns integer
 ---@param buf integer
-function Extmark:show(ns_id, buf)
+function Extmark:show(ns, buf)
     if self.id == nil then
         local mark = self.mark
         mark.opts.strict = false
-        self.id = vim.api.nvim_buf_set_extmark(buf, ns_id, mark.start_row, mark.start_col, mark.opts)
+        self.id = vim.api.nvim_buf_set_extmark(buf, ns, mark.start_row, mark.start_col, mark.opts)
     end
 end
 
----@param ns_id integer
+---@param ns integer
 ---@param buf integer
-function Extmark:hide(ns_id, buf)
+function Extmark:hide(ns, buf)
     if self.id ~= nil then
-        vim.api.nvim_buf_del_extmark(buf, ns_id, self.id)
+        vim.api.nvim_buf_del_extmark(buf, ns, self.id)
         self.id = nil
     end
 end

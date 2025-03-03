@@ -34,7 +34,7 @@ end
 ---@class render.md.Ui
 local M = {}
 
-M.namespace = vim.api.nvim_create_namespace('render-markdown.nvim')
+M.ns = vim.api.nvim_create_namespace('render-markdown.nvim')
 
 function M.invalidate_cache()
     for buf, buffer_state in pairs(Cache.states) do
@@ -54,9 +54,8 @@ function M.get_row_marks(buf, win)
 
     local marks = {}
     for _, extmark in ipairs(buffer_state:get_marks()) do
-        local mark = extmark:get_mark()
-        if hidden:contains(mark.start_row, mark.start_row) then
-            table.insert(marks, mark)
+        if extmark:inside(hidden) then
+            table.insert(marks, extmark:get())
         end
     end
     return row, marks
@@ -66,7 +65,7 @@ end
 ---@param buf integer
 ---@param buffer_state render.md.BufferState
 function M.clear(buf, buffer_state)
-    vim.api.nvim_buf_clear_namespace(buf, M.namespace, 0, -1)
+    vim.api.nvim_buf_clear_namespace(buf, M.ns, 0, -1)
     buffer_state:set_marks(nil)
 end
 
@@ -142,11 +141,10 @@ function M.run_update(buf, win, change)
         local hidden = config:hidden(mode, row)
         local extmarks = buffer_state:get_marks()
         for _, extmark in ipairs(extmarks) do
-            local mark = extmark:get_mark()
-            if mark.conceal and hidden ~= nil and hidden:contains(mark.start_row, mark.start_row) then
-                extmark:hide(M.namespace, buf)
+            if extmark:get().conceal and extmark:inside(hidden) then
+                extmark:hide(M.ns, buf)
             else
-                extmark:show(M.namespace, buf)
+                extmark:show(M.ns, buf)
             end
         end
         state.on.render({ buf = buf })
