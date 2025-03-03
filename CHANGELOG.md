@@ -22,16 +22,22 @@
 - update `lazy` preset to match `LazyVim` [4a28c13](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4a28c135bc3548e398ba38178fec3f705cb26fe6)
 - latex position below [#347](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/347)
   [43a971e](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/43a971e7da82e5622797b36450424ebd66cc9046)
+- improve checkhealth [1ef7664](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/1ef766414d754007b265881fa43d1984b5901742)
+- after clear callback [#356](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/356)
+- process conceal_lines metadata for `0.11` [595ac4f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/595ac4f7e7c0eaba7bf1d8fd6ec0f6ac91c7e33b)
 
 ### Bug Fixes
 
 - update checkhealth to not rely on `nvim-treesitter` [#322](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/322)
   [e05a9f2](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/e05a9f22f31c088ece3fa5928daf546a015b66ee)
+- lsp hover doc for `0.11` [#333](https://github.com/MeanderingProgrammer/render-markdown.nvim/discussions/333)
+  [b57d51d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b57d51d760f5e4f520414dbeb6dee3ec1ae07a83)
 
 ### Collaborator Shoutouts
 
 - @dsully
 - @mcDevnagh
+- @filippo-biondi
 
 ## 8.0.0 (2025-02-06)
 

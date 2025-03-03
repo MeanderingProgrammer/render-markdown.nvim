@@ -323,7 +323,6 @@ Default Configuration ~
             render = function() end,
             -- Called after plugin clears a buffer
             clear = function() end,
-
         },
         heading = {
             -- Turn on / off heading icon & background rendering
