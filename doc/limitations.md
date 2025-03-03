@@ -37,8 +37,11 @@ in this plugin. Different plugins will have different setups, below are some exa
             latex = { enabled = false },
             win_options = { conceallevel = { rendered = 2 } },
             on = {
-                attach = function()
+                render = function()
                     require('nabla').enable_virt({ autogen = true })
+                end,
+                clear = function()
+                    require('nabla').disable_virt()
                 end,
             },
         },

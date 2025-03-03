@@ -150,6 +150,7 @@ function M.run_update(buf, win, change)
         state.on.render({ buf = buf })
     else
         M.clear(buf, buffer_state)
+        state.on.clear({ buf = buf })
     end
 end
 
