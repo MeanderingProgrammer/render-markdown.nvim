@@ -33,14 +33,14 @@ end
 ---@param buf integer
 ---@param win integer
 ---@return boolean
-function M.valid(buf, win)
+function M.invalid(buf, win)
     if not vim.api.nvim_buf_is_valid(buf) then
-        return false
+        return true
     end
     if not vim.api.nvim_win_is_valid(win) then
-        return false
+        return true
     end
-    return buf == vim.fn.winbufnr(win)
+    return buf ~= vim.fn.winbufnr(win)
 end
 
 ---@return string

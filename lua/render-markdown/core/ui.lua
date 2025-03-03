@@ -1,4 +1,4 @@
-local BufferState = require('render-markdown.core.buffer_state')
+local Buffer = require('render-markdown.core.buffer')
 local Context = require('render-markdown.core.context')
 local Extmark = require('render-markdown.core.extmark')
 local Iter = require('render-markdown.lib.iter')
@@ -15,20 +15,20 @@ local builtin_handlers = {
 }
 
 ---@class render.md.cache.Ui
----@field states table<integer, render.md.BufferState>
+---@field states table<integer, render.md.Buffer>
 local Cache = {
     states = {},
 }
 
 ---@param buf integer
----@return render.md.BufferState
+---@return render.md.Buffer
 function Cache.get(buf)
-    local buffer_state = Cache.states[buf]
-    if buffer_state == nil then
-        buffer_state = BufferState.new()
-        Cache.states[buf] = buffer_state
+    local buffer = Cache.states[buf]
+    if buffer == nil then
+        buffer = Buffer.new(buf)
+        Cache.states[buf] = buffer
     end
-    return buffer_state
+    return buffer
 end
 
 ---@class render.md.Ui
@@ -37,8 +37,8 @@ local M = {}
 M.ns = vim.api.nvim_create_namespace('render-markdown.nvim')
 
 function M.invalidate_cache()
-    for buf, buffer_state in pairs(Cache.states) do
-        M.clear(buf, buffer_state)
+    for buf, buffer in pairs(Cache.states) do
+        M.clear(buf, buffer)
     end
     Cache.states = {}
 end
@@ -47,13 +47,13 @@ end
 ---@param win integer
 ---@return integer, render.md.Mark[]
 function M.get_row_marks(buf, win)
-    local config, buffer_state = state.get(buf), Cache.get(buf)
+    local config, buffer = state.get(buf), Cache.get(buf)
     local mode, row = util.mode(), util.row(buf, win)
     local hidden = config:hidden(mode, row)
     assert(row ~= nil and hidden ~= nil, 'Row & range must be known to get marks')
 
     local marks = {}
-    for _, extmark in ipairs(buffer_state:get_marks()) do
+    for _, extmark in ipairs(buffer:get_marks()) do
         if extmark:inside(hidden) then
             table.insert(marks, extmark:get())
         end
@@ -63,10 +63,10 @@ end
 
 ---@private
 ---@param buf integer
----@param buffer_state render.md.BufferState
-function M.clear(buf, buffer_state)
+---@param buffer render.md.Buffer
+function M.clear(buf, buffer)
     vim.api.nvim_buf_clear_namespace(buf, M.ns, 0, -1)
-    buffer_state:set_marks(nil)
+    buffer:set_marks(nil)
 end
 
 ---Used directly by fzf-lua: https://github.com/ibhagwan/fzf-lua/blob/main/lua/fzf-lua/previewer/builtin.lua
@@ -76,12 +76,15 @@ end
 ---@param change boolean
 function M.update(buf, win, event, change)
     log.buf('info', 'update', buf, string.format('event %s', event), string.format('change %s', change))
-    if not util.valid(buf, win) then
+    if util.invalid(buf, win) then
         return
     end
 
     local parse = M.parse(buf, win, change)
-    local config, buffer_state = state.get(buf), Cache.get(buf)
+    local config, buffer = state.get(buf), Cache.get(buf)
+    if buffer:is_empty() then
+        return
+    end
 
     local update = function()
         M.run_update(buf, win, change)
@@ -91,7 +94,7 @@ function M.update(buf, win, event, change)
     end
 
     if parse and config.debounce > 0 then
-        buffer_state:debounce(config.debounce, update)
+        buffer:debounce(config.debounce, update)
     else
         vim.schedule(update)
     end
@@ -112,12 +115,12 @@ end
 ---@param win integer
 ---@param change boolean
 function M.run_update(buf, win, change)
-    if not util.valid(buf, win) then
+    if util.invalid(buf, win) then
         return
     end
 
     local parse = M.parse(buf, win, change)
-    local config, buffer_state = state.get(buf), Cache.get(buf)
+    local config, buffer = state.get(buf), Cache.get(buf)
     local mode, row = util.mode(), util.row(buf, win)
     local next_state = M.next_state(config, win, mode)
 
@@ -129,9 +132,9 @@ function M.run_update(buf, win, change)
     end
 
     if next_state == 'rendered' then
-        if not buffer_state:has_marks() or parse then
-            M.clear(buf, buffer_state)
-            buffer_state:set_marks(M.parse_buffer({
+        if not buffer:has_marks() or parse then
+            M.clear(buf, buffer)
+            buffer:set_marks(M.parse_buffer({
                 buf = buf,
                 win = win,
                 mode = mode,
@@ -139,7 +142,7 @@ function M.run_update(buf, win, change)
             }))
         end
         local hidden = config:hidden(mode, row)
-        local extmarks = buffer_state:get_marks()
+        local extmarks = buffer:get_marks()
         for _, extmark in ipairs(extmarks) do
             if extmark:get().conceal and extmark:inside(hidden) then
                 extmark:hide(M.ns, buf)
@@ -149,7 +152,7 @@ function M.run_update(buf, win, change)
         end
         state.on.render({ buf = buf })
     else
-        M.clear(buf, buffer_state)
+        M.clear(buf, buffer)
         state.on.clear({ buf = buf })
     end
 end

@@ -176,9 +176,9 @@ Some of the more useful fields are discussed further down.
 require('render-markdown').setup({
     -- Whether markdown should be rendered by default.
     enabled = true,
-    -- Vim modes that will show a rendered view of the markdown file, :h mode(), for
-    -- all enabled components. Individual components can be enabled for other modes.
-    -- Remaining modes will be unaffected by this plugin.
+    -- Vim modes that will show a rendered view of the markdown file, :h mode(), for all enabled
+    -- components. Individual components can be enabled for other modes. Remaining modes will be
+    -- unaffected by this plugin.
     render_modes = { 'n', 'c', 't' },
     -- Maximum file size (in MB) that this plugin will attempt to render.
     -- Any file larger than this will effectively be ignored.
@@ -186,8 +186,8 @@ require('render-markdown').setup({
     -- Milliseconds that must pass before updating marks, updates occur.
     -- within the context of the visible window, not the entire buffer.
     debounce = 100,
-    -- Pre configured settings that will attempt to mimic various target
-    -- user experiences. Any user provided settings will take precedence.
+    -- Pre configured settings that will attempt to mimic various target user experiences.
+    -- Any user provided settings will take precedence.
     -- | obsidian | mimic Obsidian UI                                          |
     -- | lazy     | will attempt to stay up to date with LazyVim configuration |
     -- | none     | does nothing                                               |
@@ -221,7 +221,7 @@ require('render-markdown').setup({
         enabled = true,
         -- Which elements to always show, ignoring anti conceal behavior. Values can either be
         -- booleans to fix the behavior or string lists representing modes where anti conceal
-        -- behavior will be ignored. Possible keys are:
+        -- behavior will be ignored. Valid values are:
         --   head_icon, head_background, head_border, code_language, code_background, code_border
         --   dash, bullet, check_icon, check_scope, quote, table_border, callout, link, sign
         ignore = {
@@ -238,7 +238,7 @@ require('render-markdown').setup({
         highlight = 'Normal',
     },
     latex = {
-        -- Whether latex should be rendered, mainly used for health check
+        -- Turn on / off latex rendering.
         enabled = true,
         -- Additional modes to render latex.
         render_modes = false,
@@ -505,10 +505,10 @@ require('render-markdown').setup({
         -- Define custom checkbox states, more involved, not part of the markdown grammar.
         -- As a result this requires neovim >= 0.10.0 since it relies on 'inline' extmarks.
         -- The key is for healthcheck and to allow users to change its values, value type below.
-        -- | raw             | matched against the raw text of a 'shortcut_link'  |
-        -- | rendered        | replaces the 'raw' value when rendering            |
-        -- | highlight       | highlight for the 'rendered' icon                  |
-        -- | scope_highlight | highlight for item associated with custom checkbox |
+        -- | raw             | matched against the raw text of a 'shortcut_link'           |
+        -- | rendered        | replaces the 'raw' value when rendering                     |
+        -- | highlight       | highlight for the 'rendered' icon                           |
+        -- | scope_highlight | optional highlight for item associated with custom checkbox |
         custom = {
             todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownTodo', scope_highlight = nil },
         },
@@ -1095,10 +1095,10 @@ require('render-markdown').setup({
         -- Define custom checkbox states, more involved, not part of the markdown grammar.
         -- As a result this requires neovim >= 0.10.0 since it relies on 'inline' extmarks.
         -- The key is for healthcheck and to allow users to change its values, value type below.
-        -- | raw             | matched against the raw text of a 'shortcut_link'  |
-        -- | rendered        | replaces the 'raw' value when rendering            |
-        -- | highlight       | highlight for the 'rendered' icon                  |
-        -- | scope_highlight | highlight for item associated with custom checkbox |
+        -- | raw             | matched against the raw text of a 'shortcut_link'           |
+        -- | rendered        | replaces the 'raw' value when rendering                     |
+        -- | highlight       | highlight for the 'rendered' icon                           |
+        -- | scope_highlight | optional highlight for item associated with custom checkbox |
         custom = {
             todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownTodo', scope_highlight = nil },
         },
