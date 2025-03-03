@@ -50,13 +50,13 @@ describe('state', function()
     it('extra', function()
         assert.are.same(
             {
-                'render-markdown.additional: is not a valid key',
-                'render-markdown.anti_conceal.ignore.additional: is not a valid key',
-                'render-markdown.callout.note.additional: is not a valid key',
-                'render-markdown.checkbox.checked.additional: is not a valid key',
-                'render-markdown.latex.additional: is not a valid key',
-                'render-markdown.overrides.additional: is not a valid key',
-                'render-markdown.overrides.buftype.nofile.additional: is not a valid key',
+                'render-markdown.additional - invalid key',
+                'render-markdown.anti_conceal.ignore.additional - invalid key',
+                'render-markdown.callout.note.additional - invalid key',
+                'render-markdown.checkbox.checked.additional - invalid key',
+                'render-markdown.latex.additional - invalid key',
+                'render-markdown.overrides.additional - invalid key',
+                'render-markdown.overrides.buftype.nofile.additional - invalid key',
             },
             validate({
                 additional = true,
@@ -73,26 +73,28 @@ describe('state', function()
         ---@diagnostic disable: assign-type-mismatch
         assert.are.same(
             {
-                'render-markdown.anti_conceal.ignore.sign: expected string list or type boolean or nil, got string',
-                'render-markdown.callout.a.highlight: expected type string, got nil',
-                'render-markdown.callout.b: expected type table, got string',
-                'render-markdown.checkbox.checked: expected type table, got boolean',
-                'render-markdown.checkbox.unchecked.icon: expected type string, got boolean',
-                'render-markdown.debounce: expected type number, got table',
-                'render-markdown.enabled: expected type boolean, got string',
-                'render-markdown.heading.enabled: expected type boolean, got string',
-                'render-markdown.log_level: expected one of { "off", "debug", "info", "error" }, got string',
-                'render-markdown.log_runtime: expected type boolean, got string',
-                'render-markdown.max_file_size: expected type number, got boolean',
-                'render-markdown.overrides.buftype.nofile.sign.highlight: expected type string or nil, got boolean',
-                'render-markdown.overrides.buftype.other: expected type table, got boolean',
-                'render-markdown.overrides.filetype: expected type table, got string',
-                'render-markdown.padding.highlight: expected type string, got boolean',
-                'render-markdown.preset: expected one of { "none", "lazy", "obsidian" }, got string',
-                'render-markdown.render_modes: expected string list or type boolean, got string',
+                'render-markdown.anti_conceal.ignore.sign - expected: string[] or boolean or nil, but got: string',
+                'render-markdown.bullet.icons - expected: string or string[] or string[][] or function, but got: number',
+                'render-markdown.callout.a.highlight - expected: string, but got: nil',
+                'render-markdown.callout.b - expected: table, but got: string',
+                'render-markdown.checkbox.checked - expected: table, but got: boolean',
+                'render-markdown.checkbox.unchecked.icon - expected: string, but got: boolean',
+                'render-markdown.debounce - expected: number, but got: table',
+                'render-markdown.enabled - expected: boolean, but got: string',
+                'render-markdown.heading.enabled - expected: boolean, but got: string',
+                'render-markdown.log_level - expected: "off" or "debug" or "info" or "error", but got: "invalid"',
+                'render-markdown.log_runtime - expected: boolean, but got: string',
+                'render-markdown.max_file_size - expected: number, but got: boolean',
+                'render-markdown.overrides.buftype.nofile.sign.highlight - expected: string or nil, but got: boolean',
+                'render-markdown.overrides.buftype.other - expected: table, but got: boolean',
+                'render-markdown.overrides.filetype - expected: table, but got: string',
+                'render-markdown.padding.highlight - expected: string, but got: boolean',
+                'render-markdown.preset - expected: "none" or "lazy" or "obsidian", but got: "invalid"',
+                'render-markdown.render_modes - expected: string[] or boolean, but got: string',
             },
             validate({
                 anti_conceal = { ignore = { sign = 'invalid' } },
+                bullet = { icons = 0 },
                 callout = {
                     a = { raw = 'value', rendered = 'value' },
                     b = 'invalid',
@@ -119,8 +121,8 @@ describe('state', function()
 
         assert.are.same(
             {
-                'render-markdown.checkbox: expected type table, got string',
-                'render-markdown.render_modes: expected string list or type boolean, got table, info: [1] is number',
+                'render-markdown.checkbox - expected: table, but got: string',
+                'render-markdown.render_modes - expected: string[] or boolean, but got: table, info: [1] is number',
             },
             validate({
                 checkbox = 'invalid',

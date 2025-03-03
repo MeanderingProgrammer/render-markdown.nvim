@@ -59,7 +59,10 @@ function Render:setup()
 
     local icon, icons = nil, self.heading.icons
     if type(icons) == 'function' then
-        icon = icons({ sections = self.node:sections() })
+        icon = icons({
+            level = level,
+            sections = self.node:sections(),
+        })
     else
         icon = List.cycle(icons, level)
     end

@@ -11,7 +11,7 @@ plugin is not functioning how you expect. As such it is recommended to go in ord
 
 If there are any `errors` these should be looked at closely, `warnings` can largely
 be ignored. They are generated to help debug issues for less critical components,
-i.e. `LaTeX` support.
+i.e. `latex` support.
 
 ## Validate `filetype`
 

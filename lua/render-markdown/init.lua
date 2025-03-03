@@ -156,21 +156,23 @@ local M = {}
 ---@field public index integer
 ---@field public value string
 
----@alias render.md.bullet.Icons
+---@alias render.md.bullet.Text
+---| string
 ---| string[]
 ---| string[][]
 ---| fun(ctx: render.md.BulletContext): string?
 
----@alias render.md.bullet.Padding
+---@alias render.md.bullet.Int
 ---| integer
 ---| fun(ctx: render.md.BulletContext): integer
 
 ---@class (exact) render.md.UserBullet: render.md.UserBaseComponent
----@field public icons? render.md.bullet.Icons
----@field public ordered_icons? render.md.bullet.Icons
----@field public left_pad? render.md.bullet.Padding
----@field public right_pad? render.md.bullet.Padding
----@field public highlight? string
+---@field public icons? render.md.bullet.Text
+---@field public ordered_icons? render.md.bullet.Text
+---@field public left_pad? render.md.bullet.Int
+---@field public right_pad? render.md.bullet.Int
+---@field public highlight? render.md.bullet.Text
+---@field public scope_highlight? render.md.bullet.Text
 
 ---@class (exact) render.md.UserDash: render.md.UserBaseComponent
 ---@field public icon? string
@@ -214,6 +216,7 @@ local M = {}
 ---@field public foreground? string
 
 ---@class (exact) render.md.HeadingContext
+---@field public level integer
 ---@field public sections integer[]
 
 ---@alias render.md.heading.Icons
@@ -316,37 +319,37 @@ local M = {}
 
 ---@type render.md.Config
 M.default_config = {
-    -- Whether Markdown should be rendered by default or not
+    -- Whether markdown should be rendered by default.
     enabled = true,
     -- Vim modes that will show a rendered view of the markdown file, :h mode(), for
     -- all enabled components. Individual components can be enabled for other modes.
     -- Remaining modes will be unaffected by this plugin.
     render_modes = { 'n', 'c', 't' },
-    -- Maximum file size (in MB) that this plugin will attempt to render
-    -- Any file larger than this will effectively be ignored
+    -- Maximum file size (in MB) that this plugin will attempt to render.
+    -- Any file larger than this will effectively be ignored.
     max_file_size = 10.0,
-    -- Milliseconds that must pass before updating marks, updates occur
-    -- within the context of the visible window, not the entire buffer
+    -- Milliseconds that must pass before updating marks, updates occur.
+    -- within the context of the visible window, not the entire buffer.
     debounce = 100,
     -- Pre configured settings that will attempt to mimic various target
     -- user experiences. Any user provided settings will take precedence.
-    --  obsidian: mimic Obsidian UI
-    --  lazy:     will attempt to stay up to date with LazyVim configuration
-    --  none:     does nothing
+    -- | obsidian | mimic Obsidian UI                                          |
+    -- | lazy     | will attempt to stay up to date with LazyVim configuration |
+    -- | none     | does nothing                                               |
     preset = 'none',
-    -- The level of logs to write to file: vim.fn.stdpath('state') .. '/render-markdown.log'
-    -- Only intended to be used for plugin development / debugging
+    -- The level of logs to write to file: vim.fn.stdpath('state') .. '/render-markdown.log'.
+    -- Only intended to be used for plugin development / debugging.
     log_level = 'error',
-    -- Print runtime of main update method
-    -- Only intended to be used for plugin development / debugging
+    -- Print runtime of main update method.
+    -- Only intended to be used for plugin development / debugging.
     log_runtime = false,
-    -- Filetypes this plugin will run on
+    -- Filetypes this plugin will run on.
     file_types = { 'markdown' },
-    -- Additional events that will trigger this plugin's render loop
+    -- Additional events that will trigger this plugin's render loop.
     change_events = {},
-    -- Out of the box language injections for known filetypes that allow markdown to be
-    -- interpreted in specified locations, see :h treesitter-language-injections
-    -- Set enabled to false in order to disable
+    -- Out of the box language injections for known filetypes that allow markdown to be interpreted
+    -- in specified locations, see :h treesitter-language-injections.
+    -- Set enabled to false in order to disable.
     injections = {
         gitcommit = {
             enabled = true,
@@ -359,107 +362,107 @@ M.default_config = {
         },
     },
     anti_conceal = {
-        -- This enables hiding any added text on the line the cursor is on
+        -- This enables hiding any added text on the line the cursor is on.
         enabled = true,
-        -- Which elements to always show, ignoring anti conceal behavior. Values can either be booleans
-        -- to fix the behavior or string lists representing modes where anti conceal behavior will be
-        -- ignored. Possible keys are:
-        --  head_icon, head_background, head_border, code_language, code_background, code_border
-        --  dash, bullet, check_icon, check_scope, quote, table_border, callout, link, sign
+        -- Which elements to always show, ignoring anti conceal behavior. Values can either be
+        -- booleans to fix the behavior or string lists representing modes where anti conceal
+        -- behavior will be ignored. Possible keys are:
+        --   head_icon, head_background, head_border, code_language, code_background, code_border
+        --   dash, bullet, check_icon, check_scope, quote, table_border, callout, link, sign
         ignore = {
             code_background = true,
             sign = true,
         },
-        -- Number of lines above cursor to show
+        -- Number of lines above cursor to show.
         above = 0,
-        -- Number of lines below cursor to show
+        -- Number of lines below cursor to show.
         below = 0,
     },
     padding = {
-        -- Highlight to use when adding whitespace, should match background
+        -- Highlight to use when adding whitespace, should match background.
         highlight = 'Normal',
     },
     latex = {
-        -- Whether LaTeX should be rendered, mainly used for health check
+        -- Whether latex should be rendered, mainly used for health check
         enabled = true,
-        -- Additional modes to render LaTeX
+        -- Additional modes to render latex.
         render_modes = false,
-        -- Executable used to convert latex formula to rendered unicode
+        -- Executable used to convert latex formula to rendered unicode.
         converter = 'latex2text',
-        -- Highlight for LaTeX blocks
+        -- Highlight for latex blocks.
         highlight = 'RenderMarkdownMath',
-        -- Determines where latex formula is rendered relative to block:
-        --  above: above latex block
-        --  below: below latex block
+        -- Determines where latex formula is rendered relative to block.
+        -- | above | above latex block |
+        -- | below | below latex block |
         position = 'above',
-        -- Amount of empty lines above LaTeX blocks
+        -- Number of empty lines above latex blocks.
         top_pad = 0,
-        -- Amount of empty lines below LaTeX blocks
+        -- Number of empty lines below latex blocks.
         bottom_pad = 0,
     },
     on = {
-        -- Called when plugin initially attaches to a buffer
+        -- Called when plugin initially attaches to a buffer.
         attach = function() end,
-        -- Called after plugin renders a buffer
+        -- Called after plugin renders a buffer.
         render = function() end,
-        -- Called after plugin clears a buffer
+        -- Called after plugin clears a buffer.
         clear = function() end,
     },
+    -- Useful context to have when evaluating values.
+    -- | level    | the number of '#' in the heading marker         |
+    -- | sections | for each level how deeply nested the heading is |
     heading = {
-        -- Turn on / off heading icon & background rendering
+        -- Turn on / off heading icon & background rendering.
         enabled = true,
-        -- Additional modes to render headings
+        -- Additional modes to render headings.
         render_modes = false,
-        -- Turn on / off any sign column related rendering
+        -- Turn on / off any sign column related rendering.
         sign = true,
-        -- Replaces '#+' of 'atx_h._marker'
-        -- The number of '#' in the heading determines the 'level'
-        -- The 'level' is used to index into the list using a cycle
-        -- If the value is a function the input context contains the nesting level of the heading within sections
+        -- Replaces '#+' of 'atx_h._marker'.
+        -- Output is evaluated depending on the type.
+        -- | function | `value(context)`              |
+        -- | string[] | `cycle(value, context.level)` |
         icons = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
-        -- Determines how icons fill the available space:
-        --  right:   '#'s are concealed and icon is appended to right side
-        --  inline:  '#'s are concealed and icon is inlined on left side
-        --  overlay: icon is left padded with spaces and inserted on left hiding any additional '#'
+        -- Determines how icons fill the available space.
+        -- | right   | '#'s are concealed and icon is appended to right side                          |
+        -- | inline  | '#'s are concealed and icon is inlined on left side                            |
+        -- | overlay | icon is left padded with spaces and inserted on left hiding any additional '#' |
         position = 'overlay',
-        -- Added to the sign column if enabled
-        -- The 'level' is used to index into the list using a cycle
+        -- Added to the sign column if enabled.
+        -- Output is evaluated by `cycle(value, context.level)`.
         signs = { '󰫎 ' },
-        -- Width of the heading background:
-        --  block: width of the heading text
-        --  full:  full width of the window
-        -- Can also be a list of the above values in which case the 'level' is used
-        -- to index into the list using a clamp
+        -- Width of the heading background.
+        -- | block | width of the heading text |
+        -- | full  | full width of the window  |
+        -- Can also be a list of the above values evaluated by `clamp(value, context.level)`.
         width = 'full',
-        -- Amount of margin to add to the left of headings
-        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
-        -- Margin available space is computed after accounting for padding
-        -- Can also be a list of numbers in which case the 'level' is used to index into the list using a clamp
+        -- Amount of margin to add to the left of headings.
+        -- Margin available space is computed after accounting for padding.
+        -- If a float < 1 is provided it is treated as a percentage of available window space.
+        -- Can also be a list of numbers evaluated by `clamp(value, context.level)`.
         left_margin = 0,
-        -- Amount of padding to add to the left of headings
-        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
-        -- Can also be a list of numbers in which case the 'level' is used to index into the list using a clamp
+        -- Amount of padding to add to the left of headings.
+        -- Output is evaluated using the same logic as 'left_margin'.
         left_pad = 0,
-        -- Amount of padding to add to the right of headings when width is 'block'
-        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
-        -- Can also be a list of numbers in which case the 'level' is used to index into the list using a clamp
+        -- Amount of padding to add to the right of headings when width is 'block'.
+        -- Output is evaluated using the same logic as 'left_margin'.
         right_pad = 0,
-        -- Minimum width to use for headings when width is 'block'
-        -- Can also be a list of integers in which case the 'level' is used to index into the list using a clamp
+        -- Minimum width to use for headings when width is 'block'.
+        -- Can also be a list of integers evaluated by `clamp(value, context.level)`.
         min_width = 0,
-        -- Determines if a border is added above and below headings
-        -- Can also be a list of booleans in which case the 'level' is used to index into the list using a clamp
+        -- Determines if a border is added above and below headings.
+        -- Can also be a list of booleans evaluated by `clamp(value, context.level)`.
         border = false,
-        -- Always use virtual lines for heading borders instead of attempting to use empty lines
+        -- Always use virtual lines for heading borders instead of attempting to use empty lines.
         border_virtual = false,
-        -- Highlight the start of the border using the foreground highlight
+        -- Highlight the start of the border using the foreground highlight.
         border_prefix = false,
-        -- Used above heading for border
+        -- Used above heading for border.
         above = '▄',
-        -- Used below heading for border
+        -- Used below heading for border.
         below = '▀',
-        -- The 'level' is used to index into the list using a clamp
-        -- Highlight for the heading icon and extends through the entire line
+        -- Highlight for the heading icon and extends through the entire line.
+        -- Output is evaluated by `clamp(value, context.level)`.
         backgrounds = {
             'RenderMarkdownH1Bg',
             'RenderMarkdownH2Bg',
@@ -468,8 +471,8 @@ M.default_config = {
             'RenderMarkdownH5Bg',
             'RenderMarkdownH6Bg',
         },
-        -- The 'level' is used to index into the list using a clamp
-        -- Highlight for the heading and sign icons
+        -- Highlight for the heading and sign icons.
+        -- Output is evaluated using the same logic as 'backgrounds'.
         foregrounds = {
             'RenderMarkdownH1',
             'RenderMarkdownH2',
@@ -478,218 +481,230 @@ M.default_config = {
             'RenderMarkdownH5',
             'RenderMarkdownH6',
         },
-        -- Define custom heading patterns which allow you to override various properties
-        -- based on the contents of a heading. Each entry should consist of a string key,
-        -- which is used mostly as an identifier, and a table value with:
-        --   'pattern':    Matched against the heading text see :h lua-pattern
-        --   'icon':       Optional override for the icon
-        --   'background': Optional override for the background
-        --   'foreground': Optional override for the foreground
+        -- Define custom heading patterns which allow you to override various properties based on
+        -- the contents of a heading.
+        -- The key is for healthcheck and to allow users to change its values, value type below.
+        -- | pattern    | matched against the heading text @see :h lua-pattern |
+        -- | icon       | optional override for the icon                       |
+        -- | background | optional override for the background                 |
+        -- | foreground | optional override for the foreground                 |
         custom = {},
     },
     paragraph = {
-        -- Turn on / off paragraph rendering
+        -- Turn on / off paragraph rendering.
         enabled = true,
-        -- Additional modes to render paragraphs
+        -- Additional modes to render paragraphs.
         render_modes = false,
-        -- Amount of margin to add to the left of paragraphs
-        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
+        -- Amount of margin to add to the left of paragraphs.
+        -- If a float < 1 is provided it is treated as a percentage of available window space.
         left_margin = 0,
-        -- Minimum width to use for paragraphs
+        -- Minimum width to use for paragraphs.
         min_width = 0,
     },
     code = {
-        -- Turn on / off code block & inline code rendering
+        -- Turn on / off code block & inline code rendering.
         enabled = true,
-        -- Additional modes to render code blocks
+        -- Additional modes to render code blocks.
         render_modes = false,
-        -- Turn on / off any sign column related rendering
+        -- Turn on / off any sign column related rendering.
         sign = true,
-        -- Determines how code blocks & inline code are rendered:
-        --  none:     disables all rendering
-        --  normal:   adds highlight group to code blocks & inline code, adds padding to code blocks
-        --  language: adds language icon to sign column if enabled and icon + name above code blocks
-        --  full:     normal + language
+        -- Determines how code blocks & inline code are rendered.
+        -- | none     | disables all rendering                                                    |
+        -- | normal   | highlight group to code blocks & inline code, adds padding to code blocks |
+        -- | language | language icon to sign column if enabled and icon + name above code blocks |
+        -- | full     | normal + language                                                         |
         style = 'full',
-        -- Determines where language icon is rendered:
-        --  right: right side of code block
-        --  left:  left side of code block
+        -- Determines where language icon is rendered.
+        -- | right | right side of code block |
+        -- | left  | left side of code block  |
         position = 'left',
-        -- Amount of padding to add around the language
-        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
+        -- Amount of padding to add around the language.
+        -- If a float < 1 is provided it is treated as a percentage of available window space.
         language_pad = 0,
-        -- Whether to include the language name next to the icon
+        -- Whether to include the language name next to the icon.
         language_name = true,
-        -- A list of language names for which background highlighting will be disabled
-        -- Likely because that language has background highlights itself
-        -- Or a boolean to make behavior apply to all languages
-        -- Borders above & below blocks will continue to be rendered
+        -- A list of language names for which background highlighting will be disabled.
+        -- Likely because that language has background highlights itself.
+        -- Use a boolean to make behavior apply to all languages.
+        -- Borders above & below blocks will continue to be rendered.
         disable_background = { 'diff' },
-        -- Width of the code block background:
-        --  block: width of the code block
-        --  full:  full width of the window
+        -- Width of the code block background.
+        -- | block | width of the code block  |
+        -- | full  | full width of the window |
         width = 'full',
-        -- Amount of margin to add to the left of code blocks
-        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
-        -- Margin available space is computed after accounting for padding
+        -- Amount of margin to add to the left of code blocks.
+        -- If a float < 1 is provided it is treated as a percentage of available window space.
+        -- Margin available space is computed after accounting for padding.
         left_margin = 0,
-        -- Amount of padding to add to the left of code blocks
-        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
+        -- Amount of padding to add to the left of code blocks.
+        -- If a float < 1 is provided it is treated as a percentage of available window space.
         left_pad = 0,
-        -- Amount of padding to add to the right of code blocks when width is 'block'
-        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
+        -- Amount of padding to add to the right of code blocks when width is 'block'.
+        -- If a float < 1 is provided it is treated as a percentage of available window space.
         right_pad = 0,
-        -- Minimum width to use for code blocks when width is 'block'
+        -- Minimum width to use for code blocks when width is 'block'.
         min_width = 0,
-        -- Determines how the top / bottom of code block are rendered:
-        --  none:  do not render a border
-        --  thick: use the same highlight as the code body
-        --  thin:  when lines are empty overlay the above & below icons
+        -- Determines how the top / bottom of code block are rendered.
+        -- | none  | do not render a border                               |
+        -- | thick | use the same highlight as the code body              |
+        -- | thin  | when lines are empty overlay the above & below icons |
         border = 'thin',
-        -- Used above code blocks for thin border
+        -- Used above code blocks for thin border.
         above = '▄',
-        -- Used below code blocks for thin border
+        -- Used below code blocks for thin border.
         below = '▀',
-        -- Highlight for code blocks
+        -- Highlight for code blocks.
         highlight = 'RenderMarkdownCode',
-        -- Highlight for language, overrides icon provider value
+        -- Highlight for language, overrides icon provider value.
         highlight_language = nil,
-        -- Padding to add to the left & right of inline code
+        -- Padding to add to the left & right of inline code.
         inline_pad = 0,
-        -- Highlight for inline code
+        -- Highlight for inline code.
         highlight_inline = 'RenderMarkdownCodeInline',
     },
     dash = {
-        -- Turn on / off thematic break rendering
+        -- Turn on / off thematic break rendering.
         enabled = true,
-        -- Additional modes to render dash
+        -- Additional modes to render dash.
         render_modes = false,
-        -- Replaces '---'|'***'|'___'|'* * *' of 'thematic_break'
-        -- The icon gets repeated across the window's width
+        -- Replaces '---'|'***'|'___'|'* * *' of 'thematic_break'.
+        -- The icon gets repeated across the window's width.
         icon = '─',
-        -- Width of the generated line:
-        --  <number>: a hard coded width value, if a floating point value < 1 is provided it is
-        --            treated as a percentage of the available window space
-        --  full:     full width of the window
+        -- Width of the generated line.
+        -- | <number> | a hard coded width value |
+        -- | full     | full width of the window |
+        -- If a float < 1 is provided it is treated as a percentage of available window space.
         width = 'full',
-        -- Amount of margin to add to the left of dash
-        -- If a floating point value < 1 is provided it is treated as a percentage of the available window space
+        -- Amount of margin to add to the left of dash.
+        -- If a float < 1 is provided it is treated as a percentage of available window space.
         left_margin = 0,
-        -- Highlight for the whole line generated from the icon
+        -- Highlight for the whole line generated from the icon.
         highlight = 'RenderMarkdownDash',
     },
+    -- Useful context to have when evaluating values.
+    -- | level | how deeply nested the list is, 1-indexed          |
+    -- | index | how far down the item is at that level, 1-indexed |
+    -- | value | text value of the marker node                     |
     bullet = {
         -- Turn on / off list bullet rendering
         enabled = true,
         -- Additional modes to render list bullets
         render_modes = false,
-        -- Replaces '-'|'+'|'*' of 'list_item'
-        -- How deeply nested the list is determines the 'level', how far down at that level determines the 'index'
-        -- If a function is provided both of these values are provided in the context using 1 based indexing
-        -- If a list is provided we index into it using a cycle based on the level
-        -- If the value at that level is also a list we further index into it using a clamp based on the index
-        -- If the item is a 'checkbox' a conceal is used to hide the bullet instead
+        -- Replaces '-'|'+'|'*' of 'list_item'.
+        -- If the item is a 'checkbox' a conceal is used to hide the bullet instead.
+        -- Output is evaluated depending on the type.
+        -- | function   | `value(context)`                                    |
+        -- | string     | `value`                                             |
+        -- | string[]   | `cycle(value, context.level)`                       |
+        -- | string[][] | `clamp(cycle(value, context.level), context.index)` |
         icons = { '●', '○', '◆', '◇' },
-        -- Replaces 'n.'|'n)' of 'list_item'
-        -- How deeply nested the list is determines the 'level', how far down at that level determines the 'index'
-        -- If a function is provided both of these values are provided in the context using 1 based indexing
-        -- If a list is provided we index into it using a cycle based on the level
-        -- If the value at that level is also a list we further index into it using a clamp based on the index
+        -- Replaces 'n.'|'n)' of 'list_item'.
+        -- Output is evaluated using the same logic as 'icons'.
         ordered_icons = function(ctx)
             local value = vim.trim(ctx.value)
             local index = tonumber(value:sub(1, #value - 1))
             return string.format('%d.', index > 1 and index or ctx.index)
         end,
-        -- Padding to add to the left of bullet point
+        -- Padding to add to the left of bullet point.
+        -- Output is evaluated depending on the type.
+        -- | function | `value(context)` |
+        -- | integer  | `value`          |
         left_pad = 0,
-        -- Padding to add to the right of bullet point
+        -- Padding to add to the right of bullet point.
+        -- Output is evaluated using the same logic as 'left_pad'.
         right_pad = 0,
-        -- Highlight for the bullet icon
+        -- Highlight for the bullet icon.
+        -- Output is evaluated using the same logic as 'icons'.
         highlight = 'RenderMarkdownBullet',
+        -- Highlight for item associated with the bullet point.
+        -- Output is evaluated using the same logic as 'icons'.
+        scope_highlight = {},
     },
-    -- Checkboxes are a special instance of a 'list_item' that start with a 'shortcut_link'
-    -- There are two special states for unchecked & checked defined in the markdown grammar
+    -- Checkboxes are a special instance of a 'list_item' that start with a 'shortcut_link'.
+    -- There are two special states for unchecked & checked defined in the markdown grammar.
     checkbox = {
-        -- Turn on / off checkbox state rendering
+        -- Turn on / off checkbox state rendering.
         enabled = true,
-        -- Additional modes to render checkboxes
+        -- Additional modes to render checkboxes.
         render_modes = false,
-        -- Determines how icons fill the available space:
-        --  inline:  underlying text is concealed resulting in a left aligned icon
-        --  overlay: result is left padded with spaces to hide any additional text
+        -- Determines how icons fill the available space.
+        -- | inline  | underlying text is concealed resulting in a left aligned icon |
+        -- | overlay | result is left padded with spaces to hide any additional text |
         position = 'inline',
         unchecked = {
-            -- Replaces '[ ]' of 'task_list_marker_unchecked'
+            -- Replaces '[ ]' of 'task_list_marker_unchecked'.
             icon = '󰄱 ',
-            -- Highlight for the unchecked icon
+            -- Highlight for the unchecked icon.
             highlight = 'RenderMarkdownUnchecked',
-            -- Highlight for item associated with unchecked checkbox
+            -- Highlight for item associated with unchecked checkbox.
             scope_highlight = nil,
         },
         checked = {
-            -- Replaces '[x]' of 'task_list_marker_checked'
+            -- Replaces '[x]' of 'task_list_marker_checked'.
             icon = '󰱒 ',
-            -- Highlight for the checked icon
+            -- Highlight for the checked icon.
             highlight = 'RenderMarkdownChecked',
-            -- Highlight for item associated with checked checkbox
+            -- Highlight for item associated with checked checkbox.
             scope_highlight = nil,
         },
-        -- Define custom checkbox states, more involved as they are not part of the markdown grammar
-        -- As a result this requires neovim >= 0.10.0 since it relies on 'inline' extmarks
-        -- Can specify as many additional states as you like following the 'todo' pattern below
-        --   The key in this case 'todo' is for healthcheck and to allow users to change its values
-        --   'raw':             Matched against the raw text of a 'shortcut_link'
-        --   'rendered':        Replaces the 'raw' value when rendering
-        --   'highlight':       Highlight for the 'rendered' icon
-        --   'scope_highlight': Highlight for item associated with custom checkbox
+        -- Define custom checkbox states, more involved, not part of the markdown grammar.
+        -- As a result this requires neovim >= 0.10.0 since it relies on 'inline' extmarks.
+        -- The key is for healthcheck and to allow users to change its values, value type below.
+        -- | raw             | matched against the raw text of a 'shortcut_link'  |
+        -- | rendered        | replaces the 'raw' value when rendering            |
+        -- | highlight       | highlight for the 'rendered' icon                  |
+        -- | scope_highlight | highlight for item associated with custom checkbox |
         custom = {
             todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownTodo', scope_highlight = nil },
         },
     },
     quote = {
-        -- Turn on / off block quote & callout rendering
+        -- Turn on / off block quote & callout rendering.
         enabled = true,
-        -- Additional modes to render quotes
+        -- Additional modes to render quotes.
         render_modes = false,
-        -- Replaces '>' of 'block_quote'
+        -- Replaces '>' of 'block_quote'.
         icon = '▋',
-        -- Whether to repeat icon on wrapped lines. Requires neovim >= 0.10. This will obscure text if
-        -- not configured correctly with :h 'showbreak', :h 'breakindent' and :h 'breakindentopt'. A
-        -- combination of these that is likely to work is showbreak = '  ' (2 spaces), breakindent = true,
-        -- breakindentopt = '' (empty string). These values are not validated by this plugin. If you want
-        -- to avoid adding these to your main configuration then set them in win_options for this plugin.
+        -- Whether to repeat icon on wrapped lines. Requires neovim >= 0.10. This will obscure text
+        -- if incorrectly configured with :h 'showbreak', :h 'breakindent' and :h 'breakindentopt'.
+        -- A combination of these that is likely to work follows.
+        -- | showbreak      | '  ' (2 spaces)   |
+        -- | breakindent    | true              |
+        -- | breakindentopt | '' (empty string) |
+        -- These are not validated by this plugin. If you want to avoid adding these to your main
+        -- configuration then set them in win_options for this plugin.
         repeat_linebreak = false,
-        -- Highlight for the quote icon
+        -- Highlight for the quote icon.
         highlight = 'RenderMarkdownQuote',
     },
     pipe_table = {
-        -- Turn on / off pipe table rendering
+        -- Turn on / off pipe table rendering.
         enabled = true,
-        -- Additional modes to render pipe tables
+        -- Additional modes to render pipe tables.
         render_modes = false,
-        -- Pre configured settings largely for setting table border easier
-        --  heavy:  use thicker border characters
-        --  double: use double line border characters
-        --  round:  use round border corners
-        --  none:   does nothing
+        -- Pre configured settings largely for setting table border easier.
+        -- | heavy  | use thicker border characters     |
+        -- | double | use double line border characters |
+        -- | round  | use round border corners          |
+        -- | none   | does nothing                      |
         preset = 'none',
-        -- Determines how the table as a whole is rendered:
-        --  none:   disables all rendering
-        --  normal: applies the 'cell' style rendering to each row of the table
-        --  full:   normal + a top & bottom line that fill out the table when lengths match
+        -- Determines how the table as a whole is rendered.
+        -- | none   | disables all rendering                                                  |
+        -- | normal | applies the 'cell' style rendering to each row of the table             |
+        -- | full   | normal + a top & bottom line that fill out the table when lengths match |
         style = 'full',
-        -- Determines how individual cells of a table are rendered:
-        --  overlay: writes completely over the table, removing conceal behavior and highlights
-        --  raw:     replaces only the '|' characters in each row, leaving the cells unmodified
-        --  padded:  raw + cells are padded to maximum visual width for each column
-        --  trimmed: padded except empty space is subtracted from visual width calculation
+        -- Determines how individual cells of a table are rendered.
+        -- | overlay | writes completely over the table, removing conceal behavior and highlights |
+        -- | raw     | replaces only the '|' characters in each row, leaving the cells unmodified |
+        -- | padded  | raw + cells are padded to maximum visual width for each column             |
+        -- | trimmed | padded except empty space is subtracted from visual width calculation      |
         cell = 'padded',
-        -- Amount of space to put between cell contents and border
+        -- Amount of space to put between cell contents and border.
         padding = 1,
-        -- Minimum column width to use for padded or trimmed cell
+        -- Minimum column width to use for padded or trimmed cell.
         min_width = 0,
-        -- Characters used to replace table border
-        -- Correspond to top(3), delimiter(3), bottom(3), vertical, & horizontal
+        -- Characters used to replace table border.
+        -- Correspond to top(3), delimiter(3), bottom(3), vertical, & horizontal.
         -- stylua: ignore
         border = {
             '┌', '┬', '┐',
@@ -697,22 +712,21 @@ M.default_config = {
             '└', '┴', '┘',
             '│', '─',
         },
-        -- Gets placed in delimiter row for each column, position is based on alignment
+        -- Gets placed in delimiter row for each column, position is based on alignment.
         alignment_indicator = '━',
-        -- Highlight for table heading, delimiter, and the line above
+        -- Highlight for table heading, delimiter, and the line above.
         head = 'RenderMarkdownTableHead',
-        -- Highlight for everything else, main table rows and the line below
+        -- Highlight for everything else, main table rows and the line below.
         row = 'RenderMarkdownTableRow',
-        -- Highlight for inline padding used to add back concealed space
+        -- Highlight for inline padding used to add back concealed space.
         filler = 'RenderMarkdownTableFill',
     },
-    -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'
-    -- Can specify as many additional values as you like following the pattern from any below, such as 'note'
-    --   The key in this case 'note' is for healthcheck and to allow users to change its values
-    --   'raw':        Matched against the raw text of a 'shortcut_link', case insensitive
-    --   'rendered':   Replaces the 'raw' value when rendering
-    --   'highlight':  Highlight for the 'rendered' text and quote markers
-    --   'quote_icon': Optional override for quote.icon value for individual callout
+    -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'.
+    -- The key is for healthcheck and to allow users to change its values, value type below.
+    -- | raw        | matched against the raw text of a 'shortcut_link', case insensitive |
+    -- | rendered   | replaces the 'raw' value when rendering                             |
+    -- | highlight  | highlight for the 'rendered' text and quote markers                 |
+    -- | quote_icon | optional override for quote.icon value for individual callout       |
     callout = {
         note = { raw = '[!NOTE]', rendered = '󰋽 Note', highlight = 'RenderMarkdownInfo' },
         tip = { raw = '[!TIP]', rendered = '󰌶 Tip', highlight = 'RenderMarkdownSuccess' },
@@ -744,28 +758,28 @@ M.default_config = {
         cite = { raw = '[!CITE]', rendered = '󱆨 Cite', highlight = 'RenderMarkdownQuote' },
     },
     link = {
-        -- Turn on / off inline link icon rendering
+        -- Turn on / off inline link icon rendering.
         enabled = true,
-        -- Additional modes to render links
+        -- Additional modes to render links.
         render_modes = false,
-        -- How to handle footnote links, start with a '^'
+        -- How to handle footnote links, start with a '^'.
         footnote = {
-            -- Replace value with superscript equivalent
+            -- Replace value with superscript equivalent.
             superscript = true,
-            -- Added before link content when converting to superscript
+            -- Added before link content when converting to superscript.
             prefix = '',
-            -- Added after link content when converting to superscript
+            -- Added after link content when converting to superscript.
             suffix = '',
         },
-        -- Inlined with 'image' elements
+        -- Inlined with 'image' elements.
         image = '󰥶 ',
-        -- Inlined with 'email_autolink' elements
+        -- Inlined with 'email_autolink' elements.
         email = '󰀓 ',
-        -- Fallback icon for 'inline_link' and 'uri_autolink' elements
+        -- Fallback icon for 'inline_link' and 'uri_autolink' elements.
         hyperlink = '󰌹 ',
-        -- Applies to the inlined icon as a fallback
+        -- Applies to the inlined icon as a fallback.
         highlight = 'RenderMarkdownLink',
-        -- Applies to WikiLink elements
+        -- Applies to WikiLink elements.
         wiki = {
             icon = '󱗖 ',
             body = function()
@@ -776,11 +790,10 @@ M.default_config = {
         -- Define custom destination patterns so icons can quickly inform you of what a link
         -- contains. Applies to 'inline_link', 'uri_autolink', and wikilink nodes. When multiple
         -- patterns match a link the one with the longer pattern is used.
-        -- Can specify as many additional values as you like following the 'web' pattern below
-        --   The key in this case 'web' is for healthcheck and to allow users to change its values
-        --   'pattern':   Matched against the destination text see :h lua-pattern
-        --   'icon':      Gets inlined before the link text
-        --   'highlight': Optional highlight for the 'icon', uses fallback highlight if not provided
+        -- The key is for healthcheck and to allow users to change its values, value type below.
+        -- | pattern   | matched against the destination text, @see :h lua-pattern       |
+        -- | icon      | gets inlined before the link text                               |
+        -- | highlight | optional highlight for 'icon', uses fallback highlight if empty |
         custom = {
             web = { pattern = '^http', icon = '󰖟 ' },
             discord = { pattern = 'discord%.com', icon = '󰙯 ' },
@@ -795,86 +808,86 @@ M.default_config = {
         },
     },
     sign = {
-        -- Turn on / off sign rendering
+        -- Turn on / off sign rendering.
         enabled = true,
-        -- Applies to background of sign text
+        -- Applies to background of sign text.
         highlight = 'RenderMarkdownSign',
     },
-    -- Mimics Obsidian inline highlights when content is surrounded by double equals
-    -- The equals on both ends are concealed and the inner content is highlighted
+    -- Mimics Obsidian inline highlights when content is surrounded by double equals.
+    -- The equals on both ends are concealed and the inner content is highlighted.
     inline_highlight = {
-        -- Turn on / off inline highlight rendering
+        -- Turn on / off inline highlight rendering.
         enabled = true,
-        -- Additional modes to render inline highlights
+        -- Additional modes to render inline highlights.
         render_modes = false,
-        -- Applies to background of surrounded text
+        -- Applies to background of surrounded text.
         highlight = 'RenderMarkdownInlineHighlight',
     },
-    -- Mimic org-indent-mode behavior by indenting everything under a heading based on the
-    -- level of the heading. Indenting starts from level 2 headings onward.
+    -- Mimic org-indent-mode behavior by indenting everything under a heading based on the level of
+    -- the heading. Indenting starts from level 2 headings onward by default.
     indent = {
-        -- Turn on / off org-indent-mode
+        -- Turn on / off org-indent-mode.
         enabled = false,
-        -- Additional modes to render indents
+        -- Additional modes to render indents.
         render_modes = false,
-        -- Amount of additional padding added for each heading level
+        -- Amount of additional padding added for each heading level.
         per_level = 2,
-        -- Heading levels <= this value will not be indented
-        -- Use 0 to begin indenting from the very first level
+        -- Heading levels <= this value will not be indented.
+        -- Use 0 to begin indenting from the very first level.
         skip_level = 1,
-        -- Do not indent heading titles, only the body
+        -- Do not indent heading titles, only the body.
         skip_heading = false,
-        -- Prefix added when indenting, one per level
+        -- Prefix added when indenting, one per level.
         icon = '▎',
-        -- Applied to icon
+        -- Applied to icon.
         highlight = 'RenderMarkdownIndent',
     },
     html = {
-        -- Turn on / off all HTML rendering
+        -- Turn on / off all HTML rendering.
         enabled = true,
-        -- Additional modes to render HTML
+        -- Additional modes to render HTML.
         render_modes = false,
         comment = {
-            -- Turn on / off HTML comment concealing
+            -- Turn on / off HTML comment concealing.
             conceal = true,
-            -- Optional text to inline before the concealed comment
+            -- Optional text to inline before the concealed comment.
             text = nil,
-            -- Highlight for the inlined text
+            -- Highlight for the inlined text.
             highlight = 'RenderMarkdownHtmlComment',
         },
-        -- HTML tags whose start and end will be hidden and icon shown
-        --   The key is matched against the tag name
-        --   'icon':      Gets inlined at the start
-        --   'highlight': Highlight for the icon
+        -- HTML tags whose start and end will be hidden and icon shown.
+        -- The key is matched against the tag name, value type below.
+        -- | icon      | gets inlined at the start |
+        -- | highlight | highlight for the icon    |
         tag = {},
     },
-    -- Window options to use that change between rendered and raw view
+    -- Window options to use that change between rendered and raw view.
     win_options = {
-        -- See :h 'conceallevel'
+        -- @see :h 'conceallevel'
         conceallevel = {
-            -- Used when not being rendered, get user setting
+            -- Used when not being rendered, get user setting.
             default = vim.api.nvim_get_option_value('conceallevel', {}),
-            -- Used when being rendered, concealed text is completely hidden
+            -- Used when being rendered, concealed text is completely hidden.
             rendered = 3,
         },
-        -- See :h 'concealcursor'
+        -- @see :h 'concealcursor'
         concealcursor = {
-            -- Used when not being rendered, get user setting
+            -- Used when not being rendered, get user setting.
             default = vim.api.nvim_get_option_value('concealcursor', {}),
-            -- Used when being rendered, disable concealing text in all modes
+            -- Used when being rendered, disable concealing text in all modes.
             rendered = '',
         },
     },
-    -- More granular configuration mechanism, allows different aspects of buffers
-    -- to have their own behavior. Values default to the top level configuration
-    -- if no override is provided. Supports the following fields:
-    --   enabled, max_file_size, debounce, render_modes, anti_conceal, padding,
-    --   heading, paragraph, code, dash, bullet, checkbox, quote, pipe_table,
-    --   callout, link, sign, indent, latex, html, win_options
+    -- More granular configuration mechanism, allows different aspects of buffers to have their own
+    -- behavior. Values default to the top level configuration if no override is provided. Supports
+    -- the following fields:
+    --   enabled, max_file_size, debounce, render_modes, anti_conceal, padding, heading, paragraph,
+    --   code, dash, bullet, checkbox, quote, pipe_table, callout, link, sign, indent, latex, html,
+    --   win_options
     overrides = {
-        -- Override for different buflisted values, see :h 'buflisted'
+        -- Override for different buflisted values, @see :h 'buflisted'.
         buflisted = {},
-        -- Override for different buftype values, see :h 'buftype'
+        -- Override for different buftype values, @see :h 'buftype'.
         buftype = {
             nofile = {
                 render_modes = true,
@@ -882,11 +895,11 @@ M.default_config = {
                 sign = { enabled = false },
             },
         },
-        -- Override for different filetype values, see :h 'filetype'
+        -- Override for different filetype values, @see :h 'filetype'.
         filetype = {},
     },
-    -- Mapping from treesitter language to user defined handlers
-    -- See 'Custom Handlers' document for more info
+    -- Mapping from treesitter language to user defined handlers.
+    -- @see [Custom Handlers](doc/custom-handlers.md)
     custom_handlers = {},
 }
 

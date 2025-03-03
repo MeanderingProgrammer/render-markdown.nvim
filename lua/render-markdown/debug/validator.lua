@@ -1,6 +1,9 @@
 local Iter = require('render-markdown.lib.iter')
 
+---@alias render.md.debug.SpecKind 'type'|'value'
+
 ---@class render.md.debug.Spec
+---@field kind render.md.debug.SpecKind
 ---@field message string
 ---@field validation fun(value: any): boolean, string?
 
@@ -56,38 +59,39 @@ function Spec:nested(keys, f, nilable)
 end
 
 ---@param keys string|string[]
----@param input_types type|type[]
+---@param ts type|type[]
 ---@return render.md.debug.ValidatorSpec
-function Spec:type(keys, input_types)
-    local types, message = self:handle_types(input_types, '')
-    return self:add(keys, message, function(value)
+function Spec:type(keys, ts)
+    local types, message = self:handle_types({}, ts)
+    return self:add(keys, 'type', message, function(value)
         return vim.tbl_contains(types, type(value))
     end)
 end
 
 ---@param keys string|string[]
 ---@param values string[]
----@param input_types? type|type[]
+---@param ts? type|type[]
 ---@return render.md.debug.ValidatorSpec
-function Spec:one_of(keys, values, input_types)
-    local types, message = self:handle_types(input_types, 'one of ' .. vim.inspect(values))
-    return self:add(keys, message, function(value)
+function Spec:one_of(keys, values, ts)
+    local options = Iter.list.map(values, vim.inspect)
+    local types, message = self:handle_types(options, ts)
+    return self:add(keys, 'value', message, function(value)
         return vim.tbl_contains(values, value) or vim.tbl_contains(types, type(value))
     end)
 end
 
 ---@param keys string|string[]
----@param list_type type
----@param input_types? type|type[]
+---@param t type
+---@param ts? type|type[]
 ---@return render.md.debug.ValidatorSpec
-function Spec:list(keys, list_type, input_types)
-    local types, message = self:handle_types(input_types, list_type .. ' list')
-    return self:add(keys, message, function(value)
+function Spec:list(keys, t, ts)
+    local types, message = self:handle_types({ t .. '[]' }, ts)
+    return self:add(keys, 'type', message, function(value)
         if vim.tbl_contains(types, type(value)) then
             return true
         elseif type(value) == 'table' then
             for i, item in ipairs(value) do
-                if type(item) ~= list_type then
+                if type(item) ~= t then
                     return false, string.format('[%d] is %s', i, type(item))
                 end
             end
@@ -99,23 +103,23 @@ function Spec:list(keys, list_type, input_types)
 end
 
 ---@param keys string|string[]
----@param list_type type
----@param input_types? type|type[]
+---@param t type
+---@param ts? type|type[]
 ---@return render.md.debug.ValidatorSpec
-function Spec:list_or_list_of_list(keys, list_type, input_types)
-    local types, message = self:handle_types(input_types, list_type .. ' list or list of list')
-    return self:add(keys, message, function(value)
-        if vim.tbl_contains(types, type(value)) then
+function Spec:nested_list(keys, t, ts)
+    local types, message = self:handle_types({ t, t .. '[]', t .. '[][]' }, ts)
+    return self:add(keys, 'type', message, function(value)
+        if type(value) == t or vim.tbl_contains(types, type(value)) then
             return true
         elseif type(value) == 'table' then
             for i, item in ipairs(value) do
                 if type(item) == 'table' then
                     for j, nested in ipairs(item) do
-                        if type(nested) ~= list_type then
+                        if type(nested) ~= t then
                             return false, string.format('[%d][%d] is %s', i, j, type(nested))
                         end
                     end
-                elseif type(item) ~= list_type then
+                elseif type(item) ~= t then
                     return false, string.format('[%d] is %s', i, type(item))
                 end
             end
@@ -128,11 +132,12 @@ end
 
 ---@param keys string|string[]
 ---@param values string[]
----@param input_types? type|type[]
+---@param ts? type|type[]
 ---@return render.md.debug.ValidatorSpec
-function Spec:one_or_list_of(keys, values, input_types)
-    local types, message = self:handle_types(input_types, 'one or list of ' .. vim.inspect(values))
-    return self:add(keys, message, function(value)
+function Spec:one_or_list_of(keys, values, ts)
+    local options = '(' .. table.concat(Iter.list.map(values, vim.inspect), '|') .. ')'
+    local types, message = self:handle_types({ options, options .. '[]' }, ts)
+    return self:add(keys, 'type', message, function(value)
         if vim.tbl_contains(types, type(value)) then
             return true
         elseif type(value) == 'string' then
@@ -151,41 +156,35 @@ function Spec:one_or_list_of(keys, values, input_types)
 end
 
 ---@private
----@param input_types? type|type[]
----@param prefix string
+---@param custom string[]
+---@param ts? type|type[]
 ---@return type[], string
-function Spec:handle_types(input_types, prefix)
+function Spec:handle_types(custom, ts)
     local types = nil
-    if input_types == nil then
+    if ts == nil then
         types = {}
-    elseif type(input_types) == 'string' then
-        types = { input_types }
+    elseif type(ts) == 'string' then
+        types = { ts }
     else
-        types = input_types
+        types = ts
     end
     if self.nilable and not vim.tbl_contains(types, 'nil') then
         table.insert(types, 'nil')
     end
-    local message = prefix
-    if #types > 0 then
-        if #message > 0 then
-            message = message .. ' or '
-        end
-        message = message .. 'type ' .. table.concat(types, ' or ')
-    end
-    return types, message
+    return types, table.concat(vim.list_extend(custom, types), ' or ')
 end
 
 ---@private
 ---@param keys string|string[]
+---@param kind render.md.debug.SpecKind
 ---@param message string
 ---@param validation fun(v: any): boolean, string?
 ---@return render.md.debug.ValidatorSpec
-function Spec:add(keys, message, validation)
+function Spec:add(keys, kind, message, validation)
     if self.config ~= nil then
         keys = type(keys) == 'table' and keys or { keys }
         for _, key in ipairs(keys) do
-            self.specs[key] = { message = message, validation = validation }
+            self.specs[key] = { kind = kind, message = message, validation = validation }
         end
     end
     return self
@@ -223,7 +222,13 @@ function Validator:check(path, config, specs)
         local value = config[key]
         local ok, info = spec.validation(value)
         if not ok then
-            local message = string.format('%s.%s: expected %s, got %s', path, key, spec.message, type(value))
+            local message = string.format('%s.%s - expected: %s', path, key, spec.message)
+            if spec.kind == 'type' then
+                message = message .. string.format(', but got: %s', type(value))
+            end
+            if spec.kind == 'value' then
+                message = message .. string.format(', but got: %s', vim.inspect(value))
+            end
             if info ~= nil then
                 message = message .. string.format(', info: %s', info)
             end
@@ -232,7 +237,7 @@ function Validator:check(path, config, specs)
     end
     for key, _ in pairs(config) do
         if specs[key] == nil then
-            local message = string.format('%s.%s: is not a valid key', path, key)
+            local message = string.format('%s.%s - invalid key', path, key)
             table.insert(self.errors, message)
         end
     end

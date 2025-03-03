@@ -51,17 +51,18 @@ function Base:sign(text, highlight)
 end
 
 ---@protected
----@param paragraph render.md.Node?
+---@param element boolean|render.md.Element
+---@param node render.md.Node?
 ---@param highlight? string
-function Base:checkbox_scope(paragraph, highlight)
-    if paragraph == nil or highlight == nil then
+function Base:scope(element, node, highlight)
+    if node == nil or highlight == nil then
         return
     end
-    paragraph = paragraph:child('inline')
-    if paragraph == nil then
+    local inline = node:child('inline')
+    if inline == nil then
         return
     end
-    self.marks:add_over('check_scope', paragraph, { hl_group = highlight })
+    self.marks:add_over(element, inline, { hl_group = highlight })
 end
 
 ---@protected

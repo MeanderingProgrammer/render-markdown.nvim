@@ -30,7 +30,7 @@ end
 
 function Render:render()
     self:icon()
-    self:checkbox_scope(self.node:sibling('paragraph'), self.checkbox.scope_highlight)
+    self:scope('check_scope', self.node:sibling('paragraph'), self.checkbox.scope_highlight)
 end
 
 ---@private

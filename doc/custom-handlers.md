@@ -52,9 +52,9 @@ For each `mark` in the return value the fields mean:
 By not specifying the `extends` field and having the `parse` implementation return
 an empty table we can disable a builtin handler. Though this has little benefit and
 can be accomplished in other ways like setting `{ latex = { enabled = false } }`
-for `LaTeX`.
+for `latex`.
 
-Still as a toy example disabling the `LaTeX` handler can be done with:
+Still as a toy example disabling the `latex` handler can be done with:
 
 ```lua
 require('render-markdown').setup({

@@ -112,11 +112,12 @@
 ---@field public custom table<string, render.md.CustomCheckbox>
 
 ---@class (exact) render.md.Bullet: render.md.BaseComponent
----@field public icons render.md.bullet.Icons
----@field public ordered_icons render.md.bullet.Icons
----@field public left_pad render.md.bullet.Padding
----@field public right_pad render.md.bullet.Padding
----@field public highlight string
+---@field public icons render.md.bullet.Text
+---@field public ordered_icons render.md.bullet.Text
+---@field public left_pad render.md.bullet.Int
+---@field public right_pad render.md.bullet.Int
+---@field public highlight render.md.bullet.Text
+---@field public scope_highlight render.md.bullet.Text
 
 ---@class (exact) render.md.Dash: render.md.BaseComponent
 ---@field public icon string

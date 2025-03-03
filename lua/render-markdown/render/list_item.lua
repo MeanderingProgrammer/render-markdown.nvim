@@ -40,7 +40,9 @@ function Render:render()
     if self:has_checkbox() then
         -- Hide the list marker for checkboxes rather than replacing with a bullet point
         self:hide_marker()
-        self:highlight_scope()
+        if self.data.checkbox ~= nil then
+            self:highlight_scope('check_scope', self.data.checkbox.scope_highlight)
+        end
     else
         if self.context:skip(self.bullet) then
             return
@@ -52,11 +54,15 @@ function Render:render()
             index = self.node:sibling_count('list_item'),
             value = self.data.marker.text,
         }
-        local icon = self:get_icon(ctx)
-        local left_pad = self:get_padding(ctx, self.bullet.left_pad)
-        local right_pad = self:get_padding(ctx, self.bullet.right_pad)
-        self:add_icon(icon)
+        local icons = self.data.ordered and self.bullet.ordered_icons or self.bullet.icons
+        local icon = self:resolve_text(ctx, icons)
+        local highlight = self:resolve_text(ctx, self.bullet.highlight)
+        local scope_highlight = self:resolve_text(ctx, self.bullet.scope_highlight)
+        local left_pad = self:resolve_int(ctx, self.bullet.left_pad)
+        local right_pad = self:resolve_int(ctx, self.bullet.right_pad)
+        self:add_icon(icon, highlight)
         self:add_padding(left_pad, right_pad, root)
+        self:highlight_scope(true, scope_highlight)
     end
 end
 
@@ -84,52 +90,54 @@ function Render:hide_marker()
 end
 
 ---@private
-function Render:highlight_scope()
-    if self.data.checkbox == nil then
-        return
-    end
-    self:checkbox_scope(self.node:child('paragraph'), self.data.checkbox.scope_highlight)
+---@param element boolean|render.md.Element
+---@param highlight string?
+function Render:highlight_scope(element, highlight)
+    self:scope(element, self.node:child('paragraph'), highlight)
 end
 
 ---@private
 ---@param ctx render.md.BulletContext
+---@param values render.md.bullet.Text
 ---@return string?
-function Render:get_icon(ctx)
-    local icons = self.data.ordered and self.bullet.ordered_icons or self.bullet.icons
-    if type(icons) == 'function' then
-        return icons(ctx)
+function Render:resolve_text(ctx, values)
+    if type(values) == 'function' then
+        return values(ctx)
+    elseif type(values) == 'string' then
+        return values
     else
-        local icon = List.cycle(icons, ctx.level)
-        if type(icon) == 'table' then
-            return List.clamp(icon, ctx.index)
+        local value = List.cycle(values, ctx.level)
+        if type(value) == 'table' then
+            return List.clamp(value, ctx.index)
         else
-            return icon
+            return value
         end
     end
 end
 
 ---@private
 ---@param ctx render.md.BulletContext
----@param pad render.md.bullet.Padding
+---@param value render.md.bullet.Int
 ---@return integer
-function Render:get_padding(ctx, pad)
-    if type(pad) == 'function' then
-        return pad(ctx)
+function Render:resolve_int(ctx, value)
+    if type(value) == 'function' then
+        return value(ctx)
     else
-        return pad
+        return value
     end
 end
 
 ---@private
 ---@param icon string?
-function Render:add_icon(icon)
-    if icon == nil then
+---@param highlight string?
+function Render:add_icon(icon, highlight)
+    if icon == nil or highlight == nil then
         return
     end
     local text = Str.pad(self.data.spaces) .. icon
     local overflow = Str.width(text) > Str.width(self.data.marker.text)
     self.marks:add_over('bullet', self.data.marker, {
-        virt_text = { { text, self.bullet.highlight } },
+        virt_text = { { text, highlight } },
         virt_text_pos = overflow and 'inline' or 'overlay',
         conceal = overflow and '' or nil,
     })
