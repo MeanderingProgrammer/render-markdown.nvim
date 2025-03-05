@@ -87,6 +87,13 @@ function M.attach(buf)
 
     local config = state.get(buf)
     state.on.attach({ buf = buf })
+    if state.completions.lsp.enabled then
+        require('render-markdown.integ.lsp').setup()
+    elseif state.completions.coq.enabled then
+        require('render-markdown.integ.coq').setup()
+    else
+        require('render-markdown.integ.cmp').setup()
+    end
 
     local events = { 'BufWinEnter', 'BufLeave', 'CmdlineChanged', 'CursorHold', 'CursorMoved', 'WinScrolled' }
     local change_events = { 'DiffUpdated', 'ModeChanged', 'TextChanged' }

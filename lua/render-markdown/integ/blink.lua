@@ -33,7 +33,6 @@ function Source:get_completions(context, callback)
         callback({
             is_incomplete_forward = false,
             is_incomplete_backward = false,
-            context = context,
             items = items,
         })
     end

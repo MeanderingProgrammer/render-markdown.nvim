@@ -123,6 +123,17 @@ use({
 This plugin provides completions for both checkboxes and callouts provided you follow
 the relevant setup.
 
+## in-process lsp
+
+The recommended way of getting completions from this plugin. Only requires being
+enabled with no additional configuration, assuming you have general LSP completions.
+
+```lua
+require('render-markdown').setup({
+    completions = { lsp = { enabled = true } },
+})
+```
+
 ## nvim-cmp
 
 ```lua
@@ -154,7 +165,9 @@ require('blink.cmp').setup({
 ## coq_nvim
 
 ```lua
-require('render-markdown.integ.coq').setup()
+require('render-markdown').setup({
+    completions = { coq = { enabled = true } },
+})
 ```
 
 # Setup
@@ -262,6 +275,12 @@ require('render-markdown').setup({
         render = function() end,
         -- Called after plugin clears a buffer.
         clear = function() end,
+    },
+    completions = {
+        -- Settings for coq_nvim completions source
+        coq = { enabled = false },
+        -- Settings for in-process language server completions
+        lsp = { enabled = false },
     },
     -- Useful context to have when evaluating values.
     -- | level    | the number of '#' in the heading marker         |
@@ -1488,6 +1507,14 @@ The table below shows all the highlight groups with their default link
 - [Purpose](doc/purpose.md): Why this plugin exists
 - [Markdown Ecosystem](doc/markdown-ecosystem.md): Information about other `markdown`
   related plugins and how they co-exist
+
+# Acknowledgments
+
+- [headlines.nvim](https://github.com/lukas-reineke/headlines.nvim): The plugin that
+  inspired me to create this one and whose implementation I used as a reference for
+  the original version
+- [crates.nvim](https://github.com/Saecki/crates.nvim): Used the in-process lsp implementation
+  as an awesome reference [lsp.lua](https://github.com/saecki/crates.nvim/blob/main/lua/crates/lsp.lua)
 
 <!-- panvimdoc-ignore-start -->
 

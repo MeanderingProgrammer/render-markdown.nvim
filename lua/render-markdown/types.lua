@@ -1,5 +1,12 @@
 ---@meta
 
+---@class (exact) render.md.Completion
+---@field public enabled boolean
+
+---@class (exact) render.md.Completions
+---@field public coq render.md.Completion
+---@field public lsp render.md.Completion
+
 ---@class (exact) render.md.Callback
 ---@field public attach fun(ctx: render.md.CallbackContext)
 ---@field public render fun(ctx: render.md.CallbackContext)
@@ -214,5 +221,6 @@
 ---@field public change_events string[]
 ---@field public injections table<string, render.md.Injection>
 ---@field public on render.md.Callback
+---@field public completions render.md.Completions
 ---@field public overrides render.md.ConfigOverrides
 ---@field public custom_handlers table<string, render.md.Handler>

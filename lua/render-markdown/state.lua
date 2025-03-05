@@ -14,6 +14,7 @@ local configs = {}
 ---@field file_types string[]
 ---@field change_events string[]
 ---@field on render.md.Callback
+---@field completions render.md.Completions
 ---@field custom_handlers table<string, render.md.Handler>
 local M = {}
 
@@ -46,6 +47,7 @@ function M.setup(default_config, user_config)
     M.file_types = config.file_types
     M.change_events = config.change_events
     M.on = config.on
+    M.completions = config.completions
     M.custom_handlers = config.custom_handlers
     log.setup(config.log_level)
     for _, language in ipairs(M.file_types) do
@@ -335,6 +337,16 @@ function M.validate()
         end)
         :nested('on', function(on)
             on:type({ 'attach', 'render', 'clear' }, 'function'):check()
+        end)
+        :nested('completions', function(completions)
+            completions
+                :nested('coq', function(coq)
+                    coq:type('enabled', 'boolean'):check()
+                end)
+                :nested('lsp', function(lsp)
+                    lsp:type('enabled', 'boolean'):check()
+                end)
+                :check()
         end)
         :nested('overrides', function(overrides)
             overrides

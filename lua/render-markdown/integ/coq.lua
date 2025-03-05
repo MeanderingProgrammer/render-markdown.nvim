@@ -1,8 +1,34 @@
 local source = require('render-markdown.integ.source')
 
+---@class render.md.cmp.Coq
+---@field private registered boolean
+local M = {
+    registered = false,
+}
+
+---Should only be called from manager on initial buffer attach
+---or by a user to enable the integration
+function M.setup()
+    if M.registered then
+        return
+    end
+    M.registered = true
+    local has_coq = pcall(require, 'coq')
+    if not has_coq then
+        return
+    end
+    ---@type table<integer, table>
+    COQsources = COQsources or {}
+    COQsources[M.new_uid(COQsources)] = {
+        name = 'markdown',
+        fn = M.complete,
+    }
+end
+
+---@private
 ---@param map table<integer, table>
 ---@return integer
-local function new_uid(map)
+function M.new_uid(map)
     ---@type integer|nil
     local key = nil
     while true do
@@ -14,9 +40,10 @@ local function new_uid(map)
     end
 end
 
+---@private
 ---@param args { line: string, pos: { [1]: integer, [2]: integer } }
 ---@param callback fun(response?: lsp.CompletionItem[])
-local function complete(args, callback)
+function M.complete(args, callback)
     ---@return lsp.CompletionItem[]?
     local function get_items()
         if not source.enabled() then
@@ -29,23 +56,6 @@ local function complete(args, callback)
         return source.items(0, args.pos[1], args.pos[2])
     end
     callback(get_items())
-end
-
----@class render.md.cmp.Coq
-local M = {}
-
----Should only be called by a user to enable the integration
-function M.setup()
-    local has_coq = pcall(require, 'coq')
-    if not has_coq then
-        return
-    end
-    ---@type table<integer, table>
-    COQsources = COQsources or {}
-    COQsources[new_uid(COQsources)] = {
-        name = 'markdown',
-        fn = complete,
-    }
 end
 
 return M

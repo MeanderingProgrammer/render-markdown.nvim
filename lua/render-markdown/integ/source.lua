@@ -22,11 +22,15 @@ function M.trigger_characters()
     return { '-', '*', '+', '>', ' ' }
 end
 
----@param buf integer
+---@param buf integer 0 for current buffer
 ---@param row integer 0-indexed
 ---@param col integer 0-indexed
 ---@return lsp.CompletionItem[]?
 function M.items(buf, row, col)
+    if buf == 0 then
+        buf = util.current('buf')
+    end
+
     local has_parser, parser = pcall(vim.treesitter.get_parser, buf)
     if not has_parser or parser == nil then
         return nil

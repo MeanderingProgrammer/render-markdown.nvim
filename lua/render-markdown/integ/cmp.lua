@@ -30,10 +30,17 @@ function Source:complete(params, callback)
 end
 
 ---@class render.md.integ.Cmp
-local M = {}
+---@field private registered boolean
+local M = {
+    registered = false,
+}
 
----Should only be called from plugin directory
+---Should only be called from manager on initial buffer attach
 function M.setup()
+    if M.registered then
+        return
+    end
+    M.registered = true
     local has_cmp, cmp = pcall(require, 'cmp')
     if not has_cmp then
         return

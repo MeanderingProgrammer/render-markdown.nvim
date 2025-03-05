@@ -19,6 +19,13 @@ local M = {}
 ---@field [1] string text
 ---@field [2] string|string[] highlights
 
+---@class (exact) render.md.UserCompletion
+---@field public enabled? boolean
+
+---@class (exact) render.md.UserCompletions
+---@field public coq? render.md.UserCompletion
+---@field public lsp? render.md.UserCompletion
+
 ---@class (exact) render.md.CallbackContext
 ---@field public buf integer
 
@@ -318,6 +325,7 @@ local M = {}
 ---@field public change_events? string[]
 ---@field public injections? table<string, render.md.UserInjection>
 ---@field public on? render.md.UserCallback
+---@field public completions? render.md.UserCompletions
 ---@field public overrides? render.md.UserConfigOverrides
 ---@field public custom_handlers? table<string, render.md.Handler>
 
@@ -411,6 +419,12 @@ M.default_config = {
         render = function() end,
         -- Called after plugin clears a buffer.
         clear = function() end,
+    },
+    completions = {
+        -- Settings for coq_nvim completions source
+        coq = { enabled = false },
+        -- Settings for in-process language server completions
+        lsp = { enabled = false },
     },
     -- Useful context to have when evaluating values.
     -- | level    | the number of '#' in the heading marker         |
