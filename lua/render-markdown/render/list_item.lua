@@ -183,10 +183,11 @@ end
 ---@param col integer
 ---@param amount integer
 function Render:side_padding(row, col, amount)
-    if amount > 0 then
+    local line = self:append({}, amount)
+    if #line > 0 then
         self.marks:add(false, row, col, {
             priority = 0,
-            virt_text = { self:pad(amount) },
+            virt_text = { line },
             virt_text_pos = 'inline',
         })
     end

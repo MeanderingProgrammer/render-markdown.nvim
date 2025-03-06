@@ -23,15 +23,14 @@ function Render:render()
     local width = vim.fn.max(Iter.list.map(self.node:lines(), Str.width))
     width = math.max(width, self.paragraph.min_width)
     local margin = self.context:resolve_offset(self.paragraph.left_margin, width)
-    if margin <= 0 then
+    local line = self:append({}, margin)
+    if #line == 0 then
         return
     end
-
-    local virt_text = { self:pad(margin) }
     for row = self.node.start_row, self.node.end_row - 1 do
         self.marks:add(false, row, 0, {
             priority = 0,
-            virt_text = virt_text,
+            virt_text = line,
             virt_text_pos = 'inline',
         })
     end

@@ -92,11 +92,11 @@ function Base:indent_line(virtual, level)
         local indent = self.config.indent
         local icon_width = Str.width(indent.icon)
         if icon_width == 0 then
-            table.insert(line, self:pad(indent.per_level * level))
+            self:append(line, indent.per_level * level)
         else
             for _ = 1, level do
-                table.insert(line, { indent.icon, indent.highlight })
-                table.insert(line, self:pad(indent.per_level - icon_width))
+                self:append(line, indent.icon, indent.highlight)
+                self:append(line, indent.per_level - icon_width)
             end
         end
     end
@@ -133,11 +133,22 @@ function Base:indent_level(level)
 end
 
 ---@protected
----@param width integer
+---@param line render.md.Line
+---@param value string|integer
 ---@param highlight? string|string[]
----@return render.md.Text
-function Base:pad(width, highlight)
-    return { Str.pad(width), highlight or self.config.padding.highlight }
+---@return render.md.Line
+function Base:append(line, value, highlight)
+    highlight = highlight or self.config.padding.highlight
+    if type(value) == 'string' then
+        if #value > 0 then
+            table.insert(line, { value, highlight })
+        end
+    else
+        if value > 0 then
+            table.insert(line, { Str.pad(value), highlight })
+        end
+    end
+    return line
 end
 
 return Base

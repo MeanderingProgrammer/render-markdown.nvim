@@ -213,7 +213,7 @@ function Render:background(width)
     local win_col, padding = 0, {}
     if self.data.width == 'block' then
         win_col = width.margin + width.content + self:indent_size(self.data.level)
-        table.insert(padding, self:pad(vim.o.columns * 2))
+        self:append(padding, vim.o.columns * 2)
     end
     for row = self.node.start_row, self.node.end_row - 1 do
         self.marks:add('head_background', row, 0, {
@@ -247,12 +247,10 @@ function Render:border(width, position, icon, row)
     local prefix = self.heading.border_prefix and self.data.level or 0
     local total_width = self.data.width == 'block' and width.content or vim.o.columns
 
-    local line = {
-        self:pad(width.margin),
-        { icon:rep(width.padding), background },
-        { icon:rep(prefix), foreground },
-        { icon:rep(total_width - width.padding - prefix), background },
-    }
+    local line = self:append({}, width.margin)
+    self:append(line, icon:rep(width.padding), background)
+    self:append(line, icon:rep(prefix), foreground)
+    self:append(line, icon:rep(total_width - width.padding - prefix), background)
 
     local virtual = self.heading.border_virtual
     local target_line = self.node:line(position, 1)
@@ -275,20 +273,15 @@ end
 ---@private
 ---@param width render.md.width.Heading
 function Render:left_pad(width)
-    local virt_text = {}
-    if width.margin > 0 then
-        table.insert(virt_text, self:pad(width.margin))
-    end
-    if width.padding > 0 then
-        table.insert(virt_text, self:pad(width.padding, self.data.background))
-    end
-    if #virt_text == 0 then
+    local line = self:append({}, width.margin)
+    self:append(line, width.padding, self.data.background)
+    if #line == 0 then
         return
     end
     for row = self.node.start_row, self.node.end_row - 1 do
         self.marks:add(false, row, 0, {
             priority = 0,
-            virt_text = virt_text,
+            virt_text = line,
             virt_text_pos = 'inline',
         })
     end

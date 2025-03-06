@@ -311,7 +311,7 @@ function Render:shift(column, side, amount)
     if amount > 0 then
         self.marks:add(true, column.row, col, {
             priority = 0,
-            virt_text = { { Str.pad(amount), self.table.filler } },
+            virt_text = self:append({}, amount, self.table.filler),
             virt_text_pos = 'inline',
         })
     elseif amount < 0 then
@@ -375,9 +375,11 @@ function Render:full()
     ---@param above boolean
     ---@param chars { [1]: string, [2]: string, [3]: string }
     local function table_border(node, above, chars)
-        local line = spaces > 0 and { self:pad(spaces) } or {}
+        local text = chars[1] .. table.concat(sections, chars[2]) .. chars[3]
         local highlight = above and self.table.head or self.table.row
-        table.insert(line, { chars[1] .. table.concat(sections, chars[2]) .. chars[3], highlight })
+
+        local line = self:append({}, spaces)
+        self:append(line, text, highlight)
         self.marks:add(false, node.start_row, node.start_col, {
             virt_lines = { vim.list_extend(self:indent_line(true), line) },
             virt_lines_above = above,

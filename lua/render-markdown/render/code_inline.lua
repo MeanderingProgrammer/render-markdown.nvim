@@ -29,11 +29,11 @@ end
 ---@param row integer
 ---@param col integer
 function Render:side_padding(highlight, row, col)
-    local padding = self.code.inline_pad
-    if padding > 0 then
+    local line = self:append({}, self.code.inline_pad, highlight)
+    if #line > 0 then
         self.marks:add(true, row, col, {
             priority = 0,
-            virt_text = { self:pad(padding, highlight) },
+            virt_text = { line },
             virt_text_pos = 'inline',
         })
     end

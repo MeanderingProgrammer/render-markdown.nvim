@@ -12,6 +12,7 @@ local colors = require('render-markdown.colors')
 ---@field margin integer
 ---@field language_padding integer
 ---@field padding integer
+---@field width integer
 ---@field max_width integer
 ---@field empty_rows integer[]
 ---@field indent integer
@@ -62,6 +63,7 @@ function Render:setup()
         margin = self:offset(self.code.left_margin, max_width, 'left'),
         language_padding = language_padding,
         padding = left_padding,
+        width = self.code.width == 'block' and max_width or vim.o.columns,
         max_width = max_width,
         empty_rows = empty_rows,
         indent = self:indent_size(),
@@ -97,7 +99,7 @@ function Render:render()
 
     local icon = self:language()
     local start_row, end_row = self.node.start_row, self.node.end_row - 1
-    self:border(start_row, self.code.above, not icon and self:hidden(self.data.code_node))
+    self:border(start_row, self.code.above, not icon and self:concealed(self.data.code_node))
     self:border(end_row, self.code.below, true)
     if background then
         self:background(start_row + 1, end_row - 1)
@@ -135,7 +137,7 @@ function Render:language()
     end
 
     if self.code.position == 'left' then
-        if self.code.language_name and self:hidden(node) then
+        if self.code.language_name and self:concealed(node) then
             -- Code blocks pick up varying amounts of leading white space depending
             -- on the context they are in. This is lumped into the delimiter node
             -- and as a result, after concealing, the extmark would be shifted.
@@ -173,9 +175,9 @@ function Render:border(row, border, context_hidden)
         return
     end
     local delim_node = self.node:child('fenced_code_block_delimiter', row)
-    if self.code.border == 'thin' and context_hidden and self:hidden(delim_node) then
-        local width = self.code.width == 'block' and self.data.max_width or vim.o.columns
-        local line = { { border:rep(width - self.data.col), colors.bg_to_fg(self.code.highlight) } }
+    if self.code.border == 'thin' and context_hidden and self:concealed(delim_node) then
+        local width = self.data.width - self.data.col
+        local line = { { border:rep(width), colors.bg_to_fg(self.code.highlight) } }
         self.marks:add('code_border', row, self.data.col, {
             virt_text = line,
             virt_text_pos = 'overlay',
@@ -188,7 +190,7 @@ end
 ---@private
 ---@param node? render.md.Node
 ---@return boolean
-function Render:hidden(node)
+function Render:concealed(node)
     -- TODO(0.11): handle conceal_lines
     -- - Use self.context:hidden(node) to determine if a node is hidden
     -- - Default highlights remove the fenced code block delimiter lines along with
@@ -214,7 +216,7 @@ function Render:background(start_row, end_row)
     local win_col, padding = 0, {}
     if self.code.width == 'block' then
         win_col = self.data.margin + self.data.max_width + self.data.indent
-        table.insert(padding, self:pad(vim.o.columns * 2))
+        self:append(padding, vim.o.columns * 2)
     end
     for row = start_row, end_row do
         self.marks:add('code_background', row, self.data.col, {
@@ -244,26 +246,22 @@ function Render:left_pad(background)
     -- Use lowest priority (0) to include all other marks in padding when code block is at edge
     -- Use medium priority (1000) to include border marks while likely avoiding other plugin
     local priority = self.data.col == 0 and 0 or 1000
-    local fill_text = self:pad(self.data.col)
-    local margin_text = self:pad(margin)
-    local padding_text = self:pad(padding, background and self.code.highlight or nil)
+    local highlight = background and self.code.highlight or nil
 
-    local start_row, end_row = self.node.start_row, (self.node.end_row - 1)
+    local start_row, end_row = self.node.start_row, self.node.end_row - 1
     for row = start_row, end_row do
-        local virt_text = {}
-        if self.data.col > 0 and vim.tbl_contains(self.data.empty_rows, row) then
-            table.insert(virt_text, fill_text)
+        local line = {}
+        if vim.tbl_contains(self.data.empty_rows, row) then
+            self:append(line, self.data.col)
         end
-        if margin > 0 then
-            table.insert(virt_text, margin_text)
+        self:append(line, margin)
+        if row > start_row and row < end_row then
+            self:append(line, padding, highlight)
         end
-        if padding > 0 and row > start_row and row < end_row then
-            table.insert(virt_text, padding_text)
-        end
-        if #virt_text > 0 then
+        if #line > 0 then
             self.marks:add(false, row, self.data.col, {
                 priority = priority,
-                virt_text = virt_text,
+                virt_text = line,
                 virt_text_pos = 'inline',
             })
         end

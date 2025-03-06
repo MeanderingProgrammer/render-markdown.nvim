@@ -4,6 +4,7 @@
 
 ### Features
 
+- in-process lsp for engine agnostic completions [b56fa1b](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b56fa1bc7b513f16a1c361b81438f4944b420a32)
 - customize heading properties based on text [#320](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/320)
   [5c2440d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/5c2440d932a4ba96840e5ce5a7bd40f0624bdaa2)
 - allow html tags to be replaced with icons [#336](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/336)
@@ -40,6 +41,7 @@
 - @dsully
 - @mcDevnagh
 - @filippo-biondi
+- @Saecki (for in-process lsp inspiration)
 
 ## 8.0.0 (2025-02-06)
 

@@ -81,8 +81,9 @@ function Render:checkbox(checkbox)
 
     local inline = self.config.checkbox.position == 'inline'
     local icon, highlight = checkbox.rendered, checkbox.highlight
+    local text = inline and icon or Str.pad_to(self.node.text, icon) .. icon
     local added = self.marks:add_over('check_icon', self.node, {
-        virt_text = { { inline and icon or Str.pad_to(self.node.text, icon) .. icon, highlight } },
+        virt_text = { { text, highlight } },
         virt_text_pos = 'inline',
         conceal = '',
     })

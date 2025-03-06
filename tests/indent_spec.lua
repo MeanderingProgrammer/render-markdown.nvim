@@ -7,19 +7,14 @@ local util = require('tests.util')
 ---@param position 'above'|'below'
 ---@return render.md.MarkInfo
 local function border(row, level, position)
-    local foreground = util.hl(string.format('H%d', level))
     local background = util.hl_bg_to_fg(string.format('H%dBg', level))
     local icon = position == 'above' and '▄' or '▀'
-    local line = {
-        { '', 'Normal' },
-        { '', background },
-        { '', foreground },
-        { icon:rep(vim.o.columns), background },
-    }
     local virtual = row == 0 and position == 'above'
+    local line = {}
     if virtual then
-        table.insert(line, 1, { '  ', 'Normal' })
+        table.insert(line, { '  ', 'Normal' })
     end
+    table.insert(line, { icon:rep(vim.o.columns), background })
     ---@type render.md.MarkInfo
     return {
         row = { row },
