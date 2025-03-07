@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 8.1.0 (2025-03-07)
+
 ### Features
 
 - in-process lsp for engine agnostic completions [b56fa1b](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b56fa1bc7b513f16a1c361b81438f4944b420a32)
