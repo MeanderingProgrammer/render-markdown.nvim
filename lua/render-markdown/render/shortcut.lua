@@ -161,13 +161,17 @@ function Render:footnote(text)
     end
 
     local footnote = self.link.footnote
-    if not footnote.superscript then
-        return
-    end
 
-    local value = Converter.to_superscript(footnote.prefix .. text .. footnote.suffix)
-    if value == nil then
-        return
+    local value = ''
+
+    if footnote.superscript then
+        local converted_value = Converter.to_superscript(footnote.prefix .. text .. footnote.suffix)
+        if converted_value == nil then
+            return nil
+        end
+        value = converted_value
+    else
+        value = footnote.prefix .. text .. footnote.suffix
     end
 
     self.marks:add_over('link', self.node, {
