@@ -33,7 +33,7 @@ function Render:side_padding(highlight, row, col)
     if #line > 0 then
         self.marks:add(true, row, col, {
             priority = 0,
-            virt_text = { line },
+            virt_text = line,
             virt_text_pos = 'inline',
         })
     end

@@ -353,6 +353,30 @@ end
 
 ---@param row integer
 ---@param col integer
+---@param spaces integer
+---@param kind? 'code'|'table'
+---@return render.md.MarkInfo
+function M.padding(row, col, spaces, kind)
+    local highlight
+    if kind == 'code' then
+        highlight = M.hl('CodeInline')
+    elseif kind == 'table' then
+        highlight = M.hl('TableFill')
+    else
+        highlight = 'Normal'
+    end
+    ---@type render.md.MarkInfo
+    return {
+        row = { row },
+        col = { col },
+        virt_text = { { string.rep(' ', spaces), highlight } },
+        virt_text_pos = 'inline',
+        priority = 0,
+    }
+end
+
+---@param row integer
+---@param col integer
 ---@param head boolean
 ---@return render.md.MarkInfo
 function M.table_pipe(row, col, head)
@@ -363,21 +387,6 @@ function M.table_pipe(row, col, head)
         col = { col, col + 1 },
         virt_text = { { '│', M.hl(highlight) } },
         virt_text_pos = 'overlay',
-    }
-end
-
----@param row integer
----@param col integer
----@param spaces integer
----@return render.md.MarkInfo
-function M.table_padding(row, col, spaces)
-    ---@type render.md.MarkInfo
-    return {
-        row = { row },
-        col = { col },
-        virt_text = { { string.rep(' ', spaces), M.hl('TableFill') } },
-        virt_text_pos = 'inline',
-        priority = 0,
     }
 end
 
@@ -407,8 +416,9 @@ end
 ---@param row integer
 ---@param sections (integer|integer[])[]
 ---@param suffix? integer
+---@param offset? integer
 ---@return render.md.MarkInfo
-function M.table_delimiter(row, sections, suffix)
+function M.table_delimiter(row, sections, suffix, offset)
     local parts = vim.tbl_map(function(width_or_widths)
         local widths = vim.islist(width_or_widths) and width_or_widths or { width_or_widths }
         local section = vim.tbl_map(function(width)
@@ -417,10 +427,14 @@ function M.table_delimiter(row, sections, suffix)
         return table.concat(section, '')
     end, sections)
     local value = '├' .. table.concat(parts, '┼') .. '┤' .. string.rep(' ', suffix or 0)
+    local col = vim.fn.strdisplaywidth(value)
+    if offset ~= nil then
+        col = col - offset
+    end
     ---@type render.md.MarkInfo
     return {
         row = { row, row },
-        col = { 0, vim.fn.strdisplaywidth(value) },
+        col = { 0, col },
         virt_text = { { value, M.hl('TableHead') } },
         virt_text_pos = 'overlay',
     }
