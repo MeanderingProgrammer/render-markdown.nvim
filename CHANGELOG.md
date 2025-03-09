@@ -2,6 +2,13 @@
 
 ## Pre-release
 
+## 8.1.1 (2025-03-09)
+
+### Bug Fixes
+
+- padding for inline code and list items [#364](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/364)
+  [932432c](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/932432c7f569eb10115e14b93ec75e8ec6c526a3)
+
 ## 8.1.0 (2025-03-07)
 
 ### Features
