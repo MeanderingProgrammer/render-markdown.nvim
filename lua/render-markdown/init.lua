@@ -1,171 +1,178 @@
 ---@class render.md.Init: render.md.Api
 local M = {}
 
----@class (exact) render.md.Mark
----@field public conceal boolean
----@field public start_row integer
----@field public start_col integer
----@field public opts vim.api.keyset.set_extmark
-
----@class (exact) render.md.HandlerContext
----@field public buf integer
----@field public root TSNode
-
----@class (exact) render.md.Handler
----@field public extends? boolean
----@field public parse fun(ctx: render.md.HandlerContext): render.md.Mark[]
-
----@class render.md.Text
+---@class (exact) render.md.MarkText
 ---@field [1] string text
 ---@field [2] string|string[] highlights
 
+---@alias render.md.MarkLine render.md.MarkText[]
+
+---@class render.md.MarkOpts: vim.api.keyset.set_extmark
+---@field virt_text? render.md.MarkLine
+---@field virt_text_pos? 'eol'|'inline'|'overlay'
+---@field virt_lines? render.md.MarkLine[]
+
+---@class (exact) render.md.Mark
+---@field conceal boolean
+---@field start_row integer
+---@field start_col integer
+---@field opts render.md.MarkOpts
+
+---@class (exact) render.md.HandlerContext
+---@field buf integer
+---@field root TSNode
+
+---@class (exact) render.md.Handler
+---@field extends? boolean
+---@field parse fun(ctx: render.md.HandlerContext): render.md.Mark[]
+
 ---@class (exact) render.md.UserCompletion
----@field public enabled? boolean
+---@field enabled? boolean
 
 ---@class (exact) render.md.UserCompletions
----@field public coq? render.md.UserCompletion
----@field public lsp? render.md.UserCompletion
+---@field coq? render.md.UserCompletion
+---@field lsp? render.md.UserCompletion
 
 ---@class (exact) render.md.CallbackContext
----@field public buf integer
+---@field buf integer
 
 ---@class (exact) render.md.UserCallback
----@field public attach? fun(ctx: render.md.CallbackContext)
----@field public render? fun(ctx: render.md.CallbackContext)
----@field public clear? fun(ctx: render.md.CallbackContext)
+---@field attach? fun(ctx: render.md.CallbackContext)
+---@field render? fun(ctx: render.md.CallbackContext)
+---@field clear? fun(ctx: render.md.CallbackContext)
 
 ---@class (exact) render.md.UserInjection
----@field public enabled? boolean
----@field public query? string
+---@field enabled? boolean
+---@field query? string
 
 ---@alias render.md.option.Value number|integer|string|boolean
 
 ---@class (exact) render.md.UserWindowOption
----@field public default? render.md.option.Value
----@field public rendered? render.md.option.Value
+---@field default? render.md.option.Value
+---@field rendered? render.md.option.Value
 
 ---@class (exact) render.md.UserBaseComponent
----@field public enabled? boolean
----@field public render_modes? render.md.Modes
+---@field enabled? boolean
+---@field render_modes? render.md.Modes
 
 ---@class (exact) render.md.UserHtmlComment
----@field public conceal? boolean
----@field public text? string
----@field public highlight? string
+---@field conceal? boolean
+---@field text? string
+---@field highlight? string
 
 ---@class (exact) render.md.HtmlTag
----@field public icon string
----@field public highlight string
+---@field icon string
+---@field highlight string
 
 ---@class (exact) render.md.UserHtml: render.md.UserBaseComponent
----@field public comment? render.md.UserHtmlComment
----@field public tag? table<string, render.md.HtmlTag>
+---@field comment? render.md.UserHtmlComment
+---@field tag? table<string, render.md.HtmlTag>
 
 ---@alias render.md.latex.Position 'above'|'below'
 
 ---@class (exact) render.md.UserLatex: render.md.UserBaseComponent
----@field public converter? string
----@field public highlight? string
----@field public position? render.md.latex.Position
----@field public top_pad? integer
----@field public bottom_pad? integer
+---@field converter? string
+---@field highlight? string
+---@field position? render.md.latex.Position
+---@field top_pad? integer
+---@field bottom_pad? integer
 
 ---@class (exact) render.md.UserIndent: render.md.UserBaseComponent
----@field public per_level? integer
----@field public skip_level? integer
----@field public skip_heading? boolean
----@field public icon? string
----@field public highlight? string
+---@field per_level? integer
+---@field skip_level? integer
+---@field skip_heading? boolean
+---@field icon? string
+---@field highlight? string
 
 ---@class (exact) render.md.UserInlineHighlight: render.md.UserBaseComponent
----@field public highlight? string
+---@field highlight? string
 
 ---@class (exact) render.md.UserSign
----@field public enabled? boolean
----@field public highlight? string
+---@field enabled? boolean
+---@field highlight? string
 
 ---@class (exact) render.md.UserLinkComponent
----@field public pattern? string
----@field public icon? string
----@field public highlight? string
+---@field pattern? string
+---@field icon? string
+---@field highlight? string
 
 ---@class (exact) render.md.LinkContext
----@field public buf integer
----@field public row integer
----@field public start_col integer
----@field public end_col integer
----@field public destination string
----@field public alias? string
+---@field buf integer
+---@field row integer
+---@field start_col integer
+---@field end_col integer
+---@field destination string
+---@field alias? string
 
 ---@class (exact) render.md.UserWikiLink
----@field public icon? string
----@field public body? fun(ctx: render.md.LinkContext): render.md.Text|string?
----@field public highlight? string
+---@field icon? string
+---@field body? fun(ctx: render.md.LinkContext): render.md.MarkText|string?
+---@field highlight? string
 
 ---@class (exact) render.md.UserFootnote
----@field public superscript? boolean
----@field public prefix? string
----@field public suffix? string
+---@field superscript? boolean
+---@field prefix? string
+---@field suffix? string
 
 ---@class (exact) render.md.UserLink: render.md.UserBaseComponent
----@field public footnote? render.md.UserFootnote
----@field public image? string
----@field public email? string
----@field public hyperlink? string
----@field public highlight? string
----@field public wiki? render.md.UserWikiLink
----@field public custom? table<string, render.md.UserLinkComponent>
+---@field footnote? render.md.UserFootnote
+---@field image? string
+---@field email? string
+---@field hyperlink? string
+---@field highlight? string
+---@field wiki? render.md.UserWikiLink
+---@field custom? table<string, render.md.UserLinkComponent>
 
 ---@class (exact) render.md.UserCustomCallout
----@field public raw? string
----@field public rendered? string
----@field public highlight? string
----@field public quote_icon? string
+---@field raw? string
+---@field rendered? string
+---@field highlight? string
+---@field quote_icon? string
 
 ---@alias render.md.table.Preset 'none'|'round'|'double'|'heavy'
 ---@alias render.md.table.Style 'full'|'normal'|'none'
 ---@alias render.md.table.Cell 'trimmed'|'padded'|'raw'|'overlay'
 
 ---@class (exact) render.md.UserPipeTable: render.md.UserBaseComponent
----@field public preset? render.md.table.Preset
----@field public style? render.md.table.Style
----@field public cell? render.md.table.Cell
----@field public padding? integer
----@field public min_width? integer
----@field public border? string[]
----@field public alignment_indicator? string
----@field public head? string
----@field public row? string
----@field public filler? string
+---@field preset? render.md.table.Preset
+---@field style? render.md.table.Style
+---@field cell? render.md.table.Cell
+---@field padding? integer
+---@field min_width? integer
+---@field border? string[]
+---@field alignment_indicator? string
+---@field head? string
+---@field row? string
+---@field filler? string
 
 ---@class (exact) render.md.UserQuote: render.md.UserBaseComponent
----@field public icon? string
----@field public repeat_linebreak? boolean
----@field public highlight? string
+---@field icon? string
+---@field repeat_linebreak? boolean
+---@field highlight? string
 
 ---@class (exact) render.md.UserCustomCheckbox
----@field public raw? string
----@field public rendered? string
----@field public highlight? string
----@field public scope_highlight? string
+---@field raw? string
+---@field rendered? string
+---@field highlight? string
+---@field scope_highlight? string
 
 ---@class (exact) render.md.UserCheckboxComponent
----@field public icon? string
----@field public highlight? string
----@field public scope_highlight? string
+---@field icon? string
+---@field highlight? string
+---@field scope_highlight? string
 
 ---@alias render.md.checkbox.Position 'overlay'|'inline'
 
 ---@class (exact) render.md.UserCheckbox: render.md.UserBaseComponent
----@field public position? render.md.checkbox.Position
----@field public unchecked? render.md.UserCheckboxComponent
----@field public checked? render.md.UserCheckboxComponent
----@field public custom? table<string, render.md.UserCustomCheckbox>
+---@field position? render.md.checkbox.Position
+---@field unchecked? render.md.UserCheckboxComponent
+---@field checked? render.md.UserCheckboxComponent
+---@field custom? table<string, render.md.UserCustomCheckbox>
 
 ---@class (exact) render.md.BulletContext
----@field public level integer
----@field public index integer
----@field public value string
+---@field level integer
+---@field index integer
+---@field value string
 
 ---@alias render.md.bullet.Text
 ---| string
@@ -178,18 +185,18 @@ local M = {}
 ---| fun(ctx: render.md.BulletContext): integer
 
 ---@class (exact) render.md.UserBullet: render.md.UserBaseComponent
----@field public icons? render.md.bullet.Text
----@field public ordered_icons? render.md.bullet.Text
----@field public left_pad? render.md.bullet.Int
----@field public right_pad? render.md.bullet.Int
----@field public highlight? render.md.bullet.Text
----@field public scope_highlight? render.md.bullet.Text
+---@field icons? render.md.bullet.Text
+---@field ordered_icons? render.md.bullet.Text
+---@field left_pad? render.md.bullet.Int
+---@field right_pad? render.md.bullet.Int
+---@field highlight? render.md.bullet.Text
+---@field scope_highlight? render.md.bullet.Text
 
 ---@class (exact) render.md.UserDash: render.md.UserBaseComponent
----@field public icon? string
----@field public width? 'full'|number
----@field public left_margin? number
----@field public highlight? string
+---@field icon? string
+---@field width? 'full'|number
+---@field left_margin? number
+---@field highlight? string
 
 ---@alias render.md.code.Style 'full'|'normal'|'language'|'none'
 ---@alias render.md.code.Position 'left'|'right'
@@ -197,38 +204,38 @@ local M = {}
 ---@alias render.md.code.Border 'thin'|'thick'|'none'
 
 ---@class (exact) render.md.UserCode: render.md.UserBaseComponent
----@field public sign? boolean
----@field public style? render.md.code.Style
----@field public position? render.md.code.Position
----@field public language_pad? number
----@field public language_name? boolean
----@field public disable_background? boolean|string[]
----@field public width? render.md.code.Width
----@field public left_margin? number
----@field public left_pad? number
----@field public right_pad? number
----@field public min_width? integer
----@field public border? render.md.code.Border
----@field public above? string
----@field public below? string
----@field public highlight? string
----@field public highlight_language? string
----@field public inline_pad? integer
----@field public highlight_inline? string
+---@field sign? boolean
+---@field style? render.md.code.Style
+---@field position? render.md.code.Position
+---@field language_pad? number
+---@field language_name? boolean
+---@field disable_background? boolean|string[]
+---@field width? render.md.code.Width
+---@field left_margin? number
+---@field left_pad? number
+---@field right_pad? number
+---@field min_width? integer
+---@field border? render.md.code.Border
+---@field above? string
+---@field below? string
+---@field highlight? string
+---@field highlight_language? string
+---@field inline_pad? integer
+---@field highlight_inline? string
 
 ---@class (exact) render.md.UserParagraph: render.md.UserBaseComponent
----@field public left_margin? number
----@field public min_width? integer
+---@field left_margin? number
+---@field min_width? integer
 
 ---@class (exact) render.md.HeadingCustom
----@field public pattern string
----@field public icon? string
----@field public background? string
----@field public foreground? string
+---@field pattern string
+---@field icon? string
+---@field background? string
+---@field foreground? string
 
 ---@class (exact) render.md.HeadingContext
----@field public level integer
----@field public sections integer[]
+---@field level integer
+---@field sections integer[]
 
 ---@alias render.md.heading.Icons
 ---| string[]
@@ -237,26 +244,26 @@ local M = {}
 ---@alias render.md.heading.Width 'full'|'block'
 
 ---@class (exact) render.md.UserHeading: render.md.UserBaseComponent
----@field public sign? boolean
----@field public icons? render.md.heading.Icons
----@field public position? render.md.heading.Position
----@field public signs? string[]
----@field public width? render.md.heading.Width|(render.md.heading.Width)[]
----@field public left_margin? number|number[]
----@field public left_pad? number|number[]
----@field public right_pad? number|number[]
----@field public min_width? integer|integer[]
----@field public border? boolean|boolean[]
----@field public border_virtual? boolean
----@field public border_prefix? boolean
----@field public above? string
----@field public below? string
----@field public backgrounds? string[]
----@field public foregrounds? string[]
----@field public custom? table<string, render.md.HeadingCustom>
+---@field sign? boolean
+---@field icons? render.md.heading.Icons
+---@field position? render.md.heading.Position
+---@field signs? string[]
+---@field width? render.md.heading.Width|(render.md.heading.Width)[]
+---@field left_margin? number|number[]
+---@field left_pad? number|number[]
+---@field right_pad? number|number[]
+---@field min_width? integer|integer[]
+---@field border? boolean|boolean[]
+---@field border_virtual? boolean
+---@field border_prefix? boolean
+---@field above? string
+---@field below? string
+---@field backgrounds? string[]
+---@field foregrounds? string[]
+---@field custom? table<string, render.md.HeadingCustom>
 
 ---@class (exact) render.md.UserPadding
----@field public highlight? string
+---@field highlight? string
 
 ---@alias render.md.Element
 ---| 'head_icon'
@@ -278,56 +285,56 @@ local M = {}
 ---@alias render.md.config.conceal.Ignore table<render.md.Element, render.md.Modes>
 
 ---@class (exact) render.md.UserAntiConceal
----@field public enabled? boolean
----@field public ignore? render.md.config.conceal.Ignore
----@field public above? integer
----@field public below? integer
+---@field enabled? boolean
+---@field ignore? render.md.config.conceal.Ignore
+---@field above? integer
+---@field below? integer
 
 ---@class (exact) render.md.UserConfigOverrides
----@field public buflisted? table<boolean, render.md.UserBufferConfig>
----@field public buftype? table<string, render.md.UserBufferConfig>
----@field public filetype? table<string, render.md.UserBufferConfig>
+---@field buflisted? table<boolean, render.md.UserBufferConfig>
+---@field buftype? table<string, render.md.UserBufferConfig>
+---@field filetype? table<string, render.md.UserBufferConfig>
 
 ---@alias render.md.Modes boolean|string[]
 
 ---@class (exact) render.md.UserBufferConfig
----@field public enabled? boolean
----@field public render_modes? render.md.Modes
----@field public max_file_size? number
----@field public debounce? integer
----@field public anti_conceal? render.md.UserAntiConceal
----@field public padding? render.md.UserPadding
----@field public heading? render.md.UserHeading
----@field public paragraph? render.md.UserParagraph
----@field public code? render.md.UserCode
----@field public dash? render.md.UserDash
----@field public bullet? render.md.UserBullet
----@field public checkbox? render.md.UserCheckbox
----@field public quote? render.md.UserQuote
----@field public pipe_table? render.md.UserPipeTable
----@field public callout? table<string, render.md.UserCustomCallout>
----@field public link? render.md.UserLink
----@field public sign? render.md.UserSign
----@field public inline_highlight? render.md.UserInlineHighlight
----@field public indent? render.md.UserIndent
----@field public latex? render.md.UserLatex
----@field public html? render.md.UserHtml
----@field public win_options? table<string, render.md.UserWindowOption>
+---@field enabled? boolean
+---@field render_modes? render.md.Modes
+---@field max_file_size? number
+---@field debounce? integer
+---@field anti_conceal? render.md.UserAntiConceal
+---@field padding? render.md.UserPadding
+---@field heading? render.md.UserHeading
+---@field paragraph? render.md.UserParagraph
+---@field code? render.md.UserCode
+---@field dash? render.md.UserDash
+---@field bullet? render.md.UserBullet
+---@field checkbox? render.md.UserCheckbox
+---@field quote? render.md.UserQuote
+---@field pipe_table? render.md.UserPipeTable
+---@field callout? table<string, render.md.UserCustomCallout>
+---@field link? render.md.UserLink
+---@field sign? render.md.UserSign
+---@field inline_highlight? render.md.UserInlineHighlight
+---@field indent? render.md.UserIndent
+---@field latex? render.md.UserLatex
+---@field html? render.md.UserHtml
+---@field win_options? table<string, render.md.UserWindowOption>
 
 ---@alias render.md.config.Preset 'none'|'lazy'|'obsidian'
 ---@alias render.md.config.LogLevel 'off'|'debug'|'info'|'error'
 
 ---@class (exact) render.md.UserConfig: render.md.UserBufferConfig
----@field public preset? render.md.config.Preset
----@field public log_level? render.md.config.LogLevel
----@field public log_runtime? boolean
----@field public file_types? string[]
----@field public change_events? string[]
----@field public injections? table<string, render.md.UserInjection>
----@field public on? render.md.UserCallback
----@field public completions? render.md.UserCompletions
----@field public overrides? render.md.UserConfigOverrides
----@field public custom_handlers? table<string, render.md.Handler>
+---@field preset? render.md.config.Preset
+---@field log_level? render.md.config.LogLevel
+---@field log_runtime? boolean
+---@field file_types? string[]
+---@field change_events? string[]
+---@field injections? table<string, render.md.UserInjection>
+---@field on? render.md.UserCallback
+---@field completions? render.md.UserCompletions
+---@field overrides? render.md.UserConfigOverrides
+---@field custom_handlers? table<string, render.md.Handler>
 
 ---@type render.md.Config
 M.default_config = {

@@ -2,7 +2,7 @@ local Iter = require('render-markdown.lib.iter')
 
 ---@class render.md.debug.Mark
 ---@field conceal boolean
----@field opts vim.api.keyset.set_extmark
+---@field opts render.md.MarkOpts
 ---@field row { [1]: integer, [2]: integer }
 ---@field col { [1]: integer, [2]: integer }
 local Mark = {}

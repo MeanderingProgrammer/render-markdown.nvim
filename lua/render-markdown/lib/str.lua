@@ -17,6 +17,19 @@ function M.width(s)
     return vim.fn.strdisplaywidth(s)
 end
 
+---@param line? render.md.MarkLine
+---@return integer
+function M.line_width(line)
+    if line == nil then
+        return 0
+    end
+    local result = 0
+    for _, text in ipairs(line) do
+        result = result + M.width(text[1])
+    end
+    return result
+end
+
 ---@param pos 'start'|'end'
 ---@param s string
 ---@return integer

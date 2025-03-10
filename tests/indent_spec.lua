@@ -27,7 +27,7 @@ local function border(row, level, position)
 end
 
 ---@param lengths integer[]
----@return render.md.Line
+---@return render.md.MarkLine
 local function indent_line(lengths)
     local result = {}
     for _, length in ipairs(lengths) do

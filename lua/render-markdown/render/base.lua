@@ -2,8 +2,6 @@ local Iter = require('render-markdown.lib.iter')
 local Str = require('render-markdown.lib.str')
 local colors = require('render-markdown.colors')
 
----@alias render.md.Line render.md.Text[]
-
 ---@class render.md.Renderer
 ---@field protected marks render.md.Marks
 ---@field protected config render.md.buffer.Config
@@ -80,7 +78,7 @@ end
 ---@protected
 ---@param virtual boolean
 ---@param level? integer
----@return render.md.Line
+---@return render.md.MarkLine
 function Base:indent_line(virtual, level)
     if virtual then
         level = self:indent_level(level)
@@ -133,10 +131,10 @@ function Base:indent_level(level)
 end
 
 ---@protected
----@param line render.md.Line
+---@param line render.md.MarkLine
 ---@param value string|integer
 ---@param highlight? string|string[]
----@return render.md.Line
+---@return render.md.MarkLine
 function Base:append(line, value, highlight)
     highlight = highlight or self.config.padding.highlight
     if type(value) == 'string' then

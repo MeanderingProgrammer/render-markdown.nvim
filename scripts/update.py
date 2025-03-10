@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from functools import cached_property
 from pathlib import Path
 
 import tree_sitter_lua
@@ -8,23 +7,43 @@ from tree_sitter import Language, Parser
 
 
 @dataclass(frozen=True)
+class LuaAlias:
+    value: str
+    options: list[str] = field(default_factory=list)
+
+    def add(self, value: str) -> None:
+        self.options.append(value)
+
+    def name(self) -> str:
+        # ---@alias render.md.MarkLine render.md.MarkText[] -> MarkLine
+        return self.value.split()[1].split(".")[-1]
+
+    def to_str(self) -> str:
+        return "\n".join([self.value] + self.options)
+
+
+@dataclass(frozen=True)
 class LuaClass:
-    name: str
+    value: str
     fields: list[str] = field(default_factory=list)
 
-    @cached_property
-    def class_name(self) -> str:
+    def add(self, value: str) -> None:
+        self.fields.append(value)
+
+    def name(self) -> str:
         # ---@class render.md.Init: render.md.Api                               -> Init
         # ---@class (exact) render.md.UserBufferConfig                          -> UserBufferConfig
         # ---@class (exact) render.md.UserConfig: render.md.UserBufferConfig    -> UserConfig
-        return self.name.split(":")[0].split()[-1].split(".")[-1]
+        return self.value.split(":")[0].split()[-1].split(".")[-1]
 
-    @cached_property
-    def is_user(self) -> bool:
-        return self.class_name.startswith("User")
+    def user(self) -> bool:
+        return self.name().startswith("User")
 
     def is_optional(self, field: str) -> bool:
-        class_to_optional: dict[str, list[str]] = {
+        optional_classes: list[str] = [
+            "MarkOpts",
+        ]
+        class_optional_fields: dict[str, list[str]] = {
             "Handler": ["extends"],
             "HeadingCustom": ["icon", "background", "foreground"],
             "LinkContext": ["alias"],
@@ -35,25 +54,28 @@ class LuaClass:
             "UserLinkComponent": ["highlight"],
             "UserHtmlComment": ["text"],
         }
+        optional_fields = class_optional_fields.get(self.name(), [])
+        if self.name() in optional_classes:
+            return True
 
-        # ---@field public extends? boolean             -> extends
-        # ---@field public start_row integer            -> start_row
-        # ---@field public attach? fun(buf: integer)    -> attach
-        field_name = field.split()[2].replace("?", "", 1)
-        return field_name in class_to_optional.get(self.class_name, [])
+        # ---@field extends? boolean                            -> extends
+        # ---@field start_row integer                           -> start_row
+        # ---@field attach? fun(ctx: render.md.CallbackContext) -> attach
+        field_name = field.split()[1].replace("?", "", 1)
+        return field_name in optional_fields
 
     def validate(self) -> None:
         for field in self.fields:
             # User classes are expected to have optional fields with no exceptions
             # Internal classes are expected to have mandatory fields with some exceptions
-            optional = self.is_user or self.is_optional(field)
+            optional = self.user() or self.is_optional(field)
             message = "optional" if optional else "mandatory"
             assert ("?" in field) == optional, f"Field must be {message}: {field}"
 
     def to_internal(self) -> str:
-        lines: list[str] = [self.name.replace("User", "")]
+        lines: list[str] = [self.value.replace("User", "")]
         for field in self.fields:
-            if self.class_name == "UserConfigOverrides":
+            if self.name() == "UserConfigOverrides":
                 lines.append(field.replace("?", "", 1))
             elif self.is_optional(field):
                 lines.append(field)
@@ -62,7 +84,7 @@ class LuaClass:
         return "\n".join(lines)
 
     def to_str(self) -> str:
-        return "\n".join([self.name] + self.fields)
+        return "\n".join([self.value] + self.fields)
 
 
 INIT_LUA = Path("lua/render-markdown/init.lua")
@@ -79,10 +101,12 @@ def main() -> None:
 
 def update_types() -> None:
     classes: list[str] = ["---@meta"]
-    for lua_class in get_classes():
-        lua_class.validate()
-        if lua_class.is_user:
-            classes.append(lua_class.to_internal())
+    for definition in get_definitions():
+        if not isinstance(definition, LuaClass):
+            continue
+        definition.validate()
+        if definition.user():
+            classes.append(definition.to_internal())
     TYPES_LUA.write_text("\n\n".join(classes) + "\n")
 
 
@@ -118,31 +142,41 @@ def update_readme() -> None:
 
 
 def update_handlers() -> None:
-    name_lua = {lua.class_name: lua for lua in get_classes()}
-    names = ["Mark", "HandlerContext", "Handler"]
-    lua_classes = [name_lua[name] for name in names]
+    name_lua = {lua.name(): lua for lua in get_definitions()}
+    names = [
+        "MarkText",
+        "MarkLine",
+        "MarkOpts",
+        "Mark",
+        "HandlerContext",
+        "Handler",
+    ]
+    definitions = [name_lua[name] for name in names]
 
-    old = get_code_block(HANDLERS_MD, lua_classes[0].name, 1)
-    new = "\n".join([lua.to_str() + "\n" for lua in lua_classes])
+    old = get_code_block(HANDLERS_MD, definitions[-1].value, 1)
+    new = "\n".join([lua.to_str() + "\n" for lua in definitions])
     text = HANDLERS_MD.read_text().replace(old, new)
     HANDLERS_MD.write_text(text)
 
 
-def get_classes() -> list[LuaClass]:
-    lua_classes: list[LuaClass] = []
+def get_definitions() -> list[LuaAlias | LuaClass]:
+    result: list[LuaAlias | LuaClass] = []
     for comment in get_comments():
-        # ---@class render.md.Init: render.md.Api       -> class
-        # ---@field public enabled? boolean             -> field
-        # ---@alias render.md.code.Width 'full'|'block' -> alias
-        # ---@type render.md.Config                     -> type
-        # ---@param opts? render.md.UserConfig          -> param
-        # -- Inlined with 'image' elements              -> --
+        # ---@class render.md.Init: render.md.Api   -> class
+        # ---@field enabled? boolean                -> field
+        # ---@alias render.md.bullet.Text           -> alias
+        # ---| string                               -> ---|
+        # ---@type render.md.Config                 -> type
+        # ---@param opts? render.md.UserConfig      -> param
+        # -- Inlined with 'image' elements          -> --
         annotation = comment.split()[0].split("@")[-1]
-        if annotation == "class":
-            lua_classes.append(LuaClass(comment))
-        elif annotation == "field":
-            lua_classes[-1].fields.append(comment)
-    return lua_classes
+        if annotation == "alias":
+            result.append(LuaAlias(comment))
+        elif annotation == "class":
+            result.append(LuaClass(comment))
+        elif annotation in ["field", "---|"]:
+            result[-1].add(comment)
+    return result
 
 
 def get_config_for(config: str, parameter: str) -> str:

@@ -12,19 +12,30 @@ needed, and concealing when the cursor enters.
 Each handler must conform to the following interface:
 
 ```lua
+---@class (exact) render.md.MarkText
+---@field [1] string text
+---@field [2] string|string[] highlights
+
+---@alias render.md.MarkLine render.md.MarkText[]
+
+---@class render.md.MarkOpts: vim.api.keyset.set_extmark
+---@field virt_text? render.md.MarkLine
+---@field virt_text_pos? 'eol'|'inline'|'overlay'
+---@field virt_lines? render.md.MarkLine[]
+
 ---@class (exact) render.md.Mark
----@field public conceal boolean
----@field public start_row integer
----@field public start_col integer
----@field public opts vim.api.keyset.set_extmark
+---@field conceal boolean
+---@field start_row integer
+---@field start_col integer
+---@field opts render.md.MarkOpts
 
 ---@class (exact) render.md.HandlerContext
----@field public buf integer
----@field public root TSNode
+---@field buf integer
+---@field root TSNode
 
 ---@class (exact) render.md.Handler
----@field public extends? boolean
----@field public parse fun(ctx: render.md.HandlerContext): render.md.Mark[]
+---@field extends? boolean
+---@field parse fun(ctx: render.md.HandlerContext): render.md.Mark[]
 ```
 
 The `parse` function takes a `ctx` parameter whose fields are:

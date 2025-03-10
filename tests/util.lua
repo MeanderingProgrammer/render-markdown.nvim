@@ -24,20 +24,10 @@ function Row:increment(n)
     return self.value
 end
 
----@class render.md.MarkInfo
+---@class render.md.MarkInfo: render.md.MarkOpts
 ---@field row { [1]: integer, [2]?: integer }
 ---@field col { [1]: integer, [2]?: integer }
----@field hl_eol? boolean
----@field hl_group? string
----@field conceal? string
----@field virt_text? render.md.Line
 ---@field virt_text_pos? string
----@field virt_text_win_col? integer
----@field virt_lines? render.md.Line[]
----@field virt_lines_above? boolean
----@field sign_text? string
----@field sign_hl_group? string
----@field priority? integer
 
 ---@class render.md.MarkDetails: render.md.MarkInfo
 local MarkDetails = {}

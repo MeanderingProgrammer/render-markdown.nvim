@@ -31,7 +31,7 @@ end
 
 ---@param element boolean|render.md.Element
 ---@param node render.md.Node
----@param opts vim.api.keyset.set_extmark
+---@param opts render.md.MarkOpts
 ---@param offset? Range4
 ---@return boolean
 function Marks:add_over(element, node, opts, offset)
@@ -44,7 +44,7 @@ end
 ---@param element boolean|render.md.Element
 ---@param start_row integer
 ---@param start_col integer
----@param opts vim.api.keyset.set_extmark
+---@param opts render.md.MarkOpts
 ---@return boolean
 function Marks:add(element, start_row, start_col, opts)
     ---@type render.md.Mark
@@ -99,11 +99,8 @@ function Marks:update_context(mark)
         })
     end
     if mark.opts.virt_text_pos == 'inline' then
-        local amount = 0
-        for _, text in ipairs(mark.opts.virt_text or {}) do
-            amount = amount + Str.width(text[1])
-        end
-        self.context:add_offset(row, start_col, end_col, amount)
+        local width = Str.line_width(mark.opts.virt_text)
+        self.context:add_offset(row, start_col, end_col, width)
     end
 end
 
