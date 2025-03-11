@@ -2,87 +2,58 @@
 
 local util = require('tests.util')
 
----@param row integer
----@param start_col integer
----@param end_col integer
----@param text string
----@param highlight string
----@param conceal string?
----@return render.md.MarkInfo
-local function callout(row, start_col, end_col, text, highlight, conceal)
-    ---@type render.md.MarkInfo
-    return {
-        row = { row, row },
-        col = { start_col, end_col },
-        virt_text = { { text, util.hl(highlight) } },
-        virt_text_pos = 'overlay',
-        conceal = conceal,
-    }
-end
-
 describe('callout.md', function()
     it('default', function()
         util.setup('demo/callout.md')
 
-        local expected, row = {}, util.row()
+        local marks, row = util.marks(), util.row()
 
-        local info = 'Info'
-        vim.list_extend(expected, {
-            util.heading(row:get(), 1),
-            util.quote(row:increment(2), '%s ', info),
-            callout(row:get(), 2, 9, '󰋽 Note', info),
-            util.quote(row:increment(), '%s', info),
-            util.quote(row:increment(), '%s ', info),
-            util.quote(row:increment(), '%s', info),
-            util.quote(row:increment(), '%s ', info),
-        })
+        local info = 'RenderMarkdownInfo'
+        marks:extend(util.heading(row:get(), 1))
+        marks:add(util.quote(row:inc(2), '%s ', info))
+        marks:add(util.overlay(row:get(), { 2, 9 }, { '󰋽 Note', info }))
+        marks:add(util.quote(row:inc(), '%s', info))
+        marks:add(util.quote(row:inc(), '%s ', info))
+        marks:add(util.quote(row:inc(), '%s', info))
+        marks:add(util.quote(row:inc(), '%s ', info))
 
-        local ok = 'Success'
-        vim.list_extend(expected, {
-            util.heading(row:increment(2), 1),
-            util.quote(row:increment(2), '%s ', ok),
-            callout(row:get(), 2, 8, '󰌶 Tip', ok),
-            util.quote(row:increment(), '%s', ok),
-            util.quote(row:increment(), '%s ', ok),
-            util.code_language(row:get(), 2, 'lua'),
-            util.quote(row:increment(), '%s ', ok),
-            util.code_row(row:get(), 2),
-            util.quote(row:increment(), '%s ', ok),
-            util.code_border(row:get(), 2, false),
-        })
+        local ok = 'RenderMarkdownSuccess'
+        marks:extend(util.heading(row:inc(2), 1))
+        marks:add(util.quote(row:inc(2), '%s ', ok))
+        marks:add(util.overlay(row:get(), { 2, 8 }, { '󰌶 Tip', ok }))
+        marks:add(util.quote(row:inc(), '%s', ok))
+        marks:add(util.quote(row:inc(), '%s ', ok))
+        marks:extend(util.code_language(row:get(), 2, 'lua'))
+        marks:add(util.code_row(row:get(), 2))
+        marks:add(util.quote(row:inc(), '%s ', ok))
+        marks:add(util.code_row(row:get(), 2))
+        marks:add(util.quote(row:inc(), '%s ', ok))
+        marks:add(util.code_border(row:get(), 2, false))
 
-        local hint = 'Hint'
-        vim.list_extend(expected, {
-            util.heading(row:increment(2), 1),
-            util.quote(row:increment(2), '%s ', hint),
-            callout(row:get(), 2, 14, '󰅾 Important', hint),
-            util.quote(row:increment(1), '%s ', hint),
-        })
+        local hint = 'RenderMarkdownHint'
+        marks:extend(util.heading(row:inc(2), 1))
+        marks:add(util.quote(row:inc(2), '%s ', hint))
+        marks:add(util.overlay(row:get(), { 2, 14 }, { '󰅾 Important', hint }))
+        marks:add(util.quote(row:inc(), '%s ', hint))
 
-        local warn = 'Warn'
-        vim.list_extend(expected, {
-            util.heading(row:increment(2), 1),
-            util.quote(row:increment(2), '%s ', warn),
-            callout(row:get(), 2, 12, '󰀪 Custom Title', warn, ''),
-            util.quote(row:increment(), '%s ', warn),
-        })
+        local warn = 'RenderMarkdownWarn'
+        marks:extend(util.heading(row:inc(2), 1))
+        marks:add(util.quote(row:inc(2), '%s ', warn))
+        marks:add(util.overlay(row:get(), { 2, 12 }, { '󰀪 Custom Title', warn }, ''))
+        marks:add(util.quote(row:inc(), '%s ', warn))
 
-        local error = 'Error'
-        vim.list_extend(expected, {
-            util.heading(row:increment(2), 1),
-            util.quote(row:increment(2), '%s ', error),
-            callout(row:get(), 2, 12, '󰳦 Caution', error),
-            util.quote(row:increment(), '%s ', error),
-        })
+        local err = 'RenderMarkdownError'
+        marks:extend(util.heading(row:inc(2), 1))
+        marks:add(util.quote(row:inc(2), '%s ', err))
+        marks:add(util.overlay(row:get(), { 2, 12 }, { '󰳦 Caution', err }))
+        marks:add(util.quote(row:inc(), '%s ', err))
 
-        vim.list_extend(expected, {
-            util.heading(row:increment(2), 1),
-            util.quote(row:increment(2), '%s ', error),
-            callout(row:get(), 2, 8, '󰨰 Bug', error),
-            util.quote(row:increment(), '%s ', error),
-        })
+        marks:extend(util.heading(row:inc(2), 1))
+        marks:add(util.quote(row:inc(2), '%s ', err))
+        marks:add(util.overlay(row:get(), { 2, 8 }, { '󰨰 Bug', err }))
+        marks:add(util.quote(row:inc(), '%s ', err))
 
-        util.assert_view(expected, {
+        util.assert_view(marks, {
             '󰫎   1 󰲡 Note',
             '    2',
             '    3 ▋ 󰋽 Note',

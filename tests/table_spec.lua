@@ -6,49 +6,47 @@ describe('table.md', function()
     it('default', function()
         util.setup('tests/data/table.md')
 
-        local expected, row = {}, util.row()
+        local marks, row = util.marks(), util.row()
 
-        vim.list_extend(expected, {
-            util.heading(row:get(), 1),
-            util.table_border(row:increment(2), true, { 11, 24 }),
-            util.table_pipe(row:get(), 0, true),
-            util.table_pipe(row:get(), 12, true),
-            util.padding(row:get(), 14, 13, 'table'),
-            util.highlight(row:get(), 14, 25, 'CodeInline'),
-            util.conceal(row:get(), 26, 37),
-            util.table_pipe(row:get(), 37, true),
-            util.table_delimiter(row:increment(), { 11, { 23, 1 } }),
-            util.table_pipe(row:increment(), 0, false),
-            util.highlight(row:get(), 2, 12, 'CodeInline'),
-            util.padding(row:get(), 13, 2, 'table'),
-            util.table_pipe(row:get(), 13, false),
-            util.padding(row:get(), 15, 16, 'table'),
-            util.link(row:get(), 15, 38, 'web'),
-            util.table_pipe(row:get(), 39, false),
-            util.table_pipe(row:increment(), 0, false),
-            util.padding(row:get(), 12, 8, 'table'),
-            util.table_pipe(row:get(), 12, false),
-            util.padding(row:get(), 14, 16, 'table'),
-            util.inline_highlight(row:get(), 14, 25),
-            util.conceal(row:get(), 26, 38),
-            util.table_pipe(row:get(), 38, false),
-            util.table_border(row:get(), false, { 11, 24 }),
-        })
+        marks:extend(util.heading(row:get(), 1))
 
-        vim.list_extend(expected, {
-            util.heading(row:increment(2), 1),
-            util.table_border(row:increment(2), true, { 11, 11 }),
-            util.table_pipe(row:get(), 0, true),
-            util.table_pipe(row:get(), 12, true),
-            util.table_pipe(row:get(), 24, true),
-            util.table_delimiter(row:increment(), { 11, 11 }),
-            util.table_pipe(row:increment(), 0, false),
-            util.table_pipe(row:get(), 12, false),
-            util.table_pipe(row:get(), 24, false),
-            util.table_border(row:get(), false, { 11, 11 }),
-        })
+        marks:add(util.table_border(row:inc(2), true, { 11, 24 }))
+        marks:add(util.table_pipe(row:get(), 0, true))
+        marks:add(util.table_pipe(row:get(), 12, true))
+        marks:add(util.padding(row:get(), 14, 13, 'table'))
+        marks:add(util.highlight(row:get(), { 14, 25 }, 'code'))
+        marks:add(util.conceal(row:get(), { 26, 37 }))
+        marks:add(util.table_pipe(row:get(), 37, true))
+        marks:add(util.table_delimiter(row:inc(), 38, { 11, { 23, 1 } }))
+        marks:add(util.table_pipe(row:inc(), 0, false))
+        marks:add(util.highlight(row:get(), { 2, 12 }, 'code'))
+        marks:add(util.padding(row:get(), 13, 2, 'table'))
+        marks:add(util.table_pipe(row:get(), 13, false))
+        marks:add(util.padding(row:get(), 15, 16, 'table'))
+        marks:add(util.link(row:get(), { 15, 38 }, 'web'))
+        marks:add(util.table_pipe(row:get(), 39, false))
+        marks:add(util.table_pipe(row:inc(), 0, false))
+        marks:add(util.padding(row:get(), 12, 8, 'table'))
+        marks:add(util.table_pipe(row:get(), 12, false))
+        marks:add(util.padding(row:get(), 14, 16, 'table'))
+        marks:extend(util.inline_highlight(row:get(), 14, 25))
+        marks:add(util.conceal(row:get(), { 26, 38 }))
+        marks:add(util.table_pipe(row:get(), 38, false))
+        marks:add(util.table_border(row:get(), false, { 11, 24 }))
 
-        util.assert_view(expected, {
+        marks:extend(util.heading(row:inc(2), 1))
+
+        marks:add(util.table_border(row:inc(2), true, { 11, 11 }))
+        marks:add(util.table_pipe(row:get(), 0, true))
+        marks:add(util.table_pipe(row:get(), 12, true))
+        marks:add(util.table_pipe(row:get(), 24, true))
+        marks:add(util.table_delimiter(row:inc(), 25, { 11, 11 }))
+        marks:add(util.table_pipe(row:inc(), 0, false))
+        marks:add(util.table_pipe(row:get(), 12, false))
+        marks:add(util.table_pipe(row:get(), 24, false))
+        marks:add(util.table_border(row:get(), false, { 11, 11 }))
+
+        util.assert_view(marks, {
             '󰫎   1 󰲡 Table with Inline',
             '    2',
             '      ┌───────────┬────────────────────────┐',
@@ -69,50 +67,50 @@ describe('table.md', function()
     end)
 
     it('trimmed', function()
-        util.setup('tests/data/table.md', { pipe_table = { cell = 'trimmed' } })
-
-        local expected, row = {}, util.row()
-
-        vim.list_extend(expected, {
-            util.heading(row:get(), 1),
-            util.table_border(row:increment(2), true, { 11, 11 }),
-            util.table_pipe(row:get(), 0, true),
-            util.table_pipe(row:get(), 12, true),
-            util.highlight(row:get(), 14, 25, 'CodeInline'),
-            util.conceal(row:get(), 26, 37),
-            util.table_pipe(row:get(), 37, true),
-            util.table_delimiter(row:increment(), { 11, { 10, 1 } }, 13),
-            util.table_pipe(row:increment(), 0, false),
-            util.highlight(row:get(), 2, 12, 'CodeInline'),
-            util.padding(row:get(), 13, 2, 'table'),
-            util.table_pipe(row:get(), 13, false),
-            util.padding(row:get(), 15, 3, 'table'),
-            util.link(row:get(), 15, 38, 'web'),
-            util.table_pipe(row:get(), 39, false),
-            util.table_pipe(row:increment(), 0, false),
-            util.padding(row:get(), 12, 8, 'table'),
-            util.table_pipe(row:get(), 12, false),
-            util.padding(row:get(), 14, 3, 'table'),
-            util.inline_highlight(row:get(), 14, 25),
-            util.conceal(row:get(), 26, 38),
-            util.table_pipe(row:get(), 38, false),
-            util.table_border(row:get(), false, { 11, 11 }),
+        util.setup('tests/data/table.md', {
+            pipe_table = { cell = 'trimmed' },
         })
 
-        vim.list_extend(expected, {
-            util.heading(row:increment(2), 1),
-            util.table_border(row:increment(2), true, { 11, 11 }),
-            util.table_pipe(row:get(), 0, true),
-            util.table_pipe(row:get(), 12, true),
-            util.table_pipe(row:get(), 24, true),
-            util.table_delimiter(row:increment(), { 11, 11 }),
-            util.table_pipe(row:increment(), 0, false),
-            util.table_pipe(row:get(), 12, false),
-            util.table_pipe(row:get(), 24, false),
-            util.table_border(row:get(), false, { 11, 11 }),
-        })
+        local marks, row = util.marks(), util.row()
 
-        util.assert_view(expected, {
+        marks:extend(util.heading(row:get(), 1))
+
+        marks:add(util.table_border(row:inc(2), true, { 11, 11 }))
+        marks:add(util.table_pipe(row:get(), 0, true))
+        marks:add(util.table_pipe(row:get(), 12, true))
+        marks:add(util.highlight(row:get(), { 14, 25 }, 'code'))
+        marks:add(util.conceal(row:get(), { 26, 37 }))
+        marks:add(util.table_pipe(row:get(), 37, true))
+        marks:add(util.table_delimiter(row:inc(), 38, { 11, { 10, 1 } }))
+        marks:add(util.table_pipe(row:inc(), 0, false))
+        marks:add(util.highlight(row:get(), { 2, 12 }, 'code'))
+        marks:add(util.padding(row:get(), 13, 2, 'table'))
+        marks:add(util.table_pipe(row:get(), 13, false))
+        marks:add(util.padding(row:get(), 15, 3, 'table'))
+        marks:add(util.link(row:get(), { 15, 38 }, 'web'))
+        marks:add(util.table_pipe(row:get(), 39, false))
+        marks:add(util.table_pipe(row:inc(), 0, false))
+        marks:add(util.padding(row:get(), 12, 8, 'table'))
+        marks:add(util.table_pipe(row:get(), 12, false))
+        marks:add(util.padding(row:get(), 14, 3, 'table'))
+        marks:extend(util.inline_highlight(row:get(), 14, 25))
+        marks:add(util.conceal(row:get(), { 26, 38 }))
+        marks:add(util.table_pipe(row:get(), 38, false))
+        marks:add(util.table_border(row:get(), false, { 11, 11 }))
+
+        marks:extend(util.heading(row:inc(2), 1))
+
+        marks:add(util.table_border(row:inc(2), true, { 11, 11 }))
+        marks:add(util.table_pipe(row:get(), 0, true))
+        marks:add(util.table_pipe(row:get(), 12, true))
+        marks:add(util.table_pipe(row:get(), 24, true))
+        marks:add(util.table_delimiter(row:inc(), 25, { 11, 11 }))
+        marks:add(util.table_pipe(row:inc(), 0, false))
+        marks:add(util.table_pipe(row:get(), 12, false))
+        marks:add(util.table_pipe(row:get(), 24, false))
+        marks:add(util.table_border(row:get(), false, { 11, 11 }))
+
+        util.assert_view(marks, {
             '󰫎   1 󰲡 Table with Inline',
             '    2',
             '      ┌───────────┬───────────┐',
@@ -133,42 +131,42 @@ describe('table.md', function()
     end)
 
     it('raw', function()
-        util.setup('tests/data/table.md', { pipe_table = { cell = 'raw' } })
-
-        local expected, row = {}, util.row()
-
-        vim.list_extend(expected, {
-            util.heading(row:get(), 1),
-            util.table_pipe(row:increment(2), 0, true),
-            util.table_pipe(row:get(), 12, true),
-            util.highlight(row:get(), 14, 25, 'CodeInline'),
-            util.table_pipe(row:get(), 37, true),
-            util.table_delimiter(row:increment(), { 11, { 23, 1 } }),
-            util.table_pipe(row:increment(), 0, false),
-            util.highlight(row:get(), 2, 12, 'CodeInline'),
-            util.table_pipe(row:get(), 13, false),
-            util.link(row:get(), 15, 38, 'web'),
-            util.table_pipe(row:get(), 39, false),
-            util.table_pipe(row:increment(), 0, false),
-            util.table_pipe(row:get(), 12, false),
-            util.inline_highlight(row:get(), 14, 25),
-            util.table_pipe(row:get(), 38, false),
+        util.setup('tests/data/table.md', {
+            pipe_table = { cell = 'raw' },
         })
 
-        vim.list_extend(expected, {
-            util.heading(row:increment(2), 1),
-            util.table_border(row:increment(2), true, { 11, 11 }),
-            util.table_pipe(row:get(), 0, true),
-            util.table_pipe(row:get(), 12, true),
-            util.table_pipe(row:get(), 24, true),
-            util.table_delimiter(row:increment(), { 11, 11 }),
-            util.table_pipe(row:increment(), 0, false),
-            util.table_pipe(row:get(), 12, false),
-            util.table_pipe(row:get(), 24, false),
-            util.table_border(row:get(), false, { 11, 11 }),
-        })
+        local marks, row = util.marks(), util.row()
 
-        util.assert_view(expected, {
+        marks:extend(util.heading(row:get(), 1))
+
+        marks:add(util.table_pipe(row:inc(2), 0, true))
+        marks:add(util.table_pipe(row:get(), 12, true))
+        marks:add(util.highlight(row:get(), { 14, 25 }, 'code'))
+        marks:add(util.table_pipe(row:get(), 37, true))
+        marks:add(util.table_delimiter(row:inc(), 38, { 11, { 23, 1 } }))
+        marks:add(util.table_pipe(row:inc(), 0, false))
+        marks:add(util.highlight(row:get(), { 2, 12 }, 'code'))
+        marks:add(util.table_pipe(row:get(), 13, false))
+        marks:add(util.link(row:get(), { 15, 38 }, 'web'))
+        marks:add(util.table_pipe(row:get(), 39, false))
+        marks:add(util.table_pipe(row:inc(), 0, false))
+        marks:add(util.table_pipe(row:get(), 12, false))
+        marks:extend(util.inline_highlight(row:get(), 14, 25))
+        marks:add(util.table_pipe(row:get(), 38, false))
+
+        marks:extend(util.heading(row:inc(2), 1))
+
+        marks:add(util.table_border(row:inc(2), true, { 11, 11 }))
+        marks:add(util.table_pipe(row:get(), 0, true))
+        marks:add(util.table_pipe(row:get(), 12, true))
+        marks:add(util.table_pipe(row:get(), 24, true))
+        marks:add(util.table_delimiter(row:inc(), 25, { 11, 11 }))
+        marks:add(util.table_pipe(row:inc(), 0, false))
+        marks:add(util.table_pipe(row:get(), 12, false))
+        marks:add(util.table_pipe(row:get(), 24, false))
+        marks:add(util.table_border(row:get(), false, { 11, 11 }))
+
+        util.assert_view(marks, {
             '󰫎   1 󰲡 Table with Inline',
             '    2',
             '    3 │ Heading 1 │ Heading 2            │',
@@ -187,50 +185,52 @@ describe('table.md', function()
     end)
 
     it('overlay', function()
-        ---@param row integer
-        ---@param col integer
-        ---@param value string
-        ---@param head boolean
-        ---@return render.md.MarkInfo
-        local function table_row(row, col, value, head)
-            local highlight = head and 'TableHead' or 'TableRow'
-            ---@type render.md.MarkInfo
-            return {
-                row = { row, row },
-                col = { 0, col },
-                virt_text = { { value, util.hl(highlight) } },
-                virt_text_pos = 'overlay',
-            }
-        end
-
-        util.setup('tests/data/table.md', { pipe_table = { cell = 'overlay' } })
-
-        local expected, row = {}, util.row()
-
-        vim.list_extend(expected, {
-            util.heading(row:get(), 1),
-            util.table_border(row:increment(2), true, { 11, 24 }),
-            table_row(row:get(), 38, '│ Heading 1 │ `Heading 2`            │', true),
-            util.highlight(row:get(), 14, 25, 'CodeInline'),
-            util.table_delimiter(row:increment(), { 11, { 23, 1 } }),
-            table_row(row:increment(), 40, '│ `Item 行` │ [link](https://行.com) │', false),
-            util.highlight(row:get(), 2, 12, 'CodeInline'),
-            util.link(row:get(), 15, 38, 'web'),
-            table_row(row:increment(), 39, '│ &lt;1&gt; │ ==Itém 2==             │', false),
-            util.inline_highlight(row:get(), 14, 25),
-            util.table_border(row:get(), false, { 11, 24 }),
+        util.setup('tests/data/table.md', {
+            pipe_table = { cell = 'overlay' },
         })
 
-        vim.list_extend(expected, {
-            util.heading(row:increment(2), 1),
-            util.table_border(row:increment(2), true, { 11, 11 }),
-            table_row(row:get(), 25, '│ Heading 1 │ Heading 2 │', true),
-            util.table_delimiter(row:increment(), { 11, 11 }),
-            table_row(row:increment(), 25, '│ Item 1    │ Item 2    │', false),
-            util.table_border(row:get(), false, { 11, 11 }),
-        })
+        local marks, row = util.marks(), util.row()
 
-        util.assert_view(expected, {
+        marks:extend(util.heading(row:get(), 1))
+
+        marks:add(util.table_border(row:inc(2), true, { 11, 24 }))
+        marks:add(
+            util.overlay(
+                row:get(),
+                { 0, 38 },
+                { '│ Heading 1 │ `Heading 2`            │', 'RenderMarkdownTableHead' }
+            )
+        )
+        marks:add(util.highlight(row:get(), { 14, 25 }, 'code'))
+        marks:add(util.table_delimiter(row:inc(), 38, { 11, { 23, 1 } }))
+        marks:add(
+            util.overlay(
+                row:inc(),
+                { 0, 40 },
+                { '│ `Item 行` │ [link](https://行.com) │', 'RenderMarkdownTableRow' }
+            )
+        )
+        marks:add(util.highlight(row:get(), { 2, 12 }, 'code'))
+        marks:add(util.link(row:get(), { 15, 38 }, 'web'))
+        marks:add(
+            util.overlay(
+                row:inc(),
+                { 0, 39 },
+                { '│ &lt;1&gt; │ ==Itém 2==             │', 'RenderMarkdownTableRow' }
+            )
+        )
+        marks:extend(util.inline_highlight(row:get(), 14, 25))
+        marks:add(util.table_border(row:get(), false, { 11, 24 }))
+
+        marks:extend(util.heading(row:inc(2), 1))
+
+        marks:add(util.table_border(row:inc(2), true, { 11, 11 }))
+        marks:add(util.overlay(row:get(), { 0, 25 }, { '│ Heading 1 │ Heading 2 │', 'RenderMarkdownTableHead' }))
+        marks:add(util.table_delimiter(row:inc(), 25, { 11, 11 }))
+        marks:add(util.overlay(row:inc(), { 0, 25 }, { '│ Item 1    │ Item 2    │', 'RenderMarkdownTableRow' }))
+        marks:add(util.table_border(row:get(), false, { 11, 11 }))
+
+        util.assert_view(marks, {
             '󰫎   1 󰲡 Table with Inline',
             '    2',
             '      ┌───────────┬────────────────────────┐',

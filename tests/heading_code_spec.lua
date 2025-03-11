@@ -6,25 +6,24 @@ describe('heading_code.md', function()
     it('default', function()
         util.setup('demo/heading_code.md')
 
-        local expected, row = {}, util.row()
+        local marks, row = util.marks(), util.row()
 
-        vim.list_extend(expected, {
-            util.heading(row:get(), 1),
-            util.heading(row:increment(2), 3),
-            util.heading(row:increment(2), 4),
-            util.heading(row:increment(2), 5),
-            util.heading(row:increment(2), 6),
-        })
+        marks:extend(util.heading(row:get(), 1))
+        marks:extend(util.heading(row:inc(2), 3))
+        marks:extend(util.heading(row:inc(2), 4))
+        marks:extend(util.heading(row:inc(2), 5))
+        marks:extend(util.heading(row:inc(2), 6))
 
-        table.insert(expected, util.link(row:increment(2), 0, 21, 'image'))
+        marks:add(util.link(row:inc(2), { 0, 21 }, 'image'))
 
-        table.insert(expected, util.code_language(row:increment(2), 0, 'python'))
+        marks:extend(util.code_language(row:inc(2), 0, 'python'))
+        marks:add(util.code_row(row:get(), 0))
         for _ = 13, 21 do
-            table.insert(expected, util.code_row(row:increment(), 0))
+            marks:add(util.code_row(row:inc(), 0))
         end
-        table.insert(expected, util.code_border(row:increment(), 0, false))
+        marks:add(util.code_border(row:inc(), 0, false))
 
-        util.assert_view(expected, {
+        util.assert_view(marks, {
             '󰫎   1 󰲡 Heading 1',
             '    2',
             '󰫎   3   󰲥 Heading 3',

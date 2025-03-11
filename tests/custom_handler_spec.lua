@@ -22,14 +22,13 @@ describe('custom_handler.md', function()
     it('default', function()
         util.setup('tests/data/custom_handler.md')
 
-        local expected, row = {}, util.row()
-        vim.list_extend(expected, {
-            util.heading(row:get(), 1), -- Heading
-            util.highlight(row:increment(2), 0, 8, 'CodeInline'), -- Inline code
-            {}, -- No backslash escapes
-        })
-
-        util.assert_view(expected, {
+        local marks, row = util.marks(), util.row()
+        -- Heading
+        marks:extend(util.heading(row:get(), 1))
+        -- Inline code
+        marks:add(util.highlight(row:inc(2), { 0, 8 }, 'code'))
+        -- No backslash escapes
+        util.assert_view(marks, {
             '󰫎   1 󰲡 Heading',
             '    2',
             '    3 Inline code',
@@ -45,14 +44,14 @@ describe('custom_handler.md', function()
             },
         })
 
-        local expected, row = {}, util.row()
-        vim.list_extend(expected, {
-            util.heading(row:get(), 1), -- Heading
-            {}, -- No inline code
-            { util.conceal(row:increment(4), 0, 1), util.conceal(row:get(), 7, 8) }, -- Backslash escapes
-        })
-
-        util.assert_view(expected, {
+        local marks, row = util.marks(), util.row()
+        -- Heading
+        marks:extend(util.heading(row:get(), 1))
+        -- No inline code
+        -- Backslash escapes
+        marks:add(util.conceal(row:inc(4), { 0, 1 }))
+        marks:add(util.conceal(row:get(), { 7, 8 }))
+        util.assert_view(marks, {
             '󰫎   1 󰲡 Heading',
             '    2',
             '    3 Inline code',
@@ -68,14 +67,15 @@ describe('custom_handler.md', function()
             },
         })
 
-        local expected, row = {}, util.row()
-        vim.list_extend(expected, {
-            util.heading(row:get(), 1), -- Heading
-            util.highlight(row:increment(2), 0, 8, 'CodeInline'), -- Inline code
-            { util.conceal(row:increment(2), 0, 1), util.conceal(row:get(), 7, 8) }, -- Backslash escapes
-        })
-
-        util.assert_view(expected, {
+        local marks, row = util.marks(), util.row()
+        -- Heading
+        marks:extend(util.heading(row:get(), 1))
+        -- Inline code
+        marks:add(util.highlight(row:inc(2), { 0, 8 }, 'code'))
+        -- Backslash escapes
+        marks:add(util.conceal(row:inc(2), { 0, 1 }))
+        marks:add(util.conceal(row:get(), { 7, 8 }))
+        util.assert_view(marks, {
             '󰫎   1 󰲡 Heading',
             '    2',
             '    3 Inline code',

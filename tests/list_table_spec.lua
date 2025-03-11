@@ -2,75 +2,77 @@
 
 local util = require('tests.util')
 
+---@param mark render.md.MarkInfo
+---@return render.md.MarkInfo[]
+local function padded(mark)
+    local col = mark.col[2]
+    assert(col ~= nil)
+    return {
+        util.padding(mark.row[1], 0, 2),
+        mark,
+        util.padding(mark.row[1], col - 1, 2),
+    }
+end
+
 describe('list_table.md', function()
     it('default', function()
         util.setup('demo/list_table.md')
 
-        local expected, row = {}, util.row()
+        local marks, row = util.marks(), util.row()
 
-        vim.list_extend(expected, util.heading(row:get(), 1))
+        marks:extend(util.heading(row:get(), 1))
 
-        vim.list_extend(expected, {
-            util.bullet(row:increment(2), 0, 1),
-            util.link(row:get(), 20, 47, 'web'),
-            util.bullet(row:increment(), 0, 1),
-            util.highlight(row:get(), 20, 28, 'CodeInline'),
-            util.bullet(row:increment(), 2, 2, 2),
-            util.bullet(row:increment(), 4, 2),
-            util.bullet(row:increment(), 6, 3),
-            util.bullet(row:increment(), 8, 4),
-            util.bullet(row:increment(), 10, 1),
-            util.bullet(row:increment(), 0, 1),
-            util.link(row:get(), 20, 45, 'link'),
-        })
+        marks:add(util.bullet(row:inc(2), 0, 1))
+        marks:add(util.link(row:get(), { 20, 47 }, 'web'))
+        marks:add(util.bullet(row:inc(), 0, 1))
+        marks:add(util.highlight(row:get(), { 20, 28 }, 'code'))
+        marks:add(util.bullet(row:inc(), 2, 2, 2))
+        marks:add(util.bullet(row:inc(), 4, 2))
+        marks:add(util.bullet(row:inc(), 6, 3))
+        marks:add(util.bullet(row:inc(), 8, 4))
+        marks:add(util.bullet(row:inc(), 10, 1))
+        marks:add(util.bullet(row:inc(), 0, 1))
+        marks:add(util.link(row:get(), { 20, 45 }, 'link'))
 
-        vim.list_extend(expected, util.heading(row:increment(2), 1))
+        marks:extend(util.heading(row:inc(2), 1))
 
-        vim.list_extend(expected, {
-            util.ordered(row:increment(2), 0, '1.'),
-            util.ordered(row:increment(1), 0, '2.'),
-        })
+        marks:add(util.ordered(row:inc(2), 0, '1.'))
+        marks:add(util.ordered(row:inc(), 0, '2.'))
 
-        vim.list_extend(expected, util.heading(row:increment(2), 1))
+        marks:extend(util.heading(row:inc(2), 1))
 
-        vim.list_extend(expected, {
-            util.table_border(row:increment(2), true, { 8, 15, 7, 6 }),
-            util.table_pipe(row:get(), 0, true),
-            util.highlight(row:get(), 2, 8, 'CodeInline'),
-            util.padding(row:get(), 9, 2, 'table'),
-            util.table_pipe(row:get(), 9, true),
-            util.padding(row:get(), 11, 3, 'table'),
-            util.conceal(row:get(), 24, 25),
-            util.table_pipe(row:get(), 25, true),
-            util.table_pipe(row:get(), 33, true),
-            util.table_pipe(row:get(), 40, true),
-        })
-        table.insert(expected, util.table_delimiter(row:increment(), { { 1, 7 }, { 1, 13, 1 }, { 6, 1 }, 6 }))
-        vim.list_extend(expected, {
-            util.table_pipe(row:increment(), 0, false),
-            util.highlight(row:get(), 2, 8, 'CodeInline'),
-            util.padding(row:get(), 9, 2, 'table'),
-            util.table_pipe(row:get(), 9, false),
-            util.padding(row:get(), 11, 4, 'table'),
-            util.table_pipe(row:get(), 25, false),
-            util.table_pipe(row:get(), 33, false),
-            util.table_pipe(row:get(), 40, false),
-        })
-        vim.list_extend(expected, {
-            util.table_pipe(row:increment(), 0, false),
-            util.table_pipe(row:get(), 9, false),
-            util.padding(row:get(), 11, 3, 'table'),
-            util.link(row:get(), 11, 24, 'link'),
-            util.padding(row:get(), 25, 4, 'table'),
-            util.table_pipe(row:get(), 25, false),
-            util.padding(row:get(), 27, 1, 'table'),
-            util.conceal(row:get(), 32, 33),
-            util.table_pipe(row:get(), 33, false),
-            util.table_pipe(row:get(), 40, false),
-            util.table_border(row:get(), false, { 8, 15, 7, 6 }),
-        })
+        marks:add(util.table_border(row:inc(2), true, { 8, 15, 7, 6 }))
+        marks:add(util.table_pipe(row:get(), 0, true))
+        marks:add(util.highlight(row:get(), { 2, 8 }, 'code'))
+        marks:add(util.padding(row:get(), 9, 2, 'table'))
+        marks:add(util.table_pipe(row:get(), 9, true))
+        marks:add(util.padding(row:get(), 11, 3, 'table'))
+        marks:add(util.conceal(row:get(), { 24, 25 }))
+        marks:add(util.table_pipe(row:get(), 25, true))
+        marks:add(util.table_pipe(row:get(), 33, true))
+        marks:add(util.table_pipe(row:get(), 40, true))
+        marks:add(util.table_delimiter(row:inc(), 41, { { 1, 7 }, { 1, 13, 1 }, { 6, 1 }, 6 }))
+        marks:add(util.table_pipe(row:inc(), 0, false))
+        marks:add(util.highlight(row:get(), { 2, 8 }, 'code'))
+        marks:add(util.padding(row:get(), 9, 2, 'table'))
+        marks:add(util.table_pipe(row:get(), 9, false))
+        marks:add(util.padding(row:get(), 11, 4, 'table'))
+        marks:add(util.table_pipe(row:get(), 25, false))
+        marks:add(util.table_pipe(row:get(), 33, false))
+        marks:add(util.table_pipe(row:get(), 40, false))
+        marks:add(util.table_pipe(row:inc(), 0, false))
+        marks:add(util.table_pipe(row:get(), 9, false))
+        marks:add(util.padding(row:get(), 11, 3, 'table'))
+        marks:add(util.link(row:get(), { 11, 24 }, 'link'))
+        marks:add(util.padding(row:get(), 25, 4, 'table'))
+        marks:add(util.table_pipe(row:get(), 25, false))
+        marks:add(util.padding(row:get(), 27, 1, 'table'))
+        marks:add(util.conceal(row:get(), { 32, 33 }))
+        marks:add(util.table_pipe(row:get(), 33, false))
+        marks:add(util.table_pipe(row:get(), 40, false))
+        marks:add(util.table_border(row:get(), false, { 8, 15, 7, 6 }))
 
-        util.assert_view(expected, {
+        util.assert_view(marks, {
             '󰫎   1 󰲡 Unordered List',
             '    2',
             '    3 ● List Item 1: with 󰖟 link',
@@ -106,104 +108,66 @@ describe('list_table.md', function()
             bullet = { left_pad = 2, right_pad = 2 },
         })
 
-        local expected, row = {}, util.row()
+        local marks, row = util.marks(), util.row()
 
-        vim.list_extend(expected, util.heading(row:get(), 1))
+        marks:extend(util.heading(row:get(), 1))
 
-        vim.list_extend(expected, {
-            util.padding(row:increment(2), 0, 2),
-            util.bullet(row:get(), 0, 1),
-            util.padding(row:get(), 1, 2),
-            util.link(row:get(), 20, 47, 'web'),
+        marks:extend(padded(util.bullet(row:inc(2), 0, 1)))
+        marks:add(util.link(row:get(), { 20, 47 }, 'web'))
+        marks:extend(padded(util.bullet(row:inc(), 0, 1)))
+        marks:add(util.padding(row:get(), 20, 2, 'code'))
+        marks:add(util.highlight(row:get(), { 20, 28 }, 'code'))
+        marks:add(util.padding(row:get(), 28, 2, 'code'))
+        marks:extend(padded(util.bullet(row:inc(), 2, 2, 2)))
+        marks:extend(padded(util.bullet(row:inc(), 4, 2)))
+        marks:extend(padded(util.bullet(row:inc(), 6, 3)))
+        marks:extend(padded(util.bullet(row:inc(), 8, 4)))
+        marks:extend(padded(util.bullet(row:inc(), 10, 1)))
+        marks:extend(padded(util.bullet(row:inc(), 0, 1)))
+        marks:add(util.link(row:get(), { 20, 45 }, 'link'))
 
-            util.padding(row:increment(), 0, 2),
-            util.bullet(row:get(), 0, 1),
-            util.padding(row:get(), 1, 2),
-            util.padding(row:get(), 20, 2, 'code'),
-            util.highlight(row:get(), 20, 28, 'CodeInline'),
-            util.padding(row:get(), 28, 2, 'code'),
+        marks:extend(util.heading(row:inc(2), 1))
 
-            util.padding(row:increment(), 0, 2),
-            util.bullet(row:get(), 2, 2, 2),
-            util.padding(row:get(), 5, 2),
+        marks:extend(padded(util.ordered(row:inc(2), 0, '1.')))
+        marks:extend(padded(util.ordered(row:inc(), 0, '2.')))
 
-            util.padding(row:increment(), 0, 2),
-            util.bullet(row:get(), 4, 2),
-            util.padding(row:get(), 5, 2),
+        marks:extend(util.heading(row:inc(2), 1))
 
-            util.padding(row:increment(), 0, 2),
-            util.bullet(row:get(), 6, 3),
-            util.padding(row:get(), 7, 2),
+        marks:add(util.table_border(row:inc(2), true, { 10, 15, 7, 6 }))
+        marks:add(util.table_pipe(row:get(), 0, true))
+        marks:add(util.padding(row:get(), 2, 2, 'code'))
+        marks:add(util.highlight(row:get(), { 2, 8 }, 'code'))
+        marks:add(util.padding(row:get(), 8, 2, 'code'))
+        marks:add(util.table_pipe(row:get(), 9, true))
+        marks:add(util.padding(row:get(), 11, 3, 'table'))
+        marks:add(util.conceal(row:get(), { 24, 25 }))
+        marks:add(util.table_pipe(row:get(), 25, true))
+        marks:add(util.table_pipe(row:get(), 33, true))
+        marks:add(util.table_pipe(row:get(), 40, true))
+        marks:add(util.table_delimiter(row:inc(), 41, { { 1, 9 }, { 1, 13, 1 }, { 6, 1 }, 6 }))
+        marks:add(util.table_pipe(row:inc(), 0, false))
+        marks:add(util.padding(row:get(), 2, 2, 'code'))
+        marks:add(util.highlight(row:get(), { 2, 8 }, 'code'))
+        marks:add(util.padding(row:get(), 8, 2, 'code'))
+        marks:add(util.table_pipe(row:get(), 9, false))
+        marks:add(util.padding(row:get(), 11, 4, 'table'))
+        marks:add(util.table_pipe(row:get(), 25, false))
+        marks:add(util.table_pipe(row:get(), 33, false))
+        marks:add(util.table_pipe(row:get(), 40, false))
+        marks:add(util.table_pipe(row:inc(), 0, false))
+        marks:add(util.padding(row:get(), 9, 2, 'table'))
+        marks:add(util.table_pipe(row:get(), 9, false))
+        marks:add(util.padding(row:get(), 11, 3, 'table'))
+        marks:add(util.link(row:get(), { 11, 24 }, 'link'))
+        marks:add(util.padding(row:get(), 25, 4, 'table'))
+        marks:add(util.table_pipe(row:get(), 25, false))
+        marks:add(util.padding(row:get(), 27, 1, 'table'))
+        marks:add(util.conceal(row:get(), { 32, 33 }))
+        marks:add(util.table_pipe(row:get(), 33, false))
+        marks:add(util.table_pipe(row:get(), 40, false))
+        marks:add(util.table_border(row:get(), false, { 10, 15, 7, 6 }))
 
-            util.padding(row:increment(), 0, 2),
-            util.bullet(row:get(), 8, 4),
-            util.padding(row:get(), 9, 2),
-
-            util.padding(row:increment(), 0, 2),
-            util.bullet(row:get(), 10, 1),
-            util.padding(row:get(), 11, 2),
-
-            util.padding(row:increment(), 0, 2),
-            util.bullet(row:get(), 0, 1),
-            util.padding(row:get(), 1, 2),
-            util.link(row:get(), 20, 45, 'link'),
-        })
-
-        vim.list_extend(expected, util.heading(row:increment(2), 1))
-
-        vim.list_extend(expected, {
-            util.padding(row:increment(2), 0, 2),
-            util.ordered(row:get(), 0, '1.'),
-            util.padding(row:get(), 2, 2),
-
-            util.padding(row:increment(), 0, 2),
-            util.ordered(row:get(), 0, '2.'),
-            util.padding(row:get(), 2, 2),
-        })
-
-        vim.list_extend(expected, util.heading(row:increment(2), 1))
-
-        vim.list_extend(expected, {
-            util.table_border(row:increment(2), true, { 10, 15, 7, 6 }),
-            util.table_pipe(row:get(), 0, true),
-            util.padding(row:get(), 2, 2, 'code'),
-            util.highlight(row:get(), 2, 8, 'CodeInline'),
-            util.padding(row:get(), 8, 2, 'code'),
-            util.table_pipe(row:get(), 9, true),
-            util.padding(row:get(), 11, 3, 'table'),
-            util.conceal(row:get(), 24, 25),
-            util.table_pipe(row:get(), 25, true),
-            util.table_pipe(row:get(), 33, true),
-            util.table_pipe(row:get(), 40, true),
-        })
-        table.insert(expected, util.table_delimiter(row:increment(), { { 1, 9 }, { 1, 13, 1 }, { 6, 1 }, 6 }, nil, 2))
-        vim.list_extend(expected, {
-            util.table_pipe(row:increment(), 0, false),
-            util.padding(row:get(), 2, 2, 'code'),
-            util.highlight(row:get(), 2, 8, 'CodeInline'),
-            util.padding(row:get(), 8, 2, 'code'),
-            util.table_pipe(row:get(), 9, false),
-            util.padding(row:get(), 11, 4, 'table'),
-            util.table_pipe(row:get(), 25, false),
-            util.table_pipe(row:get(), 33, false),
-            util.table_pipe(row:get(), 40, false),
-        })
-        vim.list_extend(expected, {
-            util.table_pipe(row:increment(), 0, false),
-            util.padding(row:get(), 9, 2, 'table'),
-            util.table_pipe(row:get(), 9, false),
-            util.padding(row:get(), 11, 3, 'table'),
-            util.link(row:get(), 11, 24, 'link'),
-            util.padding(row:get(), 25, 4, 'table'),
-            util.table_pipe(row:get(), 25, false),
-            util.padding(row:get(), 27, 1, 'table'),
-            util.conceal(row:get(), 32, 33),
-            util.table_pipe(row:get(), 33, false),
-            util.table_pipe(row:get(), 40, false),
-            util.table_border(row:get(), false, { 10, 15, 7, 6 }),
-        })
-
-        util.assert_view(expected, {
+        util.assert_view(marks, {
             '󰫎   1 󰲡 Unordered List',
             '    2',
             '    3   ●   List Item 1: with 󰖟 link',

@@ -14,7 +14,7 @@ local function padding(row, col, offset, left, priority)
         table.insert(virt_text, { string.rep(' ', offset), 'Normal' })
     end
     if left > 0 then
-        table.insert(virt_text, { string.rep(' ', left), util.hl('Code') })
+        table.insert(virt_text, { string.rep(' ', left), 'RenderMarkdownCode' })
     end
     ---@type render.md.MarkInfo
     return {
@@ -30,47 +30,44 @@ describe('code.md', function()
     it('default', function()
         util.setup('tests/data/code.md')
 
-        local expected, row = {}, util.row()
+        local marks, row = util.marks(), util.row()
 
-        vim.list_extend(expected, util.heading(row:get(), 1))
+        marks:extend(util.heading(row:get(), 1))
 
-        table.insert(expected, util.code_language(row:increment(2), 0, 'rust'))
+        marks:extend(util.code_language(row:inc(2), 0, 'rust'))
+        marks:add(util.code_row(row:get(), 0))
         for _ = 1, 3 do
-            table.insert(expected, util.code_row(row:increment(), 0))
+            marks:add(util.code_row(row:inc(), 0))
         end
-        table.insert(expected, util.code_border(row:increment(), 0, false))
+        marks:add(util.code_border(row:inc(), 0, false))
 
-        vim.list_extend(expected, {
-            util.bullet(row:increment(2), 0, 1),
-            util.code_language(row:increment(2), 2, 'py'),
-        })
+        marks:add(util.bullet(row:inc(2), 0, 1))
+        marks:extend(util.code_language(row:inc(2), 2, 'py'))
+        marks:add(util.code_row(row:get(), 2))
         for _ = 1, 2 do
-            table.insert(expected, util.code_row(row:increment(), 2))
+            marks:add(util.code_row(row:inc(), 2))
         end
-        table.insert(expected, util.code_border(row:increment(), 2, false))
+        marks:add(util.code_border(row:inc(), 2, false))
 
-        vim.list_extend(expected, {
-            util.bullet(row:increment(2), 0, 1),
-            util.code_language(row:increment(2), 2, 'lua'),
-        })
+        marks:add(util.bullet(row:inc(2), 0, 1))
+        marks:extend(util.code_language(row:inc(2), 2, 'lua'))
+        marks:add(util.code_row(row:get(), 2))
         for _, col in ipairs({ 2, 0, 2 }) do
             if col == 0 then
-                table.insert(expected, padding(row:increment(), 0, 2, 0, 1000))
-                table.insert(expected, util.code_row(row:get(), col))
+                marks:add(padding(row:inc(), 0, 2, 0, 1000))
+                marks:add(util.code_row(row:get(), col))
             else
-                table.insert(expected, util.code_row(row:increment(), col))
+                marks:add(util.code_row(row:inc(), col))
             end
         end
-        table.insert(expected, util.code_border(row:increment(), 2, false))
+        marks:add(util.code_border(row:inc(), 2, false))
 
-        vim.list_extend(expected, {
-            util.bullet(row:increment(2), 0, 1),
-            util.code_border(row:increment(2), 0, true),
-            util.code_row(row:increment(), 0),
-            util.code_border(row:increment(), 0, false),
-        })
+        marks:add(util.bullet(row:inc(2), 0, 1))
+        marks:add(util.code_border(row:inc(2), 0, true))
+        marks:add(util.code_row(row:inc(), 0))
+        marks:add(util.code_border(row:inc(), 0, false))
 
-        util.assert_view(expected, {
+        util.assert_view(marks, {
             '󰫎   1 󰲡 Heading',
             '    2',
             '󱘗   3 󱘗 rust',
@@ -107,60 +104,54 @@ describe('code.md', function()
             code = { width = 'block', left_pad = 2, right_pad = 2 },
         })
 
-        local expected, row = {}, util.row()
+        local marks, row = util.marks(), util.row()
 
-        vim.list_extend(expected, util.heading(row:get(), 1))
+        marks:extend(util.heading(row:get(), 1))
 
         local width_1 = 34
-        table.insert(expected, util.code_language(row:increment(2), 0, 'rust', width_1))
+        marks:extend(util.code_language(row:inc(2), 0, 'rust'))
+        marks:add(util.code_hide(row:get(), 0, width_1))
+        marks:add(util.code_row(row:get(), 0))
         for _ = 1, 3 do
-            vim.list_extend(expected, {
-                padding(row:increment(), 0, 0, 2, 0),
-                util.code_hide(row:get(), 0, width_1),
-                util.code_row(row:get(), 0),
-            })
+            marks:add(padding(row:inc(), 0, 0, 2, 0))
+            marks:add(util.code_hide(row:get(), 0, width_1))
+            marks:add(util.code_row(row:get(), 0))
         end
-        table.insert(expected, util.code_border(row:increment(), 0, false, width_1))
+        marks:add(util.code_border(row:inc(), 0, false, width_1))
 
         local width_2 = 20
-        vim.list_extend(expected, {
-            util.bullet(row:increment(2), 0, 1),
-            util.code_language(row:increment(2), 2, 'py', width_2),
-        })
+        marks:add(util.bullet(row:inc(2), 0, 1))
+        marks:extend(util.code_language(row:inc(2), 2, 'py'))
+        marks:add(util.code_hide(row:get(), 2, width_2))
+        marks:add(util.code_row(row:get(), 2))
         for _ = 1, 2 do
-            vim.list_extend(expected, {
-                padding(row:increment(), 2, 0, 2, 1000),
-                util.code_hide(row:get(), 2, width_2),
-                util.code_row(row:get(), 2),
-            })
+            marks:add(padding(row:inc(), 2, 0, 2, 1000))
+            marks:add(util.code_hide(row:get(), 2, width_2))
+            marks:add(util.code_row(row:get(), 2))
         end
-        table.insert(expected, util.code_border(row:increment(), 2, false, width_2))
+        marks:add(util.code_border(row:inc(), 2, false, width_2))
 
         local width_3 = 20
-        vim.list_extend(expected, {
-            util.bullet(row:increment(2), 0, 1),
-            util.code_language(row:increment(2), 2, 'lua', width_3),
-        })
+        marks:add(util.bullet(row:inc(2), 0, 1))
+        marks:extend(util.code_language(row:inc(2), 2, 'lua'))
+        marks:add(util.code_hide(row:get(), 2, width_3))
+        marks:add(util.code_row(row:get(), 2))
         for _, col in ipairs({ 2, 0, 2 }) do
-            vim.list_extend(expected, {
-                padding(row:increment(), col, 2 - col, 2, 1000),
-                util.code_hide(row:get(), col, width_3),
-                util.code_row(row:get(), col),
-            })
+            marks:add(padding(row:inc(), col, 2 - col, 2, 1000))
+            marks:add(util.code_hide(row:get(), col, width_3))
+            marks:add(util.code_row(row:get(), col))
         end
-        table.insert(expected, util.code_border(row:increment(), 2, false, width_3))
+        marks:add(util.code_border(row:inc(), 2, false, width_3))
 
         local width_4 = (2 * vim.o.tabstop) + 24
-        vim.list_extend(expected, {
-            util.bullet(row:increment(2), 0, 1),
-            util.code_border(row:increment(2), 0, true, width_4),
-            padding(row:increment(), 0, 0, vim.o.tabstop, 0),
-            util.code_hide(row:get(), 0, width_4),
-            util.code_row(row:get(), 0),
-            util.code_border(row:increment(), 0, false, width_4),
-        })
+        marks:add(util.bullet(row:inc(2), 0, 1))
+        marks:add(util.code_border(row:inc(2), 0, true, width_4))
+        marks:add(padding(row:inc(), 0, 0, vim.o.tabstop, 0))
+        marks:add(util.code_hide(row:get(), 0, width_4))
+        marks:add(util.code_row(row:get(), 0))
+        marks:add(util.code_border(row:inc(), 0, false, width_4))
 
-        util.assert_view(expected, {
+        util.assert_view(marks, {
             '󰫎   1 󰲡 Heading',
             '    2',
             '󱘗   3 󱘗 rust',

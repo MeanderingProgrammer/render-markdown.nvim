@@ -24,7 +24,7 @@ end
 local function latex(row, lines)
     local virt_lines = vim.iter(lines)
         :map(function(line)
-            return { { line, util.hl('Math') } }
+            return { { line, 'RenderMarkdownMath' } }
         end)
         :totable()
     ---@type render.md.MarkInfo
@@ -67,16 +67,14 @@ describe('latex.md', function()
         })
         util.setup('demo/latex.md')
 
-        local expected, row = {}, util.row()
+        local marks, row = util.marks(), util.row()
 
-        vim.list_extend(expected, util.heading(row:get(), 1))
+        marks:extend(util.heading(row:get(), 1))
 
-        vim.list_extend(expected, {
-            latex(row:increment(2), inline.out),
-            latex(row:increment(2), block.out),
-        })
+        marks:add(latex(row:inc(2), inline.out))
+        marks:add(latex(row:inc(2), block.out))
 
-        util.assert_view(expected, {
+        util.assert_view(marks, {
             '󰫎   1 󰲡 LaTeX',
             '    2',
             '      ' .. inline.out[1],

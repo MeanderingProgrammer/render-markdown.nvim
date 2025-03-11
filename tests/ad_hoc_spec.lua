@@ -15,94 +15,59 @@ local function setext_heading(start_row, end_row, level)
         local row_background_mark = vim.deepcopy(background_mark)
         row_background_mark.row = { row, row + 1 }
         vim.list_extend(result, {
-            {
-                row = { row, row },
-                col = { 0, 0 },
-                virt_text = { { row == start_row and vim.trim(icon) .. ' ' or '  ', highlight } },
-                virt_text_pos = 'inline',
-            },
+            util.inline(row, { 0, 0 }, { row == start_row and vim.trim(icon) .. ' ' or '  ', highlight }),
             row_background_mark,
         })
     end
     table.insert(result, 2, sign_mark)
-    table.insert(result, #result, util.conceal(end_row, 0, 3))
+    table.insert(result, #result, util.conceal(end_row, { 0, 3 }))
     return result
-end
-
----@param row integer
----@param start_col integer
----@param end_col integer
----@param text string
----@param highlight 'Link'|'WikiLink'
----@param conceal? string
----@return render.md.MarkInfo
-local function link(row, start_col, end_col, text, highlight, conceal)
-    ---@type render.md.MarkInfo
-    return {
-        row = { row, row },
-        col = { start_col, end_col },
-        virt_text = { { text, util.hl(highlight) } },
-        virt_text_pos = 'inline',
-        conceal = conceal,
-    }
 end
 
 describe('ad_hoc.md', function()
     it('custom', function()
         util.setup('tests/data/ad_hoc.md')
 
-        local expected, row = {}, util.row()
+        local marks, row = util.marks(), util.row()
 
-        vim.list_extend(expected, util.heading(row:get(), 1))
+        marks:extend(util.heading(row:get(), 1))
 
-        vim.list_extend(expected, setext_heading(row:increment(2), row:increment(2), 2))
+        marks:extend(setext_heading(row:inc(2), row:inc(2), 2))
 
-        vim.list_extend(expected, { util.bullet(row:increment(2), 0, 1) })
+        marks:add(util.bullet(row:inc(2), 0, 1))
 
-        vim.list_extend(expected, {
-            util.bullet(row:increment(), 0, 1),
-            util.conceal(row:get(), 2, 3),
-            link(row:get(), 3, 14, '󱗖 ', 'WikiLink', nil),
-            util.conceal(row:get(), 14, 15),
-        })
+        marks:add(util.bullet(row:inc(), 0, 1))
+        marks:add(util.conceal(row:get(), { 2, 3 }))
+        marks:add(util.inline(row:get(), { 3, 14 }, { '󱗖 ', 'RenderMarkdownWikiLink' }))
+        marks:add(util.conceal(row:get(), { 14, 15 }))
 
-        vim.list_extend(expected, {
-            util.bullet(row:increment(), 0, 1),
-            util.conceal(row:get(), 2, 3),
-            link(row:get(), 3, 24, '󱗖 ', 'WikiLink', nil),
-            util.conceal(row:get(), 4, 13),
-            util.conceal(row:get(), 24, 25),
-        })
+        marks:add(util.bullet(row:inc(), 0, 1))
+        marks:add(util.conceal(row:get(), { 2, 3 }))
+        marks:add(util.inline(row:get(), { 3, 24 }, { '󱗖 ', 'RenderMarkdownWikiLink' }))
+        marks:add(util.conceal(row:get(), { 4, 13 }))
+        marks:add(util.conceal(row:get(), { 24, 25 }))
 
-        vim.list_extend(expected, {
-            util.bullet(row:increment(), 0, 1),
-            util.conceal(row:get(), 2, 3),
-            link(row:get(), 2, 20, '󰀓 ', 'Link', nil),
-            util.highlight(row:get(), 2, 20, 'Link'),
-            util.conceal(row:get(), 19, 20),
-        })
+        marks:add(util.bullet(row:inc(), 0, 1))
+        marks:add(util.conceal(row:get(), { 2, 3 }))
+        marks:add(util.inline(row:get(), { 2, 20 }, { '󰀓 ', 'RenderMarkdownLink' }))
+        marks:add(util.highlight(row:get(), { 2, 20 }, 'link'))
+        marks:add(util.conceal(row:get(), { 19, 20 }))
 
-        vim.list_extend(expected, {
-            util.bullet(row:increment(), 0, 1),
-            util.conceal(row:get(), 2, 3),
-            link(row:get(), 2, 26, '󰊤 ', 'Link', nil),
-            util.highlight(row:get(), 2, 26, 'Link'),
-            util.conceal(row:get(), 25, 26),
-        })
+        marks:add(util.bullet(row:inc(), 0, 1))
+        marks:add(util.conceal(row:get(), { 2, 3 }))
+        marks:add(util.inline(row:get(), { 2, 26 }, { '󰊤 ', 'RenderMarkdownLink' }))
+        marks:add(util.highlight(row:get(), { 2, 26 }, 'link'))
+        marks:add(util.conceal(row:get(), { 25, 26 }))
 
-        vim.list_extend(expected, {
-            util.bullet(row:increment(), 0, 1),
-            link(row:get(), 2, 61, '󰗃 ', 'Link', nil),
-        })
+        marks:add(util.bullet(row:inc(), 0, 1))
+        marks:add(util.inline(row:get(), { 2, 61 }, { '󰗃 ', 'RenderMarkdownLink' }))
 
-        vim.list_extend(expected, {
-            util.bullet(row:increment(), 0, 1),
-            link(row:get(), 16, 25, '¹ ᴵⁿᶠᵒ', 'Link', ''),
-            util.conceal(row:increment(2), 0, 16),
-            link(row:increment(2), 0, 9, '¹ ᴵⁿᶠᵒ', 'Link', ''),
-        })
+        marks:add(util.bullet(row:inc(), 0, 1))
+        marks:add(util.inline(row:get(), { 16, 25 }, { '¹ ᴵⁿᶠᵒ', 'RenderMarkdownLink' }, ''))
+        marks:add(util.conceal(row:inc(2), { 0, 16 }))
+        marks:add(util.inline(row:inc(2), { 0, 9 }, { '¹ ᴵⁿᶠᵒ', 'RenderMarkdownLink' }, ''))
 
-        util.assert_view(expected, {
+        util.assert_view(marks, {
             '󰫎   1 󰲡 Heading',
             '    2',
             '󰫎   3 󰲣 Heading 2 Line 1',

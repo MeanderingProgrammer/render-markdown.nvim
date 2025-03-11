@@ -7,7 +7,7 @@ local util = require('tests.util')
 ---@param position 'above'|'below'
 ---@return render.md.MarkInfo
 local function border(row, level, position)
-    local background = util.hl_bg_to_fg(string.format('H%dBg', level))
+    local background = string.format('RenderMarkdown_bgtofg_RenderMarkdownH%dBg', level)
     local icon = position == 'above' and '▄' or '▀'
     local virtual = row == 0 and position == 'above'
     local line = {}
@@ -32,7 +32,7 @@ local function indent_line(lengths)
     local result = {}
     for _, length in ipairs(lengths) do
         if length == 1 then
-            table.insert(result, { '▎', util.hl('Indent') })
+            table.insert(result, { '▎', 'RenderMarkdownIndent' })
         else
             table.insert(result, { string.rep(' ', length), 'Normal' })
         end
@@ -71,45 +71,37 @@ describe('indent.md', function()
             indent = { enabled = true, icon = '' },
         })
 
-        local expected, row = {}, util.row()
+        local marks, row = util.marks(), util.row()
 
         local l2, l3 = { 2 }, { 4 }
 
-        vim.list_extend(expected, {
-            border(row:get(), 2, 'above'),
-            indent(row:get(), l2),
-            util.heading(row:get(), 2),
-            indent(row:increment(), l2),
-        })
-        vim.list_extend(expected, {
-            indent_mark(util.table_border(row:increment(), true, { 5, 5 }), l2),
-            indent(row:get(), l2),
-            util.table_pipe(row:get(), 0, true),
-            util.table_pipe(row:get(), 6, true),
-            util.table_pipe(row:get(), 12, true),
-            indent(row:increment(), l2),
-            util.table_delimiter(row:get(), { 5, 5 }),
-        })
+        marks:add(border(row:get(), 2, 'above'))
+        marks:add(indent(row:get(), l2))
+        marks:extend(util.heading(row:get(), 2))
+        marks:add(indent(row:inc(), l2))
 
-        vim.list_extend(expected, {
-            border(row:increment(), 1, 'above'),
-            util.heading(row:increment(), 1),
-            border(row:increment(), 1, 'below'),
-        })
+        marks:add(indent_mark(util.table_border(row:inc(), true, { 5, 5 }), l2))
+        marks:add(indent(row:get(), l2))
+        marks:add(util.table_pipe(row:get(), 0, true))
+        marks:add(util.table_pipe(row:get(), 6, true))
+        marks:add(util.table_pipe(row:get(), 12, true))
+        marks:add(indent(row:inc(), l2))
+        marks:add(util.table_delimiter(row:get(), 13, { 5, 5 }))
 
-        vim.list_extend(expected, {
-            indent(row:increment(2), l3),
-            border(row:get(), 3, 'above'),
-            indent(row:increment(), l3),
-            util.heading(row:get(), 3),
-            indent(row:increment(), l3),
-            border(row:get(), 3, 'below'),
-        })
-        vim.list_extend(expected, {
-            indent(row:increment(), l3),
-        })
+        marks:add(border(row:inc(), 1, 'above'))
+        marks:extend(util.heading(row:inc(), 1))
+        marks:add(border(row:inc(), 1, 'below'))
 
-        util.assert_view(expected, {
+        marks:add(indent(row:inc(2), l3))
+        marks:add(border(row:get(), 3, 'above'))
+        marks:add(indent(row:inc(), l3))
+        marks:extend(util.heading(row:get(), 3))
+        marks:add(indent(row:inc(), l3))
+        marks:add(border(row:get(), 3, 'below'))
+
+        marks:add(indent(row:inc(), l3))
+
+        util.assert_view(marks, {
             '󰫎   1    󰲣 Heading 2',
             '    2',
             '        ┌─────┬─────┐',
@@ -131,50 +123,41 @@ describe('indent.md', function()
             indent = { enabled = true, per_level = 4, skip_level = 0 },
         })
 
-        local expected, row = {}, util.row()
+        local marks, row = util.marks(), util.row()
 
         local l1, l2 = { 1, 3 }, { 1, 3, 1, 3 }
 
-        vim.list_extend(expected, {
-            indent(row:get(), l2),
-            util.heading(row:get(), 2),
-            indent(row:increment(), l2),
-        })
-        vim.list_extend(expected, {
-            indent_mark(util.table_border(row:increment(), true, { 5, 5 }), l2),
-            indent(row:get(), l2),
-            util.table_pipe(row:get(), 0, true),
-            util.table_pipe(row:get(), 6, true),
-            util.table_pipe(row:get(), 12, true),
-            indent(row:increment(), l2),
-            util.table_delimiter(row:get(), { 5, 5 }),
-        })
+        marks:add(indent(row:get(), l2))
+        marks:extend(util.heading(row:get(), 2))
+        marks:add(indent(row:inc(), l2))
 
-        vim.list_extend(expected, {
-            indent(row:increment(), l1),
-            indent(row:increment(), l1),
-            util.heading(row:get(), 1),
-            indent(row:increment(), l1),
-        })
-        vim.list_extend(expected, {
-            indent(row:increment(), l1),
-        })
+        marks:add(indent_mark(util.table_border(row:inc(), true, { 5, 5 }), l2))
+        marks:add(indent(row:get(), l2))
+        marks:add(util.table_pipe(row:get(), 0, true))
+        marks:add(util.table_pipe(row:get(), 6, true))
+        marks:add(util.table_pipe(row:get(), 12, true))
+        marks:add(indent(row:inc(), l2))
+        marks:add(util.table_delimiter(row:get(), 13, { 5, 5 }))
 
-        vim.list_extend(expected, {
-            indent(row:increment(), l1),
-            indent(row:get(), l2),
-            indent(row:increment(), l1),
-            indent(row:get(), l2),
-            util.heading(row:get(), 3),
-            indent(row:increment(), l1),
-            indent(row:get(), l2),
-        })
-        vim.list_extend(expected, {
-            indent(row:increment(), l1),
-            indent(row:get(), l2),
-        })
+        marks:add(indent(row:inc(), l1))
+        marks:add(indent(row:inc(), l1))
+        marks:extend(util.heading(row:get(), 1))
+        marks:add(indent(row:inc(), l1))
 
-        util.assert_view(expected, {
+        marks:add(indent(row:inc(), l1))
+
+        marks:add(indent(row:inc(), l1))
+        marks:add(indent(row:get(), l2))
+        marks:add(indent(row:inc(), l1))
+        marks:add(indent(row:get(), l2))
+        marks:extend(util.heading(row:get(), 3))
+        marks:add(indent(row:inc(), l1))
+        marks:add(indent(row:get(), l2))
+
+        marks:add(indent(row:inc(), l1))
+        marks:add(indent(row:get(), l2))
+
+        util.assert_view(marks, {
             '󰫎   1 ▎   ▎    󰲣 Heading 2',
             '    2 ▎   ▎',
             '      ▎   ▎   ┌─────┬─────┐',

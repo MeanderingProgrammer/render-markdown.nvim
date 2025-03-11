@@ -4,8 +4,9 @@ local util = require('tests.util')
 
 describe('table.md conceallevel', function()
     it('0', function()
-        util.setup('tests/data/table.md', { win_options = { conceallevel = { rendered = 0 } } })
-
+        util.setup('tests/data/table.md', {
+            win_options = { conceallevel = { rendered = 0 } },
+        })
         util.assert_screen({
             '󰫎   1 󰲡 Table with Inline',
             '    2',
@@ -27,8 +28,9 @@ describe('table.md conceallevel', function()
     end)
 
     it('1', function()
-        util.setup('tests/data/table.md', { win_options = { conceallevel = { rendered = 1 } } })
-
+        util.setup('tests/data/table.md', {
+            win_options = { conceallevel = { rendered = 1 } },
+        })
         util.assert_screen({
             '󰫎   1 󰲡 Table with Inline',
             '    2',
@@ -50,8 +52,9 @@ describe('table.md conceallevel', function()
     end)
 
     it('2', function()
-        util.setup('tests/data/table.md', { win_options = { conceallevel = { rendered = 2 } } })
-
+        util.setup('tests/data/table.md', {
+            win_options = { conceallevel = { rendered = 2 } },
+        })
         util.assert_screen({
             '󰫎   1 󰲡 Table with Inline',
             '    2',
@@ -73,8 +76,9 @@ describe('table.md conceallevel', function()
     end)
 
     it('3', function()
-        util.setup('tests/data/table.md', { win_options = { conceallevel = { rendered = 3 } } })
-
+        util.setup('tests/data/table.md', {
+            win_options = { conceallevel = { rendered = 3 } },
+        })
         util.assert_screen({
             '󰫎   1 󰲡 Table with Inline',
             '    2',
