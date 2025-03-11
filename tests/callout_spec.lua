@@ -8,7 +8,7 @@ describe('callout.md', function()
 
         local marks, row = util.marks(), util.row()
 
-        local info = 'RenderMarkdownInfo'
+        local info = 'RmInfo'
         marks:extend(util.heading(row:get(), 1))
         marks:add(util.quote(row:inc(2), '%s ', info))
         marks:add(util.overlay(row:get(), { 2, 9 }, { '󰋽 Note', info }))
@@ -17,7 +17,7 @@ describe('callout.md', function()
         marks:add(util.quote(row:inc(), '%s', info))
         marks:add(util.quote(row:inc(), '%s ', info))
 
-        local ok = 'RenderMarkdownSuccess'
+        local ok = 'RmSuccess'
         marks:extend(util.heading(row:inc(2), 1))
         marks:add(util.quote(row:inc(2), '%s ', ok))
         marks:add(util.overlay(row:get(), { 2, 8 }, { '󰌶 Tip', ok }))
@@ -30,19 +30,19 @@ describe('callout.md', function()
         marks:add(util.quote(row:inc(), '%s ', ok))
         marks:add(util.code_border(row:get(), 2, false))
 
-        local hint = 'RenderMarkdownHint'
+        local hint = 'RmHint'
         marks:extend(util.heading(row:inc(2), 1))
         marks:add(util.quote(row:inc(2), '%s ', hint))
         marks:add(util.overlay(row:get(), { 2, 14 }, { '󰅾 Important', hint }))
         marks:add(util.quote(row:inc(), '%s ', hint))
 
-        local warn = 'RenderMarkdownWarn'
+        local warn = 'RmWarn'
         marks:extend(util.heading(row:inc(2), 1))
         marks:add(util.quote(row:inc(2), '%s ', warn))
         marks:add(util.overlay(row:get(), { 2, 12 }, { '󰀪 Custom Title', warn }, ''))
         marks:add(util.quote(row:inc(), '%s ', warn))
 
-        local err = 'RenderMarkdownError'
+        local err = 'RmError'
         marks:extend(util.heading(row:inc(2), 1))
         marks:add(util.quote(row:inc(2), '%s ', err))
         marks:add(util.overlay(row:get(), { 2, 12 }, { '󰳦 Caution', err }))

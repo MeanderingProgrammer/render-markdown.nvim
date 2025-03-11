@@ -2,8 +2,8 @@
 
 local util = require('tests.util')
 
----@param mark render.md.MarkInfo
----@return render.md.MarkInfo[]
+---@param mark render.md.test.MarkInfo
+---@return render.md.test.MarkInfo[]
 local function padded(mark)
     local col = mark.col[2]
     assert(col ~= nil)

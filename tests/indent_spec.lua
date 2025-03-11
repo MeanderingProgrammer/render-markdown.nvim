@@ -5,9 +5,9 @@ local util = require('tests.util')
 ---@param row integer
 ---@param level integer
 ---@param position 'above'|'below'
----@return render.md.MarkInfo
+---@return render.md.test.MarkInfo
 local function border(row, level, position)
-    local background = string.format('RenderMarkdown_bgtofg_RenderMarkdownH%dBg', level)
+    local background = string.format('Rm_bgtofg_RmH%dBg', level)
     local icon = position == 'above' and '▄' or '▀'
     local virtual = row == 0 and position == 'above'
     local line = {}
@@ -15,7 +15,7 @@ local function border(row, level, position)
         table.insert(line, { '  ', 'Normal' })
     end
     table.insert(line, { icon:rep(vim.o.columns), background })
-    ---@type render.md.MarkInfo
+    ---@type render.md.test.MarkInfo
     return {
         row = { row },
         col = { 0 },
@@ -32,7 +32,7 @@ local function indent_line(lengths)
     local result = {}
     for _, length in ipairs(lengths) do
         if length == 1 then
-            table.insert(result, { '▎', 'RenderMarkdownIndent' })
+            table.insert(result, { '▎', 'RmIndent' })
         else
             table.insert(result, { string.rep(' ', length), 'Normal' })
         end
@@ -42,9 +42,9 @@ end
 
 ---@param row integer
 ---@param lengths integer[]
----@return render.md.MarkInfo
+---@return render.md.test.MarkInfo
 local function indent(row, lengths)
-    ---@type render.md.MarkInfo
+    ---@type render.md.test.MarkInfo
     return {
         row = { row },
         col = { 0 },
@@ -54,9 +54,9 @@ local function indent(row, lengths)
     }
 end
 
----@param mark render.md.MarkInfo
+---@param mark render.md.test.MarkInfo
 ---@param lengths integer[]
----@return render.md.MarkInfo
+---@return render.md.test.MarkInfo
 local function indent_mark(mark, lengths)
     local line = indent_line(lengths)
     vim.list_extend(line, mark.virt_lines[1])

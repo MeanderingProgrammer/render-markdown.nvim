@@ -11,17 +11,17 @@ describe('box_dash_quote.md', function()
         marks:extend(util.heading(row:get(), 1))
 
         marks:add(util.conceal(row:inc(2), { 0, 2 }))
-        marks:add(util.inline(row:get(), { 2, 5 }, { '󰄱 ', 'RenderMarkdownUnchecked' }, ''))
+        marks:add(util.inline(row:get(), { 2, 5 }, { '󰄱 ', 'RmUnchecked' }, ''))
         marks:add(util.conceal(row:inc(), { 0, 2 }))
-        marks:add(util.inline(row:get(), { 2, 5 }, { '󰱒 ', 'RenderMarkdownChecked' }, ''))
+        marks:add(util.inline(row:get(), { 2, 5 }, { '󰱒 ', 'RmChecked' }, ''))
         marks:add(util.conceal(row:inc(), { 0, 2 }))
-        marks:add(util.inline(row:get(), { 2, 5 }, { '󰥔 ', 'RenderMarkdownTodo' }, ''))
+        marks:add(util.inline(row:get(), { 2, 5 }, { '󰥔 ', 'RmTodo' }, ''))
         marks:add(util.bullet(row:inc(), 0, 1))
 
-        marks:add(util.overlay(row:inc(2), { 0 }, { string.rep('─', vim.o.columns), 'RenderMarkdownDash' }))
+        marks:add(util.overlay(row:inc(2), { 0 }, { string.rep('─', vim.o.columns), 'RmDash' }))
 
-        marks:add(util.quote(row:inc(2), '  %s ', 'RenderMarkdownQuote'))
-        marks:add(util.quote(row:inc(), '  %s ', 'RenderMarkdownQuote'))
+        marks:add(util.quote(row:inc(2), '  %s ', 'RmQuote'))
+        marks:add(util.quote(row:inc(), '  %s ', 'RmQuote'))
 
         util.assert_view(marks, {
             '󰫎   1 󰲡 Checkbox / Dash / Quote',

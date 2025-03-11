@@ -20,14 +20,14 @@ end
 
 ---@param row integer
 ---@param lines string[]
----@return render.md.MarkInfo
+---@return render.md.test.MarkInfo
 local function latex(row, lines)
     local virt_lines = vim.iter(lines)
         :map(function(line)
-            return { { line, 'RenderMarkdownMath' } }
+            return { { line, 'RmMath' } }
         end)
         :totable()
-    ---@type render.md.MarkInfo
+    ---@type render.md.test.MarkInfo
     return {
         row = { row },
         col = { 0 },

@@ -5,7 +5,7 @@ local util = require('tests.util')
 ---@param start_row integer
 ---@param end_row integer
 ---@param level integer
----@return render.md.MarkInfo[]
+---@return render.md.test.MarkInfo[]
 local function setext_heading(start_row, end_row, level)
     local sign_mark, icon_mark, background_mark = unpack(util.heading(start_row, level))
     local icon, highlight = unpack(icon_mark.virt_text[1])
@@ -38,34 +38,34 @@ describe('ad_hoc.md', function()
 
         marks:add(util.bullet(row:inc(), 0, 1))
         marks:add(util.conceal(row:get(), { 2, 3 }))
-        marks:add(util.inline(row:get(), { 3, 14 }, { '󱗖 ', 'RenderMarkdownWikiLink' }))
+        marks:add(util.inline(row:get(), { 3, 14 }, { '󱗖 ', 'RmWikiLink' }))
         marks:add(util.conceal(row:get(), { 14, 15 }))
 
         marks:add(util.bullet(row:inc(), 0, 1))
         marks:add(util.conceal(row:get(), { 2, 3 }))
-        marks:add(util.inline(row:get(), { 3, 24 }, { '󱗖 ', 'RenderMarkdownWikiLink' }))
+        marks:add(util.inline(row:get(), { 3, 24 }, { '󱗖 ', 'RmWikiLink' }))
         marks:add(util.conceal(row:get(), { 4, 13 }))
         marks:add(util.conceal(row:get(), { 24, 25 }))
 
         marks:add(util.bullet(row:inc(), 0, 1))
         marks:add(util.conceal(row:get(), { 2, 3 }))
-        marks:add(util.inline(row:get(), { 2, 20 }, { '󰀓 ', 'RenderMarkdownLink' }))
+        marks:add(util.inline(row:get(), { 2, 20 }, { '󰀓 ', 'RmLink' }))
         marks:add(util.highlight(row:get(), { 2, 20 }, 'link'))
         marks:add(util.conceal(row:get(), { 19, 20 }))
 
         marks:add(util.bullet(row:inc(), 0, 1))
         marks:add(util.conceal(row:get(), { 2, 3 }))
-        marks:add(util.inline(row:get(), { 2, 26 }, { '󰊤 ', 'RenderMarkdownLink' }))
+        marks:add(util.inline(row:get(), { 2, 26 }, { '󰊤 ', 'RmLink' }))
         marks:add(util.highlight(row:get(), { 2, 26 }, 'link'))
         marks:add(util.conceal(row:get(), { 25, 26 }))
 
         marks:add(util.bullet(row:inc(), 0, 1))
-        marks:add(util.inline(row:get(), { 2, 61 }, { '󰗃 ', 'RenderMarkdownLink' }))
+        marks:add(util.inline(row:get(), { 2, 61 }, { '󰗃 ', 'RmLink' }))
 
         marks:add(util.bullet(row:inc(), 0, 1))
-        marks:add(util.inline(row:get(), { 16, 25 }, { '¹ ᴵⁿᶠᵒ', 'RenderMarkdownLink' }, ''))
+        marks:add(util.inline(row:get(), { 16, 25 }, { '¹ ᴵⁿᶠᵒ', 'RmLink' }, ''))
         marks:add(util.conceal(row:inc(2), { 0, 16 }))
-        marks:add(util.inline(row:inc(2), { 0, 9 }, { '¹ ᴵⁿᶠᵒ', 'RenderMarkdownLink' }, ''))
+        marks:add(util.inline(row:inc(2), { 0, 9 }, { '¹ ᴵⁿᶠᵒ', 'RmLink' }, ''))
 
         util.assert_view(marks, {
             '󰫎   1 󰲡 Heading',

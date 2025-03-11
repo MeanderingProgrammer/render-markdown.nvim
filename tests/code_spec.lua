@@ -7,16 +7,16 @@ local util = require('tests.util')
 ---@param offset integer
 ---@param left integer
 ---@param priority integer
----@return render.md.MarkInfo
+---@return render.md.test.MarkInfo
 local function padding(row, col, offset, left, priority)
     local virt_text = {}
     if offset > 0 then
         table.insert(virt_text, { string.rep(' ', offset), 'Normal' })
     end
     if left > 0 then
-        table.insert(virt_text, { string.rep(' ', left), 'RenderMarkdownCode' })
+        table.insert(virt_text, { string.rep(' ', left), 'RmCode' })
     end
-    ---@type render.md.MarkInfo
+    ---@type render.md.test.MarkInfo
     return {
         row = { row },
         col = { col },

@@ -194,40 +194,24 @@ describe('table.md', function()
         marks:extend(util.heading(row:get(), 1))
 
         marks:add(util.table_border(row:inc(2), true, { 11, 24 }))
-        marks:add(
-            util.overlay(
-                row:get(),
-                { 0, 38 },
-                { '│ Heading 1 │ `Heading 2`            │', 'RenderMarkdownTableHead' }
-            )
-        )
+        marks:add(util.overlay(row:get(), { 0, 38 }, { '│ Heading 1 │ `Heading 2`            │', 'RmTableHead' }))
         marks:add(util.highlight(row:get(), { 14, 25 }, 'code'))
         marks:add(util.table_delimiter(row:inc(), 38, { 11, { 23, 1 } }))
         marks:add(
-            util.overlay(
-                row:inc(),
-                { 0, 40 },
-                { '│ `Item 行` │ [link](https://行.com) │', 'RenderMarkdownTableRow' }
-            )
+            util.overlay(row:inc(), { 0, 40 }, { '│ `Item 行` │ [link](https://行.com) │', 'RmTableRow' })
         )
         marks:add(util.highlight(row:get(), { 2, 12 }, 'code'))
         marks:add(util.link(row:get(), { 15, 38 }, 'web'))
-        marks:add(
-            util.overlay(
-                row:inc(),
-                { 0, 39 },
-                { '│ &lt;1&gt; │ ==Itém 2==             │', 'RenderMarkdownTableRow' }
-            )
-        )
+        marks:add(util.overlay(row:inc(), { 0, 39 }, { '│ &lt;1&gt; │ ==Itém 2==             │', 'RmTableRow' }))
         marks:extend(util.inline_highlight(row:get(), 14, 25))
         marks:add(util.table_border(row:get(), false, { 11, 24 }))
 
         marks:extend(util.heading(row:inc(2), 1))
 
         marks:add(util.table_border(row:inc(2), true, { 11, 11 }))
-        marks:add(util.overlay(row:get(), { 0, 25 }, { '│ Heading 1 │ Heading 2 │', 'RenderMarkdownTableHead' }))
+        marks:add(util.overlay(row:get(), { 0, 25 }, { '│ Heading 1 │ Heading 2 │', 'RmTableHead' }))
         marks:add(util.table_delimiter(row:inc(), 25, { 11, 11 }))
-        marks:add(util.overlay(row:inc(), { 0, 25 }, { '│ Item 1    │ Item 2    │', 'RenderMarkdownTableRow' }))
+        marks:add(util.overlay(row:inc(), { 0, 25 }, { '│ Item 1    │ Item 2    │', 'RmTableRow' }))
         marks:add(util.table_border(row:get(), false, { 11, 11 }))
 
         util.assert_view(marks, {
