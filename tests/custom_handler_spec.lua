@@ -24,9 +24,12 @@ describe('custom_handler.md', function()
 
         local marks, row = util.marks(), util.row()
         -- Heading
-        marks:extend(util.heading(row:get(), 1))
+        marks
+            :add(row:get(), nil, 0, nil, util.heading.sign(1))
+            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
         -- Inline code
-        marks:add(util.highlight(row:inc(2), { 0, 8 }, 'code'))
+        marks:add(row:inc(), row:get(), 0, 8, util.highlight('code'))
         -- No backslash escapes
         util.assert_view(marks, {
             '󰫎   1 󰲡 Heading',
@@ -46,11 +49,14 @@ describe('custom_handler.md', function()
 
         local marks, row = util.marks(), util.row()
         -- Heading
-        marks:extend(util.heading(row:get(), 1))
+        marks
+            :add(row:get(), nil, 0, nil, util.heading.sign(1))
+            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
         -- No inline code
         -- Backslash escapes
-        marks:add(util.conceal(row:inc(4), { 0, 1 }))
-        marks:add(util.conceal(row:get(), { 7, 8 }))
+        marks:add(row:inc(3), row:get(), 0, 1, util.conceal())
+        marks:add(row:get(), row:get(), 7, 8, util.conceal())
         util.assert_view(marks, {
             '󰫎   1 󰲡 Heading',
             '    2',
@@ -69,12 +75,15 @@ describe('custom_handler.md', function()
 
         local marks, row = util.marks(), util.row()
         -- Heading
-        marks:extend(util.heading(row:get(), 1))
+        marks
+            :add(row:get(), nil, 0, nil, util.heading.sign(1))
+            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
         -- Inline code
-        marks:add(util.highlight(row:inc(2), { 0, 8 }, 'code'))
+        marks:add(row:inc(), row:get(), 0, 8, util.highlight('code'))
         -- Backslash escapes
-        marks:add(util.conceal(row:inc(2), { 0, 1 }))
-        marks:add(util.conceal(row:get(), { 7, 8 }))
+        marks:add(row:inc(2), row:get(), 0, 1, util.conceal())
+        marks:add(row:get(), row:get(), 7, 8, util.conceal())
         util.assert_view(marks, {
             '󰫎   1 󰲡 Heading',
             '    2',

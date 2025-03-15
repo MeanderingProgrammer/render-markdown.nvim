@@ -2,66 +2,25 @@
 
 local util = require('tests.util')
 
----@param row integer
 ---@param level integer
 ---@param position 'above'|'below'
----@return render.md.test.MarkInfo
-local function border(row, level, position)
-    local background = string.format('Rm_bgtofg_RmH%dBg', level)
-    local icon = position == 'above' and '▄' or '▀'
-    local virtual = row == 0 and position == 'above'
+---@param virtual boolean
+---@return vim.api.keyset.set_extmark
+local function border(level, position, virtual)
     local line = {}
     if virtual then
         table.insert(line, { '  ', 'Normal' })
     end
+    local icon = position == 'above' and '▄' or '▀'
+    local background = string.format('Rm_bgtofg_RmH%dBg', level)
     table.insert(line, { icon:rep(vim.o.columns), background })
-    ---@type render.md.test.MarkInfo
+    ---@type vim.api.keyset.set_extmark
     return {
-        row = { row },
-        col = { 0 },
         virt_text = not virtual and line or nil,
         virt_text_pos = not virtual and 'overlay' or nil,
         virt_lines = virtual and { line } or nil,
         virt_lines_above = virtual and position == 'above' or nil,
     }
-end
-
----@param lengths integer[]
----@return render.md.MarkLine
-local function indent_line(lengths)
-    local result = {}
-    for _, length in ipairs(lengths) do
-        if length == 1 then
-            table.insert(result, { '▎', 'RmIndent' })
-        else
-            table.insert(result, { string.rep(' ', length), 'Normal' })
-        end
-    end
-    return result
-end
-
----@param row integer
----@param lengths integer[]
----@return render.md.test.MarkInfo
-local function indent(row, lengths)
-    ---@type render.md.test.MarkInfo
-    return {
-        row = { row },
-        col = { 0 },
-        virt_text = indent_line(lengths),
-        virt_text_pos = 'inline',
-        priority = 0,
-    }
-end
-
----@param mark render.md.test.MarkInfo
----@param lengths integer[]
----@return render.md.test.MarkInfo
-local function indent_mark(mark, lengths)
-    local line = indent_line(lengths)
-    vim.list_extend(line, mark.virt_lines[1])
-    mark.virt_lines = { line }
-    return mark
 end
 
 describe('indent.md', function()
@@ -75,31 +34,43 @@ describe('indent.md', function()
 
         local l2, l3 = { 2 }, { 4 }
 
-        marks:add(border(row:get(), 2, 'above'))
-        marks:add(indent(row:get(), l2))
-        marks:extend(util.heading(row:get(), 2))
-        marks:add(indent(row:inc(), l2))
+        marks
+            :add(row:get(), nil, 0, nil, border(2, 'above', true))
+            :add(row:get(), nil, 0, nil, util.heading.sign(2))
+            :add(row:get(), nil, 0, nil, util.indent.inline(l2))
+            :add(row:get(), row:get(), 0, 2, util.heading.icon(2))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(2))
 
-        marks:add(indent_mark(util.table_border(row:inc(), true, { 5, 5 }), l2))
-        marks:add(indent(row:get(), l2))
-        marks:add(util.table_pipe(row:get(), 0, true))
-        marks:add(util.table_pipe(row:get(), 6, true))
-        marks:add(util.table_pipe(row:get(), 12, true))
-        marks:add(indent(row:inc(), l2))
-        marks:add(util.table_delimiter(row:get(), 13, { 5, 5 }))
+        marks:add(row:get(), nil, 0, nil, util.indent.inline(l2))
 
-        marks:add(border(row:inc(), 1, 'above'))
-        marks:extend(util.heading(row:inc(), 1))
-        marks:add(border(row:inc(), 1, 'below'))
+        marks:add(row:inc(), nil, 0, nil, util.indent.virtual(util.table.border(true, { 5, 5 }), l2))
+        marks
+            :add(row:get(), nil, 0, nil, util.indent.inline(l2))
+            :add(row:get(), row:get(), 0, 1, util.table.pipe(true))
+            :add(row:get(), row:get(), 6, 7, util.table.pipe(true))
+            :add(row:get(), row:get(), 12, 13, util.table.pipe(true))
+        marks
+            :add(row:inc(), nil, 0, nil, util.indent.inline(l2))
+            :add(row:get(), row:get(), 0, 13, util.table.delimiter({ { 5 }, { 5 } }))
 
-        marks:add(indent(row:inc(2), l3))
-        marks:add(border(row:get(), 3, 'above'))
-        marks:add(indent(row:inc(), l3))
-        marks:extend(util.heading(row:get(), 3))
-        marks:add(indent(row:inc(), l3))
-        marks:add(border(row:get(), 3, 'below'))
+        marks
+            :add(row:inc(), nil, 0, nil, border(1, 'above', false))
+            :add(row:inc(), nil, 0, nil, util.heading.sign(1))
+            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
+            :add(row:get(), nil, 0, nil, border(1, 'below', false))
 
-        marks:add(indent(row:inc(), l3))
+        marks
+            :add(row:inc(2), nil, 0, nil, util.indent.inline(l3))
+            :add(row:get(), nil, 0, nil, border(3, 'above', false))
+            :add(row:inc(), nil, 0, nil, util.heading.sign(3))
+            :add(row:get(), nil, 0, nil, util.indent.inline(l3))
+            :add(row:get(), row:get(), 0, 3, util.heading.icon(3))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(3))
+            :add(row:get(), nil, 0, nil, util.indent.inline(l3))
+            :add(row:get(), nil, 0, nil, border(3, 'below', false))
+
+        marks:add(row:inc(), nil, 0, nil, util.indent.inline(l3))
 
         util.assert_view(marks, {
             '󰫎   1    󰲣 Heading 2',
@@ -127,35 +98,51 @@ describe('indent.md', function()
 
         local l1, l2 = { 1, 3 }, { 1, 3, 1, 3 }
 
-        marks:add(indent(row:get(), l2))
-        marks:extend(util.heading(row:get(), 2))
-        marks:add(indent(row:inc(), l2))
+        marks
+            :add(row:get(), nil, 0, nil, util.heading.sign(2))
+            :add(row:get(), nil, 0, nil, util.indent.inline(l2))
+            :add(row:get(), row:get(), 0, 2, util.heading.icon(2))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(2))
 
-        marks:add(indent_mark(util.table_border(row:inc(), true, { 5, 5 }), l2))
-        marks:add(indent(row:get(), l2))
-        marks:add(util.table_pipe(row:get(), 0, true))
-        marks:add(util.table_pipe(row:get(), 6, true))
-        marks:add(util.table_pipe(row:get(), 12, true))
-        marks:add(indent(row:inc(), l2))
-        marks:add(util.table_delimiter(row:get(), 13, { 5, 5 }))
+        marks:add(row:get(), nil, 0, nil, util.indent.inline(l2))
 
-        marks:add(indent(row:inc(), l1))
-        marks:add(indent(row:inc(), l1))
-        marks:extend(util.heading(row:get(), 1))
-        marks:add(indent(row:inc(), l1))
+        marks:add(row:inc(), nil, 0, nil, util.indent.virtual(util.table.border(true, { 5, 5 }), l2))
+        marks
+            :add(row:get(), nil, 0, nil, util.indent.inline(l2))
+            :add(row:get(), row:get(), 0, 1, util.table.pipe(true))
+            :add(row:get(), row:get(), 6, 7, util.table.pipe(true))
+            :add(row:get(), row:get(), 12, 13, util.table.pipe(true))
+        marks
+            :add(row:inc(), nil, 0, nil, util.indent.inline(l2))
+            :add(row:get(), row:get(), 0, 13, util.table.delimiter({ { 5 }, { 5 } }))
 
-        marks:add(indent(row:inc(), l1))
+        marks:add(row:inc(), nil, 0, nil, util.indent.inline(l1))
 
-        marks:add(indent(row:inc(), l1))
-        marks:add(indent(row:get(), l2))
-        marks:add(indent(row:inc(), l1))
-        marks:add(indent(row:get(), l2))
-        marks:extend(util.heading(row:get(), 3))
-        marks:add(indent(row:inc(), l1))
-        marks:add(indent(row:get(), l2))
+        marks
+            :add(row:inc(), nil, 0, nil, util.heading.sign(1))
+            :add(row:get(), nil, 0, nil, util.indent.inline(l1))
+            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
-        marks:add(indent(row:inc(), l1))
-        marks:add(indent(row:get(), l2))
+        marks:add(row:get(), nil, 0, nil, util.indent.inline(l1))
+
+        marks:add(row:inc(), nil, 0, nil, util.indent.inline(l1))
+
+        marks:add(row:inc(), nil, 0, nil, util.indent.inline(l1))
+        marks:add(row:get(), nil, 0, nil, util.indent.inline(l2))
+
+        marks
+            :add(row:inc(), nil, 0, nil, util.heading.sign(3))
+            :add(row:get(), nil, 0, nil, util.indent.inline(l1))
+            :add(row:get(), nil, 0, nil, util.indent.inline(l2))
+            :add(row:get(), row:get(), 0, 3, util.heading.icon(3))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(3))
+
+        marks:add(row:get(), nil, 0, nil, util.indent.inline(l1))
+        marks:add(row:get(), nil, 0, nil, util.indent.inline(l2))
+
+        marks:add(row:inc(), nil, 0, nil, util.indent.inline(l1))
+        marks:add(row:get(), nil, 0, nil, util.indent.inline(l2))
 
         util.assert_view(marks, {
             '󰫎   1 ▎   ▎    󰲣 Heading 2',

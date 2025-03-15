@@ -2,75 +2,81 @@
 
 local util = require('tests.util')
 
----@param mark render.md.test.MarkInfo
----@return render.md.test.MarkInfo[]
-local function padded(mark)
-    local col = mark.col[2]
-    assert(col ~= nil)
-    return {
-        util.padding(mark.row[1], 0, 2),
-        mark,
-        util.padding(mark.row[1], col - 1, 2),
-    }
-end
-
 describe('list_table.md', function()
     it('default', function()
         util.setup('demo/list_table.md')
 
         local marks, row = util.marks(), util.row()
 
-        marks:extend(util.heading(row:get(), 1))
+        marks
+            :add(row:get(), nil, 0, nil, util.heading.sign(1))
+            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
-        marks:add(util.bullet(row:inc(2), 0, 1))
-        marks:add(util.link(row:get(), { 20, 47 }, 'web'))
-        marks:add(util.bullet(row:inc(), 0, 1))
-        marks:add(util.highlight(row:get(), { 20, 28 }, 'code'))
-        marks:add(util.bullet(row:inc(), 2, 2, 2))
-        marks:add(util.bullet(row:inc(), 4, 2))
-        marks:add(util.bullet(row:inc(), 6, 3))
-        marks:add(util.bullet(row:inc(), 8, 4))
-        marks:add(util.bullet(row:inc(), 10, 1))
-        marks:add(util.bullet(row:inc(), 0, 1))
-        marks:add(util.link(row:get(), { 20, 45 }, 'link'))
+        marks:add(row:inc(), row:get(), 0, 2, util.bullet(1))
+        marks:add(row:get(), row:get(), 20, 47, util.link('web'))
+        marks:add(row:inc(), row:get(), 0, 2, util.bullet(1))
+        marks:add(row:get(), row:get(), 20, 28, util.highlight('code'))
+        marks:add(row:inc(), row:get(), 2, 6, util.bullet(2, 2))
+        marks:add(row:inc(), row:get(), 4, 6, util.bullet(2))
+        marks:add(row:inc(), row:get(), 6, 8, util.bullet(3))
+        marks:add(row:inc(), row:get(), 8, 10, util.bullet(4))
+        marks:add(row:inc(), row:get(), 10, 12, util.bullet(1))
+        marks:add(row:inc(), row:get(), 0, 2, util.bullet(1))
+        marks:add(row:get(), row:get(), 20, 45, util.link('link'))
 
-        marks:extend(util.heading(row:inc(2), 1))
+        marks
+            :add(row:inc(2), nil, 0, nil, util.heading.sign(1))
+            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
-        marks:add(util.ordered(row:inc(2), 0, '1.'))
-        marks:add(util.ordered(row:inc(), 0, '2.'))
+        marks:add(row:inc(), row:get(), 0, 3, {
+            virt_text = { { '1.', 'RmBullet' } },
+            virt_text_pos = 'overlay',
+        })
+        marks:add(row:inc(), row:get(), 0, 3, {
+            virt_text = { { '2.', 'RmBullet' } },
+            virt_text_pos = 'overlay',
+        })
 
-        marks:extend(util.heading(row:inc(2), 1))
+        marks
+            :add(row:inc(2), nil, 0, nil, util.heading.sign(1))
+            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
-        marks:add(util.table_border(row:inc(2), true, { 8, 15, 7, 6 }))
-        marks:add(util.table_pipe(row:get(), 0, true))
-        marks:add(util.highlight(row:get(), { 2, 8 }, 'code'))
-        marks:add(util.padding(row:get(), 9, 2, 'table'))
-        marks:add(util.table_pipe(row:get(), 9, true))
-        marks:add(util.padding(row:get(), 11, 3, 'table'))
-        marks:add(util.conceal(row:get(), { 24, 25 }))
-        marks:add(util.table_pipe(row:get(), 25, true))
-        marks:add(util.table_pipe(row:get(), 33, true))
-        marks:add(util.table_pipe(row:get(), 40, true))
-        marks:add(util.table_delimiter(row:inc(), 41, { { 1, 7 }, { 1, 13, 1 }, { 6, 1 }, 6 }))
-        marks:add(util.table_pipe(row:inc(), 0, false))
-        marks:add(util.highlight(row:get(), { 2, 8 }, 'code'))
-        marks:add(util.padding(row:get(), 9, 2, 'table'))
-        marks:add(util.table_pipe(row:get(), 9, false))
-        marks:add(util.padding(row:get(), 11, 4, 'table'))
-        marks:add(util.table_pipe(row:get(), 25, false))
-        marks:add(util.table_pipe(row:get(), 33, false))
-        marks:add(util.table_pipe(row:get(), 40, false))
-        marks:add(util.table_pipe(row:inc(), 0, false))
-        marks:add(util.table_pipe(row:get(), 9, false))
-        marks:add(util.padding(row:get(), 11, 3, 'table'))
-        marks:add(util.link(row:get(), { 11, 24 }, 'link'))
-        marks:add(util.padding(row:get(), 25, 4, 'table'))
-        marks:add(util.table_pipe(row:get(), 25, false))
-        marks:add(util.padding(row:get(), 27, 1, 'table'))
-        marks:add(util.conceal(row:get(), { 32, 33 }))
-        marks:add(util.table_pipe(row:get(), 33, false))
-        marks:add(util.table_pipe(row:get(), 40, false))
-        marks:add(util.table_border(row:get(), false, { 8, 15, 7, 6 }))
+        marks:add(row:inc(), nil, 0, nil, util.table.border(true, { 8, 15, 7, 6 }))
+        marks
+            :add(row:get(), row:get(), 0, 1, util.table.pipe(true))
+            :add(row:get(), row:get(), 2, 8, util.highlight('code'))
+            :add(row:get(), nil, 9, nil, util.table.padding(2))
+            :add(row:get(), row:get(), 9, 10, util.table.pipe(true))
+            :add(row:get(), nil, 11, nil, util.table.padding(3))
+            :add(row:get(), row:get(), 24, 25, util.conceal())
+            :add(row:get(), row:get(), 25, 26, util.table.pipe(true))
+            :add(row:get(), row:get(), 33, 34, util.table.pipe(true))
+            :add(row:get(), row:get(), 40, 41, util.table.pipe(true))
+        marks:add(row:inc(), row:get(), 0, 41, util.table.delimiter({ { 1, 7 }, { 1, 13, 1 }, { 6, 1 }, { 6 } }))
+        marks
+            :add(row:inc(), row:get(), 0, 1, util.table.pipe(false))
+            :add(row:get(), row:get(), 2, 8, util.highlight('code'))
+            :add(row:get(), nil, 9, nil, util.table.padding(2))
+            :add(row:get(), row:get(), 9, 10, util.table.pipe(false))
+            :add(row:get(), nil, 11, nil, util.table.padding(4))
+            :add(row:get(), row:get(), 25, 26, util.table.pipe(false))
+            :add(row:get(), row:get(), 33, 34, util.table.pipe(false))
+            :add(row:get(), row:get(), 40, 41, util.table.pipe(false))
+        marks
+            :add(row:inc(), row:get(), 0, 1, util.table.pipe(false))
+            :add(row:get(), row:get(), 9, 10, util.table.pipe(false))
+            :add(row:get(), nil, 11, nil, util.table.padding(3))
+            :add(row:get(), row:get(), 11, 24, util.link('link'))
+            :add(row:get(), nil, 25, nil, util.table.padding(4))
+            :add(row:get(), row:get(), 25, 26, util.table.pipe(false))
+            :add(row:get(), nil, 27, nil, util.table.padding(1))
+            :add(row:get(), row:get(), 32, 33, util.conceal())
+            :add(row:get(), row:get(), 33, 34, util.table.pipe(false))
+            :add(row:get(), row:get(), 40, 41, util.table.pipe(false))
+        marks:add(row:get(), nil, 0, nil, util.table.border(false, { 8, 15, 7, 6 }))
 
         util.assert_view(marks, {
             '󰫎   1 󰲡 Unordered List',
@@ -110,62 +116,110 @@ describe('list_table.md', function()
 
         local marks, row = util.marks(), util.row()
 
-        marks:extend(util.heading(row:get(), 1))
+        marks
+            :add(row:get(), nil, 0, nil, util.heading.sign(1))
+            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
-        marks:extend(padded(util.bullet(row:inc(2), 0, 1)))
-        marks:add(util.link(row:get(), { 20, 47 }, 'web'))
-        marks:extend(padded(util.bullet(row:inc(), 0, 1)))
-        marks:add(util.padding(row:get(), 20, 2, 'code'))
-        marks:add(util.highlight(row:get(), { 20, 28 }, 'code'))
-        marks:add(util.padding(row:get(), 28, 2, 'code'))
-        marks:extend(padded(util.bullet(row:inc(), 2, 2, 2)))
-        marks:extend(padded(util.bullet(row:inc(), 4, 2)))
-        marks:extend(padded(util.bullet(row:inc(), 6, 3)))
-        marks:extend(padded(util.bullet(row:inc(), 8, 4)))
-        marks:extend(padded(util.bullet(row:inc(), 10, 1)))
-        marks:extend(padded(util.bullet(row:inc(), 0, 1)))
-        marks:add(util.link(row:get(), { 20, 45 }, 'link'))
+        marks
+            :add(row:inc(), nil, 0, nil, util.padding(2, 0))
+            :add(row:get(), row:get(), 0, 2, util.bullet(1))
+            :add(row:get(), nil, 1, nil, util.padding(2, 0))
+            :add(row:get(), row:get(), 20, 47, util.link('web'))
+        marks
+            :add(row:inc(), nil, 0, nil, util.padding(2, 0))
+            :add(row:get(), row:get(), 0, 2, util.bullet(1))
+            :add(row:get(), nil, 1, nil, util.padding(2, 0))
+            :add(row:get(), nil, 20, nil, util.code.padding(2))
+            :add(row:get(), row:get(), 20, 28, util.highlight('code'))
+            :add(row:get(), nil, 28, nil, util.code.padding(2))
+        marks
+            :add(row:inc(), nil, 0, nil, util.padding(2, 0))
+            :add(row:get(), row:get(), 2, 6, util.bullet(2, 2))
+            :add(row:get(), nil, 5, nil, util.padding(2, 0))
+        marks
+            :add(row:inc(), nil, 0, nil, util.padding(2, 0))
+            :add(row:get(), row:get(), 4, 6, util.bullet(2))
+            :add(row:get(), nil, 5, nil, util.padding(2, 0))
+        marks
+            :add(row:inc(), nil, 0, nil, util.padding(2, 0))
+            :add(row:get(), row:get(), 6, 8, util.bullet(3))
+            :add(row:get(), nil, 7, nil, util.padding(2, 0))
+        marks
+            :add(row:inc(), nil, 0, nil, util.padding(2, 0))
+            :add(row:get(), row:get(), 8, 10, util.bullet(4))
+            :add(row:get(), nil, 9, nil, util.padding(2, 0))
+        marks
+            :add(row:inc(), nil, 0, nil, util.padding(2, 0))
+            :add(row:get(), row:get(), 10, 12, util.bullet(1))
+            :add(row:get(), nil, 11, nil, util.padding(2, 0))
+        marks
+            :add(row:inc(), nil, 0, nil, util.padding(2, 0))
+            :add(row:get(), row:get(), 0, 2, util.bullet(1))
+            :add(row:get(), nil, 1, nil, util.padding(2, 0))
+            :add(row:get(), row:get(), 20, 45, util.link('link'))
 
-        marks:extend(util.heading(row:inc(2), 1))
+        marks
+            :add(row:inc(2), nil, 0, nil, util.heading.sign(1))
+            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
-        marks:extend(padded(util.ordered(row:inc(2), 0, '1.')))
-        marks:extend(padded(util.ordered(row:inc(), 0, '2.')))
+        marks
+            :add(row:inc(), nil, 0, nil, util.padding(2, 0))
+            :add(row:get(), row:get(), 0, 3, {
+                virt_text = { { '1.', 'RmBullet' } },
+                virt_text_pos = 'overlay',
+            })
+            :add(row:get(), nil, 2, nil, util.padding(2, 0))
+        marks
+            :add(row:inc(), nil, 0, nil, util.padding(2, 0))
+            :add(row:get(), row:get(), 0, 3, {
+                virt_text = { { '2.', 'RmBullet' } },
+                virt_text_pos = 'overlay',
+            })
+            :add(row:get(), nil, 2, nil, util.padding(2, 0))
 
-        marks:extend(util.heading(row:inc(2), 1))
+        marks
+            :add(row:inc(2), nil, 0, nil, util.heading.sign(1))
+            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
-        marks:add(util.table_border(row:inc(2), true, { 10, 15, 7, 6 }))
-        marks:add(util.table_pipe(row:get(), 0, true))
-        marks:add(util.padding(row:get(), 2, 2, 'code'))
-        marks:add(util.highlight(row:get(), { 2, 8 }, 'code'))
-        marks:add(util.padding(row:get(), 8, 2, 'code'))
-        marks:add(util.table_pipe(row:get(), 9, true))
-        marks:add(util.padding(row:get(), 11, 3, 'table'))
-        marks:add(util.conceal(row:get(), { 24, 25 }))
-        marks:add(util.table_pipe(row:get(), 25, true))
-        marks:add(util.table_pipe(row:get(), 33, true))
-        marks:add(util.table_pipe(row:get(), 40, true))
-        marks:add(util.table_delimiter(row:inc(), 41, { { 1, 9 }, { 1, 13, 1 }, { 6, 1 }, 6 }))
-        marks:add(util.table_pipe(row:inc(), 0, false))
-        marks:add(util.padding(row:get(), 2, 2, 'code'))
-        marks:add(util.highlight(row:get(), { 2, 8 }, 'code'))
-        marks:add(util.padding(row:get(), 8, 2, 'code'))
-        marks:add(util.table_pipe(row:get(), 9, false))
-        marks:add(util.padding(row:get(), 11, 4, 'table'))
-        marks:add(util.table_pipe(row:get(), 25, false))
-        marks:add(util.table_pipe(row:get(), 33, false))
-        marks:add(util.table_pipe(row:get(), 40, false))
-        marks:add(util.table_pipe(row:inc(), 0, false))
-        marks:add(util.padding(row:get(), 9, 2, 'table'))
-        marks:add(util.table_pipe(row:get(), 9, false))
-        marks:add(util.padding(row:get(), 11, 3, 'table'))
-        marks:add(util.link(row:get(), { 11, 24 }, 'link'))
-        marks:add(util.padding(row:get(), 25, 4, 'table'))
-        marks:add(util.table_pipe(row:get(), 25, false))
-        marks:add(util.padding(row:get(), 27, 1, 'table'))
-        marks:add(util.conceal(row:get(), { 32, 33 }))
-        marks:add(util.table_pipe(row:get(), 33, false))
-        marks:add(util.table_pipe(row:get(), 40, false))
-        marks:add(util.table_border(row:get(), false, { 10, 15, 7, 6 }))
+        marks:add(row:inc(), nil, 0, nil, util.table.border(true, { 10, 15, 7, 6 }))
+        marks
+            :add(row:get(), row:get(), 0, 1, util.table.pipe(true))
+            :add(row:get(), nil, 2, nil, util.code.padding(2))
+            :add(row:get(), row:get(), 2, 8, util.highlight('code'))
+            :add(row:get(), nil, 8, nil, util.code.padding(2))
+            :add(row:get(), row:get(), 9, 10, util.table.pipe(true))
+            :add(row:get(), nil, 11, nil, util.table.padding(3))
+            :add(row:get(), row:get(), 24, 25, util.conceal())
+            :add(row:get(), row:get(), 25, 26, util.table.pipe(true))
+            :add(row:get(), row:get(), 33, 34, util.table.pipe(true))
+            :add(row:get(), row:get(), 40, 41, util.table.pipe(true))
+        marks:add(row:inc(), row:get(), 0, 41, util.table.delimiter({ { 1, 9 }, { 1, 13, 1 }, { 6, 1 }, { 6 } }))
+        marks
+            :add(row:inc(), row:get(), 0, 1, util.table.pipe(false))
+            :add(row:get(), nil, 2, nil, util.code.padding(2))
+            :add(row:get(), row:get(), 2, 8, util.highlight('code'))
+            :add(row:get(), nil, 8, nil, util.code.padding(2))
+            :add(row:get(), row:get(), 9, 10, util.table.pipe(false))
+            :add(row:get(), nil, 11, nil, util.table.padding(4))
+            :add(row:get(), row:get(), 25, 26, util.table.pipe(false))
+            :add(row:get(), row:get(), 33, 34, util.table.pipe(false))
+            :add(row:get(), row:get(), 40, 41, util.table.pipe(false))
+        marks
+            :add(row:inc(), row:get(), 0, 1, util.table.pipe(false))
+            :add(row:get(), nil, 9, nil, util.table.padding(2))
+            :add(row:get(), row:get(), 9, 10, util.table.pipe(false))
+            :add(row:get(), nil, 11, nil, util.table.padding(3))
+            :add(row:get(), row:get(), 11, 24, util.link('link'))
+            :add(row:get(), nil, 25, nil, util.table.padding(4))
+            :add(row:get(), row:get(), 25, 26, util.table.pipe(false))
+            :add(row:get(), nil, 27, nil, util.table.padding(1))
+            :add(row:get(), row:get(), 32, 33, util.conceal())
+            :add(row:get(), row:get(), 33, 34, util.table.pipe(false))
+            :add(row:get(), row:get(), 40, 41, util.table.pipe(false))
+        marks:add(row:get(), nil, 0, nil, util.table.border(false, { 10, 15, 7, 6 }))
 
         util.assert_view(marks, {
             '󰫎   1 󰲡 Unordered List',

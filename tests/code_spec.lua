@@ -2,70 +2,54 @@
 
 local util = require('tests.util')
 
----@param row integer
----@param col integer
----@param offset integer
----@param left integer
----@param priority integer
----@return render.md.test.MarkInfo
-local function padding(row, col, offset, left, priority)
-    local virt_text = {}
-    if offset > 0 then
-        table.insert(virt_text, { string.rep(' ', offset), 'Normal' })
-    end
-    if left > 0 then
-        table.insert(virt_text, { string.rep(' ', left), 'RmCode' })
-    end
-    ---@type render.md.test.MarkInfo
-    return {
-        row = { row },
-        col = { col },
-        virt_text = virt_text,
-        virt_text_pos = 'inline',
-        priority = priority,
-    }
-end
-
 describe('code.md', function()
     it('default', function()
         util.setup('tests/data/code.md')
 
         local marks, row = util.marks(), util.row()
 
-        marks:extend(util.heading(row:get(), 1))
+        marks
+            :add(row:get(), nil, 0, nil, util.heading.sign(1))
+            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
-        marks:extend(util.code_language(row:inc(2), 0, 'rust'))
-        marks:add(util.code_row(row:get(), 0))
-        for _ = 1, 3 do
-            marks:add(util.code_row(row:inc(), 0))
-        end
-        marks:add(util.code_border(row:inc(), 0, false))
+        marks
+            :add(row:inc(), nil, 0, nil, util.code.sign('rust'))
+            :add(row:get(), nil, 3, nil, util.code.icon('rust'))
+            :add(row:get(), row:inc(), 0, 0, util.code.bg())
+            :add(row:get(), row:inc(), 0, 0, util.code.bg())
+            :add(row:get(), row:inc(), 0, 0, util.code.bg())
+            :add(row:get(), row:inc(), 0, 0, util.code.bg())
+            :add(row:get(), nil, 0, nil, util.code.border(false, vim.o.columns))
 
-        marks:add(util.bullet(row:inc(2), 0, 1))
-        marks:extend(util.code_language(row:inc(2), 2, 'py'))
-        marks:add(util.code_row(row:get(), 2))
-        for _ = 1, 2 do
-            marks:add(util.code_row(row:inc(), 2))
-        end
-        marks:add(util.code_border(row:inc(), 2, false))
+        marks:add(row:inc(2), row:get(), 0, 2, util.bullet(1))
 
-        marks:add(util.bullet(row:inc(2), 0, 1))
-        marks:extend(util.code_language(row:inc(2), 2, 'lua'))
-        marks:add(util.code_row(row:get(), 2))
-        for _, col in ipairs({ 2, 0, 2 }) do
-            if col == 0 then
-                marks:add(padding(row:inc(), 0, 2, 0, 1000))
-                marks:add(util.code_row(row:get(), col))
-            else
-                marks:add(util.code_row(row:inc(), col))
-            end
-        end
-        marks:add(util.code_border(row:inc(), 2, false))
+        marks
+            :add(row:inc(2), nil, 2, nil, util.code.sign('py'))
+            :add(row:get(), nil, 5, nil, util.code.icon('py'))
+            :add(row:get(), row:inc(), 2, 0, util.code.bg())
+            :add(row:get(), row:inc(), 2, 0, util.code.bg())
+            :add(row:get(), row:inc(), 2, 0, util.code.bg())
+            :add(row:get(), nil, 2, nil, util.code.border(false, vim.o.columns - 2))
 
-        marks:add(util.bullet(row:inc(2), 0, 1))
-        marks:add(util.code_border(row:inc(2), 0, true))
-        marks:add(util.code_row(row:inc(), 0))
-        marks:add(util.code_border(row:inc(), 0, false))
+        marks:add(row:inc(2), row:get(), 0, 2, util.bullet(1))
+
+        marks
+            :add(row:inc(2), nil, 2, nil, util.code.sign('lua'))
+            :add(row:get(), nil, 5, nil, util.code.icon('lua'))
+            :add(row:get(), row:inc(), 2, 0, util.code.bg())
+            :add(row:get(), row:inc(), 2, 0, util.code.bg())
+            :add(row:get(), nil, 0, nil, util.padding(2, 1000))
+            :add(row:get(), row:inc(), 0, 0, util.code.bg())
+            :add(row:get(), row:inc(), 2, 0, util.code.bg())
+            :add(row:get(), nil, 2, nil, util.code.border(false, vim.o.columns - 2))
+
+        marks:add(row:inc(2), row:get(), 0, 2, util.bullet(1))
+
+        marks
+            :add(row:inc(2), nil, 0, nil, util.code.border(true, vim.o.columns))
+            :add(row:inc(), row:inc(), 0, 0, util.code.bg())
+            :add(row:get(), nil, 0, nil, util.code.border(false, vim.o.columns))
 
         util.assert_view(marks, {
             '󰫎   1 󰲡 Heading',
@@ -106,50 +90,72 @@ describe('code.md', function()
 
         local marks, row = util.marks(), util.row()
 
-        marks:extend(util.heading(row:get(), 1))
+        marks
+            :add(row:get(), nil, 0, nil, util.heading.sign(1))
+            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
         local width_1 = 34
-        marks:extend(util.code_language(row:inc(2), 0, 'rust'))
-        marks:add(util.code_hide(row:get(), 0, width_1))
-        marks:add(util.code_row(row:get(), 0))
+        marks
+            :add(row:inc(), nil, 0, nil, util.code.sign('rust'))
+            :add(row:get(), nil, 3, nil, util.code.icon('rust'))
+            :add(row:get(), nil, 0, nil, util.code.hide(width_1))
+            :add(row:get(), row:inc(), 0, 0, util.code.bg())
         for _ = 1, 3 do
-            marks:add(padding(row:inc(), 0, 0, 2, 0))
-            marks:add(util.code_hide(row:get(), 0, width_1))
-            marks:add(util.code_row(row:get(), 0))
+            marks:add(row:get(), nil, 0, nil, util.padding(2, 0, 'RmCode'))
+            marks:add(row:get(), nil, 0, nil, util.code.hide(width_1))
+            marks:add(row:get(), row:inc(), 0, 0, util.code.bg())
         end
-        marks:add(util.code_border(row:inc(), 0, false, width_1))
+        marks:add(row:get(), nil, 0, nil, util.code.border(false, width_1))
+
+        marks:add(row:inc(2), row:get(), 0, 2, util.bullet(1))
 
         local width_2 = 20
-        marks:add(util.bullet(row:inc(2), 0, 1))
-        marks:extend(util.code_language(row:inc(2), 2, 'py'))
-        marks:add(util.code_hide(row:get(), 2, width_2))
-        marks:add(util.code_row(row:get(), 2))
+        marks
+            :add(row:inc(2), nil, 2, nil, util.code.sign('py'))
+            :add(row:get(), nil, 5, nil, util.code.icon('py'))
+            :add(row:get(), nil, 2, nil, util.code.hide(width_2))
+            :add(row:get(), row:inc(), 2, 0, util.code.bg())
         for _ = 1, 2 do
-            marks:add(padding(row:inc(), 2, 0, 2, 1000))
-            marks:add(util.code_hide(row:get(), 2, width_2))
-            marks:add(util.code_row(row:get(), 2))
+            marks
+                :add(row:get(), nil, 2, nil, util.padding(2, 1000, 'RmCode'))
+                :add(row:get(), nil, 2, nil, util.code.hide(width_2))
+                :add(row:get(), row:inc(), 2, 0, util.code.bg())
         end
-        marks:add(util.code_border(row:inc(), 2, false, width_2))
+        marks:add(row:get(), nil, 2, nil, util.code.border(false, width_2 - 2))
+
+        marks:add(row:inc(2), row:get(), 0, 2, util.bullet(1))
 
         local width_3 = 20
-        marks:add(util.bullet(row:inc(2), 0, 1))
-        marks:extend(util.code_language(row:inc(2), 2, 'lua'))
-        marks:add(util.code_hide(row:get(), 2, width_3))
-        marks:add(util.code_row(row:get(), 2))
+        marks
+            :add(row:inc(2), nil, 2, nil, util.code.sign('lua'))
+            :add(row:get(), nil, 5, nil, util.code.icon('lua'))
+            :add(row:get(), nil, 2, nil, util.code.hide(width_3))
+            :add(row:get(), row:inc(), 2, 0, util.code.bg())
         for _, col in ipairs({ 2, 0, 2 }) do
-            marks:add(padding(row:inc(), col, 2 - col, 2, 1000))
-            marks:add(util.code_hide(row:get(), col, width_3))
-            marks:add(util.code_row(row:get(), col))
+            if col == 0 then
+                marks:add(row:get(), nil, col, nil, {
+                    priority = 1000,
+                    virt_text = { { '  ', 'Normal' }, { '  ', 'RmCode' } },
+                    virt_text_pos = 'inline',
+                })
+            else
+                marks:add(row:get(), nil, col, nil, util.padding(2, 1000, 'RmCode'))
+            end
+            marks:add(row:get(), nil, col, nil, util.code.hide(width_3))
+            marks:add(row:get(), row:inc(), col, 0, util.code.bg())
         end
-        marks:add(util.code_border(row:inc(), 2, false, width_3))
+        marks:add(row:get(), nil, 2, nil, util.code.border(false, width_3 - 2))
+
+        marks:add(row:inc(2), row:get(), 0, 2, util.bullet(1))
 
         local width_4 = (2 * vim.o.tabstop) + 24
-        marks:add(util.bullet(row:inc(2), 0, 1))
-        marks:add(util.code_border(row:inc(2), 0, true, width_4))
-        marks:add(padding(row:inc(), 0, 0, vim.o.tabstop, 0))
-        marks:add(util.code_hide(row:get(), 0, width_4))
-        marks:add(util.code_row(row:get(), 0))
-        marks:add(util.code_border(row:inc(), 0, false, width_4))
+        marks
+            :add(row:inc(2), nil, 0, nil, util.code.border(true, width_4))
+            :add(row:inc(), nil, 0, nil, util.padding(vim.o.tabstop, 0, 'RmCode'))
+            :add(row:get(), nil, 0, nil, util.code.hide(width_4))
+            :add(row:get(), row:inc(), 0, 0, util.code.bg())
+            :add(row:get(), nil, 0, nil, util.code.border(false, width_4))
 
         util.assert_view(marks, {
             '󰫎   1 󰲡 Heading',

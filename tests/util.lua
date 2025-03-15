@@ -27,111 +27,15 @@ M.row = require('tests.helpers.row').new
 
 M.marks = require('tests.helpers.marks').new
 
----@param row integer
----@param col render.md.test.Range
----@param text render.md.MarkText
----@param conceal? string
----@return render.md.test.MarkInfo
-function M.inline(row, col, text, conceal)
-    ---@type render.md.test.MarkInfo
-    return {
-        row = #col == 1 and { row } or { row, row },
-        col = col,
-        virt_text = { text },
-        virt_text_pos = 'inline',
-        conceal = conceal,
-    }
+---@return vim.api.keyset.set_extmark
+function M.conceal()
+    ---@type vim.api.keyset.set_extmark
+    return { conceal = '' }
 end
 
----@param row integer
----@param col render.md.test.Range
----@param text render.md.MarkText
----@param conceal string?
----@return render.md.test.MarkInfo
-function M.overlay(row, col, text, conceal)
-    ---@type render.md.test.MarkInfo
-    return {
-        row = #col == 1 and { row } or { row, row },
-        col = col,
-        virt_text = { text },
-        virt_text_pos = 'overlay',
-        conceal = conceal,
-    }
-end
-
----@param row integer
----@param col render.md.test.Range
----@return render.md.test.MarkInfo
-function M.conceal(row, col)
-    ---@type render.md.test.MarkInfo
-    return {
-        row = { row, row },
-        col = col,
-        conceal = '',
-    }
-end
-
----@param row integer
----@param col integer
----@param text string
----@param highlight string
----@return render.md.test.MarkInfo
-function M.sign(row, col, text, highlight)
-    ---@type render.md.test.MarkInfo
-    return {
-        row = { row },
-        col = { col },
-        sign_text = text,
-        sign_hl_group = 'Rm_' .. highlight .. '_RmSign',
-    }
-end
-
----@param row integer
----@param level integer
----@return render.md.test.MarkInfo[]
-function M.heading(row, level)
-    local icons = { '󰲡 ', ' 󰲣 ', '  󰲥 ', '   󰲧 ', '    󰲩 ', '     󰲫 ' }
-    local foreground = string.format('RmH%d', level)
-    local background = string.format('RmH%dBg', level)
-    ---@type render.md.test.MarkInfo
-    local background_mark = {
-        row = { row, row + 1 },
-        col = { 0, 0 },
-        hl_eol = true,
-        hl_group = background,
-    }
-    return {
-        M.sign(row, 0, '󰫎 ', foreground),
-        M.overlay(row, { 0, level }, { icons[level], foreground .. ':' .. background }),
-        background_mark,
-    }
-end
-
----@param row integer
----@param col integer
----@param level integer
----@param spaces? integer
----@return render.md.test.MarkInfo
-function M.bullet(row, col, level, spaces)
-    local icons = { '●', '○', '◆', '◇' }
-    spaces = spaces or 0
-    local text = string.rep(' ', spaces) .. icons[level]
-    return M.overlay(row, { col, col + spaces + 2 }, { text, 'RmBullet' })
-end
-
----@param row integer
----@param col integer
----@param text string
----@return render.md.test.MarkInfo
-function M.ordered(row, col, text)
-    return M.overlay(row, { col, col + 3 }, { text, 'RmBullet' })
-end
-
----@param row integer
----@param col render.md.test.Range
 ---@param kind 'code'|'inline'|'link'
----@return render.md.test.MarkInfo
-function M.highlight(row, col, kind)
+---@return vim.api.keyset.set_extmark
+function M.highlight(kind)
     local highlight
     if kind == 'code' then
         highlight = 'RmCodeInline'
@@ -140,61 +44,149 @@ function M.highlight(row, col, kind)
     elseif kind == 'link' then
         highlight = 'RmLink'
     end
-    ---@type render.md.test.MarkInfo
+    ---@type vim.api.keyset.set_extmark
     return {
-        row = { row, row },
-        col = col,
         hl_eol = false,
         hl_group = highlight,
     }
 end
 
----@param row integer
----@param start_col integer
----@param end_col integer
----@return render.md.test.MarkInfo[]
-function M.inline_highlight(row, start_col, end_col)
+---@param level integer
+---@param spaces? integer
+---@return vim.api.keyset.set_extmark
+function M.bullet(level, spaces)
+    local icons = { '●', '○', '◆', '◇' }
+    ---@type vim.api.keyset.set_extmark
     return {
-        M.conceal(row, { start_col, start_col + 2 }),
-        M.highlight(row, { start_col, end_col }, 'inline'),
-        M.conceal(row, { end_col - 2, end_col }),
+        virt_text = { { string.rep(' ', spaces or 0) .. icons[level], 'RmBullet' } },
+        virt_text_pos = 'overlay',
     }
 end
 
----@param row integer
----@param col integer
----@return render.md.test.MarkInfo
-function M.code_row(row, col)
-    ---@type render.md.test.MarkInfo
+---@param kind 'email'|'git'|'image'|'link'|'web'|'wiki'|'youtube'
+---@return vim.api.keyset.set_extmark
+function M.link(kind)
+    local icons = {
+        email = '󰀓 ',
+        git = '󰊤 ',
+        image = '󰥶 ',
+        link = '󰌹 ',
+        web = '󰖟 ',
+        wiki = '󱗖 ',
+        youtube = '󰗃 ',
+    }
+    local highlight = kind == 'wiki' and 'RmWikiLink' or 'RmLink'
+    ---@type vim.api.keyset.set_extmark
     return {
-        row = { row, row + 1 },
-        col = { col, 0 },
-        hl_eol = true,
-        hl_group = 'RmCode',
+        virt_text = { { icons[kind], highlight } },
+        virt_text_pos = 'inline',
     }
 end
 
----@param row integer
----@param col integer
----@param win_col integer
----@return render.md.test.MarkInfo
-function M.code_hide(row, col, win_col)
-    ---@type render.md.test.MarkInfo
+---@param format string
+---@param highlight string
+---@return vim.api.keyset.set_extmark
+function M.quote(format, highlight)
+    ---@type vim.api.keyset.set_extmark
     return {
-        row = { row },
-        col = { col },
-        virt_text = { { string.rep(' ', vim.o.columns * 2), 'Normal' } },
-        virt_text_pos = 'win_col',
-        virt_text_win_col = win_col,
+        virt_text = { { string.format(format, '▋'), highlight } },
+        virt_text_pos = 'overlay',
+    }
+end
+
+---@param spaces integer
+---@param priority integer
+---@param highlight? string
+---@return vim.api.keyset.set_extmark
+function M.padding(spaces, priority, highlight)
+    ---@type vim.api.keyset.set_extmark
+    return {
+        priority = priority,
+        virt_text = { { string.rep(' ', spaces), highlight or 'Normal' } },
+        virt_text_pos = 'inline',
+    }
+end
+
+---@class render.md.test.Indent
+M.indent = {}
+
+---@param lengths integer[]
+---@return vim.api.keyset.set_extmark
+function M.indent.inline(lengths)
+    ---@type vim.api.keyset.set_extmark
+    return {
         priority = 0,
+        virt_text = M.indent.line(lengths),
+        virt_text_pos = 'inline',
     }
 end
 
----@param row integer
----@param col integer
+---@param opts vim.api.keyset.set_extmark
+---@param lengths integer[]
+---@return vim.api.keyset.set_extmark
+function M.indent.virtual(opts, lengths)
+    local line = M.indent.line(lengths)
+    vim.list_extend(line, opts.virt_lines[1])
+    opts.virt_lines = { line }
+    return opts
+end
+
+---@private
+---@param lengths integer[]
+---@return render.md.MarkLine
+function M.indent.line(lengths)
+    local result = {}
+    for _, length in ipairs(lengths) do
+        if length == 1 then
+            table.insert(result, { '▎', 'RmIndent' })
+        else
+            table.insert(result, { string.rep(' ', length), 'Normal' })
+        end
+    end
+    return result
+end
+
+---@class render.md.test.Heading
+M.heading = {}
+
+---@param level integer
+---@return vim.api.keyset.set_extmark
+function M.heading.sign(level)
+    ---@type vim.api.keyset.set_extmark
+    return {
+        sign_text = '󰫎 ',
+        sign_hl_group = string.format('Rm_RmH%d_RmSign', level),
+    }
+end
+
+---@param level integer
+---@return vim.api.keyset.set_extmark
+function M.heading.icon(level)
+    local icons = { '󰲡 ', ' 󰲣 ', '  󰲥 ', '   󰲧 ', '    󰲩 ', '     󰲫 ' }
+    local highlight = string.format('RmH%d:RmH%dBg', level, level)
+    ---@type vim.api.keyset.set_extmark
+    return {
+        virt_text = { { icons[level], highlight } },
+        virt_text_pos = 'overlay',
+    }
+end
+
+---@param level integer
+---@return vim.api.keyset.set_extmark
+function M.heading.bg(level)
+    ---@type vim.api.keyset.set_extmark
+    return {
+        hl_eol = true,
+        hl_group = string.format('RmH%dBg', level),
+    }
+end
+
+---@class render.md.test.Code
+M.code = {}
+
 ---@param name 'python'|'py'|'rust'|'rs'|'lua'
----@return render.md.test.MarkInfo[]
-function M.code_language(row, col, name)
+---@return vim.api.keyset.set_extmark
+function M.code.sign(name)
     local icon, highlight
     if name == 'python' or name == 'py' then
         icon, highlight = '󰌠 ', 'MiniIconsYellow'
@@ -203,117 +195,123 @@ function M.code_language(row, col, name)
     elseif name == 'lua' then
         icon, highlight = '󰢱 ', 'MiniIconsAzure'
     end
+    ---@type vim.api.keyset.set_extmark
     return {
-        M.sign(row, col, icon, highlight),
-        M.inline(row, { col + 3 }, { icon .. name, highlight .. ':' .. 'RmCode' }),
+        sign_text = icon,
+        sign_hl_group = string.format('Rm_%s_RmSign', highlight),
     }
 end
 
----@param row integer
----@param col integer
+---@param name 'python'|'py'|'rust'|'rs'|'lua'
+---@return vim.api.keyset.set_extmark
+function M.code.icon(name)
+    local icon, highlight
+    if name == 'python' or name == 'py' then
+        icon, highlight = '󰌠 ', 'MiniIconsYellow'
+    elseif name == 'rust' or name == 'rs' then
+        icon, highlight = '󱘗 ', 'MiniIconsOrange'
+    elseif name == 'lua' then
+        icon, highlight = '󰢱 ', 'MiniIconsAzure'
+    end
+    ---@type vim.api.keyset.set_extmark
+    return {
+        virt_text = { { icon .. name, highlight .. ':' .. 'RmCode' } },
+        virt_text_pos = 'inline',
+    }
+end
+
+---@return vim.api.keyset.set_extmark
+function M.code.bg()
+    ---@type vim.api.keyset.set_extmark
+    return {
+        hl_eol = true,
+        hl_group = 'RmCode',
+    }
+end
+
+---@param width integer
+---@return vim.api.keyset.set_extmark
+function M.code.hide(width)
+    ---@type vim.api.keyset.set_extmark
+    return {
+        priority = 0,
+        virt_text = { { string.rep(' ', vim.o.columns * 2), 'Normal' } },
+        virt_text_pos = 'win_col',
+        virt_text_win_col = width,
+    }
+end
+
 ---@param above boolean
----@param width? integer
----@return render.md.test.MarkInfo
-function M.code_border(row, col, above, width)
-    width = (width or vim.o.columns) - col
+---@param width integer
+---@return vim.api.keyset.set_extmark
+function M.code.border(above, width)
     local icon = above and '▄' or '▀'
-    return M.overlay(row, { col }, { icon:rep(width), 'Rm_bgtofg_RmCode' })
+    ---@type vim.api.keyset.set_extmark
+    return {
+        virt_text = { { icon:rep(width), 'Rm_bgtofg_RmCode' } },
+        virt_text_pos = 'overlay',
+    }
 end
 
----@param row integer
----@param col render.md.test.Range
----@param kind 'image'|'link'|'web'
----@return render.md.test.MarkInfo
-function M.link(row, col, kind)
-    local icon
-    if kind == 'image' then
-        icon = '󰥶 '
-    elseif kind == 'link' then
-        icon = '󰌹 '
-    elseif kind == 'web' then
-        icon = '󰖟 '
-    end
-    return M.inline(row, col, { icon, 'RmLink' })
-end
-
----@param row integer
----@param format string
----@param highlight string
----@return render.md.test.MarkInfo
-function M.quote(row, format, highlight)
-    local text = string.format(format, '▋')
-    return M.overlay(row, { 0, vim.fn.strdisplaywidth(text) }, { text, highlight })
-end
-
----@param row integer
----@param col integer
 ---@param spaces integer
----@param kind? 'code'|'table'
----@return render.md.test.MarkInfo
-function M.padding(row, col, spaces, kind)
-    local highlight
-    if kind == 'code' then
-        highlight = 'RmCodeInline'
-    elseif kind == 'table' then
-        highlight = 'RmTableFill'
-    else
-        highlight = 'Normal'
-    end
-    local mark = M.inline(row, { col }, { string.rep(' ', spaces), highlight })
-    mark.priority = 0
-    return mark
+---@return vim.api.keyset.set_extmark
+function M.code.padding(spaces)
+    return M.padding(spaces, 0, 'RmCodeInline')
 end
 
----@param row integer
----@param col integer
+---@class render.md.test.Table
+M.table = {}
+
 ---@param head boolean
----@return render.md.test.MarkInfo
-function M.table_pipe(row, col, head)
+---@return vim.api.keyset.set_extmark
+function M.table.pipe(head)
     local highlight = head and 'RmTableHead' or 'RmTableRow'
-    return M.overlay(row, { col, col + 1 }, { '│', highlight })
+    ---@type vim.api.keyset.set_extmark
+    return {
+        virt_text = { { '│', highlight } },
+        virt_text_pos = 'overlay',
+    }
 end
 
----@param row integer
 ---@param above boolean
 ---@param lengths integer[]
----@return render.md.test.MarkInfo
-function M.table_border(row, above, lengths)
+---@return vim.api.keyset.set_extmark
+function M.table.border(above, lengths)
+    local chars = above and { '┌', '┬', '┐' } or { '└', '┴', '┘' }
+    local highlight = above and 'RmTableHead' or 'RmTableRow'
     local parts = vim.tbl_map(function(length)
         return string.rep('─', length)
     end, lengths)
-    local text, highlight
-    if above then
-        text, highlight = '┌' .. table.concat(parts, '┬') .. '┐', 'RmTableHead'
-    else
-        text, highlight = '└' .. table.concat(parts, '┴') .. '┘', 'RmTableRow'
-    end
-    ---@type render.md.test.MarkInfo
+    local text = chars[1] .. table.concat(parts, chars[2]) .. chars[3]
+    ---@type vim.api.keyset.set_extmark
     return {
-        row = { row },
-        col = { 0 },
         virt_lines = { { { text, highlight } } },
         virt_lines_above = above,
     }
 end
 
----@param row integer
----@param col integer
----@param sections (integer|integer[])[]
----@return render.md.test.MarkInfo
-function M.table_delimiter(row, col, sections)
-    local parts = vim.tbl_map(function(width)
-        local widths = vim.islist(width) and width or { width }
+---@param sections integer[][]
+---@param padding? integer
+---@return vim.api.keyset.set_extmark
+function M.table.delimiter(sections, padding)
+    local parts = vim.tbl_map(function(widths)
         local section = vim.tbl_map(function(amount)
             return amount == 1 and '━' or string.rep('─', amount)
         end, widths)
         return table.concat(section, '')
     end, sections)
-    local text = '├' .. table.concat(parts, '┼') .. '┤'
-    local difference = col - vim.fn.strdisplaywidth(text)
-    if difference > 0 then
-        text = text .. string.rep(' ', difference)
-    end
-    return M.overlay(row, { 0, col }, { text, 'RmTableHead' })
+    local text = '├' .. table.concat(parts, '┼') .. '┤' .. string.rep(' ', padding or 0)
+    ---@type vim.api.keyset.set_extmark
+    return {
+        virt_text = { { text, 'RmTableHead' } },
+        virt_text_pos = 'overlay',
+    }
+end
+
+---@param spaces integer
+---@return vim.api.keyset.set_extmark
+function M.table.padding(spaces)
+    return M.padding(spaces, 0, 'RmTableFill')
 end
 
 ---@param marks render.md.test.Marks

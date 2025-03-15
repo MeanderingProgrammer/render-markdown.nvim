@@ -8,20 +8,39 @@ describe('box_dash_quote.md', function()
 
         local marks, row = util.marks(), util.row()
 
-        marks:extend(util.heading(row:get(), 1))
+        marks
+            :add(row:get(), nil, 0, nil, util.heading.sign(1))
+            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
-        marks:add(util.conceal(row:inc(2), { 0, 2 }))
-        marks:add(util.inline(row:get(), { 2, 5 }, { '󰄱 ', 'RmUnchecked' }, ''))
-        marks:add(util.conceal(row:inc(), { 0, 2 }))
-        marks:add(util.inline(row:get(), { 2, 5 }, { '󰱒 ', 'RmChecked' }, ''))
-        marks:add(util.conceal(row:inc(), { 0, 2 }))
-        marks:add(util.inline(row:get(), { 2, 5 }, { '󰥔 ', 'RmTodo' }, ''))
-        marks:add(util.bullet(row:inc(), 0, 1))
+        marks:add(row:inc(), row:get(), 0, 2, util.conceal())
+        marks:add(row:get(), row:get(), 2, 5, {
+            virt_text = { { '󰄱 ', 'RmUnchecked' } },
+            virt_text_pos = 'inline',
+            conceal = '',
+        })
+        marks:add(row:inc(), row:get(), 0, 2, util.conceal())
+        marks:add(row:get(), row:get(), 2, 5, {
+            virt_text = { { '󰱒 ', 'RmChecked' } },
+            virt_text_pos = 'inline',
+            conceal = '',
+        })
+        marks:add(row:inc(), row:get(), 0, 2, util.conceal())
+        marks:add(row:get(), row:get(), 2, 5, {
+            virt_text = { { '󰥔 ', 'RmTodo' } },
+            virt_text_pos = 'inline',
+            conceal = '',
+        })
+        marks:add(row:inc(), row:get(), 0, 2, util.bullet(1))
 
-        marks:add(util.overlay(row:inc(2), { 0 }, { string.rep('─', vim.o.columns), 'RmDash' }))
+        marks:add(row:inc(2), nil, 0, nil, {
+            virt_text = { { string.rep('─', vim.o.columns), 'RmDash' } },
+            virt_text_pos = 'overlay',
+        })
 
-        marks:add(util.quote(row:inc(2), '  %s ', 'RmQuote'))
-        marks:add(util.quote(row:inc(), '  %s ', 'RmQuote'))
+        marks
+            :add(row:inc(2), row:get(), 0, 4, util.quote('  %s ', 'RmQuote'))
+            :add(row:inc(), row:get(), 0, 4, util.quote('  %s ', 'RmQuote'))
 
         util.assert_view(marks, {
             '󰫎   1 󰲡 Checkbox / Dash / Quote',

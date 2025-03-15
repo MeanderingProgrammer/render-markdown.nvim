@@ -8,50 +8,100 @@ describe('callout.md', function()
 
         local marks, row = util.marks(), util.row()
 
+        marks
+            :add(row:get(), nil, 0, nil, util.heading.sign(1))
+            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
+
         local info = 'RmInfo'
-        marks:extend(util.heading(row:get(), 1))
-        marks:add(util.quote(row:inc(2), '%s ', info))
-        marks:add(util.overlay(row:get(), { 2, 9 }, { '󰋽 Note', info }))
-        marks:add(util.quote(row:inc(), '%s', info))
-        marks:add(util.quote(row:inc(), '%s ', info))
-        marks:add(util.quote(row:inc(), '%s', info))
-        marks:add(util.quote(row:inc(), '%s ', info))
+        marks
+            :add(row:inc(), row:get(), 0, 2, util.quote('%s ', info))
+            :add(row:get(), row:get(), 2, 9, {
+                virt_text = { { '󰋽 Note', info } },
+                virt_text_pos = 'overlay',
+            })
+            :add(row:inc(), row:get(), 0, 1, util.quote('%s', info))
+            :add(row:inc(), row:get(), 0, 2, util.quote('%s ', info))
+            :add(row:inc(), row:get(), 0, 1, util.quote('%s', info))
+            :add(row:inc(), row:get(), 0, 2, util.quote('%s ', info))
+
+        marks
+            :add(row:inc(2), nil, 0, nil, util.heading.sign(1))
+            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
         local ok = 'RmSuccess'
-        marks:extend(util.heading(row:inc(2), 1))
-        marks:add(util.quote(row:inc(2), '%s ', ok))
-        marks:add(util.overlay(row:get(), { 2, 8 }, { '󰌶 Tip', ok }))
-        marks:add(util.quote(row:inc(), '%s', ok))
-        marks:add(util.quote(row:inc(), '%s ', ok))
-        marks:extend(util.code_language(row:get(), 2, 'lua'))
-        marks:add(util.code_row(row:get(), 2))
-        marks:add(util.quote(row:inc(), '%s ', ok))
-        marks:add(util.code_row(row:get(), 2))
-        marks:add(util.quote(row:inc(), '%s ', ok))
-        marks:add(util.code_border(row:get(), 2, false))
+        marks
+            :add(row:inc(), row:get(), 0, 2, util.quote('%s ', ok))
+            :add(row:get(), row:get(), 2, 8, {
+                virt_text = { { '󰌶 Tip', ok } },
+                virt_text_pos = 'overlay',
+            })
+            :add(row:inc(), row:get(), 0, 1, util.quote('%s', ok))
+            :add(row:inc(), row:get(), 0, 2, util.quote('%s ', ok))
+            :add(row:get(), nil, 2, nil, util.code.sign('lua'))
+            :add(row:get(), nil, 5, nil, util.code.icon('lua'))
+            :add(row:get(), row:inc(), 2, 0, util.code.bg())
+            :add(row:get(), row:get(), 0, 2, util.quote('%s ', ok))
+            :add(row:get(), row:inc(), 2, 0, util.code.bg())
+            :add(row:get(), row:get(), 0, 2, util.quote('%s ', ok))
+            :add(row:get(), nil, 2, nil, util.code.border(false, vim.o.columns - 2))
+
+        marks
+            :add(row:inc(2), nil, 0, nil, util.heading.sign(1))
+            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
         local hint = 'RmHint'
-        marks:extend(util.heading(row:inc(2), 1))
-        marks:add(util.quote(row:inc(2), '%s ', hint))
-        marks:add(util.overlay(row:get(), { 2, 14 }, { '󰅾 Important', hint }))
-        marks:add(util.quote(row:inc(), '%s ', hint))
+        marks
+            :add(row:inc(), row:get(), 0, 2, util.quote('%s ', hint))
+            :add(row:get(), row:get(), 2, 14, {
+                virt_text = { { '󰅾 Important', hint } },
+                virt_text_pos = 'overlay',
+            })
+            :add(row:inc(), row:get(), 0, 2, util.quote('%s ', hint))
+
+        marks
+            :add(row:inc(2), nil, 0, nil, util.heading.sign(1))
+            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
         local warn = 'RmWarn'
-        marks:extend(util.heading(row:inc(2), 1))
-        marks:add(util.quote(row:inc(2), '%s ', warn))
-        marks:add(util.overlay(row:get(), { 2, 12 }, { '󰀪 Custom Title', warn }, ''))
-        marks:add(util.quote(row:inc(), '%s ', warn))
+        marks
+            :add(row:inc(), row:get(), 0, 2, util.quote('%s ', warn))
+            :add(row:get(), row:get(), 2, 12, {
+                virt_text = { { '󰀪 Custom Title', warn } },
+                virt_text_pos = 'overlay',
+                conceal = '',
+            })
+            :add(row:inc(), row:get(), 0, 2, util.quote('%s ', warn))
+
+        marks
+            :add(row:inc(2), nil, 0, nil, util.heading.sign(1))
+            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
         local err = 'RmError'
-        marks:extend(util.heading(row:inc(2), 1))
-        marks:add(util.quote(row:inc(2), '%s ', err))
-        marks:add(util.overlay(row:get(), { 2, 12 }, { '󰳦 Caution', err }))
-        marks:add(util.quote(row:inc(), '%s ', err))
+        marks
+            :add(row:inc(), row:get(), 0, 2, util.quote('%s ', err))
+            :add(row:get(), row:get(), 2, 12, {
+                virt_text = { { '󰳦 Caution', err } },
+                virt_text_pos = 'overlay',
+            })
+            :add(row:inc(), row:get(), 0, 2, util.quote('%s ', err))
 
-        marks:extend(util.heading(row:inc(2), 1))
-        marks:add(util.quote(row:inc(2), '%s ', err))
-        marks:add(util.overlay(row:get(), { 2, 8 }, { '󰨰 Bug', err }))
-        marks:add(util.quote(row:inc(), '%s ', err))
+        marks
+            :add(row:inc(2), nil, 0, nil, util.heading.sign(1))
+            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
+
+        marks
+            :add(row:inc(), row:get(), 0, 2, util.quote('%s ', err))
+            :add(row:get(), row:get(), 2, 8, {
+                virt_text = { { '󰨰 Bug', err } },
+                virt_text_pos = 'overlay',
+            })
+            :add(row:inc(), row:get(), 0, 2, util.quote('%s ', err))
 
         util.assert_view(marks, {
             '󰫎   1 󰲡 Note',

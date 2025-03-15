@@ -77,10 +77,10 @@ function MarkDetails:priorities()
     table.insert(result, math.max(self.col[1], col))
     table.insert(result, math.max((self.col[2] or self.col[1]), col))
 
-    -- Inline text comes first
+    -- Signs come first
+    table.insert(result, self.sign_text ~= nil and 0 or 1)
+    -- Then inline text
     table.insert(result, self.virt_text_pos == 'inline' and 0 or 1)
-    -- Signs come later
-    table.insert(result, self.sign_text == nil and 0 or 1)
 
     -- Fewer text entries comes first
     local text = #(self.virt_text or {})

@@ -2,70 +2,80 @@
 
 local util = require('tests.util')
 
----@param start_row integer
----@param end_row integer
----@param level integer
----@return render.md.test.MarkInfo[]
-local function setext_heading(start_row, end_row, level)
-    local sign_mark, icon_mark, background_mark = unpack(util.heading(start_row, level))
-    local icon, highlight = unpack(icon_mark.virt_text[1])
-
-    local result = {}
-    for row = start_row, end_row do
-        local row_background_mark = vim.deepcopy(background_mark)
-        row_background_mark.row = { row, row + 1 }
-        vim.list_extend(result, {
-            util.inline(row, { 0, 0 }, { row == start_row and vim.trim(icon) .. ' ' or '  ', highlight }),
-            row_background_mark,
-        })
-    end
-    table.insert(result, 2, sign_mark)
-    table.insert(result, #result, util.conceal(end_row, { 0, 3 }))
-    return result
-end
-
 describe('ad_hoc.md', function()
     it('custom', function()
         util.setup('tests/data/ad_hoc.md')
 
         local marks, row = util.marks(), util.row()
 
-        marks:extend(util.heading(row:get(), 1))
+        marks
+            :add(row:get(), nil, 0, nil, util.heading.sign(1))
+            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
-        marks:extend(setext_heading(row:inc(2), row:inc(2), 2))
+        marks
+            :add(row:inc(), nil, 0, nil, util.heading.sign(2))
+            :add(row:get(), row:get(), 0, 0, {
+                virt_text = { { '󰲣 ', 'RmH2:RmH2Bg' } },
+                virt_text_pos = 'inline',
+            })
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(2))
+            :add(row:get(), row:get(), 0, 0, {
+                virt_text = { { '  ', 'RmH2:RmH2Bg' } },
+                virt_text_pos = 'inline',
+            })
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(2))
+            :add(row:get(), row:get(), 0, 0, {
+                virt_text = { { '  ', 'RmH2:RmH2Bg' } },
+                virt_text_pos = 'inline',
+            })
+            :add(row:get(), row:get(), 0, 3, util.conceal())
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(2))
 
-        marks:add(util.bullet(row:inc(2), 0, 1))
+        marks:add(row:inc(), row:get(), 0, 2, util.bullet(1))
 
-        marks:add(util.bullet(row:inc(), 0, 1))
-        marks:add(util.conceal(row:get(), { 2, 3 }))
-        marks:add(util.inline(row:get(), { 3, 14 }, { '󱗖 ', 'RmWikiLink' }))
-        marks:add(util.conceal(row:get(), { 14, 15 }))
+        marks
+            :add(row:inc(), row:get(), 0, 2, util.bullet(1))
+            :add(row:get(), row:get(), 2, 3, util.conceal())
+            :add(row:get(), row:get(), 3, 14, util.link('wiki'))
+            :add(row:get(), row:get(), 14, 15, util.conceal())
 
-        marks:add(util.bullet(row:inc(), 0, 1))
-        marks:add(util.conceal(row:get(), { 2, 3 }))
-        marks:add(util.inline(row:get(), { 3, 24 }, { '󱗖 ', 'RmWikiLink' }))
-        marks:add(util.conceal(row:get(), { 4, 13 }))
-        marks:add(util.conceal(row:get(), { 24, 25 }))
+        marks
+            :add(row:inc(), row:get(), 0, 2, util.bullet(1))
+            :add(row:get(), row:get(), 2, 3, util.conceal())
+            :add(row:get(), row:get(), 3, 24, util.link('wiki'))
+            :add(row:get(), row:get(), 4, 13, util.conceal())
+            :add(row:get(), row:get(), 24, 25, util.conceal())
 
-        marks:add(util.bullet(row:inc(), 0, 1))
-        marks:add(util.conceal(row:get(), { 2, 3 }))
-        marks:add(util.inline(row:get(), { 2, 20 }, { '󰀓 ', 'RmLink' }))
-        marks:add(util.highlight(row:get(), { 2, 20 }, 'link'))
-        marks:add(util.conceal(row:get(), { 19, 20 }))
+        marks
+            :add(row:inc(), row:get(), 0, 2, util.bullet(1))
+            :add(row:get(), row:get(), 2, 3, util.conceal())
+            :add(row:get(), row:get(), 2, 20, util.link('email'))
+            :add(row:get(), row:get(), 2, 20, util.highlight('link'))
+            :add(row:get(), row:get(), 19, 20, util.conceal())
 
-        marks:add(util.bullet(row:inc(), 0, 1))
-        marks:add(util.conceal(row:get(), { 2, 3 }))
-        marks:add(util.inline(row:get(), { 2, 26 }, { '󰊤 ', 'RmLink' }))
-        marks:add(util.highlight(row:get(), { 2, 26 }, 'link'))
-        marks:add(util.conceal(row:get(), { 25, 26 }))
+        marks
+            :add(row:inc(), row:get(), 0, 2, util.bullet(1))
+            :add(row:get(), row:get(), 2, 3, util.conceal())
+            :add(row:get(), row:get(), 2, 26, util.link('git'))
+            :add(row:get(), row:get(), 2, 26, util.highlight('link'))
+            :add(row:get(), row:get(), 25, 26, util.conceal())
 
-        marks:add(util.bullet(row:inc(), 0, 1))
-        marks:add(util.inline(row:get(), { 2, 61 }, { '󰗃 ', 'RmLink' }))
+        marks:add(row:inc(), row:get(), 0, 2, util.bullet(1))
+        marks:add(row:get(), row:get(), 2, 61, util.link('youtube'))
 
-        marks:add(util.bullet(row:inc(), 0, 1))
-        marks:add(util.inline(row:get(), { 16, 25 }, { '¹ ᴵⁿᶠᵒ', 'RmLink' }, ''))
-        marks:add(util.conceal(row:inc(2), { 0, 16 }))
-        marks:add(util.inline(row:inc(2), { 0, 9 }, { '¹ ᴵⁿᶠᵒ', 'RmLink' }, ''))
+        marks:add(row:inc(), row:get(), 0, 2, util.bullet(1))
+        marks:add(row:get(), row:get(), 16, 25, {
+            virt_text = { { '¹ ᴵⁿᶠᵒ', 'RmLink' } },
+            virt_text_pos = 'inline',
+            conceal = '',
+        })
+        marks:add(row:inc(2), row:get(), 0, 16, util.conceal())
+        marks:add(row:inc(2), row:get(), 0, 9, {
+            virt_text = { { '¹ ᴵⁿᶠᵒ', 'RmLink' } },
+            virt_text_pos = 'inline',
+            conceal = '',
+        })
 
         util.assert_view(marks, {
             '󰫎   1 󰲡 Heading',

@@ -18,19 +18,16 @@ local function set_responses(converter, responses)
     end)
 end
 
----@param row integer
 ---@param lines string[]
----@return render.md.test.MarkInfo
-local function latex(row, lines)
+---@return vim.api.keyset.set_extmark
+local function latex(lines)
     local virt_lines = vim.iter(lines)
         :map(function(line)
             return { { line, 'RmMath' } }
         end)
         :totable()
-    ---@type render.md.test.MarkInfo
+    ---@type vim.api.keyset.set_extmark
     return {
-        row = { row },
-        col = { 0 },
         virt_lines = virt_lines,
         virt_lines_above = true,
     }
@@ -69,10 +66,13 @@ describe('latex.md', function()
 
         local marks, row = util.marks(), util.row()
 
-        marks:extend(util.heading(row:get(), 1))
+        marks
+            :add(row:get(), nil, 0, nil, util.heading.sign(1))
+            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
-        marks:add(latex(row:inc(2), inline.out))
-        marks:add(latex(row:inc(2), block.out))
+        marks:add(row:inc(), nil, 0, nil, latex(inline.out))
+        marks:add(row:inc(2), nil, 0, nil, latex(block.out))
 
         util.assert_view(marks, {
             '󰫎   1 󰲡 LaTeX',
