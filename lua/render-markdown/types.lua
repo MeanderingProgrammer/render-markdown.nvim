@@ -65,6 +65,7 @@
 ---@field highlight string
 
 ---@class (exact) render.md.Footnote
+---@field enabled boolean
 ---@field superscript boolean
 ---@field prefix string
 ---@field suffix string

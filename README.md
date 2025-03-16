@@ -638,11 +638,13 @@ require('render-markdown').setup({
         render_modes = false,
         -- How to handle footnote links, start with a '^'.
         footnote = {
+            -- Turn on / off footnote rendering.
+            enabled = true,
             -- Replace value with superscript equivalent.
             superscript = true,
-            -- Added before link content when converting to superscript.
+            -- Added before link content.
             prefix = '',
-            -- Added after link content when converting to superscript.
+            -- Added after link content.
             suffix = '',
         },
         -- Inlined with 'image' elements.
@@ -1288,11 +1290,13 @@ require('render-markdown').setup({
         render_modes = false,
         -- How to handle footnote links, start with a '^'.
         footnote = {
+            -- Turn on / off footnote rendering.
+            enabled = true,
             -- Replace value with superscript equivalent.
             superscript = true,
-            -- Added before link content when converting to superscript.
+            -- Added before link content.
             prefix = '',
-            -- Added after link content when converting to superscript.
+            -- Added after link content.
             suffix = '',
         },
         -- Inlined with 'image' elements.

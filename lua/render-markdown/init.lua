@@ -110,6 +110,7 @@ local M = {}
 ---@field highlight? string
 
 ---@class (exact) render.md.UserFootnote
+---@field enabled? boolean
 ---@field superscript? boolean
 ---@field prefix? string
 ---@field suffix? string
@@ -789,11 +790,13 @@ M.default_config = {
         render_modes = false,
         -- How to handle footnote links, start with a '^'.
         footnote = {
+            -- Turn on / off footnote rendering.
+            enabled = true,
             -- Replace value with superscript equivalent.
             superscript = true,
-            -- Added before link content when converting to superscript.
+            -- Added before link content.
             prefix = '',
-            -- Added after link content when converting to superscript.
+            -- Added after link content.
             suffix = '',
         },
         -- Inlined with 'image' elements.

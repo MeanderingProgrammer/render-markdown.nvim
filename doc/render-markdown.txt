@@ -1,4 +1,4 @@
-*render-markdown.txt*           For 0.10.0          Last change: 2025 March 14
+*render-markdown.txt*           For 0.10.0          Last change: 2025 March 16
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -703,11 +703,13 @@ Default Configuration ~
             render_modes = false,
             -- How to handle footnote links, start with a '^'.
             footnote = {
+                -- Turn on / off footnote rendering.
+                enabled = true,
                 -- Replace value with superscript equivalent.
                 superscript = true,
-                -- Added before link content when converting to superscript.
+                -- Added before link content.
                 prefix = '',
-                -- Added after link content when converting to superscript.
+                -- Added after link content.
                 suffix = '',
             },
             -- Inlined with 'image' elements.
@@ -1333,11 +1335,13 @@ Link Configuration ~
             render_modes = false,
             -- How to handle footnote links, start with a '^'.
             footnote = {
+                -- Turn on / off footnote rendering.
+                enabled = true,
                 -- Replace value with superscript equivalent.
                 superscript = true,
-                -- Added before link content when converting to superscript.
+                -- Added before link content.
                 prefix = '',
-                -- Added after link content when converting to superscript.
+                -- Added after link content.
                 suffix = '',
             },
             -- Inlined with 'image' elements.

@@ -159,17 +159,15 @@ function Render:footnote(text)
     if self.context:skip(self.link) then
         return
     end
-
     local footnote = self.link.footnote
-    if not footnote.superscript then
+    if not footnote.enabled then
         return
     end
-
-    local value = Converter.to_superscript(footnote.prefix .. text .. footnote.suffix)
+    local body = footnote.prefix .. text .. footnote.suffix
+    local value = not footnote.superscript and body or Converter.superscript(body)
     if value == nil then
         return
     end
-
     self.marks:add_over('link', self.node, {
         virt_text = { { value, self.link.highlight } },
         virt_text_pos = 'inline',
