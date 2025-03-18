@@ -27,11 +27,12 @@ function Base:new(marks, config, context, node)
 end
 
 ---@protected
+---@param enabled boolean
 ---@param text? string
 ---@param highlight? string
-function Base:sign(text, highlight)
+function Base:sign(enabled, text, highlight)
     local sign = self.config.sign
-    if not sign.enabled or text == nil then
+    if not enabled or not sign.enabled or text == nil then
         return
     end
     local sign_highlight = sign.highlight

@@ -114,7 +114,7 @@ function Render:language()
         return false
     end
 
-    local node = self.data.language_node
+    local node, padding = self.data.language_node, self.data.language_padding
     if node == nil then
         return false
     end
@@ -127,9 +127,7 @@ function Render:language()
         return false
     end
 
-    if self.code.sign then
-        self:sign(icon, icon_highlight)
-    end
+    self:sign(self.code.sign, icon, icon_highlight)
 
     local text, highlight = icon .. ' ', { icon_highlight }
     if self.code.border ~= 'none' then
@@ -142,8 +140,7 @@ function Render:language()
             -- on the context they are in. This is lumped into the delimiter node
             -- and as a result, after concealing, the extmark would be shifted.
             local spaces = Str.spaces('start', self.node.text)
-            local padding = Str.pad(spaces + self.data.language_padding)
-            text = padding .. text .. node.text
+            text = Str.pad(spaces + padding) .. text .. node.text
         end
         return self.marks:add('code_language', node.start_row, node.start_col, {
             virt_text = { { text, highlight } },
@@ -153,13 +150,13 @@ function Render:language()
         if self.code.language_name then
             text = text .. node.text
         end
-        local win_col = self.data.max_width - self.data.language_padding
+        local win_col = self.data.max_width - padding
         if self.code.width == 'block' then
-            win_col = win_col - Str.width(text) + self.data.indent
+            win_col = win_col - Str.width(text)
         end
         return self.marks:add('code_language', node.start_row, 0, {
             virt_text = { { text, highlight } },
-            virt_text_win_col = win_col,
+            virt_text_win_col = win_col + self.data.indent,
         })
     else
         return false

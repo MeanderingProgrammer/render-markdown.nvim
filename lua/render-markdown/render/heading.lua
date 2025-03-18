@@ -98,9 +98,7 @@ function Render:custom()
 end
 
 function Render:render()
-    if self.heading.sign then
-        self:sign(self.data.sign, self.data.foreground)
-    end
+    self:sign(self.heading.sign, self.data.sign, self.data.foreground)
     local width = self:width(self:icon())
     self:background(width)
     self:left_pad(width)
