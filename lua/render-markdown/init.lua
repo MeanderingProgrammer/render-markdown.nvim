@@ -30,6 +30,7 @@ local M = {}
 ---@field enabled? boolean
 
 ---@class (exact) render.md.UserCompletions
+---@field blink? render.md.UserCompletion
 ---@field coq? render.md.UserCompletion
 ---@field lsp? render.md.UserCompletion
 
@@ -429,6 +430,8 @@ M.default_config = {
         clear = function() end,
     },
     completions = {
+        -- Settings for blink.cmp completions source
+        blink = { enabled = false },
         -- Settings for coq_nvim completions source
         coq = { enabled = false },
         -- Settings for in-process language server completions

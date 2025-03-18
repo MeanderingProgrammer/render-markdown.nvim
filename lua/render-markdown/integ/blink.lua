@@ -38,4 +38,20 @@ function Source:get_completions(context, callback)
     end
 end
 
+---@class render.md.integ.Blink
+---@field private registered boolean
+local M = {
+    registered = false,
+}
+
+---Should only be called from manager on initial buffer attach
+function Source.setup()
+    if M.registered then
+        return
+    end
+    M.registered = true
+    -- TODO(blink.cmp): need add_source_provider to be released
+    vim.notify('render-markdown.nvim blink.cmp source registeration requires add_source_provider', 3)
+end
+
 return Source

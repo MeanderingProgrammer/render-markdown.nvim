@@ -277,6 +277,8 @@ require('render-markdown').setup({
         clear = function() end,
     },
     completions = {
+        -- Settings for blink.cmp completions source
+        blink = { enabled = false },
         -- Settings for coq_nvim completions source
         coq = { enabled = false },
         -- Settings for in-process language server completions

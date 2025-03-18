@@ -2,6 +2,15 @@
 
 ## Pre-release
 
+### Features
+
+- enabled flag for link footnote [#362](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/362)
+  [9721ffe](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/9721ffe230ec90e49c49ee33b5ca44c3fc689214)
+
+### Collaborator Shoutouts
+
+- @water-sucks
+
 ## 8.1.1 (2025-03-09)
 
 ### Bug Fixes

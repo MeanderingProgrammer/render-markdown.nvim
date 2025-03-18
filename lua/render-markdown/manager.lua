@@ -89,6 +89,8 @@ function M.attach(buf)
     state.on.attach({ buf = buf })
     if state.completions.lsp.enabled then
         require('render-markdown.integ.lsp').setup()
+    elseif state.completions.blink.enabled then
+        require('render-markdown.integ.blink').setup()
     elseif state.completions.coq.enabled then
         require('render-markdown.integ.coq').setup()
     else

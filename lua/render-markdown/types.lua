@@ -4,6 +4,7 @@
 ---@field enabled boolean
 
 ---@class (exact) render.md.Completions
+---@field blink render.md.Completion
 ---@field coq render.md.Completion
 ---@field lsp render.md.Completion
 
