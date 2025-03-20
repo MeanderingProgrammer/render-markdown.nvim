@@ -3,10 +3,11 @@ local manager = require('render-markdown.manager')
 local state = require('render-markdown.state')
 local util = require('render-markdown.core.util')
 
-local list_markers = {
+local markers = {
     list_marker_minus = '-',
     list_marker_star = '*',
     list_marker_plus = '+',
+    block_quote_marker = '>',
 }
 
 ---@class render.md.Source
@@ -19,8 +20,7 @@ end
 
 ---@return string[]
 function M.trigger_characters()
-    local characters = vim.tbl_values(list_markers)
-    return vim.list_extend(characters, { '>', ' ' })
+    return vim.list_extend(vim.tbl_values(markers), { ' ', '[', '!', ']' })
 end
 
 ---@param buf integer 0 for current buffer
@@ -29,26 +29,35 @@ end
 ---@return lsp.CompletionItem[]?
 function M.items(buf, row, col)
     buf = buf == 0 and util.current('buf') or buf
-    local node = M.get_node(buf, row, col)
-    if node == nil then
+    local node = M.node(buf, row, col)
+    if node == nil or node:range() ~= row then
         return nil
     end
-    local result, config = {}, state.get(buf)
+
+    local marker_node = node:named_child(0)
+    if marker_node == nil then
+        return nil
+    end
+
+    local marker = vim.treesitter.get_node_text(marker_node, buf)
+    local text = vim.treesitter.get_node_text(node, buf)
+    if M.ignore(marker, text:gsub('\n$', '')) then
+        return nil
+    end
+
+    local result = {}
+    local config = state.get(buf)
+    local prefix = Str.spaces('end', marker) == 0 and ' ' or ''
     if node:type() == 'block_quote' then
-        local quote_row = node:range()
-        if quote_row == row then
-            local prefix = M.space_prefix(buf, node)
-            for _, component in pairs(config.callout) do
-                table.insert(result, M.item(prefix .. component.raw, component.rendered, nil))
-            end
+        for _, component in pairs(config.callout) do
+            table.insert(result, M.item(prefix, component.raw, component.rendered, nil))
         end
     elseif node:type() == 'list_item' then
         local checkbox = config.checkbox
-        local prefix = M.list_prefix(buf, row, node)
-        table.insert(result, M.item(prefix .. '[ ] ', checkbox.unchecked.icon, 'unchecked'))
-        table.insert(result, M.item(prefix .. '[x] ', checkbox.checked.icon, 'checked'))
+        table.insert(result, M.item(prefix, '[ ] ', checkbox.unchecked.icon, 'unchecked'))
+        table.insert(result, M.item(prefix, '[x] ', checkbox.checked.icon, 'checked'))
         for name, component in pairs(checkbox.custom) do
-            table.insert(result, M.item(prefix .. component.raw .. ' ', component.rendered, name))
+            table.insert(result, M.item(prefix, component.raw .. ' ', component.rendered, name))
         end
     end
     return result
@@ -59,7 +68,7 @@ end
 ---@param row integer
 ---@param col integer
 ---@return TSNode?
-function M.get_node(buf, row, col)
+function M.node(buf, row, col)
     -- Parse current row to get up to date node
     local has_parser, parser = pcall(vim.treesitter.get_parser, buf)
     if not has_parser or parser == nil then
@@ -72,8 +81,10 @@ function M.get_node(buf, row, col)
         lang = 'markdown',
         pos = { row, col },
     })
-    local children = vim.tbl_keys(list_markers)
-    vim.list_extend(children, { 'block_quote_marker', 'block_continuation' })
+    if node ~= nil and node:type() == 'paragraph' then
+        node = node:prev_sibling()
+    end
+    local children = vim.list_extend(vim.tbl_keys(markers), { 'block_continuation' })
     if node ~= nil and vim.tbl_contains(children, node:type()) then
         node = node:parent()
     end
@@ -81,46 +92,42 @@ function M.get_node(buf, row, col)
 end
 
 ---@private
----@param buf integer
----@param row integer
----@param node TSNode
----@return string
-function M.list_prefix(buf, row, node)
-    local marker_node = node:named_child(0)
-    if marker_node == nil then
-        return ''
+---@param marker string
+---@param text string
+---@return boolean
+function M.ignore(marker, text)
+    local prefix = vim.pesc(vim.trim(marker)) .. '%s+'
+    local patterns = {
+        -- The first non-space after the marker is not '['
+        prefix .. '[^%[]',
+        -- After '[' there is another '[' or a space
+        prefix .. '%[.*[%[%s]',
+        -- There is already text enclosed by '[' ']'
+        prefix .. '%[.*%]',
+    }
+    for _, pattern in ipairs(patterns) do
+        if text:find(pattern) ~= nil then
+            return true
+        end
     end
-    local marker_row = marker_node:range()
-    if marker_row == row then
-        return M.space_prefix(buf, marker_node)
-    end
-    local marker = list_markers[marker_node:type()]
-    return marker ~= nil and marker .. ' ' or ''
+    return false
 end
 
 ---@private
----@param buf integer
----@param node TSNode
----@return string
-function M.space_prefix(buf, node)
-    local text = vim.treesitter.get_node_text(node, buf)
-    return Str.spaces('end', text) == 0 and ' ' or ''
-end
-
----@private
----@param raw string
----@param rendered string
----@param name? string
+---@param prefix string
+---@param label string
+---@param detail string
+---@param description? string
 ---@return lsp.CompletionItem
-function M.item(raw, rendered, name)
+function M.item(prefix, label, detail, description)
     ---@type lsp.CompletionItem
     return {
-        label = raw,
-        labelDetails = {
-            detail = rendered,
-            description = name,
-        },
         kind = 12,
+        label = prefix .. label,
+        labelDetails = {
+            detail = detail,
+            description = description,
+        },
     }
 end
 
