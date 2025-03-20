@@ -1,6 +1,7 @@
 ---@module 'blink.cmp'
 
 local source = require('render-markdown.integ.source')
+local state = require('render-markdown.state')
 
 ---@class render.md.blink.Source: blink.cmp.Source
 local Source = {}
@@ -39,8 +40,10 @@ function Source:get_completions(context, callback)
 end
 
 ---@class render.md.integ.Blink
+---@field private id string
 ---@field private registered boolean
 local M = {
+    id = 'markdown',
     registered = false,
 }
 
@@ -50,8 +53,17 @@ function Source.setup()
         return
     end
     M.registered = true
-    -- TODO(blink.cmp): need add_source_provider to be released
-    vim.notify('render-markdown.nvim blink.cmp source registeration requires add_source_provider', 3)
+    local has_blink, blink = pcall(require, 'blink.cmp')
+    if not has_blink or blink == nil then
+        return
+    end
+    pcall(blink.add_source_provider, M.id, {
+        name = 'RenderMarkdown',
+        module = 'render-markdown.integ.blink',
+    })
+    for _, file_type in ipairs(state.file_types) do
+        pcall(blink.add_filetype_source, file_type, M.id)
+    end
 end
 
 return Source

@@ -148,17 +148,8 @@ cmp.setup({
 ## blink.cmp
 
 ```lua
-require('blink.cmp').setup({
-    sources = {
-        default = { 'lsp', 'path', 'snippets', 'buffer', 'markdown' },
-        providers = {
-            markdown = {
-                name = 'RenderMarkdown',
-                module = 'render-markdown.integ.blink',
-                fallbacks = { 'lsp' },
-            },
-        },
-    },
+require('render-markdown').setup({
+    completions = { blink = { enabled = true } },
 })
 ```
 

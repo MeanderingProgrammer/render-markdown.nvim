@@ -6,6 +6,11 @@
 
 - enabled flag for link footnote [#362](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/362)
   [9721ffe](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/9721ffe230ec90e49c49ee33b5ca44c3fc689214)
+- blink.cmp source registration [b8d93e8](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b8d93e83a02dadddc6a566b1f60dab87190c1296)
+
+### Bug Fixes
+
+- account for indent when right aligning code language [125258a](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/125258ac5bccd21651505d78dbd6120906243749)
 
 ### Collaborator Shoutouts
 

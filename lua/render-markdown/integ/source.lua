@@ -19,7 +19,8 @@ end
 
 ---@return string[]
 function M.trigger_characters()
-    return { '-', '*', '+', '>', ' ' }
+    local characters = vim.tbl_values(list_markers)
+    return vim.list_extend(characters, { '>', ' ' })
 end
 
 ---@param buf integer 0 for current buffer
@@ -27,50 +28,56 @@ end
 ---@param col integer 0-indexed
 ---@return lsp.CompletionItem[]?
 function M.items(buf, row, col)
-    if buf == 0 then
-        buf = util.current('buf')
-    end
-
-    local has_parser, parser = pcall(vim.treesitter.get_parser, buf)
-    if not has_parser or parser == nil then
-        return nil
-    end
-
-    -- Parse current row to get up to date node
-    parser:parse({ row, row })
-    local node = vim.treesitter.get_node({ bufnr = buf, pos = { row, col } })
+    buf = buf == 0 and util.current('buf') or buf
+    local node = M.get_node(buf, row, col)
     if node == nil then
         return nil
     end
-
-    local children = { 'block_quote_marker', 'block_continuation' }
-    if vim.tbl_contains(children, node:type()) or list_markers[node:type()] ~= nil then
-        node = node:parent()
-        if node == nil then
-            return nil
-        end
-    end
-
-    local items = {}
-    local config = state.get(buf)
+    local result, config = {}, state.get(buf)
     if node:type() == 'block_quote' then
         local quote_row = node:range()
         if quote_row == row then
             local prefix = M.space_prefix(buf, node)
             for _, component in pairs(config.callout) do
-                table.insert(items, M.item(prefix .. component.raw, component.rendered, nil))
+                table.insert(result, M.item(prefix .. component.raw, component.rendered, nil))
             end
         end
     elseif node:type() == 'list_item' then
         local checkbox = config.checkbox
         local prefix = M.list_prefix(buf, row, node)
-        table.insert(items, M.item(prefix .. '[ ] ', checkbox.unchecked.icon, 'unchecked'))
-        table.insert(items, M.item(prefix .. '[x] ', checkbox.checked.icon, 'checked'))
+        table.insert(result, M.item(prefix .. '[ ] ', checkbox.unchecked.icon, 'unchecked'))
+        table.insert(result, M.item(prefix .. '[x] ', checkbox.checked.icon, 'checked'))
         for name, component in pairs(checkbox.custom) do
-            table.insert(items, M.item(prefix .. component.raw .. ' ', component.rendered, name))
+            table.insert(result, M.item(prefix .. component.raw .. ' ', component.rendered, name))
         end
     end
-    return items
+    return result
+end
+
+---@private
+---@param buf integer
+---@param row integer
+---@param col integer
+---@return TSNode?
+function M.get_node(buf, row, col)
+    -- Parse current row to get up to date node
+    local has_parser, parser = pcall(vim.treesitter.get_parser, buf)
+    if not has_parser or parser == nil then
+        return nil
+    end
+    parser:parse({ row, row })
+
+    local node = vim.treesitter.get_node({
+        bufnr = buf,
+        lang = 'markdown',
+        pos = { row, col },
+    })
+    local children = vim.tbl_keys(list_markers)
+    vim.list_extend(children, { 'block_quote_marker', 'block_continuation' })
+    if node ~= nil and vim.tbl_contains(children, node:type()) then
+        node = node:parent()
+    end
+    return node
 end
 
 ---@private
