@@ -8,6 +8,8 @@
   [9721ffe](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/9721ffe230ec90e49c49ee33b5ca44c3fc689214)
 - blink.cmp source registration [b8d93e8](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b8d93e83a02dadddc6a566b1f60dab87190c1296)
   [62d6681](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/62d6681332365cfddbe916c888752834d9f7ad0c)
+- improved completions [9f4ef68](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/9f4ef684da01016c270af2bc2b862eb6823aa7ab)
+- filter command completions [#372](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/372)
 
 ### Bug Fixes
 
@@ -16,6 +18,7 @@
 ### Collaborator Shoutouts
 
 - @water-sucks
+- @williambdean
 
 ## 8.1.1 (2025-03-09)
 
