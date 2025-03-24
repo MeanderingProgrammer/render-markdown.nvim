@@ -5,7 +5,7 @@ local state = require('render-markdown.state')
 local M = {}
 
 ---@private
-M.version = '8.1.8'
+M.version = '8.1.9'
 
 function M.check()
     M.start('version')
@@ -50,7 +50,10 @@ function M.check()
         if obsidian.get_client().opts.ui.enable == false then
             return nil
         else
-            return 'Ensure UI is disabled by setting ui = { enable = false } in obsidian.nvim config'
+            return {
+                'Disable the UI in your obsidian.nvim config',
+                "require('obsidian').setup({ ui = { enable = false } })",
+            }
         end
     end)
 end
@@ -80,7 +83,7 @@ end
 function M.disable_advice(language)
     return {
         string.format('Disable %s support to avoid this warning', language),
-        string.format('Set { %s = { enabled = false } }', language),
+        string.format("require('render-markdown').setup({ { %s = { enabled = false } })", language),
     }
 end
 
@@ -116,7 +119,11 @@ function M.check_highlight(filetype)
     if has_highlighter then
         vim.health.ok(filetype .. ': highlight enabled')
     else
-        vim.health.error(filetype .. ': highlight not enabled')
+        -- TODO(1.0): update advice once module support is removed
+        vim.health.error(filetype .. ': highlight not enabled', {
+            'Enable the highlight module in your nvim-treesitter config',
+            "require('nvim-treesitter.configs').setup({ highlight = { enable = true } })",
+        })
     end
 end
 
@@ -141,7 +148,7 @@ end
 
 ---@private
 ---@param name string
----@param validate? fun(plugin: any): string?
+---@param validate? fun(plugin: any): string[]?
 function M.check_plugin(name, validate)
     local has_plugin, plugin = pcall(require, name)
     if not has_plugin then
