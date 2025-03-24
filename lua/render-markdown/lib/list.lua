@@ -29,7 +29,7 @@ function Marks:get()
     return self.marks
 end
 
----@param element boolean|render.md.Element
+---@param element render.md.mark.Element
 ---@param node render.md.Node
 ---@param opts render.md.MarkOpts
 ---@param offset? Range4
@@ -41,7 +41,7 @@ function Marks:add_over(element, node, opts, offset)
     return self:add(element, node.start_row + offset[1], node.start_col + offset[2], opts)
 end
 
----@param element boolean|render.md.Element
+---@param element render.md.mark.Element
 ---@param start_row integer
 ---@param start_col integer
 ---@param opts render.md.MarkOpts
@@ -71,7 +71,7 @@ function Marks:add(element, start_row, start_col, opts)
 end
 
 ---@private
----@param element boolean|render.md.Element
+---@param element render.md.mark.Element
 ---@return boolean
 function Marks:conceal(element)
     if type(element) == 'boolean' then

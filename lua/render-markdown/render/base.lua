@@ -46,7 +46,51 @@ function Base:sign(enabled, text, highlight)
 end
 
 ---@protected
----@param element boolean|render.md.Element
+---@param icon string
+---@param highlight string
+---@return boolean
+function Base:check_icon(icon, highlight)
+    local line = self:append({}, icon, highlight)
+    local space = self.context:width(self.node) + 1 - Str.width(icon)
+    local right_pad = self.config.checkbox.right_pad
+    if space < 0 then
+        -- Not enough space to fit the icon in-place
+        return self.marks:add_over('check_icon', self.node, {
+            virt_text = self:append(line, right_pad),
+            virt_text_pos = 'inline',
+            conceal = '',
+        }, { 0, 0, 0, 1 })
+    else
+        local fits = math.min(space, right_pad)
+        self:append(line, fits)
+        space, right_pad = space - fits, right_pad - fits
+        local row = self.node.start_row
+        local start_col, end_col = self.node.start_col, self.node.end_col + 1
+        self.marks:add('check_icon', row, start_col, {
+            end_col = end_col - space,
+            virt_text = line,
+            virt_text_pos = 'overlay',
+        })
+        if space > 0 then
+            -- Hide extra space after the icon
+            self.marks:add('check_icon', row, end_col - space, {
+                end_col = end_col,
+                conceal = '',
+            })
+        end
+        if right_pad > 0 then
+            -- Add padding
+            self.marks:add('check_icon', row, end_col, {
+                virt_text = self:append({}, right_pad),
+                virt_text_pos = 'inline',
+            })
+        end
+        return true
+    end
+end
+
+---@protected
+---@param element render.md.mark.Element
 ---@param node render.md.Node?
 ---@param highlight? string
 function Base:scope(element, node, highlight)

@@ -75,19 +75,11 @@ end
 ---@private
 ---@param checkbox render.md.CustomCheckbox
 function Render:checkbox(checkbox)
-    if self.context:skip(self.config.checkbox) then
+    local config = self.config.checkbox
+    if self.context:skip(config) or self.node:after() ~= ' ' then
         return
     end
-
-    local inline = self.config.checkbox.position == 'inline'
-    local icon, highlight = checkbox.rendered, checkbox.highlight
-    local text = inline and icon or Str.pad_to(self.node.text, icon) .. icon
-    local added = self.marks:add_over('check_icon', self.node, {
-        virt_text = { { text, highlight } },
-        virt_text_pos = 'inline',
-        conceal = '',
-    })
-
+    local added = self:check_icon(checkbox.rendered, checkbox.highlight)
     if added then
         self.context:add_checkbox(self.node.start_row, checkbox)
     end

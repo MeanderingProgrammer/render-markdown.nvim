@@ -31,7 +31,6 @@ function M.setup(default_config, user_config)
     -- Override settings that require neovim >= 0.10.0 and have compatible alternatives
     if not util.has_10 then
         config.code.position = 'right'
-        config.checkbox.position = 'overlay'
     end
     -- Use lazy.nvim file type configuration if available and no user value is specified
     if user_config.file_types == nil then
@@ -216,7 +215,7 @@ function M.validate()
             end)
             :nested('checkbox', function(checkbox)
                 component_rules(checkbox)
-                    :one_of('position', { 'overlay', 'inline' })
+                    :type('right_pad', 'number')
                     :nested({ 'unchecked', 'checked' }, function(box)
                         box:type({ 'icon', 'highlight' }, 'string'):type('scope_highlight', { 'string', 'nil' }):check()
                     end)

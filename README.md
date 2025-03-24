@@ -32,7 +32,7 @@ Plugin to improve viewing Markdown files in Neovim
   - Code inline: background
   - Horizontal breaks: icon, color, width
   - List bullets: icon, color, padding [^1]
-  - Checkboxes: icon, color, user defined states [^1]
+  - Checkboxes: icon, color, user defined states
   - Block quotes: icon, color, line breaks [^1]
   - Callouts: icon, color, user defined values, Github & Obsidian defaults
   - Tables: border, color, alignment indicator, auto align cells [^1]
@@ -494,10 +494,8 @@ require('render-markdown').setup({
         enabled = true,
         -- Additional modes to render checkboxes.
         render_modes = false,
-        -- Determines how icons fill the available space.
-        -- | inline  | underlying text is concealed resulting in a left aligned icon |
-        -- | overlay | result is left padded with spaces to hide any additional text |
-        position = 'inline',
+        -- Padding to add to the right of checkboxes.
+        right_pad = 1,
         unchecked = {
             -- Replaces '[ ]' of 'task_list_marker_unchecked'.
             icon = '󰄱 ',
@@ -1086,10 +1084,8 @@ require('render-markdown').setup({
         enabled = true,
         -- Additional modes to render checkboxes.
         render_modes = false,
-        -- Determines how icons fill the available space.
-        -- | inline  | underlying text is concealed resulting in a left aligned icon |
-        -- | overlay | result is left padded with spaces to hide any additional text |
-        position = 'inline',
+        -- Padding to add to the right of checkboxes.
+        right_pad = 1,
         unchecked = {
             -- Replaces '[ ]' of 'task_list_marker_unchecked'.
             icon = '󰄱 ',

@@ -191,4 +191,10 @@ function Node:lines()
     return vim.api.nvim_buf_get_lines(self.buf, self.start_row, self.end_row, false)
 end
 
+---@return string?
+function Node:after()
+    local row, col = self.end_row, self.end_col
+    return vim.api.nvim_buf_get_text(self.buf, row, col, row, col + 1, {})[1]
+end
+
 return Node

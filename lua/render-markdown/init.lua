@@ -163,10 +163,8 @@ local M = {}
 ---@field highlight? string
 ---@field scope_highlight? string
 
----@alias render.md.checkbox.Position 'overlay'|'inline'
-
 ---@class (exact) render.md.UserCheckbox: render.md.UserBaseComponent
----@field position? render.md.checkbox.Position
+---@field right_pad? integer
 ---@field unchecked? render.md.UserCheckboxComponent
 ---@field checked? render.md.UserCheckboxComponent
 ---@field custom? table<string, render.md.UserCustomCheckbox>
@@ -285,6 +283,7 @@ local M = {}
 ---| 'sign'
 
 ---@alias render.md.config.conceal.Ignore table<render.md.Element, render.md.Modes>
+---@alias render.md.mark.Element boolean|render.md.Element
 
 ---@class (exact) render.md.UserAntiConceal
 ---@field enabled? boolean
@@ -656,10 +655,8 @@ M.default_config = {
         enabled = true,
         -- Additional modes to render checkboxes.
         render_modes = false,
-        -- Determines how icons fill the available space.
-        -- | inline  | underlying text is concealed resulting in a left aligned icon |
-        -- | overlay | result is left padded with spaces to hide any additional text |
-        position = 'inline',
+        -- Padding to add to the right of checkboxes.
+        right_pad = 1,
         unchecked = {
             -- Replaces '[ ]' of 'task_list_marker_unchecked'.
             icon = '󰄱 ',

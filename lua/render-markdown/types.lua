@@ -115,7 +115,7 @@
 ---@field scope_highlight? string
 
 ---@class (exact) render.md.Checkbox: render.md.BaseComponent
----@field position render.md.checkbox.Position
+---@field right_pad integer
 ---@field unchecked render.md.CheckboxComponent
 ---@field checked render.md.CheckboxComponent
 ---@field custom table<string, render.md.CustomCheckbox>

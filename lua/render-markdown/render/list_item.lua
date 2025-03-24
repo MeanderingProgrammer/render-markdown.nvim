@@ -90,7 +90,7 @@ function Render:hide_marker()
 end
 
 ---@private
----@param element boolean|render.md.Element
+---@param element render.md.mark.Element
 ---@param highlight string?
 function Render:highlight_scope(element, highlight)
     self:scope(element, self.node:child('paragraph'), highlight)
