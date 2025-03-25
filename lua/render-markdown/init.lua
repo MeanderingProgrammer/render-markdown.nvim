@@ -208,6 +208,7 @@ local M = {}
 ---@field style? render.md.code.Style
 ---@field position? render.md.code.Position
 ---@field language_pad? number
+---@field language_icon? boolean
 ---@field language_name? boolean
 ---@field disable_background? boolean|string[]
 ---@field width? render.md.code.Width
@@ -220,6 +221,7 @@ local M = {}
 ---@field below? string
 ---@field highlight? string
 ---@field highlight_language? string
+---@field highlight_fallback? string
 ---@field inline_pad? integer
 ---@field highlight_inline? string
 
@@ -549,7 +551,9 @@ M.default_config = {
         -- Amount of padding to add around the language.
         -- If a float < 1 is provided it is treated as a percentage of available window space.
         language_pad = 0,
-        -- Whether to include the language name next to the icon.
+        -- Whether to include the language icon above code blocks.
+        language_icon = true,
+        -- Whether to include the language name above code blocks.
         language_name = true,
         -- A list of language names for which background highlighting will be disabled.
         -- Likely because that language has background highlights itself.
@@ -585,6 +589,8 @@ M.default_config = {
         highlight = 'RenderMarkdownCode',
         -- Highlight for language, overrides icon provider value.
         highlight_language = nil,
+        -- Highlight for language, used if icon provider does not have a value.
+        highlight_fallback = 'RenderMarkdownCodeFallback',
         -- Padding to add to the left & right of inline code.
         inline_pad = 0,
         -- Highlight for inline code.

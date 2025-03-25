@@ -139,6 +139,7 @@
 ---@field style render.md.code.Style
 ---@field position render.md.code.Position
 ---@field language_pad number
+---@field language_icon boolean
 ---@field language_name boolean
 ---@field disable_background boolean|string[]
 ---@field width render.md.code.Width
@@ -151,6 +152,7 @@
 ---@field below string
 ---@field highlight string
 ---@field highlight_language? string
+---@field highlight_fallback string
 ---@field inline_pad integer
 ---@field highlight_inline string
 

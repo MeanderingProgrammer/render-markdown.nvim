@@ -99,8 +99,8 @@ function Render:render()
 
     local icon = self:language()
     local start_row, end_row = self.node.start_row, self.node.end_row - 1
-    self:border(start_row, self.code.above, not icon and self:concealed(self.data.code_node))
-    self:border(end_row, self.code.below, true)
+    self:border(start_row, true, not icon and self:concealed(self.data.code_node))
+    self:border(end_row, false, true)
     if background then
         self:background(start_row + 1, end_row - 1)
     end
@@ -113,6 +113,9 @@ function Render:language()
     if not vim.tbl_contains({ 'language', 'full' }, self.code.style) then
         return false
     end
+    if not self.code.language_icon and not self.code.language_name then
+        return false
+    end
 
     local node, padding = self.data.language_node, self.data.language_padding
     if node == nil then
@@ -123,58 +126,61 @@ function Render:language()
     if self.code.highlight_language ~= nil then
         icon_highlight = self.code.highlight_language
     end
-    if icon == nil or icon_highlight == nil then
-        return false
-    end
 
     self:sign(self.code.sign, icon, icon_highlight)
 
-    local text, highlight = icon .. ' ', { icon_highlight }
+    local text = ''
+    if self.code.language_icon and icon ~= nil then
+        text = text .. icon .. ' '
+    end
+    if self.code.language_name then
+        text = text .. node.text
+    end
+    if #text == 0 then
+        return false
+    end
+
+    local highlight = { icon_highlight or self.code.highlight_fallback }
     if self.code.border ~= 'none' then
         table.insert(highlight, self.code.highlight)
     end
 
     if self.code.position == 'left' then
-        if self.code.language_name and self:concealed(node) then
-            -- Code blocks pick up varying amounts of leading white space depending
-            -- on the context they are in. This is lumped into the delimiter node
-            -- and as a result, after concealing, the extmark would be shifted.
-            local spaces = Str.spaces('start', self.node.text)
-            text = Str.pad(spaces + padding) .. text .. node.text
+        text = Str.pad(padding) .. text
+        if self:concealed(node) then
+            -- Code blocks can pick up varying amounts of leading white space.
+            -- This is lumped into the delimiter node and needs to be handled.
+            text = Str.pad(Str.spaces('start', self.node.text)) .. text
         end
         return self.marks:add('code_language', node.start_row, node.start_col, {
             virt_text = { { text, highlight } },
             virt_text_pos = 'inline',
         })
-    elseif self.code.position == 'right' then
-        if self.code.language_name then
-            text = text .. node.text
-        end
-        local win_col = self.data.max_width - padding
+    else
+        local start = self.data.max_width - padding
         if self.code.width == 'block' then
-            win_col = win_col - Str.width(text)
+            start = start - Str.width(text)
         end
         return self.marks:add('code_language', node.start_row, 0, {
             virt_text = { { text, highlight } },
-            virt_text_win_col = win_col + self.data.indent,
+            virt_text_win_col = start + self.data.indent,
         })
-    else
-        return false
     end
 end
 
 ---@private
 ---@param row integer
----@param border string
----@param context_hidden boolean
-function Render:border(row, border, context_hidden)
+---@param above boolean
+---@param empty boolean
+function Render:border(row, above, empty)
     if self.code.border == 'none' then
         return
     end
-    local delim_node = self.node:child('fenced_code_block_delimiter', row)
-    if self.code.border == 'thin' and context_hidden and self:concealed(delim_node) then
-        local width = self.data.width - self.data.col
-        local line = { { border:rep(width), colors.bg_to_fg(self.code.highlight) } }
+    local delim = self.node:child('fenced_code_block_delimiter', row)
+    local width, highlight = self.data.width - self.data.col, self.code.highlight
+    local border = above and self.code.above or self.code.below
+    if self.code.border == 'thin' and empty and self:concealed(delim) then
+        local line = { { border:rep(width), colors.bg_to_fg(highlight) } }
         self.marks:add('code_border', row, self.data.col, {
             virt_text = line,
             virt_text_pos = 'overlay',

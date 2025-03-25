@@ -29,9 +29,11 @@ M.colors = {
     H4Bg            = 'DiffDelete',
     H5Bg            = 'DiffDelete',
     H6Bg            = 'DiffDelete',
-    -- General
+    -- Code
     Code            = 'ColorColumn',
+    CodeFallback    = 'Normal',
     CodeInline      = 'RenderMarkdownCode',
+    -- General
     InlineHighlight = 'RenderMarkdownCodeInline',
     Bullet          = 'Normal',
     Quote           = '@markup.quote',
