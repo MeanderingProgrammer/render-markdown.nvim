@@ -47,17 +47,22 @@ function M.items(buf, row, col)
 
     local result = {}
     local config = state.get(buf)
+    local filter = state.completions.filter
     local prefix = Str.spaces('end', marker) == 0 and ' ' or ''
     if node:type() == 'block_quote' then
-        for _, component in pairs(config.callout) do
-            table.insert(result, M.item(prefix, component.raw, component.rendered, nil))
+        for _, value in pairs(config.callout) do
+            if filter.callout(value) then
+                table.insert(result, M.item(prefix, value.raw, value.rendered, nil))
+            end
         end
     elseif node:type() == 'list_item' then
         local checkbox = config.checkbox
         table.insert(result, M.item(prefix, '[ ] ', checkbox.unchecked.icon, 'unchecked'))
         table.insert(result, M.item(prefix, '[x] ', checkbox.checked.icon, 'checked'))
-        for name, component in pairs(checkbox.custom) do
-            table.insert(result, M.item(prefix, component.raw .. ' ', component.rendered, name))
+        for name, value in pairs(checkbox.custom) do
+            if filter.checkbox(value) then
+                table.insert(result, M.item(prefix, value.raw .. ' ', value.rendered, name))
+            end
         end
     end
     return result

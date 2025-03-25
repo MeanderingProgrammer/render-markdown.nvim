@@ -1,5 +1,9 @@
 ---@meta
 
+---@class (exact) render.md.CompletionFilter
+---@field callout fun(value: render.md.CustomCallout): boolean
+---@field checkbox fun(value: render.md.CustomCheckbox): boolean
+
 ---@class (exact) render.md.Completion
 ---@field enabled boolean
 
@@ -7,6 +11,7 @@
 ---@field blink render.md.Completion
 ---@field coq render.md.Completion
 ---@field lsp render.md.Completion
+---@field filter render.md.CompletionFilter
 
 ---@class (exact) render.md.Callback
 ---@field attach fun(ctx: render.md.CallbackContext)
@@ -85,6 +90,7 @@
 ---@field rendered string
 ---@field highlight string
 ---@field quote_icon? string
+---@field category? string
 
 ---@class (exact) render.md.PipeTable: render.md.BaseComponent
 ---@field preset render.md.table.Preset

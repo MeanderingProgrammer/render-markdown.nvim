@@ -50,7 +50,7 @@ class LuaClass:
             "UserCode": ["highlight_language"],
             "UserCustomCheckbox": ["scope_highlight"],
             "UserCheckboxComponent": ["scope_highlight"],
-            "UserCustomCallout": ["quote_icon"],
+            "UserCustomCallout": ["quote_icon", "category"],
             "UserLinkComponent": ["highlight"],
             "UserHtmlComment": ["text"],
         }
