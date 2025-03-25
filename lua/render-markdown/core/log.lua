@@ -1,4 +1,4 @@
-local util = require('render-markdown.core.util')
+local Env = require('render-markdown.lib.env')
 
 ---@class render.md.log.Entry
 ---@field date string
@@ -24,7 +24,7 @@ function M.setup(level)
     -- Typically resolves to ~/.local/state/nvim/render-markdown.log
     M.file = vim.fn.stdpath('state') .. '/render-markdown.log'
     -- Clear the file contents if it is too big
-    if util.file_size_mb(M.file) > 5 then
+    if Env.file_size_mb(M.file) > 5 then
         assert(io.open(M.file, 'w')):close()
     end
 end
@@ -58,7 +58,19 @@ end
 ---@param buf integer
 ---@param ... any
 function M.buf(level, name, buf, ...)
-    M.add(level, string.format('%s|%s|%d', name, util.file_name(buf), buf), ...)
+    M.add(level, string.format('%s|%s|%d', name, M.file_name(buf), buf), ...)
+end
+
+---@private
+---@param buf integer
+---@return string
+function M.file_name(buf)
+    if Env.buf.valid(buf) then
+        local file = vim.api.nvim_buf_get_name(buf)
+        return vim.fn.fnamemodify(file, ':t')
+    else
+        return 'INVALID'
+    end
 end
 
 ---@param level render.md.config.LogLevel

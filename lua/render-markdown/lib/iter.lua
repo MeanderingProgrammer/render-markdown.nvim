@@ -1,11 +1,14 @@
+---@class render.md.Iter
+local M = {}
+
 ---@class render.md.iter.List
-local List = {}
+M.list = {}
 
 ---@generic T, U
 ---@param values T[]
 ---@param f fun(value: T): U
 ---@return U[]
-function List.map(values, f)
+function M.list.map(values, f)
     local result = {}
     for _, value in ipairs(values) do
         table.insert(result, f(value))
@@ -14,13 +17,13 @@ function List.map(values, f)
 end
 
 ---@class render.md.iter.Table
-local Table = {}
+M.table = {}
 
 ---@generic V
 ---@param values table<any, V>
 ---@param f fun(value: V): boolean
 ---@return V[]
-function Table.filter(values, f)
+function M.table.filter(values, f)
     local result = {}
     for _, value in pairs(values) do
         if f(value) then
@@ -30,8 +33,4 @@ function Table.filter(values, f)
     return result
 end
 
----@class render.md.Iter
-return {
-    list = List,
-    table = Table,
-}
+return M

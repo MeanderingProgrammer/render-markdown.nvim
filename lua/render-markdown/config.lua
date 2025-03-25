@@ -1,5 +1,5 @@
+local Env = require('render-markdown.lib.env')
 local Range = require('render-markdown.core.range')
-local util = require('render-markdown.core.util')
 
 ---@class render.md.component.Config
 ---@field callout table<string, render.md.CustomCallout>
@@ -70,7 +70,7 @@ end
 ---@param mode string
 ---@return boolean
 function Config:render(mode)
-    return util.in_modes(self.modes, mode)
+    return Env.mode.is(mode, self.modes)
 end
 
 ---@param node render.md.Node

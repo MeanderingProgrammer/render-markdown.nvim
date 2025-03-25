@@ -1,3 +1,5 @@
+local Env = require('render-markdown.lib.env')
+
 ---@class render.md.Buffer
 ---@field private buf integer
 ---@field private empty boolean
@@ -13,7 +15,7 @@ function Buffer.new(buf)
     local self = setmetatable({}, Buffer)
     self.buf = buf
     self.empty = true
-    self.timer = (vim.uv or vim.loop).new_timer()
+    self.timer = Env.uv.new_timer()
     self.running = false
     self.marks = nil
     return self

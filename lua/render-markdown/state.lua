@@ -1,8 +1,8 @@
 local Config = require('render-markdown.config')
+local Env = require('render-markdown.lib.env')
 local log = require('render-markdown.core.log')
 local presets = require('render-markdown.presets')
 local treesitter = require('render-markdown.core.treesitter')
-local util = require('render-markdown.core.util')
 
 ---@type table<integer, render.md.buffer.Config>
 local configs = {}
@@ -29,12 +29,12 @@ function M.setup(default_config, user_config)
     local preset_config = presets.get(user_config)
     local config = vim.tbl_deep_extend('force', default_config, preset_config, user_config)
     -- Override settings that require neovim >= 0.10.0 and have compatible alternatives
-    if not util.has_10 then
+    if not Env.has_10 then
         config.code.position = 'right'
     end
     -- Use lazy.nvim file type configuration if available and no user value is specified
     if user_config.file_types == nil then
-        local lazy_file_types = util.lazy('ft')
+        local lazy_file_types = Env.lazy('ft')
         if #lazy_file_types > 0 then
             config.file_types = lazy_file_types
         end
@@ -84,7 +84,7 @@ function M.get(buf)
     if config == nil then
         local buf_config = M.default_buffer_config()
         for _, name in ipairs({ 'buflisted', 'buftype', 'filetype' }) do
-            local value = util.get('buf', buf, name)
+            local value = Env.buf.get(buf, name)
             local override = M.config.overrides[name][value]
             if override ~= nil then
                 buf_config = vim.tbl_deep_extend('force', buf_config, override)

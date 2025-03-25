@@ -1,9 +1,9 @@
 local Conceal = require('render-markdown.core.conceal')
+local Env = require('render-markdown.lib.env')
 local Node = require('render-markdown.lib.node')
 local Range = require('render-markdown.core.range')
 local Str = require('render-markdown.lib.str')
 local log = require('render-markdown.core.log')
-local util = require('render-markdown.core.util')
 
 ---@class render.md.context.Props
 ---@field buf integer
@@ -35,7 +35,7 @@ function Context.new(props, offset)
     self.win = props.win
 
     local ranges = {}
-    for _, window in ipairs(util.windows(self.buf)) do
+    for _, window in ipairs(Env.buf.windows(self.buf)) do
         table.insert(ranges, Context.compute_range(self.buf, window, offset))
     end
     self.ranges = Range.coalesce(ranges)
@@ -47,7 +47,7 @@ function Context.new(props, offset)
 
     self.mode = props.mode
     self.top_level_mode = props.top_level_mode
-    self.conceal = Conceal.new(self.buf, util.get('win', self.win, 'conceallevel'))
+    self.conceal = Conceal.new(self.buf, Env.win.get(self.win, 'conceallevel'))
     self.last_heading = nil
 
     return self
@@ -59,14 +59,14 @@ end
 ---@param offset integer
 ---@return render.md.Range
 function Context.compute_range(buf, win, offset)
-    local top = math.max(util.view(win).topline - 1 - offset, 0)
+    local top = math.max(Env.win.view(win).topline - 1 - offset, 0)
 
     local bottom = top
     local lines = vim.api.nvim_buf_line_count(buf)
     local size = vim.api.nvim_win_get_height(win) + (2 * offset)
     while bottom < lines and size > 0 do
         bottom = bottom + 1
-        if util.row_visible(win, bottom) then
+        if Env.row.visible(win, bottom) then
             size = size - 1
         end
     end
@@ -86,7 +86,7 @@ function Context:skip(component)
         return false
     end
     -- Enabled components in component modes should not be skipped
-    return not util.in_modes(component.render_modes, self.mode)
+    return not Env.mode.is(self.mode, component.render_modes)
 end
 
 ---@return integer
@@ -120,7 +120,7 @@ end
 
 ---@return integer
 function Context:tab_size()
-    return util.get('buf', self.buf, 'tabstop')
+    return Env.buf.get(self.buf, 'tabstop')
 end
 
 ---@param node? render.md.Node
@@ -186,7 +186,7 @@ end
 ---@return integer
 function Context:get_width()
     if self.window_width == nil then
-        self.window_width = vim.api.nvim_win_get_width(self.win) - util.textoff(self.win)
+        self.window_width = Env.win.width(self.win)
     end
     return self.window_width
 end

@@ -1,10 +1,10 @@
 local Buffer = require('render-markdown.core.buffer')
 local Context = require('render-markdown.core.context')
+local Env = require('render-markdown.lib.env')
 local Extmark = require('render-markdown.core.extmark')
 local Iter = require('render-markdown.lib.iter')
 local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
-local util = require('render-markdown.core.util')
 
 ---@type table<string, render.md.Handler>
 local builtin_handlers = {
@@ -48,7 +48,7 @@ end
 ---@return integer, render.md.Mark[]
 function M.get_row_marks(buf, win)
     local config, buffer = state.get(buf), Cache.get(buf)
-    local mode, row = util.mode(), util.row(buf, win)
+    local mode, row = Env.mode.get(), Env.row.get(buf, win)
     local hidden = config:hidden(mode, row)
     assert(row ~= nil and hidden ~= nil, 'Row & range must be known to get marks')
 
@@ -76,7 +76,7 @@ end
 ---@param change boolean
 function M.update(buf, win, event, change)
     log.buf('info', 'update', buf, string.format('event %s', event), string.format('change %s', change))
-    if util.invalid(buf, win) then
+    if not Env.valid(buf, win) then
         return
     end
 
@@ -90,7 +90,7 @@ function M.update(buf, win, event, change)
         M.run_update(buf, win, change)
     end
     if parse and state.log_runtime then
-        update = util.wrap_runtime(update)
+        update = Env.runtime(update)
     end
 
     if parse and config.debounce > 0 then
@@ -115,19 +115,19 @@ end
 ---@param win integer
 ---@param change boolean
 function M.run_update(buf, win, change)
-    if util.invalid(buf, win) then
+    if not Env.valid(buf, win) then
         return
     end
 
     local parse = M.parse(buf, win, change)
     local config, buffer = state.get(buf), Cache.get(buf)
-    local mode, row = util.mode(), util.row(buf, win)
+    local mode, row = Env.mode.get(), Env.row.get(buf, win)
     local next_state = M.next_state(config, win, mode)
 
     log.buf('info', 'state', buf, next_state)
-    for _, window in ipairs(util.windows(buf)) do
+    for _, window in ipairs(Env.buf.windows(buf)) do
         for name, value in pairs(config.win_options) do
-            util.set('win', window, name, value[next_state])
+            Env.win.set(window, name, value[next_state])
         end
     end
 
@@ -138,7 +138,7 @@ function M.run_update(buf, win, change)
                 buf = buf,
                 win = win,
                 mode = mode,
-                top_level_mode = util.in_modes(config.render_modes, mode),
+                top_level_mode = Env.mode.is(mode, config.render_modes),
             }))
         end
         local hidden = config:hidden(mode, row)
@@ -172,10 +172,10 @@ function M.next_state(config, win, mode)
     if not config:render(mode) then
         return 'default'
     end
-    if util.get('win', win, 'diff') then
+    if Env.win.get(win, 'diff') then
         return 'default'
     end
-    if util.view(win).leftcol ~= 0 then
+    if Env.win.view(win).leftcol ~= 0 then
         return 'default'
     end
     return 'rendered'

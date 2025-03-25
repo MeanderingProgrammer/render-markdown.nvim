@@ -1,8 +1,8 @@
 local Context = require('render-markdown.core.context')
+local Env = require('render-markdown.lib.env')
 local Str = require('render-markdown.lib.str')
 local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
-local util = require('render-markdown.core.util')
 
 ---@class render.md.Marks
 ---@field private context render.md.Context
@@ -54,12 +54,9 @@ function Marks:add(element, start_row, start_col, opts)
         start_col = start_col,
         opts = opts,
     }
-    if opts.virt_text_pos == 'inline' and not util.has_10 then
-        log.add('error', 'inline marks require neovim >= 0.10.0', mark)
-        return false
-    end
-    if opts.virt_text_repeat_linebreak ~= nil and not util.has_10 then
-        log.add('error', 'repeat linebreak marks require neovim >= 0.10.0', mark)
+    local valid, feature, min_version = self:validate(opts)
+    if not valid then
+        log.add('error', 'mark', string.format('%s requires neovim >= %s', feature, min_version), mark)
         return false
     end
     log.add('debug', 'mark', mark)
@@ -81,8 +78,26 @@ function Marks:conceal(element)
     if modes == nil then
         return true
     else
-        return not util.in_modes(modes, self.context.mode)
+        return not Env.mode.is(self.context.mode, modes)
     end
+end
+
+---@private
+---@param opts render.md.MarkOpts
+---@return boolean, string, string
+function Marks:validate(opts)
+    if opts.virt_text_pos == 'inline' and not Env.has_10 then
+        return false, "virt_text_pos = 'inline'", '0.10.0'
+    end
+    if opts.virt_text_repeat_linebreak ~= nil and not Env.has_10 then
+        return false, 'virt_text_repeat_linebreak', '0.10.0'
+    end
+    -- TODO(0.11): remove
+    ---@diagnostic disable-next-line: undefined-field
+    if opts.conceal_lines ~= nil and not Env.has_11 then
+        return false, 'conceal_lines', '0.11.0'
+    end
+    return true, '', ''
 end
 
 ---@private

@@ -1,7 +1,7 @@
+local Env = require('render-markdown.lib.env')
 local Str = require('render-markdown.lib.str')
 local manager = require('render-markdown.manager')
 local state = require('render-markdown.state')
-local util = require('render-markdown.core.util')
 
 local markers = {
     list_marker_minus = '-',
@@ -15,7 +15,7 @@ local M = {}
 
 ---@return boolean
 function M.enabled()
-    return manager.is_attached(util.current('buf'))
+    return manager.is_attached(Env.buf.current())
 end
 
 ---@return string[]
@@ -28,7 +28,7 @@ end
 ---@param col integer 0-indexed
 ---@return lsp.CompletionItem[]?
 function M.items(buf, row, col)
-    buf = buf == 0 and util.current('buf') or buf
+    buf = buf == 0 and Env.buf.current() or buf
     local node = M.node(buf, row, col)
     if node == nil or node:range() ~= row then
         return nil

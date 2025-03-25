@@ -1,6 +1,6 @@
+local Env = require('render-markdown.lib.env')
 local manager = require('render-markdown.manager')
 local state = require('render-markdown.state')
-local util = require('render-markdown.core.util')
 
 ---@class render.md.Api
 local M = {}
@@ -44,7 +44,7 @@ function M.contract()
 end
 
 function M.debug()
-    local buf, win = util.current('buf'), util.current('win')
+    local buf, win = Env.buf.current(), Env.win.current()
     local row, marks = require('render-markdown.core.ui').get_row_marks(buf, win)
     require('render-markdown.debug.marks').debug(row, marks)
 end

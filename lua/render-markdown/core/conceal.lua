@@ -1,5 +1,5 @@
+local Env = require('render-markdown.lib.env')
 local Str = require('render-markdown.lib.str')
-local util = require('render-markdown.core.util')
 
 ---@class render.md.conceal.Section
 ---@field start_col integer
@@ -82,7 +82,7 @@ end
 ---@return boolean
 function Conceal:hidden(context, node)
     -- conceal lines metadata require neovim >= 0.11.0 to function
-    return util.has_11 and self:line(context, node).hidden
+    return Env.has_11 and self:line(context, node).hidden
 end
 
 ---@param context render.md.Context
