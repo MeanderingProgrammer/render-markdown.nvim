@@ -42,6 +42,9 @@ end
 ---@param n integer
 ---@return string
 function M.pad(n)
+    if n <= 0 then
+        return ''
+    end
     return string.rep(' ', n)
 end
 

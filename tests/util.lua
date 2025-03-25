@@ -203,8 +203,9 @@ function M.code.sign(name)
 end
 
 ---@param name 'python'|'py'|'rust'|'rs'|'lua'
+---@param padding? integer
 ---@return vim.api.keyset.set_extmark
-function M.code.icon(name)
+function M.code.icon(name, padding)
     local icon, highlight
     if name == 'python' or name == 'py' then
         icon, highlight = '󰌠 ', 'MiniIconsYellow'
@@ -213,9 +214,10 @@ function M.code.icon(name)
     elseif name == 'lua' then
         icon, highlight = '󰢱 ', 'MiniIconsAzure'
     end
+    local prefix = string.rep(' ', padding or 0)
     ---@type vim.api.keyset.set_extmark
     return {
-        virt_text = { { icon .. name, highlight .. ':' .. 'RmCode' } },
+        virt_text = { { prefix .. icon .. name, highlight .. ':' .. 'RmCode' } },
         virt_text_pos = 'inline',
     }
 end

@@ -29,20 +29,19 @@ describe('code.md', function()
             :add(row:get(), nil, 5, nil, util.code.icon('py'))
             :add(row:get(), row:inc(), 2, 0, util.code.bg())
             :add(row:get(), row:inc(), 2, 0, util.code.bg())
-            :add(row:get(), row:inc(), 2, 0, util.code.bg())
-            :add(row:get(), nil, 2, nil, util.code.border(false, vim.o.columns - 2))
-
-        marks:add(row:inc(2), row:get(), 0, 2, util.bullet(1))
-
-        marks
-            :add(row:inc(2), nil, 2, nil, util.code.sign('lua'))
-            :add(row:get(), nil, 5, nil, util.code.icon('lua'))
-            :add(row:get(), row:inc(), 2, 0, util.code.bg())
-            :add(row:get(), row:inc(), 2, 0, util.code.bg())
             :add(row:get(), nil, 0, nil, util.padding(2, 1000))
             :add(row:get(), row:inc(), 0, 0, util.code.bg())
             :add(row:get(), row:inc(), 2, 0, util.code.bg())
             :add(row:get(), nil, 2, nil, util.code.border(false, vim.o.columns - 2))
+
+        marks
+            :add(row:inc(4), nil, 0, nil, util.code.sign('lua'))
+            :add(row:get(), nil, 5, nil, util.code.icon('lua', 2))
+            :add(row:get(), row:inc(), 0, 0, util.code.bg())
+            :add(row:get(), row:inc(), 0, 0, util.code.bg())
+            :add(row:get(), row:inc(), 0, 0, util.code.bg())
+            :add(row:get(), row:inc(), 0, 0, util.code.bg())
+            :add(row:get(), nil, 0, nil, util.code.border(false, vim.o.columns))
 
         marks:add(row:inc(2), row:get(), 0, 2, util.bullet(1))
 
@@ -60,26 +59,27 @@ describe('code.md', function()
             '    6 }',
             '    7 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
             '    8',
-            '    9 ● Nested code',
+            '    9 ● List Divider',
             '   10',
             '󰌠  11   󰌠 py',
             '   12   print("hello")',
-            '   13   print("world")',
-            '   14   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
-            '   15',
-            '   16 ● Nested code with blank',
-            '   17',
-            '󰢱  18   󰢱 lua',
-            "   19   print('hello')",
-            '   20',
-            "   21   print('world')",
-            '   22   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
-            '   23',
-            '   24 ● No language',
-            '   25',
-            '   26 ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
-            "   27     print('Hello, World!')",
-            '   28 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
+            '   13',
+            '   14   print("world")',
+            '   15   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
+            '   16',
+            '   17 Paragraph Divider',
+            '   18',
+            '󰢱  19   󰢱 lua',
+            "   20   print('hello')",
+            '   21',
+            "   22   print('world')",
+            '   23 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
+            '   24',
+            '   25 ● List Divider',
+            '   26',
+            '   27 ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
+            "   28     print('Hello, World!')",
+            '   29 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
         })
     end)
 
@@ -101,12 +101,16 @@ describe('code.md', function()
             :add(row:get(), nil, 3, nil, util.code.icon('rust'))
             :add(row:get(), nil, 0, nil, util.code.hide(width_1))
             :add(row:get(), row:inc(), 0, 0, util.code.bg())
-        for _ = 1, 3 do
-            marks:add(row:get(), nil, 0, nil, util.padding(2, 0, 'RmCode'))
-            marks:add(row:get(), nil, 0, nil, util.code.hide(width_1))
-            marks:add(row:get(), row:inc(), 0, 0, util.code.bg())
-        end
-        marks:add(row:get(), nil, 0, nil, util.code.border(false, width_1))
+            :add(row:get(), nil, 0, nil, util.padding(2, 0, 'RmCode'))
+            :add(row:get(), nil, 0, nil, util.code.hide(width_1))
+            :add(row:get(), row:inc(), 0, 0, util.code.bg())
+            :add(row:get(), nil, 0, nil, util.padding(2, 0, 'RmCode'))
+            :add(row:get(), nil, 0, nil, util.code.hide(width_1))
+            :add(row:get(), row:inc(), 0, 0, util.code.bg())
+            :add(row:get(), nil, 0, nil, util.padding(2, 0, 'RmCode'))
+            :add(row:get(), nil, 0, nil, util.code.hide(width_1))
+            :add(row:get(), row:inc(), 0, 0, util.code.bg())
+            :add(row:get(), nil, 0, nil, util.code.border(false, width_1))
 
         marks:add(row:inc(2), row:get(), 0, 2, util.bullet(1))
 
@@ -116,36 +120,37 @@ describe('code.md', function()
             :add(row:get(), nil, 5, nil, util.code.icon('py'))
             :add(row:get(), nil, 2, nil, util.code.hide(width_2))
             :add(row:get(), row:inc(), 2, 0, util.code.bg())
-        for _ = 1, 2 do
-            marks
-                :add(row:get(), nil, 2, nil, util.padding(2, 1000, 'RmCode'))
-                :add(row:get(), nil, 2, nil, util.code.hide(width_2))
-                :add(row:get(), row:inc(), 2, 0, util.code.bg())
-        end
-        marks:add(row:get(), nil, 2, nil, util.code.border(false, width_2 - 2))
-
-        marks:add(row:inc(2), row:get(), 0, 2, util.bullet(1))
+            :add(row:get(), nil, 2, nil, util.padding(2, 1000, 'RmCode'))
+            :add(row:get(), nil, 2, nil, util.code.hide(width_2))
+            :add(row:get(), row:inc(), 2, 0, util.code.bg())
+            :add(row:get(), nil, 0, nil, {
+                priority = 1000,
+                virt_text = { { '  ', 'Normal' }, { '  ', 'RmCode' } },
+                virt_text_pos = 'inline',
+            })
+            :add(row:get(), nil, 0, nil, util.code.hide(width_2))
+            :add(row:get(), row:inc(), 0, 0, util.code.bg())
+            :add(row:get(), nil, 2, nil, util.padding(2, 1000, 'RmCode'))
+            :add(row:get(), nil, 2, nil, util.code.hide(width_2))
+            :add(row:get(), row:inc(), 2, 0, util.code.bg())
+            :add(row:get(), nil, 2, nil, util.code.border(false, width_2 - 2))
 
         local width_3 = 20
         marks
-            :add(row:inc(2), nil, 2, nil, util.code.sign('lua'))
-            :add(row:get(), nil, 5, nil, util.code.icon('lua'))
-            :add(row:get(), nil, 2, nil, util.code.hide(width_3))
-            :add(row:get(), row:inc(), 2, 0, util.code.bg())
-        for _, col in ipairs({ 2, 0, 2 }) do
-            if col == 0 then
-                marks:add(row:get(), nil, col, nil, {
-                    priority = 1000,
-                    virt_text = { { '  ', 'Normal' }, { '  ', 'RmCode' } },
-                    virt_text_pos = 'inline',
-                })
-            else
-                marks:add(row:get(), nil, col, nil, util.padding(2, 1000, 'RmCode'))
-            end
-            marks:add(row:get(), nil, col, nil, util.code.hide(width_3))
-            marks:add(row:get(), row:inc(), col, 0, util.code.bg())
-        end
-        marks:add(row:get(), nil, 2, nil, util.code.border(false, width_3 - 2))
+            :add(row:inc(4), nil, 0, nil, util.code.sign('lua'))
+            :add(row:get(), nil, 5, nil, util.code.icon('lua', 2))
+            :add(row:get(), nil, 0, nil, util.code.hide(width_3))
+            :add(row:get(), row:inc(), 0, 0, util.code.bg())
+            :add(row:get(), nil, 0, nil, util.padding(2, 0, 'RmCode'))
+            :add(row:get(), nil, 0, nil, util.code.hide(width_3))
+            :add(row:get(), row:inc(), 0, 0, util.code.bg())
+            :add(row:get(), nil, 0, nil, util.padding(2, 0, 'RmCode'))
+            :add(row:get(), nil, 0, nil, util.code.hide(width_3))
+            :add(row:get(), row:inc(), 0, 0, util.code.bg())
+            :add(row:get(), nil, 0, nil, util.padding(2, 0, 'RmCode'))
+            :add(row:get(), nil, 0, nil, util.code.hide(width_3))
+            :add(row:get(), row:inc(), 0, 0, util.code.bg())
+            :add(row:get(), nil, 0, nil, util.code.border(false, width_3))
 
         marks:add(row:inc(2), row:get(), 0, 2, util.bullet(1))
 
@@ -166,26 +171,27 @@ describe('code.md', function()
             '    6   }',
             '    7 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
             '    8',
-            '    9 ● Nested code',
+            '    9 ● List Divider',
             '   10',
             '󰌠  11   󰌠 py',
             '   12     print("hello")',
-            '   13     print("world")',
-            '   14   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
-            '   15',
-            '   16 ● Nested code with blank',
-            '   17',
-            '󰢱  18   󰢱 lua',
-            "   19     print('hello')",
-            '   20',
-            "   21     print('world')",
-            '   22   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
-            '   23',
-            '   24 ● No language',
-            '   25',
-            '   26 ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
-            "   27         print('Hello, World!')",
-            '   28 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
+            '   13',
+            '   14     print("world")',
+            '   15   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
+            '   16',
+            '   17 Paragraph Divider',
+            '   18',
+            '󰢱  19   󰢱 lua',
+            "   20     print('hello')",
+            '   21',
+            "   22     print('world')",
+            '   23 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
+            '   24',
+            '   25 ● List Divider',
+            '   26',
+            '   27 ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
+            "   28         print('Hello, World!')",
+            '   29 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
         })
     end)
 end)

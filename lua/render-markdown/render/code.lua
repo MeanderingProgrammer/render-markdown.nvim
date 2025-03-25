@@ -99,7 +99,7 @@ function Render:render()
 
     local icon = self:language()
     local start_row, end_row = self.node.start_row, self.node.end_row - 1
-    self:border(start_row, true, not icon and self:concealed(self.data.code_node))
+    self:border(start_row, true, not icon and self.context:width(self.data.code_node) == 0)
     self:border(end_row, false, true)
     if background then
         self:background(start_row + 1, end_row - 1)
@@ -114,8 +114,9 @@ function Render:language()
         return false
     end
 
+    local delim = self.node:child('fenced_code_block_delimiter', self.node.start_row)
     local node, padding = self.data.language_node, self.data.language_padding
-    if node == nil then
+    if delim == nil or node == nil then
         return false
     end
 
@@ -142,13 +143,25 @@ function Render:language()
         table.insert(highlight, self.code.highlight)
     end
 
+    -- TODO(0.11): handle conceal_lines
+    -- - Use self.context:hidden(node) to determine if a node is hidden
+    -- - Default highlights remove the fenced code block delimiter lines along with
+    --   any extmarks we add there.
+    -- - To account for this we'll need add back the lines, likely using virt_lines.
+    -- - For top delimiter
+    --   - Add extmark above the second row with virt_lines_above = true
+    --   - By doing this we'll add a line just above the fenced code block
+    --   - We likely need to handle the sign column here as well
+    -- - For bottom delimiter
+    --   - Add extmark below the second to last row with virt_lines_above = false
+    --   - By doing this we'll add a line just below the fenced code block
+
     if self.code.position == 'left' then
         text = Str.pad(padding) .. text
-        if self:concealed(node) then
-            -- Code blocks can pick up varying amounts of leading white space.
-            -- This is lumped into the delimiter node and needs to be handled.
-            text = Str.pad(Str.spaces('start', self.node.text)) .. text
-        end
+        -- Code blocks can pick up varying amounts of leading white space.
+        -- This is lumped into the delimiter node and needs to be handled.
+        local spaces = Str.spaces('start', delim.text)
+        text = Str.pad(spaces - self.context:width(delim)) .. text
         return self.marks:add('code_language', node.start_row, node.start_col, {
             virt_text = { { text, highlight } },
             virt_text_pos = 'inline',
@@ -173,10 +186,12 @@ function Render:border(row, above, empty)
     if self.code.border == 'none' then
         return
     end
-    local delim = self.node:child('fenced_code_block_delimiter', row)
+    if self.node:child('fenced_code_block_delimiter', row) == nil then
+        return
+    end
     local width, highlight = self.data.width - self.data.col, self.code.highlight
     local border = above and self.code.above or self.code.below
-    if self.code.border == 'thin' and empty and self:concealed(delim) then
+    if self.code.border == 'thin' and empty then
         local line = { { border:rep(width), colors.bg_to_fg(highlight) } }
         self.marks:add('code_border', row, self.data.col, {
             virt_text = line,
@@ -185,28 +200,6 @@ function Render:border(row, above, empty)
     else
         self:background(row, row)
     end
-end
-
----@private
----@param node? render.md.Node
----@return boolean
-function Render:concealed(node)
-    -- TODO(0.11): handle conceal_lines
-    -- - Use self.context:hidden(node) to determine if a node is hidden
-    -- - Default highlights remove the fenced code block delimiter lines along with
-    --   any extmarks we add there.
-    -- - To account for this we'll need add back the lines, likely using virt_lines.
-    -- - For top delimiter
-    --   - Add extmark above the top row with virt_lines_above = false
-    --   - By doing this we'll add a line just above the fenced code block
-    --   - We likely need to handle the sign column here as well
-    -- - For bottom delimiter
-    --   - Add extmark below the bottom row with virt_lines_above = true
-    --   - By doing this we'll add a line just below the fenced code block
-    -- - For both of these we'll need to do something that does anti_conceal via an
-    --   offset such that the cursor going over the concealed line naturally shows
-    --   the raw text and the virtual line disappears
-    return self.context:width(node) == 0
 end
 
 ---@private

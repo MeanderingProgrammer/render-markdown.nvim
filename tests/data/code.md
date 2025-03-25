@@ -6,14 +6,15 @@ fn main() {
 }
 ```
 
-- Nested code
+- List Divider
 
   ```py
   print("hello")
+
   print("world")
   ```
 
-- Nested code with blank
+Paragraph Divider
 
   ```lua
   print('hello')
@@ -21,7 +22,7 @@ fn main() {
   print('world')
   ```
 
-- No language
+- List Divider
 
 ```
 	print('Hello, World!')
