@@ -113,9 +113,6 @@ function Render:language()
     if not vim.tbl_contains({ 'language', 'full' }, self.code.style) then
         return false
     end
-    if not self.code.language_icon and not self.code.language_name then
-        return false
-    end
 
     local node, padding = self.data.language_node, self.data.language_padding
     if node == nil then

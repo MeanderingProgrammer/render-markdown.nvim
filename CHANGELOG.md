@@ -10,6 +10,11 @@
   [62d6681](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/62d6681332365cfddbe916c888752834d9f7ad0c)
 - improved completions [9f4ef68](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/9f4ef684da01016c270af2bc2b862eb6823aa7ab)
 - filter command completions [#372](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/372)
+- improved advice in checkhealth [5cec1bb](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/5cec1bb5fb11079a88fd5b3abd9c94867aec5945)
+- avoid inline text for checkboxes when possible [#378](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/378)
+  [f9badfb](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/f9badfb5907a16c8e0d5f3c157d63bcea2aa555e)
+- `code.language_icon` option [#376](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/376)
+  [8ee2701](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/8ee2701a6c4cdaef7ea0b27c13c26971ae3c9761)
 
 ### Bug Fixes
 
