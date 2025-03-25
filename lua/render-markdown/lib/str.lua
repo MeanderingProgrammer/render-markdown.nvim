@@ -45,13 +45,6 @@ function M.pad(n)
     return string.rep(' ', n)
 end
 
----@param target string
----@param s string
----@return string
-function M.pad_to(target, s)
-    return M.pad(M.width(target) - M.width(s))
-end
-
 ---@param s string
 ---@param pattern string
 ---@return Range2[]

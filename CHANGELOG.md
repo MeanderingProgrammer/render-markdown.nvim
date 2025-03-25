@@ -15,6 +15,7 @@
   [f9badfb](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/f9badfb5907a16c8e0d5f3c157d63bcea2aa555e)
 - `code.language_icon` option [#376](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/376)
   [8ee2701](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/8ee2701a6c4cdaef7ea0b27c13c26971ae3c9761)
+  [7bf951b](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7bf951b8ad93d47b90be290be6fc60da5788ddaa)
 
 ### Bug Fixes
 

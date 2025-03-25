@@ -300,10 +300,13 @@ function M.table.delimiter(sections, padding)
         end, widths)
         return table.concat(section, '')
     end, sections)
-    local text = '├' .. table.concat(parts, '┼') .. '┤' .. string.rep(' ', padding or 0)
+    local line = { { '├' .. table.concat(parts, '┼') .. '┤', 'RmTableHead' } }
+    if padding ~= nil then
+        table.insert(line, { string.rep(' ', padding), 'Normal' })
+    end
     ---@type vim.api.keyset.set_extmark
     return {
-        virt_text = { { text, 'RmTableHead' } },
+        virt_text = line,
         virt_text_pos = 'overlay',
     }
 end

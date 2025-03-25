@@ -247,12 +247,12 @@ function Render:delimiter()
         end
     end)
 
-    local text = Str.pad(Str.spaces('start', delim.node.text))
-    text = text .. border[4] .. table.concat(sections, border[5]) .. border[6]
-    text = text .. Str.pad_to(delim.node.text, text)
+    local line = self:append({}, Str.spaces('start', delim.node.text))
+    self:append(line, border[4] .. table.concat(sections, border[5]) .. border[6], self.table.head)
+    self:append(line, Str.width(delim.node.text) - Str.line_width(line))
 
     self.marks:add_over('table_border', delim.node, {
-        virt_text = { { text, self.table.head } },
+        virt_text = line,
         virt_text_pos = 'overlay',
     })
 end
