@@ -81,7 +81,7 @@ function Render:offset(offset, width, position)
     if offset <= 0 then
         return 0
     end
-    local result = self.context:resolve_offset(offset, width)
+    local result = self.context:to_width(offset, width)
     if position == 'left' and self.node.text:find('\t') ~= nil then
         local tab_size = self.context:tab_size()
         -- Rounds to the next multiple of tab_size
@@ -186,7 +186,8 @@ function Render:border(row, above, empty)
     if self.code.border == 'none' then
         return
     end
-    if self.node:child('fenced_code_block_delimiter', row) == nil then
+    local delim = self.node:child('fenced_code_block_delimiter', row)
+    if delim == nil then
         return
     end
     local width, highlight = self.data.width - self.data.col, self.code.highlight

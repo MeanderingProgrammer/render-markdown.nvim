@@ -36,7 +36,7 @@ function Render:setup()
     if self.context:skip(self.heading) then
         return false
     end
-    if self.context:hidden(self.node) then
+    if self.context.conceal:hidden(self.node) then
         return false
     end
 
@@ -190,12 +190,12 @@ function Render:width(icon_width)
     else
         width = width + vim.fn.max(Iter.list.map(self.node:lines(), Str.width))
     end
-    local left_padding = self.context:resolve_offset(self.data.left_pad, width)
-    local right_padding = self.context:resolve_offset(self.data.right_pad, width)
+    local left_padding = self.context:to_width(self.data.left_pad, width)
+    local right_padding = self.context:to_width(self.data.right_pad, width)
     width = math.max(left_padding + width + right_padding, self.data.min_width)
     ---@type render.md.width.Heading
     return {
-        margin = self.context:resolve_offset(self.data.left_margin, width),
+        margin = self.context:to_width(self.data.left_margin, width),
         padding = left_padding,
         content = width,
     }

@@ -16,6 +16,7 @@
 - `code.language_icon` option [#376](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/376)
   [8ee2701](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/8ee2701a6c4cdaef7ea0b27c13c26971ae3c9761)
   [7bf951b](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7bf951b8ad93d47b90be290be6fc60da5788ddaa)
+- code border for different conceal settings [e724a49](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/e724a49dee315744d6f5d3c651ddd604cc7afc52)
 
 ### Bug Fixes
 

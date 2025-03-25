@@ -16,8 +16,8 @@ end
 
 function Render:render()
     local width = self.dash.width
-    width = type(width) == 'number' and self.context:resolve_offset(width, 0) or vim.o.columns
-    local margin = self.context:resolve_offset(self.dash.left_margin, width)
+    width = type(width) == 'number' and self.context:to_width(width, 0) or vim.o.columns
+    local margin = self.context:to_width(self.dash.left_margin, width)
 
     local line = self:append({}, margin)
     self:append(line, self.dash.icon:rep(width), self.dash.highlight)

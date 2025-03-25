@@ -22,7 +22,7 @@ end
 function Render:render()
     local width = vim.fn.max(Iter.list.map(self.node:lines(), Str.width))
     width = math.max(width, self.paragraph.min_width)
-    local margin = self.context:resolve_offset(self.paragraph.left_margin, width)
+    local margin = self.context:to_width(self.paragraph.left_margin, width)
     local line = self:append({}, margin)
     if #line == 0 then
         return

@@ -47,7 +47,7 @@ function Context.new(props, offset)
 
     self.mode = props.mode
     self.top_level_mode = props.top_level_mode
-    self.conceal = Conceal.new(self.buf, Env.win.get(self.win, 'conceallevel'))
+    self.conceal = Conceal.new(self, self.buf, self.win)
     self.last_heading = nil
 
     return self
@@ -124,21 +124,12 @@ function Context:tab_size()
 end
 
 ---@param node? render.md.Node
----@return boolean
-function Context:hidden(node)
-    if node == nil then
-        return false
-    end
-    return self.conceal:hidden(self, node)
-end
-
----@param node? render.md.Node
 ---@return integer
 function Context:width(node)
     if node == nil then
         return 0
     end
-    return Str.width(node.text) + self:get_offset(node) - self.conceal:get(self, node)
+    return Str.width(node.text) + self:get_offset(node) - self.conceal:get(node)
 end
 
 ---@param row integer
@@ -172,7 +163,7 @@ end
 ---@param offset number
 ---@param width integer
 ---@return integer
-function Context:resolve_offset(offset, width)
+function Context:to_width(offset, width)
     if offset <= 0 then
         return 0
     elseif offset < 1 then
