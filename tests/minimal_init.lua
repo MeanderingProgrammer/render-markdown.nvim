@@ -2,7 +2,6 @@
 ---@return string
 local function get_path(name)
     local data_path = vim.fn.stdpath('data')
-    assert(type(data_path) == 'string')
     local plugin_path = vim.fs.find(name, { path = data_path })
     assert(#plugin_path == 1)
     return plugin_path[1]

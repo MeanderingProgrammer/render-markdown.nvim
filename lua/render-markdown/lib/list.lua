@@ -92,8 +92,6 @@ function Marks:validate(opts)
     if opts.virt_text_repeat_linebreak ~= nil and not Env.has_10 then
         return false, 'virt_text_repeat_linebreak', '0.10.0'
     end
-    -- TODO(0.11): remove
-    ---@diagnostic disable-next-line: undefined-field
     if opts.conceal_lines ~= nil and not Env.has_11 then
         return false, 'conceal_lines', '0.11.0'
     end

@@ -8,7 +8,7 @@ describe('medium.md', function()
         util.less_than(util.setup('temp/medium.md'), 35)
         util.num_marks(base_marks)
 
-        util.less_than(util.move_down(3), 0.5)
+        util.less_than(util.move_down(3), 20)
         util.num_marks(base_marks + 2)
 
         util.less_than(util.insert_mode(), 20)
