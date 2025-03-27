@@ -4,7 +4,7 @@ local util = require('tests.util')
 
 describe('heading_code.md', function()
     it('default', function()
-        util.setup('demo/heading_code.md')
+        util.setup.file('demo/heading_code.md')
 
         local marks, row = util.marks(), util.row()
 
@@ -43,29 +43,29 @@ describe('heading_code.md', function()
         marks:add(row:get(), nil, 0, nil, util.code.border(false, vim.o.columns))
 
         util.assert_view(marks, {
-            '󰫎   1 󰲡 Heading 1',
-            '    2',
-            '󰫎   3   󰲥 Heading 3',
-            '    4',
-            '󰫎   5    󰲧 Heading 4',
-            '    6',
-            '󰫎   7     󰲩 Heading 5',
-            '    8',
-            '󰫎   9      󰲫 Heading 6',
-            '   10',
-            '   11 󰥶 Image',
-            '   12',
-            '󰌠  13 󰌠 python {filename="demo.py"}',
-            '   14 def main() -> None:',
-            '   15     sum = 0',
-            '   16     for i in range(10):',
-            '   17         sum += i',
-            '   18     print(sum)',
-            '   19',
-            '   20',
-            '   21 if __name__ == "__main__":',
-            '   22     main()',
-            '   23 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
+            '󰫎 󰲡 Heading 1',
+            '',
+            '󰫎   󰲥 Heading 3',
+            '',
+            '󰫎    󰲧 Heading 4',
+            '',
+            '󰫎     󰲩 Heading 5',
+            '',
+            '󰫎      󰲫 Heading 6',
+            '',
+            '  󰥶 Image',
+            '',
+            '󰌠 󰌠 python {filename="demo.py"}',
+            '  def main() -> None:',
+            '      sum = 0',
+            '      for i in range(10):',
+            '          sum += i',
+            '      print(sum)',
+            '',
+            '',
+            '  if __name__ == "__main__":',
+            '      main()',
+            '  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
         })
     end)
 end)

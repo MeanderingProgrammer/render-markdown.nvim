@@ -12,14 +12,47 @@
 ---@class render.md.test.Util
 local M = {}
 
----@param file string
+---@class render.md.test.util.Setup
+M.setup = {}
+
+---@private
 ---@param opts? render.md.UserConfig
-function M.setup(file, opts)
+function M.setup.init(opts)
     require('luassert.assert'):set_parameter('TableFormatLevel', 4)
     require('luassert.assert'):set_parameter('TableErrorHighlightColor', 'none')
-    require('render-markdown').setup(opts)
+    ---@type render.md.UserConfig
+    local skip_conceal = {
+        anti_conceal = { enabled = false },
+        win_options = { concealcursor = { rendered = 'nvic' } },
+        overrides = {
+            buftype = {
+                nofile = {
+                    padding = { highlight = 'Normal' },
+                    sign = { enabled = true },
+                },
+            },
+        },
+    }
+    local config = vim.tbl_deep_extend('force', skip_conceal, opts or {})
+    require('render-markdown').setup(config)
+end
+
+---@param file string
+---@param opts? render.md.UserConfig
+function M.setup.file(file, opts)
+    M.setup.init(opts)
     vim.cmd('e ' .. file)
-    vim.api.nvim_win_set_cursor(0, { 2, 0 })
+    vim.wait(0)
+end
+
+---@param lines string[]
+---@param opts? render.md.UserConfig
+function M.setup.text(lines, opts)
+    M.setup.init(opts)
+    local buf = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_set_current_buf(buf)
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+    vim.bo[buf].filetype = 'markdown'
     vim.wait(0)
 end
 

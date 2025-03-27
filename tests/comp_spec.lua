@@ -32,8 +32,46 @@ local function item(prefix, label, detail, description)
 end
 
 describe('comp.md', function()
+    local lines = {
+        '# Heading',
+        '',
+        '-',
+        '',
+        '- ',
+        '',
+        '- [',
+        '',
+        '- [-',
+        '',
+        '- [-]',
+        '',
+        '- [-] ',
+        '',
+        '- [-] todo',
+        '',
+        '- text',
+        '',
+        '# Heading',
+        '',
+        '>',
+        '',
+        '> ',
+        '',
+        '> [',
+        '',
+        '> [!',
+        '',
+        '> [!TIP',
+        '',
+        '> [!TIP]',
+        '',
+        '> [!TIP] My Tip',
+        '',
+        '> text',
+    }
+
     it('checkbox', function()
-        util.setup('tests/data/comp.md')
+        util.setup.text(lines)
 
         ---@param prefix string
         ---@return lsp.CompletionItem[]
@@ -45,19 +83,20 @@ describe('comp.md', function()
             }
         end
 
-        assert_items(2, 1, items(' '))
-        assert_items(4, 2, items(''))
-        assert_items(6, 3, items(''))
-        assert_items(8, 4, items(''))
-        assert_items(10, 5, {})
-        assert_items(12, 6, {})
-        assert_items(14, 10, {})
-        assert_items(16, 6, {})
-        assert_items(17, 0, {})
+        local row = util.row()
+        assert_items(row:inc(2), 1, items(' '))
+        assert_items(row:inc(2), 2, items(''))
+        assert_items(row:inc(2), 3, items(''))
+        assert_items(row:inc(2), 4, items(''))
+        assert_items(row:inc(2), 5, {})
+        assert_items(row:inc(2), 6, {})
+        assert_items(row:inc(2), 10, {})
+        assert_items(row:inc(2), 6, {})
+        assert_items(row:inc(), 0, {})
     end)
 
     it('callout', function()
-        util.setup('tests/data/comp.md')
+        util.setup.text(lines)
 
         ---@param prefix string
         ---@return lsp.CompletionItem[]
@@ -93,13 +132,14 @@ describe('comp.md', function()
             }
         end
 
-        assert_items(20, 1, items(' '))
-        assert_items(22, 2, items(''))
-        assert_items(24, 3, items(''))
-        assert_items(26, 4, items(''))
-        assert_items(28, 7, items(''))
-        assert_items(30, 8, {})
-        assert_items(32, 15, {})
-        assert_items(34, 6, {})
+        local row = util.row()
+        assert_items(row:inc(20), 1, items(' '))
+        assert_items(row:inc(2), 2, items(''))
+        assert_items(row:inc(2), 3, items(''))
+        assert_items(row:inc(2), 4, items(''))
+        assert_items(row:inc(2), 7, items(''))
+        assert_items(row:inc(2), 8, {})
+        assert_items(row:inc(2), 15, {})
+        assert_items(row:inc(2), 6, {})
     end)
 end)

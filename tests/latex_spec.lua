@@ -62,7 +62,7 @@ describe('latex.md', function()
             [text(inline.raw, '', '')] = text(inline.out, '', '\n'),
             [text(block.raw, '$$\n', '\n$$')] = text(block.out, '\n', '\n\n'),
         })
-        util.setup('demo/latex.md')
+        util.setup.file('demo/latex.md')
 
         local marks, row = util.marks(), util.row()
 
@@ -75,17 +75,17 @@ describe('latex.md', function()
         marks:add(row:inc(2), nil, 0, nil, latex(block.out))
 
         util.assert_view(marks, {
-            '󰫎   1 󰲡 LaTeX',
-            '    2',
-            '      ' .. inline.out[1],
-            '    3 ' .. inline.raw[1],
-            '    4',
-            '      ' .. block.out[1],
-            '      ' .. block.out[2],
-            '    5 $$',
-            '    6 ' .. block.raw[1],
-            '    7 ' .. block.raw[2],
-            '    8 $$',
+            '󰫎 󰲡 LaTeX',
+            '',
+            '  ' .. inline.out[1],
+            '  ' .. inline.raw[1],
+            '',
+            '  ' .. block.out[1],
+            '  ' .. block.out[2],
+            '  $$',
+            '  ' .. block.raw[1],
+            '  ' .. block.raw[2],
+            '  $$',
         })
     end)
 end)

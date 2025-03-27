@@ -64,32 +64,38 @@ end
 
 ---@return integer[]
 function MarkDetails:priorities()
-    local result = {}
-
-    local row_offset = 0
+    local virt_row = 0
     if self.virt_lines ~= nil then
-        row_offset = self.virt_lines_above and -0.5 or 0.5
+        virt_row = self.virt_lines_above and -0.5 or 0.5
     end
-    table.insert(result, self.row[1] + row_offset)
-    table.insert(result, (self.row[2] or self.row[1]) + row_offset)
 
-    local col = self.virt_text_win_col or 0
-    table.insert(result, math.max(self.col[1], col))
-    table.insert(result, math.max((self.col[2] or self.col[1]), col))
+    local win_col = self.virt_text_win_col or 0
 
-    -- Signs come first
-    table.insert(result, self.sign_text ~= nil and 0 or 1)
-    -- Then inline text
-    table.insert(result, self.virt_text_pos == 'inline' and 0 or 1)
-
-    -- Fewer text entries comes first
-    local text = #(self.virt_text or {})
+    local width = 0
+    for _, text in ipairs(self.virt_text or {}) do
+        width = width + #text[1]
+    end
     for _, line in ipairs(self.virt_lines or {}) do
-        text = text + #line
+        for _, text in ipairs(line) do
+            width = width + #text[1]
+        end
     end
-    table.insert(result, text)
 
-    return result
+    ---@type integer[]
+    return {
+        -- rows
+        self.row[1] + virt_row,
+        (self.row[2] or self.row[1]) + virt_row,
+        -- cols
+        math.max(self.col[1], win_col),
+        math.max((self.col[2] or self.col[1]), win_col),
+        -- signs
+        self.sign_text ~= nil and 0 or 1,
+        -- inline text
+        self.virt_text_pos == 'inline' and 0 or 1,
+        -- text width
+        width,
+    }
 end
 
 ---@param a render.md.test.MarkDetails
@@ -97,7 +103,8 @@ end
 ---@return boolean
 function MarkDetails.__lt(a, b)
     local as, bs = a:priorities(), b:priorities()
-    for i = 1, math.max(#as, #bs) do
+    assert(#as == #bs)
+    for i = 1, #as do
         if as[i] ~= bs[i] then
             return as[i] < bs[i]
         end

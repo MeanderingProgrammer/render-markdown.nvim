@@ -2,16 +2,23 @@
 
 local util = require('tests.util')
 
-describe('table.md', function()
+describe('table', function()
+    local lines = {
+        '',
+        '| Heading 1 | `Heading 2`            |',
+        '| --------- | ---------------------: |',
+        '| `Item 行` | [link](https://行.com) |',
+        '| &lt;1&gt; | ==Itém 2==             |',
+        '',
+        '| Heading 1 | Heading 2 |',
+        '| --------- | --------- |',
+        '| Item 1    | Item 2    |',
+    }
+
     it('default', function()
-        util.setup('tests/data/table.md')
+        util.setup.text(lines)
 
         local marks, row = util.marks(), util.row()
-
-        marks
-            :add(row:get(), nil, 0, nil, util.heading.sign(1))
-            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
-            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
         marks:add(row:inc(), nil, 0, nil, util.table.border(true, { 11, 24 }))
         marks
@@ -42,12 +49,7 @@ describe('table.md', function()
             :add(row:get(), row:get(), 38, 39, util.table.pipe(false))
         marks:add(row:get(), nil, 0, nil, util.table.border(false, { 11, 24 }))
 
-        marks
-            :add(row:inc(2), nil, 0, nil, util.heading.sign(1))
-            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
-            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
-
-        marks:add(row:inc(), nil, 0, nil, util.table.border(true, { 11, 11 }))
+        marks:add(row:inc(2), nil, 0, nil, util.table.border(true, { 11, 11 }))
         marks
             :add(row:get(), row:get(), 0, 1, util.table.pipe(true))
             :add(row:get(), row:get(), 12, 13, util.table.pipe(true))
@@ -60,36 +62,28 @@ describe('table.md', function()
         marks:add(row:get(), nil, 0, nil, util.table.border(false, { 11, 11 }))
 
         util.assert_view(marks, {
-            '󰫎   1 󰲡 Table with Inline',
-            '    2',
-            '      ┌───────────┬────────────────────────┐',
-            '    3 │ Heading 1 │              Heading 2 │',
-            '    4 ├───────────┼───────────────────────━┤',
-            '    5 │ Item 行   │                 󰖟 link │',
-            '    6 │ 1         │                 Itém 2 │',
-            '      └───────────┴────────────────────────┘',
-            '    7',
-            '󰫎   8 󰲡 Table no Inline',
-            '    9',
-            '      ┌───────────┬───────────┐',
-            '   10 │ Heading 1 │ Heading 2 │',
-            '   11 ├───────────┼───────────┤',
-            '   12 │ Item 1    │ Item 2    │',
-            '      └───────────┴───────────┘',
+            '',
+            '┌───────────┬────────────────────────┐',
+            '│ Heading 1 │              Heading 2 │',
+            '├───────────┼───────────────────────━┤',
+            '│ Item 行   │                 󰖟 link │',
+            '│ 1         │                 Itém 2 │',
+            '└───────────┴────────────────────────┘',
+            '',
+            '┌───────────┬───────────┐',
+            '│ Heading 1 │ Heading 2 │',
+            '├───────────┼───────────┤',
+            '│ Item 1    │ Item 2    │',
+            '└───────────┴───────────┘',
         })
     end)
 
     it('trimmed', function()
-        util.setup('tests/data/table.md', {
+        util.setup.text(lines, {
             pipe_table = { cell = 'trimmed' },
         })
 
         local marks, row = util.marks(), util.row()
-
-        marks
-            :add(row:get(), nil, 0, nil, util.heading.sign(1))
-            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
-            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
         marks:add(row:inc(), nil, 0, nil, util.table.border(true, { 11, 11 }))
         marks
@@ -119,12 +113,7 @@ describe('table.md', function()
             :add(row:get(), row:get(), 38, 39, util.table.pipe(false))
         marks:add(row:get(), nil, 0, nil, util.table.border(false, { 11, 11 }))
 
-        marks
-            :add(row:inc(2), nil, 0, nil, util.heading.sign(1))
-            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
-            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
-
-        marks:add(row:inc(), nil, 0, nil, util.table.border(true, { 11, 11 }))
+        marks:add(row:inc(2), nil, 0, nil, util.table.border(true, { 11, 11 }))
         marks
             :add(row:get(), row:get(), 0, 1, util.table.pipe(true))
             :add(row:get(), row:get(), 12, 13, util.table.pipe(true))
@@ -137,36 +126,28 @@ describe('table.md', function()
         marks:add(row:get(), nil, 0, nil, util.table.border(false, { 11, 11 }))
 
         util.assert_view(marks, {
-            '󰫎   1 󰲡 Table with Inline',
-            '    2',
-            '      ┌───────────┬───────────┐',
-            '    3 │ Heading 1 │ Heading 2 │',
-            '    4 ├───────────┼──────────━┤',
-            '    5 │ Item 行   │    󰖟 link │',
-            '    6 │ 1         │    Itém 2 │',
-            '      └───────────┴───────────┘',
-            '    7',
-            '󰫎   8 󰲡 Table no Inline',
-            '    9',
-            '      ┌───────────┬───────────┐',
-            '   10 │ Heading 1 │ Heading 2 │',
-            '   11 ├───────────┼───────────┤',
-            '   12 │ Item 1    │ Item 2    │',
-            '      └───────────┴───────────┘',
+            '',
+            '┌───────────┬───────────┐',
+            '│ Heading 1 │ Heading 2 │',
+            '├───────────┼──────────━┤',
+            '│ Item 行   │    󰖟 link │',
+            '│ 1         │    Itém 2 │',
+            '└───────────┴───────────┘',
+            '',
+            '┌───────────┬───────────┐',
+            '│ Heading 1 │ Heading 2 │',
+            '├───────────┼───────────┤',
+            '│ Item 1    │ Item 2    │',
+            '└───────────┴───────────┘',
         })
     end)
 
     it('raw', function()
-        util.setup('tests/data/table.md', {
+        util.setup.text(lines, {
             pipe_table = { cell = 'raw' },
         })
 
         local marks, row = util.marks(), util.row()
-
-        marks
-            :add(row:get(), nil, 0, nil, util.heading.sign(1))
-            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
-            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
         marks
             :add(row:inc(), row:get(), 0, 1, util.table.pipe(true))
@@ -188,12 +169,7 @@ describe('table.md', function()
             :add(row:get(), row:get(), 23, 25, util.conceal())
             :add(row:get(), row:get(), 38, 39, util.table.pipe(false))
 
-        marks
-            :add(row:inc(2), nil, 0, nil, util.heading.sign(1))
-            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
-            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
-
-        marks:add(row:inc(), nil, 0, nil, util.table.border(true, { 11, 11 }))
+        marks:add(row:inc(2), nil, 0, nil, util.table.border(true, { 11, 11 }))
         marks
             :add(row:get(), row:get(), 0, 1, util.table.pipe(true))
             :add(row:get(), row:get(), 12, 13, util.table.pipe(true))
@@ -206,34 +182,26 @@ describe('table.md', function()
         marks:add(row:get(), nil, 0, nil, util.table.border(false, { 11, 11 }))
 
         util.assert_view(marks, {
-            '󰫎   1 󰲡 Table with Inline',
-            '    2',
-            '    3 │ Heading 1 │ Heading 2            │',
-            '    4 ├───────────┼───────────────────────━┤',
-            '    5 │ Item 行 │ 󰖟 link │',
-            '    6 │ 1 │ Itém 2             │',
-            '    7',
-            '󰫎   8 󰲡 Table no Inline',
-            '    9',
-            '      ┌───────────┬───────────┐',
-            '   10 │ Heading 1 │ Heading 2 │',
-            '   11 ├───────────┼───────────┤',
-            '   12 │ Item 1    │ Item 2    │',
-            '      └───────────┴───────────┘',
+            '',
+            '│ Heading 1 │ Heading 2            │',
+            '├───────────┼───────────────────────━┤',
+            '│ Item 行 │ 󰖟 link │',
+            '│ 1 │ Itém 2             │',
+            '',
+            '┌───────────┬───────────┐',
+            '│ Heading 1 │ Heading 2 │',
+            '├───────────┼───────────┤',
+            '│ Item 1    │ Item 2    │',
+            '└───────────┴───────────┘',
         })
     end)
 
     it('overlay', function()
-        util.setup('tests/data/table.md', {
+        util.setup.text(lines, {
             pipe_table = { cell = 'overlay' },
         })
 
         local marks, row = util.marks(), util.row()
-
-        marks
-            :add(row:get(), nil, 0, nil, util.heading.sign(1))
-            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
-            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
         marks:add(row:inc(), nil, 0, nil, util.table.border(true, { 11, 24 }))
         marks:add(row:get(), row:get(), 0, 38, {
@@ -257,12 +225,7 @@ describe('table.md', function()
         marks:add(row:get(), row:get(), 23, 25, util.conceal())
         marks:add(row:get(), nil, 0, nil, util.table.border(false, { 11, 24 }))
 
-        marks
-            :add(row:inc(2), nil, 0, nil, util.heading.sign(1))
-            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
-            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
-
-        marks:add(row:inc(), nil, 0, nil, util.table.border(true, { 11, 11 }))
+        marks:add(row:inc(2), nil, 0, nil, util.table.border(true, { 11, 11 }))
         marks:add(row:get(), row:get(), 0, 25, {
             virt_text = { { '│ Heading 1 │ Heading 2 │', 'RmTableHead' } },
             virt_text_pos = 'overlay',
@@ -275,22 +238,19 @@ describe('table.md', function()
         marks:add(row:get(), nil, 0, nil, util.table.border(false, { 11, 11 }))
 
         util.assert_view(marks, {
-            '󰫎   1 󰲡 Table with Inline',
-            '    2',
-            '      ┌───────────┬────────────────────────┐',
-            '    3 │ Heading 1 │ `Heading 2`            │',
-            '    4 ├───────────┼───────────────────────━┤',
-            '    5 │ `Item 行` │ [link](https://行.com) │',
-            '    6 │ &lt;1&gt; │ ==Itém 2==             │',
-            '      └───────────┴────────────────────────┘',
-            '    7',
-            '󰫎   8 󰲡 Table no Inline',
-            '    9',
-            '      ┌───────────┬───────────┐',
-            '   10 │ Heading 1 │ Heading 2 │',
-            '   11 ├───────────┼───────────┤',
-            '   12 │ Item 1    │ Item 2    │',
-            '      └───────────┴───────────┘',
+            '',
+            '┌───────────┬────────────────────────┐',
+            '│ Heading 1 │ `Heading 2`            │',
+            '├───────────┼───────────────────────━┤',
+            '│ `Item 行` │ [link](https://行.com) │',
+            '│ &lt;1&gt; │ ==Itém 2==             │',
+            '└───────────┴────────────────────────┘',
+            '',
+            '┌───────────┬───────────┐',
+            '│ Heading 1 │ Heading 2 │',
+            '├───────────┼───────────┤',
+            '│ Item 1    │ Item 2    │',
+            '└───────────┴───────────┘',
         })
     end)
 end)

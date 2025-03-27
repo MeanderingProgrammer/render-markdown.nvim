@@ -4,7 +4,7 @@ local util = require('tests.util')
 
 describe('box_dash_quote.md', function()
     it('default', function()
-        util.setup('demo/box_dash_quote.md')
+        util.setup.file('demo/box_dash_quote.md')
 
         local marks, row = util.marks(), util.row()
 
@@ -49,17 +49,17 @@ describe('box_dash_quote.md', function()
             :add(row:inc(), row:get(), 0, 4, util.quote('  %s ', 'RmQuote'))
 
         util.assert_view(marks, {
-            '󰫎   1 󰲡 Checkbox / Dash / Quote',
-            '    2',
-            '    3 󰄱  Unchecked Checkbox',
-            '    4 󰱒  Checked Checkbox',
-            '    5 󰥔  Todo Checkbox',
-            '    6 ● Regular List Item',
-            '    7',
-            '    8 ──────────────────────────────────────────────────────────────────────────',
-            '    9',
-            '   10   ▋ Quote line 1',
-            '   11   ▋ Quote line 2',
+            '󰫎 󰲡 Checkbox / Dash / Quote',
+            '',
+            '  󰄱  Unchecked Checkbox',
+            '  󰱒  Checked Checkbox',
+            '  󰥔  Todo Checkbox',
+            '  ● Regular List Item',
+            '',
+            '  ──────────────────────────────────────────────────────────────────────────────',
+            '',
+            '    ▋ Quote line 1',
+            '    ▋ Quote line 2',
         })
     end)
 end)

@@ -4,7 +4,7 @@ local util = require('tests.util')
 
 describe('list_table.md', function()
     it('default', function()
-        util.setup('demo/list_table.md')
+        util.setup.file('demo/list_table.md')
 
         local marks, row = util.marks(), util.row()
 
@@ -79,37 +79,37 @@ describe('list_table.md', function()
         marks:add(row:get(), nil, 0, nil, util.table.border(false, { 8, 15, 7, 6 }))
 
         util.assert_view(marks, {
-            '󰫎   1 󰲡 Unordered List',
-            '    2',
-            '    3 ● List Item 1: with 󰖟 link',
-            '    4 ● List Item 2: with inline code',
-            '    5     ○ Nested List 1 Item 1',
-            '    6     ○ Nested List 1 Item 2',
-            '    7       ◆ Nested List 2 Item 1',
-            '    8         ◇ Nested List 3 Item 1',
-            '    9           ● Nested List 4 Item 1',
-            '   10 ● List Item 3: with 󰌹 reference link',
-            '   11',
-            '󰫎  12 󰲡 Ordered List',
-            '   13',
-            '   14 1. Item 1',
-            '   15 2. Item 2',
-            '   16',
-            '󰫎  17 󰲡 Table',
-            '   18',
-            '      ┌────────┬───────────────┬───────┬──────┐',
-            '   19 │ Left   │    Center     │ Right │ None │',
-            '   20 ├━───────┼━─────────────━┼──────━┼──────┤',
-            '   21 │ Code   │     Bold      │ Plain │ Item │',
-            '   22 │ Item   │    󰌹 link     │  Item │ Item │',
-            '      └────────┴───────────────┴───────┴──────┘',
-            '   23',
-            '   24 [example]: https://example.com',
+            '󰫎 󰲡 Unordered List',
+            '',
+            '  ● List Item 1: with 󰖟 link',
+            '  ● List Item 2: with inline code',
+            '      ○ Nested List 1 Item 1',
+            '      ○ Nested List 1 Item 2',
+            '        ◆ Nested List 2 Item 1',
+            '          ◇ Nested List 3 Item 1',
+            '            ● Nested List 4 Item 1',
+            '  ● List Item 3: with 󰌹 reference link',
+            '',
+            '󰫎 󰲡 Ordered List',
+            '',
+            '  1. Item 1',
+            '  2. Item 2',
+            '',
+            '󰫎 󰲡 Table',
+            '',
+            '  ┌────────┬───────────────┬───────┬──────┐',
+            '  │ Left   │    Center     │ Right │ None │',
+            '  ├━───────┼━─────────────━┼──────━┼──────┤',
+            '  │ Code   │     Bold      │ Plain │ Item │',
+            '  │ Item   │    󰌹 link     │  Item │ Item │',
+            '  └────────┴───────────────┴───────┴──────┘',
+            '',
+            '  [example]: https://example.com',
         })
     end)
 
     it('padding', function()
-        util.setup('demo/list_table.md', {
+        util.setup.file('demo/list_table.md', {
             code = { inline_pad = 2 },
             bullet = { left_pad = 2, right_pad = 2 },
         })
@@ -222,32 +222,32 @@ describe('list_table.md', function()
         marks:add(row:get(), nil, 0, nil, util.table.border(false, { 10, 15, 7, 6 }))
 
         util.assert_view(marks, {
-            '󰫎   1 󰲡 Unordered List',
-            '    2',
-            '    3   ●   List Item 1: with 󰖟 link',
-            '    4   ●   List Item 2: with   inline   code',
-            '    5       ○   Nested List 1 Item 1',
-            '    6       ○   Nested List 1 Item 2',
-            '    7         ◆   Nested List 2 Item 1',
-            '    8           ◇   Nested List 3 Item 1',
-            '    9             ●   Nested List 4 Item 1',
-            '   10   ●   List Item 3: with 󰌹 reference link',
-            '   11',
-            '󰫎  12 󰲡 Ordered List',
-            '   13',
-            '   14   1.   Item 1',
-            '   15   2.   Item 2',
-            '   16',
-            '󰫎  17 󰲡 Table',
-            '   18',
-            '      ┌──────────┬───────────────┬───────┬──────┐',
-            '   19 │   Left   │    Center     │ Right │ None │',
-            '   20 ├━─────────┼━─────────────━┼──────━┼──────┤',
-            '   21 │   Code   │     Bold      │ Plain │ Item │',
-            '   22 │ Item     │    󰌹 link     │  Item │ Item │',
-            '      └──────────┴───────────────┴───────┴──────┘',
-            '   23',
-            '   24 [example]: https://example.com',
+            '󰫎 󰲡 Unordered List',
+            '',
+            '    ●   List Item 1: with 󰖟 link',
+            '    ●   List Item 2: with   inline   code',
+            '        ○   Nested List 1 Item 1',
+            '        ○   Nested List 1 Item 2',
+            '          ◆   Nested List 2 Item 1',
+            '            ◇   Nested List 3 Item 1',
+            '              ●   Nested List 4 Item 1',
+            '    ●   List Item 3: with 󰌹 reference link',
+            '',
+            '󰫎 󰲡 Ordered List',
+            '',
+            '    1.   Item 1',
+            '    2.   Item 2',
+            '',
+            '󰫎 󰲡 Table',
+            '',
+            '  ┌──────────┬───────────────┬───────┬──────┐',
+            '  │   Left   │    Center     │ Right │ None │',
+            '  ├━─────────┼━─────────────━┼──────━┼──────┤',
+            '  │   Code   │     Bold      │ Plain │ Item │',
+            '  │ Item     │    󰌹 link     │  Item │ Item │',
+            '  └──────────┴───────────────┴───────┴──────┘',
+            '',
+            '  [example]: https://example.com',
         })
     end)
 end)

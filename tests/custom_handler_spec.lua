@@ -18,78 +18,52 @@ local function conceal_escape(ctx)
     return marks
 end
 
-describe('custom_handler.md', function()
-    it('default', function()
-        util.setup('tests/data/custom_handler.md')
+describe('custom handler', function()
+    local lines = {
+        '`Inline` code',
+        '\\$1.50 \\$3.55',
+    }
 
-        local marks, row = util.marks(), util.row()
-        -- Heading
-        marks
-            :add(row:get(), nil, 0, nil, util.heading.sign(1))
-            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
-            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
-        -- Inline code
-        marks:add(row:inc(), row:get(), 0, 8, util.highlight('code'))
-        -- No backslash escapes
+    it('default', function()
+        util.setup.text(lines)
+        -- inline code + no backslash escapes
+        local marks = util.marks():add(0, 0, 0, 8, util.highlight('code'))
         util.assert_view(marks, {
-            '󰫎   1 󰲡 Heading',
-            '    2',
-            '    3 Inline code',
-            '    4',
-            '    5 \\$1.50 \\$3.55',
+            'Inline code',
+            '\\$1.50 \\$3.55',
         })
     end)
 
     it('custom conceal override', function()
-        util.setup('tests/data/custom_handler.md', {
+        util.setup.text(lines, {
             custom_handlers = {
                 markdown_inline = { parse = conceal_escape },
             },
         })
-
-        local marks, row = util.marks(), util.row()
-        -- Heading
-        marks
-            :add(row:get(), nil, 0, nil, util.heading.sign(1))
-            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
-            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
-        -- No inline code
-        -- Backslash escapes
-        marks:add(row:inc(3), row:get(), 0, 1, util.conceal())
-        marks:add(row:get(), row:get(), 7, 8, util.conceal())
+        -- no inline code + backslash escapes
+        local marks = util.marks()
+        marks:add(1, 1, 0, 1, util.conceal())
+        marks:add(1, 1, 7, 8, util.conceal())
         util.assert_view(marks, {
-            '󰫎   1 󰲡 Heading',
-            '    2',
-            '    3 Inline code',
-            '    4',
-            '    5 $1.50 $3.55',
+            'Inline code',
+            '$1.50 $3.55',
         })
     end)
 
     it('custom conceal extend', function()
-        util.setup('tests/data/custom_handler.md', {
+        util.setup.text(lines, {
             custom_handlers = {
                 markdown_inline = { extends = true, parse = conceal_escape },
             },
         })
-
-        local marks, row = util.marks(), util.row()
-        -- Heading
-        marks
-            :add(row:get(), nil, 0, nil, util.heading.sign(1))
-            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
-            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
-        -- Inline code
-        marks:add(row:inc(), row:get(), 0, 8, util.highlight('code'))
-        -- Backslash escapes
-        marks:add(row:inc(2), row:get(), 0, 1, util.conceal())
-        marks:add(row:get(), row:get(), 7, 8, util.conceal())
+        -- inline code + backslash escapes
+        local marks = util.marks()
+        marks:add(0, 0, 0, 8, util.highlight('code'))
+        marks:add(1, 1, 0, 1, util.conceal())
+        marks:add(1, 1, 7, 8, util.conceal())
         util.assert_view(marks, {
-            '󰫎   1 󰲡 Heading',
-            '    2',
-            '    3 Inline code',
-            '    4',
-            '    5 $1.50 $3.55',
+            'Inline code',
+            '$1.50 $3.55',
         })
     end)
 end)

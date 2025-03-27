@@ -2,19 +2,44 @@
 
 local util = require('tests.util')
 
-describe('code.md', function()
+describe('code', function()
+    local lines = {
+        '```rust',
+        'fn main() {',
+        '    println!("Hello, World!");',
+        '}',
+        '```',
+        '',
+        '- List Divider',
+        '',
+        '  ```py',
+        '  print("hello")',
+        '',
+        '  print("world")',
+        '  ```',
+        '',
+        'Paragraph Divider',
+        '',
+        '  ```lua',
+        "  print('hello')",
+        '',
+        "  print('world')",
+        '  ```',
+        '',
+        '- List Divider',
+        '',
+        '```',
+        "	print('Hello, World!')",
+        '```',
+    }
+
     it('default', function()
-        util.setup('tests/data/code.md')
+        util.setup.text(lines)
 
         local marks, row = util.marks(), util.row()
 
         marks
-            :add(row:get(), nil, 0, nil, util.heading.sign(1))
-            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
-            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
-
-        marks
-            :add(row:inc(), nil, 0, nil, util.code.sign('rust'))
+            :add(row:get(), nil, 0, nil, util.code.sign('rust'))
             :add(row:get(), nil, 3, nil, util.code.icon('rust'))
             :add(row:get(), row:inc(), 0, 0, util.code.bg())
             :add(row:get(), row:inc(), 0, 0, util.code.bg())
@@ -51,53 +76,46 @@ describe('code.md', function()
             :add(row:get(), nil, 0, nil, util.code.border(false, vim.o.columns))
 
         util.assert_view(marks, {
-            '󰫎   1 󰲡 Heading',
-            '    2',
-            '󱘗   3 󱘗 rust',
-            '    4 fn main() {',
-            '    5     println!("Hello, World!");',
-            '    6 }',
-            '    7 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
-            '    8',
-            '    9 ● List Divider',
-            '   10',
-            '󰌠  11   󰌠 py',
-            '   12   print("hello")',
-            '   13',
-            '   14   print("world")',
-            '   15   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
-            '   16',
-            '   17 Paragraph Divider',
-            '   18',
-            '󰢱  19   󰢱 lua',
-            "   20   print('hello')",
-            '   21',
-            "   22   print('world')",
-            '   23 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
-            '   24',
-            '   25 ● List Divider',
-            '   26',
-            '   27 ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
-            "   28     print('Hello, World!')",
-            '   29 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
+            '󱘗 󱘗 rust',
+            '  fn main() {',
+            '      println!("Hello, World!");',
+            '  }',
+            '  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
+            '',
+            '  ● List Divider',
+            '',
+            '󰌠   󰌠 py',
+            '    print("hello")',
+            '',
+            '    print("world")',
+            '    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
+            '',
+            '  Paragraph Divider',
+            '',
+            '󰢱   󰢱 lua',
+            "    print('hello')",
+            '',
+            "    print('world')",
+            '  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
+            '',
+            '  ● List Divider',
+            '',
+            '  ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
+            "      print('Hello, World!')",
+            '  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
         })
     end)
 
     it('block padding', function()
-        util.setup('tests/data/code.md', {
+        util.setup.text(lines, {
             code = { width = 'block', left_pad = 2, right_pad = 2 },
         })
 
         local marks, row = util.marks(), util.row()
 
-        marks
-            :add(row:get(), nil, 0, nil, util.heading.sign(1))
-            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
-            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
-
         local width_1 = 34
         marks
-            :add(row:inc(), nil, 0, nil, util.code.sign('rust'))
+            :add(row:get(), nil, 0, nil, util.code.sign('rust'))
             :add(row:get(), nil, 3, nil, util.code.icon('rust'))
             :add(row:get(), nil, 0, nil, util.code.hide(width_1))
             :add(row:get(), row:inc(), 0, 0, util.code.bg())
@@ -163,35 +181,33 @@ describe('code.md', function()
             :add(row:get(), nil, 0, nil, util.code.border(false, width_4))
 
         util.assert_view(marks, {
-            '󰫎   1 󰲡 Heading',
-            '    2',
-            '󱘗   3 󱘗 rust',
-            '    4   fn main() {',
-            '    5       println!("Hello, World!");',
-            '    6   }',
-            '    7 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
-            '    8',
-            '    9 ● List Divider',
-            '   10',
-            '󰌠  11   󰌠 py',
-            '   12     print("hello")',
-            '   13',
-            '   14     print("world")',
-            '   15   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
-            '   16',
-            '   17 Paragraph Divider',
-            '   18',
-            '󰢱  19   󰢱 lua',
-            "   20     print('hello')",
-            '   21',
-            "   22     print('world')",
-            '   23 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
-            '   24',
-            '   25 ● List Divider',
-            '   26',
-            '   27 ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
-            "   28         print('Hello, World!')",
-            '   29 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
+            '󱘗 󱘗 rust',
+            '    fn main() {',
+            '        println!("Hello, World!");',
+            '    }',
+            '  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
+            '',
+            '  ● List Divider',
+            '',
+            '󰌠   󰌠 py',
+            '      print("hello")',
+            '',
+            '      print("world")',
+            '    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
+            '',
+            '  Paragraph Divider',
+            '',
+            '󰢱   󰢱 lua',
+            "      print('hello')",
+            '',
+            "      print('world')",
+            '  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
+            '',
+            '  ● List Divider',
+            '',
+            '  ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
+            "          print('Hello, World!')",
+            '  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
         })
     end)
 end)
