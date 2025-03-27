@@ -51,7 +51,6 @@ end
 ---@param col integer
 function Render:hide_equals(row, col)
     self.marks:add(true, row, col, {
-        end_row = row,
         end_col = col + 2,
         conceal = '',
     })

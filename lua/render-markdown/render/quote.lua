@@ -49,7 +49,7 @@ end
 ---@private
 ---@param node render.md.Node
 function Render:quote_marker(node)
-    self.marks:add_over('quote', node, {
+    self.marks:over('quote', node, {
         virt_text = { { node.text:gsub('>', self.data.icon), self.data.highlight } },
         virt_text_pos = 'overlay',
         virt_text_repeat_linebreak = self.data.repeat_linebreak,

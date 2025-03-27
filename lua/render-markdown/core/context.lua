@@ -12,8 +12,7 @@ local log = require('render-markdown.core.log')
 ---@field top_level_mode boolean
 
 ---@class render.md.context.Offset
----@field start_col integer
----@field end_col integer
+---@field col integer
 ---@field width integer
 
 ---@class render.md.Context
@@ -156,7 +155,7 @@ function Context:get_offset(node)
     local result = 0
     local offsets = self.offsets[node.start_row] or {}
     for _, offset in ipairs(offsets) do
-        if node.start_col <= offset.end_col and node.end_col > offset.start_col then
+        if node.start_col <= offset.col and node.end_col > offset.col then
             result = result + offset.width
         end
     end

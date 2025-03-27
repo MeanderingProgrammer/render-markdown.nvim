@@ -15,9 +15,9 @@ function Render:setup()
 end
 
 function Render:render()
-    self.marks:add_over(true, self.node, { conceal = '' })
+    self.marks:over(true, self.node, { conceal = '' })
     if self.comment.text ~= nil then
-        self.marks:add_over(true, self.node, {
+        self.marks:start(true, self.node, {
             virt_text = { { self.comment.text, self.comment.highlight } },
             virt_text_pos = 'inline',
         })

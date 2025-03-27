@@ -39,7 +39,7 @@ function Base:sign(enabled, text, highlight)
     if highlight ~= nil then
         sign_highlight = colors.combine(highlight, sign_highlight)
     end
-    self.marks:add('sign', self.node.start_row, self.node.start_col, {
+    self.marks:start('sign', self.node, {
         sign_text = text,
         sign_hl_group = sign_highlight,
     })
@@ -55,7 +55,7 @@ function Base:check_icon(icon, highlight)
     local right_pad = self.config.checkbox.right_pad
     if space < 0 then
         -- Not enough space to fit the icon in-place
-        return self.marks:add_over('check_icon', self.node, {
+        return self.marks:over('check_icon', self.node, {
             virt_text = self:append(line, right_pad),
             virt_text_pos = 'inline',
             conceal = '',
@@ -101,7 +101,7 @@ function Base:scope(element, node, highlight)
     if inline == nil then
         return
     end
-    self.marks:add_over(element, inline, { hl_group = highlight })
+    self.marks:over(element, inline, { hl_group = highlight })
 end
 
 ---@protected

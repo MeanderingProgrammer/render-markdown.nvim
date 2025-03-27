@@ -19,7 +19,7 @@ end
 
 function Render:render()
     local highlight = self.code.highlight_inline
-    self.marks:add_over('code_background', self.node, { hl_group = highlight })
+    self.marks:over('code_background', self.node, { hl_group = highlight })
     self:side_padding(highlight, self.node.start_row, self.node.start_col)
     self:side_padding(highlight, self.node.end_row, self.node.end_col)
 end

@@ -47,7 +47,7 @@ function Render:callout(callout)
     end
 
     local text, conceal = self:callout_title(callout)
-    self.marks:add_over('callout', self.node, {
+    self.marks:over('callout', self.node, {
         virt_text = { { text, callout.highlight } },
         virt_text_pos = 'overlay',
         conceal = conceal and '' or nil,
@@ -111,7 +111,7 @@ function Render:wiki_link()
     local body = wiki.body(ctx)
     if body == nil then
         -- Add icon
-        self.marks:add_over('link', self.node, {
+        self.marks:start('link', self.node, {
             virt_text = { { icon, highlight } },
             virt_text_pos = 'inline',
         })
@@ -127,7 +127,7 @@ function Render:wiki_link()
             table.insert(line, { icon .. body[1], body[2] })
         end
         -- Inline icon & body, hide original text
-        self.marks:add_over('link', self.node, {
+        self.marks:over('link', self.node, {
             virt_text = line,
             virt_text_pos = 'inline',
             conceal = '',
@@ -160,7 +160,7 @@ function Render:footnote(text)
     if value == nil then
         return
     end
-    self.marks:add_over('link', self.node, {
+    self.marks:over('link', self.node, {
         virt_text = { { value, self.link.highlight } },
         virt_text_pos = 'inline',
         conceal = '',

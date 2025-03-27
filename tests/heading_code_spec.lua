@@ -33,7 +33,7 @@ describe('heading_code.md', function()
             :add(row:get(), row:get(), 0, 6, util.heading.icon(6))
             :add(row:get(), row:inc(), 0, 0, util.heading.bg(6))
 
-        marks:add(row:inc(), row:get(), 0, 21, util.link('image'))
+        marks:add(row:inc(), nil, 0, nil, util.link('image'))
 
         marks:add(row:inc(2), nil, 0, nil, util.code.sign('python'))
         marks:add(row:get(), nil, 3, nil, util.code.icon('python'))

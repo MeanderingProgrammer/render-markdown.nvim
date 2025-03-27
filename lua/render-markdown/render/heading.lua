@@ -128,8 +128,8 @@ function Render:icon()
             return width
         end
         if self.heading.position == 'right' then
-            self.marks:add_over(true, marker, { conceal = '' }, { 0, 0, 0, 1 })
-            self.marks:add_over('head_icon', marker, {
+            self.marks:over(true, marker, { conceal = '' }, { 0, 0, 0, 1 })
+            self.marks:start('head_icon', marker, {
                 priority = 1000,
                 virt_text = { { icon, highlight } },
                 virt_text_pos = 'eol',
@@ -138,14 +138,14 @@ function Render:icon()
         else
             local padding = width - Str.width(icon)
             if self.heading.position == 'inline' or padding < 0 then
-                local added = self.marks:add_over('head_icon', marker, {
+                local added = self.marks:over('head_icon', marker, {
                     virt_text = { { icon, highlight } },
                     virt_text_pos = 'inline',
                     conceal = '',
                 }, { 0, 0, 0, 1 })
                 return added and Str.width(icon) or width
             else
-                self.marks:add_over('head_icon', marker, {
+                self.marks:over('head_icon', marker, {
                     virt_text = { { Str.pad(padding) .. icon, highlight } },
                     virt_text_pos = 'overlay',
                 })
@@ -158,7 +158,7 @@ function Render:icon()
             return 0
         end
         if self.heading.position == 'right' then
-            self.marks:add_over('head_icon', node, {
+            self.marks:start('head_icon', node, {
                 priority = 1000,
                 virt_text = { { icon, highlight } },
                 virt_text_pos = 'eol',
@@ -167,10 +167,9 @@ function Render:icon()
         else
             local added = true
             for row = node.start_row, node.end_row - 1 do
+                local text = row == node.start_row and icon or Str.pad(Str.width(icon))
                 local added_row = self.marks:add('head_icon', row, node.start_col, {
-                    end_row = row,
-                    end_col = node.end_col,
-                    virt_text = { { row == node.start_row and icon or Str.pad(Str.width(icon)), highlight } },
+                    virt_text = { { text, highlight } },
                     virt_text_pos = 'inline',
                 })
                 added = added and added_row
@@ -287,7 +286,7 @@ end
 
 ---@private
 function Render:conceal_underline()
-    self.marks:add_over(true, self.data.marker, { conceal = '' })
+    self.marks:over(true, self.data.marker, { conceal = '' })
 end
 
 return Render

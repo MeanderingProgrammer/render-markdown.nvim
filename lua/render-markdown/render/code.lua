@@ -162,7 +162,7 @@ function Render:language()
         -- This is lumped into the delimiter node and needs to be handled.
         local spaces = Str.spaces('start', delim.text)
         text = Str.pad(spaces - self.context:width(delim)) .. text
-        return self.marks:add('code_language', node.start_row, node.start_col, {
+        return self.marks:start('code_language', node, {
             virt_text = { { text, highlight } },
             virt_text_pos = 'inline',
         })

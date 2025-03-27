@@ -34,8 +34,8 @@ describe('table', function()
             :add(row:get(), row:get(), 2, 12, util.highlight('code'))
             :add(row:get(), nil, 13, nil, util.table.padding(2))
             :add(row:get(), row:get(), 13, 14, util.table.pipe(false))
+            :add(row:get(), nil, 15, nil, util.link('web'))
             :add(row:get(), nil, 15, nil, util.table.padding(16))
-            :add(row:get(), row:get(), 15, 38, util.link('web'))
             :add(row:get(), row:get(), 39, 40, util.table.pipe(false))
         marks
             :add(row:inc(), row:get(), 0, 1, util.table.pipe(false))
@@ -99,7 +99,7 @@ describe('table', function()
             :add(row:get(), nil, 13, nil, util.table.padding(2))
             :add(row:get(), row:get(), 13, 14, util.table.pipe(false))
             :add(row:get(), nil, 15, nil, util.table.padding(3))
-            :add(row:get(), row:get(), 15, 38, util.link('web'))
+            :add(row:get(), nil, 15, nil, util.link('web'))
             :add(row:get(), row:get(), 39, 40, util.table.pipe(false))
         marks
             :add(row:inc(), row:get(), 0, 1, util.table.pipe(false))
@@ -159,7 +159,7 @@ describe('table', function()
             :add(row:inc(), row:get(), 0, 1, util.table.pipe(false))
             :add(row:get(), row:get(), 2, 12, util.highlight('code'))
             :add(row:get(), row:get(), 13, 14, util.table.pipe(false))
-            :add(row:get(), row:get(), 15, 38, util.link('web'))
+            :add(row:get(), nil, 15, nil, util.link('web'))
             :add(row:get(), row:get(), 39, 40, util.table.pipe(false))
         marks
             :add(row:inc(), row:get(), 0, 1, util.table.pipe(false))
@@ -215,7 +215,7 @@ describe('table', function()
             virt_text_pos = 'overlay',
         })
         marks:add(row:get(), row:get(), 2, 12, util.highlight('code'))
-        marks:add(row:get(), row:get(), 15, 38, util.link('web'))
+        marks:add(row:get(), nil, 15, nil, util.link('web'))
         marks:add(row:inc(), row:get(), 0, 39, {
             virt_text = { { '│ &lt;1&gt; │ ==Itém 2==             │', 'RmTableRow' } },
             virt_text_pos = 'overlay',

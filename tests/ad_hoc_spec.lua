@@ -11,17 +11,17 @@ describe('ad hoc', function()
         })
         local marks = util.marks()
             :add(0, nil, 0, nil, util.heading.sign(2))
-            :add(0, 0, 0, 0, {
+            :add(0, nil, 0, nil, {
                 virt_text = { { '󰲣 ', 'RmH2:RmH2Bg' } },
                 virt_text_pos = 'inline',
             })
             :add(0, 1, 0, 0, util.heading.bg(2))
-            :add(1, 1, 0, 0, {
+            :add(1, nil, 0, nil, {
                 virt_text = { { '  ', 'RmH2:RmH2Bg' } },
                 virt_text_pos = 'inline',
             })
             :add(1, 2, 0, 0, util.heading.bg(2))
-            :add(2, 2, 0, 0, {
+            :add(2, nil, 0, nil, {
                 virt_text = { { '  ', 'RmH2:RmH2Bg' } },
                 virt_text_pos = 'inline',
             })
@@ -46,7 +46,7 @@ describe('ad hoc', function()
         local marks = util.marks()
             :add(0, 0, 0, 2, util.bullet(1))
             :add(0, 0, 2, 3, util.conceal())
-            :add(0, 0, 3, 14, util.link('wiki'))
+            :add(0, nil, 3, nil, util.link('wiki'))
             :add(0, 0, 14, 15, util.conceal())
         util.assert_view(marks, { '● 󱗖 Basic One Then normal text' })
     end)
@@ -56,7 +56,7 @@ describe('ad hoc', function()
         local marks = util.marks()
             :add(0, 0, 0, 2, util.bullet(1))
             :add(0, 0, 2, 3, util.conceal())
-            :add(0, 0, 3, 24, util.link('wiki'))
+            :add(0, nil, 3, nil, util.link('wiki'))
             :add(0, 0, 4, 13, util.conceal())
             :add(0, 0, 24, 25, util.conceal())
         util.assert_view(marks, { '● 󱗖 With Alias Something important' })
@@ -66,8 +66,8 @@ describe('ad hoc', function()
         util.setup.text({ '- <test@example.com> Email' })
         local marks = util.marks()
             :add(0, 0, 0, 2, util.bullet(1))
+            :add(0, nil, 2, nil, util.link('email'))
             :add(0, 0, 2, 3, util.conceal())
-            :add(0, 0, 2, 20, util.link('email'))
             :add(0, 0, 2, 20, util.highlight('link'))
             :add(0, 0, 19, 20, util.conceal())
         util.assert_view(marks, { '● 󰀓 test@example.com Email' })
@@ -77,8 +77,8 @@ describe('ad hoc', function()
         util.setup.text({ '- <http://www.github.com/> Bare URL' })
         local marks = util.marks()
             :add(0, 0, 0, 2, util.bullet(1))
+            :add(0, nil, 2, nil, util.link('git'))
             :add(0, 0, 2, 3, util.conceal())
-            :add(0, 0, 2, 26, util.link('git'))
             :add(0, 0, 2, 26, util.highlight('link'))
             :add(0, 0, 25, 26, util.conceal())
         util.assert_view(marks, { '● 󰊤 http://www.github.com/ Bare URL' })
@@ -88,7 +88,7 @@ describe('ad hoc', function()
         util.setup.text({ '- [Youtube Link](https://www.youtube.com/watch?v=dQw4w9WgXcQ)' })
         local marks = util.marks()
         marks:add(0, 0, 0, 2, util.bullet(1))
-        marks:add(0, 0, 2, 61, util.link('youtube'))
+        marks:add(0, nil, 2, nil, util.link('youtube'))
         util.assert_view(marks, { '● 󰗃 Youtube Link' })
     end)
 

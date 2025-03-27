@@ -86,7 +86,7 @@ end
 
 ---@private
 function Render:hide_marker()
-    self.marks:add_over('check_icon', self.data.marker, { conceal = '' }, { 0, self.data.spaces, 0, 0 })
+    self.marks:over('check_icon', self.data.marker, { conceal = '' }, { 0, self.data.spaces, 0, 0 })
 end
 
 ---@private
@@ -136,7 +136,7 @@ function Render:add_icon(icon, highlight)
     end
     local text = Str.pad(self.data.spaces) .. icon
     local overflow = Str.width(text) > Str.width(self.data.marker.text)
-    self.marks:add_over('bullet', self.data.marker, {
+    self.marks:over('bullet', self.data.marker, {
         virt_text = { { text, highlight } },
         virt_text_pos = overflow and 'inline' or 'overlay',
         conceal = overflow and '' or nil,

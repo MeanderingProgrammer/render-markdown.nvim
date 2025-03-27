@@ -32,9 +32,17 @@ end
 ---@param element render.md.mark.Element
 ---@param node render.md.Node
 ---@param opts render.md.MarkOpts
+---@return boolean
+function Marks:start(element, node, opts)
+    return self:add(element, node.start_row, node.start_col, opts)
+end
+
+---@param element render.md.mark.Element
+---@param node render.md.Node
+---@param opts render.md.MarkOpts
 ---@param offset? Range4
 ---@return boolean
-function Marks:add_over(element, node, opts, offset)
+function Marks:over(element, node, opts, offset)
     offset = offset or { 0, 0, 0, 0 }
     opts.end_row = node.end_row + offset[3]
     opts.end_col = node.end_col + offset[4]
@@ -112,10 +120,8 @@ function Marks:update_context(mark)
         })
     end
     if mark.opts.virt_text_pos == 'inline' then
-        local end_col = mark.opts.end_col or start_col
         self.context:add_offset(row, {
-            start_col = start_col,
-            end_col = end_col,
+            col = start_col,
             width = Str.line_width(mark.opts.virt_text),
         })
     end

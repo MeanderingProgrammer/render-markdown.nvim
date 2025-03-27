@@ -39,13 +39,13 @@ function Render:setup()
 end
 
 function Render:render()
-    self.marks:add_over('link', self.node, {
+    self.marks:start('link', self.node, {
         virt_text = { { self.data.icon, self.data.highlight } },
         virt_text_pos = 'inline',
     })
     if self.data.autolink then
         self:hide_bracket(self.node.start_col)
-        self.marks:add_over('link', self.node, { hl_group = self.data.highlight })
+        self.marks:over('link', self.node, { hl_group = self.data.highlight })
         self:hide_bracket(self.node.end_col - 1)
     end
 end

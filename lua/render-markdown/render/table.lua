@@ -251,7 +251,7 @@ function Render:delimiter()
     self:append(line, border[4] .. table.concat(sections, border[5]) .. border[6], self.table.head)
     self:append(line, Str.width(delim.node.text) - Str.line_width(line))
 
-    self.marks:add_over('table_border', delim.node, {
+    self.marks:over('table_border', delim.node, {
         virt_text = line,
         virt_text_pos = 'overlay',
     })
@@ -265,7 +265,7 @@ function Render:row(row)
 
     if vim.tbl_contains({ 'trimmed', 'padded', 'raw' }, self.table.cell) then
         for _, pipe in ipairs(row.pipes) do
-            self.marks:add_over('table_border', pipe, {
+            self.marks:over('table_border', pipe, {
                 virt_text = { { border[10], highlight } },
                 virt_text_pos = 'overlay',
             })
@@ -294,7 +294,7 @@ function Render:row(row)
             end
         end
     elseif self.table.cell == 'overlay' then
-        self.marks:add_over('table_border', row.node, {
+        self.marks:over('table_border', row.node, {
             virt_text = { { row.node.text:gsub('|', border[10]), highlight } },
             virt_text_pos = 'overlay',
         })
@@ -380,7 +380,7 @@ function Render:full()
 
         local line = self:append({}, spaces)
         self:append(line, text, highlight)
-        self.marks:add(false, node.start_row, node.start_col, {
+        self.marks:start(false, node, {
             virt_lines = { vim.list_extend(self:indent_line(true), line) },
             virt_lines_above = above,
         })

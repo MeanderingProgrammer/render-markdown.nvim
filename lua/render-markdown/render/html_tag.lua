@@ -22,7 +22,7 @@ end
 function Render:render()
     self:hide('start_tag')
     self:hide('end_tag')
-    self.marks:add(false, self.node.start_row, self.node.start_col, {
+    self.marks:start(false, self.node, {
         virt_text = { { self.tag.icon, self.tag.highlight } },
         virt_text_pos = 'inline',
     })
@@ -33,7 +33,7 @@ end
 function Render:hide(child)
     local node = self.node:child(child)
     if node ~= nil then
-        self.marks:add_over(true, node, { conceal = '' })
+        self.marks:over(true, node, { conceal = '' })
     end
 end
 
