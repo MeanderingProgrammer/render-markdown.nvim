@@ -100,8 +100,8 @@ function Conceal:get(node)
     local result = 0
     for _, section in ipairs(self:line(node).sections) do
         if node.start_col < section.end_col and node.end_col > section.start_col then
-            local amount = self:adjust(section.width, section.character)
-            result = result + amount
+            local width = self:adjust(section.width, section.character)
+            result = result + width
         end
     end
     return result

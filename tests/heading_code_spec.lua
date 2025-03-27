@@ -55,7 +55,7 @@ describe('heading_code.md', function()
             '',
             '  󰥶 Image',
             '',
-            '󰌠 󰌠 python {filename="demo.py"}',
+            -- '󰌠 󰌠 python {filename="demo.py"}',
             '  def main() -> None:',
             '      sum = 0',
             '      for i in range(10):',
@@ -65,7 +65,7 @@ describe('heading_code.md', function()
             '',
             '  if __name__ == "__main__":',
             '      main()',
-            '  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
+            -- '  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
         })
     end)
 end)

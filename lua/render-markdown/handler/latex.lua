@@ -1,6 +1,6 @@
 local Context = require('render-markdown.core.context')
 local Iter = require('render-markdown.lib.iter')
-local List = require('render-markdown.lib.list')
+local Marks = require('render-markdown.lib.marks')
 local Node = require('render-markdown.lib.node')
 local Str = require('render-markdown.lib.str')
 local log = require('render-markdown.core.log')
@@ -55,7 +55,7 @@ function M.parse(ctx)
     local above = latex.position == 'above'
     local row = above and node.start_row or node.end_row
 
-    local marks = List.new_marks(ctx.buf, true)
+    local marks = Marks.new(ctx.buf, true)
     marks:add(false, row, 0, {
         virt_lines = lines,
         virt_lines_above = above,

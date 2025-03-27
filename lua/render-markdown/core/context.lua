@@ -11,13 +11,18 @@ local log = require('render-markdown.core.log')
 ---@field mode string
 ---@field top_level_mode boolean
 
+---@class render.md.context.Offset
+---@field start_col integer
+---@field end_col integer
+---@field width integer
+
 ---@class render.md.Context
 ---@field private buf integer
 ---@field private win integer
 ---@field private ranges render.md.Range[]
 ---@field private callouts table<integer, render.md.CustomCallout>
 ---@field private checkboxes table<integer, render.md.CustomCheckbox>
----@field private offsets table<integer, [integer, integer, integer][]>
+---@field private offsets table<integer, render.md.context.Offset[]>
 ---@field private window_width? integer
 ---@field mode string
 ---@field top_level_mode boolean
@@ -133,17 +138,15 @@ function Context:width(node)
 end
 
 ---@param row integer
----@param start_col integer
----@param end_col integer
----@param amount integer
-function Context:add_offset(row, start_col, end_col, amount)
-    if amount == 0 then
+---@param offset render.md.context.Offset
+function Context:add_offset(row, offset)
+    if offset.width <= 0 then
         return
     end
     if self.offsets[row] == nil then
         self.offsets[row] = {}
     end
-    table.insert(self.offsets[row], { start_col, end_col, amount })
+    table.insert(self.offsets[row], offset)
 end
 
 ---@private
@@ -151,10 +154,10 @@ end
 ---@return integer
 function Context:get_offset(node)
     local result = 0
-    local ranges = self.offsets[node.start_row] or {}
-    for _, range in ipairs(ranges) do
-        if node.start_col <= range[2] and node.end_col > range[1] then
-            result = result + range[3]
+    local offsets = self.offsets[node.start_row] or {}
+    for _, offset in ipairs(offsets) do
+        if node.start_col <= offset.end_col and node.end_col > offset.start_col then
+            result = result + offset.width
         end
     end
     return result

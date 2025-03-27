@@ -1,5 +1,5 @@
 local Context = require('render-markdown.core.context')
-local List = require('render-markdown.lib.list')
+local Marks = require('render-markdown.lib.marks')
 local state = require('render-markdown.state')
 local treesitter = require('render-markdown.core.treesitter')
 
@@ -18,7 +18,7 @@ function Handler.new(buf)
     local self = setmetatable({}, Handler)
     self.config = state.get(buf)
     self.context = Context.get(buf)
-    self.marks = List.new_marks(buf, true)
+    self.marks = Marks.new(buf, true)
     self.query = treesitter.parse(
         'markdown_inline',
         [[
