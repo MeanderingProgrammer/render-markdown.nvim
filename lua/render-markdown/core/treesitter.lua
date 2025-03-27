@@ -1,3 +1,5 @@
+local Env = require('render-markdown.lib.env')
+
 ---@type table<string, vim.treesitter.Query>
 local queries = {}
 
@@ -24,12 +26,16 @@ function M.inject(language, injection)
     end
 
     local query = ''
-    local files = vim.treesitter.query.get_files(language, 'injections')
-    for _, file in ipairs(files) do
-        local f = io.open(file, 'r')
-        if f ~= nil then
-            query = query .. f:read('*all') .. '\n'
-            f:close()
+    if Env.has_11 then
+        query = query .. ';; extends' .. '\n'
+    else
+        local files = vim.treesitter.query.get_files(language, 'injections')
+        for _, file in ipairs(files) do
+            local f = io.open(file, 'r')
+            if f ~= nil then
+                query = query .. f:read('*all') .. '\n'
+                f:close()
+            end
         end
     end
     query = query .. injection.query
