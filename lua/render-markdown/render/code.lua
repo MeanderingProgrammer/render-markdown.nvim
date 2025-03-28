@@ -100,7 +100,7 @@ function Render:render()
 
     local background = self:background_enabled(language)
     if background then
-        self:background(start_row + 1, end_row - 1)
+        self:background(start_row + 1, end_row - 1, self.code.highlight)
     end
     self:left_pad(background)
 end
@@ -117,6 +117,7 @@ function Render:language(language, delim)
         return false
     end
 
+    local border_highlight = self.code.highlight_border
     local padding = self.data.language_padding
 
     local icon, icon_highlight = Icons.get(language.text)
@@ -137,8 +138,11 @@ function Render:language(language, delim)
         return false
     end
 
-    local highlight = { icon_highlight or self.code.highlight_fallback }
-    table.insert(highlight, self.code.highlight)
+    local highlight = {}
+    table.insert(highlight, icon_highlight or self.code.highlight_fallback)
+    if type(border_highlight) == 'string' then
+        table.insert(highlight, border_highlight)
+    end
 
     if self.code.position == 'left' then
         text = Str.pad(padding) .. text
@@ -171,18 +175,18 @@ end
 ---@param above boolean
 ---@param empty boolean
 function Render:border(delim, above, empty)
-    if self.code.border == 'none' or delim == nil then
+    local highlight = self.code.highlight_border
+    if self.code.border == 'none' or type(highlight) == 'boolean' or delim == nil then
         -- skip
     elseif self.code.border == 'thick' or not empty then
-        self:background(delim.start_row, delim.start_row)
+        self:background(delim.start_row, delim.start_row, highlight)
     elseif self.code.border == 'hide' and self.marks:over(true, delim, { conceal_lines = '' }) then
         -- successfully added
     else
-        local width, highlight = self.data.width - self.data.col, self.code.highlight
         local border = above and self.code.above or self.code.below
-        local line = { { border:rep(width), colors.bg_to_fg(highlight) } }
+        local width = self.data.width - self.data.col
         self.marks:add('code_border', delim.start_row, self.data.col, {
-            virt_text = line,
+            virt_text = { { border:rep(width), colors.bg_to_fg(highlight) } },
             virt_text_pos = 'overlay',
         })
     end
@@ -196,17 +200,18 @@ function Render:background_enabled(language)
         return false
     end
     local disable = self.code.disable_background
-    if type(disable) == 'table' then
-        return language == nil or not vim.tbl_contains(disable, language.text)
-    else
+    if type(disable) == 'boolean' then
         return not disable
+    else
+        return language == nil or not vim.tbl_contains(disable, language.text)
     end
 end
 
 ---@private
 ---@param start_row integer
 ---@param end_row integer
-function Render:background(start_row, end_row)
+---@param highlight string
+function Render:background(start_row, end_row, highlight)
     local win_col, padding = 0, {}
     if self.code.width == 'block' then
         win_col = self.data.margin + self.data.max_width + self.data.indent
@@ -215,7 +220,7 @@ function Render:background(start_row, end_row)
     for row = start_row, end_row do
         self.marks:add('code_background', row, self.data.col, {
             end_row = row + 1,
-            hl_group = self.code.highlight,
+            hl_group = highlight,
             hl_eol = true,
         })
         if win_col > 0 and #padding > 0 then

@@ -256,7 +256,7 @@ function M.code.icon(name, padding)
     local prefix = string.rep(' ', padding or 0)
     ---@type vim.api.keyset.set_extmark
     return {
-        virt_text = { { prefix .. icon .. name, highlight .. ':' .. 'RmCode' } },
+        virt_text = { { prefix .. icon .. name, highlight .. ':' .. 'RmCodeBorder' } },
         virt_text_pos = 'inline',
     }
 end
@@ -282,16 +282,24 @@ function M.code.hide(width)
     }
 end
 
----@param above boolean
----@param width integer
+---@param kind 'above'|'below'
+---@param width? integer
 ---@return vim.api.keyset.set_extmark
-function M.code.border(above, width)
-    local icon = above and '▄' or '▀'
-    ---@type vim.api.keyset.set_extmark
-    return {
-        virt_text = { { icon:rep(width), 'Rm_bgtofg_RmCode' } },
-        virt_text_pos = 'overlay',
-    }
+function M.code.border(kind, width)
+    if width == nil then
+        ---@type vim.api.keyset.set_extmark
+        return {
+            hl_eol = true,
+            hl_group = 'RmCodeBorder',
+        }
+    else
+        local icon = kind == 'above' and '▄' or '▀'
+        ---@type vim.api.keyset.set_extmark
+        return {
+            virt_text = { { icon:rep(width), 'Rm_bgtofg_RmCodeBorder' } },
+            virt_text_pos = 'overlay',
+        }
+    end
 end
 
 ---@param spaces integer

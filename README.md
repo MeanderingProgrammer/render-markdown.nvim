@@ -443,14 +443,16 @@ require('render-markdown').setup({
         above = '▄',
         -- Used below code blocks for thin border.
         below = '▀',
+        -- Padding to add to the left & right of inline code.
+        inline_pad = 0,
         -- Highlight for code blocks.
         highlight = 'RenderMarkdownCode',
         -- Highlight for language, overrides icon provider value.
         highlight_language = nil,
+        -- Highlight for border, use false to add no highlight.
+        highlight_border = 'RenderMarkdownCodeBorder',
         -- Highlight for language, used if icon provider does not have a value.
         highlight_fallback = 'RenderMarkdownCodeFallback',
-        -- Padding to add to the left & right of inline code.
-        inline_pad = 0,
         -- Highlight for inline code.
         highlight_inline = 'RenderMarkdownCodeInline',
     },
@@ -995,14 +997,16 @@ require('render-markdown').setup({
         above = '▄',
         -- Used below code blocks for thin border.
         below = '▀',
+        -- Padding to add to the left & right of inline code.
+        inline_pad = 0,
         -- Highlight for code blocks.
         highlight = 'RenderMarkdownCode',
         -- Highlight for language, overrides icon provider value.
         highlight_language = nil,
+        -- Highlight for border, use false to add no highlight.
+        highlight_border = 'RenderMarkdownCodeBorder',
         -- Highlight for language, used if icon provider does not have a value.
         highlight_fallback = 'RenderMarkdownCodeFallback',
-        -- Padding to add to the left & right of inline code.
-        inline_pad = 0,
         -- Highlight for inline code.
         highlight_inline = 'RenderMarkdownCodeInline',
     },
@@ -1437,6 +1441,7 @@ The table below shows all the highlight groups with their default link
 | RenderMarkdownH5Bg            | DiffDelete                         | H5 background line         |
 | RenderMarkdownH6Bg            | DiffDelete                         | H6 background line         |
 | RenderMarkdownCode            | ColorColumn                        | Code block background      |
+| RenderMarkdownCodeBorder      | RenderMarkdownCode                 | Code border background     |
 | RenderMarkdownCodeFallback    | Normal                             | Fallback for code language |
 | RenderMarkdownCodeInline      | RenderMarkdownCode                 | Inline code background     |
 | RenderMarkdownInlineHighlight | RenderMarkdownCodeInline           | Inline highlights contents |

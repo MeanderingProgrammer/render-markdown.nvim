@@ -164,10 +164,11 @@
 ---@field border render.md.code.Border
 ---@field above string
 ---@field below string
+---@field inline_pad integer
 ---@field highlight string
 ---@field highlight_language? string
+---@field highlight_border string|boolean
 ---@field highlight_fallback string
----@field inline_pad integer
 ---@field highlight_inline string
 
 ---@class (exact) render.md.Paragraph: render.md.BaseComponent

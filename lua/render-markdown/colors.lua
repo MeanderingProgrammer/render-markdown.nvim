@@ -31,6 +31,7 @@ M.colors = {
     H6Bg            = 'DiffDelete',
     -- Code
     Code            = 'ColorColumn',
+    CodeBorder      = 'RenderMarkdownCode',
     CodeFallback    = 'Normal',
     CodeInline      = 'RenderMarkdownCode',
     -- General

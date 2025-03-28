@@ -233,10 +233,11 @@ local M = {}
 ---@field border? render.md.code.Border
 ---@field above? string
 ---@field below? string
+---@field inline_pad? integer
 ---@field highlight? string
 ---@field highlight_language? string
+---@field highlight_border? string|boolean
 ---@field highlight_fallback? string
----@field inline_pad? integer
 ---@field highlight_inline? string
 
 ---@class (exact) render.md.UserParagraph: render.md.UserBaseComponent
@@ -621,14 +622,16 @@ M.default_config = {
         above = '▄',
         -- Used below code blocks for thin border.
         below = '▀',
+        -- Padding to add to the left & right of inline code.
+        inline_pad = 0,
         -- Highlight for code blocks.
         highlight = 'RenderMarkdownCode',
         -- Highlight for language, overrides icon provider value.
         highlight_language = nil,
+        -- Highlight for border, use false to add no highlight.
+        highlight_border = 'RenderMarkdownCodeBorder',
         -- Highlight for language, used if icon provider does not have a value.
         highlight_fallback = 'RenderMarkdownCodeFallback',
-        -- Padding to add to the left & right of inline code.
-        inline_pad = 0,
         -- Highlight for inline code.
         highlight_inline = 'RenderMarkdownCodeInline',
     },

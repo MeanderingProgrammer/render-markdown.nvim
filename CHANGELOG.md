@@ -17,10 +17,16 @@
   [8ee2701](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/8ee2701a6c4cdaef7ea0b27c13c26971ae3c9761)
   [7bf951b](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7bf951b8ad93d47b90be290be6fc60da5788ddaa)
 - code border for different conceal settings [e724a49](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/e724a49dee315744d6f5d3c651ddd604cc7afc52)
+- use builtin extends query in vim.treesitter.query.set for injections [c91fa46](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c91fa46fc8d79f5577beac70a459f30ec17a60c2)
+- completion filter for callouts and checkboxes [#380](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/380)
+  [84d413b](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/84d413b0c432adaeaf3dcaac646638bd99d06aa6)
 
 ### Bug Fixes
 
 - account for indent when right aligning code language [125258a](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/125258ac5bccd21651505d78dbd6120906243749)
+- support for code border for 0.11, disable conceal_lines highlights [#351](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/351)
+  [#352](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/352)
+  [e6c8081](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/e6c8081691881fd63b4d72cb472094ac190ac56e)
 
 ### Collaborator Shoutouts
 

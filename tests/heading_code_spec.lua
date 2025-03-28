@@ -40,7 +40,8 @@ describe('heading_code.md', function()
             :add(row:get(), row:get(), 0, 3, util.conceal())
             :add(row:get(), nil, 3, nil, util.code.icon('python'))
             :add(row:get(), row:get(), 3, 9, util.conceal())
-        for _ = 13, 22 do
+            :add(row:get(), row:inc(), 0, 0, util.code.border('above'))
+        for _ = 14, 22 do
             marks:add(row:get(), row:inc(), 0, 0, util.code.bg())
         end
         marks:add(row:get(), row:get(), 0, 3, util.conceal())
