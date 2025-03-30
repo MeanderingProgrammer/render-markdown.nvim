@@ -43,11 +43,11 @@ function Render:setup()
     local atx = nil
     local marker = nil
     local level = nil
-    if self.node.type == 'atx_heading' then
+    if self.node.type == 'atx_heading' and self.heading.atx then
         atx = true
         marker = assert(self.node:child_at(0), 'atx heading expected child marker')
         level = Str.width(marker.text)
-    elseif self.node.type == 'setext_heading' then
+    elseif self.node.type == 'setext_heading' and self.heading.setext then
         atx = false
         marker = assert(self.node:child_at(1), 'ext heading expected child underline')
         level = marker.type == 'setext_h1_underline' and 1 or 2

@@ -261,6 +261,8 @@ local M = {}
 ---@alias render.md.heading.Width 'full'|'block'
 
 ---@class (exact) render.md.UserHeading: render.md.UserBaseComponent
+---@field atx? boolean
+---@field setext? boolean
 ---@field sign? boolean
 ---@field icons? render.md.heading.Icons
 ---@field position? render.md.heading.Position
@@ -482,6 +484,10 @@ M.default_config = {
         enabled = true,
         -- Additional modes to render headings.
         render_modes = false,
+        -- Turn on / off atx heading rendering.
+        atx = true,
+        -- Turn on / off setext heading rendering.
+        setext = true,
         -- Turn on / off any sign column related rendering.
         sign = true,
         -- Replaces '#+' of 'atx_h._marker'.

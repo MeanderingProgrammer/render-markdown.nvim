@@ -176,6 +176,8 @@
 ---@field min_width integer
 
 ---@class (exact) render.md.Heading: render.md.BaseComponent
+---@field atx boolean
+---@field setext boolean
 ---@field sign boolean
 ---@field icons render.md.heading.Icons
 ---@field position render.md.heading.Position

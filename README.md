@@ -303,6 +303,10 @@ require('render-markdown').setup({
         enabled = true,
         -- Additional modes to render headings.
         render_modes = false,
+        -- Turn on / off atx heading rendering.
+        atx = true,
+        -- Turn on / off setext heading rendering.
+        setext = true,
         -- Turn on / off any sign column related rendering.
         sign = true,
         -- Replaces '#+' of 'atx_h._marker'.
@@ -827,6 +831,10 @@ require('render-markdown').setup({
         enabled = true,
         -- Additional modes to render headings.
         render_modes = false,
+        -- Turn on / off atx heading rendering.
+        atx = true,
+        -- Turn on / off setext heading rendering.
+        setext = true,
         -- Turn on / off any sign column related rendering.
         sign = true,
         -- Replaces '#+' of 'atx_h._marker'.
