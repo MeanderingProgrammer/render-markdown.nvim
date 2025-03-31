@@ -5,12 +5,12 @@ local state = require('render-markdown.state')
 local M = {}
 
 ---@private
-M.version = '8.1.23'
+M.version = '8.1.24'
 
 function M.check()
     M.start('version')
     vim.health.ok('plugin ' .. M.version)
-    M.neovim('0.9', '0.10')
+    M.neovim('0.9', '0.11')
 
     M.start('configuration')
     local errors = state.validate()

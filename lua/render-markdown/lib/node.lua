@@ -1,3 +1,6 @@
+local Iter = require('render-markdown.lib.iter')
+local Str = require('render-markdown.lib.str')
+
 ---@class render.md.Node
 ---@field private buf integer
 ---@field private node TSNode
@@ -27,13 +30,6 @@ function Node.new(buf, node)
     return self
 end
 
----@private
----@param node TSNode
----@return render.md.Node
-function Node:create(node)
-    return Node.new(self.buf, node)
-end
-
 ---@param a render.md.Node
 ---@param b render.md.Node
 ---@return boolean
@@ -45,14 +41,16 @@ function Node.__lt(a, b)
     end
 end
 
+---@private
+---@param node TSNode
+---@return render.md.Node
+function Node:create(node)
+    return Node.new(self.buf, node)
+end
+
 ---@return TSNode
 function Node:get()
     return self.node
-end
-
----@return boolean
-function Node:has_error()
-    return self.node:has_error()
 end
 
 ---@return integer[]
@@ -169,6 +167,12 @@ function Node:for_each_child(callback)
     end
 end
 
+---@return string?
+function Node:after()
+    local row, col = self.end_row, self.end_col
+    return vim.api.nvim_buf_get_text(self.buf, row, col, row, col + 1, {})[1]
+end
+
 ---@param position 'above'|'first'|'below'|'last'
 ---@param by integer
 ---@return string?
@@ -186,15 +190,10 @@ function Node:line(position, by)
     return row ~= nil and vim.api.nvim_buf_get_lines(self.buf, row, row + 1, false)[1] or nil
 end
 
----@return string[]
-function Node:lines()
-    return vim.api.nvim_buf_get_lines(self.buf, self.start_row, self.end_row, false)
-end
-
----@return string?
-function Node:after()
-    local row, col = self.end_row, self.end_col
-    return vim.api.nvim_buf_get_text(self.buf, row, col, row, col + 1, {})[1]
+---@return integer[]
+function Node:widths()
+    local lines = vim.api.nvim_buf_get_lines(self.buf, self.start_row, self.end_row, false)
+    return Iter.list.map(lines, Str.width)
 end
 
 return Node

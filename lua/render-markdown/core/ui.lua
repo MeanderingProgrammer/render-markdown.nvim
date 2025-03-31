@@ -132,7 +132,8 @@ function M.run_update(buf, win, change)
     end
 
     if next_state == 'rendered' then
-        if not buffer:has_marks() or parse then
+        local initial = not buffer:has_marks()
+        if initial or parse then
             M.clear(buf, buffer)
             buffer:set_marks(M.parse_buffer({
                 buf = buf,

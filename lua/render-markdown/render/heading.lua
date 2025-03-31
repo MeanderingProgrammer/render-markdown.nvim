@@ -1,5 +1,4 @@
 local Base = require('render-markdown.render.base')
-local Iter = require('render-markdown.lib.iter')
 local List = require('render-markdown.lib.list')
 local Str = require('render-markdown.lib.str')
 local colors = require('render-markdown.colors')
@@ -187,15 +186,15 @@ function Render:width(icon_width)
     if self.data.atx then
         width = width + self.context:width(self.node:child('inline'))
     else
-        width = width + vim.fn.max(Iter.list.map(self.node:lines(), Str.width))
+        width = width + vim.fn.max(self.node:widths())
     end
-    local left_padding = self.context:to_width(self.data.left_pad, width)
-    local right_padding = self.context:to_width(self.data.right_pad, width)
-    width = math.max(left_padding + width + right_padding, self.data.min_width)
+    local left = self.context:percent(self.data.left_pad, width)
+    local right = self.context:percent(self.data.right_pad, width)
+    width = math.max(left + width + right, self.data.min_width)
     ---@type render.md.width.Heading
     return {
-        margin = self.context:to_width(self.data.left_margin, width),
-        padding = left_padding,
+        margin = self.context:percent(self.data.left_margin, width),
+        padding = left,
         content = width,
     }
 end

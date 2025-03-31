@@ -94,7 +94,7 @@ function Render:wiki_link()
     local sections = Str.split(self.node.text:sub(2, -2), '|')
     ---@type render.md.LinkContext
     local ctx = {
-        buf = self.context:get_buf(),
+        buf = self.context.buf,
         row = self.node.start_row,
         start_col = self.node.start_col - 1,
         end_col = self.node.end_col + 1,

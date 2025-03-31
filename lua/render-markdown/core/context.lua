@@ -16,13 +16,12 @@ local log = require('render-markdown.core.log')
 ---@field width integer
 
 ---@class render.md.Context
----@field private buf integer
----@field private win integer
 ---@field private ranges render.md.Range[]
 ---@field private callouts table<integer, render.md.CustomCallout>
 ---@field private checkboxes table<integer, render.md.CustomCheckbox>
 ---@field private offsets table<integer, render.md.context.Offset[]>
----@field private window_width? integer
+---@field buf integer
+---@field win integer
 ---@field mode string
 ---@field top_level_mode boolean
 ---@field conceal render.md.Conceal
@@ -35,23 +34,21 @@ Context.__index = Context
 ---@return render.md.Context
 function Context.new(props, offset)
     local self = setmetatable({}, Context)
-    self.buf = props.buf
-    self.win = props.win
 
     local ranges = {}
-    for _, window in ipairs(Env.buf.windows(self.buf)) do
-        table.insert(ranges, Context.compute_range(self.buf, window, offset))
+    for _, window in ipairs(Env.buf.windows(props.buf)) do
+        table.insert(ranges, Context.compute_range(props.buf, window, offset))
     end
     self.ranges = Range.coalesce(ranges)
-
     self.callouts = {}
     self.checkboxes = {}
     self.offsets = {}
-    self.window_width = nil
 
+    self.buf = props.buf
+    self.win = props.win
     self.mode = props.mode
     self.top_level_mode = props.top_level_mode
-    self.conceal = Conceal.new(self, self.buf, self.win)
+    self.conceal = Conceal.new(self)
     self.last_heading = nil
 
     return self
@@ -91,11 +88,6 @@ function Context:skip(component)
     end
     -- Enabled components in component modes should not be skipped
     return not Env.mode.is(self.mode, component.render_modes)
-end
-
----@return integer
-function Context:get_buf()
-    return self.buf
 end
 
 ---@param row integer
@@ -162,26 +154,18 @@ function Context:get_offset(node)
     return result
 end
 
----@param offset number
----@param width integer
+---@param value number
+---@param used integer
 ---@return integer
-function Context:to_width(offset, width)
-    if offset <= 0 then
+function Context:percent(value, used)
+    if value <= 0 then
         return 0
-    elseif offset < 1 then
-        return math.floor(((self:get_width() - width) * offset) + 0.5)
+    elseif value < 1 then
+        local available = Env.win.width(self.win) - used
+        return math.floor((available * value) + 0.5)
     else
-        return offset
+        return value
     end
-end
-
----@private
----@return integer
-function Context:get_width()
-    if self.window_width == nil then
-        self.window_width = Env.win.width(self.win)
-    end
-    return self.window_width
 end
 
 ---@param win integer

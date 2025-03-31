@@ -48,7 +48,7 @@ function Render:setup()
     if self.table.style == 'none' then
         return false
     end
-    if self.node:has_error() then
+    if self.node:get():has_error() then
         return false
     end
 

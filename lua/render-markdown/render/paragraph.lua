@@ -1,6 +1,4 @@
 local Base = require('render-markdown.render.base')
-local Iter = require('render-markdown.lib.iter')
-local Str = require('render-markdown.lib.str')
 
 ---@class render.md.render.Paragraph: render.md.Renderer
 ---@field private paragraph render.md.Paragraph
@@ -20,9 +18,9 @@ function Render:setup()
 end
 
 function Render:render()
-    local width = vim.fn.max(Iter.list.map(self.node:lines(), Str.width))
+    local width = vim.fn.max(self.node:widths())
     width = math.max(width, self.paragraph.min_width)
-    local margin = self.context:to_width(self.paragraph.left_margin, width)
+    local margin = self.context:percent(self.paragraph.left_margin, width)
     local line = self:append({}, margin)
     if #line == 0 then
         return

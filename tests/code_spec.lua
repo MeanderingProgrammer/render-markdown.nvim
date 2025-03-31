@@ -187,7 +187,7 @@ describe('code', function()
 
         marks:add(row:inc(2), row:get(), 0, 2, util.bullet(1))
 
-        local width_4 = (2 * vim.o.tabstop) + 24
+        local width_4 = (3 * vim.o.tabstop) + 22
         marks
             :add(row:inc(2), nil, 0, nil, util.code.border('above', width_4))
             :add(row:get(), row:get(), 0, 3, util.conceal())
@@ -222,9 +222,9 @@ describe('code', function()
             '',
             '  ● List Divider',
             '',
-            '  ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
+            '  ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
             "          print('Hello, World!')",
-            '  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
+            '  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
         })
     end)
 end)

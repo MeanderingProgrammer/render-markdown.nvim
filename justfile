@@ -10,7 +10,7 @@ update:
   ../../open-source/panvimdoc/panvimdoc.sh \
     --project-name render-markdown \
     --input-file README.md \
-    --vim-version 0.10.0
+    --vim-version 0.11.0
 
 test:
   just busted "tests"

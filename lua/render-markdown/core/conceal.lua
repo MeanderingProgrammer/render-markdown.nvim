@@ -21,14 +21,12 @@ local Conceal = {}
 Conceal.__index = Conceal
 
 ---@param context render.md.Context
----@param buf integer
----@param win integer
 ---@return render.md.Conceal
-function Conceal.new(context, buf, win)
+function Conceal.new(context)
     local self = setmetatable({}, Conceal)
     self.context = context
-    self.buf = buf
-    self.level = Env.win.get(win, 'conceallevel')
+    self.buf = context.buf
+    self.level = Env.win.get(context.win, 'conceallevel')
     self.computed = false
     self.lines = {}
     return self
