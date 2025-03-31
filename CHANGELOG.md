@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 8.2.0 (2025-03-31)
+
 ### Features
 
 - enabled flag for link footnote [#362](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/362)
@@ -20,6 +22,11 @@
 - use builtin extends query in vim.treesitter.query.set for injections [c91fa46](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c91fa46fc8d79f5577beac70a459f30ec17a60c2)
 - completion filter for callouts and checkboxes [#380](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/380)
   [84d413b](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/84d413b0c432adaeaf3dcaac646638bd99d06aa6)
+- separate code border highlight, allow false value [a1fc4e5](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/a1fc4e559252baa128c471adadf0be045abd542d)
+- ability to enable and disable atx and setext heading rendering [#381](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/381)
+  [a020c88](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/a020c88e9552b50916a78dec9eeb4656c6391e6d)
+- reduce height of LSP hover doc window based on concealed lines [#384](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/384)
+  [17b839b](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/17b839bba4c5c0c791fec0f7015c7d0e4eac30b8)
 
 ### Bug Fixes
 
