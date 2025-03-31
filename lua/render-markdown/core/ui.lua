@@ -1,4 +1,5 @@
 local Buffer = require('render-markdown.core.buffer')
+local Compat = require('render-markdown.lib.compat')
 local Context = require('render-markdown.core.context')
 local Env = require('render-markdown.lib.env')
 local Extmark = require('render-markdown.core.extmark')
@@ -144,6 +145,9 @@ function M.run_update(buf, win, change)
         end
         local hidden = config:hidden(mode, row)
         local extmarks = buffer:get_marks()
+        if initial then
+            Compat.lsp_window_height(win, extmarks)
+        end
         for _, extmark in ipairs(extmarks) do
             if extmark:get().conceal and extmark:inside(hidden) then
                 extmark:hide(M.ns, buf)

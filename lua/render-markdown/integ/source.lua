@@ -29,7 +29,7 @@ end
 ---@return lsp.CompletionItem[]?
 function M.items(buf, row, col)
     buf = buf == 0 and Env.buf.current() or buf
-    local node = M.node(buf, row, col)
+    local node = M.node(buf, row, col, 'markdown')
     if node == nil or node:range() ~= row then
         return nil
     end
@@ -72,10 +72,11 @@ end
 ---@param buf integer
 ---@param row integer
 ---@param col integer
+---@param lang string
 ---@return TSNode?
-function M.node(buf, row, col)
+function M.node(buf, row, col, lang)
     -- Parse current row to get up to date node
-    local has_parser, parser = pcall(vim.treesitter.get_parser, buf)
+    local has_parser, parser = pcall(vim.treesitter.get_parser, buf, lang)
     if not has_parser or parser == nil then
         return nil
     end
@@ -83,8 +84,8 @@ function M.node(buf, row, col)
 
     local node = vim.treesitter.get_node({
         bufnr = buf,
-        lang = 'markdown',
         pos = { row, col },
+        lang = lang,
     })
     if node ~= nil and node:type() == 'paragraph' then
         node = node:prev_sibling()
