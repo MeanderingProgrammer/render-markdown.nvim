@@ -41,6 +41,14 @@ which works because the simple string width calculation is if anything going to 
 an over-estimate which is not really a big deal, just adds some extra padding in
 the worst case but the block remains contiguous.
 
+The `colorcolumn` will also be missing on any `virt_lines` marks. This applies to
+the lines above and below pipe tables, heading borders, latex formulas, and potentially
+others added after the time of writing. With this limitation we have no way around
+it other than re-implementing `colorcolumn` in this plugin, which is not something
+the author has any interest in doing. Ideally neovim would be able to detect new
+virtual lines and apply the `colorcolumn` to them, I do not believe there is any
+intentions to do this since virtual lines exist mostly outside the standard buffer.
+
 Below are a few things to try out to improve the aesthetic:
 
 - Use `win_options` to disable `colorcolumn` when rendering, this is my personal
