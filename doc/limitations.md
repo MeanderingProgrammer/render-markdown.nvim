@@ -1,5 +1,70 @@
 # Limitations
 
+## `block` Width Removes Column Features
+
+[ISSUE #385](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/385)
+
+This problem impacts both `code` & `heading` rendering when using
+`{ width = 'block' }`. Regardless of how wide the actual content is all `colorcolumn`
+icons will be hidden on the intersecting lines and `cursorline` will not work.
+
+This occurs because there is no way to create a background highlight that starts
+and ends at specific columns. So instead to achieve the effect we combine 2 highlights:
+
+1. `hl_group` + `hl_eol`: results in the entire line being highlighted
+2. `virt_text` with many spaces using the background highlight + `virt_text_win_col`:
+   results in hiding the highlight after our target column
+
+Why does it work like this? To explain that lets see how else we could implement
+this. The starting point would be to avoid highlighting the entire line, so we don't
+then need to hide the highlight. This part is easy, just remove `hl_eol = true` from
+the first mark, done!
+
+Now we have all the inner text highlighted with the background, so the problem is
+now to extend each one of these so it reaches our target column.
+
+Your first thought might be to use `virt_text_pos = 'eol'`, and do some basic math
+to figure out how long to make each line. Well, unfortunately `eol` does not mean
+right at the end of the line, there's actually a space that gets added before the
+mark starts that we cannot get rid of, so this one is a non-starter.
+
+Your second thought might be to use `virt_text_win_col`, but set it to be right after
+each line, after that it's the same as the previous approach. To make this work we
+need to compute the width of each line exactly. If we make it one too large we'll
+have an empty space, too small and we'll cut off text in the code block. To do this
+correctly we'll need to properly handle concealed ranges for all of the code blocks.
+This isn't impossible but it is slow and error prone since we also need to handle
+the odd case where another `markdown` block is nested.
+
+To avoid all this additional complexity we take the approach of using 2 highlights
+which works because the simple string width calculation is if anything going to be
+an over-estimate which is not really a big deal, just adds some extra padding in
+the worst case but the block remains contiguous.
+
+Below are a few things to try out to improve the aesthetic:
+
+- Use `win_options` to disable `colorcolumn` when rendering, this is my personal
+  favorite since `colorcolumn` is really only helpful when editing
+
+```lua
+require('render-markdown').setup({
+    win_options = {
+        colorcolumn = { default = '80', rendered = '' },
+    },
+})
+```
+
+- Set the `min_width` options to the same value as `colorcolumn`
+
+```lua
+require('render-markdown').setup({
+    heading = { width = 'block', min_width = 80 },
+    code = { width = 'block', min_width = 80 },
+})
+```
+
+- Do not use `block` width, keep the default value of `full`
+
 ## `latex` Formula Positioning
 
 [ISSUE #6](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/6)

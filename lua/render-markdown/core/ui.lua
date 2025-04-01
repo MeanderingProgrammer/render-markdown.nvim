@@ -231,7 +231,7 @@ function M.parse_tree(ctx, language)
     local marks = {}
     local user = state.custom_handlers[language]
     if user ~= nil then
-        log.buf('debug', 'running handler', ctx.buf, 'user')
+        log.buf('debug', 'handler', ctx.buf, 'user')
         vim.list_extend(marks, user.parse(ctx))
         if not user.extends then
             return marks
@@ -239,7 +239,7 @@ function M.parse_tree(ctx, language)
     end
     local builtin = builtin_handlers[language]
     if builtin ~= nil then
-        log.buf('debug', 'running handler', ctx.buf, 'builtin')
+        log.buf('debug', 'handler', ctx.buf, 'builtin')
         vim.list_extend(marks, builtin.parse(ctx))
     end
     return marks

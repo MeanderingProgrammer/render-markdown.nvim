@@ -58,19 +58,19 @@ end
 ---@param buf integer
 ---@param ... any
 function M.buf(level, name, buf, ...)
-    M.add(level, string.format('%s|%s|%d', name, M.file_name(buf), buf), ...)
+    M.add(level, name, buf, M.file_name(buf), ...)
 end
 
 ---@private
 ---@param buf integer
 ---@return string
 function M.file_name(buf)
-    if Env.buf.valid(buf) then
-        local file = vim.api.nvim_buf_get_name(buf)
-        return vim.fn.fnamemodify(file, ':t')
-    else
+    if not Env.buf.valid(buf) then
         return 'INVALID'
     end
+    local file = vim.api.nvim_buf_get_name(buf)
+    local name = vim.fn.fnamemodify(file, ':t')
+    return #name == 0 and 'EMPTY' or name
 end
 
 ---@param level render.md.config.LogLevel
@@ -81,9 +81,9 @@ function M.add(level, name, ...)
         return
     end
     local messages = {}
-    local args = vim.F.pack_len(...)
-    for i = 1, args.n do
-        local message = type(args[i]) == 'string' and args[i] or vim.inspect(args[i])
+    for i = 1, select('#', ...) do
+        local value = select(i, ...)
+        local message = type(value) == 'string' and value or vim.inspect(value)
         table.insert(messages, message)
     end
     ---@type render.md.log.Entry

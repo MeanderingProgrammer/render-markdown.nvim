@@ -5,7 +5,7 @@ local state = require('render-markdown.state')
 local M = {}
 
 ---@private
-M.version = '8.2.0'
+M.version = '8.2.1'
 
 function M.check()
     M.start('version')
@@ -83,7 +83,7 @@ end
 function M.disable_advice(language)
     return {
         string.format('Disable %s support to avoid this warning', language),
-        string.format("require('render-markdown').setup({ { %s = { enabled = false } })", language),
+        string.format("require('render-markdown').setup({ %s = { enabled = false } })", language),
     }
 end
 
