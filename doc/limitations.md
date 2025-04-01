@@ -49,7 +49,7 @@ Below are a few things to try out to improve the aesthetic:
 ```lua
 require('render-markdown').setup({
     win_options = {
-        colorcolumn = { default = '80', rendered = '' },
+        colorcolumn = { default = vim.o.colorcolumn, rendered = '' },
     },
 })
 ```
@@ -58,12 +58,19 @@ require('render-markdown').setup({
 
 ```lua
 require('render-markdown').setup({
-    heading = { width = 'block', min_width = 80 },
-    code = { width = 'block', min_width = 80 },
+    heading = { width = 'block', min_width = tonumber(vim.o.colorcolumn) },
+    code = { width = 'block', min_width = tonumber(vim.o.colorcolumn) },
 })
 ```
 
 - Do not use `block` width, keep the default value of `full`
+
+```lua
+require('render-markdown').setup({
+    heading = { width = 'full' },
+    code = { width = 'full' },
+})
+```
 
 ## `latex` Formula Positioning
 

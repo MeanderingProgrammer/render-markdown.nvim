@@ -766,15 +766,15 @@ require('render-markdown').setup({
         -- @see :h 'conceallevel'
         conceallevel = {
             -- Used when not being rendered, get user setting.
-            default = vim.api.nvim_get_option_value('conceallevel', {}),
+            default = vim.o.conceallevel,
             -- Used when being rendered, concealed text is completely hidden.
             rendered = 3,
         },
         -- @see :h 'concealcursor'
         concealcursor = {
             -- Used when not being rendered, get user setting.
-            default = vim.api.nvim_get_option_value('concealcursor', {}),
-            -- Used when being rendered, disable concealing text in all modes.
+            default = vim.o.concealcursor,
+            -- Used when being rendered, show concealed text in all modes.
             rendered = '',
         },
     },

@@ -41,7 +41,7 @@ function M.file_size_mb(file)
     local ok, stats = pcall(function()
         return M.uv.fs_stat(file)
     end)
-    if not (ok and stats) then
+    if not ok or stats == nil then
         return 0
     end
     return stats.size / (1024 * 1024)

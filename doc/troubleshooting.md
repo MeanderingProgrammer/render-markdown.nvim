@@ -58,7 +58,7 @@ Create a new `markdown` file locally with the following content:
 
 Run `:InspectTree` which should output the following:
 
-```text
+```query
 (document ; [0, 0] - [8, 0]
   (section ; [0, 0] - [8, 0]
     (atx_heading ; [0, 0] - [1, 0]
