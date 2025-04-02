@@ -1,3 +1,4 @@
+local Compat = require('render-markdown.lib.compat')
 local Config = require('render-markdown.config')
 local Env = require('render-markdown.lib.env')
 local log = require('render-markdown.core.log')
@@ -31,7 +32,7 @@ function M.setup(default_config, user_config)
     local config = vim.tbl_deep_extend('force', default_config, preset_config, user_config)
 
     -- Override settings that require neovim >= 0.10.0 and have compatible alternatives
-    if not Env.has_10 then
+    if not Compat.has_10 then
         config.code.position = 'right'
     end
 

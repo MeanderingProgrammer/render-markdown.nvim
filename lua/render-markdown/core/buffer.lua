@@ -1,4 +1,4 @@
-local Env = require('render-markdown.lib.env')
+local Compat = require('render-markdown.lib.compat')
 
 ---@class render.md.Buffer
 ---@field private buf integer
@@ -15,7 +15,7 @@ function Buffer.new(buf)
     local self = setmetatable({}, Buffer)
     self.buf = buf
     self.empty = true
-    self.timer = Env.uv.new_timer()
+    self.timer = Compat.uv.new_timer()
     self.running = false
     self.marks = nil
     return self

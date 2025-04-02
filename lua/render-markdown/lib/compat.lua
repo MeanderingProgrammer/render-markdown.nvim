@@ -1,6 +1,10 @@
 ---@class render.md.Compat
 local M = {}
 
+M.uv = vim.uv or vim.loop
+M.has_10 = vim.fn.has('nvim-0.10') == 1
+M.has_11 = vim.fn.has('nvim-0.11') == 1
+
 ---@param win integer
 ---@param extmarks render.md.Extmark[]
 ---@see vim.lsp.util.open_floating_preview
@@ -24,6 +28,20 @@ function M.lsp_window_height(win, extmarks)
     if height < vim.api.nvim_win_get_height(win) then
         vim.api.nvim_win_set_height(win, height)
     end
+end
+
+---@param cause string
+function M.release_notification(cause)
+    local message = {
+        'MeanderingProgrammer/render-markdown.nvim',
+        cause,
+        'you are running an old build of neovim that has now been released',
+        'your build does not have all the features that are in the release',
+        'update your build or switch to the release version',
+    }
+    vim.schedule(function()
+        vim.notify_once(table.concat(message, '\n'), vim.log.levels.ERROR)
+    end)
 end
 
 return M

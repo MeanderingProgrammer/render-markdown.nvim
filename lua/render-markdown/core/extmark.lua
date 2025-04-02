@@ -1,3 +1,5 @@
+local Compat = require('render-markdown.lib.compat')
+
 ---@class render.md.Extmark
 ---@field private id? integer
 ---@field private mark render.md.Mark
@@ -40,13 +42,7 @@ function Extmark:show(ns, buf)
     if ok then
         self.id = id
     else
-        local message = {
-            string.format('render-markdown.nvim set extmark error (%s)', id),
-            'you are running an old build of neovim that has now been released',
-            'your build does not have all the features that are in the release',
-            'update your build or switch to the release version',
-        }
-        vim.notify_once(table.concat(message, '\n'), vim.log.levels.ERROR)
+        Compat.release_notification(string.format('nvim_buf_set_extmark error (%s)', id))
     end
 end
 

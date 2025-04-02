@@ -1,4 +1,4 @@
-local Env = require('render-markdown.lib.env')
+local Compat = require('render-markdown.lib.compat')
 
 ---@class render.md.integ.TreeSitter
 ---@field private initialized boolean
@@ -38,9 +38,8 @@ function M.inject(language, injection)
     if injection == nil or not injection.enabled then
         return
     end
-
     local query = ''
-    if Env.has_11 then
+    if Compat.has_11 then
         query = query .. ';; extends' .. '\n'
     else
         local files = vim.treesitter.query.get_files(language, 'injections')
@@ -60,14 +59,18 @@ end
 ---@param language string
 ---@param pattern? render.md.Pattern
 function M.disable(language, pattern)
-    if not Env.has_11 then
+    if pattern == nil or not pattern.disable then
         return
     end
-    if pattern == nil or not pattern.disable then
+    if not Compat.has_11 then
         return
     end
     local query = vim.treesitter.query.get(language, 'highlights')
     if query == nil then
+        return
+    end
+    if query.query.disable_pattern == nil then
+        Compat.release_notification('TSQuery missing disable_pattern API')
         return
     end
     local query_directives = query.info.patterns

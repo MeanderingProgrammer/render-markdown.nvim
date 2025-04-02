@@ -1,10 +1,7 @@
+local Compat = require('render-markdown.lib.compat')
+
 ---@class render.md.Env
 local M = {}
-
-M.uv = vim.uv or vim.loop
-
-M.has_10 = vim.fn.has('nvim-0.10') == 1
-M.has_11 = vim.fn.has('nvim-0.11') == 1
 
 ---@param key 'ft'|'cmd'
 ---@return string[]
@@ -39,7 +36,7 @@ function M.file_size_mb(file)
         file = vim.api.nvim_buf_get_name(file)
     end
     local ok, stats = pcall(function()
-        return M.uv.fs_stat(file)
+        return Compat.uv.fs_stat(file)
     end)
     if not ok or stats == nil then
         return 0
@@ -51,9 +48,9 @@ end
 ---@return fun()
 function M.runtime(callback)
     return function()
-        local start_time = M.uv.hrtime()
+        local start_time = Compat.uv.hrtime()
         callback()
-        local end_time = M.uv.hrtime()
+        local end_time = Compat.uv.hrtime()
         vim.print(string.format('Runtime (ms): %.1f', (end_time - start_time) / 1e+6))
     end
 end
