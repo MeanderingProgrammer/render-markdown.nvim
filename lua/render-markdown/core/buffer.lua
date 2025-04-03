@@ -3,7 +3,7 @@ local Compat = require('render-markdown.lib.compat')
 ---@class render.md.Buffer
 ---@field private buf integer
 ---@field private empty boolean
----@field private timer uv_timer_t
+---@field private timer uv.uv_timer_t
 ---@field private running boolean
 ---@field private marks? render.md.Extmark[]
 local Buffer = {}
@@ -15,7 +15,7 @@ function Buffer.new(buf)
     local self = setmetatable({}, Buffer)
     self.buf = buf
     self.empty = true
-    self.timer = Compat.uv.new_timer()
+    self.timer = assert(Compat.uv.new_timer())
     self.running = false
     self.marks = nil
     return self

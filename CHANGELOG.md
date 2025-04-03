@@ -2,6 +2,16 @@
 
 ## Pre-release
 
+### Features
+
+- padding character for inline code [#389](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/389)
+  [b292624](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b292624f228596010145f63697a49cdd9b8d8ce7)
+- check `disable_pattern` exists and notify if not [#386](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/386)
+  [#388](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/388)
+  [c283dec](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c283dec1ea94947499c36bb17443e15d6acf5cda)
+- wrap `nvim_buf_set_extmark` in pcall use notify_once if it errors [#382](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/382)
+  [1e2e9a3](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/1e2e9a386fbe41b869d3d0e000e19db72284585b)
+
 ## 8.2.0 (2025-03-31)
 
 ### Features
