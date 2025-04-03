@@ -144,12 +144,12 @@ def update_readme() -> None:
 def update_handlers() -> None:
     name_lua = {lua.name(): lua for lua in get_definitions()}
     names = [
-        "MarkText",
-        "MarkLine",
-        "MarkOpts",
-        "Mark",
-        "HandlerContext",
         "Handler",
+        "HandlerContext",
+        "Mark",
+        "MarkOpts",
+        "MarkLine",
+        "MarkText",
     ]
     definitions = [name_lua[name] for name in names]
 

@@ -447,6 +447,10 @@ require('render-markdown').setup({
         above = '▄',
         -- Used below code blocks for thin border.
         below = '▀',
+        -- Icon to add to the left of inline code.
+        inline_left = '',
+        -- Icon to add to the right of inline code.
+        inline_right = '',
         -- Padding to add to the left & right of inline code.
         inline_pad = 0,
         -- Highlight for code blocks.
@@ -1005,6 +1009,10 @@ require('render-markdown').setup({
         above = '▄',
         -- Used below code blocks for thin border.
         below = '▀',
+        -- Icon to add to the left of inline code.
+        inline_left = '',
+        -- Icon to add to the right of inline code.
+        inline_right = '',
         -- Padding to add to the left & right of inline code.
         inline_pad = 0,
         -- Highlight for code blocks.

@@ -12,16 +12,13 @@ needed, and concealing when the cursor enters.
 Each handler must conform to the following interface:
 
 ```lua
----@class (exact) render.md.MarkText
----@field [1] string text
----@field [2] string|string[] highlights
+---@class (exact) render.md.Handler
+---@field extends? boolean
+---@field parse fun(ctx: render.md.HandlerContext): render.md.Mark[]
 
----@alias render.md.MarkLine render.md.MarkText[]
-
----@class render.md.MarkOpts: vim.api.keyset.set_extmark
----@field virt_text? render.md.MarkLine
----@field virt_text_pos? 'eol'|'inline'|'overlay'
----@field virt_lines? render.md.MarkLine[]
+---@class (exact) render.md.HandlerContext
+---@field buf integer
+---@field root TSNode
 
 ---@class (exact) render.md.Mark
 ---@field conceal boolean
@@ -29,13 +26,16 @@ Each handler must conform to the following interface:
 ---@field start_col integer
 ---@field opts render.md.MarkOpts
 
----@class (exact) render.md.HandlerContext
----@field buf integer
----@field root TSNode
+---@class render.md.MarkOpts: vim.api.keyset.set_extmark
+---@field virt_text? render.md.MarkLine
+---@field virt_text_pos? 'eol'|'inline'|'overlay'
+---@field virt_lines? render.md.MarkLine[]
 
----@class (exact) render.md.Handler
----@field extends? boolean
----@field parse fun(ctx: render.md.HandlerContext): render.md.Mark[]
+---@alias render.md.MarkLine render.md.MarkText[]
+
+---@class (exact) render.md.MarkText
+---@field [1] string text
+---@field [2] string|string[] highlights
 ```
 
 The `parse` function takes a `ctx` parameter whose fields are:

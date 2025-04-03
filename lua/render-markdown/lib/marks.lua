@@ -5,6 +5,8 @@ local Str = require('render-markdown.lib.str')
 local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
 
+---@alias render.md.mark.Element boolean|render.md.Element
+
 ---@class render.md.Marks
 ---@field private context render.md.Context
 ---@field private ignore render.md.config.conceal.Ignore
