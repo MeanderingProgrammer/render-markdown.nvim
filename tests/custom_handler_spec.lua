@@ -8,12 +8,12 @@ local function conceal_escape(ctx)
     local marks, query = {}, vim.treesitter.query.parse('markdown_inline', '(backslash_escape) @escape')
     for _, node in query:iter_captures(ctx.root, ctx.buf) do
         local start_row, start_col, end_row, _ = node:range()
-        table.insert(marks, {
+        marks[#marks + 1] = {
             conceal = true,
             start_row = start_row,
             start_col = start_col,
             opts = { end_row = end_row, end_col = start_col + 1, conceal = '' },
-        })
+        }
     end
     return marks
 end

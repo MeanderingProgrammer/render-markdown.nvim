@@ -122,9 +122,9 @@ function Render:wiki_link()
     else
         local line = {}
         if type(body) == 'string' then
-            table.insert(line, { icon .. body, highlight })
+            line[#line + 1] = { icon .. body, highlight }
         else
-            table.insert(line, { icon .. body[1], body[2] })
+            line[#line + 1] = { icon .. body[1], body[2] }
         end
         -- Inline icon & body, hide original text
         self.marks:over('link', self.node, {

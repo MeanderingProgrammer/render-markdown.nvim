@@ -37,7 +37,7 @@ function Context.new(props, offset)
 
     local ranges = {}
     for _, window in ipairs(Env.buf.windows(props.buf)) do
-        table.insert(ranges, Context.compute_range(props.buf, window, offset))
+        ranges[#ranges + 1] = Context.compute_range(props.buf, window, offset)
     end
     self.ranges = Range.coalesce(ranges)
     self.callouts = {}
@@ -137,7 +137,8 @@ function Context:add_offset(row, offset)
     if self.offsets[row] == nil then
         self.offsets[row] = {}
     end
-    table.insert(self.offsets[row], offset)
+    local offsets = self.offsets[row]
+    offsets[#offsets + 1] = offset
 end
 
 ---@private

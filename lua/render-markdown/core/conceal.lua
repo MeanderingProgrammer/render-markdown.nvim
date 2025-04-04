@@ -53,7 +53,7 @@ function Conceal:add(row, entry)
     else
         -- If the section is covered by an existing one don't add it
         if entry.width > 0 and not self:has(line, entry) then
-            table.insert(line.sections, entry)
+            line.sections[#line.sections + 1] = entry
         end
     end
 end

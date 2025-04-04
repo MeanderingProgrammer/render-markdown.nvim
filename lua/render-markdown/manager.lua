@@ -169,7 +169,7 @@ function M.should_attach(buf)
     end
 
     log.buf('info', 'attach', buf, 'success')
-    table.insert(buffers, buf)
+    buffers[#buffers + 1] = buf
     return true
 end
 

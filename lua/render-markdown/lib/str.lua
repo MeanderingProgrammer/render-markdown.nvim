@@ -60,7 +60,7 @@ function M.find_all(s, pattern)
         if start_index == nil or end_index == nil then
             index = nil
         else
-            table.insert(result, { start_index, end_index })
+            result[#result + 1] = { start_index, end_index }
             index = end_index + 1
         end
     end

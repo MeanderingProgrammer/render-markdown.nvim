@@ -180,11 +180,11 @@ function Base:append(line, value, highlight)
     highlight = highlight or self.config.padding.highlight
     if type(value) == 'string' then
         if #value > 0 then
-            table.insert(line, { value, highlight })
+            line[#line + 1] = { value, highlight }
         end
     else
         if value > 0 then
-            table.insert(line, { Str.pad(value), highlight })
+            line[#line + 1] = { Str.pad(value), highlight }
         end
     end
     return line

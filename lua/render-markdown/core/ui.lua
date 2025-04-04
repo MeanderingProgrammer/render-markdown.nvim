@@ -56,7 +56,7 @@ function M.get_row_marks(buf, win)
     local marks = {}
     for _, extmark in ipairs(buffer:get_marks()) do
         if extmark:inside(hidden) then
-            table.insert(marks, extmark:get())
+            marks[#marks + 1] = extmark:get()
         end
     end
     return row, marks
@@ -205,7 +205,7 @@ function M.parse_buffer(props)
     parser:for_each_tree(function(tree, language_tree)
         local language = language_tree:lang()
         if language == 'markdown' then
-            table.insert(markdown_roots, tree:root())
+            markdown_roots[#markdown_roots + 1] = tree:root()
         else
             vim.list_extend(marks, M.parse_tree({ buf = buf, root = tree:root() }, language))
         end

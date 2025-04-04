@@ -61,7 +61,7 @@ function Render:setup()
             delim = self:parse_delim(row)
         elseif self.context:overlaps_node(row:get()) then
             if vim.tbl_contains({ 'pipe_table_header', 'pipe_table_row' }, row.type) then
-                table.insert(table_rows, row)
+                table_rows[#table_rows + 1] = row
             else
                 log.unhandled_type('markdown', 'row', row.type)
             end
@@ -79,7 +79,7 @@ function Render:setup()
     for _, table_row in ipairs(table_rows) do
         local row = self:parse_row(table_row, #delim.columns)
         if row ~= nil then
-            table.insert(rows, row)
+            rows[#rows + 1] = row
         end
     end
 
@@ -130,9 +130,7 @@ function Render:parse_delim(row)
         elseif self.table.cell == 'trimmed' then
             width = self.table.min_width
         end
-        ---@type render.md.table.DelimColumn
-        local column = { width = width, alignment = Render.alignment(cell) }
-        table.insert(columns, column)
+        columns[#columns + 1] = { width = width, alignment = Render.alignment(cell) }
     end
     ---@type render.md.table.DelimRow
     return { node = row, columns = columns }
@@ -174,8 +172,7 @@ function Render:parse_row(row, num_columns)
         if width < 0 then
             return nil
         end
-        ---@type render.md.table.Column
-        local column = {
+        columns[#columns + 1] = {
             row = cell.start_row,
             start_col = cell.start_col,
             end_col = cell.end_col,
@@ -187,7 +184,6 @@ function Render:parse_row(row, num_columns)
                 right = math.max(Str.spaces('end', cell.text), 0),
             },
         }
-        table.insert(columns, column)
     end
     ---@type render.md.table.Row
     return { node = row, pipes = pipes, columns = columns }
@@ -201,9 +197,9 @@ function Render.parse_row_data(row, cell_type)
     local pipes, cells = {}, {}
     row:for_each_child(function(cell)
         if cell.type == '|' then
-            table.insert(pipes, cell)
+            pipes[#pipes + 1] = cell
         elseif cell.type == cell_type then
-            table.insert(cells, cell)
+            cells[#cells + 1] = cell
         else
             log.unhandled_type('markdown', 'cell', cell.type)
         end

@@ -124,9 +124,9 @@ function Render:language(language, delim)
     end
 
     local highlight = {}
-    table.insert(highlight, icon_highlight or self.code.highlight_fallback)
+    highlight[#highlight + 1] = (icon_highlight or self.code.highlight_fallback)
     if type(border_highlight) == 'string' then
-        table.insert(highlight, border_highlight)
+        highlight[#highlight + 1] = border_highlight
     end
 
     if self.code.position == 'left' then
@@ -228,7 +228,7 @@ function Render:left_pad(background)
     local empty, widths = {}, col == 0 and {} or self.node:widths()
     for i, width in ipairs(widths) do
         if width == 0 then
-            table.insert(empty, start_row + i - 1)
+            empty[#empty + 1] = (start_row + i - 1)
         end
     end
     if #empty == 0 and self.data.margin <= 0 and self.data.padding <= 0 then

@@ -169,7 +169,7 @@ function Spec:handle_types(custom, ts)
         types = ts
     end
     if self.nilable and not vim.tbl_contains(types, 'nil') then
-        table.insert(types, 'nil')
+        types[#types + 1] = 'nil'
     end
     return types, table.concat(vim.list_extend(custom, types), ' or ')
 end
@@ -232,13 +232,13 @@ function Validator:check(path, config, specs)
             if info ~= nil then
                 message = message .. string.format(', info: %s', info)
             end
-            table.insert(self.errors, message)
+            self.errors[#self.errors + 1] = message
         end
     end
     for key, _ in pairs(config) do
         if specs[key] == nil then
             local message = string.format('%s.%s - invalid key', path, key)
-            table.insert(self.errors, message)
+            self.errors[#self.errors + 1] = message
         end
     end
 end

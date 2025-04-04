@@ -177,9 +177,9 @@ function M.indent.line(lengths)
     local result = {}
     for _, length in ipairs(lengths) do
         if length == 1 then
-            table.insert(result, { '▎', 'RmIndent' })
+            result[#result + 1] = { '▎', 'RmIndent' }
         else
-            table.insert(result, { string.rep(' ', length), 'Normal' })
+            result[#result + 1] = { string.rep(' ', length), 'Normal' }
         end
     end
     return result
@@ -351,7 +351,7 @@ function M.table.delimiter(sections, padding)
     end, sections)
     local line = { { '├' .. table.concat(parts, '┼') .. '┤', 'RmTableHead' } }
     if padding ~= nil then
-        table.insert(line, { string.rep(' ', padding), 'Normal' })
+        line[#line + 1] = { string.rep(' ', padding), 'Normal' }
     end
     ---@type vim.api.keyset.set_extmark
     return {
@@ -391,7 +391,7 @@ function M.actual_marks()
     local actual = {}
     for _, mark in ipairs(marks) do
         local _, row, col, details = unpack(mark)
-        table.insert(actual, require('tests.helpers.details').new(row, col, details))
+        actual[#actual + 1] = require('tests.helpers.details').new(row, col, details)
     end
     table.sort(actual)
     return actual
@@ -420,7 +420,7 @@ function M.actual_screen()
         if line == '~' then
             break
         end
-        table.insert(actual, line)
+        actual[#actual + 1] = line
     end
     return actual
 end

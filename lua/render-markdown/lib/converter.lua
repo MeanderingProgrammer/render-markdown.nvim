@@ -82,7 +82,7 @@ function M.superscript(s)
         if char == nil then
             return nil
         end
-        table.insert(chars, char)
+        chars[#chars + 1] = char
     end
     return table.concat(chars)
 end

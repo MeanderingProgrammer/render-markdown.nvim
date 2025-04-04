@@ -27,7 +27,8 @@ function Marks:add(start_row, end_row, start_col, end_col, opts)
     local mark = opts
     mark.row = { start_row, end_row }
     mark.col = { start_col, end_col }
-    table.insert(self.marks, opts)
+    ---@diagnostic disable-next-line: assign-type-mismatch
+    self.marks[#self.marks + 1] = opts
     return self
 end
 

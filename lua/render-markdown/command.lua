@@ -53,7 +53,7 @@ function M.matches(prefix, values)
     local result = {}
     for _, value in ipairs(values) do
         if vim.startswith(value, prefix) then
-            table.insert(result, value)
+            result[#result + 1] = value
         end
     end
     return result

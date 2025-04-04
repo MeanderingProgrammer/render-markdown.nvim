@@ -75,7 +75,7 @@ function Marks:add(element, start_row, start_col, opts)
     end
     log.add('debug', 'mark', mark)
     self:update(mark)
-    table.insert(self.marks, mark)
+    self.marks[#self.marks + 1] = mark
     return true
 end
 

@@ -92,7 +92,7 @@ local function parse_python(ctx)
         local capture = query.captures[id]
         local start_row, _, _, _ = node:range()
         if capture == 'def' then
-            table.insert(marks, {
+            marks[#marks + 1] = {
                 conceal = true,
                 start_row = start_row,
                 start_col = 0,

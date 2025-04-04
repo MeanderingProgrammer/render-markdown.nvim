@@ -11,7 +11,7 @@ M.list = {}
 function M.list.map(values, f)
     local result = {}
     for _, value in ipairs(values) do
-        table.insert(result, f(value))
+        result[#result + 1] = f(value)
     end
     return result
 end
@@ -27,7 +27,7 @@ function M.table.filter(values, f)
     local result = {}
     for _, value in pairs(values) do
         if f(value) then
-            table.insert(result, value)
+            result[#result + 1] = value
         end
     end
     return result

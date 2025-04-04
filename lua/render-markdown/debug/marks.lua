@@ -1,10 +1,14 @@
 local Iter = require('render-markdown.lib.iter')
 
+---@class render.md.debug.Range
+---@field [1] integer
+---@field [2]? integer
+
 ---@class render.md.debug.Mark
 ---@field conceal boolean
 ---@field opts render.md.MarkOpts
----@field row { [1]: integer, [2]: integer }
----@field col { [1]: integer, [2]: integer }
+---@field row render.md.debug.Range
+---@field col render.md.debug.Range
 local Mark = {}
 Mark.__index = Mark
 
@@ -13,113 +17,9 @@ Mark.__index = Mark
 function Mark.new(mark)
     local self = setmetatable({}, Mark)
     self.conceal, self.opts = mark.conceal, mark.opts
-    self.row = { mark.start_row, mark.opts.end_row or mark.start_row }
-    self.col = { mark.start_col, mark.opts.end_col or mark.start_col }
+    self.row = { mark.start_row, mark.opts.end_row }
+    self.col = { mark.start_col, mark.opts.end_col }
     return self
-end
-
----@return integer[]
-function Mark:priorities()
-    local row_offset = 0
-    if self.opts.virt_lines ~= nil then
-        row_offset = self.opts.virt_lines_above and -0.5 or 0.5
-    end
-    local col = self.opts.virt_text_win_col or 0
-    local result = { self.row[1] + row_offset, self.row[2] + row_offset }
-    return vim.list_extend(result, { math.max(self.col[1], col), math.max(self.col[2], col) })
-end
-
----@return string
-function Mark:__tostring()
-    ---@param text string
-    ---@return string
-    local function serialize_text(text)
-        local chars = vim.fn.str2list(text)
-        if #chars <= 1 then
-            return string.format('"%s"', text)
-        end
-        local first = chars[1]
-        for _, char in ipairs(chars) do
-            if first ~= char then
-                return string.format('"%s"', text)
-            end
-        end
-        return string.format('rep(%s, %d)', vim.fn.nr2char(first), #chars)
-    end
-
-    ---@param highlight number|string|string[]
-    ---@return string
-    local function serialize_highlight(highlight)
-        if type(highlight) == 'table' then
-            highlight = table.concat(highlight, '+')
-        end
-        local result, _ = highlight:gsub('RenderMarkdown_?', '')
-        result, _ = result:gsub('Inverse', 'I')
-        return string.format('(%s)', result)
-    end
-
-    ---@param line { [1]?: string, [2]?: number|string|string[] }[]
-    ---@return string[]?
-    local function virt_line(line)
-        local result = {}
-        for _, part in ipairs(line) do
-            local serialized, text, highlight = {}, part[1], part[2]
-            if text ~= nil then
-                table.insert(serialized, serialize_text(text))
-            end
-            if highlight ~= nil then
-                table.insert(serialized, serialize_highlight(highlight))
-            end
-            if #serialized > 0 then
-                table.insert(result, table.concat(serialized, '::'))
-            end
-        end
-        return #result > 0 and result or nil
-    end
-
-    ---@param vals { [1]: integer, [2]: integer }
-    ---@return string|integer
-    local function collapse(vals)
-        return vals[1] == vals[2] and vals[1] or string.format('%d -> %d', vals[1], vals[2])
-    end
-
-    local lines = {
-        string.rep('=', vim.o.columns - 10),
-        string.format('row: %s', collapse(self.row)),
-        string.format('column: %s', collapse(self.col)),
-        string.format('hide: %s', self.conceal),
-    }
-
-    ---@param name string
-    ---@param value any
-    local function append(name, value)
-        if type(value) == 'table' then
-            value = virt_line(value)
-        end
-        if value ~= nil then
-            if type(value) == 'table' then
-                value = table.concat(value, ' + ')
-            end
-            if type(value) == 'string' and #value == 0 then
-                value = vim.inspect(value)
-            end
-            table.insert(lines, string.format('  %s: %s', name, value))
-        end
-    end
-
-    append('conceal', self.opts.conceal)
-    append('sign', { { self.opts.sign_text, self.opts.sign_hl_group } })
-    append('virt_text', self.opts.virt_text)
-    append('virt_text_pos', self.opts.virt_text_pos)
-    append('virt_text_win_col', self.opts.virt_text_win_col)
-    append('virt_text_repeat_linebreak', self.opts.virt_text_repeat_linebreak)
-    append('virt_line', (self.opts.virt_lines or {})[1])
-    append('virt_line_above', self.opts.virt_lines_above)
-    append('hl_group', { { nil, self.opts.hl_group } })
-    append('hl_eol', self.opts.hl_eol)
-    append('hl_mode', self.opts.hl_mode)
-    append('priority', self.opts.priority)
-    return table.concat(lines, '\n')
 end
 
 ---@param a render.md.debug.Mark
@@ -135,20 +35,121 @@ function Mark.__lt(a, b)
     return false
 end
 
+---@private
+---@return integer[]
+function Mark:priorities()
+    local virt_row = 0
+    if self.opts.virt_lines ~= nil then
+        virt_row = self.opts.virt_lines_above and -0.5 or 0.5
+    end
+    local win_col = self.opts.virt_text_win_col or 0
+    return {
+        -- rows
+        self.row[1] + virt_row,
+        (self.row[2] or self.row[1]) + virt_row,
+        -- cols
+        math.max(self.col[1], win_col),
+        math.max((self.col[2] or self.col[1]), win_col),
+    }
+end
+
+---@return string
+function Mark:__tostring()
+    local lines = {}
+    lines[#lines + 1] = string.rep('=', vim.o.columns - 10)
+    lines[#lines + 1] = string.format('row: %s', Mark.collapse(self.row))
+    lines[#lines + 1] = string.format('column: %s', Mark.collapse(self.col))
+    lines[#lines + 1] = string.format('hide: %s', vim.inspect(self.conceal))
+
+    ---@param name string
+    ---@param value any
+    ---@param f fun(value: any): string
+    local function add(name, value, f)
+        if value ~= nil then
+            lines[#lines + 1] = string.format('  %s: %s', name, f(value))
+        end
+    end
+
+    local opts = self.opts
+    add('conceal', opts.conceal, vim.inspect)
+    add('conceal_lines', opts.conceal_lines, vim.inspect)
+    add('sign_text', opts.sign_text, Mark.text)
+    add('sign_hl_group', opts.sign_hl_group, Mark.highlight)
+    add('virt_text', opts.virt_text, Mark.line)
+    add('virt_text_pos', opts.virt_text_pos, tostring)
+    add('virt_text_win_col', opts.virt_text_win_col, vim.inspect)
+    add('virt_text_repeat_linebreak', opts.virt_text_repeat_linebreak, vim.inspect)
+    add('virt_line', (opts.virt_lines or {})[1], Mark.line)
+    add('virt_line_above', opts.virt_lines_above, vim.inspect)
+    add('hl_group', opts.hl_group, Mark.highlight)
+    add('hl_eol', opts.hl_eol, vim.inspect)
+    add('hl_mode', opts.hl_mode, tostring)
+    add('priority', opts.priority, tostring)
+    return table.concat(lines, '\n')
+end
+
+---@private
+---@param range render.md.debug.Range
+---@return string
+function Mark.collapse(range)
+    local s, e = range[1], range[2]
+    return e == nil and tostring(s) or string.format('%d -> %d', s, e)
+end
+
+---@private
+---@param line render.md.MarkLine
+---@return string
+function Mark.line(line)
+    local result = {}
+    for _, text in ipairs(line) do
+        result[#result + 1] = string.format('(%s, %s)', Mark.text(text[1]), Mark.highlight(text[2]))
+    end
+    return table.concat(result, ' + ')
+end
+
+---@private
+---@param text string
+---@return string
+function Mark.text(text)
+    local chars = vim.fn.str2list(text)
+    local first, same = chars[1], true
+    for _, char in ipairs(chars) do
+        same = same and (first == char)
+    end
+    if #chars > 1 and same then
+        local char = vim.fn.nr2char(first)
+        return string.format('rep(%s, %d)', char, #chars)
+    else
+        return text
+    end
+end
+
+---@private
+---@param highlight string|string[]
+---@return string
+function Mark.highlight(highlight)
+    if type(highlight) == 'table' then
+        highlight = table.concat(highlight, '+')
+    end
+    local result = highlight:gsub('RenderMarkdown', 'Rm')
+    return result
+end
+
 ---@class render.md.debug.Marks
 local M = {}
 
 ---@param row integer
 ---@param marks render.md.Mark[]
 function M.debug(row, marks)
-    print(string.format('Decorations on row: %d', row))
+    vim.print(string.format('Row: %d', row))
     if #marks == 0 then
-        print('No decorations found')
-    end
-    local debug_marks = Iter.list.map(marks, Mark.new)
-    table.sort(debug_marks)
-    for _, mark in ipairs(debug_marks) do
-        print(mark)
+        vim.print('No decorations found')
+    else
+        local debug_marks = Iter.list.map(marks, Mark.new)
+        table.sort(debug_marks)
+        for _, mark in ipairs(debug_marks) do
+            vim.print(tostring(mark))
+        end
     end
 end
 

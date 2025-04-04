@@ -52,7 +52,7 @@ function Range.coalesce(ranges)
         if range.top <= current.bottom + 1 then
             current.bottom = math.max(current.bottom, range.bottom)
         else
-            table.insert(result, range)
+            result[#result + 1] = range
         end
     end
     return result

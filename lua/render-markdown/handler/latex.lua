@@ -37,15 +37,16 @@ function M.parse(ctx)
         cache[node.text] = raw_expression
     end
 
-    local expressions = Str.split(raw_expression, '\n')
-    for i = 1, #expressions do
-        expressions[i] = Str.pad(node.start_col) .. expressions[i]
-    end
+    ---@type string[]
+    local expressions = {}
     for _ = 1, latex.top_pad do
-        table.insert(expressions, 1, '')
+        expressions[#expressions + 1] = ''
+    end
+    for _, expression in ipairs(Str.split(raw_expression, '\n')) do
+        expressions[#expressions + 1] = Str.pad(node.start_col) .. expression
     end
     for _ = 1, latex.bottom_pad do
-        table.insert(expressions, '')
+        expressions[#expressions + 1] = ''
     end
 
     local lines = Iter.list.map(expressions, function(expression)

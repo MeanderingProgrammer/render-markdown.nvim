@@ -52,16 +52,16 @@ function M.items(buf, row, col)
     if node:type() == 'block_quote' then
         for _, value in pairs(config.callout) do
             if filter.callout(value) then
-                table.insert(result, M.item(prefix, value.raw, value.rendered, nil))
+                result[#result + 1] = M.item(prefix, value.raw, value.rendered, nil)
             end
         end
     elseif node:type() == 'list_item' then
         local checkbox = config.checkbox
-        table.insert(result, M.item(prefix, '[ ] ', checkbox.unchecked.icon, 'unchecked'))
-        table.insert(result, M.item(prefix, '[x] ', checkbox.checked.icon, 'checked'))
+        result[#result + 1] = M.item(prefix, '[ ] ', checkbox.unchecked.icon, 'unchecked')
+        result[#result + 1] = M.item(prefix, '[x] ', checkbox.checked.icon, 'checked')
         for name, value in pairs(checkbox.custom) do
             if filter.checkbox(value) then
-                table.insert(result, M.item(prefix, value.raw .. ' ', value.rendered, name))
+                result[#result + 1] = M.item(prefix, value.raw .. ' ', value.rendered, name)
             end
         end
     end

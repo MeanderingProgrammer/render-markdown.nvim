@@ -114,10 +114,10 @@ end
 function Render:icon()
     local icon, highlight = self.data.icon, {}
     if self.data.foreground ~= nil then
-        table.insert(highlight, self.data.foreground)
+        highlight[#highlight + 1] = self.data.foreground
     end
     if self.data.background ~= nil then
-        table.insert(highlight, self.data.background)
+        highlight[#highlight + 1] = self.data.background
     end
     if self.data.atx then
         local marker = self.data.marker

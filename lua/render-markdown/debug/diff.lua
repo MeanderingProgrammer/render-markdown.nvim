@@ -30,7 +30,7 @@ end
 function M.append_keys(keys, t)
     for key in pairs(t) do
         if not vim.tbl_contains(keys, key) then
-            table.insert(keys, key)
+            keys[#keys + 1] = key
         end
     end
 end

@@ -84,7 +84,7 @@ function M.add(level, name, ...)
     for i = 1, select('#', ...) do
         local value = select(i, ...)
         local message = type(value) == 'string' and value or vim.inspect(value)
-        table.insert(messages, message)
+        messages[#messages + 1] = message
     end
     ---@type render.md.log.Entry
     local entry = {
@@ -93,7 +93,7 @@ function M.add(level, name, ...)
         name = name,
         message = table.concat(messages, ' | '),
     }
-    table.insert(M.entries, entry)
+    M.entries[#M.entries + 1] = entry
     -- Periodically flush logs to disk
     if #M.entries > 1000 then
         M.flush()

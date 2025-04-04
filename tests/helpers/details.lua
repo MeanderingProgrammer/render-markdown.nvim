@@ -59,11 +59,26 @@ function MarkDetails.simplify(highlights)
     local result = {}
     for _, highlight in ipairs(highlights) do
         highlight = string.gsub(highlight, 'RenderMarkdown', 'Rm')
-        table.insert(result, highlight)
+        result[#result + 1] = highlight
     end
     return table.concat(result, ':')
 end
 
+---@param a render.md.test.MarkDetails
+---@param b render.md.test.MarkDetails
+---@return boolean
+function MarkDetails.__lt(a, b)
+    local as, bs = a:priorities(), b:priorities()
+    assert(#as == #bs)
+    for i = 1, #as do
+        if as[i] ~= bs[i] then
+            return as[i] < bs[i]
+        end
+    end
+    return false
+end
+
+---@private
 ---@return integer[]
 function MarkDetails:priorities()
     local virt_row = 0
@@ -101,20 +116,6 @@ function MarkDetails:priorities()
         self.conceal ~= nil and 0 or 1,
         self.conceal_lines ~= nil and 0 or 1,
     }
-end
-
----@param a render.md.test.MarkDetails
----@param b render.md.test.MarkDetails
----@return boolean
-function MarkDetails.__lt(a, b)
-    local as, bs = a:priorities(), b:priorities()
-    assert(#as == #bs)
-    for i = 1, #as do
-        if as[i] ~= bs[i] then
-            return as[i] < bs[i]
-        end
-    end
-    return false
 end
 
 return MarkDetails
