@@ -12,7 +12,7 @@ local cache = {}
 ---@class render.md.handler.Latex: render.md.Handler
 local M = {}
 
----@param ctx render.md.HandlerContext
+---@param ctx render.md.handler.Context
 ---@return render.md.Mark[]
 function M.parse(ctx)
     local latex = state.get(ctx.buf).latex

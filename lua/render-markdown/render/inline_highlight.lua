@@ -2,7 +2,7 @@ local Base = require('render-markdown.render.base')
 local Str = require('render-markdown.lib.str')
 
 ---@class render.md.render.InlineHighlight: render.md.Renderer
----@field private highlight render.md.InlineHighlight
+---@field private highlight render.md.inline.highlight.Config
 local Render = setmetatable({}, Base)
 Render.__index = Render
 

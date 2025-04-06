@@ -1,7 +1,7 @@
 local Base = require('render-markdown.render.base')
 
----@class render.md.render.HtmlComment: render.md.Renderer
----@field private comment render.md.HtmlComment
+---@class render.md.render.html.Comment: render.md.Renderer
+---@field private comment render.md.html.comment.Config
 local Render = setmetatable({}, Base)
 Render.__index = Render
 

@@ -2,15 +2,15 @@ local Base = require('render-markdown.render.base')
 local List = require('render-markdown.lib.list')
 local Str = require('render-markdown.lib.str')
 
----@class render.md.data.ListMarker
+---@class render.md.bullet.Data
 ---@field marker render.md.Node
 ---@field ordered boolean
 ---@field spaces integer
----@field checkbox? render.md.CustomCheckbox
+---@field checkbox? render.md.checkbox.custom.Config
 
 ---@class render.md.render.ListMarker: render.md.Renderer
----@field private bullet render.md.Bullet
----@field private data render.md.data.ListMarker
+---@field private bullet render.md.bullet.Config
+---@field private data render.md.bullet.Data
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
@@ -48,7 +48,7 @@ function Render:render()
             return
         end
         local level, root = self.node:level_in_section('list')
-        ---@type render.md.BulletContext
+        ---@type render.md.bullet.Context
         local ctx = {
             level = level,
             index = self.node:sibling_count('list_item'),
@@ -97,7 +97,7 @@ function Render:highlight_scope(element, highlight)
 end
 
 ---@private
----@param ctx render.md.BulletContext
+---@param ctx render.md.bullet.Context
 ---@param values render.md.bullet.Text
 ---@return string?
 function Render:resolve_text(ctx, values)
@@ -116,7 +116,7 @@ function Render:resolve_text(ctx, values)
 end
 
 ---@private
----@param ctx render.md.BulletContext
+---@param ctx render.md.bullet.Context
 ---@param value render.md.bullet.Int
 ---@return integer
 function Render:resolve_int(ctx, value)

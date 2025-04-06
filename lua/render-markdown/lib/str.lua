@@ -17,7 +17,7 @@ function M.width(s)
     return vim.fn.strdisplaywidth(s)
 end
 
----@param line? render.md.MarkLine
+---@param line? render.md.mark.Line
 ---@return integer
 function M.line_width(line)
     if line == nil then

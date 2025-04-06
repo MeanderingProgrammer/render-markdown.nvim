@@ -1,10 +1,12 @@
 ---@module 'luassert'
 
+local eq = assert.are.same
+
 ---@class render.md.test.Range
 ---@field [1] integer
 ---@field [2]? integer
 
----@class render.md.test.MarkInfo: render.md.MarkOpts
+---@class render.md.test.MarkInfo: render.md.mark.Opts
 ---@field row render.md.test.Range
 ---@field col render.md.test.Range
 ---@field virt_text_pos? string
@@ -21,7 +23,7 @@ function M.setup.init(opts)
     require('luassert.assert'):set_parameter('TableFormatLevel', 4)
     require('luassert.assert'):set_parameter('TableErrorHighlightColor', 'none')
     ---@type render.md.UserConfig
-    local skip_conceal = {
+    local test_config = {
         anti_conceal = { enabled = false },
         win_options = { concealcursor = { rendered = 'nvic' } },
         overrides = {
@@ -33,7 +35,7 @@ function M.setup.init(opts)
             },
         },
     }
-    local config = vim.tbl_deep_extend('force', skip_conceal, opts or {})
+    local config = vim.tbl_deep_extend('force', test_config, opts or {})
     require('render-markdown').setup(config)
 end
 
@@ -172,7 +174,7 @@ end
 
 ---@private
 ---@param lengths integer[]
----@return render.md.MarkLine
+---@return render.md.mark.Line
 function M.indent.line(lengths)
     local result = {}
     for _, length in ipairs(lengths) do
@@ -377,9 +379,9 @@ end
 function M.assert_marks(expected)
     local actual = M.actual_marks()
     for i = 1, math.min(#expected, #actual) do
-        assert.are.same(expected[i], actual[i], string.format('Marks at index %d mismatch', i))
+        eq(expected[i], actual[i], string.format('Marks at index %d mismatch', i))
     end
-    assert.are.same(#expected, #actual, 'Different number of marks found')
+    eq(#expected, #actual, 'Different number of marks found')
 end
 
 ---@private
@@ -400,7 +402,7 @@ end
 ---@param expected string[]
 function M.assert_screen(expected)
     local actual = M.actual_screen()
-    assert.are.same(expected, actual)
+    eq(expected, actual)
 end
 
 ---@private

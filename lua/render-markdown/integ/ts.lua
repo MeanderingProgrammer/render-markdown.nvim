@@ -33,7 +33,7 @@ function M.parse(language, query)
 end
 
 ---@param language string
----@param injection? render.md.Injection
+---@param injection? render.md.injection.Config
 function M.inject(language, injection)
     if injection == nil or not injection.enabled then
         return
@@ -57,7 +57,7 @@ end
 
 ---@private
 ---@param language string
----@param pattern? render.md.Pattern
+---@param pattern? render.md.pattern.Config
 function M.disable(language, pattern)
     if pattern == nil or not pattern.disable then
         return

@@ -6,7 +6,7 @@ local Iter = require('render-markdown.lib.iter')
 
 ---@class render.md.debug.Mark
 ---@field conceal boolean
----@field opts render.md.MarkOpts
+---@field opts render.md.mark.Opts
 ---@field row render.md.debug.Range
 ---@field col render.md.debug.Range
 local Mark = {}
@@ -97,7 +97,7 @@ function Mark.collapse(range)
 end
 
 ---@private
----@param line render.md.MarkLine
+---@param line render.md.mark.Line
 ---@return string
 function Mark.line(line)
     local result = {}

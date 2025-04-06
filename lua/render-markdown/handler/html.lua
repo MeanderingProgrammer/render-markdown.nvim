@@ -4,7 +4,7 @@ local state = require('render-markdown.state')
 local ts = require('render-markdown.integ.ts')
 
 ---@class render.md.handler.buf.Html
----@field private config render.md.buffer.Config
+---@field private config render.md.BufferConfig
 ---@field private context render.md.Context
 ---@field private marks render.md.Marks
 ---@field private query vim.treesitter.Query
@@ -53,7 +53,7 @@ end
 ---@class render.md.handler.Html: render.md.Handler
 local M = {}
 
----@param ctx render.md.HandlerContext
+---@param ctx render.md.handler.Context
 ---@return render.md.Mark[]
 function M.parse(ctx)
     return Handler.new(ctx.buf):parse(ctx.root)

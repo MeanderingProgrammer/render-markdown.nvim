@@ -2,7 +2,7 @@ local Base = require('render-markdown.render.base')
 local colors = require('render-markdown.colors')
 
 ---@class render.md.render.CodeInline: render.md.Renderer
----@field private code render.md.Code
+---@field private code render.md.code.Config
 local Render = setmetatable({}, Base)
 Render.__index = Render
 

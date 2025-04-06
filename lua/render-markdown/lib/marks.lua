@@ -5,11 +5,28 @@ local Str = require('render-markdown.lib.str')
 local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
 
+---@class (exact) render.md.Mark
+---@field conceal boolean
+---@field start_row integer
+---@field start_col integer
+---@field opts render.md.mark.Opts
+
+---@class render.md.mark.Opts: vim.api.keyset.set_extmark
+---@field virt_text? render.md.mark.Line
+---@field virt_text_pos? 'eol'|'inline'|'overlay'
+---@field virt_lines? render.md.mark.Line[]
+
+---@alias render.md.mark.Line render.md.mark.Text[]
+
+---@class (exact) render.md.mark.Text
+---@field [1] string text
+---@field [2] string|string[] highlights
+
 ---@alias render.md.mark.Element boolean|render.md.Element
 
 ---@class render.md.Marks
 ---@field private context render.md.Context
----@field private ignore render.md.config.conceal.Ignore
+---@field private ignore render.md.conceal.Ignore
 ---@field private inline boolean
 ---@field private marks render.md.Mark[]
 local Marks = {}
@@ -34,7 +51,7 @@ end
 
 ---@param element render.md.mark.Element
 ---@param node render.md.Node
----@param opts render.md.MarkOpts
+---@param opts render.md.mark.Opts
 ---@return boolean
 function Marks:start(element, node, opts)
     return self:add(element, node.start_row, node.start_col, opts)
@@ -42,7 +59,7 @@ end
 
 ---@param element render.md.mark.Element
 ---@param node? render.md.Node
----@param opts render.md.MarkOpts
+---@param opts render.md.mark.Opts
 ---@param offset? Range4
 ---@return boolean
 function Marks:over(element, node, opts, offset)
@@ -58,7 +75,7 @@ end
 ---@param element render.md.mark.Element
 ---@param start_row integer
 ---@param start_col integer
----@param opts render.md.MarkOpts
+---@param opts render.md.mark.Opts
 ---@return boolean
 function Marks:add(element, start_row, start_col, opts)
     ---@type render.md.Mark
@@ -95,7 +112,7 @@ function Marks:conceal(element)
 end
 
 ---@private
----@param opts render.md.MarkOpts
+---@param opts render.md.mark.Opts
 ---@return boolean, string, string
 function Marks:validate(opts)
     if opts.virt_text_pos == 'inline' and not Compat.has_10 then

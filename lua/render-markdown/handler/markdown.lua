@@ -4,7 +4,7 @@ local state = require('render-markdown.state')
 local ts = require('render-markdown.integ.ts')
 
 ---@class render.md.handler.buf.Markdown
----@field private config render.md.buffer.Config
+---@field private config render.md.BufferConfig
 ---@field private context render.md.Context
 ---@field private marks render.md.Marks
 ---@field private query vim.treesitter.Query
@@ -39,7 +39,7 @@ function Handler.new(buf)
                 (plus_metadata)
             ] @dash
 
-            (list_item) @list_item
+            (list_item) @bullet
 
             [
                 (task_list_marker_unchecked)
@@ -52,11 +52,11 @@ function Handler.new(buf)
         ]]
     )
     self.renderers = {
+        bullet = require('render-markdown.render.bullet'),
         checkbox = require('render-markdown.render.checkbox'),
         code = require('render-markdown.render.code'),
         dash = require('render-markdown.render.dash'),
         heading = require('render-markdown.render.heading'),
-        list_item = require('render-markdown.render.list_item'),
         paragraph = require('render-markdown.render.paragraph'),
         quote = require('render-markdown.render.quote'),
         section = require('render-markdown.render.section'),
@@ -82,7 +82,7 @@ end
 ---@class render.md.handler.Markdown: render.md.Handler
 local M = {}
 
----@param ctx render.md.HandlerContext
+---@param ctx render.md.handler.Context
 ---@return render.md.Mark[]
 function M.parse(ctx)
     return Handler.new(ctx.buf):parse(ctx.root)

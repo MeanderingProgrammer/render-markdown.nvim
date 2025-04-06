@@ -2,7 +2,7 @@ local Base = require('render-markdown.render.base')
 local Str = require('render-markdown.lib.str')
 
 ---@class render.md.render.Section: render.md.Renderer
----@field private indent render.md.Indent
+---@field private indent render.md.indent.Config
 ---@field private level_change integer
 local Render = setmetatable({}, Base)
 Render.__index = Render

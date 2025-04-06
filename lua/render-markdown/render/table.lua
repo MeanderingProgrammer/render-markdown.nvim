@@ -3,9 +3,30 @@ local Iter = require('render-markdown.lib.iter')
 local Str = require('render-markdown.lib.str')
 local log = require('render-markdown.core.log')
 
----@class render.md.table.Space
----@field left integer
----@field right integer
+---@class render.md.table.Data
+---@field delim render.md.table.DelimRow
+---@field rows render.md.table.Row[]
+
+---@class render.md.table.DelimRow
+---@field node render.md.Node
+---@field columns render.md.table.DelimColumn[]
+
+---@class render.md.table.DelimColumn
+---@field width integer
+---@field alignment render.md.table.Alignment
+
+---@enum (key) render.md.table.Alignment
+local Alignment = {
+    left = 'left',
+    right = 'right',
+    center = 'center',
+    default = 'default',
+}
+
+---@class render.md.table.Row
+---@field node render.md.Node
+---@field pipes render.md.Node[]
+---@field columns render.md.table.Column[]
 
 ---@class render.md.table.Column
 ---@field row integer
@@ -14,28 +35,13 @@ local log = require('render-markdown.core.log')
 ---@field width integer
 ---@field space render.md.table.Space
 
----@class render.md.table.Row
----@field node render.md.Node
----@field pipes render.md.Node[]
----@field columns render.md.table.Column[]
-
----@alias render.md.table.Alignment 'left'|'right'|'center'|'default'
-
----@class render.md.table.DelimColumn
----@field width integer
----@field alignment render.md.table.Alignment
-
----@class render.md.table.DelimRow
----@field node render.md.Node
----@field columns render.md.table.DelimColumn[]
-
----@class render.md.data.Table
----@field delim render.md.table.DelimRow
----@field rows render.md.table.Row[]
+---@class render.md.table.Space
+---@field left integer
+---@field right integer
 
 ---@class render.md.render.Table: render.md.Renderer
----@field private table render.md.PipeTable
----@field private data render.md.data.Table
+---@field private table render.md.table.Config
+---@field private data render.md.table.Data
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
@@ -143,13 +149,13 @@ function Render.alignment(node)
     local has_left = node:child('pipe_table_align_left') ~= nil
     local has_right = node:child('pipe_table_align_right') ~= nil
     if has_left and has_right then
-        return 'center'
+        return Alignment.center
     elseif has_left then
-        return 'left'
+        return Alignment.left
     elseif has_right then
-        return 'right'
+        return Alignment.right
     else
-        return 'default'
+        return Alignment.default
     end
 end
 
@@ -231,12 +237,12 @@ function Render:delimiter()
         -- If column is small there's no good place to put the alignment indicator
         -- Alignment indicator must be exactly one character wide
         -- Do not put an indicator for default alignment
-        if column.width < 3 or Str.width(indicator) ~= 1 or column.alignment == 'default' then
+        if column.width < 3 or Str.width(indicator) ~= 1 or column.alignment == Alignment.default then
             return icon:rep(column.width)
         end
-        if column.alignment == 'left' then
+        if column.alignment == Alignment.left then
             return indicator .. icon:rep(column.width - 1)
-        elseif column.alignment == 'right' then
+        elseif column.alignment == Alignment.right then
             return icon:rep(column.width - 1) .. indicator
         else
             return indicator .. icon:rep(column.width - 2) .. indicator
@@ -275,11 +281,11 @@ function Render:row(row)
             if not self.context.conceal:enabled() then
                 -- Without concealing it is impossible to do full alignment
                 self:shift(column, 'right', filler)
-            elseif delim_column.alignment == 'center' then
+            elseif delim_column.alignment == Alignment.center then
                 local shift = math.floor((filler + column.space.right - column.space.left) / 2)
                 self:shift(column, 'left', shift)
                 self:shift(column, 'right', filler - shift)
-            elseif delim_column.alignment == 'right' then
+            elseif delim_column.alignment == Alignment.right then
                 local shift = column.space.right - self.table.padding
                 self:shift(column, 'left', filler + shift)
                 self:shift(column, 'right', -shift)

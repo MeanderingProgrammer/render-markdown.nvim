@@ -4,7 +4,7 @@ local colors = require('render-markdown.colors')
 
 ---@class render.md.Renderer
 ---@field protected marks render.md.Marks
----@field protected config render.md.buffer.Config
+---@field protected config render.md.BufferConfig
 ---@field protected context render.md.Context
 ---@field protected node render.md.Node
 ---@field setup fun(self: render.md.Renderer): boolean
@@ -13,7 +13,7 @@ local Base = {}
 Base.__index = Base
 
 ---@param marks render.md.Marks
----@param config render.md.buffer.Config
+---@param config render.md.BufferConfig
 ---@param context render.md.Context
 ---@param node render.md.Node
 ---@return render.md.Renderer
@@ -106,20 +106,20 @@ end
 ---@param destination string
 ---@return string, string
 function Base:from_destination(icon, highlight, destination)
-    local components = Iter.table.filter(self.config.link.custom, function(component)
-        return destination:find(component.pattern) ~= nil
+    local options = Iter.table.filter(self.config.link.custom, function(custom)
+        return destination:find(custom.pattern) ~= nil
     end)
-    table.sort(components, function(a, b)
+    table.sort(options, function(a, b)
         return Str.width(a.pattern) < Str.width(b.pattern)
     end)
-    local component = components[#components] or {}
-    return component.icon or icon, component.highlight or highlight
+    local result = options[#options] or {}
+    return result.icon or icon, result.highlight or highlight
 end
 
 ---@protected
 ---@param virtual boolean
 ---@param level? integer
----@return render.md.MarkLine
+---@return render.md.mark.Line
 function Base:indent_line(virtual, level)
     if virtual then
         level = self:indent_level(level)
@@ -172,10 +172,10 @@ function Base:indent_level(level)
 end
 
 ---@protected
----@param line render.md.MarkLine
+---@param line render.md.mark.Line
 ---@param value string|integer
 ---@param highlight? string|string[]
----@return render.md.MarkLine
+---@return render.md.mark.Line
 function Base:append(line, value, highlight)
     highlight = highlight or self.config.padding.highlight
     if type(value) == 'string' then

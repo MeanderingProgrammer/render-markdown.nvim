@@ -3,7 +3,7 @@ local Icons = require('render-markdown.lib.icons')
 local Str = require('render-markdown.lib.str')
 local colors = require('render-markdown.colors')
 
----@class render.md.data.Code
+---@class render.md.code.Data
 ---@field width integer
 ---@field language integer
 ---@field padding integer
@@ -11,8 +11,8 @@ local colors = require('render-markdown.colors')
 ---@field indent integer
 
 ---@class render.md.render.Code: render.md.Renderer
----@field private code render.md.Code
----@field private data render.md.data.Code
+---@field private code render.md.code.Config
+---@field private data render.md.code.Data
 local Render = setmetatable({}, Base)
 Render.__index = Render
 

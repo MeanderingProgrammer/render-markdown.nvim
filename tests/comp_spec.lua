@@ -2,6 +2,8 @@
 
 local util = require('tests.util')
 
+local eq = assert.are.same
+
 ---@param row integer
 ---@param col integer
 ---@param expected lsp.CompletionItem[]
@@ -11,7 +13,7 @@ local function assert_items(row, col, expected)
     table.sort(actual, function(a, b)
         return a.label < b.label
     end)
-    assert.are.same(expected, actual)
+    eq(expected, actual)
 end
 
 ---@param prefix string

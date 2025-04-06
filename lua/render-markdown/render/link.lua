@@ -1,12 +1,12 @@
 local Base = require('render-markdown.render.base')
 
----@class render.md.data.Link
+---@class render.md.link.Data
 ---@field icon string
 ---@field highlight string
 ---@field autolink boolean
 
 ---@class render.md.render.Link: render.md.Renderer
----@field private data render.md.data.Link
+---@field private data render.md.link.Data
 local Render = setmetatable({}, Base)
 Render.__index = Render
 

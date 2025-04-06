@@ -1,7 +1,7 @@
 local Base = require('render-markdown.render.base')
 
 ---@class render.md.render.Checkbox: render.md.Renderer
----@field private checkbox render.md.CheckboxComponent
+---@field private checkbox render.md.checkbox.component.Config
 local Render = setmetatable({}, Base)
 Render.__index = Render
 

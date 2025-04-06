@@ -1,14 +1,14 @@
 local Base = require('render-markdown.render.base')
 local ts = require('render-markdown.integ.ts')
 
----@class render.md.data.Quote
+---@class render.md.quote.Data
 ---@field query vim.treesitter.Query
 ---@field icon string
 ---@field highlight string
 ---@field repeat_linebreak? boolean
 
 ---@class render.md.render.Quote: render.md.Renderer
----@field private data render.md.data.Quote
+---@field private data render.md.quote.Data
 local Render = setmetatable({}, Base)
 Render.__index = Render
 

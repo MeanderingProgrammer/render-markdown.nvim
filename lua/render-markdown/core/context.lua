@@ -17,8 +17,8 @@ local log = require('render-markdown.core.log')
 
 ---@class render.md.Context
 ---@field private ranges render.md.Range[]
----@field private callouts table<integer, render.md.CustomCallout>
----@field private checkboxes table<integer, render.md.CustomCheckbox>
+---@field private callouts table<integer, render.md.callout.Config>
+---@field private checkboxes table<integer, render.md.checkbox.custom.Config>
 ---@field private offsets table<integer, render.md.context.Offset[]>
 ---@field buf integer
 ---@field win integer
@@ -75,41 +75,41 @@ function Context.compute_range(buf, win, offset)
     return Range.new(top, bottom)
 end
 
----@param component render.md.BaseComponent
+---@param config render.md.base.Config
 ---@return boolean
-function Context:skip(component)
-    -- Skip disabled components regardless of mode
-    if not component.enabled then
+function Context:skip(config)
+    -- Skip disabled config regardless of mode
+    if not config.enabled then
         return true
     end
-    -- Enabled components in top level modes should not be skipped
+    -- Enabled config in top level modes should not be skipped
     if self.top_level_mode then
         return false
     end
-    -- Enabled components in component modes should not be skipped
-    return not Env.mode.is(self.mode, component.render_modes)
+    -- Enabled config in config modes should not be skipped
+    return not Env.mode.is(self.mode, config.render_modes)
 end
 
 ---@param row integer
----@return render.md.CustomCallout?
+---@return render.md.callout.Config?
 function Context:get_callout(row)
     return self.callouts[row]
 end
 
 ---@param row integer
----@param callout render.md.CustomCallout
+---@param callout render.md.callout.Config
 function Context:add_callout(row, callout)
     self.callouts[row] = callout
 end
 
 ---@param row integer
----@return render.md.CustomCheckbox?
+---@return render.md.checkbox.custom.Config?
 function Context:get_checkbox(row)
     return self.checkboxes[row]
 end
 
 ---@param row integer
----@param checkbox render.md.CustomCheckbox
+---@param checkbox render.md.checkbox.custom.Config
 function Context:add_checkbox(row, checkbox)
     self.checkboxes[row] = checkbox
 end

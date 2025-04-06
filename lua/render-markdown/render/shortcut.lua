@@ -3,7 +3,7 @@ local Converter = require('render-markdown.lib.converter')
 local Str = require('render-markdown.lib.str')
 
 ---@class render.md.render.Shortcut: render.md.Renderer
----@field private link render.md.Link
+---@field private link render.md.link.Config
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
@@ -40,7 +40,7 @@ function Render:render()
 end
 
 ---@private
----@param callout render.md.CustomCallout
+---@param callout render.md.callout.Config
 function Render:callout(callout)
     if self.context:skip(self.config.quote) then
         return
@@ -56,7 +56,7 @@ function Render:callout(callout)
 end
 
 ---@private
----@param callout render.md.CustomCallout
+---@param callout render.md.callout.Config
 ---@return string, boolean
 function Render:callout_title(callout)
     ---Support for overriding title: https://help.obsidian.md/Editing+and+formatting/Callouts#Change+the+title
@@ -73,7 +73,7 @@ function Render:callout_title(callout)
 end
 
 ---@private
----@param checkbox render.md.CustomCheckbox
+---@param checkbox render.md.checkbox.custom.Config
 function Render:checkbox(checkbox)
     local config = self.config.checkbox
     if self.context:skip(config) or self.node:after() ~= ' ' then
@@ -92,7 +92,7 @@ function Render:wiki_link()
     end
 
     local sections = Str.split(self.node.text:sub(2, -2), '|')
-    ---@type render.md.LinkContext
+    ---@type render.md.link.Context
     local ctx = {
         buf = self.context.buf,
         row = self.node.start_row,

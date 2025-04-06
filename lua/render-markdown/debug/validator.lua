@@ -1,9 +1,13 @@
 local Iter = require('render-markdown.lib.iter')
 
----@alias render.md.debug.SpecKind 'type'|'value'
+---@enum (key) render.md.debug.spec.Kind
+local Kind = {
+    type = 'type',
+    value = 'value',
+}
 
 ---@class render.md.debug.Spec
----@field kind render.md.debug.SpecKind
+---@field kind render.md.debug.spec.Kind
 ---@field message string
 ---@field validation fun(value: any): boolean, string?
 
@@ -38,16 +42,20 @@ function Spec.new(validator, config, nilable, path, key)
     return self
 end
 
----@param keys 'ALL'|string|string[]
+---@param f fun(spec: render.md.debug.ValidatorSpec)
+---@param nilable? boolean
+---@return render.md.debug.ValidatorSpec
+function Spec:each(f, nilable)
+    local keys = self.config ~= nil and vim.tbl_keys(self.config) or {}
+    return self:nested(keys, f, nilable)
+end
+
+---@param keys string|string[]
 ---@param f fun(spec: render.md.debug.ValidatorSpec)
 ---@param nilable? boolean
 ---@return render.md.debug.ValidatorSpec
 function Spec:nested(keys, f, nilable)
-    if keys == 'ALL' then
-        keys = self.config ~= nil and vim.tbl_keys(self.config) or {}
-    else
-        keys = type(keys) == 'table' and keys or { keys }
-    end
+    keys = type(keys) == 'table' and keys or { keys }
     if nilable == nil then
         nilable = self.nilable
     end
@@ -63,7 +71,7 @@ end
 ---@return render.md.debug.ValidatorSpec
 function Spec:type(keys, ts)
     local types, message = self:handle_types({}, ts)
-    return self:add(keys, 'type', message, function(value)
+    return self:add(keys, Kind.type, message, function(value)
         return vim.tbl_contains(types, type(value))
     end)
 end
@@ -75,7 +83,7 @@ end
 function Spec:one_of(keys, values, ts)
     local options = Iter.list.map(values, vim.inspect)
     local types, message = self:handle_types(options, ts)
-    return self:add(keys, 'value', message, function(value)
+    return self:add(keys, Kind.value, message, function(value)
         return vim.tbl_contains(values, value) or vim.tbl_contains(types, type(value))
     end)
 end
@@ -86,7 +94,7 @@ end
 ---@return render.md.debug.ValidatorSpec
 function Spec:list(keys, t, ts)
     local types, message = self:handle_types({ t .. '[]' }, ts)
-    return self:add(keys, 'type', message, function(value)
+    return self:add(keys, Kind.type, message, function(value)
         if vim.tbl_contains(types, type(value)) then
             return true
         elseif type(value) == 'table' then
@@ -108,7 +116,7 @@ end
 ---@return render.md.debug.ValidatorSpec
 function Spec:nested_list(keys, t, ts)
     local types, message = self:handle_types({ t, t .. '[]', t .. '[][]' }, ts)
-    return self:add(keys, 'type', message, function(value)
+    return self:add(keys, Kind.type, message, function(value)
         if type(value) == t or vim.tbl_contains(types, type(value)) then
             return true
         elseif type(value) == 'table' then
@@ -137,7 +145,7 @@ end
 function Spec:one_or_list_of(keys, values, ts)
     local options = '(' .. table.concat(Iter.list.map(values, vim.inspect), '|') .. ')'
     local types, message = self:handle_types({ options, options .. '[]' }, ts)
-    return self:add(keys, 'type', message, function(value)
+    return self:add(keys, Kind.type, message, function(value)
         if vim.tbl_contains(types, type(value)) then
             return true
         elseif type(value) == 'string' then
@@ -176,7 +184,7 @@ end
 
 ---@private
 ---@param keys string|string[]
----@param kind render.md.debug.SpecKind
+---@param kind render.md.debug.spec.Kind
 ---@param message string
 ---@param validation fun(v: any): boolean, string?
 ---@return render.md.debug.ValidatorSpec
@@ -223,10 +231,10 @@ function Validator:check(path, config, specs)
         local ok, info = spec.validation(value)
         if not ok then
             local message = string.format('%s.%s - expected: %s', path, key, spec.message)
-            if spec.kind == 'type' then
+            if spec.kind == Kind.type then
                 message = message .. string.format(', but got: %s', type(value))
             end
-            if spec.kind == 'value' then
+            if spec.kind == Kind.value then
                 message = message .. string.format(', but got: %s', vim.inspect(value))
             end
             if info ~= nil then

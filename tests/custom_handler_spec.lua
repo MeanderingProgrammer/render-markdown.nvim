@@ -2,7 +2,7 @@
 
 local util = require('tests.util')
 
----@param ctx render.md.HandlerContext
+---@param ctx render.md.handler.Context
 ---@return render.md.Mark[]
 local function conceal_escape(ctx)
     local marks, query = {}, vim.treesitter.query.parse('markdown_inline', '(backslash_escape) @escape')

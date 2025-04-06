@@ -44,10 +44,10 @@ end
 
 ---@private
 ---@param name? render.md.table.Preset
----@return render.md.UserPipeTable
+---@return render.md.table.UserConfig
 function M.pipe_table_preset(name)
     if name == 'round' then
-        ---@type render.md.UserPipeTable
+        ---@type render.md.table.UserConfig
         return {
             -- stylua: ignore
             border = {
@@ -58,7 +58,7 @@ function M.pipe_table_preset(name)
             },
         }
     elseif name == 'double' then
-        ---@type render.md.UserPipeTable
+        ---@type render.md.table.UserConfig
         return {
             -- stylua: ignore
             border = {
@@ -69,7 +69,7 @@ function M.pipe_table_preset(name)
             },
         }
     elseif name == 'heavy' then
-        ---@type render.md.UserPipeTable
+        ---@type render.md.table.UserConfig
         return {
             alignment_indicator = '─',
             -- stylua: ignore
@@ -81,7 +81,7 @@ function M.pipe_table_preset(name)
             },
         }
     else
-        ---@type render.md.UserPipeTable
+        ---@type render.md.table.UserConfig
         return {}
     end
 end

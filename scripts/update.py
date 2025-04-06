@@ -15,8 +15,8 @@ class LuaAlias:
         self.options.append(value)
 
     def name(self) -> str:
-        # ---@alias render.md.MarkLine render.md.MarkText[] -> MarkLine
-        return self.value.split()[1].split(".")[-1]
+        # ---@alias md.mark.Line md.mark.Text[] -> md.mark.Line
+        return self.value.split()[1]
 
     def to_str(self) -> str:
         return "\n".join([self.value] + self.options)
@@ -30,94 +30,63 @@ class LuaClass:
     def add(self, value: str) -> None:
         self.fields.append(value)
 
+    def exact(self) -> bool:
+        return self.value.split()[1] == "(exact)"
+
     def name(self) -> str:
-        # ---@class render.md.Init: render.md.Api                               -> Init
-        # ---@class (exact) render.md.UserBufferConfig                          -> UserBufferConfig
-        # ---@class (exact) render.md.UserConfig: render.md.UserBufferConfig    -> UserConfig
-        return self.value.split(":")[0].split()[-1].split(".")[-1]
+        # ---@class md.Init: md.Api                     -> md.Init
+        # ---@class (exact) md.buffer.Config            -> md.buffer.Config
+        # ---@class (exact) md.Config: md.buffer.Config -> md.Config
+        return self.value.split(":")[0].split()[-1]
 
-    def user(self) -> bool:
-        return self.name().startswith("User")
+    def config(self) -> bool:
+        return self.name().split(".")[-1] == "Config"
 
-    def is_optional(self, field: str) -> bool:
-        optional_classes: list[str] = [
-            "MarkOpts",
-        ]
-        class_optional_fields: dict[str, list[str]] = {
-            "Handler": ["extends"],
-            "HeadingCustom": ["icon", "background", "foreground"],
-            "LinkContext": ["alias"],
-            "UserCode": ["highlight_language"],
-            "UserCustomCheckbox": ["scope_highlight"],
-            "UserCheckboxComponent": ["scope_highlight"],
-            "UserCustomCallout": ["quote_icon", "category"],
-            "UserLinkComponent": ["highlight"],
-            "UserHtmlComment": ["text"],
-        }
-        optional_fields = class_optional_fields.get(self.name(), [])
-        if self.name() in optional_classes:
-            return True
+    def to_user(self) -> str:
+        def user(s: str) -> str:
+            return s.replace(".Config", ".UserConfig")
 
-        # ---@field extends? boolean                            -> extends
-        # ---@field start_row integer                           -> start_row
-        # ---@field attach? fun(ctx: render.md.CallbackContext) -> attach
-        field_name = field.split()[1].replace("?", "", 1)
-        return field_name in optional_fields
-
-    def validate(self) -> None:
+        lines: list[str] = [user(self.value)]
         for field in self.fields:
-            # User classes are expected to have optional fields with no exceptions
-            # Internal classes are expected to have mandatory fields with some exceptions
-            optional = self.user() or self.is_optional(field)
-            message = "optional" if optional else "mandatory"
-            assert ("?" in field) == optional, f"Field must be {message}: {field}"
-
-    def to_internal(self) -> str:
-        lines: list[str] = [self.value.replace("User", "")]
-        for field in self.fields:
-            if self.name() == "UserConfigOverrides":
-                lines.append(field.replace("?", "", 1))
-            elif self.is_optional(field):
-                lines.append(field)
-            else:
-                lines.append(field.replace("User", "").replace("?", "", 1))
+            field = user(field)
+            name = field.split()[1]
+            if not name.endswith("?"):
+                field = field.replace(f" {name} ", f" {name}? ")
+            lines.append(field)
         return "\n".join(lines)
 
     def to_str(self) -> str:
         return "\n".join([self.value] + self.fields)
 
 
-INIT_LUA = Path("lua/render-markdown/init.lua")
-TYPES_LUA = Path("lua/render-markdown/types.lua")
-README_MD = Path("README.md")
-HANDLERS_MD = Path("doc/custom-handlers.md")
-
-
 def main() -> None:
-    update_types()
-    update_readme()
+    init = Path("lua/render-markdown/init.lua")
+    update_types(init)
+    update_readme(init)
     update_handlers()
 
 
-def update_types() -> None:
+def update_types(init: Path) -> None:
+    configs = list(Path("lua/render-markdown/config").iterdir())
+    configs.sort(key=str)
+    files: list[Path] = [init] + configs
+
     classes: list[str] = ["---@meta"]
-    for definition in get_definitions():
+    for definition in get_definitions(files):
         if not isinstance(definition, LuaClass):
             continue
-        definition.validate()
-        if definition.user():
-            classes.append(definition.to_internal())
-    TYPES_LUA.write_text("\n\n".join(classes) + "\n")
+        if definition.exact() and definition.config():
+            classes.append(definition.to_user())
+
+    types = Path("lua/render-markdown/types.lua")
+    types.write_text("\n\n".join(classes) + "\n")
 
 
-def update_readme() -> None:
-
-    def wrap_setup(value: str) -> str:
-        return f"require('render-markdown').setup({value})\n"
-
-    old_config = get_code_block(README_MD, "log_level", 1)
-    new_config = wrap_setup(get_default_config())
-    text = README_MD.read_text().replace(old_config, new_config)
+def update_readme(init: Path) -> None:
+    readme = Path("README.md")
+    old_config = get_code_block(readme, "log_level", 1)
+    new_config = wrap_setup(get_default(init))
+    text = readme.read_text().replace(old_config, new_config)
 
     parameters: list[str] = [
         "heading",
@@ -134,48 +103,58 @@ def update_readme() -> None:
         "indent",
     ]
     for parameter in parameters:
-        old_param = get_code_block(README_MD, f"\n    {parameter} = {{", 2)
+        old_param = get_code_block(readme, f"\n    {parameter} = {{", 2)
         new_param = wrap_setup(get_config_for(new_config, parameter))
         text = text.replace(old_param, new_param)
 
-    README_MD.write_text(text)
+    readme.write_text(text)
+
+
+def wrap_setup(s: str) -> str:
+    return f"require('render-markdown').setup({s})\n"
 
 
 def update_handlers() -> None:
-    name_lua = {lua.name(): lua for lua in get_definitions()}
+    files: list[Path] = [
+        Path("lua/render-markdown/core/ui.lua"),
+        Path("lua/render-markdown/lib/marks.lua"),
+    ]
+    name_lua = {lua.name(): lua for lua in get_definitions(files)}
     names = [
-        "Handler",
-        "HandlerContext",
-        "Mark",
-        "MarkOpts",
-        "MarkLine",
-        "MarkText",
+        "render.md.Handler",
+        "render.md.handler.Context",
+        "render.md.Mark",
+        "render.md.mark.Opts",
+        "render.md.mark.Line",
+        "render.md.mark.Text",
     ]
     definitions = [name_lua[name] for name in names]
 
-    old = get_code_block(HANDLERS_MD, definitions[-1].value, 1)
+    handlers = Path("doc/custom-handlers.md")
+    old = get_code_block(handlers, definitions[-1].value, 1)
     new = "\n".join([lua.to_str() + "\n" for lua in definitions])
-    text = HANDLERS_MD.read_text().replace(old, new)
-    HANDLERS_MD.write_text(text)
+    text = handlers.read_text().replace(old, new)
+    handlers.write_text(text)
 
 
-def get_definitions() -> list[LuaAlias | LuaClass]:
+def get_definitions(files: list[Path]) -> list[LuaAlias | LuaClass]:
     result: list[LuaAlias | LuaClass] = []
-    for comment in get_comments():
-        # ---@class render.md.Init: render.md.Api   -> class
-        # ---@field enabled? boolean                -> field
-        # ---@alias render.md.bullet.Text           -> alias
-        # ---| string                               -> ---|
-        # ---@type render.md.Config                 -> type
-        # ---@param opts? render.md.UserConfig      -> param
-        # -- Inlined with 'image' elements          -> --
-        annotation = comment.split()[0].split("@")[-1]
-        if annotation == "alias":
-            result.append(LuaAlias(comment))
-        elif annotation == "class":
-            result.append(LuaClass(comment))
-        elif annotation in ["field", "---|"]:
-            result[-1].add(comment)
+    for file in files:
+        for comment in get_comments(file):
+            # ---@class md.Init: md.Api        -> class
+            # ---@field enabled? boolean       -> field
+            # ---@alias md.bullet.Text         -> alias
+            # ---| string                      -> ---|
+            # ---@type md.Config               -> type
+            # ---@param opts? md.UserConfig    -> param
+            # -- Inlined with 'image' elements -> --
+            annotation = comment.split()[0].split("@")[-1]
+            if annotation == "alias":
+                result.append(LuaAlias(comment))
+            elif annotation == "class":
+                result.append(LuaClass(comment))
+            elif annotation in ["field", "---|"]:
+                result[-1].add(comment)
     return result
 
 
@@ -190,24 +169,21 @@ def get_config_for(config: str, parameter: str) -> str:
     return "\n".join(["{"] + lines[start : end + 1] + ["}"])
 
 
-def get_comments() -> list[str]:
+def get_comments(file: Path) -> list[str]:
     query = "(comment) @comment"
-    return ts_query(INIT_LUA, query, "comment")
+    return ts_query(file, query, "comment")
 
 
-def get_default_config() -> str:
+def get_default(file: Path) -> str:
     query = """
-        (assignment_statement
-            (variable_list
-                name: (dot_index_expression
-                    field: (identifier) @name
-                    (#eq? @name "default_config")
-                )
-            )
-            (expression_list value: (table_constructor)) @value
-        )
+    (assignment_statement
+        (variable_list
+            name: (dot_index_expression
+                field: (identifier) @name
+                (#eq? @name "default")))
+        (expression_list value: (table_constructor)) @value)
     """
-    default_configs = ts_query(INIT_LUA, query, "value")
+    default_configs = ts_query(file, query, "value")
     assert len(default_configs) == 1
     return default_configs[0]
 

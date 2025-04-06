@@ -7,6 +7,14 @@ local Iter = require('render-markdown.lib.iter')
 local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
 
+---@class (exact) render.md.Handler
+---@field extends? boolean
+---@field parse fun(ctx: render.md.handler.Context): render.md.Mark[]
+
+---@class (exact) render.md.handler.Context
+---@field buf integer
+---@field root TSNode
+
 ---@type table<string, render.md.Handler>
 local builtin_handlers = {
     html = require('render-markdown.handler.html'),
@@ -163,7 +171,7 @@ function M.run_update(buf, win, change)
 end
 
 ---@private
----@param config render.md.buffer.Config
+---@param config render.md.BufferConfig
 ---@param win integer
 ---@param mode string
 ---@return 'default'|'rendered'
@@ -219,7 +227,7 @@ end
 ---Run user & builtin handlers when available. User handler is always executed,
 ---builtin handler is skipped if user handler does not specify extends.
 ---@private
----@param ctx render.md.HandlerContext
+---@param ctx render.md.handler.Context
 ---@param language string
 ---@return render.md.Mark[]
 function M.parse_tree(ctx, language)

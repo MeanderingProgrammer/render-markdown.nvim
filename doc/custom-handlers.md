@@ -14,9 +14,9 @@ Each handler must conform to the following interface:
 ```lua
 ---@class (exact) render.md.Handler
 ---@field extends? boolean
----@field parse fun(ctx: render.md.HandlerContext): render.md.Mark[]
+---@field parse fun(ctx: render.md.handler.Context): render.md.Mark[]
 
----@class (exact) render.md.HandlerContext
+---@class (exact) render.md.handler.Context
 ---@field buf integer
 ---@field root TSNode
 
@@ -24,16 +24,16 @@ Each handler must conform to the following interface:
 ---@field conceal boolean
 ---@field start_row integer
 ---@field start_col integer
----@field opts render.md.MarkOpts
+---@field opts render.md.mark.Opts
 
----@class render.md.MarkOpts: vim.api.keyset.set_extmark
----@field virt_text? render.md.MarkLine
+---@class render.md.mark.Opts: vim.api.keyset.set_extmark
+---@field virt_text? render.md.mark.Line
 ---@field virt_text_pos? 'eol'|'inline'|'overlay'
----@field virt_lines? render.md.MarkLine[]
+---@field virt_lines? render.md.mark.Line[]
 
----@alias render.md.MarkLine render.md.MarkText[]
+---@alias render.md.mark.Line render.md.mark.Text[]
 
----@class (exact) render.md.MarkText
+---@class (exact) render.md.mark.Text
 ---@field [1] string text
 ---@field [2] string|string[] highlights
 ```
@@ -90,7 +90,7 @@ local function parse_python(ctx)
     local marks = {}
     for id, node in query:iter_captures(ctx.root, ctx.buf) do
         local capture = query.captures[id]
-        local start_row, _, _, _ = node:range()
+        local start_row = node:range()
         if capture == 'def' then
             marks[#marks + 1] = {
                 conceal = true,
