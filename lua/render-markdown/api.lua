@@ -30,7 +30,8 @@ function M.buf_toggle()
 end
 
 function M.log()
-    require('render-markdown.core.log').open()
+    local log = require('render-markdown.core.log')
+    log.open()
 end
 
 function M.expand()
@@ -44,14 +45,17 @@ function M.contract()
 end
 
 function M.debug()
-    local buf, win = Env.buf.current(), Env.win.current()
-    local row, marks =
-        require('render-markdown.core.ui').get_row_marks(buf, win)
-    require('render-markdown.debug.marks').debug(row, marks)
+    local ui = require('render-markdown.core.ui')
+    local disply = require('render-markdown.debug.marks')
+    local buf = Env.buf.current()
+    local win = Env.win.current()
+    local row, marks = ui.get_row_marks(buf, win)
+    disply.show(row, marks)
 end
 
 function M.config()
-    local difference = state.difference(require('render-markdown').default)
+    local markdown = require('render-markdown')
+    local difference = state.difference(markdown.default)
     if vim.tbl_count(difference) == 0 then
         vim.print('Default Configuration')
     else

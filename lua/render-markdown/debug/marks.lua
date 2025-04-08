@@ -150,7 +150,7 @@ local M = {}
 
 ---@param row integer
 ---@param marks render.md.Mark[]
-function M.debug(row, marks)
+function M.show(row, marks)
     vim.print(string.format('Row: %d', row))
     if #marks == 0 then
         vim.print('No decorations found')

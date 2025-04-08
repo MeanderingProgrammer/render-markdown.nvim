@@ -1,7 +1,7 @@
 local Base = require('render-markdown.render.base')
 
 ---@class render.md.render.Checkbox: render.md.Renderer
----@field private checkbox render.md.checkbox.component.Config
+---@field private info render.md.checkbox.component.Config
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
@@ -16,8 +16,8 @@ function Render:setup()
         task_list_marker_unchecked = config.unchecked,
         task_list_marker_checked = config.checked,
     }
-    self.checkbox = types[self.node.type]
-    if self.checkbox == nil then
+    self.info = types[self.node.type]
+    if self.info == nil then
         return false
     end
 
@@ -25,9 +25,9 @@ function Render:setup()
 end
 
 function Render:render()
-    self:check_icon(self.checkbox.icon, self.checkbox.highlight)
+    self:check_icon(self.info.icon, self.info.highlight)
     local scope_node = self.node:sibling('paragraph')
-    self:scope('check_scope', scope_node, self.checkbox.scope_highlight)
+    self:scope('check_scope', scope_node, self.info.scope_highlight)
 end
 
 return Render

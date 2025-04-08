@@ -204,6 +204,10 @@ require('render-markdown').setup({
     log_runtime = false,
     -- Filetypes this plugin will run on.
     file_types = { 'markdown' },
+    -- Takes buffer as input, if it returns true this plugin will not attach to the buffer
+    ignore = function()
+        return false
+    end,
     -- Additional events that will trigger this plugin's render loop.
     change_events = {},
     -- Out of the box language injections for known filetypes that allow markdown to be interpreted

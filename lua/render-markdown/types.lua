@@ -5,6 +5,7 @@
 ---@field log_level? render.md.config.LogLevel
 ---@field log_runtime? boolean
 ---@field file_types? string[]
+---@field ignore? fun(buf: integer): boolean
 ---@field change_events? string[]
 ---@field injections? table<string, render.md.injection.UserConfig>
 ---@field patterns? table<string, render.md.pattern.UserConfig>

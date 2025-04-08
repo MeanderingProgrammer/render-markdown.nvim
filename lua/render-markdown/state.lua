@@ -13,6 +13,7 @@ local configs = {}
 ---@field enabled boolean
 ---@field log_runtime boolean
 ---@field file_types string[]
+---@field ignore fun(buf: integer): boolean
 ---@field change_events string[]
 ---@field patterns table<string, render.md.pattern.Config>
 ---@field on render.md.callback.Config
@@ -43,6 +44,7 @@ function M.setup(default, user)
     M.enabled = config.enabled
     M.log_runtime = config.log_runtime
     M.file_types = config.file_types
+    M.ignore = config.ignore
     M.change_events = config.change_events
     M.patterns = config.patterns
     M.on = config.on
@@ -135,37 +137,26 @@ function M.validate()
     local validator = require('render-markdown.debug.validator').new()
     local spec = validator:spec(M.config, false)
     Config.validate(spec)
-        :one_of('preset', { 'none', 'lazy', 'obsidian' })
-        :one_of('log_level', { 'off', 'debug', 'info', 'error' })
-        :type('log_runtime', 'boolean')
-        :list('file_types', 'string')
-        :list('change_events', 'string')
-        :nested(
-            'injections',
-            require('render-markdown.config.injections').validate
-        )
-        :nested('patterns', require('render-markdown.config.patterns').validate)
-        :nested('on', require('render-markdown.config.on').validate)
-        :nested(
-            'completions',
-            require('render-markdown.config.completions').validate
-        )
-        :nested(
-            'overrides',
-            require('render-markdown.config.overrides').validate
-        )
-        :nested('custom_handlers', function(handlers)
-            handlers
-                :each(function(handler)
-                    handler
-                        :type('extends', 'boolean')
-                        :type('parse', 'function')
-                        :check()
-                end)
-                :check()
+    spec:one_of('preset', { 'none', 'lazy', 'obsidian' })
+    spec:one_of('log_level', { 'off', 'debug', 'info', 'error' })
+    spec:type('log_runtime', 'boolean')
+    spec:list('file_types', 'string')
+    spec:type('ignore', 'function')
+    spec:list('change_events', 'string')
+    spec:config('injections')
+    spec:config('patterns')
+    spec:config('on')
+    spec:config('completions')
+    spec:config('overrides')
+    spec:nested('custom_handlers', function(handlers)
+        handlers:each(function(handler)
+            handler:type('extends', 'boolean')
+            handler:type('parse', 'function')
+            handler:check()
         end)
-        :check()
-
+        handlers:check()
+    end)
+    spec:check()
     return validator:get_errors()
 end
 

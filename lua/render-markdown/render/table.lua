@@ -40,18 +40,18 @@ local Alignment = {
 ---@field right integer
 
 ---@class render.md.render.Table: render.md.Renderer
----@field private table render.md.table.Config
+---@field private info render.md.table.Config
 ---@field private data render.md.table.Data
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
 ---@return boolean
 function Render:setup()
-    self.table = self.config.pipe_table
-    if self.context:skip(self.table) then
+    self.info = self.config.pipe_table
+    if self.context:skip(self.info) then
         return false
     end
-    if self.table.style == 'none' then
+    if self.info.style == 'none' then
         return false
     end
     if self.node:get():has_error() then
@@ -105,12 +105,12 @@ function Render:setup()
             local width = column.width
             local space_available = column.space.left
                 + column.space.right
-                - (2 * self.table.padding)
+                - (2 * self.info.padding)
             -- If we don't have enough space for padding add it to the width
             if space_available < 0 then
                 width = width - space_available
             end
-            if self.table.cell == 'trimmed' then
+            if self.info.cell == 'trimmed' then
                 width = width - math.max(space_available, 0)
             end
             local delim_column = delim.columns[i]
@@ -138,10 +138,10 @@ function Render:parse_delim(row)
         if width < 0 then
             return nil
         end
-        if self.table.cell == 'padded' then
-            width = math.max(width, self.table.min_width)
-        elseif self.table.cell == 'trimmed' then
-            width = self.table.min_width
+        if self.info.cell == 'padded' then
+            width = math.max(width, self.info.min_width)
+        elseif self.info.cell == 'trimmed' then
+            width = self.info.min_width
         end
         columns[#columns + 1] = {
             width = width,
@@ -235,16 +235,16 @@ function Render:render()
     for _, row in ipairs(self.data.rows) do
         self:row(row)
     end
-    if self.table.style == 'full' then
+    if self.info.style == 'full' then
         self:full()
     end
 end
 
 ---@private
 function Render:delimiter()
-    local delim, border = self.data.delim, self.table.border
+    local delim, border = self.data.delim, self.info.border
 
-    local indicator, icon = self.table.alignment_indicator, border[11]
+    local indicator, icon = self.info.alignment_indicator, border[11]
     local sections = Iter.list.map(delim.columns, function(column)
         -- If column is small there's no good place to put the alignment indicator
         -- Alignment indicator must be exactly one character wide
@@ -269,7 +269,7 @@ function Render:delimiter()
     self:append(
         line,
         border[4] .. table.concat(sections, border[5]) .. border[6],
-        self.table.head
+        self.info.head
     )
     self:append(line, Str.width(delim.node.text) - Str.line_width(line))
 
@@ -282,11 +282,11 @@ end
 ---@private
 ---@param row render.md.table.Row
 function Render:row(row)
-    local delim, border = self.data.delim, self.table.border
-    local highlight = row.node.type == 'pipe_table_header' and self.table.head
-        or self.table.row
+    local delim, border = self.data.delim, self.info.border
+    local highlight = row.node.type == 'pipe_table_header' and self.info.head
+        or self.info.row
 
-    if vim.tbl_contains({ 'trimmed', 'padded', 'raw' }, self.table.cell) then
+    if vim.tbl_contains({ 'trimmed', 'padded', 'raw' }, self.info.cell) then
         for _, pipe in ipairs(row.pipes) do
             self.marks:over('table_border', pipe, {
                 virt_text = { { border[10], highlight } },
@@ -295,7 +295,7 @@ function Render:row(row)
         end
     end
 
-    if vim.tbl_contains({ 'trimmed', 'padded' }, self.table.cell) then
+    if vim.tbl_contains({ 'trimmed', 'padded' }, self.info.cell) then
         for i, column in ipairs(row.columns) do
             local delim_column = delim.columns[i]
             local filler = delim_column.width - column.width
@@ -309,16 +309,16 @@ function Render:row(row)
                 self:shift(column, 'left', shift)
                 self:shift(column, 'right', filler - shift)
             elseif delim_column.alignment == Alignment.right then
-                local shift = column.space.right - self.table.padding
+                local shift = column.space.right - self.info.padding
                 self:shift(column, 'left', filler + shift)
                 self:shift(column, 'right', -shift)
             else
-                local shift = column.space.left - self.table.padding
+                local shift = column.space.left - self.info.padding
                 self:shift(column, 'left', -shift)
                 self:shift(column, 'right', filler + shift)
             end
         end
-    elseif self.table.cell == 'overlay' then
+    elseif self.info.cell == 'overlay' then
         self.marks:over('table_border', row.node, {
             virt_text = { { row.node.text:gsub('|', border[10]), highlight } },
             virt_text_pos = 'overlay',
@@ -336,7 +336,7 @@ function Render:shift(column, side, amount)
     if amount > 0 then
         self.marks:add(true, column.row, col, {
             priority = 0,
-            virt_text = self:append({}, amount, self.table.filler),
+            virt_text = self:append({}, amount, self.info.filler),
             virt_text_pos = 'inline',
         })
     elseif amount < 0 then
@@ -353,15 +353,15 @@ end
 function Render:full()
     local delim = self.data.delim
     local rows = self.data.rows
-    local border = self.table.border
+    local border = self.info.border
 
     ---@param row render.md.table.Row
     ---@return boolean
     local function width_equal(row)
-        if vim.tbl_contains({ 'trimmed', 'padded' }, self.table.cell) then
+        if vim.tbl_contains({ 'trimmed', 'padded' }, self.info.cell) then
             -- Assume table was trimmed or padded to match
             return true
-        elseif self.table.cell == 'raw' then
+        elseif self.info.cell == 'raw' then
             -- Want the computed widths to match
             for i, column in ipairs(row.columns) do
                 if delim.columns[i].width ~= column.width then
@@ -369,7 +369,7 @@ function Render:full()
                 end
             end
             return true
-        elseif self.table.cell == 'overlay' then
+        elseif self.info.cell == 'overlay' then
             -- Want the underlying text widths to match
             return Str.width(delim.node.text) == Str.width(row.node.text)
         else
@@ -407,7 +407,7 @@ function Render:full()
     ---@param chars { [1]: string, [2]: string, [3]: string }
     local function table_border(node, above, chars)
         local text = chars[1] .. table.concat(sections, chars[2]) .. chars[3]
-        local highlight = above and self.table.head or self.table.row
+        local highlight = above and self.info.head or self.info.row
 
         local line = self:append({}, spaces)
         self:append(line, text, highlight)

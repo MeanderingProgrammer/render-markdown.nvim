@@ -175,6 +175,11 @@ function M.should_attach(buf)
         return false
     end
 
+    if state.ignore(buf) then
+        log.buf('info', 'attach', buf, 'skip', 'user ignore')
+        return false
+    end
+
     log.buf('info', 'attach', buf, 'success')
     buffers[#buffers + 1] = buf
     return true

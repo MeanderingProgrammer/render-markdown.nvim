@@ -10,14 +10,14 @@ local M = {}
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
     spec:each(function(callout)
-        callout
-            :type('raw', 'string')
-            :type('rendered', 'string')
-            :type('highlight', 'string')
-            :type('quote_icon', { 'string', 'nil' })
-            :type('category', { 'string', 'nil' })
-            :check()
-    end, false):check()
+        callout:type('raw', 'string')
+        callout:type('rendered', 'string')
+        callout:type('highlight', 'string')
+        callout:type('quote_icon', { 'string', 'nil' })
+        callout:type('category', { 'string', 'nil' })
+        callout:check()
+    end, false)
+    spec:check()
 end
 
 return M

@@ -11,11 +11,11 @@ local M = {}
 function M.validate(spec)
     require('render-markdown.config.base').validate(spec)
     spec:type('per_level', 'number')
-        :type('skip_level', 'number')
-        :type('skip_heading', 'boolean')
-        :type('icon', 'string')
-        :type('highlight', 'string')
-        :check()
+    spec:type('skip_level', 'number')
+    spec:type('skip_heading', 'boolean')
+    spec:type('icon', 'string')
+    spec:type('highlight', 'string')
+    spec:check()
 end
 
 return M

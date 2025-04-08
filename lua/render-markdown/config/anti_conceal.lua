@@ -7,7 +7,7 @@
 ---@alias render.md.conceal.Ignore table<render.md.Element, render.md.Modes>
 
 ---@enum (key) render.md.Element
-local element = {
+local Element = {
     head_icon = 'head_icon',
     head_background = 'head_background',
     head_border = 'head_border',
@@ -30,14 +30,15 @@ local M = {}
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
     spec:type('enabled', 'boolean')
-        :nested('ignore', function(ignore)
-            ignore
-                :list(vim.tbl_keys(element), 'string', { 'boolean', 'nil' })
-                :check()
-        end)
-        :type('above', 'number')
-        :type('below', 'number')
-        :check()
+    spec:nested('ignore', function(ignore)
+        for element in pairs(Element) do
+            ignore:list(element, 'string', { 'boolean', 'nil' })
+        end
+        ignore:check()
+    end)
+    spec:type('above', 'number')
+    spec:type('below', 'number')
+    spec:check()
 end
 
 return M

@@ -6,7 +6,9 @@ local M = {}
 
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
-    spec:type('enabled', 'boolean'):type('highlight', 'string'):check()
+    spec:type('enabled', 'boolean')
+    spec:type('highlight', 'string')
+    spec:check()
 end
 
 return M

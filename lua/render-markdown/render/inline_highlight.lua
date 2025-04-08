@@ -2,14 +2,14 @@ local Base = require('render-markdown.render.base')
 local Str = require('render-markdown.lib.str')
 
 ---@class render.md.render.InlineHighlight: render.md.Renderer
----@field private highlight render.md.inline.highlight.Config
+---@field private info render.md.inline.highlight.Config
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
 ---@return boolean
 function Render:setup()
-    self.highlight = self.config.inline_highlight
-    if self.context:skip(self.highlight) then
+    self.info = self.config.inline_highlight
+    if self.context:skip(self.info) then
         return false
     end
     return true
@@ -25,7 +25,7 @@ function Render:render()
         self.marks:add(false, start_row, start_col, {
             end_row = end_row,
             end_col = end_col,
-            hl_group = self.highlight.highlight,
+            hl_group = self.info.highlight,
         })
         -- Hide last 2 equal signs
         self:hide_equals(end_row, end_col - 2)

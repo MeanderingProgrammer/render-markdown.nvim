@@ -8,7 +8,8 @@ local M = {}
 
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
-    spec:type('enabled', 'boolean'):list('render_modes', 'string', 'boolean')
+    spec:type('enabled', 'boolean')
+    spec:list('render_modes', 'string', 'boolean')
 end
 
 return M

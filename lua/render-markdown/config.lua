@@ -37,44 +37,28 @@ function Config.new(config)
 end
 
 ---@param spec render.md.debug.ValidatorSpec
----@return render.md.debug.ValidatorSpec
 function Config.validate(spec)
     require('render-markdown.config.base').validate(spec)
-    return spec:type('max_file_size', 'number')
-        :type('debounce', 'number')
-        :nested(
-            'anti_conceal',
-            require('render-markdown.config.anti_conceal').validate
-        )
-        :nested('bullet', require('render-markdown.config.bullet').validate)
-        :nested('callout', require('render-markdown.config.callout').validate)
-        :nested('checkbox', require('render-markdown.config.checkbox').validate)
-        :nested('code', require('render-markdown.config.code').validate)
-        :nested('dash', require('render-markdown.config.dash').validate)
-        :nested('heading', require('render-markdown.config.heading').validate)
-        :nested('html', require('render-markdown.config.html').validate)
-        :nested('indent', require('render-markdown.config.indent').validate)
-        :nested(
-            'inline_highlight',
-            require('render-markdown.config.inline_highlight').validate
-        )
-        :nested('latex', require('render-markdown.config.latex').validate)
-        :nested('link', require('render-markdown.config.link').validate)
-        :nested('padding', require('render-markdown.config.padding').validate)
-        :nested(
-            'paragraph',
-            require('render-markdown.config.paragraph').validate
-        )
-        :nested(
-            'pipe_table',
-            require('render-markdown.config.pipe_table').validate
-        )
-        :nested('quote', require('render-markdown.config.quote').validate)
-        :nested('sign', require('render-markdown.config.sign').validate)
-        :nested(
-            'win_options',
-            require('render-markdown.config.win_options').validate
-        )
+    spec:type('max_file_size', 'number')
+    spec:type('debounce', 'number')
+    spec:config('anti_conceal')
+    spec:config('bullet')
+    spec:config('callout')
+    spec:config('checkbox')
+    spec:config('code')
+    spec:config('dash')
+    spec:config('heading')
+    spec:config('html')
+    spec:config('indent')
+    spec:config('inline_highlight')
+    spec:config('latex')
+    spec:config('link')
+    spec:config('padding')
+    spec:config('paragraph')
+    spec:config('pipe_table')
+    spec:config('quote')
+    spec:config('sign')
+    spec:config('win_options')
 end
 
 ---@private

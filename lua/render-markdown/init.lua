@@ -6,6 +6,7 @@ local M = {}
 ---@field log_level render.md.config.LogLevel
 ---@field log_runtime boolean
 ---@field file_types string[]
+---@field ignore fun(buf: integer): boolean
 ---@field change_events string[]
 ---@field injections table<string, render.md.injection.Config>
 ---@field patterns table<string, render.md.pattern.Config>
@@ -71,6 +72,10 @@ M.default = {
     log_runtime = false,
     -- Filetypes this plugin will run on.
     file_types = { 'markdown' },
+    -- Takes buffer as input, if it returns true this plugin will not attach to the buffer
+    ignore = function()
+        return false
+    end,
     -- Additional events that will trigger this plugin's render loop.
     change_events = {},
     -- Out of the box language injections for known filetypes that allow markdown to be interpreted

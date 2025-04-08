@@ -13,7 +13,7 @@ local Kind = {
 
 ---@class render.md.debug.ValidatorSpec
 ---@field private validator render.md.debug.Validator
----@field private config? table<string, any>
+---@field private data? table<string, any>
 ---@field private nilable boolean
 ---@field private path string
 ---@field private specs table<string, render.md.debug.Spec>
@@ -21,21 +21,21 @@ local Spec = {}
 Spec.__index = Spec
 
 ---@param validator render.md.debug.Validator
----@param config? table<string, any>
+---@param data? table<string, any>
 ---@param nilable boolean
 ---@param path? string
 ---@param key any
 ---@return render.md.debug.ValidatorSpec
-function Spec.new(validator, config, nilable, path, key)
+function Spec.new(validator, data, nilable, path, key)
     local self = setmetatable({}, Spec)
     self.validator = validator
-    self.config = config
+    self.data = data
     self.nilable = nilable
     self.path = path or ''
-    if self.config ~= nil and key ~= nil then
+    if self.data ~= nil and key ~= nil then
         local keys = type(key) == 'table' and key or { key }
-        self.config = vim.tbl_get(self.config, unpack(keys))
-        self.config = type(self.config) == 'table' and self.config or nil
+        self.data = vim.tbl_get(self.data, unpack(keys))
+        self.data = type(self.data) == 'table' and self.data or nil
         local suffix = table.concat(Iter.list.map(keys, tostring), '.')
         self.path = self.path .. '.' .. suffix
     end
@@ -43,18 +43,22 @@ function Spec.new(validator, config, nilable, path, key)
     return self
 end
 
+---@param key string
+function Spec:config(key)
+    local config = require('render-markdown.config.' .. key)
+    self:nested(key, config.validate)
+end
+
 ---@param f fun(spec: render.md.debug.ValidatorSpec)
 ---@param nilable? boolean
----@return render.md.debug.ValidatorSpec
 function Spec:each(f, nilable)
-    local keys = self.config ~= nil and vim.tbl_keys(self.config) or {}
-    return self:nested(keys, f, nilable)
+    local keys = self.data ~= nil and vim.tbl_keys(self.data) or {}
+    self:nested(keys, f, nilable)
 end
 
 ---@param keys string|string[]
 ---@param f fun(spec: render.md.debug.ValidatorSpec)
 ---@param nilable? boolean
----@return render.md.debug.ValidatorSpec
 function Spec:nested(keys, f, nilable)
     keys = type(keys) == 'table' and keys or { keys }
     if nilable == nil then
@@ -62,17 +66,15 @@ function Spec:nested(keys, f, nilable)
     end
     for _, key in ipairs(keys) do
         self:type(key, 'table')
-        f(Spec.new(self.validator, self.config, nilable, self.path, key))
+        f(Spec.new(self.validator, self.data, nilable, self.path, key))
     end
-    return self
 end
 
 ---@param keys string|string[]
 ---@param ts type|type[]
----@return render.md.debug.ValidatorSpec
 function Spec:type(keys, ts)
     local types, message = self:handle_types({}, ts)
-    return self:add(keys, Kind.type, message, function(value)
+    self:add(keys, Kind.type, message, function(value)
         return vim.tbl_contains(types, type(value))
     end)
 end
@@ -80,11 +82,10 @@ end
 ---@param keys string|string[]
 ---@param values string[]
 ---@param ts? type|type[]
----@return render.md.debug.ValidatorSpec
 function Spec:one_of(keys, values, ts)
     local options = Iter.list.map(values, vim.inspect)
     local types, message = self:handle_types(options, ts)
-    return self:add(keys, Kind.value, message, function(value)
+    self:add(keys, Kind.value, message, function(value)
         local valid_value = vim.tbl_contains(values, value)
         local valid_type = vim.tbl_contains(types, type(value))
         return valid_value or valid_type
@@ -94,10 +95,9 @@ end
 ---@param keys string|string[]
 ---@param t type
 ---@param ts? type|type[]
----@return render.md.debug.ValidatorSpec
 function Spec:list(keys, t, ts)
     local types, message = self:handle_types({ t .. '[]' }, ts)
-    return self:add(keys, Kind.type, message, function(value)
+    self:add(keys, Kind.type, message, function(value)
         if vim.tbl_contains(types, type(value)) then
             return true
         elseif type(value) == 'table' then
@@ -116,10 +116,9 @@ end
 ---@param keys string|string[]
 ---@param t type
 ---@param ts? type|type[]
----@return render.md.debug.ValidatorSpec
 function Spec:nested_list(keys, t, ts)
     local types, message = self:handle_types({ t, t .. '[]', t .. '[][]' }, ts)
-    return self:add(keys, Kind.type, message, function(value)
+    self:add(keys, Kind.type, message, function(value)
         if type(value) == t or vim.tbl_contains(types, type(value)) then
             return true
         elseif type(value) == 'table' then
@@ -150,12 +149,11 @@ end
 ---@param keys string|string[]
 ---@param values string[]
 ---@param ts? type|type[]
----@return render.md.debug.ValidatorSpec
 function Spec:one_or_list_of(keys, values, ts)
     local body = table.concat(Iter.list.map(values, vim.inspect), '|')
     local options = '(' .. body .. ')'
     local types, message = self:handle_types({ options, options .. '[]' }, ts)
-    return self:add(keys, Kind.type, message, function(value)
+    self:add(keys, Kind.type, message, function(value)
         if vim.tbl_contains(types, type(value)) then
             return true
         elseif type(value) == 'string' then
@@ -197,9 +195,8 @@ end
 ---@param kind render.md.debug.spec.Kind
 ---@param message string
 ---@param validation fun(v: any): boolean, string?
----@return render.md.debug.ValidatorSpec
 function Spec:add(keys, kind, message, validation)
-    if self.config ~= nil then
+    if self.data ~= nil then
         keys = type(keys) == 'table' and keys or { keys }
         for _, key in ipairs(keys) do
             self.specs[key] = {
@@ -209,14 +206,13 @@ function Spec:add(keys, kind, message, validation)
             }
         end
     end
-    return self
 end
 
 function Spec:check()
-    if self.config == nil or vim.tbl_count(self.specs) == 0 then
+    if self.data == nil or vim.tbl_count(self.specs) == 0 then
         return
     end
-    self.validator:check(self.path, self.config, self.specs)
+    self.validator:check(self.path, self.data, self.specs)
 end
 
 ---@class render.md.debug.Validator
@@ -236,12 +232,12 @@ end
 Validator.spec = Spec.new
 
 ---@param path string
----@param config table<string, any>
+---@param data table<string, any>
 ---@param specs table<string, render.md.debug.Spec>
-function Validator:check(path, config, specs)
+function Validator:check(path, data, specs)
     path = self.prefix .. path
     for key, spec in pairs(specs) do
-        local value = config[key]
+        local value = data[key]
         local ok, info = spec.validation(value)
         if not ok then
             local message = string.format('%s.%s', path, key)
@@ -259,7 +255,7 @@ function Validator:check(path, config, specs)
             self.errors[#self.errors + 1] = message
         end
     end
-    for key, _ in pairs(config) do
+    for key in pairs(data) do
         if specs[key] == nil then
             local message = string.format('%s.%s - invalid key', path, key)
             self.errors[#self.errors + 1] = message

@@ -3,13 +3,11 @@ local Converter = require('render-markdown.lib.converter')
 local Str = require('render-markdown.lib.str')
 
 ---@class render.md.render.Shortcut: render.md.Renderer
----@field private link render.md.link.Config
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
 ---@return boolean
 function Render:setup()
-    self.link = self.config.link
     return true
 end
 
@@ -93,7 +91,8 @@ end
 
 ---@private
 function Render:wiki_link()
-    if self.context:skip(self.link) then
+    local link = self.config.link
+    if self.context:skip(link) then
         return
     end
 
@@ -112,7 +111,7 @@ function Render:wiki_link()
     self:hide(ctx.start_col, 1)
     self:hide(ctx.end_col - 1, 1)
 
-    local wiki = self.link.wiki
+    local wiki = link.wiki
     local icon, highlight =
         self:dest(wiki.icon, wiki.highlight, ctx.destination)
     local body = wiki.body(ctx)
@@ -155,10 +154,11 @@ end
 ---@private
 ---@param text string
 function Render:footnote(text)
-    if self.context:skip(self.link) then
+    local link = self.config.link
+    if self.context:skip(link) then
         return
     end
-    local footnote = self.link.footnote
+    local footnote = link.footnote
     if not footnote.enabled then
         return
     end
@@ -169,7 +169,7 @@ function Render:footnote(text)
         return
     end
     self.marks:over('link', self.node, {
-        virt_text = { { value, self.link.highlight } },
+        virt_text = { { value, link.highlight } },
         virt_text_pos = 'inline',
         conceal = '',
     })

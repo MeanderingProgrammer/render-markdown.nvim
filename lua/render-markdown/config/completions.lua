@@ -16,10 +16,13 @@ local M = {}
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
     spec:nested({ 'blink', 'coq', 'lsp' }, function(completion)
-        completion:type('enabled', 'boolean'):check()
+        completion:type('enabled', 'boolean')
+        completion:check()
     end)
     spec:nested('filter', function(filter)
-        filter:type('callout', 'function'):type('checkbox', 'function'):check()
+        filter:type('callout', 'function')
+        filter:type('checkbox', 'function')
+        filter:check()
     end)
     spec:check()
 end

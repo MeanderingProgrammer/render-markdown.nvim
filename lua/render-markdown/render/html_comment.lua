@@ -1,14 +1,14 @@
 local Base = require('render-markdown.render.base')
 
 ---@class render.md.render.html.Comment: render.md.Renderer
----@field private comment render.md.html.comment.Config
+---@field private info render.md.html.comment.Config
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
 ---@return boolean
 function Render:setup()
-    self.comment = self.config.html.comment
-    if not self.comment.conceal then
+    self.info = self.config.html.comment
+    if not self.info.conceal then
         return false
     end
     return true
@@ -16,9 +16,9 @@ end
 
 function Render:render()
     self.marks:over(true, self.node, { conceal = '' })
-    if self.comment.text ~= nil then
+    if self.info.text ~= nil then
         self.marks:start(true, self.node, {
-            virt_text = { { self.comment.text, self.comment.highlight } },
+            virt_text = { { self.info.text, self.info.highlight } },
             virt_text_pos = 'inline',
         })
     end

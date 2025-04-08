@@ -9,9 +9,9 @@ local M = {}
 function M.validate(spec)
     require('render-markdown.config.base').validate(spec)
     spec:type('icon', 'string')
-        :type('repeat_linebreak', 'boolean')
-        :type('highlight', 'string')
-        :check()
+    spec:type('repeat_linebreak', 'boolean')
+    spec:type('highlight', 'string')
+    spec:check()
 end
 
 return M

@@ -9,11 +9,11 @@ local M = {}
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
     spec:each(function(option)
-        option
-            :type('default', { 'number', 'string', 'boolean' })
-            :type('rendered', { 'number', 'string', 'boolean' })
-            :check()
-    end, false):check()
+        option:type('default', { 'number', 'string', 'boolean' })
+        option:type('rendered', { 'number', 'string', 'boolean' })
+        option:check()
+    end, false)
+    spec:check()
 end
 
 return M

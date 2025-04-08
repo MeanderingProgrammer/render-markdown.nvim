@@ -1,7 +1,7 @@
 local Base = require('render-markdown.render.base')
 
 ---@class render.md.render.html.Tag: render.md.Renderer
----@field private tag render.md.html.Tag
+---@field private info render.md.html.Tag
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
@@ -15,15 +15,15 @@ function Render:setup()
     if name == nil then
         return false
     end
-    self.tag = self.config.html.tag[name.text]
-    return self.tag ~= nil
+    self.info = self.config.html.tag[name.text]
+    return self.info ~= nil
 end
 
 function Render:render()
     self.marks:over(true, self.node:child('start_tag'), { conceal = '' })
     self.marks:over(true, self.node:child('end_tag'), { conceal = '' })
     self.marks:start(false, self.node, {
-        virt_text = { { self.tag.icon, self.tag.highlight } },
+        virt_text = { { self.info.icon, self.info.highlight } },
         virt_text_pos = 'inline',
     })
 end

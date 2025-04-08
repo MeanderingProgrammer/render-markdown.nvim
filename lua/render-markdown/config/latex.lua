@@ -17,11 +17,11 @@ local M = {}
 function M.validate(spec)
     require('render-markdown.config.base').validate(spec)
     spec:type('converter', 'string')
-        :type('highlight', 'string')
-        :one_of('position', vim.tbl_keys(Position))
-        :type('top_pad', 'number')
-        :type('bottom_pad', 'number')
-        :check()
+    spec:type('highlight', 'string')
+    spec:one_of('position', vim.tbl_keys(Position))
+    spec:type('top_pad', 'number')
+    spec:type('bottom_pad', 'number')
+    spec:check()
 end
 
 return M

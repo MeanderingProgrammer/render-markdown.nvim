@@ -11,9 +11,9 @@ local M = {}
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
     spec:type('attach', 'function')
-        :type('render', 'function')
-        :type('clear', 'function')
-        :check()
+    spec:type('render', 'function')
+    spec:type('clear', 'function')
+    spec:check()
 end
 
 return M

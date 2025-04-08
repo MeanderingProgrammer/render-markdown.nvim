@@ -27,12 +27,12 @@ local M = {}
 function M.validate(spec)
     require('render-markdown.config.base').validate(spec)
     spec:nested_list('icons', 'string', 'function')
-        :nested_list('ordered_icons', 'string', 'function')
-        :type('left_pad', { 'number', 'function' })
-        :type('right_pad', { 'number', 'function' })
-        :nested_list('highlight', 'string', 'function')
-        :nested_list('scope_highlight', 'string', 'function')
-        :check()
+    spec:nested_list('ordered_icons', 'string', 'function')
+    spec:type('left_pad', { 'number', 'function' })
+    spec:type('right_pad', { 'number', 'function' })
+    spec:nested_list('highlight', 'string', 'function')
+    spec:nested_list('scope_highlight', 'string', 'function')
+    spec:check()
 end
 
 return M

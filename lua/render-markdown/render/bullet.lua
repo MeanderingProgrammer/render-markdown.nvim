@@ -9,14 +9,14 @@ local Str = require('render-markdown.lib.str')
 ---@field checkbox? render.md.checkbox.custom.Config
 
 ---@class render.md.render.ListMarker: render.md.Renderer
----@field private bullet render.md.bullet.Config
+---@field private info render.md.bullet.Config
 ---@field private data render.md.bullet.Data
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
 ---@return boolean
 function Render:setup()
-    self.bullet = self.config.bullet
+    self.info = self.config.bullet
 
     local marker = self.node:child_at(0)
     if marker == nil then
@@ -27,7 +27,7 @@ function Render:setup()
     local ordered = vim.tbl_contains(ordered_types, marker.type)
     self.data = {
         marker = marker,
-        icons = ordered and self.bullet.ordered_icons or self.bullet.icons,
+        icons = ordered and self.info.ordered_icons or self.info.icons,
         -- List markers from tree-sitter should have leading spaces removed, however there are edge
         -- cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
         -- As a result we account for leading spaces here, can remove if this gets fixed upstream
@@ -47,7 +47,7 @@ function Render:render()
             self:highlight_scope('check_scope', scope_highlight)
         end
     else
-        if self.context:skip(self.bullet) then
+        if self.context:skip(self.info) then
             return
         end
         local level, root = self.node:level_in_section('list')
@@ -58,10 +58,10 @@ function Render:render()
             value = self.data.marker.text,
         }
         local icon = self:get_text(ctx, self.data.icons)
-        local highlight = self:get_text(ctx, self.bullet.highlight)
-        local scope_highlight = self:get_text(ctx, self.bullet.scope_highlight)
-        local left_pad = self:get_int(ctx, self.bullet.left_pad)
-        local right_pad = self:get_int(ctx, self.bullet.right_pad)
+        local highlight = self:get_text(ctx, self.info.highlight)
+        local scope_highlight = self:get_text(ctx, self.info.scope_highlight)
+        local left_pad = self:get_int(ctx, self.info.left_pad)
+        local right_pad = self:get_int(ctx, self.info.right_pad)
         self:add_icon(icon, highlight)
         self:add_padding(left_pad, right_pad, root)
         self:highlight_scope(true, scope_highlight)

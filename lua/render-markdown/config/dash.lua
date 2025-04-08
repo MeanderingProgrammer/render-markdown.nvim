@@ -10,10 +10,10 @@ local M = {}
 function M.validate(spec)
     require('render-markdown.config.base').validate(spec)
     spec:type('icon', 'string')
-        :one_of('width', { 'full' }, 'number')
-        :type('left_margin', 'number')
-        :type('highlight', 'string')
-        :check()
+    spec:one_of('width', { 'full' }, 'number')
+    spec:type('left_margin', 'number')
+    spec:type('highlight', 'string')
+    spec:check()
 end
 
 return M

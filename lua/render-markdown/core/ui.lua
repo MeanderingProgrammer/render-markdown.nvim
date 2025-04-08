@@ -56,13 +56,11 @@ end
 ---@param win integer
 ---@return integer, render.md.Mark[]
 function M.get_row_marks(buf, win)
-    local config, buffer = state.get(buf), Cache.get(buf)
-    local mode, row = Env.mode.get(), Env.row.get(buf, win)
-    local hidden = config:hidden(mode, row)
-    assert(
-        row ~= nil and hidden ~= nil,
-        'Row & range must be known to get marks'
-    )
+    local config = state.get(buf)
+    local buffer = Cache.get(buf)
+    local mode = Env.mode.get()
+    local row = assert(Env.row.get(buf, win), 'Row must be known')
+    local hidden = assert(config:hidden(mode, row), 'Range must be known')
 
     local marks = {}
     for _, extmark in ipairs(buffer:get_marks()) do
@@ -138,8 +136,10 @@ function M.run_update(buf, win, change)
     end
 
     local parse = M.parse(buf, win, change)
-    local config, buffer = state.get(buf), Cache.get(buf)
-    local mode, row = Env.mode.get(), Env.row.get(buf, win)
+    local config = state.get(buf)
+    local buffer = Cache.get(buf)
+    local mode = Env.mode.get()
+    local row = Env.row.get(buf, win)
     local next_state = M.next_state(config, win, mode)
 
     log.buf('info', 'state', buf, next_state)

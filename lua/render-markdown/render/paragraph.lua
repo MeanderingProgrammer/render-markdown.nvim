@@ -1,17 +1,17 @@
 local Base = require('render-markdown.render.base')
 
 ---@class render.md.render.Paragraph: render.md.Renderer
----@field private paragraph render.md.paragraph.Config
+---@field private info render.md.paragraph.Config
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
 ---@return boolean
 function Render:setup()
-    self.paragraph = self.config.paragraph
-    if self.context:skip(self.paragraph) then
+    self.info = self.config.paragraph
+    if self.context:skip(self.info) then
         return false
     end
-    if self.paragraph.left_margin <= 0 then
+    if self.info.left_margin <= 0 then
         return false
     end
     return true
@@ -19,8 +19,8 @@ end
 
 function Render:render()
     local width = vim.fn.max(self.node:widths())
-    width = math.max(width, self.paragraph.min_width)
-    local margin = self.context:percent(self.paragraph.left_margin, width)
+    width = math.max(width, self.info.min_width)
+    local margin = self.context:percent(self.info.left_margin, width)
     local line = self:append({}, margin)
     if #line == 0 then
         return

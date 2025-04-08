@@ -7,15 +7,14 @@ local M = {}
 
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
-    spec
-        :nested({ 'buflisted', 'buftype', 'filetype' }, function(overrides)
-            overrides
-                :each(function(override)
-                    require('render-markdown.config').validate(override):check()
-                end, true)
-                :check()
-        end)
-        :check()
+    spec:nested({ 'buflisted', 'buftype', 'filetype' }, function(overrides)
+        overrides:each(function(override)
+            require('render-markdown.config').validate(override)
+            override:check()
+        end, true)
+        overrides:check()
+    end)
+    spec:check()
 end
 
 return M
