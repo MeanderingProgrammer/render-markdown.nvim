@@ -4,11 +4,11 @@ local has_devicons, devicons = pcall(require, 'nvim-web-devicons')
 ---@class render.md.IconProvider
 local M = {}
 
----@param language string
+---@param name string
 ---@return string?, string?
-function M.get(language)
+function M.get(name)
     -- Handle input possibly being an extension rather than a language name
-    local file_type = vim.filetype.match({ filename = 'a.' .. language }) or language
+    local file_type = vim.filetype.match({ filename = 'a.' .. name }) or name
 
     if has_mini_icons then
         ---@diagnostic disable-next-line: return-type-mismatch

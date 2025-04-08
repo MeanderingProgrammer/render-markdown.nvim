@@ -187,12 +187,20 @@ function Node:line(position, by)
     elseif position == 'last' then
         row = self.end_row - (one_line and 0 or 1) - by
     end
-    return row ~= nil and vim.api.nvim_buf_get_lines(self.buf, row, row + 1, false)[1] or nil
+    if row == nil then
+        return nil
+    end
+    return vim.api.nvim_buf_get_lines(self.buf, row, row + 1, false)[1]
 end
 
 ---@return integer[]
 function Node:widths()
-    local lines = vim.api.nvim_buf_get_lines(self.buf, self.start_row, self.end_row, false)
+    local lines = vim.api.nvim_buf_get_lines(
+        self.buf,
+        self.start_row,
+        self.end_row,
+        false
+    )
     return Iter.list.map(lines, Str.width)
 end
 

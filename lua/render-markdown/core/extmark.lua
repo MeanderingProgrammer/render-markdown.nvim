@@ -38,11 +38,19 @@ function Extmark:show(ns, buf)
     end
     local mark = self.mark
     mark.opts.strict = false
-    local ok, id = pcall(vim.api.nvim_buf_set_extmark, buf, ns, mark.start_row, mark.start_col, mark.opts)
+    local ok, id = pcall(
+        vim.api.nvim_buf_set_extmark,
+        buf,
+        ns,
+        mark.start_row,
+        mark.start_col,
+        mark.opts
+    )
     if ok then
         self.id = id
     else
-        Compat.release_notification(string.format('nvim_buf_set_extmark error (%s)', id))
+        local cause = string.format('nvim_buf_set_extmark error (%s)', id)
+        Compat.release_notification(cause)
     end
 end
 

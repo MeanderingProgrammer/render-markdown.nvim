@@ -45,27 +45,29 @@ function M.items(buf, row, col)
         return nil
     end
 
-    local result = {}
+    local items = {}
     local config = state.get(buf)
     local filter = state.completions.filter
     local prefix = Str.spaces('end', marker) == 0 and ' ' or ''
     if node:type() == 'block_quote' then
         for _, value in pairs(config.callout) do
             if filter.callout(value) then
-                result[#result + 1] = M.item(prefix, value.raw, value.rendered, nil)
+                items[#items + 1] = M.item(prefix, value.raw, value.rendered)
             end
         end
     elseif node:type() == 'list_item' then
-        local checkbox = config.checkbox
-        result[#result + 1] = M.item(prefix, '[ ] ', checkbox.unchecked.icon, 'unchecked')
-        result[#result + 1] = M.item(prefix, '[x] ', checkbox.checked.icon, 'checked')
-        for name, value in pairs(checkbox.custom) do
+        local unchecked = config.checkbox.unchecked
+        items[#items + 1] = M.item(prefix, '[ ] ', unchecked.icon, 'unchecked')
+        local checked = config.checkbox.checked
+        items[#items + 1] = M.item(prefix, '[x] ', checked.icon, 'checked')
+        for name, value in pairs(config.checkbox.custom) do
             if filter.checkbox(value) then
-                result[#result + 1] = M.item(prefix, value.raw .. ' ', value.rendered, name)
+                local label = value.raw .. ' '
+                items[#items + 1] = M.item(prefix, label, value.rendered, name)
             end
         end
     end
-    return result
+    return items
 end
 
 ---@private
@@ -90,7 +92,8 @@ function M.node(buf, row, col, lang)
     if node ~= nil and node:type() == 'paragraph' then
         node = node:prev_sibling()
     end
-    local children = vim.list_extend(vim.tbl_keys(markers), { 'block_continuation' })
+    local children = vim.tbl_keys(markers)
+    children[#children + 1] = 'block_continuation'
     if node ~= nil and vim.tbl_contains(children, node:type()) then
         node = node:parent()
     end

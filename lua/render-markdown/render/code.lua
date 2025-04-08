@@ -35,7 +35,11 @@ function Render:setup()
     local language = self:offset(self.code.language_pad, width)
     local left = self:offset(self.code.left_pad, width)
     local right = self:offset(self.code.right_pad, width)
-    width = math.max(widths[1] + language, left + width + right, self.code.min_width)
+    width = math.max(
+        widths[1] + language,
+        left + width + right,
+        self.code.min_width
+    )
 
     self.data = {
         width = width,
@@ -79,7 +83,9 @@ function Render:render()
     self.marks:over(true, bottom, { conceal = '' })
 
     local icon = self:language(language, top)
-    local more_info = info ~= nil and language ~= nil and info.end_col > language.end_col
+    local more_info = info ~= nil
+        and language ~= nil
+        and info.end_col > language.end_col
     self:border(top, true, not icon and not more_info)
     self:border(bottom, false, true)
 
@@ -156,21 +162,25 @@ function Render:language(language, delim)
 end
 
 ---@private
----@param delim? render.md.Node
+---@param node? render.md.Node
 ---@param above boolean
 ---@param empty boolean
-function Render:border(delim, above, empty)
+function Render:border(node, above, empty)
+    local kind = self.code.border
     local highlight = self.code.highlight_border
-    if self.code.border == 'none' or type(highlight) == 'boolean' or delim == nil then
+    if kind == 'none' or type(highlight) == 'boolean' or node == nil then
         -- skip
-    elseif self.code.border == 'thick' or not empty then
-        self:background(delim.start_row, delim.start_row, highlight)
-    elseif self.code.border == 'hide' and self.marks:over(true, delim, { conceal_lines = '' }) then
+    elseif kind == 'thick' or not empty then
+        self:background(node.start_row, node.start_row, highlight)
+    elseif
+        kind == 'hide' and self.marks:over(true, node, { conceal_lines = '' })
+    then
         -- successfully added
     else
-        local row, col = delim.start_row, self.node.start_col
+        local row, col = node.start_row, self.node.start_col
         local border = above and self.code.above or self.code.below
-        local width = self.code.width == 'block' and self.data.width - col or vim.o.columns
+        local width = self.code.width == 'block' and self.data.width - col
+            or vim.o.columns
         self.marks:add('code_border', row, col, {
             virt_text = { { border:rep(width), colors.bg_to_fg(highlight) } },
             virt_text_pos = 'overlay',

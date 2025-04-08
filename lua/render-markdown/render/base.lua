@@ -105,7 +105,7 @@ end
 ---@param highlight string
 ---@param destination string
 ---@return string, string
-function Base:from_destination(icon, highlight, destination)
+function Base:dest(icon, highlight, destination)
     local options = Iter.table.filter(self.config.link.custom, function(custom)
         return destination:find(custom.pattern) ~= nil
     end)

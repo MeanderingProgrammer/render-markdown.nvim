@@ -5,7 +5,7 @@ local state = require('render-markdown.state')
 local M = {}
 
 ---@private
-M.version = '8.2.6'
+M.version = '8.2.7'
 
 function M.check()
     M.start('version')
@@ -71,7 +71,9 @@ function M.neovim(minimum, recommended)
     if vim.fn.has('nvim-' .. minimum) == 0 then
         vim.health.error('neovim < ' .. minimum)
     elseif vim.fn.has('nvim-' .. recommended) == 0 then
-        vim.health.warn('neovim < ' .. recommended .. ' some features will not work')
+        vim.health.warn(
+            'neovim < ' .. recommended .. ' some features will not work'
+        )
     else
         vim.health.ok('neovim >= ' .. recommended)
     end
@@ -83,7 +85,10 @@ end
 function M.disable_advice(language)
     return {
         string.format('Disable %s support to avoid this warning', language),
-        string.format("require('render-markdown').setup({ %s = { enabled = false } })", language),
+        string.format(
+            "require('render-markdown').setup({ %s = { enabled = false } })",
+            language
+        ),
     }
 end
 

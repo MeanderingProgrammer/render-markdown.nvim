@@ -66,11 +66,14 @@ M.colors = {
 function M.setup()
     -- Reload generated colors on color scheme change
     vim.api.nvim_create_autocmd('ColorScheme', {
-        group = vim.api.nvim_create_augroup('RenderMarkdownColors', { clear = true }),
+        group = vim.api.nvim_create_augroup('RenderMarkdownColors', {}),
         callback = M.reload,
     })
     for name, link in pairs(M.colors) do
-        vim.api.nvim_set_hl(0, M.prefix .. name, { link = link, default = true })
+        vim.api.nvim_set_hl(0, M.prefix .. name, {
+            link = link,
+            default = true,
+        })
     end
 end
 

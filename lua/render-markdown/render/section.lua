@@ -46,16 +46,17 @@ function Render:get_start_row()
     if self.indent.skip_heading then
         -- Exclude any lines potentially used by section heading
         local second = self.node:line('first', 1)
-        local start_offset = Str.width(second) == 0 and 1 or 0
-        return self.node.start_row + 1 + start_offset
+        local offset = Str.width(second) == 0 and 1 or 0
+        return self.node.start_row + 1 + offset
     else
         -- Include last empty line in previous section
         -- Exclude if it is the only empty line in that section
-        local above, two_above = self.node:line('above', 1), self.node:line('above', 2)
+        local above = self.node:line('above', 1)
+        local two_above = self.node:line('above', 2)
         local above_is_empty = Str.width(above) == 0
-        local two_above_is_section = two_above ~= nil and vim.startswith(two_above, '#')
-        local start_offset = (above_is_empty and not two_above_is_section) and 1 or 0
-        return math.max(self.node.start_row - start_offset, 0)
+        local two_above_is_section = self:is_section(two_above)
+        local offset = (above_is_empty and not two_above_is_section) and 1 or 0
+        return math.max(self.node.start_row - offset, 0)
     end
 end
 
@@ -64,11 +65,19 @@ end
 function Render:get_end_row()
     -- Exclude last empty line in current section
     -- Include if it is the only empty line of the last subsection
-    local last, second_last = self.node:line('last', 0), self.node:line('last', 1)
+    local last = self.node:line('last', 0)
+    local second_last = self.node:line('last', 1)
     local last_is_empty = Str.width(last) == 0
-    local second_last_is_section = second_last ~= nil and vim.startswith(second_last, '#')
-    local end_offset = (last_is_empty and not second_last_is_section) and 1 or 0
-    return self.node.end_row - 1 - end_offset
+    local second_last_is_section = self:is_section(second_last)
+    local offset = (last_is_empty and not second_last_is_section) and 1 or 0
+    return self.node.end_row - 1 - offset
+end
+
+---@private
+---@param line? string
+---@return boolean
+function Render:is_section(line)
+    return line ~= nil and vim.startswith(line, '#')
 end
 
 return Render

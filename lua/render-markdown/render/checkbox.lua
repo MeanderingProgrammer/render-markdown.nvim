@@ -26,7 +26,8 @@ end
 
 function Render:render()
     self:check_icon(self.checkbox.icon, self.checkbox.highlight)
-    self:scope('check_scope', self.node:sibling('paragraph'), self.checkbox.scope_highlight)
+    local scope_node = self.node:sibling('paragraph')
+    self:scope('check_scope', scope_node, self.checkbox.scope_highlight)
 end
 
 return Render

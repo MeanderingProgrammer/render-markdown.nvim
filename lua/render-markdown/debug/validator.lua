@@ -36,7 +36,8 @@ function Spec.new(validator, config, nilable, path, key)
         local keys = type(key) == 'table' and key or { key }
         self.config = vim.tbl_get(self.config, unpack(keys))
         self.config = type(self.config) == 'table' and self.config or nil
-        self.path = self.path .. '.' .. table.concat(Iter.list.map(keys, tostring), '.')
+        local suffix = table.concat(Iter.list.map(keys, tostring), '.')
+        self.path = self.path .. '.' .. suffix
     end
     self.specs = {}
     return self
@@ -84,7 +85,9 @@ function Spec:one_of(keys, values, ts)
     local options = Iter.list.map(values, vim.inspect)
     local types, message = self:handle_types(options, ts)
     return self:add(keys, Kind.value, message, function(value)
-        return vim.tbl_contains(values, value) or vim.tbl_contains(types, type(value))
+        local valid_value = vim.tbl_contains(values, value)
+        local valid_type = vim.tbl_contains(types, type(value))
+        return valid_value or valid_type
     end)
 end
 
@@ -124,7 +127,13 @@ function Spec:nested_list(keys, t, ts)
                 if type(item) == 'table' then
                     for j, nested in ipairs(item) do
                         if type(nested) ~= t then
-                            return false, string.format('[%d][%d] is %s', i, j, type(nested))
+                            local info = string.format(
+                                '[%d][%d] is %s',
+                                i,
+                                j,
+                                type(nested)
+                            )
+                            return false, info
                         end
                     end
                 elseif type(item) ~= t then
@@ -143,7 +152,8 @@ end
 ---@param ts? type|type[]
 ---@return render.md.debug.ValidatorSpec
 function Spec:one_or_list_of(keys, values, ts)
-    local options = '(' .. table.concat(Iter.list.map(values, vim.inspect), '|') .. ')'
+    local body = table.concat(Iter.list.map(values, vim.inspect), '|')
+    local options = '(' .. body .. ')'
     local types, message = self:handle_types({ options, options .. '[]' }, ts)
     return self:add(keys, Kind.type, message, function(value)
         if vim.tbl_contains(types, type(value)) then
@@ -192,7 +202,11 @@ function Spec:add(keys, kind, message, validation)
     if self.config ~= nil then
         keys = type(keys) == 'table' and keys or { keys }
         for _, key in ipairs(keys) do
-            self.specs[key] = { kind = kind, message = message, validation = validation }
+            self.specs[key] = {
+                kind = kind,
+                message = message,
+                validation = validation,
+            }
         end
     end
     return self
@@ -230,12 +244,14 @@ function Validator:check(path, config, specs)
         local value = config[key]
         local ok, info = spec.validation(value)
         if not ok then
-            local message = string.format('%s.%s - expected: %s', path, key, spec.message)
+            local message = string.format('%s.%s', path, key)
+            message = message .. string.format(' - expected: %s', spec.message)
+            message = message .. ', but got: '
             if spec.kind == Kind.type then
-                message = message .. string.format(', but got: %s', type(value))
+                message = message .. type(value)
             end
             if spec.kind == Kind.value then
-                message = message .. string.format(', but got: %s', vim.inspect(value))
+                message = message .. vim.inspect(value)
             end
             if info ~= nil then
                 message = message .. string.format(', info: %s', info)

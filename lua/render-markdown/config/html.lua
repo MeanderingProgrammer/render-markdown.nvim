@@ -16,14 +16,21 @@ local M = {}
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
     require('render-markdown.config.base').validate(spec)
-    spec
-        :nested('comment', function(comment)
-            comment:type('conceal', 'boolean'):type('text', { 'string', 'nil' }):type('highlight', 'string'):check()
-        end)
+    spec:nested('comment', function(comment)
+        comment
+            :type('conceal', 'boolean')
+            :type('text', { 'string', 'nil' })
+            :type('highlight', 'string')
+            :check()
+    end)
         :nested('tag', function(tags)
-            tags:each(function(tag)
-                tag:type('icon', 'string'):type('highlight', 'string'):check()
-            end, false):check()
+            tags
+                :each(function(tag)
+                    tag:type('icon', 'string')
+                        :type('highlight', 'string')
+                        :check()
+                end, false)
+                :check()
         end)
         :check()
 end

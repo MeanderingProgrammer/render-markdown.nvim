@@ -8,7 +8,10 @@ local M = {}
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
     require('render-markdown.config.base').validate(spec)
-    spec:type('icon', 'string'):type('repeat_linebreak', 'boolean'):type('highlight', 'string'):check()
+    spec:type('icon', 'string')
+        :type('repeat_linebreak', 'boolean')
+        :type('highlight', 'string')
+        :check()
 end
 
 return M

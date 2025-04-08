@@ -20,7 +20,6 @@ end
 ---@param start_col integer
 ---@param end_col? integer
 ---@param opts vim.api.keyset.set_extmark
----@return render.md.test.Marks
 function Marks:add(start_row, end_row, start_col, end_col, opts)
     ---@type render.md.test.MarkInfo
     ---@diagnostic disable-next-line: assign-type-mismatch
@@ -29,7 +28,6 @@ function Marks:add(start_row, end_row, start_col, end_col, opts)
     mark.col = { start_col, end_col }
     ---@diagnostic disable-next-line: assign-type-mismatch
     self.marks[#self.marks + 1] = opts
-    return self
 end
 
 return Marks

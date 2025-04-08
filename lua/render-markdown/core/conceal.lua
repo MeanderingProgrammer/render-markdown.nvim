@@ -64,7 +64,9 @@ end
 ---@return boolean
 function Conceal:has(line, entry)
     for _, section in ipairs(line.sections) do
-        if section.start_col <= entry.start_col and section.end_col >= entry.end_col then
+        local starts_before = section.start_col <= entry.start_col
+        local ends_after = section.end_col >= entry.end_col
+        if starts_before and ends_after then
             return true
         end
     end
@@ -98,7 +100,9 @@ end
 function Conceal:get(node)
     local result = 0
     for _, section in ipairs(self:line(node).sections) do
-        if node.start_col < section.end_col and node.end_col > section.start_col then
+        local before_end = node.start_col < section.end_col
+        local after_start = node.end_col > section.start_col
+        if before_end and after_start then
             local width = section.width - self:width(section.character)
             result = result + width
         end
@@ -108,6 +112,7 @@ end
 
 ---@private
 ---@param node render.md.Node
+---@return render.md.conceal.Line
 function Conceal:line(node)
     if not self.computed then
         self.computed = true
@@ -154,20 +159,22 @@ function Conceal:compute_tree(language, root)
         return
     end
     self.context:for_each(function(range)
-        for id, node, metadata in query:iter_captures(root, self.buf, range.top, range.bottom) do
-            if metadata.conceal_lines ~= nil then
-                local node_range = self:node_range(id, node, metadata)
+        local start, stop = range.top, range.bottom
+        for id, node, data in query:iter_captures(root, self.buf, start, stop) do
+            if data.conceal_lines ~= nil then
+                local node_range = self:node_range(id, node, data)
                 local row = unpack(node_range)
                 self:add(row, true)
             end
-            if metadata.conceal ~= nil then
-                local node_range = self:node_range(id, node, metadata)
+            if data.conceal ~= nil then
+                local node_range = self:node_range(id, node, data)
                 local row, start_col, _, end_col = unpack(node_range)
+                local text = vim.treesitter.get_node_text(node, self.buf)
                 self:add(row, {
                     start_col = start_col,
                     end_col = end_col,
-                    width = Str.width(vim.treesitter.get_node_text(node, self.buf)),
-                    character = metadata.conceal,
+                    width = Str.width(text),
+                    character = data.conceal,
                 })
             end
         end
@@ -177,14 +184,14 @@ end
 ---@private
 ---@param id integer
 ---@param node TSNode
----@param metadata vim.treesitter.query.TSMetadata
+---@param data vim.treesitter.query.TSMetadata
 ---@return Range
-function Conceal:node_range(id, node, metadata)
-    local range = metadata.range
+function Conceal:node_range(id, node, data)
+    local range = data.range
     if range ~= nil then
         return range
     end
-    range = metadata[id] ~= nil and metadata[id].range or nil
+    range = data[id] ~= nil and data[id].range or nil
     if range ~= nil then
         return range
     end

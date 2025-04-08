@@ -67,9 +67,11 @@ function Marks:over(element, node, opts, offset)
         return false
     end
     offset = offset or { 0, 0, 0, 0 }
+    local start_row = node.start_row + offset[1]
+    local start_col = node.start_col + offset[2]
     opts.end_row = node.end_row + offset[3]
     opts.end_col = node.end_col + offset[4]
-    return self:add(element, node.start_row + offset[1], node.start_col + offset[2], opts)
+    return self:add(element, start_row, start_col, opts)
 end
 
 ---@param element render.md.mark.Element
@@ -87,7 +89,8 @@ function Marks:add(element, start_row, start_col, opts)
     }
     local valid, feature, min_version = self:validate(opts)
     if not valid then
-        log.add('error', 'mark', string.format('%s requires neovim >= %s', feature, min_version), mark)
+        local message = feature .. ' requires neovim >= ' .. min_version
+        log.add('error', 'mark', message, mark)
         return false
     end
     log.add('debug', 'mark', mark)

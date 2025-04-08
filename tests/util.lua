@@ -99,7 +99,9 @@ function M.bullet(level, spaces)
     local icons = { '●', '○', '◆', '◇' }
     ---@type vim.api.keyset.set_extmark
     return {
-        virt_text = { { string.rep(' ', spaces or 0) .. icons[level], 'RmBullet' } },
+        virt_text = {
+            { string.rep(' ', spaces or 0) .. icons[level], 'RmBullet' },
+        },
         virt_text_pos = 'overlay',
     }
 end
@@ -203,7 +205,8 @@ end
 ---@param level integer
 ---@return vim.api.keyset.set_extmark
 function M.heading.icon(level)
-    local icons = { '󰲡 ', ' 󰲣 ', '  󰲥 ', '   󰲧 ', '    󰲩 ', '     󰲫 ' }
+    local icons =
+        { '󰲡 ', ' 󰲣 ', '  󰲥 ', '   󰲧 ', '    󰲩 ', '     󰲫 ' }
     local highlight = string.format('RmH%d:RmH%dBg', level, level)
     ---@type vim.api.keyset.set_extmark
     return {
@@ -258,7 +261,9 @@ function M.code.icon(name, padding)
     local prefix = string.rep(' ', padding or 0)
     ---@type vim.api.keyset.set_extmark
     return {
-        virt_text = { { prefix .. icon .. name, highlight .. ':' .. 'RmCodeBorder' } },
+        virt_text = {
+            { prefix .. icon .. name, highlight .. ':' .. 'RmCodeBorder' },
+        },
         virt_text_pos = 'inline',
     }
 end
@@ -351,7 +356,9 @@ function M.table.delimiter(sections, padding)
         end, widths)
         return table.concat(section, '')
     end, sections)
-    local line = { { '├' .. table.concat(parts, '┼') .. '┤', 'RmTableHead' } }
+    local line = {
+        { '├' .. table.concat(parts, '┼') .. '┤', 'RmTableHead' },
+    }
     if padding ~= nil then
         line[#line + 1] = { string.rep(' ', padding), 'Normal' }
     end
@@ -379,7 +386,8 @@ end
 function M.assert_marks(expected)
     local actual = M.actual_marks()
     for i = 1, math.min(#expected, #actual) do
-        eq(expected[i], actual[i], string.format('Marks at index %d mismatch', i))
+        local message = string.format('Marks at index %d mismatch', i)
+        eq(expected[i], actual[i], message)
     end
     eq(#expected, #actual, 'Different number of marks found')
 end
@@ -388,12 +396,15 @@ end
 ---@return render.md.test.MarkInfo[]
 function M.actual_marks()
     local ui = require('render-markdown.core.ui')
-    local marks = vim.api.nvim_buf_get_extmarks(0, ui.ns, 0, -1, { details = true })
+    local marks = vim.api.nvim_buf_get_extmarks(0, ui.ns, 0, -1, {
+        details = true,
+    })
     ---@type render.md.test.MarkDetails[]
     local actual = {}
     for _, mark in ipairs(marks) do
         local _, row, col, details = unpack(mark)
-        actual[#actual + 1] = require('tests.helpers.details').new(row, col, details)
+        local info = require('tests.helpers.details').new(row, col, details)
+        actual[#actual + 1] = info
     end
     table.sort(actual)
     return actual

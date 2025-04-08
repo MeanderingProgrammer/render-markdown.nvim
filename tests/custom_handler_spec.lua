@@ -5,7 +5,11 @@ local util = require('tests.util')
 ---@param ctx render.md.handler.Context
 ---@return render.md.Mark[]
 local function conceal_escape(ctx)
-    local marks, query = {}, vim.treesitter.query.parse('markdown_inline', '(backslash_escape) @escape')
+    local marks = {}
+    local query = vim.treesitter.query.parse(
+        'markdown_inline',
+        '(backslash_escape) @escape'
+    )
     for _, node in query:iter_captures(ctx.root, ctx.buf) do
         local start_row, start_col, end_row, _ = node:range()
         marks[#marks + 1] = {
@@ -27,7 +31,8 @@ describe('custom handler', function()
     it('default', function()
         util.setup.text(lines)
         -- inline code + no backslash escapes
-        local marks = util.marks():add(0, 0, 0, 8, util.highlight('code'))
+        local marks = util.marks()
+        marks:add(0, 0, 0, 8, util.highlight('code'))
         util.assert_view(marks, {
             'Inline code',
             '\\$1.50 \\$3.55',

@@ -26,11 +26,11 @@ function Render:setup()
     elseif self.node.type == 'inline_link' then
         local destination = self.node:child('link_destination')
         if destination ~= nil then
-            icon, highlight = self:from_destination(icon, highlight, destination.text)
+            icon, highlight = self:dest(icon, highlight, destination.text)
         end
     elseif self.node.type == 'uri_autolink' then
         local destination = self.node.text:sub(2, -2)
-        icon, highlight = self:from_destination(icon, highlight, destination)
+        icon, highlight = self:dest(icon, highlight, destination)
         autolink = true
     end
     self.data = { icon = icon, highlight = highlight, autolink = autolink }

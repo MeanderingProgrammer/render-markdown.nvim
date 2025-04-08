@@ -16,7 +16,7 @@ local M = {}
 function M.setup(level)
     -- Write out any logs before closing
     vim.api.nvim_create_autocmd('VimLeave', {
-        group = vim.api.nvim_create_augroup('RenderMarkdownLog', { clear = true }),
+        group = vim.api.nvim_create_augroup('RenderMarkdownLog', {}),
         callback = M.flush,
     })
     M.level = level
@@ -50,7 +50,8 @@ end
 ---@param group string
 ---@param value string
 function M.unhandled_type(language, group, value)
-    M.add('error', 'unhandled type', string.format('%s -> %s -> %s', language, group, value))
+    local message = string.format('%s -> %s -> %s', language, group, value)
+    M.add('error', 'unhandled type', message)
 end
 
 ---@param level render.md.config.LogLevel
@@ -124,7 +125,13 @@ function M.flush()
     end
     local file = assert(io.open(M.file, 'a'))
     for _, entry in ipairs(M.entries) do
-        local line = string.format('%s %s [%s] - %s', entry.date, entry.level, entry.name, entry.message)
+        local line = string.format(
+            '%s %s [%s] - %s',
+            entry.date,
+            entry.level,
+            entry.name,
+            entry.message
+        )
         file:write(line .. '\n')
     end
     file:close()

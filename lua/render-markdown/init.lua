@@ -421,6 +421,7 @@ M.default = {
         -- | rendered        | replaces the 'raw' value when rendering                     |
         -- | highlight       | highlight for the 'rendered' icon                           |
         -- | scope_highlight | optional highlight for item associated with custom checkbox |
+        -- stylua: ignore
         custom = {
             todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownTodo', scope_highlight = nil },
         },

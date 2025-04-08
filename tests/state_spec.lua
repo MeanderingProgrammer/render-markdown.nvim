@@ -66,7 +66,10 @@ describe('state', function()
                 callout = { note = { additional = true } },
                 checkbox = { checked = { additional = true } },
                 latex = { additional = true },
-                overrides = { additional = true, buftype = { nofile = { additional = true } } },
+                overrides = {
+                    additional = true,
+                    buftype = { nofile = { additional = true } },
+                },
             })
         )
     end)

@@ -199,7 +199,8 @@ end
 ---@param callback fun(capture: string, node: render.md.Node)
 function Context:query(root, query, callback)
     self:for_each(function(range)
-        for id, ts_node in query:iter_captures(root, self.buf, range.top, range.bottom) do
+        local start, stop = range.top, range.bottom
+        for id, ts_node in query:iter_captures(root, self.buf, start, stop) do
             local capture = query.captures[id]
             local node = Node.new(self.buf, ts_node)
             log.node(capture, node)

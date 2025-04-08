@@ -10,7 +10,7 @@ local buffers = {}
 local M = {}
 
 ---@private
-M.group = vim.api.nvim_create_augroup('RenderMarkdown', { clear = true })
+M.group = vim.api.nvim_create_augroup('RenderMarkdown', {})
 
 ---Should only be called from plugin directory
 function M.setup()
@@ -98,7 +98,14 @@ function M.attach(buf)
         require('render-markdown.integ.cmp').setup()
     end
 
-    local events = { 'BufWinEnter', 'BufLeave', 'CmdlineChanged', 'CursorHold', 'CursorMoved', 'WinScrolled' }
+    local events = {
+        'BufWinEnter',
+        'BufLeave',
+        'CmdlineChanged',
+        'CursorHold',
+        'CursorMoved',
+        'WinScrolled',
+    }
     local change_events = { 'DiffUpdated', 'ModeChanged', 'TextChanged' }
     vim.list_extend(change_events, state.change_events)
     if config:render('i') then
@@ -150,7 +157,7 @@ function M.should_attach(buf)
 
     local file_type, file_types = Env.buf.get(buf, 'filetype'), state.file_types
     if not vim.tbl_contains(file_types, file_type) then
-        local reason = string.format('%s /∈ %s', file_type, vim.inspect(file_types))
+        local reason = file_type .. ' /∈ ' .. vim.inspect(file_types)
         log.buf('info', 'attach', buf, 'skip', 'file type', reason)
         return false
     end

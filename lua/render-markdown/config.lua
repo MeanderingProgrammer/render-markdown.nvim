@@ -28,7 +28,11 @@ function Config.new(config)
         checkbox = Config.normalize(config.checkbox.custom),
     }
 
-    local instance = vim.tbl_deep_extend('force', { modes = modes, components = components }, config)
+    local instance = vim.tbl_deep_extend(
+        'force',
+        { modes = modes, components = components },
+        config
+    )
     return setmetatable(instance, Config)
 end
 
@@ -38,7 +42,10 @@ function Config.validate(spec)
     require('render-markdown.config.base').validate(spec)
     return spec:type('max_file_size', 'number')
         :type('debounce', 'number')
-        :nested('anti_conceal', require('render-markdown.config.anti_conceal').validate)
+        :nested(
+            'anti_conceal',
+            require('render-markdown.config.anti_conceal').validate
+        )
         :nested('bullet', require('render-markdown.config.bullet').validate)
         :nested('callout', require('render-markdown.config.callout').validate)
         :nested('checkbox', require('render-markdown.config.checkbox').validate)
@@ -47,15 +54,27 @@ function Config.validate(spec)
         :nested('heading', require('render-markdown.config.heading').validate)
         :nested('html', require('render-markdown.config.html').validate)
         :nested('indent', require('render-markdown.config.indent').validate)
-        :nested('inline_highlight', require('render-markdown.config.inline_highlight').validate)
+        :nested(
+            'inline_highlight',
+            require('render-markdown.config.inline_highlight').validate
+        )
         :nested('latex', require('render-markdown.config.latex').validate)
         :nested('link', require('render-markdown.config.link').validate)
         :nested('padding', require('render-markdown.config.padding').validate)
-        :nested('paragraph', require('render-markdown.config.paragraph').validate)
-        :nested('pipe_table', require('render-markdown.config.pipe_table').validate)
+        :nested(
+            'paragraph',
+            require('render-markdown.config.paragraph').validate
+        )
+        :nested(
+            'pipe_table',
+            require('render-markdown.config.pipe_table').validate
+        )
         :nested('quote', require('render-markdown.config.quote').validate)
         :nested('sign', require('render-markdown.config.sign').validate)
-        :nested('win_options', require('render-markdown.config.win_options').validate)
+        :nested(
+            'win_options',
+            require('render-markdown.config.win_options').validate
+        )
 end
 
 ---@private
@@ -124,7 +143,10 @@ function Config:hidden(mode, row)
         local start = vim.fn.getpos('v')[2] - 1
         return Range.new(math.min(row, start), math.max(row, start))
     else
-        return Range.new(row - self.anti_conceal.above, row + self.anti_conceal.below)
+        return Range.new(
+            row - self.anti_conceal.above,
+            row + self.anti_conceal.below
+        )
     end
 end
 

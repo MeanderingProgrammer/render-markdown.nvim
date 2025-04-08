@@ -66,7 +66,12 @@ function Render:setup()
         if row.type == 'pipe_table_delimiter_row' then
             delim = self:parse_delim(row)
         elseif self.context:overlaps_node(row:get()) then
-            if vim.tbl_contains({ 'pipe_table_header', 'pipe_table_row' }, row.type) then
+            if
+                vim.tbl_contains(
+                    { 'pipe_table_header', 'pipe_table_row' },
+                    row.type
+                )
+            then
                 table_rows[#table_rows + 1] = row
             else
                 log.unhandled_type('markdown', 'row', row.type)
@@ -98,7 +103,9 @@ function Render:setup()
     for _, row in ipairs(rows) do
         for i, column in ipairs(row.columns) do
             local width = column.width
-            local space_available = column.space.left + column.space.right - (2 * self.table.padding)
+            local space_available = column.space.left
+                + column.space.right
+                - (2 * self.table.padding)
             -- If we don't have enough space for padding add it to the width
             if space_available < 0 then
                 width = width - space_available
@@ -136,7 +143,10 @@ function Render:parse_delim(row)
         elseif self.table.cell == 'trimmed' then
             width = self.table.min_width
         end
-        columns[#columns + 1] = { width = width, alignment = Render.alignment(cell) }
+        columns[#columns + 1] = {
+            width = width,
+            alignment = Render.alignment(cell),
+        }
     end
     ---@type render.md.table.DelimRow
     return { node = row, columns = columns }
@@ -174,7 +184,9 @@ function Render:parse_row(row, num_columns)
         local start_col, end_col = pipes[i].end_col, pipes[i + 1].start_col
         -- Account for double width glyphs by replacing cell range with its width
         local width = end_col - start_col
-        width = width - (cell.end_col - cell.start_col) + self.context:width(cell)
+        width = width
+            - (cell.end_col - cell.start_col)
+            + self.context:width(cell)
         if width < 0 then
             return nil
         end
@@ -237,7 +249,11 @@ function Render:delimiter()
         -- If column is small there's no good place to put the alignment indicator
         -- Alignment indicator must be exactly one character wide
         -- Do not put an indicator for default alignment
-        if column.width < 3 or Str.width(indicator) ~= 1 or column.alignment == Alignment.default then
+        if
+            column.width < 3
+            or Str.width(indicator) ~= 1
+            or column.alignment == Alignment.default
+        then
             return icon:rep(column.width)
         end
         if column.alignment == Alignment.left then
@@ -250,7 +266,11 @@ function Render:delimiter()
     end)
 
     local line = self:append({}, Str.spaces('start', delim.node.text))
-    self:append(line, border[4] .. table.concat(sections, border[5]) .. border[6], self.table.head)
+    self:append(
+        line,
+        border[4] .. table.concat(sections, border[5]) .. border[6],
+        self.table.head
+    )
     self:append(line, Str.width(delim.node.text) - Str.line_width(line))
 
     self.marks:over('table_border', delim.node, {
@@ -263,7 +283,8 @@ end
 ---@param row render.md.table.Row
 function Render:row(row)
     local delim, border = self.data.delim, self.table.border
-    local highlight = row.node.type == 'pipe_table_header' and self.table.head or self.table.row
+    local highlight = row.node.type == 'pipe_table_header' and self.table.head
+        or self.table.row
 
     if vim.tbl_contains({ 'trimmed', 'padded', 'raw' }, self.table.cell) then
         for _, pipe in ipairs(row.pipes) do
@@ -282,7 +303,9 @@ function Render:row(row)
                 -- Without concealing it is impossible to do full alignment
                 self:shift(column, 'right', filler)
             elseif delim_column.alignment == Alignment.center then
-                local shift = math.floor((filler + column.space.right - column.space.left) / 2)
+                local shift = math.floor(
+                    (filler + column.space.right - column.space.left) / 2
+                )
                 self:shift(column, 'left', shift)
                 self:shift(column, 'right', filler - shift)
             elseif delim_column.alignment == Alignment.right then
@@ -328,7 +351,9 @@ end
 
 ---@private
 function Render:full()
-    local delim, rows, border = self.data.delim, self.data.rows, self.table.border
+    local delim = self.data.delim
+    local rows = self.data.rows
+    local border = self.table.border
 
     ---@param row render.md.table.Row
     ---@return boolean
@@ -360,10 +385,14 @@ function Render:full()
     ---@param node render.md.Node
     ---@return integer
     local function get_spaces(node)
-        return math.max(Str.spaces('start', node:line('first', 0) or ''), node.start_col)
+        return math.max(
+            Str.spaces('start', node:line('first', 0) or ''),
+            node.start_col
+        )
     end
 
-    local first_node, last_node = first.node, #rows == 1 and delim.node or last.node
+    local first_node = first.node
+    local last_node = #rows == 1 and delim.node or last.node
     local spaces = get_spaces(first_node)
     if spaces ~= get_spaces(last_node) then
         return

@@ -51,7 +51,8 @@ function M.runtime(callback)
         local start_time = Compat.uv.hrtime()
         callback()
         local end_time = Compat.uv.hrtime()
-        vim.print(string.format('Runtime (ms): %.1f', (end_time - start_time) / 1e+6))
+        local elapsed = (end_time - start_time) / 1e+6
+        vim.print(string.format('Runtime (ms): %.1f', elapsed))
     end
 end
 
@@ -180,7 +181,10 @@ end
 ---@param value render.md.option.Value
 function M.win.set(win, name, value)
     if value ~= M.win.get(win, name) then
-        vim.api.nvim_set_option_value(name, value, { scope = 'local', win = win })
+        vim.api.nvim_set_option_value(name, value, {
+            scope = 'local',
+            win = win,
+        })
     end
 end
 

@@ -44,11 +44,15 @@ function Render:setup()
     local level = nil
     if self.node.type == 'atx_heading' and self.heading.atx then
         atx = true
-        marker = assert(self.node:child_at(0), 'atx heading expected child marker')
+        marker =
+            assert(self.node:child_at(0), 'atx heading expected child marker')
         level = Str.width(marker.text)
     elseif self.node.type == 'setext_heading' and self.heading.setext then
         atx = false
-        marker = assert(self.node:child_at(1), 'ext heading expected child underline')
+        marker = assert(
+            self.node:child_at(1),
+            'ext heading expected child underline'
+        )
         level = marker.type == 'setext_h1_underline' and 1 or 2
     else
         return false
@@ -72,8 +76,10 @@ function Render:setup()
         level = level,
         icon = custom.icon or icon,
         sign = List.cycle(self.heading.signs, level),
-        foreground = custom.foreground or List.clamp(self.heading.foregrounds, level),
-        background = custom.background or List.clamp(self.heading.backgrounds, level),
+        foreground = custom.foreground
+            or List.clamp(self.heading.foregrounds, level),
+        background = custom.background
+            or List.clamp(self.heading.backgrounds, level),
         width = List.clamp(self.heading.width, level) or 'full',
         left_margin = List.clamp(self.heading.left_margin, level) or 0,
         left_pad = List.clamp(self.heading.left_pad, level) or 0,
@@ -166,12 +172,13 @@ function Render:icon()
         else
             local added = true
             for row = node.start_row, node.end_row - 1 do
-                local text = row == node.start_row and icon or Str.pad(Str.width(icon))
-                local added_row = self.marks:add('head_icon', row, node.start_col, {
-                    virt_text = { { text, highlight } },
-                    virt_text_pos = 'inline',
-                })
-                added = added and added_row
+                local start = row == node.start_row
+                local text = start and icon or Str.pad(Str.width(icon))
+                added = added
+                    and self.marks:add('head_icon', row, node.start_col, {
+                        virt_text = { { text, highlight } },
+                        virt_text_pos = 'inline',
+                    })
             end
             return added and Str.width(icon) or 0
         end
@@ -239,9 +246,11 @@ function Render:border(box, position, icon, row)
     end
 
     local foreground = self.data.foreground
-    local background = self.data.background and colors.bg_to_fg(self.data.background)
+    local background = self.data.background
+        and colors.bg_to_fg(self.data.background)
     local prefix = self.heading.border_prefix and self.data.level or 0
-    local total_width = self.data.width == 'block' and box.content or vim.o.columns
+    local total_width = self.data.width == 'block' and box.content
+        or vim.o.columns
 
     local line = self:append({}, box.margin)
     self:append(line, icon:rep(box.padding), background)
@@ -260,7 +269,9 @@ function Render:border(box, position, icon, row)
         self.context.last_heading = row
     else
         self.marks:add(false, self.node.start_row, 0, {
-            virt_lines = { vim.list_extend(self:indent_line(true, self.data.level), line) },
+            virt_lines = {
+                vim.list_extend(self:indent_line(true, self.data.level), line),
+            },
             virt_lines_above = position == 'above',
         })
     end

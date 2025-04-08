@@ -1,5 +1,5 @@
 import abc
-from argparse import ArgumentParser
+import argparse
 from dataclasses import dataclass
 from pathlib import Path
 from typing import override
@@ -67,7 +67,9 @@ def main(force: bool) -> None:
 
 
 if __name__ == "__main__":
-    parser = ArgumentParser(description="Generate sample data for benchmarking")
+    parser = argparse.ArgumentParser(
+        description="Generate sample data for benchmarking"
+    )
     parser.add_argument("--force", action="store_true")
     args = parser.parse_args()
     main(args.force)

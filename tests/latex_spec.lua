@@ -69,10 +69,9 @@ describe('latex.md', function()
 
         local marks, row = util.marks(), util.row()
 
-        marks
-            :add(row:get(), nil, 0, nil, util.heading.sign(1))
-            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
-            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
+        marks:add(row:get(), nil, 0, nil, util.heading.sign(1))
+        marks:add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+        marks:add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
         marks:add(row:inc(), nil, 0, nil, latex(inline.out))
         marks:add(row:inc(2), nil, 0, nil, latex(block.out))

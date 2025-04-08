@@ -42,42 +42,49 @@ describe('indent', function()
 
         local l2, l3 = { 2 }, { 4 }
 
-        marks
-            :add(row:get(), nil, 0, nil, util.indent.inline(l2))
-            :add(row:get(), nil, 0, nil, border(2, 'above'))
-            :add(row:inc(), nil, 0, nil, util.heading.sign(2))
-            :add(row:get(), nil, 0, nil, util.indent.inline(l2))
-            :add(row:get(), row:get(), 0, 2, util.heading.icon(2))
-            :add(row:get(), row:inc(), 0, 0, util.heading.bg(2))
-            :add(row:get(), nil, 0, nil, util.indent.inline(l2))
-            :add(row:get(), nil, 0, nil, border(2, 'below'))
+        marks:add(row:get(), nil, 0, nil, util.indent.inline(l2))
+        marks:add(row:get(), nil, 0, nil, border(2, 'above'))
+        marks:add(row:inc(), nil, 0, nil, util.heading.sign(2))
+        marks:add(row:get(), nil, 0, nil, util.indent.inline(l2))
+        marks:add(row:get(), row:get(), 0, 2, util.heading.icon(2))
+        marks:add(row:get(), row:inc(), 0, 0, util.heading.bg(2))
+        marks:add(row:get(), nil, 0, nil, util.indent.inline(l2))
+        marks:add(row:get(), nil, 0, nil, border(2, 'below'))
 
-        marks:add(row:inc(), nil, 0, nil, util.indent.virtual(util.table.border(true, { 5, 5 }), l2))
-        marks
-            :add(row:get(), nil, 0, nil, util.indent.inline(l2))
-            :add(row:get(), row:get(), 0, 1, util.table.pipe(true))
-            :add(row:get(), row:get(), 6, 7, util.table.pipe(true))
-            :add(row:get(), row:get(), 12, 13, util.table.pipe(true))
-        marks
-            :add(row:inc(), nil, 0, nil, util.indent.inline(l2))
-            :add(row:get(), row:get(), 0, 13, util.table.delimiter({ { 5 }, { 5 } }))
+        marks:add(
+            row:inc(),
+            nil,
+            0,
+            nil,
+            util.indent.virtual(util.table.border(true, { 5, 5 }), l2)
+        )
+        marks:add(row:get(), nil, 0, nil, util.indent.inline(l2))
+        marks:add(row:get(), row:get(), 0, 1, util.table.pipe(true))
+        marks:add(row:get(), row:get(), 6, 7, util.table.pipe(true))
+        marks:add(row:get(), row:get(), 12, 13, util.table.pipe(true))
+        marks:add(row:inc(), nil, 0, nil, util.indent.inline(l2))
+        marks:add(
+            row:get(),
+            row:get(),
+            0,
+            13,
+            util.table.delimiter({ { 5 }, { 5 } })
+        )
 
-        marks
-            :add(row:inc(), nil, 0, nil, border(1, 'above'))
-            :add(row:inc(), nil, 0, nil, util.heading.sign(1))
-            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
-            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
-            :add(row:get(), nil, 0, nil, border(1, 'below'))
+        marks:add(row:inc(), nil, 0, nil, border(1, 'above'))
+        marks:add(row:inc(), nil, 0, nil, util.heading.sign(1))
+        marks:add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+        marks:add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
+        marks:add(row:get(), nil, 0, nil, border(1, 'below'))
 
-        marks
-            :add(row:inc(2), nil, 0, nil, util.indent.inline(l3))
-            :add(row:get(), nil, 0, nil, border(3, 'above'))
-            :add(row:inc(), nil, 0, nil, util.heading.sign(3))
-            :add(row:get(), nil, 0, nil, util.indent.inline(l3))
-            :add(row:get(), row:get(), 0, 3, util.heading.icon(3))
-            :add(row:get(), row:inc(), 0, 0, util.heading.bg(3))
-            :add(row:get(), nil, 0, nil, util.indent.inline(l3))
-            :add(row:get(), nil, 0, nil, border(3, 'below'))
+        marks:add(row:inc(2), nil, 0, nil, util.indent.inline(l3))
+        marks:add(row:get(), nil, 0, nil, border(3, 'above'))
+        marks:add(row:inc(), nil, 0, nil, util.heading.sign(3))
+        marks:add(row:get(), nil, 0, nil, util.indent.inline(l3))
+        marks:add(row:get(), row:get(), 0, 3, util.heading.icon(3))
+        marks:add(row:get(), row:inc(), 0, 0, util.heading.bg(3))
+        marks:add(row:get(), nil, 0, nil, util.indent.inline(l3))
+        marks:add(row:get(), nil, 0, nil, border(3, 'below'))
 
         marks:add(row:inc(), nil, 0, nil, util.indent.inline(l3))
 
@@ -108,32 +115,40 @@ describe('indent', function()
 
         local l1, l2 = { 1, 3 }, { 1, 3, 1, 3 }
 
-        marks
-            :add(row:get(), nil, 0, nil, util.indent.inline(l2))
-            :add(row:inc(), nil, 0, nil, util.heading.sign(2))
-            :add(row:get(), nil, 0, nil, util.indent.inline(l2))
-            :add(row:get(), row:get(), 0, 2, util.heading.icon(2))
-            :add(row:get(), row:inc(), 0, 0, util.heading.bg(2))
+        marks:add(row:get(), nil, 0, nil, util.indent.inline(l2))
+        marks:add(row:inc(), nil, 0, nil, util.heading.sign(2))
+        marks:add(row:get(), nil, 0, nil, util.indent.inline(l2))
+        marks:add(row:get(), row:get(), 0, 2, util.heading.icon(2))
+        marks:add(row:get(), row:inc(), 0, 0, util.heading.bg(2))
 
         marks:add(row:get(), nil, 0, nil, util.indent.inline(l2))
 
-        marks:add(row:inc(), nil, 0, nil, util.indent.virtual(util.table.border(true, { 5, 5 }), l2))
-        marks
-            :add(row:get(), nil, 0, nil, util.indent.inline(l2))
-            :add(row:get(), row:get(), 0, 1, util.table.pipe(true))
-            :add(row:get(), row:get(), 6, 7, util.table.pipe(true))
-            :add(row:get(), row:get(), 12, 13, util.table.pipe(true))
-        marks
-            :add(row:inc(), nil, 0, nil, util.indent.inline(l2))
-            :add(row:get(), row:get(), 0, 13, util.table.delimiter({ { 5 }, { 5 } }))
+        marks:add(
+            row:inc(),
+            nil,
+            0,
+            nil,
+            util.indent.virtual(util.table.border(true, { 5, 5 }), l2)
+        )
+        marks:add(row:get(), nil, 0, nil, util.indent.inline(l2))
+        marks:add(row:get(), row:get(), 0, 1, util.table.pipe(true))
+        marks:add(row:get(), row:get(), 6, 7, util.table.pipe(true))
+        marks:add(row:get(), row:get(), 12, 13, util.table.pipe(true))
+        marks:add(row:inc(), nil, 0, nil, util.indent.inline(l2))
+        marks:add(
+            row:get(),
+            row:get(),
+            0,
+            13,
+            util.table.delimiter({ { 5 }, { 5 } })
+        )
 
         marks:add(row:inc(), nil, 0, nil, util.indent.inline(l1))
 
-        marks
-            :add(row:inc(), nil, 0, nil, util.heading.sign(1))
-            :add(row:get(), nil, 0, nil, util.indent.inline(l1))
-            :add(row:get(), row:get(), 0, 1, util.heading.icon(1))
-            :add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
+        marks:add(row:inc(), nil, 0, nil, util.heading.sign(1))
+        marks:add(row:get(), nil, 0, nil, util.indent.inline(l1))
+        marks:add(row:get(), row:get(), 0, 1, util.heading.icon(1))
+        marks:add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
         marks:add(row:get(), nil, 0, nil, util.indent.inline(l1))
 
@@ -142,12 +157,11 @@ describe('indent', function()
         marks:add(row:inc(), nil, 0, nil, util.indent.inline(l1))
         marks:add(row:get(), nil, 0, nil, util.indent.inline(l2))
 
-        marks
-            :add(row:inc(), nil, 0, nil, util.heading.sign(3))
-            :add(row:get(), nil, 0, nil, util.indent.inline(l1))
-            :add(row:get(), nil, 0, nil, util.indent.inline(l2))
-            :add(row:get(), row:get(), 0, 3, util.heading.icon(3))
-            :add(row:get(), row:inc(), 0, 0, util.heading.bg(3))
+        marks:add(row:inc(), nil, 0, nil, util.heading.sign(3))
+        marks:add(row:get(), nil, 0, nil, util.indent.inline(l1))
+        marks:add(row:get(), nil, 0, nil, util.indent.inline(l2))
+        marks:add(row:get(), row:get(), 0, 3, util.heading.icon(3))
+        marks:add(row:get(), row:inc(), 0, 0, util.heading.bg(3))
 
         marks:add(row:get(), nil, 0, nil, util.indent.inline(l1))
         marks:add(row:get(), nil, 0, nil, util.indent.inline(l2))

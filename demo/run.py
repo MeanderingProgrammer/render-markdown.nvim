@@ -1,5 +1,5 @@
+import argparse
 import subprocess
-from argparse import ArgumentParser
 from pathlib import Path
 
 from PIL import Image
@@ -90,7 +90,7 @@ def get_move(file: Path) -> str:
 
 
 if __name__ == "__main__":
-    parser = ArgumentParser(description="Generate a demo recording using vhs")
+    parser = argparse.ArgumentParser(description="Generate a demo recording using vhs")
     parser.add_argument("--name", type=str, required=True, choices=INFO.keys())
     args = parser.parse_args()
     main(args.name)

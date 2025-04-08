@@ -41,7 +41,8 @@ function M.command(opts)
         message = string.format('unexpected # arguments: %d', #args)
     end
     if message ~= nil then
-        vim.notify(string.format('%s: %s', M.plugin, message), vim.log.levels.ERROR)
+        local notification = string.format('%s: %s', M.plugin, message)
+        vim.notify(notification, vim.log.levels.ERROR)
     end
 end
 

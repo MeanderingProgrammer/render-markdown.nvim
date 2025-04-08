@@ -27,7 +27,10 @@ function Render:render()
     end
 
     local line = self.node:line('first', 0)
-    if line ~= nil and line:find('[' .. self.node.text .. ']', 1, true) ~= nil then
+    if
+        line ~= nil
+        and line:find('[' .. self.node.text .. ']', 1, true) ~= nil
+    then
         self:wiki_link()
         return
     end
@@ -63,7 +66,10 @@ function Render:callout_title(callout)
     local content = self.node:parent('inline')
     if content ~= nil then
         local line = Str.split(content.text, '\n')[1]
-        if #line > #callout.raw and vim.startswith(line:lower(), callout.raw:lower()) then
+        if
+            #line > #callout.raw
+            and vim.startswith(line:lower(), callout.raw:lower())
+        then
             local icon = Str.split(callout.rendered, ' ')[1]
             local title = vim.trim(line:sub(#callout.raw + 1))
             return icon .. ' ' .. title, true
@@ -107,7 +113,8 @@ function Render:wiki_link()
     self:hide(ctx.end_col - 1, 1)
 
     local wiki = self.link.wiki
-    local icon, highlight = self:from_destination(wiki.icon, wiki.highlight, ctx.destination)
+    local icon, highlight =
+        self:dest(wiki.icon, wiki.highlight, ctx.destination)
     local body = wiki.body(ctx)
     if body == nil then
         -- Add icon
@@ -156,7 +163,8 @@ function Render:footnote(text)
         return
     end
     local body = footnote.prefix .. text .. footnote.suffix
-    local value = not footnote.superscript and body or Converter.superscript(body)
+    local value = not footnote.superscript and body
+        or Converter.superscript(body)
     if value == nil then
         return
     end

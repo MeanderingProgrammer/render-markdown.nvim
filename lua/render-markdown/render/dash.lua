@@ -16,7 +16,8 @@ end
 
 function Render:render()
     local width = self.dash.width
-    width = type(width) == 'number' and self.context:percent(width, 0) or vim.o.columns
+    width = type(width) == 'number' and self.context:percent(width, 0)
+        or vim.o.columns
     local margin = self.context:percent(self.dash.left_margin, width)
 
     local line = self:append({}, margin)

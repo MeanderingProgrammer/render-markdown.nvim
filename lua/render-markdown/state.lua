@@ -140,15 +140,27 @@ function M.validate()
         :type('log_runtime', 'boolean')
         :list('file_types', 'string')
         :list('change_events', 'string')
-        :nested('injections', require('render-markdown.config.injections').validate)
+        :nested(
+            'injections',
+            require('render-markdown.config.injections').validate
+        )
         :nested('patterns', require('render-markdown.config.patterns').validate)
         :nested('on', require('render-markdown.config.on').validate)
-        :nested('completions', require('render-markdown.config.completions').validate)
-        :nested('overrides', require('render-markdown.config.overrides').validate)
+        :nested(
+            'completions',
+            require('render-markdown.config.completions').validate
+        )
+        :nested(
+            'overrides',
+            require('render-markdown.config.overrides').validate
+        )
         :nested('custom_handlers', function(handlers)
             handlers
                 :each(function(handler)
-                    handler:type('extends', 'boolean'):type('parse', 'function'):check()
+                    handler
+                        :type('extends', 'boolean')
+                        :type('parse', 'function')
+                        :check()
                 end)
                 :check()
         end)

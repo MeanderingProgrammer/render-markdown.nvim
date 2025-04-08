@@ -62,29 +62,28 @@ function Mark:__tostring()
     lines[#lines + 1] = string.format('hide: %s', vim.inspect(self.conceal))
 
     ---@param name string
-    ---@param value any
     ---@param f fun(value: any): string
-    local function add(name, value, f)
+    local function add(name, f)
+        local value = self.opts[name]
         if value ~= nil then
             lines[#lines + 1] = string.format('  %s: %s', name, f(value))
         end
     end
 
-    local opts = self.opts
-    add('conceal', opts.conceal, vim.inspect)
-    add('conceal_lines', opts.conceal_lines, vim.inspect)
-    add('sign_text', opts.sign_text, Mark.text)
-    add('sign_hl_group', opts.sign_hl_group, Mark.highlight)
-    add('virt_text', opts.virt_text, Mark.line)
-    add('virt_text_pos', opts.virt_text_pos, tostring)
-    add('virt_text_win_col', opts.virt_text_win_col, vim.inspect)
-    add('virt_text_repeat_linebreak', opts.virt_text_repeat_linebreak, vim.inspect)
-    add('virt_line', (opts.virt_lines or {})[1], Mark.line)
-    add('virt_line_above', opts.virt_lines_above, vim.inspect)
-    add('hl_group', opts.hl_group, Mark.highlight)
-    add('hl_eol', opts.hl_eol, vim.inspect)
-    add('hl_mode', opts.hl_mode, tostring)
-    add('priority', opts.priority, tostring)
+    add('conceal', vim.inspect)
+    add('conceal_lines', vim.inspect)
+    add('sign_text', Mark.text)
+    add('sign_hl_group', Mark.highlight)
+    add('virt_text', Mark.line)
+    add('virt_text_pos', tostring)
+    add('virt_text_win_col', vim.inspect)
+    add('virt_text_repeat_linebreak', vim.inspect)
+    add('virt_lines', Mark.lines)
+    add('virt_lines_above', vim.inspect)
+    add('hl_group', Mark.highlight)
+    add('hl_eol', vim.inspect)
+    add('hl_mode', tostring)
+    add('priority', tostring)
     return table.concat(lines, '\n')
 end
 
@@ -97,12 +96,23 @@ function Mark.collapse(range)
 end
 
 ---@private
+---@param lines render.md.mark.Line[]
+---@return string
+function Mark.lines(lines)
+    return #lines > 0 and Mark.line(lines[1]) or ''
+end
+
+---@private
 ---@param line render.md.mark.Line
 ---@return string
 function Mark.line(line)
     local result = {}
     for _, text in ipairs(line) do
-        result[#result + 1] = string.format('(%s, %s)', Mark.text(text[1]), Mark.highlight(text[2]))
+        result[#result + 1] = string.format(
+            '(%s, %s)',
+            Mark.text(text[1]),
+            Mark.highlight(text[2])
+        )
     end
     return table.concat(result, ' + ')
 end

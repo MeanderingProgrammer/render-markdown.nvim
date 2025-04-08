@@ -1,4 +1,4 @@
-*render-markdown.txt*           For 0.11.0          Last change: 2025 April 06
+*render-markdown.txt*           For 0.11.0          Last change: 2025 April 07
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -619,6 +619,7 @@ Default Configuration ~
             -- | rendered        | replaces the 'raw' value when rendering                     |
             -- | highlight       | highlight for the 'rendered' icon                           |
             -- | scope_highlight | optional highlight for item associated with custom checkbox |
+            -- stylua: ignore
             custom = {
                 todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownTodo', scope_highlight = nil },
             },
@@ -1214,6 +1215,7 @@ Checkbox Configuration ~
             -- | rendered        | replaces the 'raw' value when rendering                     |
             -- | highlight       | highlight for the 'rendered' icon                           |
             -- | scope_highlight | optional highlight for item associated with custom checkbox |
+            -- stylua: ignore
             custom = {
                 todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownTodo', scope_highlight = nil },
             },

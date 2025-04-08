@@ -31,7 +31,9 @@ local M = {}
 function M.validate(spec)
     spec:type('enabled', 'boolean')
         :nested('ignore', function(ignore)
-            ignore:list(vim.tbl_keys(element), 'string', { 'boolean', 'nil' }):check()
+            ignore
+                :list(vim.tbl_keys(element), 'string', { 'boolean', 'nil' })
+                :check()
         end)
         :type('above', 'number')
         :type('below', 'number')

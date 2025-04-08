@@ -4,7 +4,7 @@ local Str = require('render-markdown.lib.str')
 
 ---@class render.md.bullet.Data
 ---@field marker render.md.Node
----@field ordered boolean
+---@field icons render.md.bullet.Text
 ---@field spaces integer
 ---@field checkbox? render.md.checkbox.custom.Config
 
@@ -23,9 +23,11 @@ function Render:setup()
         return false
     end
 
+    local ordered_types = { 'list_marker_dot', 'list_marker_parenthesis' }
+    local ordered = vim.tbl_contains(ordered_types, marker.type)
     self.data = {
         marker = marker,
-        ordered = vim.tbl_contains({ 'list_marker_dot', 'list_marker_parenthesis' }, marker.type),
+        icons = ordered and self.bullet.ordered_icons or self.bullet.icons,
         -- List markers from tree-sitter should have leading spaces removed, however there are edge
         -- cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
         -- As a result we account for leading spaces here, can remove if this gets fixed upstream
@@ -41,7 +43,8 @@ function Render:render()
         -- Hide the list marker for checkboxes rather than replacing with a bullet point
         self:hide_marker()
         if self.data.checkbox ~= nil then
-            self:highlight_scope('check_scope', self.data.checkbox.scope_highlight)
+            local scope_highlight = self.data.checkbox.scope_highlight
+            self:highlight_scope('check_scope', scope_highlight)
         end
     else
         if self.context:skip(self.bullet) then
@@ -54,12 +57,11 @@ function Render:render()
             index = self.node:sibling_count('list_item'),
             value = self.data.marker.text,
         }
-        local icons = self.data.ordered and self.bullet.ordered_icons or self.bullet.icons
-        local icon = self:resolve_text(ctx, icons)
-        local highlight = self:resolve_text(ctx, self.bullet.highlight)
-        local scope_highlight = self:resolve_text(ctx, self.bullet.scope_highlight)
-        local left_pad = self:resolve_int(ctx, self.bullet.left_pad)
-        local right_pad = self:resolve_int(ctx, self.bullet.right_pad)
+        local icon = self:get_text(ctx, self.data.icons)
+        local highlight = self:get_text(ctx, self.bullet.highlight)
+        local scope_highlight = self:get_text(ctx, self.bullet.scope_highlight)
+        local left_pad = self:get_int(ctx, self.bullet.left_pad)
+        local right_pad = self:get_int(ctx, self.bullet.right_pad)
         self:add_icon(icon, highlight)
         self:add_padding(left_pad, right_pad, root)
         self:highlight_scope(true, scope_highlight)
@@ -86,7 +88,8 @@ end
 
 ---@private
 function Render:hide_marker()
-    self.marks:over('check_icon', self.data.marker, { conceal = '' }, { 0, self.data.spaces, 0, 0 })
+    local offset = { 0, self.data.spaces, 0, 0 }
+    self.marks:over('check_icon', self.data.marker, { conceal = '' }, offset)
 end
 
 ---@private
@@ -100,7 +103,7 @@ end
 ---@param ctx render.md.bullet.Context
 ---@param values render.md.bullet.Text
 ---@return string?
-function Render:resolve_text(ctx, values)
+function Render:get_text(ctx, values)
     if type(values) == 'function' then
         return values(ctx)
     elseif type(values) == 'string' then
@@ -119,7 +122,7 @@ end
 ---@param ctx render.md.bullet.Context
 ---@param value render.md.bullet.Int
 ---@return integer
-function Render:resolve_int(ctx, value)
+function Render:get_int(ctx, value)
     if type(value) == 'function' then
         return value(ctx)
     else
@@ -153,10 +156,10 @@ function Render:add_padding(left_pad, right_pad, root)
     end
     local start_row, end_row = self.node.start_row, self:end_row(root)
     for row = start_row, end_row - 1 do
-        local left_col = root ~= nil and root.start_col or self.node.start_col
-        local right_col = row == start_row and self.data.marker.end_col - 1 or left_col
-        self:side_padding(row, left_col, left_pad)
-        self:side_padding(row, right_col, right_pad)
+        local left = root ~= nil and root.start_col or self.node.start_col
+        local right = row == start_row and self.data.marker.end_col - 1 or left
+        self:side_padding(row, left, left_pad)
+        self:side_padding(row, right, right_pad)
     end
 end
 
@@ -170,7 +173,11 @@ function Render:end_row(root)
     else
         local row = self.node.end_row
         -- On the last item of the root list ignore the last line if it is empty
-        if root ~= nil and root.end_row == row and Str.width(root:line('last', 0)) == 0 then
+        if
+            root ~= nil
+            and root.end_row == row
+            and Str.width(root:line('last', 0)) == 0
+        then
             return row - 1
         else
             return row
