@@ -23,6 +23,7 @@
 ---@field checkbox? render.md.checkbox.UserConfig
 ---@field code? render.md.code.UserConfig
 ---@field dash? render.md.dash.UserConfig
+---@field document? render.md.document.UserConfig
 ---@field heading? render.md.heading.UserConfig
 ---@field html? render.md.html.UserConfig
 ---@field indent? render.md.indent.UserConfig
@@ -121,6 +122,13 @@
 ---@field width? 'full'|number
 ---@field left_margin? number
 ---@field highlight? string
+
+---@class (exact) render.md.document.UserConfig: render.md.base.UserConfig
+---@field conceal? render.md.document.conceal.UserConfig
+
+---@class (exact) render.md.document.conceal.UserConfig
+---@field char_patterns? string[]
+---@field line_patterns? string[]
 
 ---@class (exact) render.md.heading.UserConfig: render.md.base.UserConfig
 ---@field atx? boolean

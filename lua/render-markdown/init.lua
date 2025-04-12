@@ -28,6 +28,7 @@ local M = {}
 ---@field checkbox render.md.checkbox.Config
 ---@field code render.md.code.Config
 ---@field dash render.md.dash.Config
+---@field document render.md.document.Config
 ---@field heading render.md.heading.Config
 ---@field html render.md.html.Config
 ---@field indent render.md.indent.Config
@@ -249,10 +250,10 @@ M.default = {
         -- Define custom heading patterns which allow you to override various properties based on
         -- the contents of a heading.
         -- The key is for healthcheck and to allow users to change its values, value type below.
-        -- | pattern    | matched against the heading text @see :h lua-pattern |
-        -- | icon       | optional override for the icon                       |
-        -- | background | optional override for the background                 |
-        -- | foreground | optional override for the foreground                 |
+        -- | pattern    | matched against the heading text @see :h lua-patterns |
+        -- | icon       | optional override for the icon                        |
+        -- | background | optional override for the background                  |
+        -- | foreground | optional override for the foreground                  |
         custom = {},
     },
     paragraph = {
@@ -356,6 +357,20 @@ M.default = {
         left_margin = 0,
         -- Highlight for the whole line generated from the icon.
         highlight = 'RenderMarkdownDash',
+    },
+    document = {
+        -- Turn on / off document rendering.
+        enabled = true,
+        -- Additional modes to render document.
+        render_modes = false,
+        -- Ability to conceal arbitrary ranges of text based on lua patterns, @see :h lua-patterns.
+        -- Relies entirely on user to set patterns that handle their edge cases.
+        conceal = {
+            -- Matched ranges will be concealed using character level conceal.
+            char_patterns = {},
+            -- Matched ranges will be concealed using line level conceal.
+            line_patterns = {},
+        },
     },
     -- Useful context to have when evaluating values.
     -- | level | how deeply nested the list is, 1-indexed          |
@@ -570,7 +585,7 @@ M.default = {
         -- contains. Applies to 'inline_link', 'uri_autolink', and wikilink nodes. When multiple
         -- patterns match a link the one with the longer pattern is used.
         -- The key is for healthcheck and to allow users to change its values, value type below.
-        -- | pattern   | matched against the destination text, @see :h lua-pattern       |
+        -- | pattern   | matched against the destination text, @see :h lua-patterns      |
         -- | icon      | gets inlined before the link text                               |
         -- | highlight | optional highlight for 'icon', uses fallback highlight if empty |
         custom = {

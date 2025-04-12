@@ -22,6 +22,8 @@ function Handler.new(buf)
     self.query = ts.parse(
         'markdown',
         [[
+            (document) @document
+
             (section) @section
 
             [
@@ -56,6 +58,7 @@ function Handler.new(buf)
         checkbox = require('render-markdown.render.checkbox'),
         code = require('render-markdown.render.code'),
         dash = require('render-markdown.render.dash'),
+        document = require('render-markdown.render.document'),
         heading = require('render-markdown.render.heading'),
         paragraph = require('render-markdown.render.paragraph'),
         quote = require('render-markdown.render.quote'),

@@ -63,12 +63,12 @@ function Render:callout_title(callout)
     ---Support for overriding title: https://help.obsidian.md/Editing+and+formatting/Callouts#Change+the+title
     local content = self.node:parent('inline')
     if content ~= nil then
-        local line = Str.split(content.text, '\n')[1]
+        local line = Str.split(content.text, '\n', true)[1]
         if
             #line > #callout.raw
             and vim.startswith(line:lower(), callout.raw:lower())
         then
-            local icon = Str.split(callout.rendered, ' ')[1]
+            local icon = Str.split(callout.rendered, ' ', true)[1]
             local title = vim.trim(line:sub(#callout.raw + 1))
             return icon .. ' ' .. title, true
         end
@@ -96,7 +96,7 @@ function Render:wiki_link()
         return
     end
 
-    local sections = Str.split(self.node.text:sub(2, -2), '|')
+    local sections = Str.split(self.node.text:sub(2, -2), '|', true)
     ---@type render.md.link.Context
     local ctx = {
         buf = self.context.buf,

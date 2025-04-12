@@ -230,7 +230,7 @@ end
 ---@param offset integer
 ---@return integer, integer
 function Node:position(index, offset)
-    local lines = Str.split(self.text:sub(1, index), '\n')
+    local lines = Str.split(self.text:sub(1, index), '\n', false)
     -- start row includes first line
     local row = self.start_row + #lines - 1
     local col = #lines[#lines] + offset

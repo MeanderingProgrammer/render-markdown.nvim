@@ -3,9 +3,10 @@ local M = {}
 
 ---@param s string
 ---@param sep string
+---@param trimempty boolean
 ---@return string[]
-function M.split(s, sep)
-    return vim.split(s, sep, { plain = true, trimempty = true })
+function M.split(s, sep, trimempty)
+    return vim.split(s, sep, { plain = true, trimempty = trimempty })
 end
 
 ---@param s? string

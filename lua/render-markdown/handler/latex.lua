@@ -41,7 +41,7 @@ function M.parse(ctx)
     for _ = 1, latex.top_pad do
         expressions[#expressions + 1] = ''
     end
-    for _, expression in ipairs(Str.split(raw_expression, '\n')) do
+    for _, expression in ipairs(Str.split(raw_expression, '\n', true)) do
         expressions[#expressions + 1] = Str.pad(node.start_col) .. expression
     end
     for _ = 1, latex.bottom_pad do

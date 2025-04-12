@@ -116,6 +116,7 @@ function M.default_buffer_config()
         checkbox = config.checkbox,
         code = config.code,
         dash = config.dash,
+        document = config.document,
         heading = config.heading,
         html = config.html,
         indent = config.indent,
