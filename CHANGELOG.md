@@ -11,6 +11,9 @@
   [c283dec](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c283dec1ea94947499c36bb17443e15d6acf5cda)
 - wrap `nvim_buf_set_extmark` in pcall use notify_once if it errors [#382](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/382)
   [1e2e9a3](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/1e2e9a386fbe41b869d3d0e000e19db72284585b)
+- ignore option, checked before attaching [05e6a6d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/05e6a6d119f90b99829ecb7eb85428a226c0c05f)
+- on.initial option, called before adding marks for the first time [#396](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/396)
+  [91d40c2](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/91d40c2f37a4373ec29a47fcf3ce656408d302dc)
 
 ## 8.2.0 (2025-03-31)
 

@@ -58,10 +58,8 @@ function Render:setup()
         return false
     end
 
-    ---@type render.md.table.DelimRow?
-    local delim = nil
-    ---@type render.md.Node[]
-    local table_rows = {}
+    local delim = nil ---@type render.md.table.DelimRow?
+    local table_rows = {} ---@type render.md.Node[]
     self.node:for_each_child(function(row)
         if row.type == 'pipe_table_delimiter_row' then
             delim = self:parse_delim(row)
@@ -84,8 +82,7 @@ function Render:setup()
         return false
     end
 
-    ---@type render.md.table.Row[]
-    local rows = {}
+    local rows = {} ---@type render.md.table.Row[]
     table.sort(table_rows)
     for _, table_row in ipairs(table_rows) do
         local row = self:parse_row(table_row, #delim.columns)
@@ -131,8 +128,7 @@ function Render:parse_delim(row)
     if pipes == nil or cells == nil then
         return nil
     end
-    ---@type render.md.table.DelimColumn[]
-    local columns = {}
+    local columns = {} ---@type render.md.table.DelimColumn[]
     for i, cell in ipairs(cells) do
         local width = pipes[i + 1].start_col - pipes[i].end_col
         if width < 0 then
@@ -178,8 +174,7 @@ function Render:parse_row(row, num_columns)
     if pipes == nil or cells == nil or #cells ~= num_columns then
         return nil
     end
-    ---@type render.md.table.Column[]
-    local columns = {}
+    local columns = {} ---@type render.md.table.Column[]
     for i, cell in ipairs(cells) do
         local start_col, end_col = pipes[i].end_col, pipes[i + 1].start_col
         -- Account for double width glyphs by replacing cell range with its width

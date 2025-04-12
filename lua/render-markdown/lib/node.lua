@@ -204,4 +204,40 @@ function Node:widths()
     return Iter.list.map(lines, Str.width)
 end
 
+---@param pattern string
+---@return Range4[]
+function Node:find(pattern)
+    local result = {} ---@type Range4[]
+    local index = 1 ---@type integer?
+    while index ~= nil do
+        local start_index, end_index = self.text:find(pattern, index)
+        if start_index == nil or end_index == nil then
+            index = nil
+        else
+            index = end_index + 1
+            -- start : 1-based inclusive -> 0-based inclusive = -1 offset
+            -- end   : 1-based inclusive -> 0-based exclusive =  0 offset
+            local start_row, start_col = self:position(start_index, -1)
+            local end_row, end_col = self:position(end_index, 0)
+            result[#result + 1] = { start_row, start_col, end_row, end_col }
+        end
+    end
+    return result
+end
+
+---@private
+---@param index integer
+---@param offset integer
+---@return integer, integer
+function Node:position(index, offset)
+    local lines = Str.split(self.text:sub(1, index), '\n')
+    -- start row includes first line
+    local row = self.start_row + #lines - 1
+    local col = #lines[#lines] + offset
+    if row == self.start_row then
+        col = col + self.start_col
+    end
+    return row, col
+end
+
 return Node

@@ -399,8 +399,7 @@ function M.actual_marks()
     local marks = vim.api.nvim_buf_get_extmarks(0, ui.ns, 0, -1, {
         details = true,
     })
-    ---@type render.md.test.MarkDetails[]
-    local actual = {}
+    local actual = {} ---@type render.md.test.MarkDetails[]
     for _, mark in ipairs(marks) do
         local _, row, col, details = unpack(mark)
         local info = require('tests.helpers.details').new(row, col, details)

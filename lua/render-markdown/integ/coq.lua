@@ -29,8 +29,7 @@ end
 ---@param map table<integer, table>
 ---@return integer
 function M.new_uid(map)
-    ---@type integer|nil
-    local key = nil
+    local key = nil ---@type integer?
     while true do
         if not key or map[key] then
             key = math.floor(math.random() * 10000)

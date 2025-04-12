@@ -37,8 +37,7 @@ function M.parse(ctx)
         cache[node.text] = raw_expression
     end
 
-    ---@type string[]
-    local expressions = {}
+    local expressions = {} ---@type string[]
     for _ = 1, latex.top_pad do
         expressions[#expressions + 1] = ''
     end

@@ -1,5 +1,4 @@
 local Base = require('render-markdown.render.base')
-local Str = require('render-markdown.lib.str')
 
 ---@class render.md.render.InlineHighlight: render.md.Renderer
 ---@field private info render.md.inline.highlight.Config
@@ -16,34 +15,18 @@ function Render:setup()
 end
 
 function Render:render()
-    for _, range in ipairs(Str.find_all(self.node.text, '==[^=]+==')) do
-        local start_row, start_col = self:row_col(range[1], 1)
-        local end_row, end_col = self:row_col(range[2], 0)
+    for _, range in ipairs(self.node:find('==[^=]+==')) do
         -- Hide first 2 equal signs
-        self:hide_equals(start_row, start_col)
+        self:hide_equals(range[1], range[2])
         -- Highlight contents
-        self.marks:add(false, start_row, start_col, {
-            end_row = end_row,
-            end_col = end_col,
+        self.marks:add(false, range[1], range[2], {
+            end_row = range[3],
+            end_col = range[4],
             hl_group = self.info.highlight,
         })
         -- Hide last 2 equal signs
-        self:hide_equals(end_row, end_col - 2)
+        self:hide_equals(range[3], range[4] - 2)
     end
-end
-
----@private
----@param index integer
----@param offset integer
----@return integer, integer
-function Render:row_col(index, offset)
-    local lines = Str.split(self.node.text:sub(1, index), '\n')
-    local row = self.node.start_row + #lines - 1
-    local col = #lines[#lines] - offset
-    if row == self.node.start_row then
-        col = col + self.node.start_col
-    end
-    return row, col
 end
 
 ---@private
