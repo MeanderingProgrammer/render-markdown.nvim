@@ -164,6 +164,7 @@ function M.run_update(buf, win, change)
         local extmarks = buffer:get_marks()
         if initial then
             Compat.lsp_window_height(win, extmarks)
+            state.on.initial({ buf = buf, win = win })
         end
         for _, extmark in ipairs(extmarks) do
             if extmark:get().conceal and extmark:inside(hidden) then
@@ -172,10 +173,10 @@ function M.run_update(buf, win, change)
                 extmark:show(M.ns, buf)
             end
         end
-        state.on.render({ buf = buf })
+        state.on.render({ buf = buf, win = win })
     else
         M.clear(buf, buffer)
-        state.on.clear({ buf = buf })
+        state.on.clear({ buf = buf, win = win })
     end
 end
 

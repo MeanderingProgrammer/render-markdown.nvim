@@ -144,6 +144,8 @@ M.default = {
     on = {
         -- Called when plugin initially attaches to a buffer.
         attach = function() end,
+        -- Called before adding marks to the buffer for the first time.
+        initial = function() end,
         -- Called after plugin renders a buffer.
         render = function() end,
         -- Called after plugin clears a buffer.

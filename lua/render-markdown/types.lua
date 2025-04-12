@@ -199,9 +199,10 @@
 ---@field highlight? string
 
 ---@class (exact) render.md.callback.UserConfig
----@field attach? fun(ctx: render.md.callback.Context)
----@field render? fun(ctx: render.md.callback.Context)
----@field clear? fun(ctx: render.md.callback.Context)
+---@field attach? fun(ctx: render.md.callback.attach.Context)
+---@field initial? fun(ctx: render.md.callback.render.Context)
+---@field render? fun(ctx: render.md.callback.render.Context)
+---@field clear? fun(ctx: render.md.callback.render.Context)
 
 ---@class (exact) render.md.overrides.UserConfig
 ---@field buflisted? table<boolean, render.md.buffer.UserConfig>
