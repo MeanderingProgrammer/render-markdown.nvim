@@ -10,7 +10,7 @@ local colors = require('render-markdown.colors')
 ---@field margin integer
 ---@field indent integer
 
----@class render.md.render.Code: render.md.Renderer
+---@class render.md.render.Code: render.md.Render
 ---@field private info render.md.code.Config
 ---@field private data render.md.code.Data
 local Render = setmetatable({}, Base)

@@ -2,13 +2,13 @@ local Iter = require('render-markdown.lib.iter')
 local Str = require('render-markdown.lib.str')
 local colors = require('render-markdown.colors')
 
----@class render.md.Renderer
+---@class render.md.Render
 ---@field protected marks render.md.Marks
 ---@field protected config render.md.BufferConfig
 ---@field protected context render.md.Context
 ---@field protected node render.md.Node
----@field setup fun(self: render.md.Renderer): boolean
----@field render fun(self: render.md.Renderer)
+---@field setup fun(self: render.md.Render): boolean
+---@field render fun(self: render.md.Render)
 local Base = {}
 Base.__index = Base
 
@@ -16,7 +16,7 @@ Base.__index = Base
 ---@param config render.md.BufferConfig
 ---@param context render.md.Context
 ---@param node render.md.Node
----@return render.md.Renderer
+---@return render.md.Render
 function Base:new(marks, config, context, node)
     local instance = setmetatable({}, self)
     instance.marks = marks

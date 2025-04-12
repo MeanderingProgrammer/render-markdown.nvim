@@ -119,7 +119,7 @@ end
 ---@return render.md.Range?
 function Config:hidden(mode, row)
     -- Anti-conceal is not enabled -> hide nothing
-    -- Row is not known means buffer is not active -> hide nothing
+    -- Row is not known -> buffer is not active -> hide nothing
     if not self.anti_conceal.enabled or row == nil then
         return nil
     end

@@ -1,6 +1,6 @@
 local Base = require('render-markdown.render.base')
 
----@class render.md.render.Paragraph: render.md.Renderer
+---@class render.md.render.Paragraph: render.md.Render
 ---@field private info render.md.paragraph.Config
 local Render = setmetatable({}, Base)
 Render.__index = Render

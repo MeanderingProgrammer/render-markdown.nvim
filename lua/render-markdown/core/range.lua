@@ -36,7 +36,7 @@ end
 ---@param bottom integer
 ---@return boolean
 function Range:overlaps(top, bottom)
-    return top < self.bottom and bottom >= self.top
+    return top <= self.bottom and bottom >= self.top
 end
 
 ---@param ranges render.md.Range[]

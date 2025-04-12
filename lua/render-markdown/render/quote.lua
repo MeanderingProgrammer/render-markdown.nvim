@@ -7,7 +7,7 @@ local ts = require('render-markdown.integ.ts')
 ---@field highlight string
 ---@field repeat_linebreak? boolean
 
----@class render.md.render.Quote: render.md.Renderer
+---@class render.md.render.Quote: render.md.Render
 ---@field private data render.md.quote.Data
 local Render = setmetatable({}, Base)
 Render.__index = Render

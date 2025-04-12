@@ -1,6 +1,6 @@
 local Base = require('render-markdown.render.base')
 
----@class render.md.render.InlineHighlight: render.md.Renderer
+---@class render.md.render.InlineHighlight: render.md.Render
 ---@field private info render.md.inline.highlight.Config
 local Render = setmetatable({}, Base)
 Render.__index = Render

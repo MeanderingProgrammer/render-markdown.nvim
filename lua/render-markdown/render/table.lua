@@ -39,7 +39,7 @@ local Alignment = {
 ---@field left integer
 ---@field right integer
 
----@class render.md.render.Table: render.md.Renderer
+---@class render.md.render.Table: render.md.Render
 ---@field private info render.md.table.Config
 ---@field private data render.md.table.Data
 local Render = setmetatable({}, Base)

@@ -23,7 +23,7 @@ local colors = require('render-markdown.colors')
 ---@field padding integer
 ---@field content integer
 
----@class render.md.render.Heading: render.md.Renderer
+---@class render.md.render.Heading: render.md.Render
 ---@field private info render.md.heading.Config
 ---@field private data render.md.heading.Data
 local Render = setmetatable({}, Base)

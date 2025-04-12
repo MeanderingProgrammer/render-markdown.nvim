@@ -8,7 +8,7 @@ local Str = require('render-markdown.lib.str')
 ---@field spaces integer
 ---@field checkbox? render.md.checkbox.custom.Config
 
----@class render.md.render.ListMarker: render.md.Renderer
+---@class render.md.render.Bullet: render.md.Render
 ---@field private info render.md.bullet.Config
 ---@field private data render.md.bullet.Data
 local Render = setmetatable({}, Base)

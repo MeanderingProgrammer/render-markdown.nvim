@@ -56,7 +56,7 @@ end
 ---@return string
 function Mark:__tostring()
     local lines = {}
-    lines[#lines + 1] = string.rep('=', vim.o.columns - 10)
+    lines[#lines + 1] = string.rep('=', vim.o.columns - 1)
     lines[#lines + 1] = string.format('row: %s', Mark.collapse(self.row))
     lines[#lines + 1] = string.format('column: %s', Mark.collapse(self.col))
     lines[#lines + 1] = string.format('hide: %s', vim.inspect(self.conceal))

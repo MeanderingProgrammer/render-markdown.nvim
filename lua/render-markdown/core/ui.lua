@@ -64,7 +64,7 @@ function M.get_row_marks(buf, win)
 
     local marks = {}
     for _, extmark in ipairs(buffer:get_marks()) do
-        if extmark:inside(hidden) then
+        if extmark:overlaps(hidden) then
             marks[#marks + 1] = extmark:get()
         end
     end
@@ -167,7 +167,7 @@ function M.run_update(buf, win, change)
             state.on.initial({ buf = buf, win = win })
         end
         for _, extmark in ipairs(extmarks) do
-            if extmark:get().conceal and extmark:inside(hidden) then
+            if extmark:get().conceal and extmark:overlaps(hidden) then
                 extmark:hide(M.ns, buf)
             else
                 extmark:show(M.ns, buf)

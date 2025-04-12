@@ -5,7 +5,7 @@ local Base = require('render-markdown.render.base')
 ---@field highlight string
 ---@field autolink boolean
 
----@class render.md.render.Link: render.md.Renderer
+---@class render.md.render.Link: render.md.Render
 ---@field private data render.md.link.Data
 local Render = setmetatable({}, Base)
 Render.__index = Render

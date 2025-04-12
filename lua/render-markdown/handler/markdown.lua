@@ -8,7 +8,7 @@ local ts = require('render-markdown.integ.ts')
 ---@field private context render.md.Context
 ---@field private marks render.md.Marks
 ---@field private query vim.treesitter.Query
----@field private renderers table<string, render.md.Renderer>
+---@field private renderers table<string, render.md.Render>
 local Handler = {}
 Handler.__index = Handler
 

@@ -2,7 +2,7 @@
 
 local util = require('tests.util')
 
-local eq = assert.are.same
+local Eq = assert.are.same
 
 ---@param row integer
 ---@param col integer
@@ -13,7 +13,7 @@ local function assert_items(row, col, expected)
     table.sort(actual, function(a, b)
         return a.label < b.label
     end)
-    eq(expected, actual)
+    Eq(expected, actual)
 end
 
 ---@param prefix string

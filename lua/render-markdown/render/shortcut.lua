@@ -2,7 +2,7 @@ local Base = require('render-markdown.render.base')
 local Converter = require('render-markdown.lib.converter')
 local Str = require('render-markdown.lib.str')
 
----@class render.md.render.Shortcut: render.md.Renderer
+---@class render.md.render.Shortcut: render.md.Render
 local Render = setmetatable({}, Base)
 Render.__index = Render
 

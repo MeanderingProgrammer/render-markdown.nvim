@@ -22,12 +22,17 @@ end
 
 ---@param range? render.md.Range
 ---@return boolean
-function Extmark:inside(range)
+function Extmark:overlaps(range)
     if range == nil then
         return false
     end
-    local row = self.mark.start_row
-    return range:contains(row, row)
+    local top = self.mark.start_row
+    local bottom = self.mark.opts.end_row or top
+    -- overlap for hl_eol should not include last line
+    if self.mark.opts.hl_eol then
+        bottom = bottom - 1
+    end
+    return range:overlaps(top, bottom)
 end
 
 ---@param ns integer
