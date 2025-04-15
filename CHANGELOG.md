@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 8.3.0 (2025-04-15)
+
 ### Features
 
 - padding character for inline code [#389](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/389)
@@ -14,6 +16,9 @@
 - ignore option, checked before attaching [05e6a6d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/05e6a6d119f90b99829ecb7eb85428a226c0c05f)
 - on.initial option, called before adding marks for the first time [#396](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/396)
   [91d40c2](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/91d40c2f37a4373ec29a47fcf3ce656408d302dc)
+- ability to conceal text based on lua patterns [#397](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/397)
+  [51da7d1](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/51da7d186f3f3be0ea00944c827293bc1dc5af8a)
+- better anti-conceal for multi-line decorations [8355c85](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/8355c85e4a34c2071fb9c78295aedf877116648b)
 
 ## 8.2.0 (2025-03-31)
 
