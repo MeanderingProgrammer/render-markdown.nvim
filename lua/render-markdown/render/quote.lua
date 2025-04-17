@@ -14,8 +14,8 @@ Render.__index = Render
 
 ---@return boolean
 function Render:setup()
-    local quote = self.config.quote
-    if self.context:skip(quote) then
+    local config = self.config.quote
+    if self.context:skip(config) then
         return false
     end
 
@@ -31,9 +31,9 @@ function Render:setup()
                 ] @quote_marker
             ]]
         ),
-        icon = callout ~= nil and callout.quote_icon or quote.icon,
-        highlight = callout ~= nil and callout.highlight or quote.highlight,
-        repeat_linebreak = quote.repeat_linebreak or nil,
+        icon = callout ~= nil and callout.quote_icon or config.icon,
+        highlight = callout ~= nil and callout.highlight or config.highlight,
+        repeat_linebreak = config.repeat_linebreak or nil,
     }
 
     return true

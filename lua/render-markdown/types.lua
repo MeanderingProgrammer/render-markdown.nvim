@@ -221,7 +221,7 @@
 ---@field highlight? string
 
 ---@class (exact) render.md.paragraph.UserConfig: render.md.base.UserConfig
----@field left_margin? number
+---@field left_margin? render.md.paragraph.Margin
 ---@field min_width? integer
 
 ---@class (exact) render.md.pattern.UserConfig

@@ -1,9 +1,12 @@
 local Base = require('render-markdown.render.base')
 local Str = require('render-markdown.lib.str')
 
+---@class render.md.indent.Data
+---@field level_change integer
+
 ---@class render.md.render.Section: render.md.Render
 ---@field private info render.md.indent.Config
----@field private level_change integer
+---@field private data render.md.indent.Data
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
@@ -16,10 +19,12 @@ function Render:setup()
 
     local current_level = self.node:level(false)
     local parent_level = math.max(self.node:level(true), self.info.skip_level)
-    self.level_change = current_level - parent_level
+    self.data = {
+        level_change = current_level - parent_level,
+    }
 
     -- Nothing to do if there is not a change in level
-    if self.level_change <= 0 then
+    if self.data.level_change <= 0 then
         return false
     end
 
@@ -30,7 +35,7 @@ function Render:render()
     local start_row = self:get_start_row()
     local end_row = self:get_end_row()
     -- Each level stacks inline marks so we only need to process change in level
-    local virt_text = self:indent_line(false, self.level_change)
+    local virt_text = self:indent_line(false, self.data.level_change)
     for row = start_row, end_row do
         self.marks:add(false, row, 0, {
             priority = 0,

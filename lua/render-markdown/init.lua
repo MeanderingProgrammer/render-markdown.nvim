@@ -256,6 +256,8 @@ M.default = {
         -- | foreground | optional override for the foreground                  |
         custom = {},
     },
+    -- Useful context to have when evaluating values.
+    -- | text | text value of the node |
     paragraph = {
         -- Turn on / off paragraph rendering.
         enabled = true,
@@ -263,6 +265,9 @@ M.default = {
         render_modes = false,
         -- Amount of margin to add to the left of paragraphs.
         -- If a float < 1 is provided it is treated as a percentage of available window space.
+        -- Output is evaluated depending on the type.
+        -- | function | `value(context)` |
+        -- | number   | `value`          |
         left_margin = 0,
         -- Minimum width to use for paragraphs.
         min_width = 0,

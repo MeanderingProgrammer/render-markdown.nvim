@@ -1,4 +1,4 @@
-*render-markdown.txt*           For 0.11.0          Last change: 2025 April 15
+*render-markdown.txt*           For 0.11.0          Last change: 2025 April 17
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -452,6 +452,8 @@ Default Configuration ~
             -- | foreground | optional override for the foreground                  |
             custom = {},
         },
+        -- Useful context to have when evaluating values.
+        -- | text | text value of the node |
         paragraph = {
             -- Turn on / off paragraph rendering.
             enabled = true,
@@ -459,6 +461,9 @@ Default Configuration ~
             render_modes = false,
             -- Amount of margin to add to the left of paragraphs.
             -- If a float < 1 is provided it is treated as a percentage of available window space.
+            -- Output is evaluated depending on the type.
+            -- | function | `value(context)` |
+            -- | number   | `value`          |
             left_margin = 0,
             -- Minimum width to use for paragraphs.
             min_width = 0,
@@ -1010,6 +1015,8 @@ Paragraph Configuration ~
 
 >lua
     require('render-markdown').setup({
+        -- Useful context to have when evaluating values.
+        -- | text | text value of the node |
         paragraph = {
             -- Turn on / off paragraph rendering.
             enabled = true,
@@ -1017,6 +1024,9 @@ Paragraph Configuration ~
             render_modes = false,
             -- Amount of margin to add to the left of paragraphs.
             -- If a float < 1 is provided it is treated as a percentage of available window space.
+            -- Output is evaluated depending on the type.
+            -- | function | `value(context)` |
+            -- | number   | `value`          |
             left_margin = 0,
             -- Minimum width to use for paragraphs.
             min_width = 0,
