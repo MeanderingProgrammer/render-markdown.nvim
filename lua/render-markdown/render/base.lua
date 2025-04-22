@@ -4,7 +4,7 @@ local colors = require('render-markdown.colors')
 
 ---@class render.md.Render
 ---@field protected marks render.md.Marks
----@field protected config render.md.BufferConfig
+---@field protected config render.md.main.Config
 ---@field protected context render.md.Context
 ---@field protected node render.md.Node
 ---@field setup fun(self: render.md.Render): boolean
@@ -13,7 +13,7 @@ local Base = {}
 Base.__index = Base
 
 ---@param marks render.md.Marks
----@param config render.md.BufferConfig
+---@param config render.md.main.Config
 ---@param context render.md.Context
 ---@param node render.md.Node
 ---@return render.md.Render

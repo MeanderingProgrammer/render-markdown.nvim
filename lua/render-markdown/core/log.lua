@@ -12,6 +12,7 @@ local Env = require('render-markdown.lib.env')
 ---@field private file string
 local M = {}
 
+---Should only be called from state on setup
 ---@param level render.md.config.LogLevel
 function M.setup(level)
     -- Write out any logs before closing

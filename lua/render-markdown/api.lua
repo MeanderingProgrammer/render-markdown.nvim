@@ -54,8 +54,7 @@ function M.debug()
 end
 
 function M.config()
-    local markdown = require('render-markdown')
-    local difference = state.difference(markdown.default)
+    local difference = state.difference()
     if vim.tbl_count(difference) == 0 then
         vim.print('Default Configuration')
     else

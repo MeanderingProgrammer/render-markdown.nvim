@@ -220,29 +220,29 @@ function Context:for_each(callback)
     return false
 end
 
----@type table<integer, render.md.Context>
-local cache = {}
+---@class render.md.context.Cache: { [integer]: render.md.Context }
+local Cache = {}
 
----@class render.md.ContextManager
+---@class render.md.context.Manager
 local M = {}
 
 ---@param props render.md.context.Props
 function M.reset(props)
-    cache[props.buf] = Context.new(props, 10)
+    Cache[props.buf] = Context.new(props, 10)
 end
 
 ---@param buf integer
 ---@param win integer
 ---@return boolean
 function M.contains_range(buf, win)
-    local context = cache[buf]
+    local context = Cache[buf]
     return context ~= nil and context:contains_window(win)
 end
 
 ---@param buf integer
 ---@return render.md.Context
 function M.get(buf)
-    return cache[buf]
+    return Cache[buf]
 end
 
 return M

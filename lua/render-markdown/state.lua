@@ -1,12 +1,9 @@
 local Compat = require('render-markdown.lib.compat')
 local Config = require('render-markdown.config')
 local Env = require('render-markdown.lib.env')
-local log = require('render-markdown.core.log')
-local presets = require('render-markdown.presets')
-local ts = require('render-markdown.integ.ts')
 
----@type table<integer, render.md.BufferConfig>
-local configs = {}
+---@class render.md.state.Cache: { [integer]: render.md.main.Config }
+local Cache = {}
 
 ---@class render.md.State
 ---@field private config render.md.Config
@@ -21,10 +18,10 @@ local configs = {}
 ---@field custom_handlers table<string, render.md.Handler>
 local M = {}
 
----@param default render.md.Config
 ---@param user render.md.UserConfig
-function M.setup(default, user)
-    local preset = presets.get(user)
+function M.setup(user)
+    local default = require('render-markdown').default
+    local preset = require('render-markdown.presets').get(user)
     local config = vim.tbl_deep_extend('force', default, preset, user)
 
     -- Override settings that require neovim >= 0.10.0 and have compatible alternatives
@@ -50,54 +47,54 @@ function M.setup(default, user)
     M.on = config.on
     M.completions = config.completions
     M.custom_handlers = config.custom_handlers
-    log.setup(config.log_level)
-    for _, language in ipairs(M.file_types) do
-        ts.inject(language, config.injections[language])
-    end
 
-    M.invalidate_cache()
+    require('render-markdown.core.log').setup(config.log_level)
+    for _, language in ipairs(M.file_types) do
+        local injection = config.injections[language]
+        require('render-markdown.integ.ts').inject(language, injection)
+    end
 end
 
 function M.invalidate_cache()
-    configs = {}
+    Cache = {}
 end
 
----@param default render.md.Config
 ---@return table
-function M.difference(default)
+function M.difference()
+    local default = require('render-markdown').default
     return require('render-markdown.debug.diff').get(default, M.config)
 end
 
 ---@param amount integer
 function M.modify_anti_conceal(amount)
-    ---@param anti_conceal render.md.anti.conceal.Config
-    local function modify(anti_conceal)
-        anti_conceal.above = math.max(anti_conceal.above + amount, 0)
-        anti_conceal.below = math.max(anti_conceal.below + amount, 0)
+    ---@param config render.md.anti.conceal.Config
+    local function modify(config)
+        config.above = math.max(config.above + amount, 0)
+        config.below = math.max(config.below + amount, 0)
     end
     modify(M.config.anti_conceal)
-    for _, config in pairs(configs) do
+    for _, config in pairs(Cache) do
         modify(config.anti_conceal)
     end
 end
 
 ---@param buf integer
----@return render.md.BufferConfig
+---@return render.md.main.Config
 function M.get(buf)
-    local config = configs[buf]
-    if config == nil then
-        local buf_config = M.default_buffer_config()
+    local result = Cache[buf]
+    if result == nil then
+        local config = M.default_buffer_config()
         for _, name in ipairs({ 'buflisted', 'buftype', 'filetype' }) do
             local value = Env.buf.get(buf, name)
             local override = M.config.overrides[name][value]
             if override ~= nil then
-                buf_config = vim.tbl_deep_extend('force', buf_config, override)
+                config = vim.tbl_deep_extend('force', config, override)
             end
         end
-        config = Config.new(buf_config)
-        configs[buf] = config
+        result = Config.new(config)
+        Cache[buf] = result
     end
-    return config
+    return result
 end
 
 ---@private

@@ -42,3 +42,5 @@ ensure_installed({ 'html', 'latex', 'markdown', 'markdown_inline' })
 require('nvim-treesitter.configs').setup({
     highlight = { enable = true },
 })
+
+require('mini.icons').setup({})

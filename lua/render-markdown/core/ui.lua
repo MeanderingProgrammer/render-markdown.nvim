@@ -23,7 +23,7 @@ local builtin_handlers = {
     markdown_inline = require('render-markdown.handler.markdown_inline'),
 }
 
----@class render.md.cache.Ui
+---@class render.md.ui.Cache
 ---@field states table<integer, render.md.Buffer>
 local Cache = {
     states = {},
@@ -97,7 +97,8 @@ function M.update(buf, win, event, change)
     end
 
     local parse = M.parse(buf, win, change)
-    local config, buffer = state.get(buf), Cache.get(buf)
+    local config = state.get(buf)
+    local buffer = Cache.get(buf)
     if buffer:is_empty() then
         return
     end
@@ -181,7 +182,7 @@ function M.run_update(buf, win, change)
 end
 
 ---@private
----@param config render.md.BufferConfig
+---@param config render.md.main.Config
 ---@param win integer
 ---@param mode string
 ---@return 'default'|'rendered'

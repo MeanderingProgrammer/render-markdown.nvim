@@ -119,7 +119,7 @@
 
 ---@class (exact) render.md.dash.UserConfig: render.md.base.UserConfig
 ---@field icon? string
----@field width? 'full'|number
+---@field width? render.md.dash.Width
 ---@field left_margin? number
 ---@field highlight? string
 

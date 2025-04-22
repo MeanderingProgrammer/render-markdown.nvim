@@ -106,14 +106,13 @@ end
 ---@return boolean
 function M.ignore(marker, text)
     local prefix = vim.pesc(vim.trim(marker)) .. '%s+'
-    local patterns = {
-        -- The first non-space after the marker is not '['
-        prefix .. '[^%[]',
-        -- After '[' there is another '[' or a space
-        prefix .. '%[.*[%[%s]',
-        -- There is already text enclosed by '[' ']'
-        prefix .. '%[.*%]',
-    }
+    local patterns = {} ---@type string[]
+    -- first non-space after the marker is not '['
+    patterns[#patterns + 1] = prefix .. '[^%[]'
+    -- after '[' there is another '[' or a space
+    patterns[#patterns + 1] = prefix .. '%[.*[%[%s]'
+    -- there is already text enclosed by '[' ']'
+    patterns[#patterns + 1] = prefix .. '%[.*%]'
     for _, pattern in ipairs(patterns) do
         if text:find(pattern) ~= nil then
             return true

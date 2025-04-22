@@ -1,4 +1,4 @@
----@class render.md.cache.Colors
+---@class render.md.colors.Cache
 ---@field combine table<string, { fg: string, bg: string }>
 ---@field bg_to_fg table<string, { hl: string }>
 local Cache = {

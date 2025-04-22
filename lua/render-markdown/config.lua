@@ -1,18 +1,18 @@
 local Env = require('render-markdown.lib.env')
 local Range = require('render-markdown.core.range')
 
----@class render.md.Components
+---@class render.md.main.Components
 ---@field callout table<string, render.md.callout.Config>
 ---@field checkbox table<string, render.md.checkbox.custom.Config>
 
----@class render.md.BufferConfig: render.md.buffer.Config
+---@class render.md.main.Config: render.md.buffer.Config
 ---@field private modes render.md.Modes
----@field private components render.md.Components
+---@field private components render.md.main.Components
 local Config = {}
 Config.__index = Config
 
 ---@param config render.md.buffer.Config
----@return render.md.BufferConfig
+---@return render.md.main.Config
 function Config.new(config)
     -- Super set of render modes across top level and individual components
     local modes = config.render_modes
@@ -22,7 +22,7 @@ function Config.new(config)
         end
     end
 
-    ---@type render.md.Components
+    ---@type render.md.main.Components
     local components = {
         callout = Config.normalize(config.callout),
         checkbox = Config.normalize(config.checkbox.custom),
@@ -119,19 +119,17 @@ end
 ---@param row? integer
 ---@return render.md.Range?
 function Config:hidden(mode, row)
-    -- Anti-conceal is not enabled -> hide nothing
-    -- Row is not known -> buffer is not active -> hide nothing
-    if not self.anti_conceal.enabled or row == nil then
+    -- anti-conceal is not enabled -> hide nothing
+    -- row is not known -> buffer is not active -> hide nothing
+    local config = self.anti_conceal
+    if not config.enabled or row == nil then
         return nil
     end
     if vim.tbl_contains({ 'v', 'V', '\22' }, mode) then
         local start = vim.fn.getpos('v')[2] - 1
         return Range.new(math.min(row, start), math.max(row, start))
     else
-        return Range.new(
-            row - self.anti_conceal.above,
-            row + self.anti_conceal.below
-        )
+        return Range.new(row - config.above, row + config.below)
     end
 end
 

@@ -1,5 +1,5 @@
 local Base = require('render-markdown.render.base')
-local Icons = require('render-markdown.lib.icons')
+local Icons = require('render-markdown.integ.icons')
 local Str = require('render-markdown.lib.str')
 local colors = require('render-markdown.colors')
 

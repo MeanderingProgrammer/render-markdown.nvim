@@ -4,7 +4,7 @@ local state = require('render-markdown.state')
 local ts = require('render-markdown.integ.ts')
 
 ---@class render.md.handler.buf.MarkdownInline
----@field private config render.md.BufferConfig
+---@field private config render.md.main.Config
 ---@field private context render.md.Context
 ---@field private marks render.md.Marks
 ---@field private query vim.treesitter.Query

@@ -1,11 +1,11 @@
-local Icons = require('render-markdown.lib.icons')
+local Icons = require('render-markdown.integ.icons')
 local state = require('render-markdown.state')
 
 ---@class render.md.Health
 local M = {}
 
 ---@private
-M.version = '8.3.1'
+M.version = '8.3.2'
 
 function M.check()
     M.start('version')
@@ -33,7 +33,7 @@ function M.check()
     M.check_highlight('markdown')
 
     M.start('icons')
-    local provider = Icons.provider()
+    local provider = Icons.name()
     if provider ~= nil then
         vim.health.ok('using: ' .. provider)
     else
@@ -65,17 +65,15 @@ function M.start(name)
 end
 
 ---@private
----@param minimum string
----@param recommended string
-function M.neovim(minimum, recommended)
-    if vim.fn.has('nvim-' .. minimum) == 0 then
-        vim.health.error('neovim < ' .. minimum)
-    elseif vim.fn.has('nvim-' .. recommended) == 0 then
-        vim.health.warn(
-            'neovim < ' .. recommended .. ' some features will not work'
-        )
+---@param min string
+---@param rec string
+function M.neovim(min, rec)
+    if vim.fn.has('nvim-' .. min) == 0 then
+        vim.health.error('neovim < ' .. min)
+    elseif vim.fn.has('nvim-' .. rec) == 0 then
+        vim.health.warn('neovim < ' .. rec .. ' some features will not work')
     else
-        vim.health.ok('neovim >= ' .. recommended)
+        vim.health.ok('neovim >= ' .. rec)
     end
 end
 

@@ -1,8 +1,10 @@
 ---@class (exact) render.md.dash.Config: render.md.base.Config
 ---@field icon string
----@field width 'full'|number
+---@field width render.md.dash.Width
 ---@field left_margin number
 ---@field highlight string
+
+---@alias render.md.dash.Width 'full'|number
 
 local M = {}
 

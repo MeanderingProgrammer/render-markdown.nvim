@@ -714,7 +714,8 @@ function M.setup(opts)
     end
     M.initialized = true
 
-    require('render-markdown.state').setup(M.default, opts or {})
+    require('render-markdown.state').setup(opts or {})
+    require('render-markdown.state').invalidate_cache()
     require('render-markdown.core.ui').invalidate_cache()
 end
 
