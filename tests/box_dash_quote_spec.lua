@@ -40,8 +40,8 @@ describe('box_dash_quote.md', function()
             virt_text_pos = 'overlay',
         })
 
-        marks:add(row:inc(2), row:get(), 0, 4, util.quote('  %s ', 'RmQuote'))
-        marks:add(row:inc(), row:get(), 0, 4, util.quote('  %s ', 'RmQuote'))
+        marks:add(row:inc(2), row:get(), 2, 3, util.quote('RmQuote'))
+        marks:add(row:inc(), row:get(), 2, 3, util.quote('RmQuote'))
 
         util.assert_view(marks, {
             '󰫎 󰲡 Checkbox / Dash / Quote',

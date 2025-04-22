@@ -16,25 +16,23 @@ function Render:setup()
     if self.context:skip(self.info) then
         return false
     end
-
     local current_level = self.node:level(false)
     local parent_level = math.max(self.node:level(true), self.info.skip_level)
-    self.data = {
-        level_change = current_level - parent_level,
-    }
-
-    -- Nothing to do if there is not a change in level
-    if self.data.level_change <= 0 then
+    local level_change = current_level - parent_level
+    -- nothing to do if there is not a change in level
+    if level_change <= 0 then
         return false
     end
-
+    self.data = {
+        level_change = level_change,
+    }
     return true
 end
 
 function Render:render()
-    local start_row = self:get_start_row()
-    local end_row = self:get_end_row()
-    -- Each level stacks inline marks so we only need to process change in level
+    local start_row = math.max(self.node.start_row + self:start_below(), 0)
+    local end_row = self.node.end_row - 1 - self:end_above()
+    -- each level stacks inline marks so we only add changes in level
     local virt_text = self:indent_line(false, self.data.level_change)
     for row = start_row, end_row do
         self.marks:add(false, row, 0, {
@@ -47,41 +45,34 @@ end
 
 ---@private
 ---@return integer
-function Render:get_start_row()
+function Render:start_below()
     if self.info.skip_heading then
-        -- Exclude any lines potentially used by section heading
-        local second = self.node:line('first', 1)
-        local offset = Str.width(second) == 0 and 1 or 0
-        return self.node.start_row + 1 + offset
+        -- exclude second line of current section if empty
+        local empty = Str.width(self.node:line('first', 1)) == 0
+        return empty and 2 or 1
     else
-        -- Include last empty line in previous section
-        -- Exclude if it is the only empty line in that section
-        local above = self.node:line('above', 1)
-        local two_above = self.node:line('above', 2)
-        local above_is_empty = Str.width(above) == 0
-        local two_above_is_section = self:is_section(two_above)
-        local offset = (above_is_empty and not two_above_is_section) and 1 or 0
-        return math.max(self.node.start_row - offset, 0)
+        -- include last line of previous section if empty
+        -- skip if it is the only line in the previous section
+        local empty = Str.width(self.node:line('above', 1)) == 0
+        local only = self:section(self.node:line('above', 2))
+        return (empty and not only) and -1 or 0
     end
 end
 
 ---@private
 ---@return integer
-function Render:get_end_row()
-    -- Exclude last empty line in current section
-    -- Include if it is the only empty line of the last subsection
-    local last = self.node:line('last', 0)
-    local second_last = self.node:line('last', 1)
-    local last_is_empty = Str.width(last) == 0
-    local second_last_is_section = self:is_section(second_last)
-    local offset = (last_is_empty and not second_last_is_section) and 1 or 0
-    return self.node.end_row - 1 - offset
+function Render:end_above()
+    -- exclude last line of current section if empty
+    -- skip if it is the only line in the last nested section
+    local empty = Str.width(self.node:line('last', 0)) == 0
+    local only = self:section(self.node:line('last', 1))
+    return (empty and not only) and 1 or 0
 end
 
 ---@private
 ---@param line? string
 ---@return boolean
-function Render:is_section(line)
+function Render:section(line)
     return line ~= nil and vim.startswith(line, '#')
 end
 

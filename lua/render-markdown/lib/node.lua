@@ -55,14 +55,16 @@ end
 
 ---@return integer[]
 function Node:sections()
-    local result, levels, section = {}, 0, self:parent('section')
+    local result = {} ---@type integer[]
+    local levels = 0
+    local section = self:parent('section')
     while section ~= nil do
         local level = section:level(false)
         result[level] = section:sibling_count('section', level)
         levels = math.max(levels, level)
         section = section:parent('section')
     end
-    -- Fill in any heading level gaps with 0
+    -- fill in any heading level gaps with 0
     for i = 1, levels do
         result[i] = result[i] or 0
     end
@@ -87,12 +89,15 @@ end
 ---@param target string
 ---@return integer, render.md.Node?
 function Node:level_in_section(target)
-    local parent, level, root = self.node:parent(), 0, nil
-    while parent ~= nil and parent:type() ~= 'section' do
-        if parent:type() == target then
-            level, root = level + 1, parent
+    local level = 0
+    local root = nil ---@type TSNode?
+    local node = self.node ---@type TSNode?
+    while node ~= nil and node:type() ~= 'section' do
+        if node:type() == target then
+            level = level + 1
+            root = node
         end
-        parent = parent:parent()
+        node = node:parent()
     end
     return level, root ~= nil and self:create(root) or nil
 end
@@ -113,12 +118,12 @@ end
 ---@param target string
 ---@return render.md.Node?
 function Node:sibling(target)
-    local sibling = self.node:next_sibling()
-    while sibling ~= nil do
-        if sibling:type() == target then
-            return self:create(sibling)
+    local node = self.node ---@type TSNode?
+    while node ~= nil do
+        if node:type() == target then
+            return self:create(node)
         end
-        sibling = sibling:next_sibling()
+        node = node:next_sibling()
     end
     return nil
 end
@@ -127,14 +132,15 @@ end
 ---@param level? integer
 ---@return integer
 function Node:sibling_count(target, level)
-    local count, sibling = 1, self.node:prev_sibling()
+    local count = 0
+    local node = self.node ---@type TSNode?
     while
-        sibling ~= nil
-        and sibling:type() == target
-        and (level == nil or self:create(sibling):level(false) == level)
+        node ~= nil
+        and node:type() == target
+        and (level == nil or self:create(node):level(false) == level)
     do
         count = count + 1
-        sibling = sibling:prev_sibling()
+        node = node:prev_sibling()
     end
     return count
 end
@@ -150,10 +156,10 @@ end
 ---@param target_row? integer
 ---@return render.md.Node?
 function Node:child(target_type, target_row)
-    for child in self.node:iter_children() do
-        if child:type() == target_type then
-            if target_row == nil or child:range() == target_row then
-                return self:create(child)
+    for node in self.node:iter_children() do
+        if node:type() == target_type then
+            if target_row == nil or node:range() == target_row then
+                return self:create(node)
             end
         end
     end

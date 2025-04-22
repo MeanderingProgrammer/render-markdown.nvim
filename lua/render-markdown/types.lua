@@ -245,9 +245,9 @@
 ---@field filler? string
 
 ---@class (exact) render.md.quote.UserConfig: render.md.base.UserConfig
----@field icon? string
+---@field icon? string|string[]
 ---@field repeat_linebreak? boolean
----@field highlight? string
+---@field highlight? string|string[]
 
 ---@class (exact) render.md.sign.UserConfig
 ---@field enabled? boolean

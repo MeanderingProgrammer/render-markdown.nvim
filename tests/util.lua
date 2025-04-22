@@ -126,13 +126,12 @@ function M.link(kind)
     }
 end
 
----@param format string
 ---@param highlight string
 ---@return vim.api.keyset.set_extmark
-function M.quote(format, highlight)
+function M.quote(highlight)
     ---@type vim.api.keyset.set_extmark
     return {
-        virt_text = { { string.format(format, '▋'), highlight } },
+        virt_text = { { '▋', highlight } },
         virt_text_pos = 'overlay',
     }
 end

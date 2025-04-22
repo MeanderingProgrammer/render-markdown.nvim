@@ -2,14 +2,18 @@
 local M = {}
 
 ---@generic T
----@param values T[]
+---@param values `T`|T[]
 ---@param index integer
 ---@return T|nil
 function M.cycle(values, index)
-    if #values == 0 then
-        return nil
+    if type(values) == 'table' then
+        if #values == 0 then
+            return nil
+        end
+        return values[((index - 1) % #values) + 1]
+    else
+        return values
     end
-    return values[((index - 1) % #values) + 1]
 end
 
 ---@generic T
