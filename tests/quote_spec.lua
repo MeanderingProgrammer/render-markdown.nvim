@@ -17,6 +17,7 @@ describe('quote', function()
             '> Important',
             '> > > New',
         })
+
         local marks, row = util.marks(), util.row()
 
         local hint = 'RmHint'

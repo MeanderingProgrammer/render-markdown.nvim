@@ -2,6 +2,18 @@
 
 ## Pre-release
 
+### Features
+
+- handle arbitrary block quote nesting nicely [#404](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/404)
+  [7f75b16](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7f75b162dbe1e1b9daf1b1201b97a93481169614)
+- support function for paragraph.left_margin [#401](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/401)
+  [dfc1299](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/dfc1299d9f32b53b34b7ac6c3a7553b5fd29977f)
+
+### Bug Fixes
+
+- more robust icon provider resolution [#403](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/403)
+  [dfffdd2](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/dfffdd221570d36ac80d1a599643140a319a36de)
+
 ## 8.3.0 (2025-04-15)
 
 ### Features
