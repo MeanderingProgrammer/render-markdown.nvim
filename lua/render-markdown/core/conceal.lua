@@ -138,7 +138,6 @@ function Conceal:compute()
     if parser == nil then
         return
     end
-    self.context:parse(parser)
     parser:for_each_tree(function(tree, language_tree)
         self:compute_tree(language_tree:lang(), tree:root())
     end)

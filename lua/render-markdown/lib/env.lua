@@ -44,15 +44,17 @@ function M.file_size_mb(file)
     return stats.size / (1024 * 1024)
 end
 
+---@param name string
 ---@param callback fun()
 ---@return fun()
-function M.runtime(callback)
+function M.runtime(name, callback)
     return function()
         local start_time = Compat.uv.hrtime()
         callback()
         local end_time = Compat.uv.hrtime()
         local elapsed = (end_time - start_time) / 1e+6
-        vim.print(string.format('Runtime (ms): %.1f', elapsed))
+        assert(elapsed < 1000)
+        vim.print(string.format('%8s : %5.1f ms', name:upper(), elapsed))
     end
 end
 

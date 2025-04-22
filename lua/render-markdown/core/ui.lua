@@ -107,7 +107,7 @@ function M.update(buf, win, event, change)
         M.run_update(buf, win, change)
     end
     if parse and state.log_runtime then
-        update = Env.runtime(update)
+        update = Env.runtime('update', update)
     end
 
     if parse and config.debounce > 0 then

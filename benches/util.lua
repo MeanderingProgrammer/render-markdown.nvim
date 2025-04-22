@@ -36,10 +36,11 @@ end
 ---@param callback fun()
 ---@return number
 function M.time(callback)
-    local start = vim.uv.hrtime()
     callback()
+    local start_time = vim.uv.hrtime()
     vim.wait(0)
-    return (vim.uv.hrtime() - start) / 1e+6
+    local end_time = vim.uv.hrtime()
+    return (end_time - start_time) / 1e+6
 end
 
 ---@private
