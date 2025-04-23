@@ -68,6 +68,26 @@ function M.valid(buf, win)
     return buf == M.win.buf(win)
 end
 
+---@param buf integer
+---@param win integer
+---@param offset integer
+---@return integer, integer
+function M.range(buf, win, offset)
+    local top = math.max(M.win.view(win).topline - 1 - offset, 0)
+
+    local bottom = top
+    local lines = vim.api.nvim_buf_line_count(buf)
+    local size = vim.api.nvim_win_get_height(win) + (2 * offset)
+    while bottom < lines and size > 0 do
+        bottom = bottom + 1
+        if M.row.visible(win, bottom) then
+            size = size - 1
+        end
+    end
+
+    return top, bottom
+end
+
 ---@class render.md.env.Row
 M.row = {}
 

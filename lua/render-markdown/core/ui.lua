@@ -85,13 +85,7 @@ end
 ---@param event string
 ---@param change boolean
 function M.update(buf, win, event, change)
-    log.buf(
-        'info',
-        'update',
-        buf,
-        string.format('event %s', event),
-        string.format('change %s', change)
-    )
+    log.buf('info', 'update', buf, event, string.format('change %s', change))
     if not Env.valid(buf, win) then
         return
     end
@@ -124,7 +118,7 @@ end
 ---@return boolean
 function M.parse(buf, win, change)
     -- Need to parse when things change or we have not parsed the visible range yet
-    return change or not Context.contains_range(buf, win)
+    return change or not Context.contains(buf, win)
 end
 
 ---@private
@@ -246,7 +240,7 @@ end
 ---@return render.md.Mark[]
 function M.parse_tree(ctx, language)
     log.buf('debug', 'language', ctx.buf, language)
-    if not Context.get(ctx.buf):overlaps_node(ctx.root) then
+    if not Context.get(ctx.buf):overlaps(ctx.root) then
         return {}
     end
 

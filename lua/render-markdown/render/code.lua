@@ -1,4 +1,5 @@
 local Base = require('render-markdown.render.base')
+local Env = require('render-markdown.lib.env')
 local Icons = require('render-markdown.integ.icons')
 local Str = require('render-markdown.lib.str')
 local colors = require('render-markdown.colors')
@@ -63,7 +64,7 @@ function Render:offset(value, used)
     local result = self.context:percent(value, used)
     if self.node.text:find('\t') ~= nil then
         -- Rounds to the next multiple of tab size
-        local tab_size = self.context:tab_size()
+        local tab_size = Env.buf.get(self.context.buf, 'tabstop')
         result = math.ceil(result / tab_size) * tab_size
     end
     return result
