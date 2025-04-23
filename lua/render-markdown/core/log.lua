@@ -7,27 +7,31 @@ local Env = require('render-markdown.lib.env')
 ---@field message string
 
 ---@class render.md.Log
+---@field private file string
 ---@field private level render.md.config.LogLevel
 ---@field private entries render.md.log.Entry[]
----@field private file string
 local M = {}
 
----Should only be called from state on setup
----@param level render.md.config.LogLevel
-function M.setup(level)
-    -- Write out any logs before closing
+---called from plugin directory
+function M.init()
+    -- typically resolves to ~/.local/state/nvim/render-markdown.log
+    M.file = vim.fn.stdpath('state') .. '/render-markdown.log'
+    -- clear the file contents if it is too big
+    if Env.file_size_mb(M.file) > 5 then
+        assert(io.open(M.file, 'w')):close()
+    end
+    -- write out any logs before closing
     vim.api.nvim_create_autocmd('VimLeave', {
         group = vim.api.nvim_create_augroup('RenderMarkdownLog', {}),
         callback = M.flush,
     })
+end
+
+---called from state on setup
+---@param level render.md.config.LogLevel
+function M.setup(level)
     M.level = level
     M.entries = {}
-    -- Typically resolves to ~/.local/state/nvim/render-markdown.log
-    M.file = vim.fn.stdpath('state') .. '/render-markdown.log'
-    -- Clear the file contents if it is too big
-    if Env.file_size_mb(M.file) > 5 then
-        assert(io.open(M.file, 'w')):close()
-    end
 end
 
 function M.open()

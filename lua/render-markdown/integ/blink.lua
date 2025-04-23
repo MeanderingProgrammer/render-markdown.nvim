@@ -40,29 +40,29 @@ function Source:get_completions(context, callback)
 end
 
 ---@class render.md.integ.Blink
----@field private id string
----@field private registered boolean
-local M = {
-    id = 'markdown',
-    registered = false,
-}
+local M = {}
 
----Should only be called from manager on initial buffer attach
+---@private
+---@type boolean
+M.initialized = false
+
+---called from manager on buffer attach
 function Source.setup()
-    if M.registered then
+    if M.initialized then
         return
     end
-    M.registered = true
+    M.initialized = true
     local has_blink, blink = pcall(require, 'blink.cmp')
     if not has_blink or blink == nil then
         return
     end
-    pcall(blink.add_source_provider, M.id, {
+    local id = 'markdown'
+    pcall(blink.add_source_provider, id, {
         name = 'RenderMarkdown',
         module = 'render-markdown.integ.blink',
     })
     for _, file_type in ipairs(state.file_types) do
-        pcall(blink.add_filetype_source, file_type, M.id)
+        pcall(blink.add_filetype_source, file_type, id)
     end
 end
 

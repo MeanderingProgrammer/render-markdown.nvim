@@ -1,11 +1,11 @@
 ---@class render.md.Presets
 local M = {}
 
----@param user_config render.md.UserConfig
+---@param user render.md.UserConfig
 ---@return render.md.UserConfig
-function M.get(user_config)
-    local config = M.config(user_config.preset)
-    config.pipe_table = M.pipe_table((user_config.pipe_table or {}).preset)
+function M.get(user)
+    local config = M.config(user.preset)
+    config.pipe_table = M.pipe_table((user.pipe_table or {}).preset)
     return config
 end
 

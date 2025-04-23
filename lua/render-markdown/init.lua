@@ -43,6 +43,7 @@ local M = {}
 ---@field win_options table<string, render.md.window.Config>
 
 ---@private
+---@type boolean
 M.initialized = false
 
 ---@type render.md.Config
@@ -713,10 +714,7 @@ function M.setup(opts)
         return
     end
     M.initialized = true
-
     require('render-markdown.state').setup(opts or {})
-    require('render-markdown.state').invalidate_cache()
-    require('render-markdown.core.ui').invalidate_cache()
 end
 
 return setmetatable(M, {

@@ -1,9 +1,11 @@
-if vim.g.loaded_render_markdown then
+local initialized = false
+if initialized then
     return
 end
-vim.g.loaded_render_markdown = true
+initialized = true
 
 require('render-markdown').setup()
-require('render-markdown.colors').setup()
-require('render-markdown.command').setup()
-require('render-markdown.manager').setup()
+require('render-markdown.colors').init()
+require('render-markdown.command').init()
+require('render-markdown.manager').init()
+require('render-markdown.core.log').init()

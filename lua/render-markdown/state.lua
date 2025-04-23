@@ -18,18 +18,19 @@ local Cache = {}
 ---@field custom_handlers table<string, render.md.Handler>
 local M = {}
 
+---called from init on setup
 ---@param user render.md.UserConfig
 function M.setup(user)
     local default = require('render-markdown').default
     local preset = require('render-markdown.presets').get(user)
     local config = vim.tbl_deep_extend('force', default, preset, user)
 
-    -- Override settings that require neovim >= 0.10.0 and have compatible alternatives
+    -- override settings that require neovim >= 0.10.0 and have compatible alternatives
     if not Compat.has_10 then
         config.code.position = 'right'
     end
 
-    -- Use lazy.nvim file type configuration if available and no user value is specified
+    -- use lazy.nvim file type configuration if available and no user value is specified
     if user.file_types == nil then
         local lazy_file_types = Env.lazy('ft')
         if #lazy_file_types > 0 then
@@ -53,6 +54,9 @@ function M.setup(user)
         local injection = config.injections[language]
         require('render-markdown.integ.ts').inject(language, injection)
     end
+
+    M.invalidate_cache()
+    require('render-markdown.core.ui').invalidate_cache()
 end
 
 function M.invalidate_cache()

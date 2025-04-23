@@ -30,17 +30,18 @@ function Source:complete(params, callback)
 end
 
 ---@class render.md.integ.Cmp
----@field private registered boolean
-local M = {
-    registered = false,
-}
+local M = {}
 
----Should only be called from manager on initial buffer attach
+---@private
+---@type boolean
+M.initialized = false
+
+---called from manager on buffer attach
 function M.setup()
-    if M.registered then
+    if M.initialized then
         return
     end
-    M.registered = true
+    M.initialized = true
     local has_cmp, cmp = pcall(require, 'cmp')
     if not has_cmp or cmp == nil then
         return

@@ -12,20 +12,20 @@ local M = {}
 ---@private
 M.group = vim.api.nvim_create_augroup('RenderMarkdown', {})
 
----Should only be called from plugin directory
-function M.setup()
-    -- Lazy Loading: ignores current buffer as FileType event already executed
+---called from plugin directory
+function M.init()
+    -- lazy loading: ignores current buffer as FileType event already executed
     if #Env.lazy('ft') == 0 and #Env.lazy('cmd') == 0 then
         M.attach(Env.buf.current())
     end
-    -- Attempt to attach to all buffers, cannot use pattern to support plugin directory
+    -- attempt to attach to all buffers, cannot use pattern to support plugin directory
     vim.api.nvim_create_autocmd('FileType', {
         group = M.group,
         callback = function(args)
             M.attach(args.buf)
         end,
     })
-    -- Window resizing is not buffer specific so is managed more globally
+    -- window resizing is not buffer specific so is managed more globally
     vim.api.nvim_create_autocmd('WinResized', {
         group = M.group,
         callback = function(args)
@@ -34,7 +34,7 @@ function M.setup()
             end
             for _, win in ipairs(vim.v.event.windows) do
                 local buf = Env.win.buf(win)
-                if M.is_attached(buf) then
+                if M.attached(buf) then
                     ui.update(buf, win, args.event, true)
                 end
             end
@@ -44,13 +44,13 @@ end
 
 ---@param buf integer
 ---@return boolean
-function M.is_attached(buf)
+function M.attached(buf)
     return vim.tbl_contains(buffers, buf)
 end
 
 ---@param enabled? boolean
 function M.set_all(enabled)
-    -- Lazy Loading: all previously opened buffers have been ignored
+    -- lazy loading: all previously opened buffers have been ignored
     if #Env.lazy('cmd') > 0 then
         M.attach(Env.buf.current())
     end
@@ -67,7 +67,7 @@ end
 ---@param enabled? boolean
 function M.set_current(enabled)
     local buf = Env.buf.current()
-    if M.is_attached(buf) then
+    if M.attached(buf) then
         local config = state.get(buf)
         if enabled ~= nil then
             config.enabled = enabled
@@ -145,7 +145,7 @@ end
 function M.should_attach(buf)
     log.buf('info', 'attach', buf, 'start')
 
-    if M.is_attached(buf) then
+    if M.attached(buf) then
         log.buf('info', 'attach', buf, 'skip', 'already attached')
         return false
     end

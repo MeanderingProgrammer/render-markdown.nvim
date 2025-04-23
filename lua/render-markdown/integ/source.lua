@@ -15,7 +15,7 @@ local M = {}
 
 ---@return boolean
 function M.enabled()
-    return manager.is_attached(Env.buf.current())
+    return manager.attached(Env.buf.current())
 end
 
 ---@return string[]

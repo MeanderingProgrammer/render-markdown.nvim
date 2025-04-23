@@ -1,14 +1,17 @@
 local Compat = require('render-markdown.lib.compat')
 
 ---@class render.md.integ.TreeSitter
----@field private initialized boolean
----@field private queries table<string, vim.treesitter.Query>
-local M = {
-    initialized = false,
-    queries = {},
-}
+local M = {}
 
----Should only be called from manager on initial buffer attach
+---@private
+---@type boolean
+M.initialized = false
+
+---@private
+---@type table<string, vim.treesitter.Query>
+M.queries = {}
+
+---called from manager on buffer attach
 function M.setup()
     if M.initialized then
         return

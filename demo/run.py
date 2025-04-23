@@ -4,7 +4,7 @@ from pathlib import Path
 
 from PIL import Image
 
-INFO: dict[str, tuple[int, str]] = dict(
+DEMOS: dict[str, tuple[int, str]] = dict(
     heading_code=(550, "## Heading 2"),
     list_table=(550, ""),
     box_dash_quote=(250, ""),
@@ -26,7 +26,7 @@ def create_gif(name: str, file: Path) -> None:
     if gif.exists():
         gif.unlink()
 
-    height, content = INFO[name]
+    height, content = DEMOS[name]
 
     tape = Path("demo/demo.tape")
     tape.write_text(tape_content(file, gif, height, content))
@@ -91,6 +91,6 @@ def get_move(file: Path) -> str:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate a demo recording using vhs")
-    parser.add_argument("--name", type=str, required=True, choices=INFO.keys())
+    parser.add_argument("--name", type=str, required=True, choices=DEMOS.keys())
     args = parser.parse_args()
     main(args.name)

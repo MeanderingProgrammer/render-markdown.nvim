@@ -62,19 +62,19 @@ M.colors = {
     Error           = 'DiagnosticError',
 }
 
----Should only be called from plugin directory
-function M.setup()
-    -- Reload generated colors on color scheme change
-    vim.api.nvim_create_autocmd('ColorScheme', {
-        group = vim.api.nvim_create_augroup('RenderMarkdownColors', {}),
-        callback = M.reload,
-    })
+---called from plugin directory
+function M.init()
     for name, link in pairs(M.colors) do
         vim.api.nvim_set_hl(0, M.prefix .. name, {
             link = link,
             default = true,
         })
     end
+    -- reload generated colors on color scheme change
+    vim.api.nvim_create_autocmd('ColorScheme', {
+        group = vim.api.nvim_create_augroup('RenderMarkdownColors', {}),
+        callback = M.reload,
+    })
 end
 
 ---@private

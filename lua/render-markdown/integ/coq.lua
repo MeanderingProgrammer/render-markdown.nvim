@@ -1,18 +1,18 @@
 local source = require('render-markdown.integ.source')
 
 ---@class render.md.cmp.Coq
----@field private registered boolean
-local M = {
-    registered = false,
-}
+local M = {}
 
----Should only be called from manager on initial buffer attach
----or by a user to enable the integration
+---@private
+---@type boolean
+M.initialized = false
+
+---called from manager on buffer attach or directly by user
 function M.setup()
-    if M.registered then
+    if M.initialized then
         return
     end
-    M.registered = true
+    M.initialized = true
     local has_coq = pcall(require, 'coq')
     if not has_coq then
         return

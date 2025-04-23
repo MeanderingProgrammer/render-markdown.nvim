@@ -3,7 +3,7 @@ local source = require('render-markdown.integ.source')
 ---@class render.md.integ.Lsp
 local M = {}
 
----Should only be called from manager on initial buffer attach
+---called from manager on buffer attach
 function M.setup()
     local name = 'render-markdown'
     ---@type vim.lsp.ClientConfig
