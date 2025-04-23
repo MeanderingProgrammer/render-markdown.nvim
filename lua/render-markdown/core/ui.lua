@@ -158,7 +158,7 @@ function M.run_update(buf, win, change)
         local hidden = config:hidden(mode, row)
         local extmarks = buffer:get_marks()
         if initial then
-            Compat.lsp_window_height(win, extmarks)
+            Compat.lsp_window_height(buf, win, extmarks)
             state.on.initial({ buf = buf, win = win })
         end
         for _, extmark in ipairs(extmarks) do

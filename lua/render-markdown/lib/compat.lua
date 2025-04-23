@@ -5,28 +5,39 @@ M.uv = vim.uv or vim.loop
 M.has_10 = vim.fn.has('nvim-0.10') == 1
 M.has_11 = vim.fn.has('nvim-0.11') == 1
 
+---@param buf integer
 ---@param win integer
 ---@param extmarks render.md.Extmark[]
 ---@see vim.lsp.util.open_floating_preview
-function M.lsp_window_height(win, extmarks)
-    -- This is a fragile way of identifying whether this is a floating LSP buffer,
-    -- comes from the implementation and not from any documentation
-    local lsp_buf = pcall(vim.api.nvim_win_get_var, win, 'lsp_floating_bufnr')
-    if not lsp_buf then
+function M.lsp_window_height(buf, win, extmarks)
+    -- this is a fragile way of identifying whether this is a floating LSP
+    -- window, comes from the implementation and not from any documentation
+    local has_lsp = pcall(vim.api.nvim_win_get_var, win, 'lsp_floating_bufnr')
+    if not has_lsp then
         return
     end
-    local concealed = 0
+
+    local Env = require('render-markdown.lib.env')
+    local Str = require('render-markdown.lib.str')
+
+    -- account for conceal lines marks allowing us to reduce window height
+    local height = vim.api.nvim_win_text_height(win, {}).all
     for _, extmark in ipairs(extmarks) do
         if extmark:get().opts.conceal_lines ~= nil then
-            concealed = concealed + 1
+            height = height - 1
         end
     end
-    if concealed == 0 then
-        return
-    end
-    local height = vim.api.nvim_win_text_height(win, {}).all - concealed
     if height < vim.api.nvim_win_get_height(win) then
         vim.api.nvim_win_set_height(win, height)
+    end
+
+    -- disable line wrapping if it is not needed to contain the text
+    local width = 0
+    for _, line in ipairs(vim.api.nvim_buf_get_lines(buf, 0, -1, false)) do
+        width = math.max(width, Str.width(line))
+    end
+    if width <= vim.api.nvim_win_get_width(win) then
+        Env.win.set(win, 'wrap', false)
     end
 end
 
