@@ -43,7 +43,7 @@ function M.invalidate_cache()
     Cache = {}
 end
 
----@return table
+---@return table?
 function M.difference()
     local default = require('render-markdown').default
     return require('render-markdown.debug.diff').get(default, M.config)

@@ -1,4 +1,3 @@
-local Env = require('render-markdown.lib.env')
 local manager = require('render-markdown.manager')
 local state = require('render-markdown.state')
 
@@ -30,8 +29,7 @@ function M.buf_toggle()
 end
 
 function M.log()
-    local log = require('render-markdown.core.log')
-    log.open()
+    require('render-markdown.core.log').open()
 end
 
 function M.expand()
@@ -45,18 +43,13 @@ function M.contract()
 end
 
 function M.debug()
-    local ui = require('render-markdown.core.ui')
-    local disply = require('render-markdown.debug.marks')
-    local buf = Env.buf.current()
-    local win = Env.win.current()
-    local row, marks = ui.get_row_marks(buf, win)
-    disply.show(row, marks)
+    require('render-markdown.debug.marks').show()
 end
 
 function M.config()
     local difference = state.difference()
-    if vim.tbl_count(difference) == 0 then
-        vim.print('Default Configuration')
+    if difference == nil then
+        vim.print('default configuration')
     else
         vim.print(difference)
     end

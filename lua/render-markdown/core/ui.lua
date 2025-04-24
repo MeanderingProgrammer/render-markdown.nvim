@@ -53,14 +53,13 @@ function M.invalidate_cache()
 end
 
 ---@param buf integer
----@param win integer
----@return integer, render.md.Mark[]
-function M.get_row_marks(buf, win)
+---@param row integer
+---@return render.md.Mark[]
+function M.row_marks(buf, row)
     local config = state.get(buf)
     local buffer = Cache.get(buf)
     local mode = Env.mode.get()
-    local row = assert(Env.row.get(buf, win), 'Row must be known')
-    local hidden = assert(config:hidden(mode, row), 'Range must be known')
+    local hidden = assert(config:hidden(mode, row), 'range must be known')
 
     local marks = {}
     for _, extmark in ipairs(buffer:get_marks()) do
@@ -68,7 +67,7 @@ function M.get_row_marks(buf, win)
             marks[#marks + 1] = extmark:get()
         end
     end
-    return row, marks
+    return marks
 end
 
 ---@private

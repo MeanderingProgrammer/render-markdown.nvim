@@ -1,5 +1,3 @@
-local Iter = require('render-markdown.lib.iter')
-
 ---@class render.md.debug.Range
 ---@field [1] integer
 ---@field [2]? integer
@@ -148,12 +146,19 @@ end
 ---@class render.md.debug.Marks
 local M = {}
 
----@param row integer
----@param marks render.md.Mark[]
-function M.show(row, marks)
-    vim.print(string.format('Row: %d', row))
+function M.show()
+    local Env = require('render-markdown.lib.env')
+    local Iter = require('render-markdown.lib.iter')
+    local ui = require('render-markdown.core.ui')
+
+    local buf = Env.buf.current()
+    local win = Env.win.current()
+    local row = assert(Env.row.get(buf, win), 'row must be known')
+    local marks = ui.row_marks(buf, row)
+
+    vim.print(string.format('row: %d', row))
     if #marks == 0 then
-        vim.print('No decorations found')
+        vim.print('no decorations found')
     else
         local debug_marks = Iter.list.map(marks, Mark.new)
         table.sort(debug_marks)
