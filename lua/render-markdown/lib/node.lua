@@ -78,14 +78,13 @@ function Node:level(parent)
     if section == nil then
         return 0
     end
-    assert(section.type == 'section', 'Node must be a section')
+    assert(section.type == 'section', 'must be a section')
     local heading = section:child('atx_heading')
     local node = heading ~= nil and heading.node:child(0) or nil
-    -- Counts the number of hashtags in the heading marker
+    -- counts the number of hashtags in the heading marker
     return node ~= nil and #vim.treesitter.get_node_text(node, self.buf) or 0
 end
 
----Walk through parent nodes, count the number of target nodes
 ---@param target string
 ---@return integer, render.md.Node?
 function Node:level_in_section(target)
@@ -105,12 +104,12 @@ end
 ---@param target string
 ---@return render.md.Node?
 function Node:parent(target)
-    local parent = self.node:parent()
-    while parent ~= nil do
-        if parent:type() == target then
-            return self:create(parent)
+    local node = self.node:parent()
+    while node ~= nil do
+        if node:type() == target then
+            return self:create(node)
         end
-        parent = parent:parent()
+        node = node:parent()
     end
     return nil
 end
@@ -152,13 +151,13 @@ function Node:child_at(index)
     return node ~= nil and self:create(node) or nil
 end
 
----@param target_type string
----@param target_row? integer
+---@param target string
+---@param row? integer
 ---@return render.md.Node?
-function Node:child(target_type, target_row)
+function Node:child(target, row)
     for node in self.node:iter_children() do
-        if node:type() == target_type then
-            if target_row == nil or node:range() == target_row then
+        if node:type() == target then
+            if row == nil or node:range() == row then
                 return self:create(node)
             end
         end
@@ -168,9 +167,25 @@ end
 
 ---@param callback fun(node: render.md.Node)
 function Node:for_each_child(callback)
-    for child in self.node:iter_children() do
-        callback(self:create(child))
+    for node in self.node:iter_children() do
+        callback(self:create(node))
     end
+end
+
+---@param target string
+---@return render.md.Node?
+function Node:descendant(target)
+    for node in self.node:iter_children() do
+        local child = self:create(node)
+        if child.type == target then
+            return child
+        end
+        local nested = child:descendant(target)
+        if nested ~= nil then
+            return nested
+        end
+    end
+    return nil
 end
 
 ---@return string?
@@ -183,15 +198,16 @@ end
 ---@param by integer
 ---@return string?
 function Node:line(position, by)
-    local one_line, row = self.start_row == self.end_row, nil
+    local row = nil
+    local single = self.start_row == self.end_row
     if position == 'above' then
         row = self.start_row - by
     elseif position == 'first' then
         row = self.start_row + by
     elseif position == 'below' then
-        row = self.end_row - (one_line and 0 or 1) + by
+        row = self.end_row - (single and 0 or 1) + by
     elseif position == 'last' then
-        row = self.end_row - (one_line and 0 or 1) - by
+        row = self.end_row - (single and 0 or 1) - by
     end
     if row == nil then
         return nil

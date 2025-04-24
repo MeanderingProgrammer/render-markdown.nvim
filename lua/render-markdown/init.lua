@@ -587,8 +587,12 @@ M.default = {
         -- contains. Applies to 'inline_link', 'uri_autolink', and wikilink nodes. When multiple
         -- patterns match a link the one with the longer pattern is used.
         -- The key is for healthcheck and to allow users to change its values, value type below.
-        -- | pattern   | matched against the destination text, @see :h lua-patterns      |
+        -- | pattern   | matched against the destination text                            |
         -- | icon      | gets inlined before the link text                               |
+        -- | kind      | optional determines how pattern is checked                      |
+        -- |           | pattern | @see :h lua-patterns, is the default if not set       |
+        -- |           | suffix  | @see :h vim.endswith()                                |
+        -- | priority  | optional used when multiple match, uses pattern length if empty |
         -- | highlight | optional highlight for 'icon', uses fallback highlight if empty |
         custom = {
             web = { pattern = '^http', icon = '󰖟 ' },

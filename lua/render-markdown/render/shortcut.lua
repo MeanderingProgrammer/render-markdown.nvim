@@ -25,10 +25,8 @@ function Render:render()
     end
 
     local line = self.node:line('first', 0)
-    if
-        line ~= nil
-        and line:find('[' .. self.node.text .. ']', 1, true) ~= nil
-    then
+    local wiki_pattern = '[' .. self.node.text .. ']'
+    if line ~= nil and line:find(wiki_pattern, 1, true) ~= nil then
         self:wiki_link()
         return
     end

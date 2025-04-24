@@ -29,7 +29,15 @@
 ---@class (exact) render.md.link.custom.Config
 ---@field pattern string
 ---@field icon string
+---@field kind? render.md.link.custom.Kind
+---@field priority? integer
 ---@field highlight? string
+
+---@enum (key) render.md.link.custom.Kind
+local Kind = {
+    pattern = 'pattern',
+    suffix = 'suffix',
+}
 
 local M = {}
 
@@ -57,6 +65,8 @@ function M.validate(spec)
         patterns:each(function(pattern)
             pattern:type('pattern', 'string')
             pattern:type('icon', 'string')
+            pattern:one_of('kind', vim.tbl_keys(Kind), 'nil')
+            pattern:type('priority', { 'number', 'nil' })
             pattern:type('highlight', { 'string', 'nil' })
             pattern:check()
         end, false)

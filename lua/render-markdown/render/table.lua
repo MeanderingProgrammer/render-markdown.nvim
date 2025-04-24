@@ -64,12 +64,8 @@ function Render:setup()
         if row.type == 'pipe_table_delimiter_row' then
             delim = self:parse_delim(row)
         elseif self.context:overlaps(row:get()) then
-            if
-                vim.tbl_contains(
-                    { 'pipe_table_header', 'pipe_table_row' },
-                    row.type
-                )
-            then
+            local row_types = { 'pipe_table_header', 'pipe_table_row' }
+            if vim.tbl_contains(row_types, row.type) then
                 table_rows[#table_rows + 1] = row
             else
                 log.unhandled_type('markdown', 'row', row.type)

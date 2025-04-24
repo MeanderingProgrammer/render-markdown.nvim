@@ -204,6 +204,8 @@
 ---@class (exact) render.md.link.custom.UserConfig
 ---@field pattern? string
 ---@field icon? string
+---@field kind? render.md.link.custom.Kind
+---@field priority? integer
 ---@field highlight? string
 
 ---@class (exact) render.md.callback.UserConfig

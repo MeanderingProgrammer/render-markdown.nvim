@@ -16,7 +16,9 @@ function Render:setup()
     if self.context:skip(link) then
         return false
     end
-
+    if self.node:descendant('shortcut_link') ~= nil then
+        return false
+    end
     local icon, highlight, autolink = link.hyperlink, link.highlight, false
     if self.node.type == 'email_autolink' then
         icon = link.email
@@ -34,7 +36,6 @@ function Render:setup()
         autolink = true
     end
     self.data = { icon = icon, highlight = highlight, autolink = autolink }
-
     return true
 end
 
