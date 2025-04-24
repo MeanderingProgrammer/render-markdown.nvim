@@ -1,6 +1,12 @@
 local Compat = require('render-markdown.lib.compat')
 
----@class render.md.integ.TreeSitter
+---@class render.md.integ.ts.Config
+---@field file_types string[]
+---@field injections table<string, render.md.injection.Config>
+---@field patterns table<string, render.md.pattern.Config>
+
+---@class render.md.integ.TS
+---@field private config render.md.integ.ts.Config
 local M = {}
 
 ---@private
@@ -11,15 +17,23 @@ M.initialized = false
 ---@type table<string, vim.treesitter.Query>
 M.queries = {}
 
+---called from state on setup
+---@param config render.md.integ.ts.Config
+function M.setup(config)
+    M.config = config
+    for _, language in ipairs(M.config.file_types) do
+        M.inject(language)
+    end
+end
+
 ---called from manager on buffer attach
-function M.setup()
+function M.init()
     if M.initialized then
         return
     end
     M.initialized = true
-    local state = require('render-markdown.state')
-    for _, language in ipairs(state.file_types) do
-        M.disable(language, state.patterns[language])
+    for _, language in ipairs(M.config.file_types) do
+        M.disable(language)
     end
 end
 
@@ -35,9 +49,10 @@ function M.parse(language, query)
     return result
 end
 
+---@private
 ---@param language string
----@param injection? render.md.injection.Config
-function M.inject(language, injection)
+function M.inject(language)
+    local injection = M.config.injections[language]
     if injection == nil or not injection.enabled then
         return
     end
@@ -60,8 +75,8 @@ end
 
 ---@private
 ---@param language string
----@param pattern? render.md.pattern.Config
-function M.disable(language, pattern)
+function M.disable(language)
+    local pattern = M.config.patterns[language]
     if pattern == nil or not pattern.disable then
         return
     end

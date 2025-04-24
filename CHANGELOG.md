@@ -13,6 +13,8 @@
 
 - more robust icon provider resolution [#403](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/403)
   [dfffdd2](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/dfffdd221570d36ac80d1a599643140a319a36de)
+- disable line wrapping in LSP hover docs in some cases [#408](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/408)
+  [080104e](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/080104e4dce26819efb4f4c83d1b7b2d82b96f7c)
 
 ## 8.3.0 (2025-04-15)
 

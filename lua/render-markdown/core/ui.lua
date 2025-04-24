@@ -97,28 +97,10 @@ function M.update(buf, win, event, change)
         return
     end
 
-    local update = function()
+    local update = log.runtime('update', function()
         M.run_update(buf, win, change)
-    end
-    if parse and state.log_runtime then
-        update = Env.runtime('update', update)
-    end
-
-    if parse and config.debounce > 0 then
-        buffer:debounce(config.debounce, update)
-    else
-        vim.schedule(update)
-    end
-end
-
----@private
----@param buf integer
----@param win integer
----@param change boolean
----@return boolean
-function M.parse(buf, win, change)
-    -- Need to parse when things change or we have not parsed the visible range yet
-    return change or not Context.contains(buf, win)
+    end)
+    buffer:run(parse, config.debounce, update)
 end
 
 ---@private
@@ -145,7 +127,7 @@ function M.run_update(buf, win, change)
     end
 
     if next_state == 'rendered' then
-        local initial = not buffer:has_marks()
+        local initial = buffer:initial()
         if initial or parse then
             M.clear(buf, buffer)
             buffer:set_marks(M.parse_buffer({
@@ -173,6 +155,16 @@ function M.run_update(buf, win, change)
         M.clear(buf, buffer)
         state.on.clear({ buf = buf, win = win })
     end
+end
+
+---@private
+---@param buf integer
+---@param win integer
+---@param change boolean
+---@return boolean
+function M.parse(buf, win, change)
+    -- need to parse when things change or we have not parsed the visible range yet
+    return change or not Context.contains(buf, win)
 end
 
 ---@private

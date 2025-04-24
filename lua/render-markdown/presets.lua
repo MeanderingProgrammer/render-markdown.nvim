@@ -1,3 +1,10 @@
+---@enum (key) render.md.config.Preset
+local Preset = {
+    none = 'none',
+    lazy = 'lazy',
+    obsidian = 'obsidian',
+}
+
 ---@class render.md.Presets
 local M = {}
 
@@ -10,15 +17,15 @@ function M.get(user)
 end
 
 ---@private
----@param name? render.md.config.Preset
+---@param preset? render.md.config.Preset
 ---@return render.md.UserConfig
-function M.config(name)
-    if name == 'obsidian' then
+function M.config(preset)
+    if preset == Preset.obsidian then
         ---@type render.md.UserConfig
         return {
             render_modes = true,
         }
-    elseif name == 'lazy' then
+    elseif preset == Preset.lazy then
         ---https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/extras/lang/markdown.lua
         ---@type render.md.UserConfig
         return {
@@ -43,10 +50,10 @@ function M.config(name)
 end
 
 ---@private
----@param name? render.md.table.Preset
+---@param preset? render.md.table.Preset
 ---@return render.md.table.UserConfig
-function M.pipe_table(name)
-    if name == 'round' then
+function M.pipe_table(preset)
+    if preset == 'round' then
         ---@type render.md.table.UserConfig
         return {
             -- stylua: ignore
@@ -57,7 +64,7 @@ function M.pipe_table(name)
                 '│', '─',
             },
         }
-    elseif name == 'double' then
+    elseif preset == 'double' then
         ---@type render.md.table.UserConfig
         return {
             -- stylua: ignore
@@ -68,7 +75,7 @@ function M.pipe_table(name)
                 '║', '═',
             },
         }
-    elseif name == 'heavy' then
+    elseif preset == 'heavy' then
         ---@type render.md.table.UserConfig
         return {
             alignment_indicator = '─',

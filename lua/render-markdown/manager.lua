@@ -87,7 +87,7 @@ function M.attach(buf)
 
     local config = state.get(buf)
     state.on.attach({ buf = buf })
-    require('render-markdown.integ.ts').setup()
+    require('render-markdown.integ.ts').init()
     if state.completions.lsp.enabled then
         require('render-markdown.integ.lsp').setup()
     elseif state.completions.blink.enabled then

@@ -6,16 +6,29 @@ local Env = require('render-markdown.lib.env')
 ---@field name string
 ---@field message string
 
+---@class render.md.log.Config
+---@field level render.md.log.Level
+---@field runtime boolean
+
+---@alias render.md.log.Level 'off'|'debug'|'info'|'error'
+
 ---@class render.md.Log
 ---@field private file string
----@field private level render.md.config.LogLevel
 ---@field private entries render.md.log.Entry[]
+---@field private config render.md.log.Config
 local M = {}
+
+---called from state on setup
+---@param config render.md.log.Config
+function M.setup(config)
+    -- typically resolves to ~/.local/state/nvim/render-markdown.log
+    M.file = vim.fn.stdpath('state') .. '/render-markdown.log'
+    M.entries = {}
+    M.config = config
+end
 
 ---called from plugin directory
 function M.init()
-    -- typically resolves to ~/.local/state/nvim/render-markdown.log
-    M.file = vim.fn.stdpath('state') .. '/render-markdown.log'
     -- clear the file contents if it is too big
     if Env.file_size_mb(M.file) > 5 then
         assert(io.open(M.file, 'w')):close()
@@ -27,11 +40,23 @@ function M.init()
     })
 end
 
----called from state on setup
----@param level render.md.config.LogLevel
-function M.setup(level)
-    M.level = level
-    M.entries = {}
+---@param name string
+---@param callback fun()
+---@return fun()
+function M.runtime(name, callback)
+    if M.config.runtime then
+        return function()
+            local Compat = require('render-markdown.lib.compat')
+            local start_time = Compat.uv.hrtime()
+            callback()
+            local end_time = Compat.uv.hrtime()
+            local elapsed = (end_time - start_time) / 1e+6
+            assert(elapsed < 1000)
+            vim.print(string.format('%8s : %5.1f ms', name:upper(), elapsed))
+        end
+    else
+        return callback
+    end
 end
 
 function M.open()
@@ -59,7 +84,7 @@ function M.unhandled_type(language, group, value)
     M.add('error', 'unhandled type', message)
 end
 
----@param level render.md.config.LogLevel
+---@param level render.md.log.Level
 ---@param name string
 ---@param buf integer
 ---@param ... any
@@ -79,11 +104,11 @@ function M.file_name(buf)
     return #name == 0 and 'EMPTY' or name
 end
 
----@param level render.md.config.LogLevel
+---@param level render.md.log.Level
 ---@param name string
 ---@param ... any
 function M.add(level, name, ...)
-    if M.level_value(level) < M.level_value(M.level) then
+    if M.level_value(level) < M.level_value(M.config.level) then
         return
     end
     local messages = {}
@@ -107,7 +132,7 @@ function M.add(level, name, ...)
 end
 
 ---@private
----@param level render.md.config.LogLevel
+---@param level render.md.log.Level
 ---@return integer
 function M.level_value(level)
     if level == 'debug' then

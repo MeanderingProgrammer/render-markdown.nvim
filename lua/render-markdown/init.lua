@@ -3,7 +3,7 @@ local M = {}
 
 ---@class (exact) render.md.Config: render.md.buffer.Config
 ---@field preset render.md.config.Preset
----@field log_level render.md.config.LogLevel
+---@field log_level render.md.log.Level
 ---@field log_runtime boolean
 ---@field file_types string[]
 ---@field ignore fun(buf: integer): boolean
@@ -14,10 +14,6 @@ local M = {}
 ---@field completions render.md.completions.Config
 ---@field overrides render.md.overrides.Config
 ---@field custom_handlers table<string, render.md.Handler>
-
----@alias render.md.config.Preset 'none'|'lazy'|'obsidian'
-
----@alias render.md.config.LogLevel 'off'|'debug'|'info'|'error'
 
 ---@class (exact) render.md.buffer.Config: render.md.base.Config
 ---@field max_file_size number
@@ -714,7 +710,29 @@ function M.setup(opts)
         return
     end
     M.initialized = true
-    require('render-markdown.state').setup(opts or {})
+    local config = M.resolve_config(opts or {})
+    require('render-markdown.state').setup(config)
+end
+
+---@private
+---@param user render.md.UserConfig
+---@return render.md.Config
+function M.resolve_config(user)
+    local preset = require('render-markdown.presets').get(user)
+    local config = vim.tbl_deep_extend('force', M.default, preset, user)
+    -- override settings that require neovim >= 0.10.0 and have compatible alternatives
+    local has_10 = require('render-markdown.lib.compat').has_10
+    if not has_10 then
+        config.code.position = 'right'
+    end
+    -- use lazy.nvim file type configuration if available and no user value is specified
+    if user.file_types == nil then
+        local lazy_file_types = require('render-markdown.lib.env').lazy('ft')
+        if #lazy_file_types > 0 then
+            config.file_types = lazy_file_types
+        end
+    end
+    return config
 end
 
 return setmetatable(M, {

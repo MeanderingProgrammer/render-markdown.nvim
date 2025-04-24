@@ -2,7 +2,7 @@
 
 ---@class (exact) render.md.UserConfig: render.md.buffer.UserConfig
 ---@field preset? render.md.config.Preset
----@field log_level? render.md.config.LogLevel
+---@field log_level? render.md.log.Level
 ---@field log_runtime? boolean
 ---@field file_types? string[]
 ---@field ignore? fun(buf: integer): boolean

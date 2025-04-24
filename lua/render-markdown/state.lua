@@ -1,4 +1,3 @@
-local Compat = require('render-markdown.lib.compat')
 local Config = require('render-markdown.config')
 local Env = require('render-markdown.lib.env')
 
@@ -8,53 +7,34 @@ local Cache = {}
 ---@class render.md.State
 ---@field private config render.md.Config
 ---@field enabled boolean
----@field log_runtime boolean
 ---@field file_types string[]
 ---@field ignore fun(buf: integer): boolean
 ---@field change_events string[]
----@field patterns table<string, render.md.pattern.Config>
 ---@field on render.md.callback.Config
 ---@field completions render.md.completions.Config
 ---@field custom_handlers table<string, render.md.Handler>
 local M = {}
 
 ---called from init on setup
----@param user render.md.UserConfig
-function M.setup(user)
-    local default = require('render-markdown').default
-    local preset = require('render-markdown.presets').get(user)
-    local config = vim.tbl_deep_extend('force', default, preset, user)
-
-    -- override settings that require neovim >= 0.10.0 and have compatible alternatives
-    if not Compat.has_10 then
-        config.code.position = 'right'
-    end
-
-    -- use lazy.nvim file type configuration if available and no user value is specified
-    if user.file_types == nil then
-        local lazy_file_types = Env.lazy('ft')
-        if #lazy_file_types > 0 then
-            config.file_types = lazy_file_types
-        end
-    end
-
+---@param config render.md.Config
+function M.setup(config)
     M.config = config
     M.enabled = config.enabled
-    M.log_runtime = config.log_runtime
     M.file_types = config.file_types
     M.ignore = config.ignore
     M.change_events = config.change_events
-    M.patterns = config.patterns
     M.on = config.on
     M.completions = config.completions
     M.custom_handlers = config.custom_handlers
-
-    require('render-markdown.core.log').setup(config.log_level)
-    for _, language in ipairs(M.file_types) do
-        local injection = config.injections[language]
-        require('render-markdown.integ.ts').inject(language, injection)
-    end
-
+    require('render-markdown.core.log').setup({
+        level = config.log_level,
+        runtime = config.log_runtime,
+    })
+    require('render-markdown.integ.ts').setup({
+        file_types = config.file_types,
+        injections = config.injections,
+        patterns = config.patterns,
+    })
     M.invalidate_cache()
     require('render-markdown.core.ui').invalidate_cache()
 end

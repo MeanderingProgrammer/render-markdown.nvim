@@ -34,21 +34,26 @@ function Buffer:is_empty()
     return self.empty
 end
 
+---@param debounce boolean
 ---@param ms integer
 ---@param callback fun()
-function Buffer:debounce(ms, callback)
-    self.timer:start(ms, 0, function()
-        self.running = false
-    end)
-    if not self.running then
-        self.running = true
+function Buffer:run(debounce, ms, callback)
+    if debounce and ms > 0 then
+        self.timer:start(ms, 0, function()
+            self.running = false
+        end)
+        if not self.running then
+            self.running = true
+            vim.schedule(callback)
+        end
+    else
         vim.schedule(callback)
     end
 end
 
 ---@return boolean
-function Buffer:has_marks()
-    return self.marks ~= nil
+function Buffer:initial()
+    return self.marks == nil
 end
 
 ---@return render.md.Extmark[]
