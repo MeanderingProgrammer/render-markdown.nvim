@@ -8,22 +8,18 @@ local log = require('render-markdown.core.log')
 ---@class render.md.context.Props
 ---@field buf integer
 ---@field win integer
+---@field config render.md.main.Config
 ---@field mode string
----@field top_level_mode boolean
 
 ---@class render.md.context.Offset
 ---@field col integer
 ---@field width integer
 
----@class render.md.Context
+---@class render.md.Context: render.md.context.Props
 ---@field private ranges render.md.Range[]
 ---@field private callouts table<integer, render.md.callout.Config>
 ---@field private checkboxes table<integer, render.md.checkbox.custom.Config>
 ---@field private offsets table<integer, render.md.context.Offset[]>
----@field buf integer
----@field win integer
----@field mode string
----@field top_level_mode boolean
 ---@field conceal render.md.Conceal
 ---@field last_heading? integer
 local Context = {}
@@ -47,8 +43,9 @@ function Context.new(props, offset)
 
     self.buf = props.buf
     self.win = props.win
+    self.config = props.config
     self.mode = props.mode
-    self.top_level_mode = props.top_level_mode
+
     self.conceal = Conceal.new(self)
     self.last_heading = nil
 
@@ -63,7 +60,7 @@ function Context:skip(config)
         return true
     end
     -- Enabled config in top level modes should not be skipped
-    if self.top_level_mode then
+    if Env.mode.is(self.mode, self.config.render_modes) then
         return false
     end
     -- Enabled config in config modes should not be skipped

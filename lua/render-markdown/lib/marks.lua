@@ -1,9 +1,7 @@
 local Compat = require('render-markdown.lib.compat')
-local Context = require('render-markdown.core.context')
 local Env = require('render-markdown.lib.env')
 local Str = require('render-markdown.lib.str')
 local log = require('render-markdown.core.log')
-local state = require('render-markdown.state')
 
 ---@class (exact) render.md.Mark
 ---@field conceal boolean
@@ -32,13 +30,13 @@ local state = require('render-markdown.state')
 local Marks = {}
 Marks.__index = Marks
 
----@param buf integer
+---@param context render.md.Context
 ---@param inline boolean
 ---@return render.md.Marks
-function Marks.new(buf, inline)
+function Marks.new(context, inline)
     local self = setmetatable({}, Marks)
-    self.context = Context.get(buf)
-    self.ignore = state.get(buf).anti_conceal.ignore
+    self.context = context
+    self.ignore = context.config.anti_conceal.ignore
     self.inline = inline
     self.marks = {}
     return self

@@ -4,7 +4,6 @@ local Marks = require('render-markdown.lib.marks')
 local Node = require('render-markdown.lib.node')
 local Str = require('render-markdown.lib.str')
 local log = require('render-markdown.core.log')
-local state = require('render-markdown.state')
 
 ---@class render.md.latex.Cache: { [string]: string }
 local Cache = {}
@@ -15,8 +14,9 @@ local M = {}
 ---@param ctx render.md.handler.Context
 ---@return render.md.Mark[]
 function M.parse(ctx)
-    local latex = state.get(ctx.buf).latex
-    if Context.get(ctx.buf):skip(latex) then
+    local context = Context.get(ctx.buf)
+    local latex = context.config.latex
+    if context:skip(latex) then
         return {}
     end
     if vim.fn.executable(latex.converter) ~= 1 then
@@ -55,7 +55,7 @@ function M.parse(ctx)
     local above = latex.position == 'above'
     local row = above and node.start_row or node.end_row
 
-    local marks = Marks.new(ctx.buf, true)
+    local marks = Marks.new(context, true)
     marks:add(false, row, 0, {
         virt_lines = lines,
         virt_lines_above = above,

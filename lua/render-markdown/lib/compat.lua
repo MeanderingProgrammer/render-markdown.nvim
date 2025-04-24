@@ -9,7 +9,7 @@ M.has_11 = vim.fn.has('nvim-0.11') == 1
 ---@param win integer
 ---@param extmarks render.md.Extmark[]
 ---@see vim.lsp.util.open_floating_preview
-function M.lsp_window_height(buf, win, extmarks)
+function M.fix_lsp_window(buf, win, extmarks)
     -- this is a fragile way of identifying whether this is a floating LSP
     -- window, comes from the implementation and not from any documentation
     local has_lsp = pcall(vim.api.nvim_win_get_var, win, 'lsp_floating_bufnr')

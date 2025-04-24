@@ -151,14 +151,14 @@ function M.run_update(buf, win, change)
             buffer:set_marks(M.parse_buffer({
                 buf = buf,
                 win = win,
+                config = config,
                 mode = mode,
-                top_level_mode = Env.mode.is(mode, config.render_modes),
             }))
         end
         local hidden = config:hidden(mode, row)
         local extmarks = buffer:get_marks()
         if initial then
-            Compat.lsp_window_height(buf, win, extmarks)
+            Compat.fix_lsp_window(buf, win, extmarks)
             state.on.initial({ buf = buf, win = win })
         end
         for _, extmark in ipairs(extmarks) do
@@ -181,22 +181,12 @@ end
 ---@param mode string
 ---@return 'default'|'rendered'
 function M.next_state(config, win, mode)
-    if not state.enabled then
-        return 'default'
-    end
-    if not config.enabled then
-        return 'default'
-    end
-    if not config:render(mode) then
-        return 'default'
-    end
-    if Env.win.get(win, 'diff') then
-        return 'default'
-    end
-    if Env.win.view(win).leftcol ~= 0 then
-        return 'default'
-    end
-    return 'rendered'
+    local render = state.enabled
+        and config.enabled
+        and config:render(mode)
+        and not Env.win.get(win, 'diff')
+        and Env.win.view(win).leftcol == 0
+    return render and 'rendered' or 'default'
 end
 
 ---@private

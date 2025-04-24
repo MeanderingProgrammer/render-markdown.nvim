@@ -3,25 +3,24 @@ local Str = require('render-markdown.lib.str')
 local colors = require('render-markdown.colors')
 
 ---@class render.md.Render
----@field protected marks render.md.Marks
----@field protected config render.md.main.Config
 ---@field protected context render.md.Context
+---@field protected config render.md.main.Config
+---@field protected marks render.md.Marks
 ---@field protected node render.md.Node
 ---@field setup fun(self: render.md.Render): boolean
 ---@field render fun(self: render.md.Render)
 local Base = {}
 Base.__index = Base
 
----@param marks render.md.Marks
----@param config render.md.main.Config
 ---@param context render.md.Context
+---@param marks render.md.Marks
 ---@param node render.md.Node
 ---@return render.md.Render
-function Base:new(marks, config, context, node)
+function Base:new(context, marks, node)
     local instance = setmetatable({}, self)
-    instance.marks = marks
-    instance.config = config
     instance.context = context
+    instance.config = context.config
+    instance.marks = marks
     instance.node = node
     return instance
 end

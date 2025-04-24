@@ -1,14 +1,11 @@
 local Context = require('render-markdown.core.context')
 local Marks = require('render-markdown.lib.marks')
-local state = require('render-markdown.state')
 local ts = require('render-markdown.integ.ts')
 
 ---@class render.md.handler.buf.Markdown
----@field private config render.md.main.Config
----@field private context render.md.Context
----@field private marks render.md.Marks
 ---@field private query vim.treesitter.Query
 ---@field private renderers table<string, render.md.Render>
+---@field private context render.md.Context
 local Handler = {}
 Handler.__index = Handler
 
@@ -16,9 +13,6 @@ Handler.__index = Handler
 ---@return render.md.handler.buf.Markdown
 function Handler.new(buf)
     local self = setmetatable({}, Handler)
-    self.config = state.get(buf)
-    self.context = Context.get(buf)
-    self.marks = Marks.new(buf, false)
     self.query = ts.parse(
         'markdown',
         [[
@@ -65,21 +59,23 @@ function Handler.new(buf)
         section = require('render-markdown.render.section'),
         table = require('render-markdown.render.table'),
     }
+    self.context = Context.get(buf)
     return self
 end
 
 ---@param root TSNode
 ---@return render.md.Mark[]
 function Handler:parse(root)
+    local marks = Marks.new(self.context, false)
     self.context:query(root, self.query, function(capture, node)
         local renderer = self.renderers[capture]
         assert(renderer ~= nil, 'Unhandled markdown capture: ' .. capture)
-        local render = renderer:new(self.marks, self.config, self.context, node)
+        local render = renderer:new(self.context, marks, node)
         if render:setup() then
             render:render()
         end
     end)
-    return self.marks:get()
+    return marks:get()
 end
 
 ---@class render.md.handler.Markdown: render.md.Handler

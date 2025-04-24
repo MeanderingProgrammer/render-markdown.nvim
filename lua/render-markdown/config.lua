@@ -1,38 +1,35 @@
 local Env = require('render-markdown.lib.env')
 local Range = require('render-markdown.core.range')
 
----@class render.md.main.Components
+---@class render.md.main.Full
+---@field modes render.md.Modes
 ---@field callout table<string, render.md.callout.Config>
 ---@field checkbox table<string, render.md.checkbox.custom.Config>
 
 ---@class render.md.main.Config: render.md.buffer.Config
----@field private modes render.md.Modes
----@field private components render.md.main.Components
+---@field private full render.md.main.Full
 local Config = {}
 Config.__index = Config
 
 ---@param config render.md.buffer.Config
 ---@return render.md.main.Config
 function Config.new(config)
-    -- Super set of render modes across top level and individual components
+    -- super set of render modes across top level and individual components
     local modes = config.render_modes
     for _, component in pairs(config) do
         if type(component) == 'table' then
-            modes = Config.fold_modes(modes, component['render_modes'])
+            modes = Config.fold(modes, component['render_modes'])
         end
     end
 
-    ---@type render.md.main.Components
-    local components = {
+    ---@type render.md.main.Full
+    local full = {
+        modes = modes,
         callout = Config.normalize(config.callout),
         checkbox = Config.normalize(config.checkbox.custom),
     }
 
-    local instance = vim.tbl_deep_extend(
-        'force',
-        { modes = modes, components = components },
-        config
-    )
+    local instance = vim.tbl_deep_extend('force', { full = full }, config)
     return setmetatable(instance, Config)
 end
 
@@ -63,25 +60,25 @@ function Config.validate(spec)
 end
 
 ---@private
----@param current render.md.Modes
+---@param acc render.md.Modes
 ---@param new? render.md.Modes
 ---@return render.md.Modes
-function Config.fold_modes(current, new)
-    if type(current) == 'boolean' and type(new) == 'boolean' then
-        return current or new
-    elseif type(current) == 'boolean' and type(new) == 'table' then
-        return current or new
-    elseif type(current) == 'table' and type(new) == 'boolean' then
-        return new or current
-    elseif type(current) == 'table' and type(new) == 'table' then
-        -- Copy to avoid modifying inputs
+function Config.fold(acc, new)
+    if type(acc) == 'boolean' and type(new) == 'boolean' then
+        return acc or new
+    elseif type(acc) == 'boolean' and type(new) == 'table' then
+        return acc or new
+    elseif type(acc) == 'table' and type(new) == 'boolean' then
+        return new or acc
+    elseif type(acc) == 'table' and type(new) == 'table' then
+        -- copy to avoid modifying inputs
         local result = {}
-        vim.list_extend(result, current)
+        vim.list_extend(result, acc)
         vim.list_extend(result, new)
         return result
     else
-        -- Should only occur if new is nil, keep current value
-        return current
+        -- should only occur if new is nil, keep current value
+        return acc
     end
 end
 
@@ -100,19 +97,19 @@ end
 ---@param mode string
 ---@return boolean
 function Config:render(mode)
-    return Env.mode.is(mode, self.modes)
+    return Env.mode.is(mode, self.full.modes)
 end
 
 ---@param node render.md.Node
 ---@return render.md.callout.Config?
 function Config:get_callout(node)
-    return self.components.callout[node.text:lower()]
+    return self.full.callout[node.text:lower()]
 end
 
 ---@param node render.md.Node
 ---@return render.md.checkbox.custom.Config?
 function Config:get_checkbox(node)
-    return self.components.checkbox[node.text:lower()]
+    return self.full.checkbox[node.text:lower()]
 end
 
 ---@param mode string
