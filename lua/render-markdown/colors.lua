@@ -34,10 +34,17 @@ M.colors = {
     CodeBorder      = 'RenderMarkdownCode',
     CodeFallback    = 'Normal',
     CodeInline      = 'RenderMarkdownCode',
+    -- Block quotes
+    Quote           = '@markup.quote',
+    Quote1          = 'RenderMarkdownQuote',
+    Quote2          = 'RenderMarkdownQuote',
+    Quote3          = 'RenderMarkdownQuote',
+    Quote4          = 'RenderMarkdownQuote',
+    Quote5          = 'RenderMarkdownQuote',
+    Quote6          = 'RenderMarkdownQuote',
     -- General
     InlineHighlight = 'RenderMarkdownCodeInline',
     Bullet          = 'Normal',
-    Quote           = '@markup.quote',
     Dash            = 'LineNr',
     Sign            = 'SignColumn',
     Math            = '@markup.math',

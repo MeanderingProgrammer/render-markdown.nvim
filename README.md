@@ -601,7 +601,15 @@ require('render-markdown').setup({
         -- configuration then set them in win_options for this plugin.
         repeat_linebreak = false,
         -- Highlight for the quote icon.
-        highlight = 'RenderMarkdownQuote',
+        -- If a list is provided output is evaluated by `cycle(value, level)`.
+        highlight = {
+            'RenderMarkdownQuote1',
+            'RenderMarkdownQuote2',
+            'RenderMarkdownQuote3',
+            'RenderMarkdownQuote4',
+            'RenderMarkdownQuote5',
+            'RenderMarkdownQuote6',
+        },
     },
     pipe_table = {
         -- Turn on / off pipe table rendering.
@@ -1233,7 +1241,15 @@ require('render-markdown').setup({
         -- configuration then set them in win_options for this plugin.
         repeat_linebreak = false,
         -- Highlight for the quote icon.
-        highlight = 'RenderMarkdownQuote',
+        -- If a list is provided output is evaluated by `cycle(value, level)`.
+        highlight = {
+            'RenderMarkdownQuote1',
+            'RenderMarkdownQuote2',
+            'RenderMarkdownQuote3',
+            'RenderMarkdownQuote4',
+            'RenderMarkdownQuote5',
+            'RenderMarkdownQuote6',
+        },
     },
 })
 ```
@@ -1500,9 +1516,15 @@ The table below shows all the highlight groups with their default link
 | RenderMarkdownCodeBorder      | RenderMarkdownCode                 | Code border background     |
 | RenderMarkdownCodeFallback    | Normal                             | Fallback for code language |
 | RenderMarkdownCodeInline      | RenderMarkdownCode                 | Inline code background     |
+| RenderMarkdownQuote           | @markup.quote                      | Default for block quote    |
+| RenderMarkdownQuote1          | RenderMarkdownQuote                | Level 1 block quote marker |
+| RenderMarkdownQuote2          | RenderMarkdownQuote                | Level 2 block quote marker |
+| RenderMarkdownQuote3          | RenderMarkdownQuote                | Level 3 block quote marker |
+| RenderMarkdownQuote4          | RenderMarkdownQuote                | Level 4 block quote marker |
+| RenderMarkdownQuote5          | RenderMarkdownQuote                | Level 5 block quote marker |
+| RenderMarkdownQuote6          | RenderMarkdownQuote                | Level 6 block quote marker |
 | RenderMarkdownInlineHighlight | RenderMarkdownCodeInline           | Inline highlights contents |
 | RenderMarkdownBullet          | Normal                             | List item bullet points    |
-| RenderMarkdownQuote           | @markup.quote                      | Block quote marker         |
 | RenderMarkdownDash            | LineNr                             | Thematic break line        |
 | RenderMarkdownSign            | SignColumn                         | Sign column background     |
 | RenderMarkdownMath            | @markup.math                       | Latex lines                |

@@ -20,43 +20,46 @@ describe('quote', function()
 
         local marks, row = util.marks(), util.row()
 
-        local hint = 'RmHint'
-        local base = 'RmQuote'
-        local err = 'RmError'
+        local levels = {
+            'RmHint',
+            'RmQuote2',
+            'RmError',
+            'RmQuote3',
+        }
 
-        marks:add(row:get(), row:get(), 0, 1, util.quote(hint))
+        marks:add(row:get(), row:get(), 0, 1, util.quote(levels[1]))
         marks:add(row:get(), row:get(), 2, 14, {
-            virt_text = { { '󰅾 Important', hint } },
+            virt_text = { { '󰅾 Important', levels[1] } },
             virt_text_pos = 'overlay',
         })
-        marks:add(row:inc(), row:get(), 0, 1, util.quote(hint))
-        marks:add(row:inc(), row:get(), 0, 1, util.quote(hint))
-        marks:add(row:inc(), row:get(), 0, 1, util.quote(hint))
+        marks:add(row:inc(), row:get(), 0, 1, util.quote(levels[1]))
+        marks:add(row:inc(), row:get(), 0, 1, util.quote(levels[1]))
+        marks:add(row:inc(), row:get(), 0, 1, util.quote(levels[1]))
 
-        marks:add(row:inc(), row:get(), 0, 1, util.quote(hint))
-        marks:add(row:get(), row:get(), 2, 3, util.quote(base))
-        marks:add(row:inc(), row:get(), 0, 1, util.quote(hint))
-        marks:add(row:get(), row:get(), 2, 3, util.quote(base))
+        marks:add(row:inc(), row:get(), 0, 1, util.quote(levels[1]))
+        marks:add(row:get(), row:get(), 2, 3, util.quote(levels[2]))
+        marks:add(row:inc(), row:get(), 0, 1, util.quote(levels[1]))
+        marks:add(row:get(), row:get(), 2, 3, util.quote(levels[2]))
 
-        marks:add(row:inc(), row:get(), 0, 1, util.quote(hint))
-        marks:add(row:get(), row:get(), 2, 3, util.quote(base))
-        marks:add(row:get(), row:get(), 4, 5, util.quote(err))
+        marks:add(row:inc(), row:get(), 0, 1, util.quote(levels[1]))
+        marks:add(row:get(), row:get(), 2, 3, util.quote(levels[2]))
+        marks:add(row:get(), row:get(), 4, 5, util.quote(levels[3]))
         marks:add(row:get(), row:get(), 6, 16, {
-            virt_text = { { '󰳦 Caution', err } },
+            virt_text = { { '󰳦 Caution', levels[3] } },
             virt_text_pos = 'overlay',
         })
-        marks:add(row:inc(), row:get(), 0, 1, util.quote(hint))
-        marks:add(row:get(), row:get(), 2, 3, util.quote(base))
-        marks:add(row:get(), row:get(), 4, 5, util.quote(err))
-        marks:add(row:inc(), row:get(), 0, 1, util.quote(hint))
-        marks:add(row:get(), row:get(), 2, 3, util.quote(base))
-        marks:add(row:get(), row:get(), 4, 5, util.quote(err))
+        marks:add(row:inc(), row:get(), 0, 1, util.quote(levels[1]))
+        marks:add(row:get(), row:get(), 2, 3, util.quote(levels[2]))
+        marks:add(row:get(), row:get(), 4, 5, util.quote(levels[3]))
+        marks:add(row:inc(), row:get(), 0, 1, util.quote(levels[1]))
+        marks:add(row:get(), row:get(), 2, 3, util.quote(levels[2]))
+        marks:add(row:get(), row:get(), 4, 5, util.quote(levels[3]))
 
-        marks:add(row:inc(), row:get(), 0, 1, util.quote(hint))
+        marks:add(row:inc(), row:get(), 0, 1, util.quote(levels[1]))
 
-        marks:add(row:inc(), row:get(), 0, 1, util.quote(hint))
-        marks:add(row:get(), row:get(), 2, 3, util.quote(base))
-        marks:add(row:get(), row:get(), 4, 5, util.quote(base))
+        marks:add(row:inc(), row:get(), 0, 1, util.quote(levels[1]))
+        marks:add(row:get(), row:get(), 2, 3, util.quote(levels[2]))
+        marks:add(row:get(), row:get(), 4, 5, util.quote(levels[4]))
 
         util.assert_view(marks, {
             '▋ 󰅾 Important',

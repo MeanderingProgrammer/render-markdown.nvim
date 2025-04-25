@@ -467,7 +467,15 @@ M.default = {
         -- configuration then set them in win_options for this plugin.
         repeat_linebreak = false,
         -- Highlight for the quote icon.
-        highlight = 'RenderMarkdownQuote',
+        -- If a list is provided output is evaluated by `cycle(value, level)`.
+        highlight = {
+            'RenderMarkdownQuote1',
+            'RenderMarkdownQuote2',
+            'RenderMarkdownQuote3',
+            'RenderMarkdownQuote4',
+            'RenderMarkdownQuote5',
+            'RenderMarkdownQuote6',
+        },
     },
     pipe_table = {
         -- Turn on / off pipe table rendering.
