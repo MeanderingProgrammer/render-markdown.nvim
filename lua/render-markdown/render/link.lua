@@ -1,8 +1,7 @@
 local Base = require('render-markdown.render.base')
 
 ---@class render.md.link.Data
----@field icon string
----@field highlight string
+---@field icon render.md.mark.Text
 ---@field autolink boolean
 
 ---@class render.md.render.Link: render.md.Render
@@ -19,34 +18,37 @@ function Render:setup()
     if self.node:descendant('shortcut_link') ~= nil then
         return false
     end
-    local icon, highlight, autolink = link.hyperlink, link.highlight, false
+    ---@type render.md.mark.Text
+    local icon = { link.hyperlink, link.highlight }
+    local autolink = false
     if self.node.type == 'email_autolink' then
-        icon = link.email
+        icon[1] = link.email
         autolink = true
     elseif self.node.type == 'image' then
-        icon = link.image
+        icon[1] = link.image
     elseif self.node.type == 'inline_link' then
         local destination = self.node:child('link_destination')
         if destination ~= nil then
-            icon, highlight = self:dest(icon, highlight, destination.text)
+            self:link_icon(destination.text, icon)
         end
     elseif self.node.type == 'uri_autolink' then
         local destination = self.node.text:sub(2, -2)
-        icon, highlight = self:dest(icon, highlight, destination)
+        self:link_icon(destination, icon)
         autolink = true
     end
-    self.data = { icon = icon, highlight = highlight, autolink = autolink }
+    self.data = { icon = icon, autolink = autolink }
     return true
 end
 
 function Render:render()
     self.marks:start('link', self.node, {
-        virt_text = { { self.data.icon, self.data.highlight } },
+        hl_mode = 'combine',
+        virt_text = { self.data.icon },
         virt_text_pos = 'inline',
     })
     if self.data.autolink then
         self:hide_bracket(self.node.start_col)
-        self.marks:over('link', self.node, { hl_group = self.data.highlight })
+        self.marks:over('link', self.node, { hl_group = self.data.icon[2] })
         self:hide_bracket(self.node.end_col - 1)
     end
 end

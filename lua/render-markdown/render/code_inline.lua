@@ -21,14 +21,14 @@ end
 function Render:render()
     local highlight = self.info.highlight_inline
     self.marks:over('code_background', self.node, { hl_group = highlight })
-    self:side_padding(highlight, true)
-    self:side_padding(highlight, false)
+    self:padding(highlight, true)
+    self:padding(highlight, false)
 end
 
 ---@private
 ---@param highlight string
 ---@param left boolean
-function Render:side_padding(highlight, left)
+function Render:padding(highlight, left)
     local line, icon_highlight = {}, colors.bg_to_fg(highlight)
     if left then
         self:append(line, self.info.inline_left, icon_highlight)

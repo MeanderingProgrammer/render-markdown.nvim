@@ -19,6 +19,7 @@ function MarkDetails.new(row, col, details)
     self.conceal = details.conceal
     ---@diagnostic disable-next-line: undefined-field
     self.conceal_lines = details.conceal_lines
+    self.hl_mode = details.hl_mode
     self.virt_text = details.virt_text
     if self.virt_text ~= nil then
         for _, text in ipairs(self.virt_text) do
@@ -41,8 +42,9 @@ function MarkDetails.new(row, col, details)
     if self.sign_hl_group ~= nil then
         self.sign_hl_group = MarkDetails.simplify(self.sign_hl_group)
     end
-    if details.priority ~= 4096 then
-        self.priority = details.priority
+    self.priority = details.priority
+    if self.priority == 4096 then
+        self.priority = nil
     end
     return self
 end

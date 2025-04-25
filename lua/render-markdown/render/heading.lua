@@ -102,10 +102,10 @@ function Render:render()
     self:sign(self.info.sign, self.data.sign, self.data.foreground)
     local box = self:box(self:icon())
     self:background(box)
-    self:left_pad(box)
+    self:padding(box)
     if self.data.atx then
-        self:border(box, 'above', self.info.above, self.node.start_row - 1)
-        self:border(box, 'below', self.info.below, self.node.end_row)
+        self:border(box, true)
+        self:border(box, false)
     else
         self.marks:over(true, self.data.marker, { conceal = '' })
     end
@@ -233,31 +233,29 @@ end
 
 ---@private
 ---@param box render.md.heading.Box
----@param position 'above'|'below'
----@param icon string
----@param row integer
-function Render:border(box, position, icon, row)
+---@param above boolean
+function Render:border(box, above)
     if not self.data.border then
         return
     end
 
     local foreground = self.data.foreground
     local background = self.data.background
-        and colors.bg_to_fg(self.data.background)
+    background = background and colors.bg_to_fg(background)
     local prefix = self.info.border_prefix and self.data.level or 0
-    local total_width = self.data.width == 'block' and box.content
-        or vim.o.columns
+    local width = self.data.width == 'block' and box.content or vim.o.columns
+    local icon = above and self.info.above or self.info.below
 
     local line = self:append({}, box.margin)
     self:append(line, icon:rep(box.padding), background)
     self:append(line, icon:rep(prefix), foreground)
-    self:append(line, icon:rep(total_width - box.padding - prefix), background)
+    self:append(line, icon:rep(width - box.padding - prefix), background)
 
     local virtual = self.info.border_virtual
-    local target_line = self.node:line(position, 1)
-    local line_available = target_line ~= nil and Str.width(target_line) == 0
+    local row, target = self.node:line(above and 'above' or 'below', 1)
+    local available = target ~= nil and Str.width(target) == 0
 
-    if not virtual and line_available and row ~= self.context.last_heading then
+    if not virtual and available and row ~= self.context.last_heading then
         self.marks:add('head_border', row, 0, {
             virt_text = line,
             virt_text_pos = 'overlay',
@@ -268,14 +266,14 @@ function Render:border(box, position, icon, row)
             virt_lines = {
                 vim.list_extend(self:indent_line(true, self.data.level), line),
             },
-            virt_lines_above = position == 'above',
+            virt_lines_above = above,
         })
     end
 end
 
 ---@private
 ---@param box render.md.heading.Box
-function Render:left_pad(box)
+function Render:padding(box)
     local line = self:append({}, box.margin)
     self:append(line, box.padding, self.data.background)
     if #line == 0 then

@@ -9,7 +9,6 @@ local Eq = assert.are.same
 ---@class render.md.test.MarkInfo: render.md.mark.Opts
 ---@field row render.md.test.Range
 ---@field col render.md.test.Range
----@field virt_text_pos? string
 
 ---@class render.md.test.Util
 local M = {}
@@ -121,6 +120,7 @@ function M.link(kind)
     local highlight = kind == 'wiki' and 'RmWikiLink' or 'RmLink'
     ---@type vim.api.keyset.set_extmark
     return {
+        hl_mode = 'combine',
         virt_text = { { icons[kind], highlight } },
         virt_text_pos = 'inline',
     }

@@ -94,7 +94,7 @@ function Render:render()
     if background then
         self:background(start_row + 1, end_row - 1, self.info.highlight)
     end
-    self:left_pad(background)
+    self:padding(background)
 end
 
 ---@private
@@ -233,7 +233,7 @@ end
 
 ---@private
 ---@param background boolean
-function Render:left_pad(background)
+function Render:padding(background)
     local col = self.node.start_col
     local start_row, end_row = self.node.start_row, self.node.end_row - 1
     local empty, widths = {}, col == 0 and {} or self.node:widths()

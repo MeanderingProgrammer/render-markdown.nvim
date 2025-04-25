@@ -24,7 +24,7 @@ function Render:render()
         return
     end
 
-    local line = self.node:line('first', 0)
+    local _, line = self.node:line('first', 0)
     local wiki_pattern = '[' .. self.node.text .. ']'
     if line ~= nil and line:find(wiki_pattern, 1, true) ~= nil then
         self:wiki_link()
@@ -44,34 +44,31 @@ function Render:callout(callout)
     if self.context:skip(self.config.quote) then
         return
     end
-
-    local text, conceal = self:callout_title(callout)
+    local title = self:callout_title(callout)
     self.marks:over('callout', self.node, {
-        virt_text = { { text, callout.highlight } },
+        virt_text = { { title or callout.rendered, callout.highlight } },
         virt_text_pos = 'overlay',
-        conceal = conceal and '' or nil,
+        conceal = title ~= nil and '' or nil,
     })
     self.context:add_callout(self.node.start_row, callout)
 end
 
 ---@private
 ---@param callout render.md.callout.Config
----@return string, boolean
+---@return string?
 function Render:callout_title(callout)
-    ---Support for overriding title: https://help.obsidian.md/Editing+and+formatting/Callouts#Change+the+title
+    -- https://help.obsidian.md/Editing+and+formatting/Callouts#Change+the+title
     local content = self.node:parent('inline')
     if content ~= nil then
         local line = Str.split(content.text, '\n', true)[1]
-        if
-            #line > #callout.raw
-            and vim.startswith(line:lower(), callout.raw:lower())
-        then
+        local prefix = callout.raw:lower()
+        if #line > #prefix and vim.startswith(line:lower(), prefix) then
             local icon = Str.split(callout.rendered, ' ', true)[1]
-            local title = vim.trim(line:sub(#callout.raw + 1))
-            return icon .. ' ' .. title, true
+            local title = vim.trim(line:sub(#prefix + 1))
+            return icon .. ' ' .. title
         end
     end
-    return callout.rendered, false
+    return nil
 end
 
 ---@private
@@ -93,7 +90,6 @@ function Render:wiki_link()
     if self.context:skip(link) then
         return
     end
-
     local sections = Str.split(self.node.text:sub(2, -2), '|', true)
     ---@type render.md.link.Context
     local ctx = {
@@ -104,35 +100,35 @@ function Render:wiki_link()
         destination = sections[1],
         alias = sections[2],
     }
-
-    -- Hide opening & closing outer brackets
+    -- hide opening & closing outer brackets
     self:hide(ctx.start_col, 1)
     self:hide(ctx.end_col - 1, 1)
-
-    local wiki = link.wiki
-    local icon, highlight =
-        self:dest(wiki.icon, wiki.highlight, ctx.destination)
-    local body = wiki.body(ctx)
+    ---@type render.md.mark.Text
+    local icon = { link.wiki.icon, link.wiki.highlight }
+    self:link_icon(ctx.destination, icon)
+    local body = link.wiki.body(ctx)
     if body == nil then
-        -- Add icon
+        -- add icon
         self.marks:start('link', self.node, {
-            virt_text = { { icon, highlight } },
+            hl_mode = 'combine',
+            virt_text = { icon },
             virt_text_pos = 'inline',
         })
-        -- Hide destination if there is an alias
+        -- hide destination if there is an alias
         if #sections > 1 then
             self:hide(ctx.start_col + 2, #ctx.destination + 1)
         end
     else
-        local line = {}
         if type(body) == 'string' then
-            line[#line + 1] = { icon .. body, highlight }
+            icon[1] = icon[1] .. body
         else
-            line[#line + 1] = { icon .. body[1], body[2] }
+            icon[1] = icon[1] .. body[1]
+            icon[2] = body[2]
         end
-        -- Inline icon & body, hide original text
+        -- inline icon & body, hide original text
         self.marks:over('link', self.node, {
-            virt_text = line,
+            hl_mode = 'combine',
+            virt_text = { icon },
             virt_text_pos = 'inline',
             conceal = '',
         }, { 0, 1, 0, -1 })

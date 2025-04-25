@@ -1,6 +1,14 @@
 local Iter = require('render-markdown.lib.iter')
 local Str = require('render-markdown.lib.str')
 
+---@enum (key) render.md.node.Position
+local Position = {
+    above = 'above',
+    first = 'first',
+    below = 'below',
+    last = 'last',
+}
+
 ---@class render.md.Node
 ---@field private buf integer
 ---@field private node TSNode
@@ -194,25 +202,24 @@ function Node:after()
     return vim.api.nvim_buf_get_text(self.buf, row, col, row, col + 1, {})[1]
 end
 
----@param position 'above'|'first'|'below'|'last'
+---@param position render.md.node.Position
 ---@param by integer
----@return string?
+---@return integer, string?
 function Node:line(position, by)
     local row = nil
     local single = self.start_row == self.end_row
-    if position == 'above' then
+    if position == Position.above then
         row = self.start_row - by
-    elseif position == 'first' then
+    elseif position == Position.first then
         row = self.start_row + by
-    elseif position == 'below' then
+    elseif position == Position.below then
         row = self.end_row - (single and 0 or 1) + by
-    elseif position == 'last' then
+    elseif position == Position.last then
         row = self.end_row - (single and 0 or 1) - by
+    else
+        error('invalid position: ' .. position)
     end
-    if row == nil then
-        return nil
-    end
-    return vim.api.nvim_buf_get_lines(self.buf, row, row + 1, false)[1]
+    return row, vim.api.nvim_buf_get_lines(self.buf, row, row + 1, false)[1]
 end
 
 ---@return integer[]

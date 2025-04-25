@@ -48,13 +48,13 @@ end
 function Render:start_below()
     if self.info.skip_heading then
         -- exclude second line of current section if empty
-        local empty = Str.width(self.node:line('first', 1)) == 0
+        local empty = self:empty('first', 1)
         return empty and 2 or 1
     else
         -- include last line of previous section if empty
         -- skip if it is the only line in the previous section
-        local empty = Str.width(self.node:line('above', 1)) == 0
-        local only = self:section(self.node:line('above', 2))
+        local empty = self:empty('above', 1)
+        local only = self:section('above', 2)
         return (empty and not only) and -1 or 0
     end
 end
@@ -64,15 +64,26 @@ end
 function Render:end_above()
     -- exclude last line of current section if empty
     -- skip if it is the only line in the last nested section
-    local empty = Str.width(self.node:line('last', 0)) == 0
-    local only = self:section(self.node:line('last', 1))
+    local empty = self:empty('last', 0)
+    local only = self:section('last', 1)
     return (empty and not only) and 1 or 0
 end
 
 ---@private
----@param line? string
+---@param position render.md.node.Position
+---@param by integer
 ---@return boolean
-function Render:section(line)
+function Render:empty(position, by)
+    local _, line = self.node:line(position, by)
+    return Str.width(line) == 0
+end
+
+---@private
+---@param position render.md.node.Position
+---@param by integer
+---@return boolean
+function Render:section(position, by)
+    local _, line = self.node:line(position, by)
     return line ~= nil and vim.startswith(line, '#')
 end
 

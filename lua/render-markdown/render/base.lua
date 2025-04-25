@@ -102,11 +102,9 @@ function Base:scope(element, node, highlight)
 end
 
 ---@protected
----@param icon string
----@param highlight string
 ---@param destination string
----@return string, string
-function Base:dest(icon, highlight, destination)
+---@param icon render.md.mark.Text
+function Base:link_icon(destination, icon)
     local options = Iter.table.filter(self.config.link.custom, function(custom)
         if custom.kind == 'suffix' then
             return vim.endswith(destination, custom.pattern)
@@ -117,8 +115,11 @@ function Base:dest(icon, highlight, destination)
     Iter.list.sort(options, function(custom)
         return custom.priority or Str.width(custom.pattern)
     end)
-    local result = options[#options] or {}
-    return result.icon or icon, result.highlight or highlight
+    local result = options[#options]
+    if result ~= nil then
+        icon[1] = result.icon
+        icon[2] = result.highlight or icon[2]
+    end
 end
 
 ---@protected

@@ -27,6 +27,7 @@ Each handler must conform to the following interface:
 ---@field opts render.md.mark.Opts
 
 ---@class render.md.mark.Opts: vim.api.keyset.set_extmark
+---@field hl_mode? 'replace'|'combine'|'blend'
 ---@field virt_text? render.md.mark.Line
 ---@field virt_text_pos? 'eol'|'inline'|'overlay'
 ---@field virt_lines? render.md.mark.Line[]
