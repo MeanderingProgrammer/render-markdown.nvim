@@ -5,7 +5,7 @@
 ---@field top_pad integer
 ---@field bottom_pad integer
 
----@enum (key) render.md.latex.Position
+---@enum render.md.latex.Position
 local Position = {
     above = 'above',
     below = 'below',
@@ -18,7 +18,7 @@ function M.validate(spec)
     require('render-markdown.config.base').validate(spec)
     spec:type('converter', 'string')
     spec:type('highlight', 'string')
-    spec:one_of('position', vim.tbl_keys(Position))
+    spec:one_of('position', vim.tbl_values(Position))
     spec:type('top_pad', 'number')
     spec:type('bottom_pad', 'number')
     spec:check()

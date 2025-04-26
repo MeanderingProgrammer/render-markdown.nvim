@@ -27,14 +27,14 @@
 ---| string[]
 ---| fun(ctx: render.md.heading.Context): string?
 
----@enum (key) render.md.heading.Position
+---@enum render.md.heading.Position
 local Position = {
     overlay = 'overlay',
     inline = 'inline',
     right = 'right',
 }
 
----@enum (key) render.md.heading.Width
+---@enum render.md.heading.Width
 local Width = {
     full = 'full',
     block = 'block',
@@ -55,9 +55,9 @@ function M.validate(spec)
     spec:type('setext', 'boolean')
     spec:type('sign', 'boolean')
     spec:list('icons', 'string', 'function')
-    spec:one_of('position', vim.tbl_keys(Position))
+    spec:one_of('position', vim.tbl_values(Position))
     spec:list('signs', 'string')
-    spec:one_or_list_of('width', vim.tbl_keys(Width))
+    spec:one_or_list_of('width', vim.tbl_values(Width))
     spec:list('left_margin', 'number', 'number')
     spec:list('left_pad', 'number', 'number')
     spec:list('right_pad', 'number', 'number')

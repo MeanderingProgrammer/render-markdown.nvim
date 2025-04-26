@@ -41,10 +41,8 @@ describe('heading.md', function()
             '',
             '󰫎 󰲡 Ext Heading',
             '',
-            '',
             '󰫎 󰲣 Ext Heading 2',
             '    Ext Heading 2 Line 2',
-            '',
         })
     end)
 
@@ -73,10 +71,8 @@ describe('heading.md', function()
             '  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
             '󰫎 󰲡 Ext Heading',
             '',
-            '',
             '󰫎 󰲣 Ext Heading 2',
             '    Ext Heading 2 Line 2',
-            '',
         })
     end)
 
@@ -105,10 +101,8 @@ describe('heading.md', function()
             '  ▀▀▀▀▀▀▀▀▀▀▀▀▀',
             '󰫎 󰲡 Ext Heading',
             '',
-            '',
             '󰫎 󰲣 Ext Heading 2',
             '    Ext Heading 2 Line 2',
-            '',
         })
     end)
 
@@ -130,10 +124,8 @@ describe('heading.md', function()
             '',
             '󰫎 󰲡 Ext Heading',
             '',
-            '',
             '󰫎 󰲣 Ext Heading 2',
             '    Ext Heading 2 Line 2',
-            '',
         })
     end)
 
@@ -167,10 +159,8 @@ describe('heading.md', function()
             '',
             '󰫎 󰲡 Ext Heading',
             '',
-            '',
             '󰫎 󰲣 Ext Heading 2',
             '    Ext Heading 2 Line 2',
-            '',
         })
     end)
 
@@ -199,10 +189,8 @@ describe('heading.md', function()
             '  ▀▀▀▀▀▀▀▀',
             '󰫎 󰲡 Ext Heading',
             '',
-            '',
             '󰫎 󰲣 Ext Heading 2',
             '    Ext Heading 2 Line 2',
-            '',
         })
     end)
 
@@ -224,10 +212,8 @@ describe('heading.md', function()
             '',
             '󰫎 Ext Heading 󰲡',
             '',
-            '',
             '󰫎 Ext Heading 2 󰲣',
             '  Ext Heading 2 Line 2',
-            '',
         })
     end)
 
@@ -256,10 +242,8 @@ describe('heading.md', function()
             '  ▀▀▀▀▀▀▀▀▀',
             '󰫎 Ext Heading 󰲡',
             '',
-            '',
             '󰫎 Ext Heading 2 󰲣',
             '  Ext Heading 2 Line 2',
-            '',
         })
     end)
 
@@ -281,10 +265,8 @@ describe('heading.md', function()
             '',
             '󰫎                                   󰲡 Ext Heading',
             '',
-            '',
             '󰫎                              󰲣 Ext Heading 2',
             '                                 Ext Heading 2 Line 2',
-            '',
         })
     end)
 end)

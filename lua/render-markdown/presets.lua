@@ -1,4 +1,4 @@
----@enum (key) render.md.config.Preset
+---@enum render.md.config.Preset
 local Preset = {
     none = 'none',
     lazy = 'lazy',

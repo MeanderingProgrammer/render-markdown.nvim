@@ -23,7 +23,7 @@
 ---@field highlight_fallback string
 ---@field highlight_inline string
 
----@enum (key) render.md.code.Style
+---@enum render.md.code.Style
 local Style = {
     full = 'full',
     normal = 'normal',
@@ -31,19 +31,19 @@ local Style = {
     none = 'none',
 }
 
----@enum (key) render.md.code.Position
+---@enum render.md.code.Position
 local Position = {
     left = 'left',
     right = 'right',
 }
 
----@enum (key) render.md.code.Width
+---@enum render.md.code.Width
 local Width = {
     full = 'full',
     block = 'block',
 }
 
----@enum (key) render.md.code.Border
+---@enum render.md.code.Border
 local Border = {
     hide = 'hide',
     thin = 'thin',
@@ -57,18 +57,18 @@ local M = {}
 function M.validate(spec)
     require('render-markdown.config.base').validate(spec)
     spec:type('sign', 'boolean')
-    spec:one_of('style', vim.tbl_keys(Style))
-    spec:one_of('position', vim.tbl_keys(Position))
+    spec:one_of('style', vim.tbl_values(Style))
+    spec:one_of('position', vim.tbl_values(Position))
     spec:type('language_pad', 'number')
     spec:type('language_icon', 'boolean')
     spec:type('language_name', 'boolean')
     spec:list('disable_background', 'string', 'boolean')
-    spec:one_of('width', vim.tbl_keys(Width))
+    spec:one_of('width', vim.tbl_values(Width))
     spec:type('left_margin', 'number')
     spec:type('left_pad', 'number')
     spec:type('right_pad', 'number')
     spec:type('min_width', 'number')
-    spec:one_of('border', vim.tbl_keys(Border))
+    spec:one_of('border', vim.tbl_values(Border))
     spec:type('above', 'string')
     spec:type('below', 'string')
     spec:type('inline_left', 'string')

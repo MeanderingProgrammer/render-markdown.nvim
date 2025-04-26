@@ -26,11 +26,11 @@ describe('ad hoc', function()
             virt_text_pos = 'inline',
         })
         marks:add(2, 2, 0, 3, util.conceal())
+        marks:add(2, 2, 0, 3, util.conceal_lines())
         marks:add(2, 3, 0, 0, util.heading.bg(2))
         util.assert_view(marks, {
             '󰫎 󰲣 Heading 2 Line 1',
             '    Heading 2 Line 2',
-            '',
         })
     end)
 

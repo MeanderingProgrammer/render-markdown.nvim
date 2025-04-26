@@ -6,7 +6,7 @@
 
 ---@alias render.md.conceal.Ignore table<render.md.Element, render.md.Modes>
 
----@enum (key) render.md.Element
+---@enum render.md.Element
 local Element = {
     head_icon = 'head_icon',
     head_background = 'head_background',
@@ -31,7 +31,7 @@ local M = {}
 function M.validate(spec)
     spec:type('enabled', 'boolean')
     spec:nested('ignore', function(ignore)
-        for element in pairs(Element) do
+        for _, element in pairs(Element) do
             ignore:list(element, 'string', { 'boolean', 'nil' })
         end
         ignore:check()

@@ -33,7 +33,7 @@
 ---@field priority? integer
 ---@field highlight? string
 
----@enum (key) render.md.link.custom.Kind
+---@enum render.md.link.custom.Kind
 local Kind = {
     pattern = 'pattern',
     suffix = 'suffix',
@@ -65,7 +65,7 @@ function M.validate(spec)
         patterns:each(function(pattern)
             pattern:type('pattern', 'string')
             pattern:type('icon', 'string')
-            pattern:one_of('kind', vim.tbl_keys(Kind), 'nil')
+            pattern:one_of('kind', vim.tbl_values(Kind), 'nil')
             pattern:type('priority', { 'number', 'nil' })
             pattern:type('highlight', { 'string', 'nil' })
             pattern:check()

@@ -1,6 +1,6 @@
 local Iter = require('render-markdown.lib.iter')
 
----@enum (key) render.md.debug.spec.Kind
+---@enum render.md.debug.spec.Kind
 local Kind = {
     type = 'type',
     value = 'value',
@@ -245,9 +245,10 @@ function Validator:check(path, data, specs)
             message = message .. ', but got: '
             if spec.kind == Kind.type then
                 message = message .. type(value)
-            end
-            if spec.kind == Kind.value then
+            elseif spec.kind == Kind.value then
                 message = message .. vim.inspect(value)
+            else
+                error('invalid kind: ' .. spec.kind)
             end
             if info ~= nil then
                 message = message .. string.format(', info: %s', info)

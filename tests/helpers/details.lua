@@ -81,15 +81,13 @@ function MarkDetails.__lt(a, b)
 end
 
 ---@private
----@return integer[]
+---@return number[]
 function MarkDetails:priorities()
     local virt_row = 0
     if self.virt_lines ~= nil then
         virt_row = self.virt_lines_above and -0.5 or 0.5
     end
-
     local win_col = self.virt_text_win_col or 0
-
     local width = 0
     for _, text in ipairs(self.virt_text or {}) do
         width = width + #text[1]
@@ -99,8 +97,7 @@ function MarkDetails:priorities()
             width = width + #text[1]
         end
     end
-
-    ---@type integer[]
+    ---@type number[]
     return {
         -- rows
         self.row[1] + virt_row,

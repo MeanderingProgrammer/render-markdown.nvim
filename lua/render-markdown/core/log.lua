@@ -10,7 +10,13 @@ local Env = require('render-markdown.lib.env')
 ---@field level render.md.log.Level
 ---@field runtime boolean
 
----@alias render.md.log.Level 'off'|'debug'|'info'|'error'
+---@enum render.md.log.Level
+local Level = {
+    debug = 'debug',
+    info = 'info',
+    error = 'error',
+    off = 'off',
+}
 
 ---@class render.md.Log
 ---@field private file string
@@ -108,7 +114,7 @@ end
 ---@param name string
 ---@param ... any
 function M.add(level, name, ...)
-    if M.level_value(level) < M.level_value(M.config.level) then
+    if M.level(level) < M.level(M.config.level) then
         return
     end
     local messages = {}
@@ -125,7 +131,7 @@ function M.add(level, name, ...)
         message = table.concat(messages, ' | '),
     }
     M.entries[#M.entries + 1] = entry
-    -- Periodically flush logs to disk
+    -- periodically flush logs to disk
     if #M.entries > 1000 then
         M.flush()
     end
@@ -134,14 +140,14 @@ end
 ---@private
 ---@param level render.md.log.Level
 ---@return integer
-function M.level_value(level)
-    if level == 'debug' then
+function M.level(level)
+    if level == Level.debug then
         return 1
-    elseif level == 'info' then
+    elseif level == Level.info then
         return 2
-    elseif level == 'error' then
+    elseif level == Level.error then
         return 3
-    elseif level == 'off' then
+    elseif level == Level.off then
         return 4
     else
         return 0

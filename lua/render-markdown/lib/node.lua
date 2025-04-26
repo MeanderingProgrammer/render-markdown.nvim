@@ -1,7 +1,7 @@
 local Iter = require('render-markdown.lib.iter')
 local Str = require('render-markdown.lib.str')
 
----@enum (key) render.md.node.Position
+---@enum render.md.node.Position
 local Position = {
     above = 'above',
     first = 'first',

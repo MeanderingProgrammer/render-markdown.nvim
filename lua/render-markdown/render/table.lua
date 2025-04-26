@@ -15,7 +15,7 @@ local log = require('render-markdown.core.log')
 ---@field width integer
 ---@field alignment render.md.table.Alignment
 
----@enum (key) render.md.table.Alignment
+---@enum render.md.table.Alignment
 local Alignment = {
     left = 'left',
     right = 'right',

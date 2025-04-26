@@ -25,7 +25,8 @@ end
 ---@return boolean
 function Mark.__lt(a, b)
     local as, bs = a:priorities(), b:priorities()
-    for i = 1, math.max(#as, #bs) do
+    assert(#as == #bs)
+    for i = 1, #as do
         if as[i] ~= bs[i] then
             return as[i] < bs[i]
         end
@@ -34,13 +35,14 @@ function Mark.__lt(a, b)
 end
 
 ---@private
----@return integer[]
+---@return number[]
 function Mark:priorities()
     local virt_row = 0
     if self.opts.virt_lines ~= nil then
         virt_row = self.opts.virt_lines_above and -0.5 or 0.5
     end
     local win_col = self.opts.virt_text_win_col or 0
+    ---@type number[]
     return {
         -- rows
         self.row[1] + virt_row,

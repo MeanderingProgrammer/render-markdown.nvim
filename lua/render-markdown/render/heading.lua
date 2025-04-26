@@ -108,6 +108,7 @@ function Render:render()
         self:border(box, false)
     else
         self.marks:over(true, self.data.marker, { conceal = '' })
+        self.marks:over(true, self.data.marker, { conceal_lines = '' })
     end
 end
 
@@ -233,6 +234,23 @@ end
 
 ---@private
 ---@param box render.md.heading.Box
+function Render:padding(box)
+    local line = self:append({}, box.margin)
+    self:append(line, box.padding, self.data.background)
+    if #line == 0 then
+        return
+    end
+    for row = self.node.start_row, self.node.end_row - 1 do
+        self.marks:add(false, row, 0, {
+            priority = 0,
+            virt_text = line,
+            virt_text_pos = 'inline',
+        })
+    end
+end
+
+---@private
+---@param box render.md.heading.Box
 ---@param above boolean
 function Render:border(box, above)
     if not self.data.border then
@@ -267,23 +285,6 @@ function Render:border(box, above)
                 vim.list_extend(self:indent_line(true, self.data.level), line),
             },
             virt_lines_above = above,
-        })
-    end
-end
-
----@private
----@param box render.md.heading.Box
-function Render:padding(box)
-    local line = self:append({}, box.margin)
-    self:append(line, box.padding, self.data.background)
-    if #line == 0 then
-        return
-    end
-    for row = self.node.start_row, self.node.end_row - 1 do
-        self.marks:add(false, row, 0, {
-            priority = 0,
-            virt_text = line,
-            virt_text_pos = 'inline',
         })
     end
 end
