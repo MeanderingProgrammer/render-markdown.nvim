@@ -86,7 +86,6 @@ end
 
 ---@private
 function M.reload()
-    vim.print(M.cache)
     for _, color in pairs(M.cache.combine) do
         M.combine(color.fg, color.bg, true)
     end
