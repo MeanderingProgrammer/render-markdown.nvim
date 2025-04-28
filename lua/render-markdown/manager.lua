@@ -6,11 +6,24 @@ local ui = require('render-markdown.core.ui')
 ---@type integer[]
 local buffers = {}
 
+---@class render.md.manager.Config
+---@field ignore fun(buf: integer): boolean
+---@field change_events string[]
+---@field on render.md.callback.Config
+---@field completions render.md.completions.Config
+
 ---@class render.md.Manager
+---@field private config render.md.manager.Config
 local M = {}
 
 ---@private
 M.group = vim.api.nvim_create_augroup('RenderMarkdown', {})
+
+---called from state on setup
+---@param config render.md.manager.Config
+function M.setup(config)
+    M.config = config
+end
 
 ---called from plugin directory
 function M.init()
@@ -86,13 +99,13 @@ function M.attach(buf)
     end
 
     local config = state.get(buf)
-    state.on.attach({ buf = buf })
+    M.config.on.attach({ buf = buf })
     require('render-markdown.integ.ts').init()
-    if state.completions.lsp.enabled then
+    if M.config.completions.lsp.enabled then
         require('render-markdown.integ.lsp').setup()
-    elseif state.completions.blink.enabled then
+    elseif M.config.completions.blink.enabled then
         require('render-markdown.integ.blink').setup()
-    elseif state.completions.coq.enabled then
+    elseif M.config.completions.coq.enabled then
         require('render-markdown.integ.coq').setup()
     else
         require('render-markdown.integ.cmp').setup()
@@ -107,7 +120,7 @@ function M.attach(buf)
         'WinScrolled',
     }
     local change_events = { 'DiffUpdated', 'ModeChanged', 'TextChanged' }
-    vim.list_extend(change_events, state.change_events)
+    vim.list_extend(change_events, M.config.change_events)
     if config:render('i') then
         vim.list_extend(events, { 'CursorHoldI', 'CursorMovedI' })
         vim.list_extend(change_events, { 'TextChangedI' })
@@ -175,7 +188,7 @@ function M.should_attach(buf)
         return false
     end
 
-    if state.ignore(buf) then
+    if M.config.ignore(buf) then
         log.buf('info', 'attach', buf, 'skip', 'user ignore')
         return false
     end

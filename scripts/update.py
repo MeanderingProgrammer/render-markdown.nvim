@@ -93,7 +93,8 @@ def update_readme(init: Path) -> None:
         if match is None:
             break
         statement = new[match.start() : match.end()]
-        file = Path("lua").joinpath(match.group(1).replace(".", "/") + ".lua")
+        path = match.group(1).replace(".", "/")
+        file = Path("lua").joinpath(path).with_suffix(".lua")
         config = indent(get_default(file), "    ").strip()
         new = new.replace(statement, config)
 
@@ -194,9 +195,9 @@ def get_default(file: Path) -> str:
                 (#eq? @name "default")))
         (expression_list value: (table_constructor)) @value)
     """
-    default_configs = ts_query(file, query, "value")
-    assert len(default_configs) == 1
-    return default_configs[0]
+    defaults = ts_query(file, query, "value")
+    assert len(defaults) == 1
+    return defaults[0]
 
 
 def get_code_block(file: Path, content: str, n: int) -> str:

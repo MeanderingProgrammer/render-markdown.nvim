@@ -850,9 +850,10 @@ require('render-markdown').setup({
         -- Override for different filetype values, @see :h 'filetype'.
         filetype = {},
     },
-    -- Mapping from treesitter language to user defined handlers.
-    -- @see [Custom Handlers](doc/custom-handlers.md)
-    custom_handlers = {},
+    custom_handlers = {
+        -- Mapping from treesitter language to user defined handlers.
+        -- @see [Custom Handlers](doc/custom-handlers.md)
+    },
 })
 ```
 

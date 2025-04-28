@@ -8,10 +8,6 @@ local Cache = {}
 ---@field private config render.md.Config
 ---@field enabled boolean
 ---@field file_types string[]
----@field ignore fun(buf: integer): boolean
----@field change_events string[]
----@field on render.md.callback.Config
----@field completions render.md.completions.Config
 local M = {}
 
 ---called from init on setup
@@ -20,16 +16,22 @@ function M.setup(config)
     M.config = config
     M.enabled = config.enabled
     M.file_types = config.file_types
-    M.ignore = config.ignore
-    M.change_events = config.change_events
-    M.on = config.on
-    M.completions = config.completions
+    require('render-markdown.manager').setup({
+        ignore = config.ignore,
+        change_events = config.change_events,
+        on = config.on,
+        completions = config.completions,
+    })
     require('render-markdown.core.log').setup({
         level = config.log_level,
         runtime = config.log_runtime,
     })
     require('render-markdown.core.ui').setup({
+        on = config.on,
         custom_handlers = config.custom_handlers,
+    })
+    require('render-markdown.integ.source').setup({
+        completions = config.completions,
     })
     require('render-markdown.integ.ts').setup({
         file_types = config.file_types,
@@ -132,14 +134,7 @@ function M.validate()
     spec:nested('on', require('render-markdown.config.on').validate)
     spec:nested('completions', require('render-markdown.config.completions').validate)
     spec:nested('overrides', require('render-markdown.config.overrides').validate)
-    spec:nested('custom_handlers', function(handlers)
-        handlers:each(function(handler)
-            handler:type('extends', { 'boolean', 'nil' })
-            handler:type('parse', 'function')
-            handler:check()
-        end)
-        handlers:check()
-    end)
+    spec:nested('custom_handlers', require('render-markdown.config.custom_handlers').validate)
     spec:check()
     return validator:get_errors()
 end

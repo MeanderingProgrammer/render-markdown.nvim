@@ -92,6 +92,9 @@ describe('state', function()
                 b = 'invalid',
             },
             checkbox = { checked = false, unchecked = { icon = false } },
+            custom_handlers = {
+                markdown = { extends = 'invalid', parse = 'invalid' },
+            },
             debounce = {},
             enabled = 'invalid',
             heading = { enabled = 'invalid' },
@@ -116,6 +119,8 @@ describe('state', function()
             'callout.b - expected: table, got: string',
             'checkbox.checked - expected: table, got: boolean',
             'checkbox.unchecked.icon - expected: string, got: boolean',
+            'custom_handlers.markdown.extends - expected: boolean or nil, got: string',
+            'custom_handlers.markdown.parse - expected: function, got: string',
             'debounce - expected: number, got: table',
             'enabled - expected: boolean, got: string',
             'heading.enabled - expected: boolean, got: string',

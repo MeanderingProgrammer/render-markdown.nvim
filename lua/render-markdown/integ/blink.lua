@@ -1,7 +1,6 @@
 ---@module 'blink.cmp'
 
 local source = require('render-markdown.integ.source')
-local state = require('render-markdown.state')
 
 ---@class render.md.blink.Source: blink.cmp.Source
 local Source = {}
@@ -61,6 +60,7 @@ function Source.setup()
         name = 'RenderMarkdown',
         module = 'render-markdown.integ.blink',
     })
+    local state = require('render-markdown.state')
     for _, file_type in ipairs(state.file_types) do
         pcall(blink.add_filetype_source, file_type, id)
     end

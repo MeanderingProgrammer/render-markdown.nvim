@@ -100,9 +100,7 @@ M.default = {
     html = require('render-markdown.config.html').default,
     win_options = require('render-markdown.config.win_options').default,
     overrides = require('render-markdown.config.overrides').default,
-    -- Mapping from treesitter language to user defined handlers.
-    -- @see [Custom Handlers](doc/custom-handlers.md)
-    custom_handlers = {},
+    custom_handlers = require('render-markdown.config.custom_handlers').default,
 }
 
 ---@param opts? render.md.UserConfig
