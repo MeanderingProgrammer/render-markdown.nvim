@@ -11,7 +11,20 @@
 ---@field buf integer
 ---@field win integer
 
+---@class render.md.callback
 local M = {}
+
+---@type render.md.callback.Config
+M.default = {
+    -- Called when plugin initially attaches to a buffer.
+    attach = function() end,
+    -- Called before adding marks to the buffer for the first time.
+    initial = function() end,
+    -- Called after plugin renders a buffer.
+    render = function() end,
+    -- Called after plugin clears a buffer.
+    clear = function() end,
+}
 
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)

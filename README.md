@@ -210,10 +210,11 @@ require('render-markdown').setup({
     end,
     -- Additional events that will trigger this plugin's render loop.
     change_events = {},
-    -- Out of the box language injections for known filetypes that allow markdown to be interpreted
-    -- in specified locations, see :h treesitter-language-injections.
-    -- Set enabled to false in order to disable.
     injections = {
+        -- Out of the box language injections for known filetypes that allow markdown to be interpreted
+        -- in specified locations, see :h treesitter-language-injections.
+        -- Set enabled to false in order to disable.
+
         gitcommit = {
             enabled = true,
             query = [[
@@ -224,8 +225,9 @@ require('render-markdown').setup({
             ]],
         },
     },
-    -- Highlight patterns to disable for filetypes, i.e. lines concealed around code blocks
     patterns = {
+        -- Highlight patterns to disable for filetypes, i.e. lines concealed around code blocks
+
         markdown = {
             disable = true,
             directives = {
@@ -301,10 +303,11 @@ require('render-markdown').setup({
             end,
         },
     },
-    -- Useful context to have when evaluating values.
-    -- | level    | the number of '#' in the heading marker         |
-    -- | sections | for each level how deeply nested the heading is |
     heading = {
+        -- Useful context to have when evaluating values.
+        -- | level    | the number of '#' in the heading marker         |
+        -- | sections | for each level how deeply nested the heading is |
+
         -- Turn on / off heading icon & background rendering.
         enabled = true,
         -- Additional modes to render headings.
@@ -387,9 +390,10 @@ require('render-markdown').setup({
         -- | foreground | optional override for the foreground                  |
         custom = {},
     },
-    -- Useful context to have when evaluating values.
-    -- | text | text value of the node |
     paragraph = {
+        -- Useful context to have when evaluating values.
+        -- | text | text value of the node |
+
         -- Turn on / off paragraph rendering.
         enabled = true,
         -- Additional modes to render paragraphs.
@@ -508,11 +512,12 @@ require('render-markdown').setup({
             line_patterns = {},
         },
     },
-    -- Useful context to have when evaluating values.
-    -- | level | how deeply nested the list is, 1-indexed          |
-    -- | index | how far down the item is at that level, 1-indexed |
-    -- | value | text value of the marker node                     |
     bullet = {
+        -- Useful context to have when evaluating values.
+        -- | level | how deeply nested the list is, 1-indexed          |
+        -- | index | how far down the item is at that level, 1-indexed |
+        -- | value | text value of the marker node                     |
+
         -- Turn on / off list bullet rendering
         enabled = true,
         -- Additional modes to render list bullets
@@ -547,9 +552,10 @@ require('render-markdown').setup({
         -- Output is evaluated using the same logic as 'icons'.
         scope_highlight = {},
     },
-    -- Checkboxes are a special instance of a 'list_item' that start with a 'shortcut_link'.
-    -- There are two special states for unchecked & checked defined in the markdown grammar.
     checkbox = {
+        -- Checkboxes are a special instance of a 'list_item' that start with a 'shortcut_link'.
+        -- There are two special states for unchecked & checked defined in the markdown grammar.
+
         -- Turn on / off checkbox state rendering.
         enabled = true,
         -- Additional modes to render checkboxes.
@@ -655,15 +661,15 @@ require('render-markdown').setup({
         -- Highlight for inline padding used to add back concealed space.
         filler = 'RenderMarkdownTableFill',
     },
-    -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'.
-    -- The key is for healthcheck and to allow users to change its values, value type below.
-    -- | raw        | matched against the raw text of a 'shortcut_link', case insensitive |
-    -- | rendered   | replaces the 'raw' value when rendering                             |
-    -- | highlight  | highlight for the 'rendered' text and quote markers                 |
-    -- | quote_icon | optional override for quote.icon value for individual callout       |
-    -- | category   | optional metadata useful for filtering                              |
-    -- stylua: ignore
     callout = {
+        -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'.
+        -- The key is for healthcheck and to allow users to change its values, value type below.
+        -- | raw        | matched against the raw text of a 'shortcut_link', case insensitive |
+        -- | rendered   | replaces the 'raw' value when rendering                             |
+        -- | highlight  | highlight for the 'rendered' text and quote markers                 |
+        -- | quote_icon | optional override for quote.icon value for individual callout       |
+        -- | category   | optional metadata useful for filtering                              |
+
         note      = { raw = '[!NOTE]',      rendered = '󰋽 Note',      highlight = 'RenderMarkdownInfo',    category = 'github'   },
         tip       = { raw = '[!TIP]',       rendered = '󰌶 Tip',       highlight = 'RenderMarkdownSuccess', category = 'github'   },
         important = { raw = '[!IMPORTANT]', rendered = '󰅾 Important', highlight = 'RenderMarkdownHint',    category = 'github'   },
@@ -755,9 +761,10 @@ require('render-markdown').setup({
         -- Applies to background of sign text.
         highlight = 'RenderMarkdownSign',
     },
-    -- Mimics Obsidian inline highlights when content is surrounded by double equals.
-    -- The equals on both ends are concealed and the inner content is highlighted.
     inline_highlight = {
+        -- Mimics Obsidian inline highlights when content is surrounded by double equals.
+        -- The equals on both ends are concealed and the inner content is highlighted.
+
         -- Turn on / off inline highlight rendering.
         enabled = true,
         -- Additional modes to render inline highlights.
@@ -765,9 +772,10 @@ require('render-markdown').setup({
         -- Applies to background of surrounded text.
         highlight = 'RenderMarkdownInlineHighlight',
     },
-    -- Mimic org-indent-mode behavior by indenting everything under a heading based on the level of
-    -- the heading. Indenting starts from level 2 headings onward by default.
     indent = {
+        -- Mimic org-indent-mode behavior by indenting everything under a heading based on the
+        -- level of the heading. Indenting starts from level 2 headings onward by default.
+
         -- Turn on / off org-indent-mode.
         enabled = false,
         -- Additional modes to render indents.
@@ -803,8 +811,9 @@ require('render-markdown').setup({
         -- | highlight | highlight for the icon    |
         tag = {},
     },
-    -- Window options to use that change between rendered and raw view.
     win_options = {
+        -- Window options to use that change between rendered and raw view.
+
         -- @see :h 'conceallevel'
         conceallevel = {
             -- Used when not being rendered, get user setting.
@@ -820,13 +829,14 @@ require('render-markdown').setup({
             rendered = '',
         },
     },
-    -- More granular configuration mechanism, allows different aspects of buffers to have their own
-    -- behavior. Values default to the top level configuration if no override is provided. Supports
-    -- the following fields:
-    --   enabled, max_file_size, debounce, render_modes, anti_conceal, padding, heading, paragraph,
-    --   code, dash, bullet, checkbox, quote, pipe_table, callout, link, sign, indent, latex, html,
-    --   win_options
     overrides = {
+        -- More granular configuration mechanism, allows different aspects of buffers to have their own
+        -- behavior. Values default to the top level configuration if no override is provided. Supports
+        -- the following fields:
+        --   enabled, max_file_size, debounce, render_modes, anti_conceal, padding, heading, paragraph,
+        --   code, dash, bullet, checkbox, quote, pipe_table, callout, link, sign, indent, latex, html,
+        --   win_options
+
         -- Override for different buflisted values, @see :h 'buflisted'.
         buflisted = {},
         -- Override for different buftype values, @see :h 'buftype'.
@@ -865,10 +875,11 @@ We use the following definitions when discussing indexing into lists:
 
 ```lua
 require('render-markdown').setup({
-    -- Useful context to have when evaluating values.
-    -- | level    | the number of '#' in the heading marker         |
-    -- | sections | for each level how deeply nested the heading is |
     heading = {
+        -- Useful context to have when evaluating values.
+        -- | level    | the number of '#' in the heading marker         |
+        -- | sections | for each level how deeply nested the heading is |
+
         -- Turn on / off heading icon & background rendering.
         enabled = true,
         -- Additional modes to render headings.
@@ -966,9 +977,10 @@ require('render-markdown').setup({
 
 ```lua
 require('render-markdown').setup({
-    -- Useful context to have when evaluating values.
-    -- | text | text value of the node |
     paragraph = {
+        -- Useful context to have when evaluating values.
+        -- | text | text value of the node |
+
         -- Turn on / off paragraph rendering.
         enabled = true,
         -- Additional modes to render paragraphs.
@@ -1118,11 +1130,12 @@ require('render-markdown').setup({
 
 ```lua
 require('render-markdown').setup({
-    -- Useful context to have when evaluating values.
-    -- | level | how deeply nested the list is, 1-indexed          |
-    -- | index | how far down the item is at that level, 1-indexed |
-    -- | value | text value of the marker node                     |
     bullet = {
+        -- Useful context to have when evaluating values.
+        -- | level | how deeply nested the list is, 1-indexed          |
+        -- | index | how far down the item is at that level, 1-indexed |
+        -- | value | text value of the marker node                     |
+
         -- Turn on / off list bullet rendering
         enabled = true,
         -- Additional modes to render list bullets
@@ -1172,9 +1185,10 @@ require('render-markdown').setup({
 
 ```lua
 require('render-markdown').setup({
-    -- Checkboxes are a special instance of a 'list_item' that start with a 'shortcut_link'.
-    -- There are two special states for unchecked & checked defined in the markdown grammar.
     checkbox = {
+        -- Checkboxes are a special instance of a 'list_item' that start with a 'shortcut_link'.
+        -- There are two special states for unchecked & checked defined in the markdown grammar.
+
         -- Turn on / off checkbox state rendering.
         enabled = true,
         -- Additional modes to render checkboxes.
@@ -1325,15 +1339,15 @@ require('render-markdown').setup({
 
 ```lua
 require('render-markdown').setup({
-    -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'.
-    -- The key is for healthcheck and to allow users to change its values, value type below.
-    -- | raw        | matched against the raw text of a 'shortcut_link', case insensitive |
-    -- | rendered   | replaces the 'raw' value when rendering                             |
-    -- | highlight  | highlight for the 'rendered' text and quote markers                 |
-    -- | quote_icon | optional override for quote.icon value for individual callout       |
-    -- | category   | optional metadata useful for filtering                              |
-    -- stylua: ignore
     callout = {
+        -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'.
+        -- The key is for healthcheck and to allow users to change its values, value type below.
+        -- | raw        | matched against the raw text of a 'shortcut_link', case insensitive |
+        -- | rendered   | replaces the 'raw' value when rendering                             |
+        -- | highlight  | highlight for the 'rendered' text and quote markers                 |
+        -- | quote_icon | optional override for quote.icon value for individual callout       |
+        -- | category   | optional metadata useful for filtering                              |
+
         note      = { raw = '[!NOTE]',      rendered = '󰋽 Note',      highlight = 'RenderMarkdownInfo',    category = 'github'   },
         tip       = { raw = '[!TIP]',       rendered = '󰌶 Tip',       highlight = 'RenderMarkdownSuccess', category = 'github'   },
         important = { raw = '[!IMPORTANT]', rendered = '󰅾 Important', highlight = 'RenderMarkdownHint',    category = 'github'   },
@@ -1470,9 +1484,10 @@ require('render-markdown').setup({
 
 ```lua
 require('render-markdown').setup({
-    -- Mimic org-indent-mode behavior by indenting everything under a heading based on the level of
-    -- the heading. Indenting starts from level 2 headings onward by default.
     indent = {
+        -- Mimic org-indent-mode behavior by indenting everything under a heading based on the
+        -- level of the heading. Indenting starts from level 2 headings onward by default.
+
         -- Turn on / off org-indent-mode.
         enabled = false,
         -- Additional modes to render indents.

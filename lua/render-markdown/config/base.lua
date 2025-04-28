@@ -4,6 +4,7 @@
 
 ---@alias render.md.Modes boolean|string[]
 
+---@class render.md.base
 local M = {}
 
 ---@param spec render.md.debug.ValidatorSpec

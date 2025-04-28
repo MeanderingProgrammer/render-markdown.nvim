@@ -40,11 +40,23 @@ function Cache.get(buf)
     return buffer
 end
 
+---@class render.md.ui.Config
+---@field custom_handlers table<string, render.md.Handler>
+
 ---@class render.md.Ui
+---@field private config render.md.ui.Config
 local M = {}
 
 M.ns = vim.api.nvim_create_namespace('render-markdown.nvim')
 
+---called from state on setup
+---@param config render.md.ui.Config
+function M.setup(config)
+    M.config = config
+    M.invalidate_cache()
+end
+
+---@private
 function M.invalidate_cache()
     for buf, buffer in pairs(Cache.states) do
         M.clear(buf, buffer)
@@ -226,7 +238,7 @@ function M.parse_tree(ctx, language)
     end
 
     local marks = {}
-    local user = state.custom_handlers[language]
+    local user = M.config.custom_handlers[language]
     if user ~= nil then
         log.buf('debug', 'handler', ctx.buf, 'user')
         vim.list_extend(marks, user.parse(ctx))

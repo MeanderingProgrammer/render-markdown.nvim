@@ -12,7 +12,6 @@ local Cache = {}
 ---@field change_events string[]
 ---@field on render.md.callback.Config
 ---@field completions render.md.completions.Config
----@field custom_handlers table<string, render.md.Handler>
 local M = {}
 
 ---called from init on setup
@@ -25,10 +24,12 @@ function M.setup(config)
     M.change_events = config.change_events
     M.on = config.on
     M.completions = config.completions
-    M.custom_handlers = config.custom_handlers
     require('render-markdown.core.log').setup({
         level = config.log_level,
         runtime = config.log_runtime,
+    })
+    require('render-markdown.core.ui').setup({
+        custom_handlers = config.custom_handlers,
     })
     require('render-markdown.integ.ts').setup({
         file_types = config.file_types,
@@ -36,9 +37,9 @@ function M.setup(config)
         patterns = config.patterns,
     })
     M.invalidate_cache()
-    require('render-markdown.core.ui').invalidate_cache()
 end
 
+---@private
 function M.invalidate_cache()
     Cache = {}
 end
@@ -114,6 +115,7 @@ function M.default_buffer_config()
     return vim.deepcopy(buffer_config)
 end
 
+-- stylua: ignore
 ---@return string[]
 function M.validate()
     local validator = require('render-markdown.debug.validator').new()
@@ -125,14 +127,14 @@ function M.validate()
     spec:list('file_types', 'string')
     spec:type('ignore', 'function')
     spec:list('change_events', 'string')
-    spec:config('injections')
-    spec:config('patterns')
-    spec:config('on')
-    spec:config('completions')
-    spec:config('overrides')
+    spec:nested('injections', require('render-markdown.config.injections').validate)
+    spec:nested('patterns', require('render-markdown.config.patterns').validate)
+    spec:nested('on', require('render-markdown.config.on').validate)
+    spec:nested('completions', require('render-markdown.config.completions').validate)
+    spec:nested('overrides', require('render-markdown.config.overrides').validate)
     spec:nested('custom_handlers', function(handlers)
         handlers:each(function(handler)
-            handler:type('extends', 'boolean')
+            handler:type('extends', { 'boolean', 'nil' })
             handler:type('parse', 'function')
             handler:check()
         end)

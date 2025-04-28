@@ -9,7 +9,27 @@
 ---| number
 ---| fun(ctx: render.md.paragraph.Context): number
 
+---@class render.md.paragraph
 local M = {}
+
+---@type render.md.paragraph.Config
+M.default = {
+    -- Useful context to have when evaluating values.
+    -- | text | text value of the node |
+
+    -- Turn on / off paragraph rendering.
+    enabled = true,
+    -- Additional modes to render paragraphs.
+    render_modes = false,
+    -- Amount of margin to add to the left of paragraphs.
+    -- If a float < 1 is provided it is treated as a percentage of available window space.
+    -- Output is evaluated depending on the type.
+    -- | function | `value(context)` |
+    -- | number   | `value`          |
+    left_margin = 0,
+    -- Minimum width to use for paragraphs.
+    min_width = 0,
+}
 
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)

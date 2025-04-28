@@ -25,7 +25,27 @@ local Element = {
     sign = 'sign',
 }
 
+---@class render.md.anti.conceal
 local M = {}
+
+---@type render.md.anti.conceal.Config
+M.default = {
+    -- This enables hiding any added text on the line the cursor is on.
+    enabled = true,
+    -- Which elements to always show, ignoring anti conceal behavior. Values can either be
+    -- booleans to fix the behavior or string lists representing modes where anti conceal
+    -- behavior will be ignored. Valid values are:
+    --   head_icon, head_background, head_border, code_language, code_background, code_border,
+    --   dash, bullet, check_icon, check_scope, quote, table_border, callout, link, sign
+    ignore = {
+        code_background = true,
+        sign = true,
+    },
+    -- Number of lines above cursor to show.
+    above = 0,
+    -- Number of lines below cursor to show.
+    below = 0,
+}
 
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)

@@ -6,7 +6,21 @@
 ---@field id integer
 ---@field name string
 
+---@class render.md.pattern
 local M = {}
+
+---@type table<string, render.md.pattern.Config>
+M.default = {
+    -- Highlight patterns to disable for filetypes, i.e. lines concealed around code blocks
+
+    markdown = {
+        disable = true,
+        directives = {
+            { id = 17, name = 'conceal_lines' },
+            { id = 18, name = 'conceal_lines' },
+        },
+    },
+}
 
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
