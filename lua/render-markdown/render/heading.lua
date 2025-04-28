@@ -259,7 +259,7 @@ function Render:border(box, above)
 
     local foreground = self.data.foreground
     local background = self.data.background
-    background = background and colors.bg_to_fg(background)
+    background = background and colors.bg_as_fg(background)
     local prefix = self.info.border_prefix and self.data.level or 0
     local width = self.data.width == 'block' and box.content or vim.o.columns
     local icon = above and self.info.above or self.info.below

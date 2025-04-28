@@ -1,14 +1,14 @@
 local Config = require('render-markdown.config')
-local Env = require('render-markdown.lib.env')
-
----@class render.md.state.Cache: { [integer]: render.md.main.Config }
-local Cache = {}
 
 ---@class render.md.State
 ---@field private config render.md.Config
 ---@field enabled boolean
 ---@field file_types string[]
 local M = {}
+
+---@private
+---@type table<integer, render.md.main.Config>
+M.cache = {}
 
 ---called from init on setup
 ---@param config render.md.Config
@@ -38,18 +38,19 @@ function M.setup(config)
         injections = config.injections,
         patterns = config.patterns,
     })
-    M.invalidate_cache()
+    -- reset cache
+    M.cache = {}
 end
 
----@private
-function M.invalidate_cache()
-    Cache = {}
-end
-
----@return table?
-function M.difference()
-    local default = require('render-markdown').default
-    return require('render-markdown.debug.diff').get(default, M.config)
+---@param buf integer
+---@return render.md.main.Config
+function M.get(buf)
+    local result = M.cache[buf]
+    if result == nil then
+        result = Config.new(M.config, buf)
+        M.cache[buf] = result
+    end
+    return result
 end
 
 ---@param amount integer
@@ -60,61 +61,15 @@ function M.modify_anti_conceal(amount)
         config.below = math.max(config.below + amount, 0)
     end
     modify(M.config.anti_conceal)
-    for _, config in pairs(Cache) do
+    for _, config in pairs(M.cache) do
         modify(config.anti_conceal)
     end
 end
 
----@param buf integer
----@return render.md.main.Config
-function M.get(buf)
-    local result = Cache[buf]
-    if result == nil then
-        local config = M.default_buffer_config()
-        for _, name in ipairs({ 'buflisted', 'buftype', 'filetype' }) do
-            local value = Env.buf.get(buf, name)
-            local override = M.config.overrides[name][value]
-            if override ~= nil then
-                config = vim.tbl_deep_extend('force', config, override)
-            end
-        end
-        result = Config.new(config)
-        Cache[buf] = result
-    end
-    return result
-end
-
----@private
----@return render.md.buffer.Config
-function M.default_buffer_config()
-    local config = M.config
-    ---@type render.md.buffer.Config
-    local buffer_config = {
-        enabled = true,
-        render_modes = config.render_modes,
-        max_file_size = config.max_file_size,
-        debounce = config.debounce,
-        anti_conceal = config.anti_conceal,
-        bullet = config.bullet,
-        callout = config.callout,
-        checkbox = config.checkbox,
-        code = config.code,
-        dash = config.dash,
-        document = config.document,
-        heading = config.heading,
-        html = config.html,
-        indent = config.indent,
-        inline_highlight = config.inline_highlight,
-        latex = config.latex,
-        link = config.link,
-        padding = config.padding,
-        paragraph = config.paragraph,
-        pipe_table = config.pipe_table,
-        quote = config.quote,
-        sign = config.sign,
-        win_options = config.win_options,
-    }
-    return vim.deepcopy(buffer_config)
+---@return table?
+function M.difference()
+    local default = require('render-markdown').default
+    return require('render-markdown.debug.diff').get(default, M.config)
 end
 
 -- stylua: ignore

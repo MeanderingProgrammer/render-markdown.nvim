@@ -11,9 +11,45 @@ local Range = require('render-markdown.core.range')
 local Config = {}
 Config.__index = Config
 
----@param config render.md.buffer.Config
+---@param root render.md.Config
+---@param buf integer
 ---@return render.md.main.Config
-function Config.new(config)
+function Config.new(root, buf)
+    ---@type render.md.buffer.Config
+    local config = {
+        enabled = true,
+        render_modes = root.render_modes,
+        max_file_size = root.max_file_size,
+        debounce = root.debounce,
+        anti_conceal = root.anti_conceal,
+        bullet = root.bullet,
+        callout = root.callout,
+        checkbox = root.checkbox,
+        code = root.code,
+        dash = root.dash,
+        document = root.document,
+        heading = root.heading,
+        html = root.html,
+        indent = root.indent,
+        inline_highlight = root.inline_highlight,
+        latex = root.latex,
+        link = root.link,
+        padding = root.padding,
+        paragraph = root.paragraph,
+        pipe_table = root.pipe_table,
+        quote = root.quote,
+        sign = root.sign,
+        win_options = root.win_options,
+    }
+    config = vim.deepcopy(config)
+    for _, name in ipairs({ 'buflisted', 'buftype', 'filetype' }) do
+        local value = Env.buf.get(buf, name)
+        local override = root.overrides[name][value]
+        if override ~= nil then
+            config = vim.tbl_deep_extend('force', config, override)
+        end
+    end
+
     -- super set of render modes across top level and individual components
     local modes = config.render_modes
     for _, component in pairs(config) do
@@ -31,33 +67,6 @@ function Config.new(config)
 
     local instance = vim.tbl_deep_extend('force', { full = full }, config)
     return setmetatable(instance, Config)
-end
-
--- stylua: ignore
----@param spec render.md.debug.ValidatorSpec
-function Config.validate(spec)
-    require('render-markdown.config.base').validate(spec)
-    spec:type('max_file_size', 'number')
-    spec:type('debounce', 'number')
-    spec:nested('anti_conceal', require('render-markdown.config.anti_conceal').validate)
-    spec:nested('bullet', require('render-markdown.config.bullet').validate)
-    spec:nested('callout', require('render-markdown.config.callout').validate)
-    spec:nested('checkbox', require('render-markdown.config.checkbox').validate)
-    spec:nested('code', require('render-markdown.config.code').validate)
-    spec:nested('dash', require('render-markdown.config.dash').validate)
-    spec:nested('document', require('render-markdown.config.document').validate)
-    spec:nested('heading', require('render-markdown.config.heading').validate)
-    spec:nested('html', require('render-markdown.config.html').validate)
-    spec:nested('indent', require('render-markdown.config.indent').validate)
-    spec:nested('inline_highlight', require('render-markdown.config.inline_highlight').validate)
-    spec:nested('latex', require('render-markdown.config.latex').validate)
-    spec:nested('link', require('render-markdown.config.link').validate)
-    spec:nested('padding', require('render-markdown.config.padding').validate)
-    spec:nested('paragraph', require('render-markdown.config.paragraph').validate)
-    spec:nested('pipe_table', require('render-markdown.config.pipe_table').validate)
-    spec:nested('quote', require('render-markdown.config.quote').validate)
-    spec:nested('sign', require('render-markdown.config.sign').validate)
-    spec:nested('win_options', require('render-markdown.config.win_options').validate)
 end
 
 ---@private
@@ -95,6 +104,33 @@ function Config.normalize(components)
     return result
 end
 
+-- stylua: ignore
+---@param spec render.md.debug.ValidatorSpec
+function Config.validate(spec)
+    require('render-markdown.config.base').validate(spec)
+    spec:type('max_file_size', 'number')
+    spec:type('debounce', 'number')
+    spec:nested('anti_conceal', require('render-markdown.config.anti_conceal').validate)
+    spec:nested('bullet', require('render-markdown.config.bullet').validate)
+    spec:nested('callout', require('render-markdown.config.callout').validate)
+    spec:nested('checkbox', require('render-markdown.config.checkbox').validate)
+    spec:nested('code', require('render-markdown.config.code').validate)
+    spec:nested('dash', require('render-markdown.config.dash').validate)
+    spec:nested('document', require('render-markdown.config.document').validate)
+    spec:nested('heading', require('render-markdown.config.heading').validate)
+    spec:nested('html', require('render-markdown.config.html').validate)
+    spec:nested('indent', require('render-markdown.config.indent').validate)
+    spec:nested('inline_highlight', require('render-markdown.config.inline_highlight').validate)
+    spec:nested('latex', require('render-markdown.config.latex').validate)
+    spec:nested('link', require('render-markdown.config.link').validate)
+    spec:nested('padding', require('render-markdown.config.padding').validate)
+    spec:nested('paragraph', require('render-markdown.config.paragraph').validate)
+    spec:nested('pipe_table', require('render-markdown.config.pipe_table').validate)
+    spec:nested('quote', require('render-markdown.config.quote').validate)
+    spec:nested('sign', require('render-markdown.config.sign').validate)
+    spec:nested('win_options', require('render-markdown.config.win_options').validate)
+end
+
 ---@param mode string
 ---@return boolean
 function Config:render(mode)
@@ -123,7 +159,7 @@ function Config:hidden(mode, row)
     if not config.enabled or row == nil then
         return nil
     end
-    if vim.tbl_contains({ 'v', 'V', '\22' }, mode) then
+    if Env.mode.is(mode, { 'v', 'V', '\22' }) then
         local start = vim.fn.getpos('v')[2] - 1
         return Range.new(math.min(row, start), math.max(row, start))
     else

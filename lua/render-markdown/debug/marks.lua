@@ -56,17 +56,17 @@ end
 ---@return string
 function Mark:__tostring()
     local lines = {}
-    lines[#lines + 1] = string.rep('=', vim.o.columns - 1)
-    lines[#lines + 1] = string.format('row: %s', Mark.collapse(self.row))
-    lines[#lines + 1] = string.format('column: %s', Mark.collapse(self.col))
-    lines[#lines + 1] = string.format('hide: %s', vim.inspect(self.conceal))
+    lines[#lines + 1] = ('='):rep(vim.o.columns - 1)
+    lines[#lines + 1] = ('row: %s'):format(Mark.collapse(self.row))
+    lines[#lines + 1] = ('column: %s'):format(Mark.collapse(self.col))
+    lines[#lines + 1] = ('hide: %s'):format(vim.inspect(self.conceal))
 
     ---@param name string
     ---@param f fun(value: any): string
     local function add(name, f)
         local value = self.opts[name]
         if value ~= nil then
-            lines[#lines + 1] = string.format('  %s: %s', name, f(value))
+            lines[#lines + 1] = ('  %s: %s'):format(name, f(value))
         end
     end
 
@@ -92,7 +92,7 @@ end
 ---@return string
 function Mark.collapse(range)
     local s, e = range[1], range[2]
-    return e == nil and tostring(s) or string.format('%d -> %d', s, e)
+    return e == nil and tostring(s) or ('%d -> %d'):format(s, e)
 end
 
 ---@private
@@ -108,8 +108,7 @@ end
 function Mark.line(line)
     local result = {}
     for _, text in ipairs(line) do
-        result[#result + 1] = string.format(
-            '(%s, %s)',
+        result[#result + 1] = ('(%s, %s)'):format(
             Mark.text(text[1]),
             Mark.highlight(text[2])
         )
@@ -128,7 +127,7 @@ function Mark.text(text)
     end
     if #chars > 1 and same then
         local char = vim.fn.nr2char(first)
-        return string.format('rep(%s, %d)', char, #chars)
+        return ('rep(%s, %d)'):format(char, #chars)
     else
         return text
     end
@@ -150,21 +149,27 @@ local M = {}
 
 function M.show()
     local Env = require('render-markdown.lib.env')
-    local Iter = require('render-markdown.lib.iter')
+    local Range = require('render-markdown.core.range')
     local ui = require('render-markdown.core.ui')
 
     local buf = Env.buf.current()
     local win = Env.win.current()
     local row = assert(Env.row.get(buf, win), 'row must be known')
-    local marks = ui.row_marks(buf, row)
+    local range = Range.new(row, row)
 
-    vim.print(string.format('row: %d', row))
+    local marks = {} ---@type render.md.debug.Mark[]
+    for _, extmark in ipairs(ui.get(buf):get_marks()) do
+        if extmark:overlaps(range) then
+            marks[#marks + 1] = Mark.new(extmark:get())
+        end
+    end
+    table.sort(marks)
+
     if #marks == 0 then
-        vim.print('no decorations found')
+        vim.print(('no marks on row: %d'):format(row))
     else
-        local debug_marks = Iter.list.map(marks, Mark.new)
-        table.sort(debug_marks)
-        for _, mark in ipairs(debug_marks) do
+        vim.print(('marks on row: %d'):format(row))
+        for _, mark in ipairs(marks) do
             vim.print(tostring(mark))
         end
     end

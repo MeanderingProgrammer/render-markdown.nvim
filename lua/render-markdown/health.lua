@@ -5,7 +5,7 @@ local state = require('render-markdown.state')
 local M = {}
 
 ---@private
-M.version = '8.3.16'
+M.version = '8.3.17'
 
 function M.check()
     M.start('version')
@@ -61,7 +61,7 @@ end
 ---@private
 ---@param name string
 function M.start(name)
-    vim.health.start(string.format('render-markdown.nvim [%s]', name))
+    vim.health.start(('render-markdown.nvim [%s]'):format(name))
 end
 
 ---@private
@@ -81,12 +81,10 @@ end
 ---@param language string
 ---@return string[]
 function M.disable_advice(language)
+    local setup = "require('render-markdown').setup"
     return {
-        string.format('Disable %s support to avoid this warning', language),
-        string.format(
-            "require('render-markdown').setup({ %s = { enabled = false } })",
-            language
-        ),
+        ('disable %s support to avoid this warning'):format(language),
+        ('%s({ %s = { enabled = false } })'):format(setup, language),
     }
 end
 

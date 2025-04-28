@@ -19,7 +19,7 @@ end
 ---@return number
 function M.move_down(n)
     return M.time(function()
-        M.feed(string.format('%dj', n))
+        M.feed(('%dj'):format(n))
         -- Unsure why, but the CursorMoved event needs to be triggered manually
         vim.api.nvim_exec_autocmds('CursorMoved', {})
     end)
@@ -53,7 +53,7 @@ end
 ---@param actual number
 ---@param max number
 function M.less_than(actual, max)
-    True(actual < max, string.format('expected %f < %f', actual, max))
+    True(actual < max, ('expected %f < %f'):format(actual, max))
 end
 
 ---@param expected integer

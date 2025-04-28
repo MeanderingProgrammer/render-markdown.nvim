@@ -29,7 +29,7 @@ end
 ---@param highlight string
 ---@param left boolean
 function Render:padding(highlight, left)
-    local line, icon_highlight = {}, colors.bg_to_fg(highlight)
+    local line, icon_highlight = {}, colors.bg_as_fg(highlight)
     if left then
         self:append(line, self.info.inline_left, icon_highlight)
         self:append(line, self.info.inline_pad, highlight)

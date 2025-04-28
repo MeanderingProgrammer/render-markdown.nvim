@@ -183,7 +183,7 @@ function Render:border(node, above, empty)
         local width = self.info.width == 'block' and self.data.width - col
             or vim.o.columns
         self.marks:add('code_border', row, col, {
-            virt_text = { { border:rep(width), colors.bg_to_fg(highlight) } },
+            virt_text = { { border:rep(width), colors.bg_as_fg(highlight) } },
             virt_text_pos = 'overlay',
         })
     end

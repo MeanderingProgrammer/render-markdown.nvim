@@ -95,7 +95,7 @@ function Spec:list(keys, t, ts)
         elseif type(value) == 'table' then
             for i, item in ipairs(value) do
                 if type(item) ~= t then
-                    return false, string.format('[%d] is %s', i, type(item))
+                    return false, ('[%d] is %s'):format(i, type(item))
                 end
             end
             return true
@@ -118,8 +118,7 @@ function Spec:nested_list(keys, t, ts)
                 if type(item) == 'table' then
                     for j, nested in ipairs(item) do
                         if type(nested) ~= t then
-                            local info = string.format(
-                                '[%d][%d] is %s',
+                            local info = ('[%d][%d] is %s'):format(
                                 i,
                                 j,
                                 type(nested)
@@ -128,7 +127,7 @@ function Spec:nested_list(keys, t, ts)
                         end
                     end
                 elseif type(item) ~= t then
-                    return false, string.format('[%d] is %s', i, type(item))
+                    return false, ('[%d] is %s'):format(i, type(item))
                 end
             end
             return true
@@ -153,7 +152,7 @@ function Spec:one_or_list_of(keys, values, ts)
         elseif type(value) == 'table' then
             for i, item in ipairs(value) do
                 if not vim.tbl_contains(values, item) then
-                    return false, string.format('[%d] is %s', i, item)
+                    return false, ('[%d] is %s'):format(i, item)
                 end
             end
             return true

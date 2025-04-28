@@ -60,7 +60,7 @@ function MarkDetails.simplify(highlights)
     end
     local result = {}
     for _, highlight in ipairs(highlights) do
-        highlight = string.gsub(highlight, 'RenderMarkdown', 'Rm')
+        highlight = highlight:gsub('RenderMarkdown', 'Rm')
         result[#result + 1] = highlight
     end
     return table.concat(result, ':')

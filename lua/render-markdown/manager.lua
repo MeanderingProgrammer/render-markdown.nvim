@@ -3,9 +3,6 @@ local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
 local ui = require('render-markdown.core.ui')
 
----@type integer[]
-local buffers = {}
-
 ---@class render.md.manager.Config
 ---@field ignore fun(buf: integer): boolean
 ---@field change_events string[]
@@ -18,6 +15,10 @@ local M = {}
 
 ---@private
 M.group = vim.api.nvim_create_augroup('RenderMarkdown', {})
+
+---@private
+---@type integer[]
+M.buffers = {}
 
 ---called from state on setup
 ---@param config render.md.manager.Config
@@ -58,7 +59,7 @@ end
 ---@param buf integer
 ---@return boolean
 function M.attached(buf)
-    return vim.tbl_contains(buffers, buf)
+    return vim.tbl_contains(M.buffers, buf)
 end
 
 ---@param enabled? boolean
@@ -72,7 +73,7 @@ function M.set_all(enabled)
     else
         state.enabled = not state.enabled
     end
-    for _, buf in ipairs(buffers) do
+    for _, buf in ipairs(M.buffers) do
         M.update(buf, 'UserCommand')
     end
 end
@@ -183,7 +184,7 @@ function M.should_attach(buf)
 
     local file_size, max_file_size = Env.file_size_mb(buf), config.max_file_size
     if file_size > max_file_size then
-        local reason = string.format('%f > %f', file_size, max_file_size)
+        local reason = ('%f > %f'):format(file_size, max_file_size)
         log.buf('info', 'attach', buf, 'skip', 'file size', reason)
         return false
     end
@@ -194,7 +195,7 @@ function M.should_attach(buf)
     end
 
     log.buf('info', 'attach', buf, 'success')
-    buffers[#buffers + 1] = buf
+    M.buffers[#M.buffers + 1] = buf
     return true
 end
 

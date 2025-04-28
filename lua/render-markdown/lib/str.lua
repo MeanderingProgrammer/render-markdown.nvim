@@ -46,7 +46,7 @@ function M.pad(n)
     if n <= 0 then
         return ''
     end
-    return string.rep(' ', n)
+    return (' '):rep(n)
 end
 
 return M

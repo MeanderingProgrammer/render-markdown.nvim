@@ -194,29 +194,33 @@ function Context:for_each(callback)
     end
 end
 
----@class render.md.context.Cache: { [integer]: render.md.Context }
-local Cache = {}
-
 ---@class render.md.context.Manager
 local M = {}
+
+---@private
+---@type table<integer, render.md.Context>
+M.cache = {}
 
 ---@param buf integer
 ---@param win integer
 ---@return boolean
 function M.contains(buf, win)
-    local context = Cache[buf]
+    local context = M.cache[buf]
     return context ~= nil and context:contains(win)
 end
 
 ---@param props render.md.context.Props
+---@return render.md.Context
 function M.reset(props)
-    Cache[props.buf] = Context.new(props, 10)
+    local context = Context.new(props, 10)
+    M.cache[props.buf] = context
+    return context
 end
 
 ---@param buf integer
 ---@return render.md.Context
 function M.get(buf)
-    return Cache[buf]
+    return assert(M.cache[buf], 'missing context')
 end
 
 return M

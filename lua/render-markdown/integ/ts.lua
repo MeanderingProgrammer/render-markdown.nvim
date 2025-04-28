@@ -88,7 +88,7 @@ function M.disable(language)
         return
     end
     if query.query.disable_pattern == nil then
-        Compat.release_notification('TSQuery missing disable_pattern API')
+        Compat.release('TSQuery missing disable_pattern API')
         return
     end
     local query_directives = query.info.patterns

@@ -1,5 +1,3 @@
-local Compat = require('render-markdown.lib.compat')
-
 ---@class render.md.Extmark
 ---@field private id? integer
 ---@field private mark render.md.Mark
@@ -54,8 +52,8 @@ function Extmark:show(ns, buf)
     if ok then
         self.id = id
     else
-        local cause = string.format('nvim_buf_set_extmark error (%s)', id)
-        Compat.release_notification(cause)
+        local Compat = require('render-markdown.lib.compat')
+        Compat.release(('nvim_buf_set_extmark error (%s)'):format(id))
     end
 end
 

@@ -42,7 +42,7 @@ function M.fix_lsp_window(buf, win, extmarks)
 end
 
 ---@param cause string
-function M.release_notification(cause)
+function M.release(cause)
     local message = {
         'MeanderingProgrammer/render-markdown.nvim',
         cause,

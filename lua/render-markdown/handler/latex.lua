@@ -5,11 +5,12 @@ local Node = require('render-markdown.lib.node')
 local Str = require('render-markdown.lib.str')
 local log = require('render-markdown.core.log')
 
----@class render.md.latex.Cache: { [string]: string }
-local Cache = {}
-
 ---@class render.md.handler.Latex: render.md.Handler
 local M = {}
+
+---@private
+---@type table<string, string>
+M.cache = {}
 
 ---@param ctx render.md.handler.Context
 ---@return render.md.Mark[]
@@ -27,14 +28,14 @@ function M.parse(ctx)
     local node = Node.new(ctx.buf, ctx.root)
     log.node('latex', node)
 
-    local raw_expression = Cache[node.text]
+    local raw_expression = M.cache[node.text]
     if raw_expression == nil then
         raw_expression = vim.fn.system(latex.converter, node.text)
         if vim.v.shell_error == 1 then
             log.add('error', latex.converter, raw_expression)
             raw_expression = 'error'
         end
-        Cache[node.text] = raw_expression
+        M.cache[node.text] = raw_expression
     end
 
     local expressions = {} ---@type string[]

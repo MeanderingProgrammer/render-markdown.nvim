@@ -9,8 +9,7 @@ update:
   # https://github.com/kdheepak/panvimdoc
   ../../open-source/panvimdoc/panvimdoc.sh \
     --project-name render-markdown \
-    --input-file README.md \
-    --vim-version 0.11.0
+    --input-file README.md
 
 test:
   just busted "tests"

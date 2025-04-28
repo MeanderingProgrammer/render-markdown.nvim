@@ -23,23 +23,6 @@ local builtin_handlers = {
     markdown_inline = require('render-markdown.handler.markdown_inline'),
 }
 
----@class render.md.ui.Cache
----@field states table<integer, render.md.Buffer>
-local Cache = {
-    states = {},
-}
-
----@param buf integer
----@return render.md.Buffer
-function Cache.get(buf)
-    local buffer = Cache.states[buf]
-    if buffer == nil then
-        buffer = Buffer.new(buf)
-        Cache.states[buf] = buffer
-    end
-    return buffer
-end
-
 ---@class render.md.ui.Config
 ---@field on render.md.callback.Config
 ---@field custom_handlers table<string, render.md.Handler>
@@ -50,45 +33,30 @@ local M = {}
 
 M.ns = vim.api.nvim_create_namespace('render-markdown.nvim')
 
+---@private
+---@type table<integer, render.md.Buffer>
+M.cache = {}
+
 ---called from state on setup
 ---@param config render.md.ui.Config
 function M.setup(config)
     M.config = config
-    M.invalidate_cache()
-end
-
----@private
-function M.invalidate_cache()
-    for buf, buffer in pairs(Cache.states) do
-        M.clear(buf, buffer)
+    -- reset cache
+    for buf, buffer in pairs(M.cache) do
+        M.clear_buffer(buf, buffer)
     end
-    Cache.states = {}
+    M.cache = {}
 end
 
 ---@param buf integer
----@param row integer
----@return render.md.Mark[]
-function M.row_marks(buf, row)
-    local config = state.get(buf)
-    local buffer = Cache.get(buf)
-    local mode = Env.mode.get()
-    local hidden = assert(config:hidden(mode, row), 'range must be known')
-
-    local marks = {}
-    for _, extmark in ipairs(buffer:get_marks()) do
-        if extmark:overlaps(hidden) then
-            marks[#marks + 1] = extmark:get()
-        end
+---@return render.md.Buffer
+function M.get(buf)
+    local result = M.cache[buf]
+    if result == nil then
+        result = Buffer.new(buf)
+        M.cache[buf] = result
     end
-    return marks
-end
-
----@private
----@param buf integer
----@param buffer render.md.Buffer
-function M.clear(buf, buffer)
-    vim.api.nvim_buf_clear_namespace(buf, M.ns, 0, -1)
-    buffer:set_marks(nil)
+    return result
 end
 
 ---Used directly by fzf-lua: https://github.com/ibhagwan/fzf-lua/blob/main/lua/fzf-lua/previewer/builtin.lua
@@ -97,14 +65,14 @@ end
 ---@param event string
 ---@param change boolean
 function M.update(buf, win, event, change)
-    log.buf('info', 'update', buf, event, string.format('change %s', change))
+    log.buf('info', 'update', buf, event, ('change %s'):format(change))
     if not Env.valid(buf, win) then
         return
     end
 
     local parse = M.parse(buf, win, change)
     local config = state.get(buf)
-    local buffer = Cache.get(buf)
+    local buffer = M.get(buf)
     if buffer:is_empty() then
         return
     end
@@ -126,22 +94,28 @@ function M.run_update(buf, win, change)
 
     local parse = M.parse(buf, win, change)
     local config = state.get(buf)
-    local buffer = Cache.get(buf)
+    local buffer = M.get(buf)
     local mode = Env.mode.get()
     local row = Env.row.get(buf, win)
-    local next_state = M.next_state(config, win, mode)
 
-    log.buf('info', 'state', buf, next_state)
+    local render = state.enabled
+        and config.enabled
+        and config:render(mode)
+        and not Env.win.get(win, 'diff')
+        and Env.win.view(win).leftcol == 0
+
+    log.buf('info', 'render', buf, render)
+    local next_state = render and 'rendered' or 'default'
     for _, window in ipairs(Env.buf.windows(buf)) do
         for name, value in pairs(config.win_options) do
             Env.win.set(window, name, value[next_state])
         end
     end
 
-    if next_state == 'rendered' then
+    if render then
         local initial = buffer:initial()
         if initial or parse then
-            M.clear(buf, buffer)
+            M.clear_buffer(buf, buffer)
             buffer:set_marks(M.parse_buffer({
                 buf = buf,
                 win = win,
@@ -149,14 +123,14 @@ function M.run_update(buf, win, change)
                 mode = mode,
             }))
         end
-        local hidden = config:hidden(mode, row)
+        local range = config:hidden(mode, row)
         local extmarks = buffer:get_marks()
         if initial then
             Compat.fix_lsp_window(buf, win, extmarks)
             M.config.on.initial({ buf = buf, win = win })
         end
         for _, extmark in ipairs(extmarks) do
-            if extmark:get().conceal and extmark:overlaps(hidden) then
+            if extmark:get().conceal and extmark:overlaps(range) then
                 extmark:hide(M.ns, buf)
             else
                 extmark:show(M.ns, buf)
@@ -164,7 +138,7 @@ function M.run_update(buf, win, change)
         end
         M.config.on.render({ buf = buf, win = win })
     else
-        M.clear(buf, buffer)
+        M.clear_buffer(buf, buffer)
         M.config.on.clear({ buf = buf, win = win })
     end
 end
@@ -180,17 +154,11 @@ function M.parse(buf, win, change)
 end
 
 ---@private
----@param config render.md.main.Config
----@param win integer
----@param mode string
----@return 'default'|'rendered'
-function M.next_state(config, win, mode)
-    local render = state.enabled
-        and config.enabled
-        and config:render(mode)
-        and not Env.win.get(win, 'diff')
-        and Env.win.view(win).leftcol == 0
-    return render and 'rendered' or 'default'
+---@param buf integer
+---@param buffer render.md.Buffer
+function M.clear_buffer(buf, buffer)
+    vim.api.nvim_buf_clear_namespace(buf, M.ns, 0, -1)
+    buffer:set_marks(nil)
 end
 
 ---@private
@@ -203,25 +171,25 @@ function M.parse_buffer(props)
         log.buf('error', 'fail', buf, 'no treesitter parser found')
         return {}
     end
-    -- Reset buffer context
-    Context.reset(props)
-    -- Make sure injections are processed
-    Context.get(buf):parse(parser)
-    -- Parse markdown after all other nodes to take advantage of state
-    local marks = {}
-    local markdown_contexts = {}
+    -- reset buffer context
+    local context = Context.reset(props)
+    -- make sure injections are processed
+    context:parse(parser)
+    -- parse markdown after other nodes to get accurate state
+    local marks = {} ---@type render.md.Mark[]
+    local markdown = {} ---@type render.md.handler.Context[]
     parser:for_each_tree(function(tree, language_tree)
         local language = language_tree:lang()
         ---@type render.md.handler.Context
         local ctx = { buf = buf, root = tree:root() }
         if language == 'markdown' then
-            markdown_contexts[#markdown_contexts + 1] = ctx
+            markdown[#markdown + 1] = ctx
         else
-            vim.list_extend(marks, M.parse_tree(ctx, language))
+            vim.list_extend(marks, M.parse_tree(context, ctx, language))
         end
     end)
-    for _, ctx in ipairs(markdown_contexts) do
-        vim.list_extend(marks, M.parse_tree(ctx, 'markdown'))
+    for _, ctx in ipairs(markdown) do
+        vim.list_extend(marks, M.parse_tree(context, ctx, 'markdown'))
     end
     return Iter.list.map(marks, Extmark.new)
 end
@@ -229,12 +197,13 @@ end
 ---Run user & builtin handlers when available. User handler is always executed,
 ---builtin handler is skipped if user handler does not specify extends.
 ---@private
+---@param context render.md.Context
 ---@param ctx render.md.handler.Context
 ---@param language string
 ---@return render.md.Mark[]
-function M.parse_tree(ctx, language)
+function M.parse_tree(context, ctx, language)
     log.buf('debug', 'language', ctx.buf, language)
-    if not Context.get(ctx.buf):overlaps(ctx.root) then
+    if not context:overlaps(ctx.root) then
         return {}
     end
 

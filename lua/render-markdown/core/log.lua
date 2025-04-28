@@ -58,7 +58,7 @@ function M.runtime(name, callback)
             local end_time = Compat.uv.hrtime()
             local elapsed = (end_time - start_time) / 1e+6
             assert(elapsed < 1000)
-            vim.print(string.format('%8s : %5.1f ms', name:upper(), elapsed))
+            vim.print(('%8s : %5.1f ms'):format(name:upper(), elapsed))
         end
     else
         return callback
@@ -86,7 +86,7 @@ end
 ---@param group string
 ---@param value string
 function M.unhandled_type(language, group, value)
-    local message = string.format('%s -> %s -> %s', language, group, value)
+    local message = ('%s -> %s -> %s'):format(language, group, value)
     M.add('error', 'unhandled type', message)
 end
 
@@ -161,8 +161,7 @@ function M.flush()
     end
     local file = assert(io.open(M.file, 'a'))
     for _, entry in ipairs(M.entries) do
-        local line = string.format(
-            '%s %s [%s] - %s',
+        local line = ('%s %s [%s] - %s'):format(
             entry.date,
             entry.level,
             entry.name,

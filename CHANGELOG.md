@@ -8,6 +8,14 @@
   [7f75b16](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7f75b162dbe1e1b9daf1b1201b97a93481169614)
 - support function for paragraph.left_margin [#401](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/401)
   [dfc1299](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/dfc1299d9f32b53b34b7ac6c3a7553b5fd29977f)
+- include removed values in config diff [6531aa7](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/6531aa7f615926de1962102d90fff69665b672d7)
+- support wiki style media links, improve custom links [#410](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/410)
+  [6910fe1](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/6910fe12a9634be5ce4e19aff4d3b45abf3f0dd3)
+- combine highlights for links [#413](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/413)
+  [da3e146](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/da3e146acaf2069a0e975d675d172ac94d1e2f88)
+- set quote highlights for 6 levels of nesting [7051859](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/70518594a4bf1a35d4e331677dd86bc065e599a4)
+  [cyberdream](https://github.com/scottmckendry/cyberdream.nvim/pull/182)
+- use conceal lines for setext heading underline [78ffe3b](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/78ffe3b0500bbc7e37fabde723d96661538e8b32)
 
 ### Bug Fixes
 
@@ -15,6 +23,10 @@
   [dfffdd2](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/dfffdd221570d36ac80d1a599643140a319a36de)
 - disable line wrapping in LSP hover docs in some cases [#408](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/408)
   [080104e](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/080104e4dce26819efb4f4c83d1b7b2d82b96f7c)
+
+### Collaborator Shoutouts
+
+- @scottmckendry
 
 ## 8.3.0 (2025-04-15)
 

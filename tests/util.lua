@@ -99,7 +99,7 @@ function M.bullet(level, spaces)
     ---@type vim.api.keyset.set_extmark
     return {
         virt_text = {
-            { string.rep(' ', spaces or 0) .. icons[level], 'RmBullet' },
+            { (' '):rep(spaces or 0) .. icons[level], 'RmBullet' },
         },
         virt_text_pos = 'overlay',
     }
@@ -144,7 +144,7 @@ function M.padding(spaces, priority, highlight)
     ---@type vim.api.keyset.set_extmark
     return {
         priority = priority,
-        virt_text = { { string.rep(' ', spaces), highlight or 'Normal' } },
+        virt_text = { { (' '):rep(spaces), highlight or 'Normal' } },
         virt_text_pos = 'inline',
     }
 end
@@ -182,7 +182,7 @@ function M.indent.line(lengths)
         if length == 1 then
             result[#result + 1] = { '▎', 'RmIndent' }
         else
-            result[#result + 1] = { string.rep(' ', length), 'Normal' }
+            result[#result + 1] = { (' '):rep(length), 'Normal' }
         end
     end
     return result
@@ -197,7 +197,7 @@ function M.heading.sign(level)
     ---@type vim.api.keyset.set_extmark
     return {
         sign_text = '󰫎 ',
-        sign_hl_group = string.format('Rm_RmH%d_RmSign', level),
+        sign_hl_group = ('Rm_RmH%d_RmSign'):format(level),
     }
 end
 
@@ -206,7 +206,7 @@ end
 function M.heading.icon(level)
     local icons =
         { '󰲡 ', ' 󰲣 ', '  󰲥 ', '   󰲧 ', '    󰲩 ', '     󰲫 ' }
-    local highlight = string.format('RmH%d:RmH%dBg', level, level)
+    local highlight = ('RmH%d:RmH%dBg'):format(level, level)
     ---@type vim.api.keyset.set_extmark
     return {
         virt_text = { { icons[level], highlight } },
@@ -220,7 +220,7 @@ function M.heading.bg(level)
     ---@type vim.api.keyset.set_extmark
     return {
         hl_eol = true,
-        hl_group = string.format('RmH%dBg', level),
+        hl_group = ('RmH%dBg'):format(level),
     }
 end
 
@@ -241,7 +241,7 @@ function M.code.sign(name)
     ---@type vim.api.keyset.set_extmark
     return {
         sign_text = icon,
-        sign_hl_group = string.format('Rm_%s_RmSign', highlight),
+        sign_hl_group = ('Rm_%s_RmSign'):format(highlight),
     }
 end
 
@@ -257,12 +257,10 @@ function M.code.icon(name, padding)
     elseif name == 'lua' then
         icon, highlight = '󰢱 ', 'MiniIconsAzure'
     end
-    local prefix = string.rep(' ', padding or 0)
+    local text = ('%s%s%s'):format((' '):rep(padding or 0), icon, name)
     ---@type vim.api.keyset.set_extmark
     return {
-        virt_text = {
-            { prefix .. icon .. name, highlight .. ':' .. 'RmCodeBorder' },
-        },
+        virt_text = { { text, ('%s:RmCodeBorder'):format(highlight) } },
         virt_text_pos = 'inline',
     }
 end
@@ -282,7 +280,7 @@ function M.code.hide(width)
     ---@type vim.api.keyset.set_extmark
     return {
         priority = 0,
-        virt_text = { { string.rep(' ', vim.o.columns * 2), 'Normal' } },
+        virt_text = { { (' '):rep(vim.o.columns * 2), 'Normal' } },
         virt_text_pos = 'win_col',
         virt_text_win_col = width,
     }
@@ -302,7 +300,7 @@ function M.code.border(kind, width)
         local icon = kind == 'above' and '▄' or '▀'
         ---@type vim.api.keyset.set_extmark
         return {
-            virt_text = { { icon:rep(width), 'Rm_bgtofg_RmCodeBorder' } },
+            virt_text = { { icon:rep(width), 'Rm_RmCodeBorder_bg_as_fg' } },
             virt_text_pos = 'overlay',
         }
     end
@@ -335,7 +333,7 @@ function M.table.border(above, lengths)
     local chars = above and { '┌', '┬', '┐' } or { '└', '┴', '┘' }
     local highlight = above and 'RmTableHead' or 'RmTableRow'
     local parts = vim.tbl_map(function(length)
-        return string.rep('─', length)
+        return ('─'):rep(length)
     end, lengths)
     local text = chars[1] .. table.concat(parts, chars[2]) .. chars[3]
     ---@type vim.api.keyset.set_extmark
@@ -351,7 +349,7 @@ end
 function M.table.delimiter(sections, padding)
     local parts = vim.tbl_map(function(widths)
         local section = vim.tbl_map(function(amount)
-            return amount == 1 and '━' or string.rep('─', amount)
+            return amount == 1 and '━' or ('─'):rep(amount)
         end, widths)
         return table.concat(section, '')
     end, sections)
@@ -359,7 +357,7 @@ function M.table.delimiter(sections, padding)
         { '├' .. table.concat(parts, '┼') .. '┤', 'RmTableHead' },
     }
     if padding ~= nil then
-        line[#line + 1] = { string.rep(' ', padding), 'Normal' }
+        line[#line + 1] = { (' '):rep(padding), 'Normal' }
     end
     ---@type vim.api.keyset.set_extmark
     return {
@@ -385,10 +383,10 @@ end
 function M.assert_marks(expected)
     local actual = M.actual_marks()
     for i = 1, math.min(#expected, #actual) do
-        local message = string.format('Marks at index %d mismatch', i)
+        local message = ('marks at index %d mismatch'):format(i)
         Eq(expected[i], actual[i], message)
     end
-    Eq(#expected, #actual, 'Different number of marks found')
+    Eq(#expected, #actual, 'different number of marks found')
 end
 
 ---@private

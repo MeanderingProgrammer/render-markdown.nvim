@@ -1,11 +1,3 @@
----@class render.md.colors.Cache
----@field combine table<string, { fg: string, bg: string }>
----@field bg_to_fg table<string, { hl: string }>
-local Cache = {
-    combine = {},
-    bg_to_fg = {},
-}
-
 ---@class render.md.Colors
 local M = {}
 
@@ -69,6 +61,14 @@ M.colors = {
     Error           = 'DiagnosticError',
 }
 
+---@private
+---@class render.md.colors.Cache
+M.cache = {}
+---@type table<string, { fg: string, bg: string }>
+M.cache.combine = {}
+---@type table<string, { hl: string }>
+M.cache.bg_as_fg = {}
+
 ---called from plugin directory
 function M.init()
     for name, link in pairs(M.colors) do
@@ -86,11 +86,12 @@ end
 
 ---@private
 function M.reload()
-    for _, color in pairs(Cache.combine) do
+    vim.print(M.cache)
+    for _, color in pairs(M.cache.combine) do
         M.combine(color.fg, color.bg, true)
     end
-    for _, color in pairs(Cache.bg_to_fg) do
-        M.bg_to_fg(color.hl, true)
+    for _, color in pairs(M.cache.bg_as_fg) do
+        M.bg_as_fg(color.hl, true)
     end
 end
 
@@ -99,8 +100,8 @@ end
 ---@param force? boolean
 ---@return string
 function M.combine(foreground, background, force)
-    local name = string.format('%s_%s_%s', M.prefix, foreground, background)
-    if Cache.combine[name] == nil or force then
+    local name = ('%s_%s_%s'):format(M.prefix, foreground, background)
+    if M.cache.combine[name] == nil or force then
         local fg, bg = M.get_hl(foreground), M.get_hl(background)
         vim.api.nvim_set_hl(0, name, {
             fg = fg.fg,
@@ -108,7 +109,7 @@ function M.combine(foreground, background, force)
             ctermfg = fg.ctermfg,
             ctermbg = bg.ctermbg,
         })
-        Cache.combine[name] = { fg = foreground, bg = background }
+        M.cache.combine[name] = { fg = foreground, bg = background }
     end
     return name
 end
@@ -116,15 +117,15 @@ end
 ---@param highlight string
 ---@param force? boolean
 ---@return string
-function M.bg_to_fg(highlight, force)
-    local name = string.format('%s_bgtofg_%s', M.prefix, highlight)
-    if Cache.bg_to_fg[name] == nil or force then
+function M.bg_as_fg(highlight, force)
+    local name = ('%s_%s_bg_as_fg'):format(M.prefix, highlight)
+    if M.cache.bg_as_fg[name] == nil or force then
         local hl = M.get_hl(highlight)
         vim.api.nvim_set_hl(0, name, {
             fg = hl.bg,
             ctermfg = hl.ctermbg,
         })
-        Cache.bg_to_fg[name] = { hl = highlight }
+        M.cache.bg_as_fg[name] = { hl = highlight }
     end
     return name
 end

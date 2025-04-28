@@ -36,7 +36,7 @@ describe('box_dash_quote.md', function()
         marks:add(row:inc(), row:get(), 0, 2, util.bullet(1))
 
         marks:add(row:inc(2), nil, 0, nil, {
-            virt_text = { { string.rep('─', vim.o.columns), 'RmDash' } },
+            virt_text = { { ('─'):rep(vim.o.columns), 'RmDash' } },
             virt_text_pos = 'overlay',
         })
 

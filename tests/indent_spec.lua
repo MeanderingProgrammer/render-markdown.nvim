@@ -7,7 +7,7 @@ local util = require('tests.util')
 ---@return vim.api.keyset.set_extmark
 local function border(level, position)
     local icon = position == 'above' and '▄' or '▀'
-    local background = string.format('Rm_bgtofg_RmH%dBg', level)
+    local background = ('Rm_RmH%dBg_bg_as_fg'):format(level)
     ---@type vim.api.keyset.set_extmark
     return {
         virt_text = { { icon:rep(vim.o.columns), background } },

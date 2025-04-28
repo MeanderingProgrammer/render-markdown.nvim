@@ -27,21 +27,21 @@ function M.init()
 end
 
 ---@private
----@param opts { fargs: string[] }
-function M.command(opts)
-    local args, err = opts.fargs, nil
-    if #args == 0 or #args == 1 then
-        local command = #args == 0 and api.enable or api[args[1]]
+---@param args vim.api.keyset.create_user_command.command_args
+function M.command(args)
+    local fargs, err = args.fargs, nil
+    if #fargs == 0 or #fargs == 1 then
+        local command = #fargs == 0 and api.enable or api[fargs[1]]
         if command ~= nil then
             command()
         else
-            err = string.format('unexpected command: %s', args[1])
+            err = ('unexpected command: %s'):format(fargs[1])
         end
     else
-        err = string.format('unexpected # arguments: %d', #args)
+        err = ('unexpected # arguments: %d'):format(#fargs)
     end
     if err ~= nil then
-        vim.notify(string.format('%s: %s', M.plugin, err), vim.log.levels.ERROR)
+        vim.notify(('%s: %s'):format(M.plugin, err), vim.log.levels.ERROR)
     end
 end
 
