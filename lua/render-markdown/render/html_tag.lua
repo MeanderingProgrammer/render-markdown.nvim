@@ -8,11 +8,11 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     local tag = self.node:child('start_tag')
-    if tag == nil then
+    if not tag then
         return false
     end
     local name = tag:child('tag_name')
-    if name == nil then
+    if not name then
         return false
     end
     self.info = self.config.html.tag[name.text]

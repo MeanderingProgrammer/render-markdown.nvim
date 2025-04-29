@@ -9,23 +9,25 @@ function M.split(s, sep, trimempty)
     return vim.split(s, sep, { plain = true, trimempty = trimempty })
 end
 
+---number of hashtags at the start of the string
+---@param s string
+---@return integer
+function M.level(s)
+    local match = s:match('^%s*(#+)')
+    return match and #match or 0
+end
+
 ---@param s? string
 ---@return integer
 function M.width(s)
-    if s == nil then
-        return 0
-    end
-    return vim.fn.strdisplaywidth(s)
+    return s and vim.fn.strdisplaywidth(s) or 0
 end
 
 ---@param line? render.md.mark.Line
 ---@return integer
 function M.line_width(line)
-    if line == nil then
-        return 0
-    end
     local result = 0
-    for _, text in ipairs(line) do
+    for _, text in ipairs(line or {}) do
         result = result + M.width(text[1])
     end
     return result
@@ -37,16 +39,13 @@ end
 function M.spaces(pos, s)
     local pattern = pos == 'start' and '^%s*' or '%s*$'
     local from, to = s:find(pattern)
-    return (from ~= nil and to ~= nil) and to - from + 1 or 0
+    return (from and to) and to - from + 1 or 0
 end
 
 ---@param n integer
 ---@return string
 function M.pad(n)
-    if n <= 0 then
-        return ''
-    end
-    return (' '):rep(n)
+    return n > 0 and (' '):rep(n) or ''
 end
 
 return M

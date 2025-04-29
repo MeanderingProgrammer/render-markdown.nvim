@@ -27,7 +27,7 @@ function Source:get_completions(context, callback)
     -- nvim_win_get_cursor: (1,0)-indexed
     local cursor = context.cursor
     local items = source.items(context.bufnr, cursor[1] - 1, cursor[2])
-    if items == nil then
+    if not items then
         callback(nil)
     else
         callback({
@@ -52,7 +52,7 @@ function Source.setup()
     end
     M.initialized = true
     local has_blink, blink = pcall(require, 'blink.cmp')
-    if not has_blink or blink == nil then
+    if not has_blink or not blink then
         return
     end
     local id = 'markdown'

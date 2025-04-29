@@ -13,26 +13,26 @@ end
 
 function Render:render()
     local callout = self.config:get_callout(self.node)
-    if callout ~= nil then
+    if callout then
         self:callout(callout)
         return
     end
 
     local checkbox = self.config:get_checkbox(self.node)
-    if checkbox ~= nil then
+    if checkbox then
         self:checkbox(checkbox)
         return
     end
 
     local _, line = self.node:line('first', 0)
     local wiki_pattern = '[' .. self.node.text .. ']'
-    if line ~= nil and line:find(wiki_pattern, 1, true) ~= nil then
+    if line and line:find(wiki_pattern, 1, true) then
         self:wiki_link()
         return
     end
 
     local _, _, text = self.node.text:find('^%[%^(.+)%]$')
-    if text ~= nil then
+    if text then
         self:footnote(text)
         return
     end
@@ -48,7 +48,7 @@ function Render:callout(callout)
     self.marks:over('callout', self.node, {
         virt_text = { { title or callout.rendered, callout.highlight } },
         virt_text_pos = 'overlay',
-        conceal = title ~= nil and '' or nil,
+        conceal = title and '' or nil,
     })
     self.context:add_callout(self.node.start_row, callout)
 end
@@ -59,7 +59,7 @@ end
 function Render:callout_title(callout)
     -- https://help.obsidian.md/Editing+and+formatting/Callouts#Change+the+title
     local content = self.node:parent('inline')
-    if content ~= nil then
+    if content then
         local line = Str.split(content.text, '\n', true)[1]
         local prefix = callout.raw:lower()
         if #line > #prefix and vim.startswith(line:lower(), prefix) then
@@ -107,7 +107,7 @@ function Render:wiki_link()
     local icon = { link.wiki.icon, link.wiki.highlight }
     self:link_icon(ctx.destination, icon)
     local body = link.wiki.body(ctx)
-    if body == nil then
+    if not body then
         -- add icon
         self.marks:start('link', self.node, {
             hl_mode = 'combine',
@@ -157,9 +157,11 @@ function Render:footnote(text)
         return
     end
     local body = footnote.prefix .. text .. footnote.suffix
-    local value = not footnote.superscript and body
-        or Converter.superscript(body)
-    if value == nil then
+    local value = body ---@type string?
+    if footnote.superscript then
+        value = Converter.superscript(body)
+    end
+    if not value then
         return
     end
     self.marks:over('link', self.node, {

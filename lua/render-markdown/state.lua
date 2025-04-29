@@ -46,7 +46,7 @@ end
 ---@return render.md.main.Config
 function M.get(buf)
     local result = M.cache[buf]
-    if result == nil then
+    if not result then
         result = Config.new(M.config, buf)
         M.cache[buf] = result
     end

@@ -16,7 +16,7 @@ end
 
 function Render:render()
     self.marks:over(true, self.node, { conceal = '' })
-    if self.info.text ~= nil then
+    if self.info.text then
         self.marks:start(true, self.node, {
             virt_text = { { self.info.text, self.info.highlight } },
             virt_text_pos = 'inline',

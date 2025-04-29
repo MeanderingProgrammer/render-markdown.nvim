@@ -15,7 +15,7 @@ function Render:setup()
     if self.context:skip(link) then
         return false
     end
-    if self.node:descendant('shortcut_link') ~= nil then
+    if self.node:descendant('shortcut_link') then
         return false
     end
     ---@type render.md.mark.Text
@@ -28,7 +28,7 @@ function Render:setup()
         icon[1] = link.image
     elseif self.node.type == 'inline_link' then
         local destination = self.node:child('link_destination')
-        if destination ~= nil then
+        if destination then
             self:link_icon(destination.text, icon)
         end
     elseif self.node.type == 'uri_autolink' then

@@ -52,7 +52,7 @@ end
 ---@return render.md.Buffer
 function M.get(buf)
     local result = M.cache[buf]
-    if result == nil then
+    if not result then
         result = Buffer.new(buf)
         M.cache[buf] = result
     end
@@ -167,7 +167,7 @@ end
 function M.parse_buffer(props)
     local buf = props.buf
     local has_parser, parser = pcall(vim.treesitter.get_parser, buf)
-    if not has_parser or parser == nil then
+    if not has_parser or not parser then
         log.buf('error', 'fail', buf, 'no treesitter parser found')
         return {}
     end
@@ -209,7 +209,7 @@ function M.parse_tree(context, ctx, language)
 
     local marks = {}
     local user = M.config.custom_handlers[language]
-    if user ~= nil then
+    if user then
         log.buf('debug', 'handler', ctx.buf, 'user')
         vim.list_extend(marks, user.parse(ctx))
         if not user.extends then
@@ -217,7 +217,7 @@ function M.parse_tree(context, ctx, language)
         end
     end
     local builtin = builtin_handlers[language]
-    if builtin ~= nil then
+    if builtin then
         log.buf('debug', 'handler', ctx.buf, 'builtin')
         vim.list_extend(marks, builtin.parse(ctx))
     end

@@ -38,7 +38,7 @@ end
 ---@return number[]
 function Mark:priorities()
     local virt_row = 0
-    if self.opts.virt_lines ~= nil then
+    if self.opts.virt_lines then
         virt_row = self.opts.virt_lines_above and -0.5 or 0.5
     end
     local win_col = self.opts.virt_text_win_col or 0
@@ -92,7 +92,7 @@ end
 ---@return string
 function Mark.collapse(range)
     local s, e = range[1], range[2]
-    return e == nil and tostring(s) or ('%d -> %d'):format(s, e)
+    return e and ('%d -> %d'):format(s, e) or tostring(s)
 end
 
 ---@private

@@ -130,7 +130,7 @@ function M.resolve_config(user)
         config.code.position = 'right'
     end
     -- use lazy.nvim file type configuration if available and no user value is specified
-    if user.file_types == nil then
+    if not user.file_types then
         local lazy_file_types = require('render-markdown.lib.env').lazy('ft')
         if #lazy_file_types > 0 then
             config.file_types = lazy_file_types

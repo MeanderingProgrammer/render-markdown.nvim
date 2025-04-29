@@ -9,8 +9,8 @@ local colors = require('render-markdown.colors')
 ---@field level integer
 ---@field icon? string
 ---@field sign? string
----@field foreground? string
----@field background? string
+---@field fg? string
+---@field bg? string
 ---@field width render.md.heading.Width
 ---@field left_margin number
 ---@field left_pad number
@@ -19,9 +19,9 @@ local colors = require('render-markdown.colors')
 ---@field border boolean
 
 ---@class render.md.heading.Box
----@field margin integer
 ---@field padding integer
 ---@field content integer
+---@field margin integer
 
 ---@class render.md.render.Heading: render.md.Render
 ---@field private info render.md.heading.Config
@@ -38,14 +38,11 @@ function Render:setup()
     if self.context.conceal:hidden(self.node) then
         return false
     end
-
-    local atx = nil
-    local marker = nil
-    local level = nil
+    local atx, marker, level
     if self.node.type == 'atx_heading' and self.info.atx then
         atx = true
         marker = assert(self.node:child_at(0), 'atx heading missing marker')
-        level = Str.width(marker.text)
+        level = Str.level(marker.text)
     elseif self.node.type == 'setext_heading' and self.info.setext then
         atx = false
         marker = assert(self.node:child_at(1), 'ext heading missing underline')
@@ -53,29 +50,15 @@ function Render:setup()
     else
         return false
     end
-
     local custom = self:custom()
-
-    local icon, icons = nil, self.info.icons
-    if type(icons) == 'function' then
-        icon = icons({
-            level = level,
-            sections = self.node:sections(),
-        })
-    else
-        icon = List.cycle(icons, level)
-    end
-
     self.data = {
         atx = atx,
         marker = marker,
         level = level,
-        icon = custom.icon or icon,
+        icon = custom.icon or self:get_icon(self.info.icons, level),
         sign = List.cycle(self.info.signs, level),
-        foreground = custom.foreground
-            or List.clamp(self.info.foregrounds, level),
-        background = custom.background
-            or List.clamp(self.info.backgrounds, level),
+        fg = custom.foreground or List.clamp(self.info.foregrounds, level),
+        bg = custom.background or List.clamp(self.info.backgrounds, level),
         width = List.clamp(self.info.width, level) or 'full',
         left_margin = List.clamp(self.info.left_margin, level) or 0,
         left_pad = List.clamp(self.info.left_pad, level) or 0,
@@ -83,7 +66,6 @@ function Render:setup()
         min_width = List.clamp(self.info.min_width, level) or 0,
         border = List.clamp(self.info.border, level) or false,
     }
-
     return true
 end
 
@@ -91,15 +73,30 @@ end
 ---@return render.md.heading.Custom
 function Render:custom()
     for _, custom in pairs(self.info.custom) do
-        if self.node.text:find(custom.pattern) ~= nil then
+        if self.node.text:find(custom.pattern) then
             return custom
         end
     end
     return {}
 end
 
+---@private
+---@param values render.md.heading.Icons
+---@param level integer
+---@return string?
+function Render:get_icon(values, level)
+    if type(values) == 'function' then
+        return values({
+            level = level,
+            sections = self.node:sections(),
+        })
+    else
+        return List.cycle(values, level)
+    end
+end
+
 function Render:render()
-    self:sign(self.info.sign, self.data.sign, self.data.foreground)
+    self:sign(self.info.sign, self.data.sign, self.data.fg)
     local box = self:box(self:icon())
     self:background(box)
     self:padding(box)
@@ -116,17 +113,17 @@ end
 ---@return integer
 function Render:icon()
     local icon, highlight = self.data.icon, {}
-    if self.data.foreground ~= nil then
-        highlight[#highlight + 1] = self.data.foreground
+    if self.data.fg then
+        highlight[#highlight + 1] = self.data.fg
     end
-    if self.data.background ~= nil then
-        highlight[#highlight + 1] = self.data.background
+    if self.data.bg then
+        highlight[#highlight + 1] = self.data.bg
     end
     if self.data.atx then
         local marker = self.data.marker
-        -- Add 1 to account for space after last `#`
+        -- add 1 to account for space after last `#`
         local width = self.context:width(marker) + 1
-        if icon == nil or #highlight == 0 then
+        if not icon or #highlight == 0 then
             return width
         end
         if self.info.position == 'right' then
@@ -156,7 +153,7 @@ function Render:icon()
         end
     else
         local node = self.node
-        if icon == nil or #highlight == 0 then
+        if not icon or #highlight == 0 then
             return 0
         end
         if self.info.position == 'right' then
@@ -183,10 +180,10 @@ function Render:icon()
 end
 
 ---@private
----@param icon_width integer
+---@param icon integer
 ---@return render.md.heading.Box
-function Render:box(icon_width)
-    local width = icon_width
+function Render:box(icon)
+    local width = icon
     if self.data.atx then
         width = width + self.context:width(self.node:child('inline'))
     else
@@ -197,17 +194,17 @@ function Render:box(icon_width)
     width = math.max(left + width + right, self.data.min_width)
     ---@type render.md.heading.Box
     return {
-        margin = self.context:percent(self.data.left_margin, width),
         padding = left,
         content = width,
+        margin = self.context:percent(self.data.left_margin, width),
     }
 end
 
 ---@private
 ---@param box render.md.heading.Box
 function Render:background(box)
-    local highlight = self.data.background
-    if highlight == nil then
+    local highlight = self.data.bg
+    if not highlight then
         return
     end
     local win_col, padding = 0, {}
@@ -236,7 +233,7 @@ end
 ---@param box render.md.heading.Box
 function Render:padding(box)
     local line = self:append({}, box.margin)
-    self:append(line, box.padding, self.data.background)
+    self:append(line, box.padding, self.data.bg)
     if #line == 0 then
         return
     end
@@ -257,21 +254,20 @@ function Render:border(box, above)
         return
     end
 
-    local foreground = self.data.foreground
-    local background = self.data.background
-    background = background and colors.bg_as_fg(background)
+    local fg = self.data.fg
+    local bg = self.data.bg and colors.bg_as_fg(self.data.bg)
     local prefix = self.info.border_prefix and self.data.level or 0
     local width = self.data.width == 'block' and box.content or vim.o.columns
     local icon = above and self.info.above or self.info.below
 
     local line = self:append({}, box.margin)
-    self:append(line, icon:rep(box.padding), background)
-    self:append(line, icon:rep(prefix), foreground)
-    self:append(line, icon:rep(width - box.padding - prefix), background)
+    self:append(line, icon:rep(box.padding), bg)
+    self:append(line, icon:rep(prefix), fg)
+    self:append(line, icon:rep(width - box.padding - prefix), bg)
 
     local virtual = self.info.border_virtual
     local row, target = self.node:line(above and 'above' or 'below', 1)
-    local available = target ~= nil and Str.width(target) == 0
+    local available = target and Str.width(target) == 0
 
     if not virtual and available and row ~= self.context.last_heading then
         self.marks:add('head_border', row, 0, {

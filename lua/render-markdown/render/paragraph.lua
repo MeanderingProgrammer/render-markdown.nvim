@@ -15,22 +15,25 @@ function Render:setup()
     if self.context:skip(self.info) then
         return false
     end
-
-    local margin, left_margin = nil, self.info.left_margin
-    if type(left_margin) == 'function' then
-        margin = left_margin({ text = self.node.text })
-    else
-        margin = left_margin
-    end
-
+    local margin = self:get_margin(self.info.left_margin)
     if margin <= 0 then
         return false
     end
     self.data = {
         margin = margin,
     }
-
     return true
+end
+
+---@private
+---@param value render.md.paragraph.Margin
+---@return number
+function Render:get_margin(value)
+    if type(value) == 'function' then
+        return value({ text = self.node.text })
+    else
+        return value
+    end
 end
 
 function Render:render()

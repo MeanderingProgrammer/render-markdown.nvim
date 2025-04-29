@@ -42,7 +42,7 @@ end
 ---@return vim.treesitter.Query
 function M.parse(language, query)
     local result = M.queries[query]
-    if result == nil then
+    if not result then
         result = vim.treesitter.query.parse(language, query)
         M.queries[query] = result
     end
@@ -53,7 +53,7 @@ end
 ---@param language string
 function M.inject(language)
     local injection = M.config.injections[language]
-    if injection == nil or not injection.enabled then
+    if not injection or not injection.enabled then
         return
     end
     local query = ''
@@ -63,7 +63,7 @@ function M.inject(language)
         local files = vim.treesitter.query.get_files(language, 'injections')
         for _, file in ipairs(files) do
             local f = io.open(file, 'r')
-            if f ~= nil then
+            if f then
                 query = query .. f:read('*all') .. '\n'
                 f:close()
             end
@@ -77,17 +77,17 @@ end
 ---@param language string
 function M.disable(language)
     local pattern = M.config.patterns[language]
-    if pattern == nil or not pattern.disable then
+    if not pattern or not pattern.disable then
         return
     end
     if not Compat.has_11 then
         return
     end
     local query = vim.treesitter.query.get(language, 'highlights')
-    if query == nil then
+    if not query then
         return
     end
-    if query.query.disable_pattern == nil then
+    if not query.query.disable_pattern then
         Compat.release('TSQuery missing disable_pattern API')
         return
     end
@@ -105,7 +105,7 @@ end
 ---@param directives? (string|integer)[][]
 ---@return boolean
 function M.has_directive(name, directives)
-    if directives == nil then
+    if not directives then
         return false
     end
     for _, directive in ipairs(directives) do

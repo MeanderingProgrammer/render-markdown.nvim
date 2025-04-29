@@ -66,7 +66,7 @@ function Node:sections()
     local result = {} ---@type integer[]
     local levels = 0
     local section = self:parent('section')
-    while section ~= nil do
+    while section do
         local level = section:level(false)
         result[level] = section:sibling_count('section', level)
         levels = math.max(levels, level)
@@ -83,14 +83,16 @@ end
 ---@return integer
 function Node:level(parent)
     local section = not parent and self or self:parent('section')
-    if section == nil then
+    if not section then
         return 0
     end
     assert(section.type == 'section', 'must be a section')
     local heading = section:child('atx_heading')
-    local node = heading ~= nil and heading.node:child(0) or nil
-    -- counts the number of hashtags in the heading marker
-    return node ~= nil and #vim.treesitter.get_node_text(node, self.buf) or 0
+    local node = heading and heading.node:child(0)
+    if not node then
+        return 0
+    end
+    return Str.level(vim.treesitter.get_node_text(node, self.buf))
 end
 
 ---@param target string
@@ -99,21 +101,21 @@ function Node:level_in_section(target)
     local level = 0
     local root = nil ---@type TSNode?
     local node = self.node ---@type TSNode?
-    while node ~= nil and node:type() ~= 'section' do
+    while node and node:type() ~= 'section' do
         if node:type() == target then
             level = level + 1
             root = node
         end
         node = node:parent()
     end
-    return level, root ~= nil and self:create(root) or nil
+    return level, root and self:create(root)
 end
 
 ---@param target string
 ---@return render.md.Node?
 function Node:parent(target)
     local node = self.node:parent()
-    while node ~= nil do
+    while node do
         if node:type() == target then
             return self:create(node)
         end
@@ -126,7 +128,7 @@ end
 ---@return render.md.Node?
 function Node:sibling(target)
     local node = self.node ---@type TSNode?
-    while node ~= nil do
+    while node do
         if node:type() == target then
             return self:create(node)
         end
@@ -142,7 +144,7 @@ function Node:sibling_count(target, level)
     local count = 0
     local node = self.node ---@type TSNode?
     while
-        node ~= nil
+        node
         and node:type() == target
         and (level == nil or self:create(node):level(false) == level)
     do
@@ -156,7 +158,7 @@ end
 ---@return render.md.Node?
 function Node:child_at(index)
     local node = self.node:named_child(index)
-    return node ~= nil and self:create(node) or nil
+    return node and self:create(node)
 end
 
 ---@param target string
@@ -165,7 +167,7 @@ end
 function Node:child(target, row)
     for node in self.node:iter_children() do
         if node:type() == target then
-            if row == nil or node:range() == row then
+            if not row or node:range() == row then
                 return self:create(node)
             end
         end
@@ -189,7 +191,7 @@ function Node:descendant(target)
             return child
         end
         local nested = child:descendant(target)
-        if nested ~= nil then
+        if nested then
             return nested
         end
     end
@@ -206,7 +208,7 @@ end
 ---@param by integer
 ---@return integer, string?
 function Node:line(position, by)
-    local row = nil
+    local row
     local single = self.start_row == self.end_row
     if position == Position.above then
         row = self.start_row - by
@@ -238,9 +240,9 @@ end
 function Node:find(pattern)
     local result = {} ---@type Range4[]
     local index = 1 ---@type integer?
-    while index ~= nil do
+    while index do
         local start_index, end_index = self.text:find(pattern, index)
-        if start_index == nil or end_index == nil then
+        if not start_index or not end_index then
             index = nil
         else
             index = end_index + 1

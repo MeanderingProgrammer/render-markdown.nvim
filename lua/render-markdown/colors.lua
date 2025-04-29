@@ -100,7 +100,7 @@ end
 ---@return string
 function M.combine(foreground, background, force)
     local name = ('%s_%s_%s'):format(M.prefix, foreground, background)
-    if M.cache.combine[name] == nil or force then
+    if not M.cache.combine[name] or force then
         local fg, bg = M.get_hl(foreground), M.get_hl(background)
         vim.api.nvim_set_hl(0, name, {
             fg = fg.fg,
@@ -118,7 +118,7 @@ end
 ---@return string
 function M.bg_as_fg(highlight, force)
     local name = ('%s_%s_bg_as_fg'):format(M.prefix, highlight)
-    if M.cache.bg_as_fg[name] == nil or force then
+    if not M.cache.bg_as_fg[name] or force then
         local hl = M.get_hl(highlight)
         vim.api.nvim_set_hl(0, name, {
             fg = hl.bg,

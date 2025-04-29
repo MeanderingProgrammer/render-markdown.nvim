@@ -12,7 +12,7 @@ function MarkDetails.new(row, col, details)
     self.col = { col, details.end_col }
     self.hl_eol = details.hl_eol
     self.hl_group = details.hl_group
-    if self.hl_group ~= nil then
+    if self.hl_group then
         self.hl_group = MarkDetails.simplify(self.hl_group)
     end
     ---@diagnostic disable-next-line: assign-type-mismatch
@@ -21,7 +21,7 @@ function MarkDetails.new(row, col, details)
     self.conceal_lines = details.conceal_lines
     self.hl_mode = details.hl_mode
     self.virt_text = details.virt_text
-    if self.virt_text ~= nil then
+    if self.virt_text then
         for _, text in ipairs(self.virt_text) do
             text[2] = MarkDetails.simplify(text[2])
         end
@@ -29,7 +29,7 @@ function MarkDetails.new(row, col, details)
     self.virt_text_pos = details.virt_text_pos
     self.virt_text_win_col = details.virt_text_win_col
     self.virt_lines = details.virt_lines
-    if self.virt_lines ~= nil then
+    if self.virt_lines then
         for _, line in ipairs(self.virt_lines) do
             for _, text in ipairs(line) do
                 text[2] = MarkDetails.simplify(text[2])
@@ -39,7 +39,7 @@ function MarkDetails.new(row, col, details)
     self.virt_lines_above = details.virt_lines_above
     self.sign_text = details.sign_text
     self.sign_hl_group = details.sign_hl_group
-    if self.sign_hl_group ~= nil then
+    if self.sign_hl_group then
         self.sign_hl_group = MarkDetails.simplify(self.sign_hl_group)
     end
     self.priority = details.priority
@@ -84,7 +84,7 @@ end
 ---@return number[]
 function MarkDetails:priorities()
     local virt_row = 0
-    if self.virt_lines ~= nil then
+    if self.virt_lines then
         virt_row = self.virt_lines_above and -0.5 or 0.5
     end
     local win_col = self.virt_text_win_col or 0
@@ -106,14 +106,14 @@ function MarkDetails:priorities()
         math.max(self.col[1], win_col),
         math.max((self.col[2] or self.col[1]), win_col),
         -- signs
-        self.sign_text ~= nil and 0 or 1,
+        self.sign_text and 0 or 1,
         -- inline text
         self.virt_text_pos == 'inline' and 0 or 1,
         -- text width
         width,
         -- conceal
-        self.conceal ~= nil and 0 or 1,
-        self.conceal_lines ~= nil and 0 or 1,
+        self.conceal and 0 or 1,
+        self.conceal_lines and 0 or 1,
     }
 end
 

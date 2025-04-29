@@ -70,7 +70,7 @@ function M.completions(params)
     -- lsp position: (0,0)-indexed
     local cursor = params.position
     local items = source.items(0, cursor.line, cursor.character)
-    if items == nil then
+    if not items then
         return nil
     end
     ---@type lsp.CompletionList

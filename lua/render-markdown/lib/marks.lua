@@ -62,7 +62,7 @@ end
 ---@param offset? Range4
 ---@return boolean
 function Marks:over(element, node, opts, offset)
-    if node == nil then
+    if not node then
         return false
     end
     offset = offset or { 0, 0, 0, 0 }
@@ -120,10 +120,10 @@ function Marks:validate(opts)
     if opts.virt_text_pos == 'inline' and not Compat.has_10 then
         return false, "virt_text_pos = 'inline'", '0.10.0'
     end
-    if opts.virt_text_repeat_linebreak ~= nil and not Compat.has_10 then
+    if opts.virt_text_repeat_linebreak and not Compat.has_10 then
         return false, 'virt_text_repeat_linebreak', '0.10.0'
     end
-    if opts.conceal_lines ~= nil and not Compat.has_11 then
+    if opts.conceal_lines and not Compat.has_11 then
         return false, 'conceal_lines', '0.11.0'
     end
     return true, '', ''
@@ -136,7 +136,7 @@ function Marks:update(mark)
         return
     end
     local row, start_col = mark.start_row, mark.start_col
-    if mark.opts.conceal ~= nil then
+    if mark.opts.conceal then
         local end_col = assert(mark.opts.end_col, 'conceal requires end_col')
         self.context.conceal:add(row, {
             start_col = start_col,

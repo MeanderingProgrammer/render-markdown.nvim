@@ -11,16 +11,14 @@ function Render:setup()
     if self.context:skip(config) then
         return false
     end
-
     local types = {
         task_list_marker_unchecked = config.unchecked,
         task_list_marker_checked = config.checked,
     }
     self.info = types[self.node.type]
-    if self.info == nil then
+    if not self.info then
         return false
     end
-
     return true
 end
 

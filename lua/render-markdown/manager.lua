@@ -135,7 +135,7 @@ function M.attach(buf)
             end
             local win, windows = Env.win.current(), Env.buf.windows(buf)
             win = vim.tbl_contains(windows, win) and win or windows[1]
-            if win == nil then
+            if not win then
                 return
             end
             local event = args.event

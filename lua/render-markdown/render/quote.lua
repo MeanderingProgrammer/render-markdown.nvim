@@ -31,9 +31,9 @@ function Render:setup()
             ]]
         ),
         level = level,
-        icon = callout ~= nil and callout.quote_icon
+        icon = callout and callout.quote_icon
             or assert(List.cycle(config.icon, level)),
-        highlight = callout ~= nil and callout.highlight
+        highlight = callout and callout.highlight
             or assert(List.cycle(config.highlight, level)),
         repeat_linebreak = config.repeat_linebreak or nil,
     }
@@ -63,7 +63,7 @@ end
 ---@param index integer
 function Render:quote(node, index)
     local range = node:find('>')[index]
-    if range == nil then
+    if not range then
         return
     end
     self.marks:add('quote', range[1], range[2], {

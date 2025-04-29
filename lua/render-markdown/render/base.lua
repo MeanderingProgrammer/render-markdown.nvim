@@ -31,11 +31,11 @@ end
 ---@param highlight? string
 function Base:sign(enabled, text, highlight)
     local sign = self.config.sign
-    if not enabled or not sign.enabled or text == nil then
+    if not enabled or not sign.enabled or not text then
         return
     end
     local sign_highlight = sign.highlight
-    if highlight ~= nil then
+    if highlight then
         sign_highlight = colors.combine(highlight, sign_highlight)
     end
     self.marks:start('sign', self.node, {
@@ -95,7 +95,7 @@ end
 ---@param node render.md.Node?
 ---@param highlight? string
 function Base:scope(element, node, highlight)
-    if node == nil or highlight == nil then
+    if not node or not highlight then
         return
     end
     self.marks:over(element, node:child('inline'), { hl_group = highlight })
@@ -116,7 +116,7 @@ function Base:link_icon(destination, icon)
         return custom.priority or Str.width(custom.pattern)
     end)
     local result = options[#options]
-    if result ~= nil then
+    if result then
         icon[1] = result.icon
         icon[2] = result.highlight or icon[2]
     end
@@ -130,7 +130,7 @@ function Base:indent_line(virtual, level)
     if virtual then
         level = self:indent_level(level)
     else
-        assert(level ~= nil, 'level must be known for real lines')
+        assert(level, 'level must be known for real lines')
     end
     local line = {}
     if level > 0 then
@@ -163,7 +163,7 @@ function Base:indent_level(level)
     if self.context:skip(indent) then
         return 0
     end
-    if level == nil then
+    if not level then
         -- Level is not known, get it from the closest parent section
         level = self.node:level(true)
     else
@@ -171,7 +171,7 @@ function Base:indent_level(level)
         if indent.skip_heading then
             -- Account for ability to skip headings
             local parent = self.node:parent('section')
-            level = parent ~= nil and parent:level(true) or 0
+            level = parent and parent:level(true) or 0
         end
     end
     return math.max(level - indent.skip_level, 0)

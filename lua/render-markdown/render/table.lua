@@ -74,7 +74,7 @@ function Render:setup()
     end)
 
     -- Ensure delimiter and rows exist for table
-    if delim == nil or #table_rows == 0 then
+    if not delim or #table_rows == 0 then
         return false
     end
 
@@ -82,7 +82,7 @@ function Render:setup()
     table.sort(table_rows)
     for _, table_row in ipairs(table_rows) do
         local row = self:parse_row(table_row, #delim.columns)
-        if row ~= nil then
+        if row then
             rows[#rows + 1] = row
         end
     end
@@ -121,7 +121,7 @@ end
 ---@return render.md.table.DelimRow?
 function Render:parse_delim(row)
     local pipes, cells = Render.parse_row_data(row, 'pipe_table_delimiter_cell')
-    if pipes == nil or cells == nil then
+    if not pipes or not cells then
         return nil
     end
     local columns = {} ---@type render.md.table.DelimColumn[]
@@ -167,7 +167,7 @@ end
 ---@return render.md.table.Row?
 function Render:parse_row(row, num_columns)
     local pipes, cells = Render.parse_row_data(row, 'pipe_table_cell')
-    if pipes == nil or cells == nil or #cells ~= num_columns then
+    if not pipes or not cells or #cells ~= num_columns then
         return nil
     end
     local columns = {} ---@type render.md.table.Column[]

@@ -62,8 +62,8 @@ function Render:offset(value, used)
         return 0
     end
     local result = self.context:percent(value, used)
-    if self.node.text:find('\t') ~= nil then
-        -- Rounds to the next multiple of tab size
+    if self.node.text:find('\t') then
+        -- rounds to the next multiple of tab size
         local tab_size = Env.buf.get(self.context.buf, 'tabstop')
         result = math.ceil(result / tab_size) * tab_size
     end
@@ -72,7 +72,7 @@ end
 
 function Render:render()
     local info = self.node:child('info_string')
-    local language = info ~= nil and info:child('language') or nil
+    local language = info and info:child('language')
     self.marks:over(true, language, { conceal = '' })
 
     local start_row = self.node.start_row
@@ -84,9 +84,7 @@ function Render:render()
     self.marks:over(true, bottom, { conceal = '' })
 
     local icon = self:language(language, top)
-    local more_info = info ~= nil
-        and language ~= nil
-        and info.end_col > language.end_col
+    local more_info = info and language and info.end_col > language.end_col
     self:border(top, true, not icon and not more_info)
     self:border(bottom, false, true)
 
@@ -105,7 +103,7 @@ function Render:language(language, delim)
     if not vim.tbl_contains({ 'language', 'full' }, self.info.style) then
         return false
     end
-    if language == nil or delim == nil then
+    if not language or not delim then
         return false
     end
 
@@ -113,14 +111,14 @@ function Render:language(language, delim)
     local padding = self.data.language
 
     local icon, icon_highlight = Icons.get(language.text)
-    if self.info.highlight_language ~= nil then
+    if self.info.highlight_language then
         icon_highlight = self.info.highlight_language
     end
 
     self:sign(self.info.sign, icon, icon_highlight)
 
     local text = ''
-    if self.info.language_icon and icon ~= nil then
+    if self.info.language_icon and icon then
         text = text .. icon .. ' '
     end
     if self.info.language_name then
@@ -169,7 +167,7 @@ end
 function Render:border(node, above, empty)
     local kind = self.info.border
     local highlight = self.info.highlight_border
-    if kind == 'none' or type(highlight) == 'boolean' or node == nil then
+    if kind == 'none' or type(highlight) == 'boolean' or not node then
         -- skip
     elseif kind == 'thick' or not empty then
         self:background(node.start_row, node.start_row, highlight)

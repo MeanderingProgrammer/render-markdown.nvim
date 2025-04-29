@@ -84,7 +84,7 @@ end
 ---@return boolean
 function Render:section(position, by)
     local _, line = self.node:line(position, by)
-    return line ~= nil and vim.startswith(line, '#')
+    return line and Str.level(line) > 0 or false
 end
 
 return Render

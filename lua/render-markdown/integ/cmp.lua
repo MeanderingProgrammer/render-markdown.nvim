@@ -43,7 +43,7 @@ function M.setup()
     end
     M.initialized = true
     local has_cmp, cmp = pcall(require, 'cmp')
-    if not has_cmp or cmp == nil then
+    if not has_cmp or not cmp then
         return
     end
     pcall(cmp.register_source, Source:get_debug_name(), Source)

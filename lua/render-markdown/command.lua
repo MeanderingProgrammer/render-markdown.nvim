@@ -32,7 +32,7 @@ function M.command(args)
     local fargs, err = args.fargs, nil
     if #fargs == 0 or #fargs == 1 then
         local command = #fargs == 0 and api.enable or api[fargs[1]]
-        if command ~= nil then
+        if command then
             command()
         else
             err = ('unexpected command: %s'):format(fargs[1])
@@ -40,7 +40,7 @@ function M.command(args)
     else
         err = ('unexpected # arguments: %d'):format(#fargs)
     end
-    if err ~= nil then
+    if err then
         vim.notify(('%s: %s'):format(M.plugin, err), vim.log.levels.ERROR)
     end
 end

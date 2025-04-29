@@ -79,7 +79,7 @@ function M.superscript(s)
     local chars = {}
     for char in s:gmatch('.') do
         char = M.superscripts[char]
-        if char == nil then
+        if not char then
             return nil
         end
         chars[#chars + 1] = char

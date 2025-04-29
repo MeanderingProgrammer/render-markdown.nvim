@@ -5,7 +5,7 @@ local state = require('render-markdown.state')
 local M = {}
 
 ---@private
-M.version = '8.3.19'
+M.version = '8.3.20'
 
 function M.check()
     M.start('version')
@@ -34,7 +34,7 @@ function M.check()
 
     M.start('icons')
     local provider = Icons.name()
-    if provider ~= nil then
+    if provider then
         vim.health.ok('using: ' .. provider)
     else
         vim.health.warn('none installed')
@@ -100,7 +100,7 @@ function M.check_parser(language, required, advice)
         local message = language .. ': parser not installed'
         if not required then
             vim.health.ok(message)
-        elseif advice ~= nil then
+        elseif advice then
             vim.health.warn(message, advice)
         else
             vim.health.error(message)
@@ -139,7 +139,7 @@ function M.check_executable(name, required, advice)
         local message = name .. ': not installed'
         if not required then
             vim.health.ok(message)
-        elseif advice ~= nil then
+        elseif advice then
             vim.health.warn(message, advice)
         else
             vim.health.error(message)
@@ -154,14 +154,14 @@ function M.check_plugin(name, validate)
     local has_plugin, plugin = pcall(require, name)
     if not has_plugin then
         vim.health.ok(name .. ': not installed')
-    elseif validate == nil then
+    elseif not validate then
         vim.health.error(name .. ': installed')
     else
         local advice = validate(plugin)
-        if advice == nil then
-            vim.health.ok(name .. ': installed but should not conflict')
-        else
+        if advice then
             vim.health.error(name .. ': installed', advice)
+        else
+            vim.health.ok(name .. ': installed but should not conflict')
         end
     end
 end

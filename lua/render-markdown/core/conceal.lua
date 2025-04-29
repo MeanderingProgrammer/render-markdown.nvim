@@ -44,7 +44,7 @@ function Conceal:add(row, entry)
     if not self:enabled() then
         return
     end
-    if self.lines[row] == nil then
+    if not self.lines[row] then
         self.lines[row] = { hidden = false, sections = {} }
     end
     local line = self.lines[row]
@@ -119,7 +119,7 @@ function Conceal:line(node)
         self:compute()
     end
     local line = self.lines[node.start_row]
-    if line == nil then
+    if not line then
         line = { hidden = false, sections = {} }
     end
     return line
@@ -131,11 +131,11 @@ function Conceal:compute()
     if not self:enabled() then
         return
     end
-    if vim.treesitter.highlighter.active[self.buf] == nil then
+    if not vim.treesitter.highlighter.active[self.buf] then
         return
     end
     local parser = vim.treesitter.get_parser(self.buf)
-    if parser == nil then
+    if not parser then
         return
     end
     parser:for_each_tree(function(tree, language_tree)
@@ -154,18 +154,18 @@ function Conceal:compute_tree(language, root)
         return
     end
     local query = vim.treesitter.query.get(language, 'highlights')
-    if query == nil then
+    if not query then
         return
     end
     self.context:for_each(function(range)
         local top, bottom = range.top, range.bottom
         for id, node, data in query:iter_captures(root, self.buf, top, bottom) do
-            if data.conceal_lines ~= nil then
+            if data.conceal_lines then
                 local node_range = self:node_range(id, node, data)
                 local row = unpack(node_range)
                 self:add(row, true)
             end
-            if data.conceal ~= nil then
+            if data.conceal then
                 local node_range = self:node_range(id, node, data)
                 local row, start_col, _, end_col = unpack(node_range)
                 local text = vim.treesitter.get_node_text(node, self.buf)
@@ -187,11 +187,11 @@ end
 ---@return Range
 function Conceal:node_range(id, node, data)
     local range = data.range
-    if range ~= nil then
+    if range then
         return range
     end
-    range = data[id] ~= nil and data[id].range or nil
-    if range ~= nil then
+    range = data[id] and data[id].range or nil
+    if range then
         return range
     end
     return { node:range() }

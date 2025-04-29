@@ -15,7 +15,7 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     local marker = self.node:child_at(0)
-    if marker == nil then
+    if not marker then
         return false
     end
     self.data = {
@@ -33,7 +33,7 @@ function Render:render()
     if self:has_checkbox() then
         -- Hide the list marker for checkboxes rather than replacing with a bullet point
         self:hide_marker()
-        if self.data.checkbox ~= nil then
+        if self.data.checkbox then
             local scope_highlight = self.data.checkbox.scope_highlight
             self:highlight_scope('check_scope', scope_highlight)
         end
@@ -125,7 +125,7 @@ end
 ---@param icon string?
 ---@param highlight string?
 function Render:icon(icon, highlight)
-    if icon == nil or highlight == nil then
+    if not icon or not highlight then
         return
     end
     local text = Str.pad(self.data.spaces) .. icon
@@ -149,7 +149,7 @@ function Render:padding(root, left_pad, right_pad)
     local left_line = self:append({}, left_pad)
     local right_line = self:append({}, right_pad)
     for row = start_row, end_row - 1 do
-        local left = root ~= nil and root.start_col or self.node.start_col
+        local left = root and root.start_col or self.node.start_col
         local right = row == start_row and self.data.marker.end_col - 1 or left
         if #left_line > 0 then
             self.marks:add(false, row, left, {
@@ -173,9 +173,9 @@ end
 ---@return integer
 function Render:end_row(root)
     local sub_list = self.node:child('list')
-    if sub_list ~= nil then
+    if sub_list then
         return sub_list.start_row
-    elseif root == nil then
+    elseif not root then
         return self.node.end_row
     else
         -- on the last item of the root list ignore the last line if empty

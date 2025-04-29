@@ -29,7 +29,7 @@ function M.parse(ctx)
     log.node('latex', node)
 
     local raw_expression = M.cache[node.text]
-    if raw_expression == nil then
+    if not raw_expression then
         raw_expression = vim.fn.system(latex.converter, node.text)
         if vim.v.shell_error == 1 then
             log.add('error', latex.converter, raw_expression)

@@ -1,13 +1,13 @@
 init := "tests/minimal_init.lua"
+settings := "{ minimal_init = " + quote(init) + ", sequential = true, keep_going = false }"
 
 default: update check test health
 
 update:
-  # Updates types.lua & README.md
+  # keep documentation in sync with code
   python scripts/update.py
-  # https://pandoc.org/
   # https://github.com/kdheepak/panvimdoc
-  ../../open-source/panvimdoc/panvimdoc.sh \
+  ../../tools/panvimdoc/panvimdoc.sh \
     --project-name render-markdown \
     --input-file README.md
 
@@ -19,21 +19,17 @@ test:
   just busted "tests"
 
 bench:
-  just generate
+  python scripts/generate.py
   just busted "benches"
 
 [private]
-busted directory:
-  nvim --headless --noplugin -u {{init}} \
-    -c "PlenaryBustedDirectory {{directory}} { minimal_init = '{{init}}', sequential = true, keep_going = false }"
-
-generate:
-  python scripts/generate.py
+busted path:
+  nvim --headless --noplugin -u {{init}} -c "PlenaryBustedDirectory {{path}} {{settings}}"
 
 health:
   nvim -c "checkhealth render-markdown" -- -
 
-cat-log:
+log:
   cat ~/.local/state/nvim/render-markdown.log
 
 demo: heading table box latex callout

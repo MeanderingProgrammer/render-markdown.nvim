@@ -45,7 +45,7 @@ function Config.new(root, buf)
     for _, name in ipairs({ 'buflisted', 'buftype', 'filetype' }) do
         local value = Env.buf.get(buf, name)
         local override = root.overrides[name][value]
-        if override ~= nil then
+        if override then
             config = vim.tbl_deep_extend('force', config, override)
         end
     end
@@ -156,7 +156,7 @@ function Config:hidden(mode, row)
     -- anti-conceal is not enabled -> hide nothing
     -- row is not known -> buffer is not active -> hide nothing
     local config = self.anti_conceal
-    if not config.enabled or row == nil then
+    if not config.enabled or not row then
         return nil
     end
     if Env.mode.is(mode, { 'v', 'V', '\22' }) then

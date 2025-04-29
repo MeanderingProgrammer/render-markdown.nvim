@@ -288,7 +288,7 @@ end
 ---@param width? integer
 ---@return vim.api.keyset.set_extmark
 function M.code.border(kind, width)
-    if width == nil then
+    if not width then
         ---@type vim.api.keyset.set_extmark
         return {
             hl_eol = true,
@@ -354,7 +354,7 @@ function M.table.delimiter(sections, padding)
     local line = {
         { '├' .. table.concat(parts, '┼') .. '┤', 'RmTableHead' },
     }
-    if padding ~= nil then
+    if padding then
         line[#line + 1] = { (' '):rep(padding), 'Normal' }
     end
     ---@type vim.api.keyset.set_extmark

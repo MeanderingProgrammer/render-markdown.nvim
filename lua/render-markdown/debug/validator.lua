@@ -32,7 +32,7 @@ function Spec.new(validator, data, nilable, path, key)
     self.data = data
     self.nilable = nilable
     self.path = vim.list_extend({}, path or {})
-    if self.data ~= nil and key ~= nil then
+    if self.data and key then
         self.data = self.data[key]
         self.data = type(self.data) == 'table' and self.data or nil
         self.path[#self.path + 1] = tostring(key)
@@ -44,7 +44,7 @@ end
 ---@param f fun(spec: render.md.debug.ValidatorSpec)
 ---@param nilable? boolean
 function Spec:each(f, nilable)
-    local keys = self.data ~= nil and vim.tbl_keys(self.data) or {}
+    local keys = self.data and vim.tbl_keys(self.data) or {}
     self:nested(keys, f, nilable)
 end
 
@@ -167,8 +167,8 @@ end
 ---@param ts? type|type[]
 ---@return type[], string
 function Spec:handle_types(custom, ts)
-    local types = nil
-    if ts == nil then
+    local types
+    if not ts then
         types = {}
     elseif type(ts) == 'string' then
         types = { ts }
@@ -187,7 +187,7 @@ end
 ---@param message string
 ---@param validation fun(v: any): boolean, string?
 function Spec:add(keys, kind, message, validation)
-    if self.data ~= nil then
+    if self.data then
         keys = type(keys) == 'table' and keys or { keys }
         for _, key in ipairs(keys) do
             self.specs[key] = {
@@ -200,7 +200,7 @@ function Spec:add(keys, kind, message, validation)
 end
 
 function Spec:check()
-    if self.data == nil or vim.tbl_count(self.specs) == 0 then
+    if not self.data or vim.tbl_count(self.specs) == 0 then
         return
     end
     self.validator:check(self.path, self.data, self.specs)
@@ -230,7 +230,7 @@ function Validator:check(path, data, specs)
         local value = data[key]
         local ok, info = spec.validation(value)
         if not ok then
-            local actual = nil
+            local actual
             if spec.kind == Kind.data then
                 actual = vim.inspect(value)
             elseif spec.kind == Kind.type then
@@ -240,7 +240,7 @@ function Validator:check(path, data, specs)
             end
             local body = ('expected: %s, got: %s'):format(spec.message, actual)
             local message = ('%s - %s'):format(table.concat(root, '.'), body)
-            if info ~= nil then
+            if info then
                 message = message .. (', info: %s'):format(info)
             end
             self.errors[#self.errors + 1] = message
@@ -249,7 +249,7 @@ function Validator:check(path, data, specs)
     for key in pairs(data) do
         local root = vim.list_extend({}, path)
         root[#root + 1] = tostring(key)
-        if specs[key] == nil then
+        if not specs[key] then
             local message = ('%s - invalid key'):format(table.concat(root, '.'))
             self.errors[#self.errors + 1] = message
         end

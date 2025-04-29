@@ -48,7 +48,7 @@ end
 
 function M.config()
     local difference = state.difference()
-    if difference == nil then
+    if not difference then
         -- selene: allow(deprecated)
         vim.print('default configuration')
     else

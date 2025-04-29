@@ -21,7 +21,7 @@ end
 ---@param range? render.md.Range
 ---@return boolean
 function Extmark:overlaps(range)
-    if range == nil then
+    if not range then
         return false
     end
     local top = self.mark.start_row
@@ -36,7 +36,7 @@ end
 ---@param ns integer
 ---@param buf integer
 function Extmark:show(ns, buf)
-    if self.id ~= nil then
+    if self.id then
         return
     end
     local mark = self.mark
@@ -60,7 +60,7 @@ end
 ---@param ns integer
 ---@param buf integer
 function Extmark:hide(ns, buf)
-    if self.id == nil then
+    if not self.id then
         return
     end
     vim.api.nvim_buf_del_extmark(buf, ns, self.id)

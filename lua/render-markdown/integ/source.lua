@@ -40,12 +40,12 @@ end
 function M.items(buf, row, col)
     buf = buf == 0 and Env.buf.current() or buf
     local node = M.node(buf, row, col, 'markdown')
-    if node == nil or node:range() ~= row then
+    if not node or node:range() ~= row then
         return nil
     end
 
     local marker_node = node:named_child(0)
-    if marker_node == nil then
+    if not marker_node then
         return nil
     end
 
@@ -89,7 +89,7 @@ end
 function M.node(buf, row, col, lang)
     -- Parse current row to get up to date node
     local has_parser, parser = pcall(vim.treesitter.get_parser, buf, lang)
-    if not has_parser or parser == nil then
+    if not has_parser or not parser then
         return nil
     end
     parser:parse({ row, row })
@@ -99,12 +99,12 @@ function M.node(buf, row, col, lang)
         pos = { row, col },
         lang = lang,
     })
-    if node ~= nil and node:type() == 'paragraph' then
+    if node and node:type() == 'paragraph' then
         node = node:prev_sibling()
     end
     local children = vim.tbl_keys(markers)
     children[#children + 1] = 'block_continuation'
-    if node ~= nil and vim.tbl_contains(children, node:type()) then
+    if node and vim.tbl_contains(children, node:type()) then
         node = node:parent()
     end
     return node
@@ -124,7 +124,7 @@ function M.ignore(marker, text)
     -- there is already text enclosed by '[' ']'
     patterns[#patterns + 1] = prefix .. '%[.*%]'
     for _, pattern in ipairs(patterns) do
-        if text:find(pattern) ~= nil then
+        if text:find(pattern) then
             return true
         end
     end

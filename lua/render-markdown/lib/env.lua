@@ -16,7 +16,7 @@ function M.lazy(key)
     end
     local name = 'render-markdown.nvim'
     local plugin = lazy_config.spec.plugins[name]
-    if plugin == nil then
+    if not plugin then
         return {}
     end
     local values = plugin[key]
@@ -38,7 +38,7 @@ function M.file_size_mb(file)
     local ok, stats = pcall(function()
         return Compat.uv.fs_stat(file)
     end)
-    if not ok or stats == nil then
+    if not ok or not stats then
         return 0
     end
     return stats.size / (1024 * 1024)

@@ -8,16 +8,16 @@ local Providers = {}
 ---@return render.md.icon.Provider?
 function Providers.MiniIcons()
     local has, icons = pcall(require, 'mini.icons')
-    if not has or icons == nil then
+    if not has or not icons then
         return nil
     end
     local getter = icons.get
-    if getter == nil then
+    if not getter then
         return nil
     end
     -- selene: allow(global_usage)
     -- additional check recommended by author
-    if _G.MiniIcons == nil then
+    if not _G.MiniIcons then
         return nil
     end
     ---@type render.md.icon.Provider
@@ -32,11 +32,11 @@ end
 ---@return render.md.icon.Provider?
 function Providers.DevIcons()
     local has, icons = pcall(require, 'nvim-web-devicons')
-    if not has or icons == nil then
+    if not has or not icons then
         return nil
     end
     local getter = icons.get_icon_by_filetype
-    if getter == nil then
+    if not getter then
         return nil
     end
     ---@type render.md.icon.Provider
@@ -80,7 +80,7 @@ end
 ---@return render.md.icon.Provider
 function M.resolve()
     local provider = M.provider
-    if provider == nil then
+    if not provider then
         provider = provider or Providers.MiniIcons()
         provider = provider or Providers.DevIcons()
         provider = provider or Providers.None()

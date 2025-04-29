@@ -19,20 +19,20 @@ local function ensure_installed(parsers)
     end
 end
 
--- Settings
+-- settings
 vim.opt.lines = 40
 vim.opt.columns = 80
 
--- Source dependencies first
+-- source dependencies first
 vim.opt.rtp:prepend(get_path('nvim-treesitter'))
 vim.cmd.runtime('plugin/nvim-treesitter.lua')
 vim.opt.rtp:prepend(get_path('mini.nvim'))
 
--- Now we can safely source this plugin
+-- source this plugin
 vim.opt.rtp:prepend('.')
 vim.cmd.runtime('plugin/render-markdown.lua')
 
--- Used for unit testing, not an actual dependency of this plugin
+-- used for unit testing
 vim.opt.rtp:prepend(get_path('plenary.nvim'))
 vim.cmd.runtime('plugin/plenary.vim')
 

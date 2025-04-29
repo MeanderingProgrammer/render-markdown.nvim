@@ -15,7 +15,7 @@ function M.get(t1, t2)
     end
     local result = {}
     for _, key in ipairs(keys) do
-        local difference = nil
+        local difference
         local v1, v2 = t1[key], t2[key]
         if type(v1) == 'table' and type(v2) == 'table' then
             difference = M.get(v1, v2)

@@ -94,7 +94,7 @@ end
 ---@param node? render.md.Node
 ---@return integer
 function Context:width(node)
-    if node == nil then
+    if not node then
         return 0
     end
     return Str.width(node.text) + self:get_offset(node) - self.conceal:get(node)
@@ -120,7 +120,7 @@ function Context:add_offset(row, offset)
     if offset.width <= 0 then
         return
     end
-    if self.offsets[row] == nil then
+    if not self.offsets[row] then
         self.offsets[row] = {}
     end
     local offsets = self.offsets[row]
@@ -206,7 +206,7 @@ M.cache = {}
 ---@return boolean
 function M.contains(buf, win)
     local context = M.cache[buf]
-    return context ~= nil and context:contains(win)
+    return context and context:contains(win) or false
 end
 
 ---@param props render.md.context.Props
