@@ -57,7 +57,8 @@ function M.runtime(name, callback)
             callback()
             local end_time = Compat.uv.hrtime()
             local elapsed = (end_time - start_time) / 1e+6
-            assert(elapsed < 1000)
+            assert(elapsed < 1000, 'invalid elapsed time')
+            -- selene: allow(deprecated)
             vim.print(('%8s : %5.1f ms'):format(name:upper(), elapsed))
         end
     else

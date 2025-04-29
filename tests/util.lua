@@ -1,7 +1,5 @@
 ---@module 'luassert'
 
-local Eq = assert.are.same
-
 ---@class render.md.test.Range
 ---@field [1] integer
 ---@field [2]? integer
@@ -384,9 +382,9 @@ function M.assert_marks(expected)
     local actual = M.actual_marks()
     for i = 1, math.min(#expected, #actual) do
         local message = ('marks at index %d mismatch'):format(i)
-        Eq(expected[i], actual[i], message)
+        assert.same(expected[i], actual[i], message)
     end
-    Eq(#expected, #actual, 'different number of marks found')
+    assert.same(#expected, #actual, 'different number of marks found')
 end
 
 ---@private
@@ -409,7 +407,7 @@ end
 ---@param expected string[]
 function M.assert_screen(expected)
     local actual = M.actual_screen()
-    Eq(expected, actual)
+    assert.same(expected, actual)
 end
 
 ---@private

@@ -71,7 +71,7 @@ end
 ---@return boolean
 function MarkDetails.__lt(a, b)
     local as, bs = a:priorities(), b:priorities()
-    assert(#as == #bs)
+    assert(#as == #bs, 'priorities must be same length')
     for i = 1, #as do
         if as[i] ~= bs[i] then
             return as[i] < bs[i]

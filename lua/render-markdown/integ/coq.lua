@@ -17,6 +17,7 @@ function M.setup()
     if not has_coq then
         return
     end
+    -- selene: allow(unscoped_variables)
     ---@type table<integer, table>
     COQsources = COQsources or {}
     COQsources[M.new_uid(COQsources)] = {

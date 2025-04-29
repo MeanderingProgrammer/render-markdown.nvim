@@ -3,7 +3,7 @@
 ---@field get fun(filetype: string): string?, string?
 
 ---@class render.md.icon.Providers
-Providers = {}
+local Providers = {}
 
 ---@return render.md.icon.Provider?
 function Providers.MiniIcons()
@@ -15,6 +15,7 @@ function Providers.MiniIcons()
     if getter == nil then
         return nil
     end
+    -- selene: allow(global_usage)
     -- additional check recommended by author
     if _G.MiniIcons == nil then
         return nil

@@ -1,0 +1,40 @@
+---
+base: lua51
+
+globals:
+  vim:
+    any: true
+  vim.print:
+    args:
+      - type: ...
+    deprecated:
+      message: accidental print
+  print:
+    args:
+      - type: ...
+    deprecated:
+      message: accidental print
+  describe:
+    args:
+      - type: string
+      - type: function
+  it:
+    args:
+      - type: string
+      - type: function
+  assert.same:
+    args:
+      - type: any
+      - type: any
+      - type: string
+        required: false
+  assert.is_true:
+    args:
+      - type: bool
+      - type: string
+        required: false
+  assert.is_false:
+    args:
+      - type: bool
+      - type: string
+        required: false

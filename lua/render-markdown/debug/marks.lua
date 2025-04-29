@@ -25,7 +25,7 @@ end
 ---@return boolean
 function Mark.__lt(a, b)
     local as, bs = a:priorities(), b:priorities()
-    assert(#as == #bs)
+    assert(#as == #bs, 'priorities must be same length')
     for i = 1, #as do
         if as[i] ~= bs[i] then
             return as[i] < bs[i]
@@ -166,10 +166,13 @@ function M.show()
     table.sort(marks)
 
     if #marks == 0 then
+        -- selene: allow(deprecated)
         vim.print(('no marks on row: %d'):format(row))
     else
+        -- selene: allow(deprecated)
         vim.print(('marks on row: %d'):format(row))
         for _, mark in ipairs(marks) do
+            -- selene: allow(deprecated)
             vim.print(tostring(mark))
         end
     end

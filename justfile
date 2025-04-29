@@ -1,6 +1,6 @@
 init := "tests/minimal_init.lua"
 
-default: update test health
+default: update check test health
 
 update:
   # Updates types.lua & README.md
@@ -10,6 +10,10 @@ update:
   ../../open-source/panvimdoc/panvimdoc.sh \
     --project-name render-markdown \
     --input-file README.md
+
+check:
+  selene --quiet .
+  stylua --check .
 
 test:
   just busted "tests"

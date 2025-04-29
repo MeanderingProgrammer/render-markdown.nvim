@@ -130,7 +130,7 @@ function Base:indent_line(virtual, level)
     if virtual then
         level = self:indent_level(level)
     else
-        assert(level ~= nil, 'Level must be known for real lines')
+        assert(level ~= nil, 'level must be known for real lines')
     end
     local line = {}
     if level > 0 then

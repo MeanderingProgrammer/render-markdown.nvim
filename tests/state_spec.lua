@@ -2,13 +2,11 @@
 
 local state = require('render-markdown.state')
 
-local Eq = assert.are.same
-
 ---@param config render.md.UserConfig
 ---@param expected string[]
 local function validate(config, expected)
     require('render-markdown').setup(config)
-    Eq(expected, state.validate())
+    assert.same(expected, state.validate())
 end
 
 describe('state', function()
@@ -17,11 +15,11 @@ describe('state', function()
 
         vim.bo.buftype = ''
         validate(config, {})
-        Eq(true, state.get(0).sign.enabled)
+        assert.same(true, state.get(0).sign.enabled)
 
         vim.bo.buftype = 'nofile'
         validate(config, {})
-        Eq(false, state.get(0).sign.enabled)
+        assert.same(false, state.get(0).sign.enabled)
     end)
 
     it('default', function()

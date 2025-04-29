@@ -3,20 +3,17 @@
 local stub = require('luassert.stub')
 local util = require('tests.util')
 
-local Eq = assert.are.same
-local True = assert.True
-
 ---@param converter string
 ---@param responses table<string, string>
 local function set_responses(converter, responses)
     stub.new(vim.fn, 'executable', function(expr)
-        Eq(converter, expr)
+        assert.same(converter, expr)
         return 1
     end)
     stub.new(vim.fn, 'system', function(cmd, input)
-        Eq(converter, cmd)
+        assert.same(converter, cmd)
         local result = responses[input]
-        True(result ~= nil, 'No output for: ' .. input)
+        assert.is_true(result ~= nil, 'No output for: ' .. input)
         return result
     end)
 end

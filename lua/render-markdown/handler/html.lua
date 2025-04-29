@@ -37,7 +37,7 @@ function Handler:parse(root)
     local marks = Marks.new(self.context, true)
     self.context:query(root, self.query, function(capture, node)
         local renderer = self.renderers[capture]
-        assert(renderer ~= nil, 'Unhandled html capture: ' .. capture)
+        assert(renderer ~= nil, 'unhandled html capture: ' .. capture)
         local render = renderer:new(self.context, marks, node)
         if render:setup() then
             render:render()

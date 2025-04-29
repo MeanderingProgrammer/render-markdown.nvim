@@ -15,6 +15,7 @@ local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
 assert(vim.uv.fs_stat(lazypath))
 vim.opt.rtp:prepend(lazypath)
 
+-- selene: allow(mixed_table)
 require('lazy').setup({
     dev = { path = '~/dev/repos/personal' },
     spec = {
@@ -32,7 +33,12 @@ require('lazy').setup({
             config = function()
                 ---@diagnostic disable-next-line: missing-fields
                 require('nvim-treesitter.configs').setup({
-                    ensure_installed = { 'markdown', 'markdown_inline', 'latex' },
+                    ensure_installed = {
+                        'html',
+                        'latex',
+                        'markdown',
+                        'markdown_inline',
+                    },
                     highlight = { enable = true },
                 })
             end,
@@ -56,7 +62,10 @@ require('lazy').setup({
         {
             'MeanderingProgrammer/render-markdown.nvim',
             dev = true,
-            dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' },
+            dependencies = {
+                'nvim-treesitter/nvim-treesitter',
+                'echasnovski/mini.nvim',
+            },
             config = function()
                 require('render-markdown').setup({})
             end,
