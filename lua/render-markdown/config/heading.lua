@@ -5,7 +5,7 @@
 ---@field icons render.md.heading.Icons
 ---@field position render.md.heading.Position
 ---@field signs string[]
----@field width render.md.heading.Width|(render.md.heading.Width)[]
+---@field width render.md.base.Width|(render.md.base.Width)[]
 ---@field left_margin number|number[]
 ---@field left_pad number|number[]
 ---@field right_pad number|number[]
@@ -32,12 +32,6 @@ local Position = {
     overlay = 'overlay',
     inline = 'inline',
     right = 'right',
-}
-
----@enum render.md.heading.Width
-local Width = {
-    full = 'full',
-    block = 'block',
 }
 
 ---@class (exact) render.md.heading.Custom
@@ -140,14 +134,15 @@ M.default = {
 
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
-    require('render-markdown.config.base').validate(spec)
+    local Base = require('render-markdown.config.base')
+    Base.validate(spec)
     spec:type('atx', 'boolean')
     spec:type('setext', 'boolean')
     spec:type('sign', 'boolean')
     spec:list('icons', 'string', 'function')
     spec:one_of('position', vim.tbl_values(Position))
     spec:list('signs', 'string')
-    spec:one_or_list_of('width', vim.tbl_values(Width))
+    spec:one_or_list_of('width', vim.tbl_values(Base.Width))
     spec:list('left_margin', 'number', 'number')
     spec:list('left_pad', 'number', 'number')
     spec:list('right_pad', 'number', 'number')

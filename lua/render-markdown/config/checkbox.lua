@@ -60,7 +60,8 @@ M.default = {
 
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
-    require('render-markdown.config.base').validate(spec)
+    local Base = require('render-markdown.config.base')
+    Base.validate(spec)
     spec:type('right_pad', 'number')
     spec:nested({ 'unchecked', 'checked' }, function(box)
         box:type('icon', 'string')

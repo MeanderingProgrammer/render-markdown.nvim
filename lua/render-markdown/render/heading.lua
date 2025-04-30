@@ -11,7 +11,7 @@ local colors = require('render-markdown.colors')
 ---@field sign? string
 ---@field fg? string
 ---@field bg? string
----@field width render.md.heading.Width
+---@field width render.md.base.Width
 ---@field left_margin number
 ---@field left_pad number
 ---@field right_pad number

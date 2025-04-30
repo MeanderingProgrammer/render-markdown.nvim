@@ -32,7 +32,8 @@ M.default = {
 
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
-    require('render-markdown.config.base').validate(spec)
+    local Base = require('render-markdown.config.base')
+    Base.validate(spec)
     spec:type('per_level', 'number')
     spec:type('skip_level', 'number')
     spec:type('skip_heading', 'boolean')

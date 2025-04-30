@@ -32,7 +32,8 @@ M.default = {
 
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
-    require('render-markdown.config.base').validate(spec)
+    local Base = require('render-markdown.config.base')
+    Base.validate(spec)
     spec:type('icon', 'string')
     spec:one_of('width', { 'full' }, 'number')
     spec:type('left_margin', 'number')

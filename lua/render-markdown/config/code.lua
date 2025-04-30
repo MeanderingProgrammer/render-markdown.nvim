@@ -6,7 +6,7 @@
 ---@field language_icon boolean
 ---@field language_name boolean
 ---@field disable_background boolean|string[]
----@field width render.md.code.Width
+---@field width render.md.base.Width
 ---@field left_margin number
 ---@field left_pad number
 ---@field right_pad number
@@ -35,12 +35,6 @@ local Style = {
 local Position = {
     left = 'left',
     right = 'right',
-}
-
----@enum render.md.code.Width
-local Width = {
-    full = 'full',
-    block = 'block',
 }
 
 ---@enum render.md.code.Border
@@ -130,7 +124,8 @@ M.default = {
 
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
-    require('render-markdown.config.base').validate(spec)
+    local Base = require('render-markdown.config.base')
+    Base.validate(spec)
     spec:type('sign', 'boolean')
     spec:one_of('style', vim.tbl_values(Style))
     spec:one_of('position', vim.tbl_values(Position))
@@ -138,7 +133,7 @@ function M.validate(spec)
     spec:type('language_icon', 'boolean')
     spec:type('language_name', 'boolean')
     spec:list('disable_background', 'string', 'boolean')
-    spec:one_of('width', vim.tbl_values(Width))
+    spec:one_of('width', vim.tbl_values(Base.Width))
     spec:type('left_margin', 'number')
     spec:type('left_pad', 'number')
     spec:type('right_pad', 'number')

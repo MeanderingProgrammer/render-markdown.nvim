@@ -107,7 +107,8 @@ end
 -- stylua: ignore
 ---@param spec render.md.debug.ValidatorSpec
 function Config.validate(spec)
-    require('render-markdown.config.base').validate(spec)
+    local Base = require('render-markdown.config.base')
+    Base.validate(spec)
     spec:type('max_file_size', 'number')
     spec:type('debounce', 'number')
     spec:nested('anti_conceal', require('render-markdown.config.anti_conceal').validate)
