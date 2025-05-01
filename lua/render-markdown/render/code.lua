@@ -207,22 +207,23 @@ end
 ---@param end_row integer
 ---@param highlight string
 function Render:background(start_row, end_row, highlight)
-    local col, win_col, padding = self.node.start_col, 0, {}
+    local padding = self.config:line()
+    local win_col = 0
     if self.info.width == 'block' then
+        padding:pad(vim.o.columns * 2)
         win_col = self.data.margin + self.data.width + self.data.indent
-        self:append(padding, vim.o.columns * 2)
     end
     for row = start_row, end_row do
-        self.marks:add('code_background', row, col, {
+        self.marks:add('code_background', row, self.node.start_col, {
             end_row = row + 1,
             hl_group = highlight,
             hl_eol = true,
         })
-        if win_col > 0 and #padding > 0 then
-            -- Overwrite anything beyond width with padding highlight
-            self.marks:add('code_background', row, col, {
+        if not padding:empty() and win_col > 0 then
+            -- overwrite anything beyond width with padding
+            self.marks:add('code_background', row, self.node.start_col, {
                 priority = 0,
-                virt_text = padding,
+                virt_text = padding:get(),
                 virt_text_win_col = win_col,
             })
         end
@@ -250,18 +251,18 @@ function Render:padding(background)
     local highlight = background and self.info.highlight or nil
 
     for row = start_row, end_row do
-        local line = {}
+        local line = self.config:line()
         if vim.tbl_contains(empty, row) then
-            self:append(line, col)
+            line:pad(col)
         end
-        self:append(line, self.data.margin)
+        line:pad(self.data.margin)
         if row > start_row and row < end_row then
-            self:append(line, self.data.padding, highlight)
+            line:pad(self.data.padding, highlight)
         end
-        if #line > 0 then
+        if not line:empty() then
             self.marks:add(false, row, col, {
                 priority = priority,
-                virt_text = line,
+                virt_text = line:get(),
                 virt_text_pos = 'inline',
             })
         end

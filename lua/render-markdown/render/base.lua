@@ -1,4 +1,3 @@
-local Iter = require('render-markdown.lib.iter')
 local Str = require('render-markdown.lib.str')
 local colors = require('render-markdown.colors')
 
@@ -31,7 +30,7 @@ end
 ---@param highlight? string
 function Base:sign(enabled, text, highlight)
     local sign = self.config.sign
-    if not enabled or not sign.enabled or not text then
+    if not sign.enabled or not enabled or not text then
         return
     end
     local sign_highlight = sign.highlight
@@ -49,19 +48,18 @@ end
 ---@param highlight string
 ---@return boolean
 function Base:check_icon(icon, highlight)
-    local line = self:append({}, icon, highlight)
+    local line = self.config:line():text(icon, highlight)
     local space = self.context:width(self.node) + 1 - Str.width(icon)
     local right_pad = self.config.checkbox.right_pad
     if space < 0 then
         -- not enough space to fit the icon in-place
         return self.marks:over('check_icon', self.node, {
-            virt_text = self:append(line, right_pad),
+            virt_text = line:pad(right_pad):get(),
             virt_text_pos = 'inline',
             conceal = '',
         }, { 0, 0, 0, 1 })
     else
         local fits = math.min(space, right_pad)
-        self:append(line, fits)
         space = space - fits
         right_pad = right_pad - fits
         local row = self.node.start_row
@@ -69,7 +67,7 @@ function Base:check_icon(icon, highlight)
         local end_col = self.node.end_col + 1
         self.marks:add('check_icon', row, start_col, {
             end_col = end_col - space,
-            virt_text = line,
+            virt_text = line:pad(fits):get(),
             virt_text_pos = 'overlay',
         })
         if space > 0 then
@@ -82,7 +80,7 @@ function Base:check_icon(icon, highlight)
         if right_pad > 0 then
             -- add padding
             self.marks:add('check_icon', row, end_col, {
-                virt_text = self:append({}, right_pad),
+                virt_text = self.config:line():pad(right_pad):get(),
                 virt_text_pos = 'inline',
             })
         end
@@ -102,46 +100,25 @@ function Base:scope(element, node, highlight)
 end
 
 ---@protected
----@param destination string
----@param icon render.md.mark.Text
-function Base:link_icon(destination, icon)
-    local options = Iter.table.filter(self.config.link.custom, function(custom)
-        if custom.kind == 'suffix' then
-            return vim.endswith(destination, custom.pattern)
-        else
-            return destination:find(custom.pattern) ~= nil
-        end
-    end)
-    Iter.list.sort(options, function(custom)
-        return custom.priority or Str.width(custom.pattern)
-    end)
-    local result = options[#options]
-    if result then
-        icon[1] = result.icon
-        icon[2] = result.highlight or icon[2]
-    end
-end
-
----@protected
 ---@param virtual boolean
 ---@param level? integer
----@return render.md.mark.Line
+---@return render.md.Line
 function Base:indent_line(virtual, level)
     if virtual then
         level = self:indent_level(level)
     else
         assert(level, 'level must be known for real lines')
     end
-    local line = {}
+    local line = self.config:line()
     if level > 0 then
         local indent = self.config.indent
         local icon_width = Str.width(indent.icon)
         if icon_width == 0 then
-            self:append(line, indent.per_level * level)
+            line:pad(indent.per_level * level)
         else
             for _ = 1, level do
-                self:append(line, indent.icon, indent.highlight)
-                self:append(line, indent.per_level - icon_width)
+                line:text(indent.icon, indent.highlight)
+                line:pad(indent.per_level - icon_width)
             end
         end
     end
@@ -175,25 +152,6 @@ function Base:indent_level(level)
         end
     end
     return math.max(level - indent.skip_level, 0)
-end
-
----@protected
----@param line render.md.mark.Line
----@param value string|integer
----@param highlight? string|string[]
----@return render.md.mark.Line
-function Base:append(line, value, highlight)
-    highlight = highlight or self.config.padding.highlight
-    if type(value) == 'string' then
-        if #value > 0 then
-            line[#line + 1] = { value, highlight }
-        end
-    else
-        if value > 0 then
-            line[#line + 1] = { Str.pad(value), highlight }
-        end
-    end
-    return line
 end
 
 return Base

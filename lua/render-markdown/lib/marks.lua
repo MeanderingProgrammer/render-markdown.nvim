@@ -26,19 +26,19 @@ local log = require('render-markdown.core.log')
 ---@class render.md.Marks
 ---@field private context render.md.Context
 ---@field private ignore render.md.conceal.Ignore
----@field private inline boolean
+---@field private update boolean
 ---@field private marks render.md.Mark[]
 local Marks = {}
 Marks.__index = Marks
 
 ---@param context render.md.Context
----@param inline boolean
+---@param update boolean
 ---@return render.md.Marks
-function Marks.new(context, inline)
+function Marks.new(context, update)
     local self = setmetatable({}, Marks)
     self.context = context
     self.ignore = context.config.anti_conceal.ignore
-    self.inline = inline
+    self.update = update
     self.marks = {}
     return self
 end
@@ -93,7 +93,9 @@ function Marks:add(element, start_row, start_col, opts)
         return false
     end
     log.add('debug', 'mark', mark)
-    self:update(mark)
+    if self.update then
+        self:run_update(mark)
+    end
     self.marks[#self.marks + 1] = mark
     return true
 end
@@ -131,10 +133,7 @@ end
 
 ---@private
 ---@param mark render.md.Mark
-function Marks:update(mark)
-    if not self.inline then
-        return
-    end
+function Marks:run_update(mark)
     local row, start_col = mark.start_row, mark.start_col
     if mark.opts.conceal then
         local end_col = assert(mark.opts.end_col, 'conceal requires end_col')

@@ -33,11 +33,11 @@ function Render:render()
     local start_row = math.max(self.node.start_row + self:start_below(), 0)
     local end_row = self.node.end_row - 1 - self:end_above()
     -- each level stacks inline marks so we only add changes in level
-    local virt_text = self:indent_line(false, self.data.level_change)
+    local line = self:indent_line(false, self.data.level_change):get()
     for row = start_row, end_row do
         self.marks:add(false, row, 0, {
             priority = 0,
-            virt_text = virt_text,
+            virt_text = line,
             virt_text_pos = 'inline',
         })
     end

@@ -236,7 +236,7 @@ function Render:delimiter()
     local delim, border = self.data.delim, self.info.border
 
     local indicator, icon = self.info.alignment_indicator, border[11]
-    local sections = Iter.list.map(delim.columns, function(column)
+    local parts = Iter.list.map(delim.columns, function(column)
         -- If column is small there's no good place to put the alignment indicator
         -- Alignment indicator must be exactly one character wide
         -- Do not put an indicator for default alignment
@@ -255,17 +255,14 @@ function Render:delimiter()
             return indicator .. icon:rep(column.width - 2) .. indicator
         end
     end)
+    local delimiter = border[4] .. table.concat(parts, border[5]) .. border[6]
 
-    local line = self:append({}, Str.spaces('start', delim.node.text))
-    self:append(
-        line,
-        border[4] .. table.concat(sections, border[5]) .. border[6],
-        self.info.head
-    )
-    self:append(line, Str.width(delim.node.text) - Str.line_width(line))
-
+    local line = self.config:line()
+    line:pad(Str.spaces('start', delim.node.text))
+    line:text(delimiter, self.info.head)
+    line:pad(Str.width(delim.node.text) - Str.line_width(line:get()))
     self.marks:over('table_border', delim.node, {
-        virt_text = line,
+        virt_text = line:get(),
         virt_text_pos = 'overlay',
     })
 end
@@ -327,7 +324,7 @@ function Render:shift(column, side, amount)
     if amount > 0 then
         self.marks:add(true, column.row, col, {
             priority = 0,
-            virt_text = self:append({}, amount, self.info.filler),
+            virt_text = self.config:line():pad(amount, self.info.filler):get(),
             virt_text_pos = 'inline',
         })
     elseif amount < 0 then
@@ -397,11 +394,9 @@ function Render:full()
     local function table_border(node, above, chars)
         local text = chars[1] .. table.concat(sections, chars[2]) .. chars[3]
         local highlight = above and self.info.head or self.info.row
-
-        local line = self:append({}, spaces)
-        self:append(line, text, highlight)
+        local line = self.config:line():pad(spaces):text(text, highlight)
         self.marks:start(false, node, {
-            virt_lines = { vim.list_extend(self:indent_line(true), line) },
+            virt_lines = { self:indent_line(true):extend(line):get() },
             virt_lines_above = above,
         })
     end

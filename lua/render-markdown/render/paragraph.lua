@@ -40,7 +40,7 @@ function Render:render()
     local width = vim.fn.max(self.node:widths())
     width = math.max(width, self.info.min_width)
     local margin = self.context:percent(self.data.margin, width)
-    local line = self:append({}, margin)
+    local line = self.config:line():pad(margin):get()
     if #line == 0 then
         return
     end

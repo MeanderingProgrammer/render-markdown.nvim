@@ -1,4 +1,6 @@
 local Env = require('render-markdown.lib.env')
+local Iter = require('render-markdown.lib.iter')
+local Line = require('render-markdown.lib.line')
 local Range = require('render-markdown.core.range')
 
 ---@class render.md.main.Full
@@ -132,6 +134,11 @@ function Config.validate(spec)
     spec:nested('win_options', require('render-markdown.config.win_options').validate)
 end
 
+---@return render.md.Line
+function Config:line()
+    return Line.new(self)
+end
+
 ---@param mode string
 ---@return boolean
 function Config:render(mode)
@@ -148,6 +155,26 @@ end
 ---@return render.md.checkbox.custom.Config?
 function Config:get_checkbox(node)
     return self.full.checkbox[node.text:lower()]
+end
+
+---@param destination string
+---@param icon render.md.mark.Text
+function Config:link_text(destination, icon)
+    local options = Iter.table.filter(self.link.custom, function(custom)
+        if custom.kind == 'suffix' then
+            return vim.endswith(destination, custom.pattern)
+        else
+            return destination:find(custom.pattern) ~= nil
+        end
+    end)
+    Iter.list.sort(options, function(custom)
+        return custom.priority or #custom.pattern
+    end)
+    local result = options[#options]
+    if result then
+        icon[1] = result.icon
+        icon[2] = result.highlight or icon[2]
+    end
 end
 
 ---@param mode string

@@ -20,20 +20,23 @@ function Render:render()
         or vim.o.columns
     local margin = self.context:percent(self.info.left_margin, width)
 
-    local line = self:append({}, margin)
-    self:append(line, self.info.icon:rep(width), self.info.highlight)
+    local line = self.config:line():pad(margin)
+    line:text(self.info.icon:rep(width), self.info.highlight)
 
     local start_row, end_row = self.node.start_row, self.node.end_row - 1
-    self.marks:add('dash', start_row, 0, {
-        virt_text = line,
+    self:dash(line, start_row)
+    if end_row > start_row then
+        self:dash(line, end_row)
+    end
+end
+
+---@param line render.md.Line
+---@param row integer
+function Render:dash(line, row)
+    self.marks:add('dash', row, 0, {
+        virt_text = line:get(),
         virt_text_pos = 'overlay',
     })
-    if end_row > start_row then
-        self.marks:add('dash', end_row, 0, {
-            virt_text = line,
-            virt_text_pos = 'overlay',
-        })
-    end
 end
 
 return Render

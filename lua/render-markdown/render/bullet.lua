@@ -146,8 +146,8 @@ function Render:padding(root, left_pad, right_pad)
         return
     end
     local start_row, end_row = self.node.start_row, self:end_row(root)
-    local left_line = self:append({}, left_pad)
-    local right_line = self:append({}, right_pad)
+    local left_line = self.config:line():pad(left_pad):get()
+    local right_line = self.config:line():pad(right_pad):get()
     for row = start_row, end_row - 1 do
         local left = root and root.start_col or self.node.start_col
         local right = row == start_row and self.data.marker.end_col - 1 or left

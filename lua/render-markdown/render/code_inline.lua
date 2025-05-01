@@ -29,20 +29,21 @@ end
 ---@param highlight string
 ---@param left boolean
 function Render:padding(highlight, left)
-    local line, icon_highlight = {}, colors.bg_as_fg(highlight)
+    local line = self.config:line()
+    local icon_highlight = colors.bg_as_fg(highlight)
     if left then
-        self:append(line, self.info.inline_left, icon_highlight)
-        self:append(line, self.info.inline_pad, highlight)
+        line:text(self.info.inline_left, icon_highlight)
+        line:pad(self.info.inline_pad, highlight)
     else
-        self:append(line, self.info.inline_pad, highlight)
-        self:append(line, self.info.inline_right, icon_highlight)
+        line:pad(self.info.inline_pad, highlight)
+        line:text(self.info.inline_right, icon_highlight)
     end
-    if #line > 0 then
+    if not line:empty() then
         local row = left and self.node.start_row or self.node.end_row
         local col = left and self.node.start_col or self.node.end_col
         self.marks:add(true, row, col, {
             priority = 0,
-            virt_text = line,
+            virt_text = line:get(),
             virt_text_pos = 'inline',
         })
     end
