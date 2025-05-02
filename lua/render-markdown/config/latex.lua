@@ -11,7 +11,7 @@ local Position = {
     below = 'below',
 }
 
----@class render.md.latex
+---@class render.md.latex.Cfg
 local M = {}
 
 ---@type render.md.latex.Config

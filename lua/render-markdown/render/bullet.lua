@@ -20,9 +20,7 @@ function Render:setup()
     end
     self.data = {
         marker = marker,
-        -- List markers from tree-sitter should have leading spaces removed, however there are edge
-        -- cases in the parser: https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
-        -- As a result we account for leading spaces here, can remove if this gets fixed upstream
+        -- https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
         spaces = Str.spaces('start', marker.text),
         checkbox = self.context:get_checkbox(self.node.start_row),
     }
@@ -55,11 +53,11 @@ function Render:render()
             value = self.data.marker.text,
         }
 
-        local icon = self:get_text(icons, ctx)
-        local highlight = self:get_text(info.highlight, ctx)
-        local scope_highlight = self:get_text(info.scope_highlight, ctx)
-        local left_pad = self:get_int(info.left_pad, ctx)
-        local right_pad = self:get_int(info.right_pad, ctx)
+        local icon = self:get_string(icons, ctx)
+        local highlight = self:get_string(info.highlight, ctx)
+        local scope_highlight = self:get_string(info.scope_highlight, ctx)
+        local left_pad = self:get_integer(info.left_pad, ctx)
+        local right_pad = self:get_integer(info.right_pad, ctx)
         self:icon(icon, highlight)
         self:padding(root, left_pad, right_pad)
         self:highlight_scope(true, scope_highlight)
@@ -91,10 +89,10 @@ function Render:highlight_scope(element, highlight)
 end
 
 ---@private
----@param values render.md.bullet.Text
+---@param values render.md.bullet.String
 ---@param ctx render.md.bullet.Context
 ---@return string?
-function Render:get_text(values, ctx)
+function Render:get_string(values, ctx)
     if type(values) == 'function' then
         return values(ctx)
     elseif type(values) == 'string' then
@@ -110,10 +108,10 @@ function Render:get_text(values, ctx)
 end
 
 ---@private
----@param value render.md.bullet.Int
+---@param value render.md.bullet.Integer
 ---@param ctx render.md.bullet.Context
 ---@return integer
-function Render:get_int(value, ctx)
+function Render:get_integer(value, ctx)
     if type(value) == 'function' then
         return value(ctx)
     else

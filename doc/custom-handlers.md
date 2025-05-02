@@ -36,7 +36,9 @@ Each handler must conform to the following interface:
 
 ---@class (exact) render.md.mark.Text
 ---@field [1] string text
----@field [2] string|string[] highlights
+---@field [2] render.md.mark.Hl highlight
+
+---@alias render.md.mark.Hl string|string[]
 ```
 
 The `parse` function takes a `ctx` parameter whose fields are:

@@ -19,7 +19,9 @@ local log = require('render-markdown.core.log')
 
 ---@class (exact) render.md.mark.Text
 ---@field [1] string text
----@field [2] string|string[] highlights
+---@field [2] render.md.mark.Hl highlight
+
+---@alias render.md.mark.Hl string|string[]
 
 ---@alias render.md.mark.Element boolean|render.md.Element
 

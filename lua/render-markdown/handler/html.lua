@@ -1,6 +1,6 @@
-local Context = require('render-markdown.core.context')
+local Context = require('render-markdown.lib.context')
 local Marks = require('render-markdown.lib.marks')
-local ts = require('render-markdown.integ.ts')
+local ts = require('render-markdown.core.ts')
 
 ---@class render.md.handler.buf.Html
 ---@field private query vim.treesitter.Query

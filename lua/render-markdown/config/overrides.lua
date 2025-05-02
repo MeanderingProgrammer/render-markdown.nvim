@@ -3,7 +3,7 @@
 ---@field buftype table<string, render.md.buffer.UserConfig>
 ---@field filetype table<string, render.md.buffer.UserConfig>
 
----@class render.md.overrides
+---@class render.md.overrides.Cfg
 local M = {}
 
 ---@type render.md.overrides.Config
@@ -31,9 +31,10 @@ M.default = {
 
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
+    local Config = require('render-markdown.lib.config')
     spec:nested({ 'buflisted', 'buftype', 'filetype' }, function(overrides)
         overrides:each(function(override)
-            require('render-markdown.config').validate(override)
+            Config.validate(override)
             override:check()
         end, true)
         overrides:check()

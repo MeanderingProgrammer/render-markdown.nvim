@@ -59,7 +59,7 @@ function Providers.None()
     }
 end
 
----@class render.md.integ.Icons
+---@class render.md.Icons
 ---@field private provider? render.md.icon.Provider
 local M = {}
 

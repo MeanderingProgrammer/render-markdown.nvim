@@ -1,27 +1,27 @@
 ---@class (exact) render.md.bullet.Config: render.md.base.Config
----@field icons render.md.bullet.Text
----@field ordered_icons render.md.bullet.Text
----@field left_pad render.md.bullet.Int
----@field right_pad render.md.bullet.Int
----@field highlight render.md.bullet.Text
----@field scope_highlight render.md.bullet.Text
+---@field icons render.md.bullet.String
+---@field ordered_icons render.md.bullet.String
+---@field left_pad render.md.bullet.Integer
+---@field right_pad render.md.bullet.Integer
+---@field highlight render.md.bullet.String
+---@field scope_highlight render.md.bullet.String
 
 ---@class (exact) render.md.bullet.Context
 ---@field level integer
 ---@field index integer
 ---@field value string
 
----@alias render.md.bullet.Text
+---@alias render.md.bullet.String
 ---| string
 ---| string[]
 ---| string[][]
 ---| fun(ctx: render.md.bullet.Context): string?
 
----@alias render.md.bullet.Int
+---@alias render.md.bullet.Integer
 ---| integer
 ---| fun(ctx: render.md.bullet.Context): integer
 
----@class render.md.bullet
+---@class render.md.bullet.Cfg
 local M = {}
 
 ---@type render.md.bullet.Config

@@ -1,4 +1,4 @@
----@class render.md.StringHelper
+---@class render.md.Str
 local M = {}
 
 ---@param s string

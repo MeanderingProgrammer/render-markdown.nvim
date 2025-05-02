@@ -9,7 +9,7 @@
 ---@field change_events? string[]
 ---@field injections? table<string, render.md.injection.UserConfig>
 ---@field patterns? table<string, render.md.pattern.UserConfig>
----@field on? render.md.callback.UserConfig
+---@field on? render.md.on.UserConfig
 ---@field completions? render.md.completions.UserConfig
 ---@field overrides? render.md.overrides.UserConfig
 ---@field custom_handlers? table<string, render.md.Handler>
@@ -48,12 +48,12 @@
 ---@field render_modes? render.md.Modes
 
 ---@class (exact) render.md.bullet.UserConfig: render.md.base.UserConfig
----@field icons? render.md.bullet.Text
----@field ordered_icons? render.md.bullet.Text
----@field left_pad? render.md.bullet.Int
----@field right_pad? render.md.bullet.Int
----@field highlight? render.md.bullet.Text
----@field scope_highlight? render.md.bullet.Text
+---@field icons? render.md.bullet.String
+---@field ordered_icons? render.md.bullet.String
+---@field left_pad? render.md.bullet.Integer
+---@field right_pad? render.md.bullet.Integer
+---@field highlight? render.md.bullet.String
+---@field scope_highlight? render.md.bullet.String
 
 ---@class (exact) render.md.callout.UserConfig
 ---@field raw? string
@@ -134,7 +134,7 @@
 ---@field atx? boolean
 ---@field setext? boolean
 ---@field sign? boolean
----@field icons? render.md.heading.Icons
+---@field icons? render.md.heading.String
 ---@field position? render.md.heading.Position
 ---@field signs? string[]
 ---@field width? render.md.base.Width|(render.md.base.Width)[]
@@ -208,11 +208,11 @@
 ---@field priority? integer
 ---@field highlight? string
 
----@class (exact) render.md.callback.UserConfig
----@field attach? fun(ctx: render.md.callback.attach.Context)
----@field initial? fun(ctx: render.md.callback.render.Context)
----@field render? fun(ctx: render.md.callback.render.Context)
----@field clear? fun(ctx: render.md.callback.render.Context)
+---@class (exact) render.md.on.UserConfig
+---@field attach? fun(ctx: render.md.on.attach.Context)
+---@field initial? fun(ctx: render.md.on.render.Context)
+---@field render? fun(ctx: render.md.on.render.Context)
+---@field clear? fun(ctx: render.md.on.render.Context)
 
 ---@class (exact) render.md.overrides.UserConfig
 ---@field buflisted? table<boolean, render.md.buffer.UserConfig>
@@ -223,7 +223,8 @@
 ---@field highlight? string
 
 ---@class (exact) render.md.paragraph.UserConfig: render.md.base.UserConfig
----@field left_margin? render.md.paragraph.Margin
+---@field left_margin? render.md.paragraph.Number
+---@field indent? render.md.paragraph.Number
 ---@field min_width? integer
 
 ---@class (exact) render.md.pattern.UserConfig

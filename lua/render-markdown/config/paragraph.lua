@@ -1,15 +1,16 @@
 ---@class (exact) render.md.paragraph.Config: render.md.base.Config
----@field left_margin render.md.paragraph.Margin
+---@field left_margin render.md.paragraph.Number
+---@field indent render.md.paragraph.Number
 ---@field min_width integer
 
 ---@class (exact) render.md.paragraph.Context
 ---@field text string
 
----@alias render.md.paragraph.Margin
+---@alias render.md.paragraph.Number
 ---| number
 ---| fun(ctx: render.md.paragraph.Context): number
 
----@class render.md.paragraph
+---@class render.md.paragraph.Cfg
 local M = {}
 
 ---@type render.md.paragraph.Config
@@ -27,6 +28,9 @@ M.default = {
     -- | function | `value(context)` |
     -- | number   | `value`          |
     left_margin = 0,
+    -- Amount of padding to add to the first line of each paragraph.
+    -- Output is evaluated using the same logic as 'left_margin'.
+    indent = 0,
     -- Minimum width to use for paragraphs.
     min_width = 0,
 }
@@ -36,6 +40,7 @@ function M.validate(spec)
     local Base = require('render-markdown.config.base')
     Base.validate(spec)
     spec:type('left_margin', { 'number', 'function' })
+    spec:type('indent', { 'number', 'function' })
     spec:type('min_width', 'number')
     spec:check()
 end

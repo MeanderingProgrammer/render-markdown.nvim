@@ -1,5 +1,5 @@
 local Base = require('render-markdown.render.base')
-local colors = require('render-markdown.colors')
+local colors = require('render-markdown.core.colors')
 
 ---@class render.md.render.CodeInline: render.md.Render
 ---@field private info render.md.code.Config

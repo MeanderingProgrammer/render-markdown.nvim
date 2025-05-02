@@ -134,7 +134,7 @@ function Mark.text(text)
 end
 
 ---@private
----@param highlight string|string[]
+---@param highlight render.md.mark.Hl
 ---@return string
 function Mark.highlight(highlight)
     if type(highlight) == 'table' then
@@ -149,7 +149,7 @@ local M = {}
 
 function M.show()
     local Env = require('render-markdown.lib.env')
-    local Range = require('render-markdown.core.range')
+    local Range = require('render-markdown.lib.range')
     local ui = require('render-markdown.core.ui')
 
     local buf = Env.buf.current()

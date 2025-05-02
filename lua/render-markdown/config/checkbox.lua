@@ -15,7 +15,7 @@
 ---@field highlight string
 ---@field scope_highlight? string
 
----@class render.md.checkbox
+---@class render.md.checkbox.Cfg
 local M = {}
 
 ---@type render.md.checkbox.Config

@@ -5,7 +5,7 @@
 ---@field quote_icon? string
 ---@field category? string
 
----@class render.md.callout
+---@class render.md.callout.Cfg
 local M = {}
 
 -- stylua: ignore

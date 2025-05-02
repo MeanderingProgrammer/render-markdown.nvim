@@ -11,7 +11,7 @@
 ---@field callout fun(value: render.md.callout.Config): boolean
 ---@field checkbox fun(value: render.md.checkbox.custom.Config): boolean
 
----@class render.md.completions
+---@class render.md.completions.Cfg
 local M = {}
 
 ---@type render.md.completions.Config

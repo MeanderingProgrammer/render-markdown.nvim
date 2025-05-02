@@ -2,7 +2,7 @@
 ---@field enabled boolean
 ---@field highlight string
 
----@class render.md.sign
+---@class render.md.sign.Cfg
 local M = {}
 
 ---@type render.md.sign.Config

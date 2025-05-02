@@ -1,4 +1,4 @@
-local Context = require('render-markdown.core.context')
+local Context = require('render-markdown.lib.context')
 local Iter = require('render-markdown.lib.iter')
 local Marks = require('render-markdown.lib.marks')
 local Node = require('render-markdown.lib.node')

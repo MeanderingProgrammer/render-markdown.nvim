@@ -1,19 +1,11 @@
-local Buffer = require('render-markdown.core.buffer')
+local Buffer = require('render-markdown.lib.buffer')
 local Compat = require('render-markdown.lib.compat')
-local Context = require('render-markdown.core.context')
+local Context = require('render-markdown.lib.context')
 local Env = require('render-markdown.lib.env')
-local Extmark = require('render-markdown.core.extmark')
+local Extmark = require('render-markdown.lib.extmark')
 local Iter = require('render-markdown.lib.iter')
 local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
-
----@class (exact) render.md.Handler
----@field extends? boolean
----@field parse fun(ctx: render.md.handler.Context): render.md.Mark[]
-
----@class (exact) render.md.handler.Context
----@field buf integer
----@field root TSNode
 
 ---@type table<string, render.md.Handler>
 local builtin_handlers = {
@@ -24,7 +16,7 @@ local builtin_handlers = {
 }
 
 ---@class render.md.ui.Config
----@field on render.md.callback.Config
+---@field on render.md.on.Config
 ---@field custom_handlers table<string, render.md.Handler>
 
 ---@class render.md.Ui
@@ -59,7 +51,7 @@ function M.get(buf)
     return result
 end
 
----Used directly by fzf-lua: https://github.com/ibhagwan/fzf-lua/blob/main/lua/fzf-lua/previewer/builtin.lua
+---Used by fzf-lua: https://github.com/ibhagwan/fzf-lua/blob/main/lua/fzf-lua/previewer/builtin.lua
 ---@param buf integer
 ---@param win integer
 ---@param event string

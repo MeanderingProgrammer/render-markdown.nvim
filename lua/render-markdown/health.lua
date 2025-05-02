@@ -1,11 +1,11 @@
-local Icons = require('render-markdown.integ.icons')
+local Icons = require('render-markdown.lib.icons')
 local state = require('render-markdown.state')
 
 ---@class render.md.Health
 local M = {}
 
 ---@private
-M.version = '8.3.22'
+M.version = '8.3.23'
 
 function M.check()
     M.start('version')

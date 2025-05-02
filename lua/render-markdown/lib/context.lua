@@ -1,7 +1,7 @@
-local Conceal = require('render-markdown.core.conceal')
+local Conceal = require('render-markdown.lib.conceal')
 local Env = require('render-markdown.lib.env')
 local Node = require('render-markdown.lib.node')
-local Range = require('render-markdown.core.range')
+local Range = require('render-markdown.lib.range')
 local Str = require('render-markdown.lib.str')
 local log = require('render-markdown.core.log')
 
@@ -133,11 +133,11 @@ end
 function Context:percent(value, used)
     if value <= 0 then
         return 0
-    elseif value < 1 then
+    elseif value >= 1 then
+        return value
+    else
         local available = Env.win.width(self.win) - used
         return math.floor((available * value) + 0.5)
-    else
-        return value
     end
 end
 

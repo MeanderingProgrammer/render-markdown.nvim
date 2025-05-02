@@ -25,7 +25,7 @@ local Element = {
     sign = 'sign',
 }
 
----@class render.md.anti.conceal
+---@class render.md.anti.conceal.Cfg
 local M = {}
 
 ---@type render.md.anti.conceal.Config

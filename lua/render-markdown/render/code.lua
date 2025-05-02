@@ -1,15 +1,14 @@
 local Base = require('render-markdown.render.base')
 local Env = require('render-markdown.lib.env')
-local Icons = require('render-markdown.integ.icons')
+local Icons = require('render-markdown.lib.icons')
 local Str = require('render-markdown.lib.str')
-local colors = require('render-markdown.colors')
+local colors = require('render-markdown.core.colors')
 
 ---@class render.md.code.Data
----@field width integer
 ---@field language integer
 ---@field padding integer
+---@field body integer
 ---@field margin integer
----@field indent integer
 
 ---@class render.md.render.Code: render.md.Render
 ---@field private info render.md.code.Config
@@ -26,30 +25,26 @@ function Render:setup()
     if self.info.style == 'none' then
         return false
     end
-    -- Do not attempt to render single line code block
+    -- skip single line code block
     if self.node.end_row - self.node.start_row <= 1 then
         return false
     end
-
     local widths = self.node:widths()
     local width = vim.fn.max(widths)
     local language = self:offset(self.info.language_pad, width)
     local left = self:offset(self.info.left_pad, width)
     local right = self:offset(self.info.right_pad, width)
-    width = math.max(
+    local body = math.max(
         widths[1] + language,
         left + width + right,
         self.info.min_width
     )
-
     self.data = {
-        width = width,
         language = language,
         padding = left,
-        margin = self:offset(self.info.left_margin, width),
-        indent = self:indent_size(),
+        body = body,
+        margin = self:offset(self.info.left_margin, body),
     }
-
     return true
 end
 
@@ -63,9 +58,9 @@ function Render:offset(value, used)
     end
     local result = self.context:percent(value, used)
     if self.node.text:find('\t') then
-        -- rounds to the next multiple of tab size
-        local tab_size = Env.buf.get(self.context.buf, 'tabstop')
-        result = math.ceil(result / tab_size) * tab_size
+        -- rounds to the next multiple of tab
+        local tab = Env.buf.get(self.context.buf, 'tabstop')
+        result = math.ceil(result / tab) * tab
     end
     return result
 end
@@ -149,13 +144,13 @@ function Render:language(language, delim)
             virt_text_pos = 'inline',
         })
     else
-        local start = self.data.width - padding
+        local start = self.data.body - padding
         if self.info.width == 'block' then
             start = start - Str.width(text)
         end
         return self.marks:add('code_language', language.start_row, 0, {
             virt_text = { { text, highlight } },
-            virt_text_win_col = start + self.data.indent,
+            virt_text_win_col = start + self:indent():size(),
         })
     end
 end
@@ -178,7 +173,7 @@ function Render:border(node, above, empty)
     else
         local row, col = node.start_row, self.node.start_col
         local border = above and self.info.above or self.info.below
-        local width = self.info.width == 'block' and self.data.width - col
+        local width = self.info.width == 'block' and self.data.body - col
             or vim.o.columns
         self.marks:add('code_border', row, col, {
             virt_text = { { border:rep(width), colors.bg_as_fg(highlight) } },
@@ -211,7 +206,7 @@ function Render:background(start_row, end_row, highlight)
     local win_col = 0
     if self.info.width == 'block' then
         padding:pad(vim.o.columns * 2)
-        win_col = self.data.margin + self.data.width + self.data.indent
+        win_col = self.data.margin + self.data.body + self:indent():size()
     end
     for row = start_row, end_row do
         self.marks:add('code_background', row, self.node.start_col, {

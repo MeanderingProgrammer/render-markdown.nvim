@@ -1,7 +1,7 @@
 local Env = require('render-markdown.lib.env')
 local Iter = require('render-markdown.lib.iter')
 local Line = require('render-markdown.lib.line')
-local Range = require('render-markdown.core.range')
+local Range = require('render-markdown.lib.range')
 
 ---@class render.md.main.Full
 ---@field modes render.md.Modes
@@ -106,34 +106,6 @@ function Config.normalize(components)
     return result
 end
 
--- stylua: ignore
----@param spec render.md.debug.ValidatorSpec
-function Config.validate(spec)
-    local Base = require('render-markdown.config.base')
-    Base.validate(spec)
-    spec:type('max_file_size', 'number')
-    spec:type('debounce', 'number')
-    spec:nested('anti_conceal', require('render-markdown.config.anti_conceal').validate)
-    spec:nested('bullet', require('render-markdown.config.bullet').validate)
-    spec:nested('callout', require('render-markdown.config.callout').validate)
-    spec:nested('checkbox', require('render-markdown.config.checkbox').validate)
-    spec:nested('code', require('render-markdown.config.code').validate)
-    spec:nested('dash', require('render-markdown.config.dash').validate)
-    spec:nested('document', require('render-markdown.config.document').validate)
-    spec:nested('heading', require('render-markdown.config.heading').validate)
-    spec:nested('html', require('render-markdown.config.html').validate)
-    spec:nested('indent', require('render-markdown.config.indent').validate)
-    spec:nested('inline_highlight', require('render-markdown.config.inline_highlight').validate)
-    spec:nested('latex', require('render-markdown.config.latex').validate)
-    spec:nested('link', require('render-markdown.config.link').validate)
-    spec:nested('padding', require('render-markdown.config.padding').validate)
-    spec:nested('paragraph', require('render-markdown.config.paragraph').validate)
-    spec:nested('pipe_table', require('render-markdown.config.pipe_table').validate)
-    spec:nested('quote', require('render-markdown.config.quote').validate)
-    spec:nested('sign', require('render-markdown.config.sign').validate)
-    spec:nested('win_options', require('render-markdown.config.win_options').validate)
-end
-
 ---@return render.md.Line
 function Config:line()
     return Line.new(self)
@@ -193,6 +165,34 @@ function Config:hidden(mode, row)
     else
         return Range.new(row - config.above, row + config.below)
     end
+end
+
+-- stylua: ignore
+---@param spec render.md.debug.ValidatorSpec
+function Config.validate(spec)
+    local Base = require('render-markdown.config.base')
+    Base.validate(spec)
+    spec:type('max_file_size', 'number')
+    spec:type('debounce', 'number')
+    spec:nested('anti_conceal', require('render-markdown.config.anti_conceal').validate)
+    spec:nested('bullet', require('render-markdown.config.bullet').validate)
+    spec:nested('callout', require('render-markdown.config.callout').validate)
+    spec:nested('checkbox', require('render-markdown.config.checkbox').validate)
+    spec:nested('code', require('render-markdown.config.code').validate)
+    spec:nested('dash', require('render-markdown.config.dash').validate)
+    spec:nested('document', require('render-markdown.config.document').validate)
+    spec:nested('heading', require('render-markdown.config.heading').validate)
+    spec:nested('html', require('render-markdown.config.html').validate)
+    spec:nested('indent', require('render-markdown.config.indent').validate)
+    spec:nested('inline_highlight', require('render-markdown.config.inline_highlight').validate)
+    spec:nested('latex', require('render-markdown.config.latex').validate)
+    spec:nested('link', require('render-markdown.config.link').validate)
+    spec:nested('padding', require('render-markdown.config.padding').validate)
+    spec:nested('paragraph', require('render-markdown.config.paragraph').validate)
+    spec:nested('pipe_table', require('render-markdown.config.pipe_table').validate)
+    spec:nested('quote', require('render-markdown.config.quote').validate)
+    spec:nested('sign', require('render-markdown.config.sign').validate)
+    spec:nested('win_options', require('render-markdown.config.win_options').validate)
 end
 
 return Config

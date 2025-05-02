@@ -11,7 +11,7 @@
 ---@field icon string
 ---@field highlight string
 
----@class render.md.html
+---@class render.md.html.Cfg
 local M = {}
 
 ---@type render.md.html.Config

@@ -49,19 +49,19 @@ function MarkDetails.new(row, col, details)
     return self
 end
 
----@param highlights number|string|string[]
+---@param highlight number|render.md.mark.Hl
 ---@return string
-function MarkDetails.simplify(highlights)
-    if type(highlights) == 'number' then
-        return tostring(highlights)
+function MarkDetails.simplify(highlight)
+    if type(highlight) == 'number' then
+        return tostring(highlight)
     end
-    if type(highlights) == 'string' then
-        highlights = { highlights }
+    if type(highlight) == 'string' then
+        highlight = { highlight }
     end
-    local result = {}
-    for _, highlight in ipairs(highlights) do
-        highlight = highlight:gsub('RenderMarkdown', 'Rm')
-        result[#result + 1] = highlight
+    local result = {} ---@type string[]
+    for _, value in ipairs(highlight) do
+        value = value:gsub('RenderMarkdown', 'Rm')
+        result[#result + 1] = value
     end
     return table.concat(result, ':')
 end

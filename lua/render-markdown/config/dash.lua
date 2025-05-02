@@ -6,7 +6,7 @@
 
 ---@alias render.md.dash.Width 'full'|number
 
----@class render.md.dash
+---@class render.md.dash.Cfg
 local M = {}
 
 ---@type render.md.dash.Config

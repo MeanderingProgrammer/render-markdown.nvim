@@ -16,6 +16,8 @@
 - set quote highlights for 6 levels of nesting [7051859](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/70518594a4bf1a35d4e331677dd86bc065e599a4)
   [cyberdream](https://github.com/scottmckendry/cyberdream.nvim/pull/182)
 - use conceal lines for setext heading underline [78ffe3b](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/78ffe3b0500bbc7e37fabde723d96661538e8b32)
+- improve debug command [40fff90](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/40fff90caccb4a1c902681f0440806ee9ae95d0b)
+- use selene to prevent accidental print statements [7f81e9d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7f81e9dcc15504c044f20df39d28a590cd5c6ca5)
 
 ### Bug Fixes
 
@@ -23,6 +25,8 @@
   [dfffdd2](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/dfffdd221570d36ac80d1a599643140a319a36de)
 - disable line wrapping in LSP hover docs in some cases [#408](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/408)
   [080104e](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/080104e4dce26819efb4f4c83d1b7b2d82b96f7c)
+- handle spaces before atx headings [bd56575](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/bd5657594bf1a96b04f900c87e8d74226a54d832)
+- remove accidental vim.print [bff12b4](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/bff12b4655d1537cf0f10859fcd63ef2cec65010)
 
 ### Collaborator Shoutouts
 

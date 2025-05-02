@@ -4,7 +4,7 @@
 
 ---@alias render.md.Modes boolean|string[]
 
----@class render.md.base
+---@class render.md.base.Cfg
 local M = {}
 
 ---@enum render.md.base.Width

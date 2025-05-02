@@ -6,7 +6,7 @@
 ---@field id integer
 ---@field name string
 
----@class render.md.pattern
+---@class render.md.pattern.Cfg
 local M = {}
 
 ---@type table<string, render.md.pattern.Config>

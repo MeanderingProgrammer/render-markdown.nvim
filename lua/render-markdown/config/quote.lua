@@ -3,7 +3,7 @@
 ---@field repeat_linebreak boolean
 ---@field highlight string|string[]
 
----@class render.md.quote
+---@class render.md.quote.Cfg
 local M = {}
 
 ---@type render.md.quote.Config

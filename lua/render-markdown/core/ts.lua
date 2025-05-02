@@ -1,12 +1,12 @@
 local Compat = require('render-markdown.lib.compat')
 
----@class render.md.integ.ts.Config
+---@class render.md.ts.Config
 ---@field file_types string[]
 ---@field injections table<string, render.md.injection.Config>
 ---@field patterns table<string, render.md.pattern.Config>
 
----@class render.md.integ.TS
----@field private config render.md.integ.ts.Config
+---@class render.md.Ts
+---@field private config render.md.ts.Config
 local M = {}
 
 ---@private
@@ -18,7 +18,7 @@ M.initialized = false
 M.queries = {}
 
 ---called from state on setup
----@param config render.md.integ.ts.Config
+---@param config render.md.ts.Config
 function M.setup(config)
     M.config = config
     for _, language in ipairs(M.config.file_types) do

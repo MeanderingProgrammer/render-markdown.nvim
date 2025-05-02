@@ -5,7 +5,7 @@
 ---@field icon string
 ---@field highlight string
 
----@class render.md.indent
+---@class render.md.indent.Cfg
 local M = {}
 
 ---@type render.md.indent.Config

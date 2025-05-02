@@ -33,7 +33,7 @@ local Cell = {
     overlay = 'overlay',
 }
 
----@class render.md.table
+---@class render.md.table.Cfg
 local M = {}
 
 ---@type render.md.table.Config

@@ -2,7 +2,7 @@
 ---@field atx boolean
 ---@field setext boolean
 ---@field sign boolean
----@field icons render.md.heading.Icons
+---@field icons render.md.heading.String
 ---@field position render.md.heading.Position
 ---@field signs string[]
 ---@field width render.md.base.Width|(render.md.base.Width)[]
@@ -23,7 +23,7 @@
 ---@field level integer
 ---@field sections integer[]
 
----@alias render.md.heading.Icons
+---@alias render.md.heading.String
 ---| string[]
 ---| fun(ctx: render.md.heading.Context): string?
 
@@ -40,7 +40,7 @@ local Position = {
 ---@field background? string
 ---@field foreground? string
 
----@class render.md.heading
+---@class render.md.heading.Cfg
 local M = {}
 
 ---@type render.md.heading.Config

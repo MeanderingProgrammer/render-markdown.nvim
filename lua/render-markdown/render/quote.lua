@@ -1,6 +1,6 @@
 local Base = require('render-markdown.render.base')
 local List = require('render-markdown.lib.list')
-local ts = require('render-markdown.integ.ts')
+local ts = require('render-markdown.core.ts')
 
 ---@class render.md.quote.Data
 ---@field query vim.treesitter.Query

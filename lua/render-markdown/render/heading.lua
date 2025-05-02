@@ -1,7 +1,7 @@
 local Base = require('render-markdown.render.base')
 local List = require('render-markdown.lib.list')
 local Str = require('render-markdown.lib.str')
-local colors = require('render-markdown.colors')
+local colors = require('render-markdown.core.colors')
 
 ---@class render.md.heading.Data
 ---@field atx boolean
@@ -20,7 +20,7 @@ local colors = require('render-markdown.colors')
 
 ---@class render.md.heading.Box
 ---@field padding integer
----@field content integer
+---@field body integer
 ---@field margin integer
 
 ---@class render.md.render.Heading: render.md.Render
@@ -55,7 +55,7 @@ function Render:setup()
         atx = atx,
         marker = marker,
         level = level,
-        icon = custom.icon or self:get_icon(self.info.icons, level),
+        icon = custom.icon or self:get_string(self.info.icons, level),
         sign = List.cycle(self.info.signs, level),
         fg = custom.foreground or List.clamp(self.info.foregrounds, level),
         bg = custom.background or List.clamp(self.info.backgrounds, level),
@@ -81,10 +81,10 @@ function Render:custom()
 end
 
 ---@private
----@param values render.md.heading.Icons
+---@param values render.md.heading.String
 ---@param level integer
 ---@return string?
-function Render:get_icon(values, level)
+function Render:get_string(values, level)
     if type(values) == 'function' then
         return values({
             level = level,
@@ -191,12 +191,12 @@ function Render:box(icon)
     end
     local left = self.context:percent(self.data.left_pad, width)
     local right = self.context:percent(self.data.right_pad, width)
-    width = math.max(left + width + right, self.data.min_width)
+    local body = math.max(left + width + right, self.data.min_width)
     ---@type render.md.heading.Box
     return {
         padding = left,
-        content = width,
-        margin = self.context:percent(self.data.left_margin, width),
+        body = body,
+        margin = self.context:percent(self.data.left_margin, body),
     }
 end
 
@@ -211,7 +211,7 @@ function Render:background(box)
     local win_col = 0
     if self.data.width == 'block' then
         padding:pad(vim.o.columns * 2)
-        win_col = box.margin + box.content + self:indent_size(self.data.level)
+        win_col = box.margin + box.body + self:indent():size(self.data.level)
     end
     for row = self.node.start_row, self.node.end_row - 1 do
         self.marks:add('head_background', row, self.node.start_col, {
@@ -258,7 +258,7 @@ function Render:border(box, above)
     local fg = self.data.fg
     local bg = self.data.bg and colors.bg_as_fg(self.data.bg)
     local prefix = self.info.border_prefix and self.data.level or 0
-    local width = self.data.width == 'block' and box.content or vim.o.columns
+    local width = self.data.width == 'block' and box.body or vim.o.columns
     local icon = above and self.info.above or self.info.below
 
     local line = self.config:line():pad(box.margin)
@@ -279,7 +279,7 @@ function Render:border(box, above)
     else
         self.marks:add(false, self.node.start_row, 0, {
             virt_lines = {
-                self:indent_line(true, self.data.level):extend(line):get(),
+                self:indent():line(true, self.data.level):extend(line):get(),
             },
             virt_lines_above = above,
         })

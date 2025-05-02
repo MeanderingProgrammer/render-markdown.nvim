@@ -1,7 +1,7 @@
 ---@class (exact) render.md.padding.Config
 ---@field highlight string
 
----@class render.md.padding
+---@class render.md.padding.Cfg
 local M = {}
 
 ---@type render.md.padding.Config

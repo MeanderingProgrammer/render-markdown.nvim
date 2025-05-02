@@ -31,7 +31,7 @@ function Line:extend(other)
 end
 
 ---@param s string
----@param highlight? string|string[]
+---@param highlight? render.md.mark.Hl
 ---@return render.md.Line
 function Line:text(s, highlight)
     if #s > 0 then
@@ -41,7 +41,7 @@ function Line:text(s, highlight)
 end
 
 ---@param n integer
----@param highlight? string|string[]
+---@param highlight? render.md.mark.Hl
 ---@return render.md.Line
 function Line:pad(n, highlight)
     if n > 0 then
@@ -52,7 +52,7 @@ end
 
 ---@private
 ---@param text string
----@param highlight? string|string[]
+---@param highlight? render.md.mark.Hl
 function Line:add(text, highlight)
     self.line[#self.line + 1] = { text, highlight or self.highlight }
 end

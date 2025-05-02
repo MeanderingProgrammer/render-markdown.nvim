@@ -10,7 +10,7 @@ local M = {}
 ---@field change_events string[]
 ---@field injections table<string, render.md.injection.Config>
 ---@field patterns table<string, render.md.pattern.Config>
----@field on render.md.callback.Config
+---@field on render.md.on.Config
 ---@field completions render.md.completions.Config
 ---@field overrides render.md.overrides.Config
 ---@field custom_handlers table<string, render.md.Handler>
@@ -100,7 +100,7 @@ M.default = {
     html = require('render-markdown.config.html').default,
     win_options = require('render-markdown.config.win_options').default,
     overrides = require('render-markdown.config.overrides').default,
-    custom_handlers = require('render-markdown.config.custom_handlers').default,
+    custom_handlers = require('render-markdown.config.handlers').default,
 }
 
 ---@param opts? render.md.UserConfig
@@ -122,7 +122,7 @@ end
 ---@param user render.md.UserConfig
 ---@return render.md.Config
 function M.resolve_config(user)
-    local preset = require('render-markdown.presets').get(user)
+    local preset = require('render-markdown.lib.presets').get(user)
     local config = vim.tbl_deep_extend('force', M.default, preset, user)
     -- override settings that require neovim >= 0.10.0 and have compatible alternatives
     local has_10 = require('render-markdown.lib.compat').has_10

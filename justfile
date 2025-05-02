@@ -1,7 +1,7 @@
 init := "tests/minimal_init.lua"
 settings := "{ minimal_init = " + quote(init) + ", sequential = true, keep_going = false }"
 
-default: update check test health
+default: update check test bench health
 
 update:
   # keep documentation in sync with code

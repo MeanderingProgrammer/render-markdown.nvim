@@ -1,7 +1,7 @@
 ---@class (exact) render.md.inline.highlight.Config: render.md.base.Config
 ---@field highlight string
 
----@class render.md.inline.highlight
+---@class render.md.inline.highlight.Cfg
 local M = {}
 
 ---@type render.md.inline.highlight.Config

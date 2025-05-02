@@ -1,6 +1,6 @@
 ---@module 'luassert'
 
-local Range = require('render-markdown.core.range')
+local Range = require('render-markdown.lib.range')
 
 describe('range', function()
     it('contains', function()

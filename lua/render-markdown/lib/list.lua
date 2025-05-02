@@ -1,4 +1,4 @@
----@class render.md.ListHelper
+---@class render.md.List
 local M = {}
 
 ---@generic T

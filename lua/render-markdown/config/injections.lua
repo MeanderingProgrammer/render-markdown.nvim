@@ -2,7 +2,7 @@
 ---@field enabled boolean
 ---@field query string
 
----@class render.md.injection
+---@class render.md.injection.Cfg
 local M = {}
 
 ---@type table<string, render.md.injection.Config>

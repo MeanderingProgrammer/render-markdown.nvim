@@ -45,7 +45,7 @@ local Border = {
     none = 'none',
 }
 
----@class render.md.code
+---@class render.md.code.Cfg
 local M = {}
 
 ---@type render.md.code.Config

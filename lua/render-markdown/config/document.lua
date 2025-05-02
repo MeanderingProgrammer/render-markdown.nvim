@@ -5,7 +5,7 @@
 ---@field char_patterns string[]
 ---@field line_patterns string[]
 
----@class render.md.document
+---@class render.md.document.Cfg
 local M = {}
 
 ---@type render.md.document.Config

@@ -404,6 +404,9 @@ require('render-markdown').setup({
         -- | function | `value(context)` |
         -- | number   | `value`          |
         left_margin = 0,
+        -- Amount of padding to add to the first line of each paragraph.
+        -- Output is evaluated using the same logic as 'left_margin'.
+        indent = 0,
         -- Minimum width to use for paragraphs.
         min_width = 0,
     },
@@ -992,6 +995,9 @@ require('render-markdown').setup({
         -- | function | `value(context)` |
         -- | number   | `value`          |
         left_margin = 0,
+        -- Amount of padding to add to the first line of each paragraph.
+        -- Output is evaluated using the same logic as 'left_margin'.
+        indent = 0,
         -- Minimum width to use for paragraphs.
         min_width = 0,
     },

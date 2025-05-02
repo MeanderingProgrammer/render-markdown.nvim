@@ -4,7 +4,7 @@
 
 ---@alias render.md.option.Value number|integer|string|boolean
 
----@class render.md.window
+---@class render.md.window.Cfg
 local M = {}
 
 ---@type table<string, render.md.window.Config>

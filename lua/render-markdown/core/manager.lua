@@ -6,7 +6,7 @@ local ui = require('render-markdown.core.ui')
 ---@class render.md.manager.Config
 ---@field ignore fun(buf: integer): boolean
 ---@field change_events string[]
----@field on render.md.callback.Config
+---@field on render.md.on.Config
 ---@field completions render.md.completions.Config
 
 ---@class render.md.Manager
@@ -101,7 +101,7 @@ function M.attach(buf)
 
     local config = state.get(buf)
     M.config.on.attach({ buf = buf })
-    require('render-markdown.integ.ts').init()
+    require('render-markdown.core.ts').init()
     if M.config.completions.lsp.enabled then
         require('render-markdown.integ.lsp').setup()
     elseif M.config.completions.blink.enabled then

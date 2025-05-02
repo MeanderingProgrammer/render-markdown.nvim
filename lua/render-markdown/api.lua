@@ -1,31 +1,28 @@
-local manager = require('render-markdown.manager')
-local state = require('render-markdown.state')
-
 ---@class render.md.Api
 local M = {}
 
 function M.enable()
-    manager.set_all(true)
+    require('render-markdown.core.manager').set_all(true)
 end
 
 function M.buf_enable()
-    manager.set_current(true)
+    require('render-markdown.core.manager').set_current(true)
 end
 
 function M.disable()
-    manager.set_all(false)
+    require('render-markdown.core.manager').set_all(false)
 end
 
 function M.buf_disable()
-    manager.set_current(false)
+    require('render-markdown.core.manager').set_current(false)
 end
 
 function M.toggle()
-    manager.set_all()
+    require('render-markdown.core.manager').set_all()
 end
 
 function M.buf_toggle()
-    manager.set_current()
+    require('render-markdown.core.manager').set_current()
 end
 
 function M.log()
@@ -33,12 +30,12 @@ function M.log()
 end
 
 function M.expand()
-    state.modify_anti_conceal(1)
+    require('render-markdown.state').modify_anti_conceal(1)
     M.enable()
 end
 
 function M.contract()
-    state.modify_anti_conceal(-1)
+    require('render-markdown.state').modify_anti_conceal(-1)
     M.enable()
 end
 
@@ -47,7 +44,7 @@ function M.debug()
 end
 
 function M.config()
-    local difference = state.difference()
+    local difference = require('render-markdown.state').difference()
     if not difference then
         -- selene: allow(deprecated)
         vim.print('default configuration')

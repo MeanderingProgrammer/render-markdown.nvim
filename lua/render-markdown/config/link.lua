@@ -39,7 +39,7 @@ local Kind = {
     suffix = 'suffix',
 }
 
----@class render.md.link
+---@class render.md.link.Cfg
 local M = {}
 
 ---@type render.md.link.Config

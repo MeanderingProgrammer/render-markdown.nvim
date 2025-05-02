@@ -396,7 +396,7 @@ function Render:full()
         local highlight = above and self.info.head or self.info.row
         local line = self.config:line():pad(spaces):text(text, highlight)
         self.marks:start(false, node, {
-            virt_lines = { self:indent_line(true):extend(line):get() },
+            virt_lines = { self:indent():line(true):extend(line):get() },
             virt_lines_above = above,
         })
     end

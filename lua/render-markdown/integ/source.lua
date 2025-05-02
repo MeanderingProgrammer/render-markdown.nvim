@@ -1,6 +1,6 @@
 local Env = require('render-markdown.lib.env')
 local Str = require('render-markdown.lib.str')
-local manager = require('render-markdown.manager')
+local manager = require('render-markdown.core.manager')
 local state = require('render-markdown.state')
 
 local markers = {

@@ -128,7 +128,7 @@ def wrap_setup(s: str) -> str:
 
 def update_handlers() -> None:
     files: list[Path] = [
-        Path("lua/render-markdown/core/ui.lua"),
+        Path("lua/render-markdown/config/handlers.lua"),
         Path("lua/render-markdown/lib/marks.lua"),
     ]
     name_lua = {lua.name(): lua for lua in get_definitions(files)}
@@ -139,11 +139,12 @@ def update_handlers() -> None:
         "render.md.mark.Opts",
         "render.md.mark.Line",
         "render.md.mark.Text",
+        "render.md.mark.Hl",
     ]
     definitions = [name_lua[name] for name in names]
 
     handlers = Path("doc/custom-handlers.md")
-    old = get_code_block(handlers, definitions[-1].value, 1)
+    old = get_code_block(handlers, definitions[0].value, 1)
     new = "\n".join([lua.to_str() + "\n" for lua in definitions])
     text = handlers.read_text().replace(old, new)
     handlers.write_text(text)
