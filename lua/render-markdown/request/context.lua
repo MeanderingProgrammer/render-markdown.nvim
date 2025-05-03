@@ -1,50 +1,44 @@
-local Conceal = require('render-markdown.lib.conceal')
+local Conceal = require('render-markdown.request.conceal')
 local Env = require('render-markdown.lib.env')
-local Node = require('render-markdown.lib.node')
-local Range = require('render-markdown.lib.range')
 local Str = require('render-markdown.lib.str')
-local log = require('render-markdown.core.log')
-
----@class render.md.context.Props
----@field buf integer
----@field win integer
----@field config render.md.main.Config
----@field mode string
+local View = require('render-markdown.request.view')
 
 ---@class render.md.context.Offset
 ---@field col integer
 ---@field width integer
 
----@class render.md.Context: render.md.context.Props
----@field private ranges render.md.Range[]
+---@class render.md.request.Context
 ---@field private callouts table<integer, render.md.callout.Config>
 ---@field private checkboxes table<integer, render.md.checkbox.custom.Config>
 ---@field private offsets table<integer, render.md.context.Offset[]>
----@field conceal render.md.Conceal
+---@field buf integer
+---@field win integer
+---@field config render.md.main.Config
+---@field mode string
+---@field view render.md.request.View
+---@field conceal render.md.request.Conceal
 ---@field last_heading? integer
 local Context = {}
 Context.__index = Context
 
----@param props render.md.context.Props
----@param offset integer
----@return render.md.Context
-function Context.new(props, offset)
+---@param buf integer
+---@param win integer
+---@param config render.md.main.Config
+---@param mode string
+---@param view render.md.request.View
+---@return render.md.request.Context
+function Context.new(buf, win, config, mode, view)
     local self = setmetatable({}, Context)
 
-    local ranges = {}
-    for _, window in ipairs(Env.buf.windows(props.buf)) do
-        local top, bottom = Env.range(props.buf, window, offset)
-        ranges[#ranges + 1] = Range.new(top, bottom)
-    end
-    self.ranges = Range.coalesce(ranges)
     self.callouts = {}
     self.checkboxes = {}
     self.offsets = {}
 
-    self.buf = props.buf
-    self.win = props.win
-    self.config = props.config
-    self.mode = props.mode
+    self.buf = buf
+    self.win = win
+    self.config = config
+    self.mode = mode
+    self.view = view
 
     self.conceal = Conceal.new(self)
     self.last_heading = nil
@@ -141,64 +135,11 @@ function Context:percent(value, used)
     end
 end
 
----@param win integer
----@return boolean
-function Context:contains(win)
-    local top, bottom = Env.range(self.buf, win, 0)
-    for _, range in ipairs(self.ranges) do
-        if range:contains(top, bottom) then
-            return true
-        end
-    end
-    return false
-end
-
----@param node TSNode
----@return boolean
-function Context:overlaps(node)
-    local top, _, bottom, _ = node:range()
-    for _, range in ipairs(self.ranges) do
-        if range:overlaps(top, bottom) then
-            return true
-        end
-    end
-    return false
-end
-
----@param parser vim.treesitter.LanguageTree
-function Context:parse(parser)
-    for _, range in ipairs(self.ranges) do
-        parser:parse({ range.top, range.bottom })
-    end
-end
-
----@param root TSNode
----@param query vim.treesitter.Query
----@param callback fun(capture: string, node: render.md.Node)
-function Context:query(root, query, callback)
-    for _, range in ipairs(self.ranges) do
-        local top, bottom = range.top, range.bottom
-        for id, ts_node in query:iter_captures(root, self.buf, top, bottom) do
-            local capture = query.captures[id]
-            local node = Node.new(self.buf, ts_node)
-            log.node(capture, node)
-            callback(capture, node)
-        end
-    end
-end
-
----@param callback fun(range: render.md.Range)
-function Context:for_each(callback)
-    for _, range in ipairs(self.ranges) do
-        callback(range)
-    end
-end
-
 ---@class render.md.context.Manager
 local M = {}
 
 ---@private
----@type table<integer, render.md.Context>
+---@type table<integer, render.md.request.Context>
 M.cache = {}
 
 ---@param buf integer
@@ -206,21 +147,25 @@ M.cache = {}
 ---@return boolean
 function M.contains(buf, win)
     local context = M.cache[buf]
-    return context and context:contains(win) or false
+    return context and context.view:contains(win) or false
 end
 
----@param props render.md.context.Props
----@return render.md.Context
-function M.reset(props)
-    local context = Context.new(props, 10)
-    M.cache[props.buf] = context
+---@param buf integer
+---@param win integer
+---@param config render.md.main.Config
+---@param mode string
+---@return render.md.request.Context
+function M.start(buf, win, config, mode)
+    local view = View.new(buf)
+    local context = Context.new(buf, win, config, mode, view)
+    M.cache[buf] = context
     return context
 end
 
 ---@param buf integer
----@return render.md.Context
+---@return render.md.request.Context
 function M.get(buf)
-    return assert(M.cache[buf], 'missing context')
+    return assert(M.cache[buf], 'missing request context')
 end
 
 return M

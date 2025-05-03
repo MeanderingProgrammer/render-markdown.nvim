@@ -25,6 +25,11 @@ function Range.__lt(a, b)
     end
 end
 
+---@return string
+function Range:__tostring()
+    return ('%d->%d'):format(self.top, self.bottom)
+end
+
 ---@param top integer
 ---@param bottom integer
 ---@return boolean

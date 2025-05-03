@@ -3,7 +3,7 @@ local Str = require('render-markdown.lib.str')
 local colors = require('render-markdown.core.colors')
 
 ---@class render.md.Render
----@field protected context render.md.Context
+---@field protected context render.md.request.Context
 ---@field protected config render.md.main.Config
 ---@field protected marks render.md.Marks
 ---@field protected node render.md.Node
@@ -12,7 +12,7 @@ local colors = require('render-markdown.core.colors')
 local Base = {}
 Base.__index = Base
 
----@param context render.md.Context
+---@param context render.md.request.Context
 ---@param marks render.md.Marks
 ---@param node render.md.Node
 ---@return render.md.Render

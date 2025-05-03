@@ -3,6 +3,10 @@
 local Range = require('render-markdown.lib.range')
 
 describe('range', function()
+    it('string', function()
+        assert.same('5->9', tostring(Range.new(5, 9)))
+    end)
+
     it('contains', function()
         local range = Range.new(5, 9)
         assert.is_true(range:contains(5, 9)) -- identity

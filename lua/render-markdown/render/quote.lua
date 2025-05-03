@@ -41,7 +41,8 @@ function Render:setup()
 end
 
 function Render:render()
-    self.context:query(self.node:get(), self.data.query, function(capture, node)
+    local root = self.node:get()
+    self.context.view:query(root, self.data.query, function(capture, node)
         if capture == 'marker' then
             -- marker nodes are a single '>' at the start of a block quote
             -- overlay the only range if it is at the current level

@@ -63,7 +63,7 @@ function Render:setup()
     self.node:for_each_child(function(row)
         if row.type == 'pipe_table_delimiter_row' then
             delim = self:parse_delim(row)
-        elseif self.context:overlaps(row:get()) then
+        elseif self.context.view:overlaps(row:get()) then
             local row_types = { 'pipe_table_header', 'pipe_table_row' }
             if vim.tbl_contains(row_types, row.type) then
                 table_rows[#table_rows + 1] = row

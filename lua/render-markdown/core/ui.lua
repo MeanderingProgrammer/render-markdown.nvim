@@ -1,6 +1,6 @@
 local Buffer = require('render-markdown.lib.buffer')
 local Compat = require('render-markdown.lib.compat')
-local Context = require('render-markdown.lib.context')
+local Context = require('render-markdown.request.context')
 local Env = require('render-markdown.lib.env')
 local Extmark = require('render-markdown.lib.extmark')
 local Iter = require('render-markdown.lib.iter')
@@ -108,19 +108,15 @@ function M.run_update(buf, win, change)
         local initial = buffer:initial()
         if initial or parse then
             M.clear_buffer(buf, buffer)
-            buffer:set_marks(M.parse_buffer({
-                buf = buf,
-                win = win,
-                config = config,
-                mode = mode,
-            }))
+            local extmarks = M.parse_buffer(buf, win, config, mode)
+            buffer:set_marks(extmarks)
+            if initial then
+                Compat.fix_lsp_window(buf, win, extmarks)
+                M.config.on.initial({ buf = buf, win = win })
+            end
         end
         local range = config:hidden(mode, row)
         local extmarks = buffer:get_marks()
-        if initial then
-            Compat.fix_lsp_window(buf, win, extmarks)
-            M.config.on.initial({ buf = buf, win = win })
-        end
         for _, extmark in ipairs(extmarks) do
             if extmark:get().conceal and extmark:overlaps(range) then
                 extmark:hide(M.ns, buf)
@@ -154,19 +150,21 @@ function M.clear_buffer(buf, buffer)
 end
 
 ---@private
----@param props render.md.context.Props
+---@param buf integer
+---@param win integer
+---@param config render.md.main.Config
+---@param mode string
 ---@return render.md.Extmark[]
-function M.parse_buffer(props)
-    local buf = props.buf
+function M.parse_buffer(buf, win, config, mode)
     local has_parser, parser = pcall(vim.treesitter.get_parser, buf)
     if not has_parser or not parser then
         log.buf('error', 'fail', buf, 'no treesitter parser found')
         return {}
     end
     -- reset buffer context
-    local context = Context.reset(props)
+    local context = Context.start(buf, win, config, mode)
     -- make sure injections are processed
-    context:parse(parser)
+    context.view:parse(parser)
     -- parse markdown after other nodes to get accurate state
     local marks = {} ---@type render.md.Mark[]
     local markdown = {} ---@type render.md.handler.Context[]
@@ -189,13 +187,13 @@ end
 ---Run user & builtin handlers when available. User handler is always executed,
 ---builtin handler is skipped if user handler does not specify extends.
 ---@private
----@param context render.md.Context
+---@param context render.md.request.Context
 ---@param ctx render.md.handler.Context
 ---@param language string
 ---@return render.md.Mark[]
 function M.parse_tree(context, ctx, language)
     log.buf('debug', 'language', ctx.buf, language)
-    if not context:overlaps(ctx.root) then
+    if not context.view:overlaps(ctx.root) then
         return {}
     end
 

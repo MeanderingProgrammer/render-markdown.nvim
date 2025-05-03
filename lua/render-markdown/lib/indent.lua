@@ -1,13 +1,13 @@
 local Str = require('render-markdown.lib.str')
 
 ---@class render.md.Indent
----@field private context render.md.Context
+---@field private context render.md.request.Context
 ---@field private config render.md.indent.Config
 ---@field private node render.md.Node
 local Indent = {}
 Indent.__index = Indent
 
----@param context render.md.Context
+---@param context render.md.request.Context
 ---@param node render.md.Node
 ---@return render.md.Indent
 function Indent.new(context, node)

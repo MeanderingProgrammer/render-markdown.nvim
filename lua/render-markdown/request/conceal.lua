@@ -2,31 +2,31 @@ local Compat = require('render-markdown.lib.compat')
 local Env = require('render-markdown.lib.env')
 local Str = require('render-markdown.lib.str')
 
----@class render.md.conceal.Section
+---@class render.md.request.conceal.Section
 ---@field start_col integer
 ---@field end_col integer
 ---@field width integer
 ---@field character? string
 
----@class render.md.conceal.Line
+---@class render.md.request.conceal.Line
 ---@field hidden boolean
----@field sections render.md.conceal.Section[]
+---@field sections render.md.request.conceal.Section[]
 
----@class render.md.Conceal
----@field private context render.md.Context
+---@class render.md.request.Conceal
 ---@field private buf integer
+---@field private view render.md.request.View
 ---@field private level integer
 ---@field private computed boolean
----@field private lines table<integer, render.md.conceal.Line>
+---@field private lines table<integer, render.md.request.conceal.Line>
 local Conceal = {}
 Conceal.__index = Conceal
 
----@param context render.md.Context
----@return render.md.Conceal
+---@param context render.md.request.Context
+---@return render.md.request.Conceal
 function Conceal.new(context)
     local self = setmetatable({}, Conceal)
-    self.context = context
     self.buf = context.buf
+    self.view = context.view
     self.level = Env.win.get(context.win, 'conceallevel')
     self.computed = false
     self.lines = {}
@@ -39,7 +39,7 @@ function Conceal:enabled()
 end
 
 ---@param row integer
----@param entry boolean|render.md.conceal.Section
+---@param entry boolean|render.md.request.conceal.Section
 function Conceal:add(row, entry)
     if not self:enabled() then
         return
@@ -59,8 +59,8 @@ function Conceal:add(row, entry)
 end
 
 ---@private
----@param line render.md.conceal.Line
----@param entry render.md.conceal.Section
+---@param line render.md.request.conceal.Line
+---@param entry render.md.request.conceal.Section
 ---@return boolean
 function Conceal:has(line, entry)
     for _, section in ipairs(line.sections) do
@@ -112,7 +112,7 @@ end
 
 ---@private
 ---@param node render.md.Node
----@return render.md.conceal.Line
+---@return render.md.request.conceal.Line
 function Conceal:line(node)
     if not self.computed then
         self.computed = true
@@ -147,7 +147,7 @@ end
 ---@param language string
 ---@param root TSNode
 function Conceal:compute_tree(language, root)
-    if not self.context:overlaps(root) then
+    if not self.view:overlaps(root) then
         return
     end
     if not vim.tbl_contains({ 'markdown', 'markdown_inline' }, language) then
@@ -157,7 +157,7 @@ function Conceal:compute_tree(language, root)
     if not query then
         return
     end
-    self.context:for_each(function(range)
+    self.view:for_each(function(range)
         local top, bottom = range.top, range.bottom
         for id, node, data in query:iter_captures(root, self.buf, top, bottom) do
             if data.conceal_lines then

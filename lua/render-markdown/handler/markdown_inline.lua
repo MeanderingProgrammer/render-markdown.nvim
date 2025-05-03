@@ -1,11 +1,11 @@
-local Context = require('render-markdown.lib.context')
+local Context = require('render-markdown.request.context')
 local Marks = require('render-markdown.lib.marks')
 local ts = require('render-markdown.core.ts')
 
 ---@class render.md.handler.buf.MarkdownInline
 ---@field private query vim.treesitter.Query
 ---@field private renderers table<string, render.md.Render>
----@field private context render.md.Context
+---@field private context render.md.request.Context
 local Handler = {}
 Handler.__index = Handler
 
@@ -46,7 +46,7 @@ end
 ---@return render.md.Mark[]
 function Handler:parse(root)
     local marks = Marks.new(self.context, true)
-    self.context:query(root, self.query, function(capture, node)
+    self.context.view:query(root, self.query, function(capture, node)
         local renderer = self.renderers[capture]
         assert(renderer ~= nil, 'unhandled inline capture: ' .. capture)
         local render = renderer:new(self.context, marks, node)
