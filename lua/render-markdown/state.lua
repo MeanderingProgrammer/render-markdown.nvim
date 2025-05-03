@@ -17,6 +17,9 @@ function M.setup(config)
     M.config = config
     M.enabled = config.enabled
     M.file_types = config.file_types
+    require('render-markdown.core.handlers').setup({
+        custom = config.custom_handlers,
+    })
     require('render-markdown.core.log').setup({
         level = config.log_level,
         runtime = config.log_runtime,
@@ -34,7 +37,6 @@ function M.setup(config)
     })
     require('render-markdown.core.ui').setup({
         on = config.on,
-        custom_handlers = config.custom_handlers,
     })
     require('render-markdown.integ.source').setup({
         completions = config.completions,

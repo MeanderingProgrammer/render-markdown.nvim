@@ -135,7 +135,7 @@ function Context:percent(value, used)
     end
 end
 
----@class render.md.context.Manager
+---@class render.md.request.context.Manager
 local M = {}
 
 ---@private

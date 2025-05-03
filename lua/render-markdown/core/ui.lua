@@ -4,20 +4,12 @@ local Context = require('render-markdown.request.context')
 local Env = require('render-markdown.lib.env')
 local Extmark = require('render-markdown.lib.extmark')
 local Iter = require('render-markdown.lib.iter')
+local handlers = require('render-markdown.core.handlers')
 local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
 
----@type table<string, render.md.Handler>
-local builtin_handlers = {
-    html = require('render-markdown.handler.html'),
-    latex = require('render-markdown.handler.latex'),
-    markdown = require('render-markdown.handler.markdown'),
-    markdown_inline = require('render-markdown.handler.markdown_inline'),
-}
-
 ---@class render.md.ui.Config
 ---@field on render.md.on.Config
----@field custom_handlers table<string, render.md.Handler>
 
 ---@class render.md.Ui
 ---@field private config render.md.ui.Config
@@ -165,53 +157,8 @@ function M.parse_buffer(buf, win, config, mode)
     local context = Context.start(buf, win, config, mode)
     -- make sure injections are processed
     context.view:parse(parser)
-    -- parse markdown after other nodes to get accurate state
-    local marks = {} ---@type render.md.Mark[]
-    local markdown = {} ---@type render.md.handler.Context[]
-    parser:for_each_tree(function(tree, language_tree)
-        local language = language_tree:lang()
-        ---@type render.md.handler.Context
-        local ctx = { buf = buf, root = tree:root() }
-        if language == 'markdown' then
-            markdown[#markdown + 1] = ctx
-        else
-            vim.list_extend(marks, M.parse_tree(context, ctx, language))
-        end
-    end)
-    for _, ctx in ipairs(markdown) do
-        vim.list_extend(marks, M.parse_tree(context, ctx, 'markdown'))
-    end
+    local marks = handlers.run(context, parser)
     return Iter.list.map(marks, Extmark.new)
-end
-
----Run user & builtin handlers when available. User handler is always executed,
----builtin handler is skipped if user handler does not specify extends.
----@private
----@param context render.md.request.Context
----@param ctx render.md.handler.Context
----@param language string
----@return render.md.Mark[]
-function M.parse_tree(context, ctx, language)
-    log.buf('debug', 'language', ctx.buf, language)
-    if not context.view:overlaps(ctx.root) then
-        return {}
-    end
-
-    local marks = {}
-    local user = M.config.custom_handlers[language]
-    if user then
-        log.buf('debug', 'handler', ctx.buf, 'user')
-        vim.list_extend(marks, user.parse(ctx))
-        if not user.extends then
-            return marks
-        end
-    end
-    local builtin = builtin_handlers[language]
-    if builtin then
-        log.buf('debug', 'handler', ctx.buf, 'builtin')
-        vim.list_extend(marks, builtin.parse(ctx))
-    end
-    return marks
 end
 
 return M
