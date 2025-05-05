@@ -41,6 +41,7 @@ function Render:setup()
     return true
 end
 
+---@protected
 function Render:run()
     local root = self.node:get()
     self.context.view:nodes(root, self.data.query, function(capture, node)

@@ -30,6 +30,7 @@ function Render:setup()
     return true
 end
 
+---@protected
 function Render:run()
     local start_row = math.max(self.node.start_row + self:start_below(), 0)
     local end_row = self.node.end_row - 1 - self:end_above()

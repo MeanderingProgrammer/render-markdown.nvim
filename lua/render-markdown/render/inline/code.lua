@@ -1,7 +1,7 @@
 local Base = require('render-markdown.render.base')
 local colors = require('render-markdown.core.colors')
 
----@class render.md.render.CodeInline: render.md.Render
+---@class render.md.render.inline.Code: render.md.Render
 ---@field private info render.md.code.Config
 local Render = setmetatable({}, Base)
 Render.__index = Render
@@ -19,6 +19,7 @@ function Render:setup()
     return true
 end
 
+---@protected
 function Render:run()
     local highlight = self.info.highlight_inline
     self.marks:over('code_background', self.node, { hl_group = highlight })

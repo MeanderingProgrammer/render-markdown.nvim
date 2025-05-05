@@ -15,6 +15,7 @@ function Render:setup()
     return true
 end
 
+---@protected
 function Render:run()
     for _, pattern in ipairs(self.info.conceal.char_patterns) do
         for _, range in ipairs(self.node:find(pattern)) do

@@ -4,7 +4,7 @@ local ts = require('render-markdown.core.ts')
 
 ---@class render.md.handler.buf.MarkdownInline
 ---@field private query vim.treesitter.Query
----@field private modules table<string, render.md.Render>
+---@field private renders table<string, render.md.Render>
 ---@field private context render.md.request.Context
 local Handler = {}
 Handler.__index = Handler
@@ -16,9 +16,10 @@ function Handler.new(buf)
     self.query = ts.parse(
         'markdown_inline',
         [[
-            (code_span) @code_inline
+            (code_span) @code
 
-            (shortcut_link) @shortcut
+            ((inline) @highlight
+                (#lua-match? @highlight "==[^=]+=="))
 
             [
                 (email_autolink)
@@ -28,15 +29,14 @@ function Handler.new(buf)
                 (uri_autolink)
             ] @link
 
-            ((inline) @inline_highlight
-                (#lua-match? @inline_highlight "==[^=]+=="))
+            (shortcut_link) @shortcut
         ]]
     )
-    self.modules = {
-        code_inline = require('render-markdown.render.code_inline'),
-        inline_highlight = require('render-markdown.render.inline_highlight'),
-        link = require('render-markdown.render.link'),
-        shortcut = require('render-markdown.render.shortcut'),
+    self.renders = {
+        code = require('render-markdown.render.inline.code'),
+        highlight = require('render-markdown.render.inline.highlight'),
+        link = require('render-markdown.render.inline.link'),
+        shortcut = require('render-markdown.render.inline.shortcut'),
     }
     self.context = Context.get(buf)
     return self
@@ -47,12 +47,9 @@ end
 function Handler:parse(root)
     local marks = Marks.new(self.context, true)
     self.context.view:nodes(root, self.query, function(capture, node)
-        local module = self.modules[capture]
-        assert(module ~= nil, 'unhandled inline capture: ' .. capture)
-        local render = module:new(self.context, marks, node)
-        if render then
-            render:run()
-        end
+        local render = self.renders[capture]
+        assert(render ~= nil, 'unhandled inline capture: ' .. capture)
+        render:execute(self.context, marks, node)
     end)
     return marks:get()
 end

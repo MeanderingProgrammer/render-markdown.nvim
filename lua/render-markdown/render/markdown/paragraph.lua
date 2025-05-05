@@ -38,6 +38,7 @@ function Render:get_number(value)
     end
 end
 
+---@protected
 function Render:run()
     local width = math.max(vim.fn.max(self.node:widths()), self.info.min_width)
     local margin = Env.win.percent(self.context.win, self.data.margin, width)

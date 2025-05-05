@@ -222,6 +222,7 @@ function Render.parse_row_data(row, cell_type)
     return pipes, cells
 end
 
+---@protected
 function Render:run()
     self:delimiter()
     for _, row in ipairs(self.data.rows) do

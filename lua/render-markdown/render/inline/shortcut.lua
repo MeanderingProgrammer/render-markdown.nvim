@@ -2,7 +2,7 @@ local Base = require('render-markdown.render.base')
 local Converter = require('render-markdown.lib.converter')
 local Str = require('render-markdown.lib.str')
 
----@class render.md.render.Shortcut: render.md.Render
+---@class render.md.render.inline.Shortcut: render.md.Render
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
@@ -12,6 +12,7 @@ function Render:setup()
     return true
 end
 
+---@protected
 function Render:run()
     local callout = self.config:get_callout(self.node)
     if callout then

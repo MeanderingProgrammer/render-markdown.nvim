@@ -66,6 +66,7 @@ function Render:offset(value, used)
     return result
 end
 
+---@protected
 function Render:run()
     local info = self.node:child('info_string')
     local language = info and info:child('language')

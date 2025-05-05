@@ -23,6 +23,7 @@ function Render:setup()
     return true
 end
 
+---@protected
 function Render:run()
     self:check_icon(self.info.icon, self.info.highlight)
     local scope_node = self.node:sibling('paragraph')

@@ -97,6 +97,7 @@ function Render:get_string(values, level)
     end
 end
 
+---@protected
 function Render:run()
     self:sign(self.info.sign, self.data.sign, self.data.fg)
     local box = self:box(self:icon())

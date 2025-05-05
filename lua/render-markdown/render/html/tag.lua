@@ -20,6 +20,7 @@ function Render:setup()
     return self.info ~= nil
 end
 
+---@protected
 function Render:run()
     self.marks:over(true, self.node:child('start_tag'), { conceal = '' })
     self.marks:over(true, self.node:child('end_tag'), { conceal = '' })

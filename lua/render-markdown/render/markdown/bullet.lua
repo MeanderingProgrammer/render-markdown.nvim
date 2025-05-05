@@ -29,6 +29,7 @@ function Render:setup()
     return true
 end
 
+---@protected
 function Render:run()
     if self:has_checkbox() then
         -- Hide the list marker for checkboxes rather than replacing with a bullet point

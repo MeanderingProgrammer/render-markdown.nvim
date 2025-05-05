@@ -4,7 +4,7 @@ local Base = require('render-markdown.render.base')
 ---@field icon render.md.mark.Text
 ---@field autolink boolean
 
----@class render.md.render.Link: render.md.Render
+---@class render.md.render.inline.Link: render.md.Render
 ---@field private data render.md.link.Data
 local Render = setmetatable({}, Base)
 Render.__index = Render
@@ -41,6 +41,7 @@ function Render:setup()
     return true
 end
 
+---@protected
 function Render:run()
     self.marks:start('link', self.node, {
         hl_mode = 'combine',

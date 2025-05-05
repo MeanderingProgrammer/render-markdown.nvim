@@ -39,6 +39,7 @@ function Render:get_width(width, used)
     end
 end
 
+---@protected
 function Render:run()
     local line = self.config:line():pad(self.data.margin)
     line:text(self.info.icon:rep(self.data.width), self.info.highlight)

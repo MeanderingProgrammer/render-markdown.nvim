@@ -4,7 +4,7 @@ local ts = require('render-markdown.core.ts')
 
 ---@class render.md.handler.buf.Markdown
 ---@field private query vim.treesitter.Query
----@field private modules table<string, render.md.Render>
+---@field private renders table<string, render.md.Render>
 ---@field private context render.md.request.Context
 local Handler = {}
 Handler.__index = Handler
@@ -16,16 +16,10 @@ function Handler.new(buf)
     self.query = ts.parse(
         'markdown',
         [[
-            (document) @document
-
-            (section) @section
-
             [
-                (atx_heading)
-                (setext_heading)
-            ] @heading
-
-            (section (paragraph) @paragraph)
+                (task_list_marker_unchecked)
+                (task_list_marker_checked)
+            ] @checkbox
 
             (fenced_code_block) @code
 
@@ -35,29 +29,35 @@ function Handler.new(buf)
                 (plus_metadata)
             ] @dash
 
-            (list_item) @list
+            (document) @document
 
             [
-                (task_list_marker_unchecked)
-                (task_list_marker_checked)
-            ] @checkbox
+                (atx_heading)
+                (setext_heading)
+            ] @heading
+
+            (list_item) @list
+
+            (section (paragraph) @paragraph)
 
             (block_quote) @quote
+
+            (section) @section
 
             (pipe_table) @table
         ]]
     )
-    self.modules = {
-        checkbox = require('render-markdown.render.checkbox'),
-        code = require('render-markdown.render.code'),
-        dash = require('render-markdown.render.dash'),
-        document = require('render-markdown.render.document'),
-        heading = require('render-markdown.render.heading'),
-        list = require('render-markdown.render.bullet'),
-        paragraph = require('render-markdown.render.paragraph'),
-        quote = require('render-markdown.render.quote'),
-        section = require('render-markdown.render.section'),
-        table = require('render-markdown.render.table'),
+    self.renders = {
+        checkbox = require('render-markdown.render.markdown.checkbox'),
+        code = require('render-markdown.render.markdown.code'),
+        dash = require('render-markdown.render.markdown.dash'),
+        document = require('render-markdown.render.markdown.document'),
+        heading = require('render-markdown.render.markdown.heading'),
+        list = require('render-markdown.render.markdown.bullet'),
+        paragraph = require('render-markdown.render.markdown.paragraph'),
+        quote = require('render-markdown.render.markdown.quote'),
+        section = require('render-markdown.render.markdown.section'),
+        table = require('render-markdown.render.markdown.table'),
     }
     self.context = Context.get(buf)
     return self
@@ -68,12 +68,9 @@ end
 function Handler:parse(root)
     local marks = Marks.new(self.context, false)
     self.context.view:nodes(root, self.query, function(capture, node)
-        local module = self.modules[capture]
-        assert(module ~= nil, 'unhandled markdown capture: ' .. capture)
-        local render = module:new(self.context, marks, node)
-        if render then
-            render:run()
-        end
+        local render = self.renders[capture]
+        assert(render ~= nil, 'unhandled markdown capture: ' .. capture)
+        render:execute(self.context, marks, node)
     end)
     return marks:get()
 end

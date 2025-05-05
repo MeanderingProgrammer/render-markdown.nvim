@@ -15,6 +15,7 @@ function Render:setup()
     return true
 end
 
+---@protected
 function Render:run()
     self.marks:over(true, self.node, { conceal = '' })
     if self.info.text then
