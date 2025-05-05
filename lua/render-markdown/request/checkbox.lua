@@ -1,6 +1,6 @@
 ---@class render.md.request.checkbox.Value
 ---@field node render.md.Node
----@field config render.md.checkbox.custom.Config
+---@field config render.md.checkbox.component.Config
 
 ---@class render.md.request.Checkbox
 ---@field private values table<integer, render.md.request.checkbox.Value>
@@ -17,7 +17,14 @@ end
 ---@param node render.md.Node
 ---@param config render.md.checkbox.custom.Config
 function Checkbox:set(node, config)
-    self.values[node.start_row] = { node = node, config = config }
+    self.values[node.start_row] = {
+        node = node,
+        config = {
+            icon = config.rendered,
+            highlight = config.highlight,
+            scope_highlight = config.scope_highlight,
+        },
+    }
 end
 
 ---@param node render.md.Node

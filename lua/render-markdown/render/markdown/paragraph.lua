@@ -6,7 +6,7 @@ local Env = require('render-markdown.lib.env')
 ---@field indent number
 
 ---@class render.md.render.Paragraph: render.md.Render
----@field private info render.md.paragraph.Config
+---@field private config render.md.paragraph.Config
 ---@field private data render.md.paragraph.Data
 local Render = setmetatable({}, Base)
 Render.__index = Render
@@ -14,12 +14,12 @@ Render.__index = Render
 ---@protected
 ---@return boolean
 function Render:setup()
-    self.info = self.config.paragraph
-    if self.context:skip(self.info) then
+    self.config = self.context.config.paragraph
+    if self.context:skip(self.config) then
         return false
     end
-    local margin = self:get_number(self.info.left_margin)
-    local indent = self:get_number(self.info.indent)
+    local margin = self:get_number(self.config.left_margin)
+    local indent = self:get_number(self.config.indent)
     if margin <= 0 and indent <= 0 then
         return false
     end
@@ -40,7 +40,8 @@ end
 
 ---@protected
 function Render:run()
-    local width = math.max(vim.fn.max(self.node:widths()), self.info.min_width)
+    local widths = self.node:widths()
+    local width = math.max(vim.fn.max(widths), self.config.min_width)
     local margin = Env.win.percent(self.context.win, self.data.margin, width)
     self:padding(self.node.start_row, self.node.end_row - 1, margin)
     local indent = Env.win.percent(self.context.win, self.data.indent, width)
@@ -52,7 +53,7 @@ end
 ---@param end_row integer
 ---@param amount integer
 function Render:padding(start_row, end_row, amount)
-    local line = self.config:line():pad(amount):get()
+    local line = self:line():pad(amount):get()
     if #line == 0 then
         return
     end

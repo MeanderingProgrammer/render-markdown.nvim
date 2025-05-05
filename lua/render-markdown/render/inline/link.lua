@@ -12,29 +12,29 @@ Render.__index = Render
 ---@protected
 ---@return boolean
 function Render:setup()
-    local link = self.config.link
-    if self.context:skip(link) then
+    local config = self.context.config.link
+    if self.context:skip(config) then
         return false
     end
     if self.node:descendant('shortcut_link') then
         return false
     end
     ---@type render.md.mark.Text
-    local icon = { link.hyperlink, link.highlight }
+    local icon = { config.hyperlink, config.highlight }
     local autolink = false
     if self.node.type == 'email_autolink' then
-        icon[1] = link.email
+        icon[1] = config.email
         autolink = true
     elseif self.node.type == 'image' then
-        icon[1] = link.image
+        icon[1] = config.image
     elseif self.node.type == 'inline_link' then
         local destination = self.node:child('link_destination')
         if destination then
-            self.config:link_text(destination.text, icon)
+            self.context.config:link_text(destination.text, icon)
         end
     elseif self.node.type == 'uri_autolink' then
         local destination = self.node.text:sub(2, -2)
-        self.config:link_text(destination, icon)
+        self.context.config:link_text(destination, icon)
         autolink = true
     end
     self.data = { icon = icon, autolink = autolink }

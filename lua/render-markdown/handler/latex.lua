@@ -16,12 +16,12 @@ M.cache = {}
 ---@return render.md.Mark[]
 function M.parse(ctx)
     local context = Context.get(ctx.buf)
-    local latex = context.config.latex
-    if context:skip(latex) then
+    local config = context.config.latex
+    if context:skip(config) then
         return {}
     end
-    if vim.fn.executable(latex.converter) ~= 1 then
-        log.add('debug', 'executable not found', latex.converter)
+    if vim.fn.executable(config.converter) ~= 1 then
+        log.add('debug', 'executable not found', config.converter)
         return {}
     end
 
@@ -30,30 +30,30 @@ function M.parse(ctx)
 
     local raw_expression = M.cache[node.text]
     if not raw_expression then
-        raw_expression = vim.fn.system(latex.converter, node.text)
+        raw_expression = vim.fn.system(config.converter, node.text)
         if vim.v.shell_error == 1 then
-            log.add('error', latex.converter, raw_expression)
+            log.add('error', config.converter, raw_expression)
             raw_expression = 'error'
         end
         M.cache[node.text] = raw_expression
     end
 
     local expressions = {} ---@type string[]
-    for _ = 1, latex.top_pad do
+    for _ = 1, config.top_pad do
         expressions[#expressions + 1] = ''
     end
     for _, expression in ipairs(Str.split(raw_expression, '\n', true)) do
         expressions[#expressions + 1] = Str.pad(node.start_col) .. expression
     end
-    for _ = 1, latex.bottom_pad do
+    for _ = 1, config.bottom_pad do
         expressions[#expressions + 1] = ''
     end
 
     local lines = Iter.list.map(expressions, function(expression)
-        return { { expression, latex.highlight } }
+        return { { expression, config.highlight } }
     end)
 
-    local above = latex.position == 'above'
+    local above = config.position == 'above'
     local row = above and node.start_row or node.end_row
 
     local marks = Marks.new(context, true)

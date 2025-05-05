@@ -11,7 +11,7 @@ local colors = require('render-markdown.core.colors')
 ---@field margin integer
 
 ---@class render.md.render.Code: render.md.Render
----@field private info render.md.code.Config
+---@field private config render.md.code.Config
 ---@field private data render.md.code.Data
 local Render = setmetatable({}, Base)
 Render.__index = Render
@@ -19,11 +19,11 @@ Render.__index = Render
 ---@protected
 ---@return boolean
 function Render:setup()
-    self.info = self.config.code
-    if self.context:skip(self.info) then
+    self.config = self.context.config.code
+    if self.context:skip(self.config) then
         return false
     end
-    if self.info.style == 'none' then
+    if self.config.style == 'none' then
         return false
     end
     -- skip single line code block
@@ -32,19 +32,19 @@ function Render:setup()
     end
     local widths = self.node:widths()
     local width = vim.fn.max(widths)
-    local language = self:offset(self.info.language_pad, width)
-    local left = self:offset(self.info.left_pad, width)
-    local right = self:offset(self.info.right_pad, width)
+    local language = self:offset(self.config.language_pad, width)
+    local left = self:offset(self.config.left_pad, width)
+    local right = self:offset(self.config.right_pad, width)
     local body = math.max(
         widths[1] + language,
         left + width + right,
-        self.info.min_width
+        self.config.min_width
     )
     self.data = {
         language = language,
         padding = left,
         body = body,
-        margin = self:offset(self.info.left_margin, body),
+        margin = self:offset(self.config.left_margin, body),
     }
     return true
 end
@@ -87,7 +87,7 @@ function Render:run()
 
     local background = self:background_enabled(language)
     if background then
-        self:background(start_row + 1, end_row - 1, self.info.highlight)
+        self:background(start_row + 1, end_row - 1, self.config.highlight)
     end
     self:padding(background)
 end
@@ -97,7 +97,7 @@ end
 ---@param delim? render.md.Node
 ---@return boolean
 function Render:language(language, delim)
-    if not vim.tbl_contains({ 'language', 'full' }, self.info.style) then
+    if not vim.tbl_contains({ 'language', 'full' }, self.config.style) then
         return false
     end
     if not language or not delim then
@@ -105,17 +105,17 @@ function Render:language(language, delim)
     end
 
     local icon, icon_highlight = Icons.get(language.text)
-    if self.info.highlight_language then
-        icon_highlight = self.info.highlight_language
+    if self.config.highlight_language then
+        icon_highlight = self.config.highlight_language
     end
 
-    self:sign(self.info.sign, icon, icon_highlight)
+    self:sign(self.config.sign, icon, icon_highlight)
 
     local text = ''
-    if self.info.language_icon and icon then
+    if self.config.language_icon and icon then
         text = text .. icon .. ' '
     end
-    if self.info.language_name then
+    if self.config.language_name then
         text = text .. language.text
     end
     if #text == 0 then
@@ -123,13 +123,14 @@ function Render:language(language, delim)
     end
 
     local highlight = {}
-    highlight[#highlight + 1] = (icon_highlight or self.info.highlight_fallback)
-    local border_highlight = self.info.highlight_border
+    local fallback_highlight = self.config.highlight_fallback
+    highlight[#highlight + 1] = (icon_highlight or fallback_highlight)
+    local border_highlight = self.config.highlight_border
     if type(border_highlight) == 'string' then
         highlight[#highlight + 1] = border_highlight
     end
 
-    if self.info.position == 'left' then
+    if self.config.position == 'left' then
         text = Str.pad(self.data.language) .. text
         -- code blocks can pick up varying amounts of leading white space
         -- this is lumped into the delimiter node and needs to be handled
@@ -145,7 +146,7 @@ function Render:language(language, delim)
         })
     else
         local start = self.data.body - self.data.language
-        if self.info.width == 'block' then
+        if self.config.width == 'block' then
             start = start - Str.width(text)
         end
         return self.marks:add('code_language', language.start_row, 0, {
@@ -160,8 +161,8 @@ end
 ---@param above boolean
 ---@param empty boolean
 function Render:border(node, above, empty)
-    local kind = self.info.border
-    local highlight = self.info.highlight_border
+    local kind = self.config.border
+    local highlight = self.config.highlight_border
     if kind == 'none' or type(highlight) == 'boolean' or not node then
         -- skip
     elseif kind == 'thick' or not empty then
@@ -172,8 +173,8 @@ function Render:border(node, above, empty)
         -- successfully added
     else
         local row, col = node.start_row, self.node.start_col
-        local border = above and self.info.above or self.info.below
-        local width = self.info.width == 'block' and self.data.body - col
+        local border = above and self.config.above or self.config.below
+        local width = self.config.width == 'block' and self.data.body - col
             or vim.o.columns
         self.marks:add('code_border', row, col, {
             virt_text = { { border:rep(width), colors.bg_as_fg(highlight) } },
@@ -186,10 +187,10 @@ end
 ---@param language? render.md.Node
 ---@return boolean
 function Render:background_enabled(language)
-    if not vim.tbl_contains({ 'normal', 'full' }, self.info.style) then
+    if not vim.tbl_contains({ 'normal', 'full' }, self.config.style) then
         return false
     end
-    local disable = self.info.disable_background
+    local disable = self.config.disable_background
     if type(disable) == 'boolean' then
         return not disable
     else
@@ -202,9 +203,9 @@ end
 ---@param end_row integer
 ---@param highlight string
 function Render:background(start_row, end_row, highlight)
-    local padding = self.config:line()
+    local padding = self:line()
     local win_col = 0
-    if self.info.width == 'block' then
+    if self.config.width == 'block' then
         padding:pad(vim.o.columns * 2)
         win_col = self.data.margin + self.data.body + self:indent():size()
     end
@@ -240,13 +241,13 @@ function Render:padding(background)
         return
     end
 
-    -- Use lowest priority (0) to include all other marks in padding when code block is at edge
-    -- Use medium priority (1000) to include border marks while likely avoiding other plugin
+    -- use lowest priority (0) to include all other marks in padding when code block is at edge
+    -- use medium priority (1000) to include border marks while likely avoiding other plugins
     local priority = col == 0 and 0 or 1000
-    local highlight = background and self.info.highlight or nil
+    local highlight = background and self.config.highlight or nil
 
     for row = start_row, end_row do
-        local line = self.config:line()
+        local line = self:line()
         if vim.tbl_contains(empty, row) then
             line:pad(col)
         end

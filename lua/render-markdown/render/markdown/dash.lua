@@ -6,7 +6,7 @@ local Env = require('render-markdown.lib.env')
 ---@field margin integer
 
 ---@class render.md.render.Dash: render.md.Render
----@field private info render.md.dash.Config
+---@field private config render.md.dash.Config
 ---@field private data render.md.dash.Data
 local Render = setmetatable({}, Base)
 Render.__index = Render
@@ -14,12 +14,12 @@ Render.__index = Render
 ---@protected
 ---@return boolean
 function Render:setup()
-    self.info = self.config.dash
-    if self.context:skip(self.info) then
+    self.config = self.context.config.dash
+    if self.context:skip(self.config) then
         return false
     end
-    local width = self:get_width(self.info.width, 0)
-    local margin = self:get_width(self.info.left_margin, width)
+    local width = self:get_width(self.config.width, 0)
+    local margin = self:get_width(self.config.left_margin, width)
     if width <= 0 and margin <= 0 then
         return false
     end
@@ -41,8 +41,8 @@ end
 
 ---@protected
 function Render:run()
-    local line = self.config:line():pad(self.data.margin)
-    line:text(self.info.icon:rep(self.data.width), self.info.highlight)
+    local line = self:line():pad(self.data.margin)
+    line:text(self.config.icon:rep(self.data.width), self.config.highlight)
     local start_row, end_row = self.node.start_row, self.node.end_row - 1
     self:dash(line, start_row)
     if end_row > start_row then

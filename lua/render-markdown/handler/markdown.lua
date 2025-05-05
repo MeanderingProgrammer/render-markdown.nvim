@@ -16,11 +16,6 @@ function Handler.new(buf)
     self.query = ts.parse(
         'markdown',
         [[
-            [
-                (task_list_marker_unchecked)
-                (task_list_marker_checked)
-            ] @checkbox
-
             (fenced_code_block) @code
 
             [
@@ -48,12 +43,11 @@ function Handler.new(buf)
         ]]
     )
     self.renders = {
-        checkbox = require('render-markdown.render.markdown.checkbox'),
         code = require('render-markdown.render.markdown.code'),
         dash = require('render-markdown.render.markdown.dash'),
         document = require('render-markdown.render.markdown.document'),
         heading = require('render-markdown.render.markdown.heading'),
-        list = require('render-markdown.render.markdown.bullet'),
+        list = require('render-markdown.render.markdown.list'),
         paragraph = require('render-markdown.render.markdown.paragraph'),
         quote = require('render-markdown.render.markdown.quote'),
         section = require('render-markdown.render.markdown.section'),

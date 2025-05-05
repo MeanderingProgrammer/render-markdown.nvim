@@ -5,7 +5,7 @@ local Str = require('render-markdown.lib.str')
 ---@field level_change integer
 
 ---@class render.md.render.Section: render.md.Render
----@field private info render.md.indent.Config
+---@field private config render.md.indent.Config
 ---@field private data render.md.indent.Data
 local Render = setmetatable({}, Base)
 Render.__index = Render
@@ -13,12 +13,12 @@ Render.__index = Render
 ---@protected
 ---@return boolean
 function Render:setup()
-    self.info = self.config.indent
-    if self.context:skip(self.info) then
+    self.config = self.context.config.indent
+    if self.context:skip(self.config) then
         return false
     end
     local current_level = self.node:level(false)
-    local parent_level = math.max(self.node:level(true), self.info.skip_level)
+    local parent_level = math.max(self.node:level(true), self.config.skip_level)
     local level_change = current_level - parent_level
     -- nothing to do if there is not a change in level
     if level_change <= 0 then
@@ -48,7 +48,7 @@ end
 ---@private
 ---@return integer
 function Render:start_below()
-    if self.info.skip_heading then
+    if self.config.skip_heading then
         -- exclude second line of current section if empty
         local empty = self:empty('first', 1)
         return empty and 2 or 1

@@ -175,6 +175,12 @@ function Node:child(target, row)
     return nil
 end
 
+---@return render.md.Node?
+function Node:scope()
+    local node = self:child('paragraph')
+    return node and node:child('inline')
+end
+
 ---@param callback fun(node: render.md.Node)
 function Node:for_each_child(callback)
     for node in self.node:iter_children() do

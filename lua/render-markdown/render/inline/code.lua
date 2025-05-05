@@ -2,18 +2,18 @@ local Base = require('render-markdown.render.base')
 local colors = require('render-markdown.core.colors')
 
 ---@class render.md.render.inline.Code: render.md.Render
----@field private info render.md.code.Config
+---@field private config render.md.code.Config
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
 ---@protected
 ---@return boolean
 function Render:setup()
-    self.info = self.config.code
-    if self.context:skip(self.info) then
+    self.config = self.context.config.code
+    if self.context:skip(self.config) then
         return false
     end
-    if not vim.tbl_contains({ 'normal', 'full' }, self.info.style) then
+    if not vim.tbl_contains({ 'normal', 'full' }, self.config.style) then
         return false
     end
     return true
@@ -21,7 +21,7 @@ end
 
 ---@protected
 function Render:run()
-    local highlight = self.info.highlight_inline
+    local highlight = self.config.highlight_inline
     self.marks:over('code_background', self.node, { hl_group = highlight })
     self:padding(highlight, true)
     self:padding(highlight, false)
@@ -31,14 +31,14 @@ end
 ---@param highlight string
 ---@param left boolean
 function Render:padding(highlight, left)
-    local line = self.config:line()
+    local line = self:line()
     local icon_highlight = colors.bg_as_fg(highlight)
     if left then
-        line:text(self.info.inline_left, icon_highlight)
-        line:pad(self.info.inline_pad, highlight)
+        line:text(self.config.inline_left, icon_highlight)
+        line:pad(self.config.inline_pad, highlight)
     else
-        line:pad(self.info.inline_pad, highlight)
-        line:text(self.info.inline_right, icon_highlight)
+        line:pad(self.config.inline_pad, highlight)
+        line:text(self.config.inline_right, icon_highlight)
     end
     if not line:empty() then
         local row = left and self.node.start_row or self.node.end_row

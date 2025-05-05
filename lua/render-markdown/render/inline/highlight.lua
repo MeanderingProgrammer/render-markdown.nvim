@@ -1,15 +1,15 @@
 local Base = require('render-markdown.render.base')
 
 ---@class render.md.render.inline.Highlight: render.md.Render
----@field private info render.md.inline.highlight.Config
+---@field private config render.md.inline.highlight.Config
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
 ---@protected
 ---@return boolean
 function Render:setup()
-    self.info = self.config.inline_highlight
-    if self.context:skip(self.info) then
+    self.config = self.context.config.inline_highlight
+    if self.context:skip(self.config) then
         return false
     end
     return true
@@ -18,15 +18,15 @@ end
 ---@protected
 function Render:run()
     for _, range in ipairs(self.node:find('==[^=]+==')) do
-        -- Hide first 2 equal signs
+        -- hide first 2 equal signs
         self:hide_equals(range[1], range[2])
-        -- Highlight contents
+        -- highlight contents
         self.marks:add(false, range[1], range[2], {
             end_row = range[3],
             end_col = range[4],
-            hl_group = self.info.highlight,
+            hl_group = self.config.highlight,
         })
-        -- Hide last 2 equal signs
+        -- hide last 2 equal signs
         self:hide_equals(range[3], range[4] - 2)
     end
 end

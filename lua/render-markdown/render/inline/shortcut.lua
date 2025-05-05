@@ -3,36 +3,40 @@ local Converter = require('render-markdown.lib.converter')
 local Str = require('render-markdown.lib.str')
 
 ---@class render.md.render.inline.Shortcut: render.md.Render
+---@field private config render.md.link.Config
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
 ---@protected
 ---@return boolean
 function Render:setup()
+    local callout = self.context.config:get_callout(self.node)
+    if callout then
+        self.context.callout:set(self.node, callout)
+        return false
+    end
+    local checkbox = self.context.config:get_checkbox(self.node)
+    if checkbox then
+        if self.node:after() == ' ' then
+            self.context.checkbox:set(self.node, checkbox)
+        end
+        return false
+    end
+    self.config = self.context.config.link
+    if self.context:skip(self.config) then
+        return false
+    end
     return true
 end
 
 ---@protected
 function Render:run()
-    local callout = self.config:get_callout(self.node)
-    if callout then
-        self:callout(callout)
-        return
-    end
-
-    local checkbox = self.config:get_checkbox(self.node)
-    if checkbox then
-        self:checkbox(checkbox)
-        return
-    end
-
     local _, line = self.node:line('first', 0)
     local wiki_pattern = '[' .. self.node.text .. ']'
     if line and line:find(wiki_pattern, 1, true) then
         self:wiki_link()
         return
     end
-
     local _, _, text = self.node.text:find('^%[%^(.+)%]$')
     if text then
         self:footnote(text)
@@ -41,57 +45,8 @@ function Render:run()
 end
 
 ---@private
----@param callout render.md.callout.Config
-function Render:callout(callout)
-    if self.context:skip(self.config.quote) then
-        return
-    end
-    local title = self:callout_title(callout)
-    self.marks:over('callout', self.node, {
-        virt_text = { { title or callout.rendered, callout.highlight } },
-        virt_text_pos = 'overlay',
-        conceal = title and '' or nil,
-    })
-    self.context.callout:set(self.node, callout)
-end
-
----@private
----@param callout render.md.callout.Config
----@return string?
-function Render:callout_title(callout)
-    -- https://help.obsidian.md/Editing+and+formatting/Callouts#Change+the+title
-    local content = self.node:parent('inline')
-    if content then
-        local line = Str.split(content.text, '\n', true)[1]
-        local prefix = callout.raw:lower()
-        if #line > #prefix and vim.startswith(line:lower(), prefix) then
-            local icon = Str.split(callout.rendered, ' ', true)[1]
-            local title = vim.trim(line:sub(#prefix + 1))
-            return icon .. ' ' .. title
-        end
-    end
-    return nil
-end
-
----@private
----@param checkbox render.md.checkbox.custom.Config
-function Render:checkbox(checkbox)
-    local config = self.config.checkbox
-    if self.context:skip(config) or self.node:after() ~= ' ' then
-        return
-    end
-    local added = self:check_icon(checkbox.rendered, checkbox.highlight)
-    if added then
-        self.context.checkbox:set(self.node, checkbox)
-    end
-end
-
----@private
 function Render:wiki_link()
-    local link = self.config.link
-    if self.context:skip(link) then
-        return
-    end
+    local config = self.config.wiki
     local sections = Str.split(self.node.text:sub(2, -2), '|', true)
     ---@type render.md.link.Context
     local ctx = {
@@ -106,9 +61,9 @@ function Render:wiki_link()
     self:hide(ctx.start_col, 1)
     self:hide(ctx.end_col - 1, 1)
     ---@type render.md.mark.Text
-    local icon = { link.wiki.icon, link.wiki.highlight }
-    self.config:link_text(ctx.destination, icon)
-    local body = link.wiki.body(ctx)
+    local icon = { config.icon, config.highlight }
+    self.context.config:link_text(ctx.destination, icon)
+    local body = config.body(ctx)
     if not body then
         -- add icon
         self.marks:start('link', self.node, {
@@ -150,24 +105,20 @@ end
 ---@private
 ---@param text string
 function Render:footnote(text)
-    local link = self.config.link
-    if self.context:skip(link) then
+    local config = self.config.footnote
+    if not config.enabled then
         return
     end
-    local footnote = link.footnote
-    if not footnote.enabled then
-        return
-    end
-    local body = footnote.prefix .. text .. footnote.suffix
+    local body = config.prefix .. text .. config.suffix
     local value = body ---@type string?
-    if footnote.superscript then
+    if config.superscript then
         value = Converter.superscript(body)
     end
     if not value then
         return
     end
     self.marks:over('link', self.node, {
-        virt_text = { { value, link.highlight } },
+        virt_text = { { value, self.config.highlight } },
         virt_text_pos = 'inline',
         conceal = '',
     })
