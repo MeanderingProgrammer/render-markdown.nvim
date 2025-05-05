@@ -10,6 +10,7 @@ local Str = require('render-markdown.lib.str')
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
+---@protected
 ---@return boolean
 function Render:setup()
     self.info = self.config.indent
@@ -29,7 +30,7 @@ function Render:setup()
     return true
 end
 
-function Render:render()
+function Render:run()
     local start_row = math.max(self.node.start_row + self:start_below(), 0)
     local end_row = self.node.end_row - 1 - self:end_above()
     -- each level stacks inline marks so we only add changes in level

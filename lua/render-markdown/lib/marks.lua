@@ -147,7 +147,7 @@ function Marks:run_update(mark)
         })
     end
     if mark.opts.virt_text_pos == 'inline' then
-        self.context:add_offset(row, {
+        self.context.offset:add(row, {
             col = start_col,
             width = Str.line_width(mark.opts.virt_text),
         })

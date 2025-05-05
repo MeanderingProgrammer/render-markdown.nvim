@@ -14,6 +14,7 @@ local ts = require('render-markdown.core.ts')
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
+---@protected
 ---@return boolean
 function Render:setup()
     local config = self.config.quote
@@ -21,7 +22,7 @@ function Render:setup()
         return false
     end
     local level = self.node:level_in_section('block_quote')
-    local callout = self.context:get_callout(self.node.start_row)
+    local callout = self.context.callout:get(self.node)
     self.data = {
         query = ts.parse(
             'markdown',
@@ -31,18 +32,18 @@ function Render:setup()
             ]]
         ),
         level = level,
-        icon = callout and callout.quote_icon
+        icon = callout and callout.config.quote_icon
             or assert(List.cycle(config.icon, level)),
-        highlight = callout and callout.highlight
+        highlight = callout and callout.config.highlight
             or assert(List.cycle(config.highlight, level)),
         repeat_linebreak = config.repeat_linebreak or nil,
     }
     return true
 end
 
-function Render:render()
+function Render:run()
     local root = self.node:get()
-    self.context.view:query(root, self.data.query, function(capture, node)
+    self.context.view:nodes(root, self.data.query, function(capture, node)
         if capture == 'marker' then
             -- marker nodes are a single '>' at the start of a block quote
             -- overlay the only range if it is at the current level
@@ -54,7 +55,7 @@ function Render:render()
             -- overlay the range of the one at the current level if it exists
             self:quote(node, self.data.level)
         else
-            error('Unhandled quote capture: ' .. capture)
+            error('unhandled quote capture: ' .. capture)
         end
     end)
 end

@@ -12,22 +12,24 @@ local Str = require('render-markdown.lib.str')
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
+---@protected
 ---@return boolean
 function Render:setup()
     local marker = self.node:child_at(0)
     if not marker then
         return false
     end
+    local checkbox = self.context.checkbox:get(self.node)
     self.data = {
         marker = marker,
         -- https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
         spaces = Str.spaces('start', marker.text),
-        checkbox = self.context:get_checkbox(self.node.start_row),
+        checkbox = checkbox and checkbox.config,
     }
     return true
 end
 
-function Render:render()
+function Render:run()
     if self:has_checkbox() then
         -- Hide the list marker for checkboxes rather than replacing with a bullet point
         self:hide_marker()

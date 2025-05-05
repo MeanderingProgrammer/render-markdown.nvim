@@ -18,6 +18,8 @@
 - use conceal lines for setext heading underline [78ffe3b](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/78ffe3b0500bbc7e37fabde723d96661538e8b32)
 - improve debug command [40fff90](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/40fff90caccb4a1c902681f0440806ee9ae95d0b)
 - use selene to prevent accidental print statements [7f81e9d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7f81e9dcc15504c044f20df39d28a590cd5c6ca5)
+- configurable indent for first line of paragraph [#417](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/417)
+  [57c7f33](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/57c7f33f276876c994898683680da9e3a3590d0d)
 
 ### Bug Fixes
 

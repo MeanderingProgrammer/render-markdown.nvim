@@ -5,6 +5,7 @@ local Base = require('render-markdown.render.base')
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
+---@protected
 ---@return boolean
 function Render:setup()
     self.info = self.config.document
@@ -14,7 +15,7 @@ function Render:setup()
     return true
 end
 
-function Render:render()
+function Render:run()
     for _, pattern in ipairs(self.info.conceal.char_patterns) do
         for _, range in ipairs(self.node:find(pattern)) do
             self.marks:add(true, range[1], range[2], {

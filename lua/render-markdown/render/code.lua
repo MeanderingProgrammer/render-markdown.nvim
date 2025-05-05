@@ -16,6 +16,7 @@ local colors = require('render-markdown.core.colors')
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
+---@protected
 ---@return boolean
 function Render:setup()
     self.info = self.config.code
@@ -56,7 +57,7 @@ function Render:offset(value, used)
     if value <= 0 then
         return 0
     end
-    local result = self.context:percent(value, used)
+    local result = Env.win.percent(self.context.win, value, used)
     if self.node.text:find('\t') then
         -- rounds to the next multiple of tab
         local tab = Env.buf.get(self.context.buf, 'tabstop')
@@ -65,7 +66,7 @@ function Render:offset(value, used)
     return result
 end
 
-function Render:render()
+function Render:run()
     local info = self.node:child('info_string')
     local language = info and info:child('language')
     self.marks:over(true, language, { conceal = '' })
@@ -102,9 +103,6 @@ function Render:language(language, delim)
         return false
     end
 
-    local border_highlight = self.info.highlight_border
-    local padding = self.data.language
-
     local icon, icon_highlight = Icons.get(language.text)
     if self.info.highlight_language then
         icon_highlight = self.info.highlight_language
@@ -125,14 +123,15 @@ function Render:language(language, delim)
 
     local highlight = {}
     highlight[#highlight + 1] = (icon_highlight or self.info.highlight_fallback)
+    local border_highlight = self.info.highlight_border
     if type(border_highlight) == 'string' then
         highlight[#highlight + 1] = border_highlight
     end
 
     if self.info.position == 'left' then
-        text = Str.pad(padding) .. text
-        -- Code blocks can pick up varying amounts of leading white space.
-        -- This is lumped into the delimiter node and needs to be handled.
+        text = Str.pad(self.data.language) .. text
+        -- code blocks can pick up varying amounts of leading white space
+        -- this is lumped into the delimiter node and needs to be handled
         local spaces = Str.spaces('start', delim.text)
         local width = self.context:width(delim)
         if self.context.conceal:enabled() then
@@ -144,7 +143,7 @@ function Render:language(language, delim)
             virt_text_pos = 'inline',
         })
     else
-        local start = self.data.body - padding
+        local start = self.data.body - self.data.language
         if self.info.width == 'block' then
             start = start - Str.width(text)
         end

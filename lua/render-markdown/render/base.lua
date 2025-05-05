@@ -7,22 +7,22 @@ local colors = require('render-markdown.core.colors')
 ---@field protected config render.md.main.Config
 ---@field protected marks render.md.Marks
 ---@field protected node render.md.Node
----@field setup fun(self: render.md.Render): boolean
----@field render fun(self: render.md.Render)
+---@field protected setup fun(self: render.md.Render): boolean
+---@field run fun(self: render.md.Render)
 local Base = {}
 Base.__index = Base
 
 ---@param context render.md.request.Context
 ---@param marks render.md.Marks
 ---@param node render.md.Node
----@return render.md.Render
+---@return render.md.Render?
 function Base:new(context, marks, node)
     local instance = setmetatable({}, self)
     instance.context = context
     instance.config = context.config
     instance.marks = marks
     instance.node = node
-    return instance
+    return instance:setup() and instance or nil
 end
 
 ---@protected

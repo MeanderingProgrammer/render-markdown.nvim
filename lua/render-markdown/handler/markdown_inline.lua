@@ -4,7 +4,7 @@ local ts = require('render-markdown.core.ts')
 
 ---@class render.md.handler.buf.MarkdownInline
 ---@field private query vim.treesitter.Query
----@field private renderers table<string, render.md.Render>
+---@field private modules table<string, render.md.Render>
 ---@field private context render.md.request.Context
 local Handler = {}
 Handler.__index = Handler
@@ -32,7 +32,7 @@ function Handler.new(buf)
                 (#lua-match? @inline_highlight "==[^=]+=="))
         ]]
     )
-    self.renderers = {
+    self.modules = {
         code_inline = require('render-markdown.render.code_inline'),
         inline_highlight = require('render-markdown.render.inline_highlight'),
         link = require('render-markdown.render.link'),
@@ -46,12 +46,12 @@ end
 ---@return render.md.Mark[]
 function Handler:parse(root)
     local marks = Marks.new(self.context, true)
-    self.context.view:query(root, self.query, function(capture, node)
-        local renderer = self.renderers[capture]
-        assert(renderer ~= nil, 'unhandled inline capture: ' .. capture)
-        local render = renderer:new(self.context, marks, node)
-        if render:setup() then
-            render:render()
+    self.context.view:nodes(root, self.query, function(capture, node)
+        local module = self.modules[capture]
+        assert(module ~= nil, 'unhandled inline capture: ' .. capture)
+        local render = module:new(self.context, marks, node)
+        if render then
+            render:run()
         end
     end)
     return marks:get()

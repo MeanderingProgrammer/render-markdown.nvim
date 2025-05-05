@@ -9,6 +9,7 @@ local Base = require('render-markdown.render.base')
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
+---@protected
 ---@return boolean
 function Render:setup()
     local link = self.config.link
@@ -40,7 +41,7 @@ function Render:setup()
     return true
 end
 
-function Render:render()
+function Render:run()
     self.marks:start('link', self.node, {
         hl_mode = 'combine',
         virt_text = { self.data.icon },

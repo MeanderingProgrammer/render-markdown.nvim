@@ -6,6 +6,7 @@ local colors = require('render-markdown.core.colors')
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
+---@protected
 ---@return boolean
 function Render:setup()
     self.info = self.config.code
@@ -18,7 +19,7 @@ function Render:setup()
     return true
 end
 
-function Render:render()
+function Render:run()
     local highlight = self.info.highlight_inline
     self.marks:over('code_background', self.node, { hl_group = highlight })
     self:padding(highlight, true)

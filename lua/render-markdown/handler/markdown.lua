@@ -4,7 +4,7 @@ local ts = require('render-markdown.core.ts')
 
 ---@class render.md.handler.buf.Markdown
 ---@field private query vim.treesitter.Query
----@field private renderers table<string, render.md.Render>
+---@field private modules table<string, render.md.Render>
 ---@field private context render.md.request.Context
 local Handler = {}
 Handler.__index = Handler
@@ -35,7 +35,7 @@ function Handler.new(buf)
                 (plus_metadata)
             ] @dash
 
-            (list_item) @bullet
+            (list_item) @list
 
             [
                 (task_list_marker_unchecked)
@@ -47,13 +47,13 @@ function Handler.new(buf)
             (pipe_table) @table
         ]]
     )
-    self.renderers = {
-        bullet = require('render-markdown.render.bullet'),
+    self.modules = {
         checkbox = require('render-markdown.render.checkbox'),
         code = require('render-markdown.render.code'),
         dash = require('render-markdown.render.dash'),
         document = require('render-markdown.render.document'),
         heading = require('render-markdown.render.heading'),
+        list = require('render-markdown.render.bullet'),
         paragraph = require('render-markdown.render.paragraph'),
         quote = require('render-markdown.render.quote'),
         section = require('render-markdown.render.section'),
@@ -67,12 +67,12 @@ end
 ---@return render.md.Mark[]
 function Handler:parse(root)
     local marks = Marks.new(self.context, false)
-    self.context.view:query(root, self.query, function(capture, node)
-        local renderer = self.renderers[capture]
-        assert(renderer ~= nil, 'unhandled markdown capture: ' .. capture)
-        local render = renderer:new(self.context, marks, node)
-        if render:setup() then
-            render:render()
+    self.context.view:nodes(root, self.query, function(capture, node)
+        local module = self.modules[capture]
+        assert(module ~= nil, 'unhandled markdown capture: ' .. capture)
+        local render = module:new(self.context, marks, node)
+        if render then
+            render:run()
         end
     end)
     return marks:get()

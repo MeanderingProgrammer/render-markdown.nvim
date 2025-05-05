@@ -5,6 +5,7 @@ local Base = require('render-markdown.render.base')
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
+---@protected
 ---@return boolean
 function Render:setup()
     self.info = self.config.html.comment
@@ -14,7 +15,7 @@ function Render:setup()
     return true
 end
 
-function Render:render()
+function Render:run()
     self.marks:over(true, self.node, { conceal = '' })
     if self.info.text then
         self.marks:start(true, self.node, {

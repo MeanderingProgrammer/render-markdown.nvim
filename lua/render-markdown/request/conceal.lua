@@ -14,20 +14,22 @@ local Str = require('render-markdown.lib.str')
 
 ---@class render.md.request.Conceal
 ---@field private buf integer
----@field private view render.md.request.View
 ---@field private level integer
+---@field private view render.md.request.View
 ---@field private computed boolean
 ---@field private lines table<integer, render.md.request.conceal.Line>
 local Conceal = {}
 Conceal.__index = Conceal
 
----@param context render.md.request.Context
+---@param buf integer
+---@param win integer
+---@param view render.md.request.View
 ---@return render.md.request.Conceal
-function Conceal.new(context)
+function Conceal.new(buf, win, view)
     local self = setmetatable({}, Conceal)
-    self.buf = context.buf
-    self.view = context.view
-    self.level = Env.win.get(context.win, 'conceallevel')
+    self.buf = buf
+    self.level = Env.win.get(win, 'conceallevel')
+    self.view = view
     self.computed = false
     self.lines = {}
     return self
@@ -139,14 +141,14 @@ function Conceal:compute()
         return
     end
     parser:for_each_tree(function(tree, language_tree)
-        self:compute_tree(language_tree:lang(), tree:root())
+        self:tree(language_tree:lang(), tree:root())
     end)
 end
 
 ---@private
 ---@param language string
 ---@param root TSNode
-function Conceal:compute_tree(language, root)
+function Conceal:tree(language, root)
     if not self.view:overlaps(root) then
         return
     end
@@ -157,25 +159,20 @@ function Conceal:compute_tree(language, root)
     if not query then
         return
     end
-    self.view:for_each(function(range)
-        local top, bottom = range.top, range.bottom
-        for id, node, data in query:iter_captures(root, self.buf, top, bottom) do
-            if data.conceal_lines then
-                local node_range = self:node_range(id, node, data)
-                local row = unpack(node_range)
-                self:add(row, true)
-            end
-            if data.conceal then
-                local node_range = self:node_range(id, node, data)
-                local row, start_col, _, end_col = unpack(node_range)
-                local text = vim.treesitter.get_node_text(node, self.buf)
-                self:add(row, {
-                    start_col = start_col,
-                    end_col = end_col,
-                    width = Str.width(text),
-                    character = data.conceal,
-                })
-            end
+    self.view:query(root, query, function(id, node, data)
+        if data.conceal_lines then
+            local row = Conceal.range(id, node, data)
+            self:add(row, true)
+        end
+        if data.conceal then
+            local row, start_col, _, end_col = Conceal.range(id, node, data)
+            local text = vim.treesitter.get_node_text(node, self.buf)
+            self:add(row, {
+                start_col = start_col,
+                end_col = end_col,
+                width = Str.width(text),
+                character = data.conceal,
+            })
         end
     end)
 end
@@ -184,17 +181,17 @@ end
 ---@param id integer
 ---@param node TSNode
 ---@param data vim.treesitter.query.TSMetadata
----@return Range
-function Conceal:node_range(id, node, data)
+---@return integer, integer, integer, integer
+function Conceal.range(id, node, data)
     local range = data.range
     if range then
-        return range
+        return range[1], range[2], range[3], range[4]
     end
     range = data[id] and data[id].range or nil
     if range then
-        return range
+        return range[1], range[2], range[3], range[4]
     end
-    return { node:range() }
+    return node:range()
 end
 
 return Conceal

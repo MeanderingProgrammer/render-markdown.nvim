@@ -66,22 +66,24 @@ end
 ---@param root TSNode
 ---@param query vim.treesitter.Query
 ---@param callback fun(capture: string, node: render.md.Node)
+function View:nodes(root, query, callback)
+    self:query(root, query, function(id, ts_node)
+        local capture = query.captures[id]
+        local node = Node.new(self.buf, ts_node)
+        log.node(capture, node)
+        callback(capture, node)
+    end)
+end
+
+---@param root TSNode
+---@param query vim.treesitter.Query
+---@param callback fun(id: integer, node: TSNode, data: vim.treesitter.query.TSMetadata)
 function View:query(root, query, callback)
     for _, range in ipairs(self.ranges) do
         local top, bottom = range.top, range.bottom
-        for id, ts_node in query:iter_captures(root, self.buf, top, bottom) do
-            local capture = query.captures[id]
-            local node = Node.new(self.buf, ts_node)
-            log.node(capture, node)
-            callback(capture, node)
+        for id, node, data in query:iter_captures(root, self.buf, top, bottom) do
+            callback(id, node, data)
         end
-    end
-end
-
----@param callback fun(range: render.md.Range)
-function View:for_each(callback)
-    for _, range in ipairs(self.ranges) do
-        callback(range)
     end
 end
 

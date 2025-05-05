@@ -1,4 +1,5 @@
 local Base = require('render-markdown.render.base')
+local Env = require('render-markdown.lib.env')
 local List = require('render-markdown.lib.list')
 local Str = require('render-markdown.lib.str')
 local colors = require('render-markdown.core.colors')
@@ -29,6 +30,7 @@ local colors = require('render-markdown.core.colors')
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
+---@protected
 ---@return boolean
 function Render:setup()
     self.info = self.config.heading
@@ -95,7 +97,7 @@ function Render:get_string(values, level)
     end
 end
 
-function Render:render()
+function Render:run()
     self:sign(self.info.sign, self.data.sign, self.data.fg)
     local box = self:box(self:icon())
     self:background(box)
@@ -189,14 +191,14 @@ function Render:box(icon)
     else
         width = width + vim.fn.max(self.node:widths())
     end
-    local left = self.context:percent(self.data.left_pad, width)
-    local right = self.context:percent(self.data.right_pad, width)
+    local left = Env.win.percent(self.context.win, self.data.left_pad, width)
+    local right = Env.win.percent(self.context.win, self.data.right_pad, width)
     local body = math.max(left + width + right, self.data.min_width)
     ---@type render.md.heading.Box
     return {
         padding = left,
         body = body,
-        margin = self.context:percent(self.data.left_margin, body),
+        margin = Env.win.percent(self.context.win, self.data.left_margin, body),
     }
 end
 

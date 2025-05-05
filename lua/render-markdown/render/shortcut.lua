@@ -6,12 +6,13 @@ local Str = require('render-markdown.lib.str')
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
+---@protected
 ---@return boolean
 function Render:setup()
     return true
 end
 
-function Render:render()
+function Render:run()
     local callout = self.config:get_callout(self.node)
     if callout then
         self:callout(callout)
@@ -50,7 +51,7 @@ function Render:callout(callout)
         virt_text_pos = 'overlay',
         conceal = title and '' or nil,
     })
-    self.context:add_callout(self.node.start_row, callout)
+    self.context.callout:set(self.node, callout)
 end
 
 ---@private
@@ -80,7 +81,7 @@ function Render:checkbox(checkbox)
     end
     local added = self:check_icon(checkbox.rendered, checkbox.highlight)
     if added then
-        self.context:add_checkbox(self.node.start_row, checkbox)
+        self.context.checkbox:set(self.node, checkbox)
     end
 end
 

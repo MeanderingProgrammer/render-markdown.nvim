@@ -5,6 +5,7 @@ local Base = require('render-markdown.render.base')
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
+---@protected
 ---@return boolean
 function Render:setup()
     local config = self.config.checkbox
@@ -22,7 +23,7 @@ function Render:setup()
     return true
 end
 
-function Render:render()
+function Render:run()
     self:check_icon(self.info.icon, self.info.highlight)
     local scope_node = self.node:sibling('paragraph')
     self:scope('check_scope', scope_node, self.info.scope_highlight)

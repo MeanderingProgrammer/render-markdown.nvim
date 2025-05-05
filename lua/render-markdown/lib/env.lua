@@ -133,8 +133,8 @@ end
 ---@param name string
 ---@return render.md.option.Value
 ---@overload fun(buf: integer, name: 'buflisted'): boolean
----@overload fun(buf: integer, name: 'buftype'): integer
----@overload fun(buf: integer, name: 'filetype'): integer
+---@overload fun(buf: integer, name: 'buftype'): string
+---@overload fun(buf: integer, name: 'filetype'): string
 ---@overload fun(buf: integer, name: 'tabstop'): integer
 function M.buf.get(buf, name)
     return vim.api.nvim_get_option_value(name, { buf = buf })
@@ -203,17 +203,26 @@ function M.win.buf(win)
 end
 
 ---@param win integer
----@return integer
-function M.win.width(win)
-    local infos = vim.fn.getwininfo(win)
-    local textoff = #infos == 1 and infos[1].textoff or 0
-    return vim.api.nvim_win_get_width(win) - textoff
-end
-
----@param win integer
 ---@return vim.fn.winsaveview.ret
 function M.win.view(win)
     return vim.api.nvim_win_call(win, vim.fn.winsaveview)
+end
+
+---@param win integer
+---@param value number
+---@param used integer
+---@return integer
+function M.win.percent(win, value, used)
+    if value <= 0 then
+        return 0
+    elseif value >= 1 then
+        return value
+    else
+        local infos = vim.fn.getwininfo(win)
+        local textoff = #infos == 1 and infos[1].textoff or 0
+        local width = vim.api.nvim_win_get_width(win) - textoff - used
+        return math.floor((width * value) + 0.5)
+    end
 end
 
 return M

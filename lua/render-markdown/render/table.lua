@@ -45,6 +45,7 @@ local Alignment = {
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
+---@protected
 ---@return boolean
 function Render:setup()
     self.info = self.config.pipe_table
@@ -221,7 +222,7 @@ function Render.parse_row_data(row, cell_type)
     return pipes, cells
 end
 
-function Render:render()
+function Render:run()
     self:delimiter()
     for _, row in ipairs(self.data.rows) do
         self:row(row)

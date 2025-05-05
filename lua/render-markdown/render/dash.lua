@@ -1,28 +1,47 @@
 local Base = require('render-markdown.render.base')
+local Env = require('render-markdown.lib.env')
+
+---@class render.md.dash.Data
+---@field width integer
+---@field margin integer
 
 ---@class render.md.render.Dash: render.md.Render
 ---@field private info render.md.dash.Config
+---@field private data render.md.dash.Data
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
+---@protected
 ---@return boolean
 function Render:setup()
     self.info = self.config.dash
     if self.context:skip(self.info) then
         return false
     end
+    local width = self:get_width(self.info.width, 0)
+    local margin = self:get_width(self.info.left_margin, width)
+    if width <= 0 and margin <= 0 then
+        return false
+    end
+    self.data = { width = width, margin = margin }
     return true
 end
 
-function Render:render()
-    local width = self.info.width
-    width = type(width) == 'number' and self.context:percent(width, 0)
-        or vim.o.columns
-    local margin = self.context:percent(self.info.left_margin, width)
+---@private
+---@param width render.md.dash.Width
+---@param used integer
+---@return integer
+function Render:get_width(width, used)
+    if type(width) == 'number' then
+        return Env.win.percent(self.context.win, width, used)
+    else
+        return vim.o.columns
+    end
+end
 
-    local line = self.config:line():pad(margin)
-    line:text(self.info.icon:rep(width), self.info.highlight)
-
+function Render:run()
+    local line = self.config:line():pad(self.data.margin)
+    line:text(self.info.icon:rep(self.data.width), self.info.highlight)
     local start_row, end_row = self.node.start_row, self.node.end_row - 1
     self:dash(line, start_row)
     if end_row > start_row then

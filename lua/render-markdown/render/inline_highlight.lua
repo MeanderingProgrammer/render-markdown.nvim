@@ -5,6 +5,7 @@ local Base = require('render-markdown.render.base')
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
+---@protected
 ---@return boolean
 function Render:setup()
     self.info = self.config.inline_highlight
@@ -14,7 +15,7 @@ function Render:setup()
     return true
 end
 
-function Render:render()
+function Render:run()
     for _, range in ipairs(self.node:find('==[^=]+==')) do
         -- Hide first 2 equal signs
         self:hide_equals(range[1], range[2])
