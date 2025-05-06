@@ -324,21 +324,30 @@ function M.table.pipe(head)
     }
 end
 
+---@param virtual boolean
 ---@param above boolean
 ---@param lengths integer[]
 ---@return vim.api.keyset.set_extmark
-function M.table.border(above, lengths)
+function M.table.border(virtual, above, lengths)
     local chars = above and { '┌', '┬', '┐' } or { '└', '┴', '┘' }
     local highlight = above and 'RmTableHead' or 'RmTableRow'
     local parts = vim.tbl_map(function(length)
         return ('─'):rep(length)
     end, lengths)
     local text = chars[1] .. table.concat(parts, chars[2]) .. chars[3]
-    ---@type vim.api.keyset.set_extmark
-    return {
-        virt_lines = { { { text, highlight } } },
-        virt_lines_above = above,
-    }
+    if virtual then
+        ---@type vim.api.keyset.set_extmark
+        return {
+            virt_lines = { { { text, highlight } } },
+            virt_lines_above = above,
+        }
+    else
+        ---@type vim.api.keyset.set_extmark
+        return {
+            virt_text = { { text, highlight } },
+            virt_text_pos = 'overlay',
+        }
+    end
 end
 
 ---@param sections integer[][]

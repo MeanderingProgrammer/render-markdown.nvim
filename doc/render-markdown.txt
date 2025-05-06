@@ -1,4 +1,4 @@
-*render-markdown.txt*         For NVIM v0.11.1        Last change: 2025 May 05
+*render-markdown.txt*         For NVIM v0.11.1        Last change: 2025 May 06
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -720,6 +720,9 @@ Default Configuration ~
                 '└', '┴', '┘',
                 '│', '─',
             },
+            -- Always use virtual lines for table borders instead of attempting to use empty lines.
+            -- Will be automatically enabled if indentation module is enabled.
+            border_virtual = false,
             -- Gets placed in delimiter row for each column, position is based on alignment.
             alignment_indicator = '━',
             -- Highlight for table heading, delimiter, and the line above.
@@ -1371,6 +1374,9 @@ Table Configuration ~
                 '└', '┴', '┘',
                 '│', '─',
             },
+            -- Always use virtual lines for table borders instead of attempting to use empty lines.
+            -- Will be automatically enabled if indentation module is enabled.
+            border_virtual = false,
             -- Gets placed in delimiter row for each column, position is based on alignment.
             alignment_indicator = '━',
             -- Highlight for table heading, delimiter, and the line above.

@@ -20,14 +20,12 @@ describe('table.md conceallevel', function()
             win_options = { conceallevel = { rendered = 0 } },
         })
         util.assert_screen({
-            '',
             '┌───────────┬──────────────────────────┐',
             '│ Heading 1 │ `Heading 2`              │',
             '├───────────┼─────────────────────────━┤',
             '│ `Item 行` │ 󰖟 [link](https://行.com) │',
             '│ &lt;1&gt; │ ==Itém 2==               │',
             '└───────────┴──────────────────────────┘',
-            '',
             '┌───────────┬───────────┐',
             '│ Heading 1 │ Heading 2 │',
             '├───────────┼───────────┤',
@@ -41,14 +39,12 @@ describe('table.md conceallevel', function()
             win_options = { conceallevel = { rendered = 1 } },
         })
         util.assert_screen({
-            '',
             '┌───────────┬────────────────────────┐',
             '│ Heading 1 │             Heading 2  │',
             '├───────────┼───────────────────────━┤',
             '│  Item 行  │            󰖟  link     │',
             '│ <1>       │                Itém 2  │',
             '└───────────┴────────────────────────┘',
-            '',
             '┌───────────┬───────────┐',
             '│ Heading 1 │ Heading 2 │',
             '├───────────┼───────────┤',
@@ -62,14 +58,12 @@ describe('table.md conceallevel', function()
             win_options = { conceallevel = { rendered = 2 } },
         })
         util.assert_screen({
-            '',
             '┌───────────┬────────────────────────┐',
             '│ Heading 1 │              Heading 2 │',
             '├───────────┼───────────────────────━┤',
             '│ Item 行   │                 󰖟 link │',
             '│ <1>       │                 Itém 2 │',
             '└───────────┴────────────────────────┘',
-            '',
             '┌───────────┬───────────┐',
             '│ Heading 1 │ Heading 2 │',
             '├───────────┼───────────┤',
@@ -83,14 +77,12 @@ describe('table.md conceallevel', function()
             win_options = { conceallevel = { rendered = 3 } },
         })
         util.assert_screen({
-            '',
             '┌───────────┬────────────────────────┐',
             '│ Heading 1 │              Heading 2 │',
             '├───────────┼───────────────────────━┤',
             '│ Item 行   │                 󰖟 link │',
             '│ 1         │                 Itém 2 │',
             '└───────────┴────────────────────────┘',
-            '',
             '┌───────────┬───────────┐',
             '│ Heading 1 │ Heading 2 │',
             '├───────────┼───────────┤',

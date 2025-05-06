@@ -59,7 +59,7 @@ end
 ---@protected
 function Render:run()
     self:marker()
-    self:icon()
+    self:checkbox()
     self:scope()
 end
 
@@ -72,7 +72,7 @@ function Render:marker()
 end
 
 ---@private
-function Render:icon()
+function Render:checkbox()
     local node = self.data.checkbox
     local line = self:line():text(self.data.icon, self.data.highlight)
     local space = self.context:width(node) + 1 - Str.width(self.data.icon)

@@ -41,14 +41,13 @@ describe('list_table.md', function()
         marks:add(row:get(), row:get(), 0, 1, util.heading.icon(1))
         marks:add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
-        marks:add(
-            row:inc(),
-            nil,
-            0,
-            nil,
-            util.table.border(true, { 8, 15, 7, 6 })
-        )
-        marks:add(row:get(), row:get(), 0, 1, util.table.pipe(true))
+        local sections = {
+            util.table.border(false, true, { 8, 15, 7, 6 }),
+            util.table.delimiter({ { 1, 7 }, { 1, 13, 1 }, { 6, 1 }, { 6 } }),
+            util.table.border(false, false, { 8, 15, 7, 6 }),
+        }
+        marks:add(row:get(), nil, 0, nil, sections[1])
+        marks:add(row:inc(), row:get(), 0, 1, util.table.pipe(true))
         marks:add(row:get(), row:get(), 2, 8, util.highlight('code'))
         marks:add(row:get(), nil, 9, nil, util.table.padding(2))
         marks:add(row:get(), row:get(), 9, 10, util.table.pipe(true))
@@ -57,13 +56,7 @@ describe('list_table.md', function()
         marks:add(row:get(), row:get(), 25, 26, util.table.pipe(true))
         marks:add(row:get(), row:get(), 33, 34, util.table.pipe(true))
         marks:add(row:get(), row:get(), 40, 41, util.table.pipe(true))
-        marks:add(
-            row:inc(),
-            row:get(),
-            0,
-            41,
-            util.table.delimiter({ { 1, 7 }, { 1, 13, 1 }, { 6, 1 }, { 6 } })
-        )
+        marks:add(row:inc(), row:get(), 0, 41, sections[2])
         marks:add(row:inc(), row:get(), 0, 1, util.table.pipe(false))
         marks:add(row:get(), row:get(), 2, 8, util.highlight('code'))
         marks:add(row:get(), nil, 9, nil, util.table.padding(2))
@@ -82,13 +75,7 @@ describe('list_table.md', function()
         marks:add(row:get(), row:get(), 32, 33, util.conceal())
         marks:add(row:get(), row:get(), 33, 34, util.table.pipe(false))
         marks:add(row:get(), row:get(), 40, 41, util.table.pipe(false))
-        marks:add(
-            row:get(),
-            nil,
-            0,
-            nil,
-            util.table.border(false, { 8, 15, 7, 6 })
-        )
+        marks:add(row:inc(), nil, 0, nil, sections[3])
 
         util.assert_view(marks, {
             '󰫎 󰲡 Unordered List',
@@ -108,14 +95,12 @@ describe('list_table.md', function()
             '  2. Item 2',
             '',
             '󰫎 󰲡 Table',
-            '',
             '  ┌────────┬───────────────┬───────┬──────┐',
             '  │ Left   │    Center     │ Right │ None │',
             '  ├━───────┼━─────────────━┼──────━┼──────┤',
             '  │ Code   │     Bold      │ Plain │ Item │',
             '  │ Item   │    󰌹 link     │  Item │ Item │',
             '  └────────┴───────────────┴───────┴──────┘',
-            '',
             '  [example]: https://example.com',
         })
     end)
@@ -183,14 +168,13 @@ describe('list_table.md', function()
         marks:add(row:get(), row:get(), 0, 1, util.heading.icon(1))
         marks:add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
-        marks:add(
-            row:inc(),
-            nil,
-            0,
-            nil,
-            util.table.border(true, { 10, 15, 7, 6 })
-        )
-        marks:add(row:get(), row:get(), 0, 1, util.table.pipe(true))
+        local sections = {
+            util.table.border(false, true, { 10, 15, 7, 6 }),
+            util.table.delimiter({ { 1, 9 }, { 1, 13, 1 }, { 6, 1 }, { 6 } }),
+            util.table.border(false, false, { 10, 15, 7, 6 }),
+        }
+        marks:add(row:get(), nil, 0, nil, sections[1])
+        marks:add(row:inc(), row:get(), 0, 1, util.table.pipe(true))
         marks:add(row:get(), nil, 2, nil, util.code.padding(2))
         marks:add(row:get(), row:get(), 2, 8, util.highlight('code'))
         marks:add(row:get(), nil, 8, nil, util.code.padding(2))
@@ -200,13 +184,7 @@ describe('list_table.md', function()
         marks:add(row:get(), row:get(), 25, 26, util.table.pipe(true))
         marks:add(row:get(), row:get(), 33, 34, util.table.pipe(true))
         marks:add(row:get(), row:get(), 40, 41, util.table.pipe(true))
-        marks:add(
-            row:inc(),
-            row:get(),
-            0,
-            41,
-            util.table.delimiter({ { 1, 9 }, { 1, 13, 1 }, { 6, 1 }, { 6 } })
-        )
+        marks:add(row:inc(), row:get(), 0, 41, sections[2])
         marks:add(row:inc(), row:get(), 0, 1, util.table.pipe(false))
         marks:add(row:get(), nil, 2, nil, util.code.padding(2))
         marks:add(row:get(), row:get(), 2, 8, util.highlight('code'))
@@ -227,13 +205,7 @@ describe('list_table.md', function()
         marks:add(row:get(), row:get(), 32, 33, util.conceal())
         marks:add(row:get(), row:get(), 33, 34, util.table.pipe(false))
         marks:add(row:get(), row:get(), 40, 41, util.table.pipe(false))
-        marks:add(
-            row:get(),
-            nil,
-            0,
-            nil,
-            util.table.border(false, { 10, 15, 7, 6 })
-        )
+        marks:add(row:inc(), nil, 0, nil, sections[3])
 
         util.assert_view(marks, {
             '󰫎 󰲡 Unordered List',
@@ -253,14 +225,12 @@ describe('list_table.md', function()
             '    2.   Item 2',
             '',
             '󰫎 󰲡 Table',
-            '',
             '  ┌──────────┬───────────────┬───────┬──────┐',
             '  │   Left   │    Center     │ Right │ None │',
             '  ├━─────────┼━─────────────━┼──────━┼──────┤',
             '  │   Code   │     Bold      │ Plain │ Item │',
             '  │ Item     │    󰌹 link     │  Item │ Item │',
             '  └──────────┴───────────────┴───────┴──────┘',
-            '',
             '  [example]: https://example.com',
         })
     end)

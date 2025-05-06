@@ -100,7 +100,7 @@ end
 ---@protected
 function Render:run()
     self:sign(self.config.sign, self.data.sign, self.data.fg)
-    local box = self:box(self:icon())
+    local box = self:box(self:marker())
     self:background(box)
     self:padding(box)
     if self.data.atx then
@@ -114,7 +114,7 @@ end
 
 ---@private
 ---@return integer
-function Render:icon()
+function Render:marker()
     local icon, highlight = self.data.icon, {}
     if self.data.fg then
         highlight[#highlight + 1] = self.data.fg
@@ -183,10 +183,10 @@ function Render:icon()
 end
 
 ---@private
----@param icon integer
+---@param marker_width integer
 ---@return render.md.heading.Box
-function Render:box(icon)
-    local width = icon
+function Render:box(marker_width)
+    local width = marker_width
     if self.data.atx then
         width = width + self.context:width(self.node:child('inline'))
     else
@@ -273,12 +273,11 @@ function Render:border(box, above)
     local row, target = self.node:line(above and 'above' or 'below', 1)
     local available = target and Str.width(target) == 0
 
-    if not virtual and available and row ~= self.context.last_heading then
+    if not virtual and available and self.context.used:take(row) then
         self.marks:add('head_border', row, 0, {
             virt_text = line:get(),
             virt_text_pos = 'overlay',
         })
-        self.context.last_heading = row
     else
         self.marks:add(false, self.node.start_row, 0, {
             virt_lines = {

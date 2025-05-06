@@ -124,6 +124,10 @@ end
 function M.resolve_config(user)
     local preset = require('render-markdown.lib.presets').get(user)
     local config = vim.tbl_deep_extend('force', M.default, preset, user)
+    -- section indentation is built to support headings
+    if config.indent.enabled then
+        config.pipe_table.border_virtual = true
+    end
     -- override settings that require neovim >= 0.10.0 and have compatible alternatives
     local has_10 = require('render-markdown.lib.compat').has_10
     if not has_10 then

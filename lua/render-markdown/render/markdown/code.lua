@@ -81,8 +81,8 @@ function Render:run()
     self.marks:over(true, bottom, { conceal = '' })
 
     local icon = self:language(language, top)
-    local more_info = info and language and info.end_col > language.end_col
-    self:border(top, true, not icon and not more_info)
+    local has_more = info and language and info.end_col > language.end_col
+    self:border(top, true, not icon and not has_more)
     self:border(bottom, false, true)
 
     local background = self:background_enabled(language)

@@ -242,6 +242,7 @@
 ---@field padding? integer
 ---@field min_width? integer
 ---@field border? string[]
+---@field border_virtual? boolean
 ---@field alignment_indicator? string
 ---@field head? string
 ---@field row? string

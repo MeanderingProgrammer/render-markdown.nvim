@@ -5,6 +5,7 @@
 ---@field padding integer
 ---@field min_width integer
 ---@field border string[]
+---@field border_virtual boolean
 ---@field alignment_indicator string
 ---@field head string
 ---@field row string
@@ -72,6 +73,9 @@ M.default = {
         '└', '┴', '┘',
         '│', '─',
     },
+    -- Always use virtual lines for table borders instead of attempting to use empty lines.
+    -- Will be automatically enabled if indentation module is enabled.
+    border_virtual = false,
     -- Gets placed in delimiter row for each column, position is based on alignment.
     alignment_indicator = '━',
     -- Highlight for table heading, delimiter, and the line above.
@@ -92,6 +96,7 @@ function M.validate(spec)
     spec:type('padding', 'number')
     spec:type('min_width', 'number')
     spec:list('border', 'string')
+    spec:type('border_virtual', 'boolean')
     spec:type('alignment_indicator', 'string')
     spec:type('head', 'string')
     spec:type('row', 'string')

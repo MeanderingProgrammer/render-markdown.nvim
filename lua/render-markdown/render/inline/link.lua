@@ -49,17 +49,18 @@ function Render:run()
         virt_text_pos = 'inline',
     })
     if self.data.autolink then
-        self:hide_bracket(self.node.start_col)
+        self:hide(self.node.start_col, self.node.start_col + 1)
         self.marks:over('link', self.node, { hl_group = self.data.icon[2] })
-        self:hide_bracket(self.node.end_col - 1)
+        self:hide(self.node.end_col - 1, self.node.end_col)
     end
 end
 
 ---@private
----@param col integer
-function Render:hide_bracket(col)
-    self.marks:add(true, self.node.start_row, col, {
-        end_col = col + 1,
+---@param start_col integer
+---@param end_col integer
+function Render:hide(start_col, end_col)
+    self.marks:add(true, self.node.start_row, start_col, {
+        end_col = end_col,
         conceal = '',
     })
 end

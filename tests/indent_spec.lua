@@ -51,25 +51,17 @@ describe('indent', function()
         marks:add(row:get(), nil, 0, nil, util.indent.inline(l2))
         marks:add(row:get(), nil, 0, nil, border(2, 'below'))
 
-        marks:add(
-            row:inc(),
-            nil,
-            0,
-            nil,
-            util.indent.virtual(util.table.border(true, { 5, 5 }), l2)
-        )
+        local sections = {
+            util.table.border(true, true, { 5, 5 }),
+            util.table.delimiter({ { 5 }, { 5 } }),
+        }
+        marks:add(row:inc(), nil, 0, nil, util.indent.virtual(sections[1], l2))
         marks:add(row:get(), nil, 0, nil, util.indent.inline(l2))
         marks:add(row:get(), row:get(), 0, 1, util.table.pipe(true))
         marks:add(row:get(), row:get(), 6, 7, util.table.pipe(true))
         marks:add(row:get(), row:get(), 12, 13, util.table.pipe(true))
         marks:add(row:inc(), nil, 0, nil, util.indent.inline(l2))
-        marks:add(
-            row:get(),
-            row:get(),
-            0,
-            13,
-            util.table.delimiter({ { 5 }, { 5 } })
-        )
+        marks:add(row:get(), row:get(), 0, 13, sections[2])
 
         marks:add(row:inc(), nil, 0, nil, border(1, 'above'))
         marks:add(row:inc(), nil, 0, nil, util.heading.sign(1))
@@ -123,25 +115,17 @@ describe('indent', function()
 
         marks:add(row:get(), nil, 0, nil, util.indent.inline(l2))
 
-        marks:add(
-            row:inc(),
-            nil,
-            0,
-            nil,
-            util.indent.virtual(util.table.border(true, { 5, 5 }), l2)
-        )
+        local sections = {
+            util.table.border(true, true, { 5, 5 }),
+            util.table.delimiter({ { 5 }, { 5 } }),
+        }
+        marks:add(row:inc(), nil, 0, nil, util.indent.virtual(sections[1], l2))
         marks:add(row:get(), nil, 0, nil, util.indent.inline(l2))
         marks:add(row:get(), row:get(), 0, 1, util.table.pipe(true))
         marks:add(row:get(), row:get(), 6, 7, util.table.pipe(true))
         marks:add(row:get(), row:get(), 12, 13, util.table.pipe(true))
         marks:add(row:inc(), nil, 0, nil, util.indent.inline(l2))
-        marks:add(
-            row:get(),
-            row:get(),
-            0,
-            13,
-            util.table.delimiter({ { 5 }, { 5 } })
-        )
+        marks:add(row:get(), row:get(), 0, 13, sections[2])
 
         marks:add(row:inc(), nil, 0, nil, util.indent.inline(l1))
 

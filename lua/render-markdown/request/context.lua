@@ -4,6 +4,7 @@ local Conceal = require('render-markdown.request.conceal')
 local Env = require('render-markdown.lib.env')
 local Offset = require('render-markdown.request.offset')
 local Str = require('render-markdown.lib.str')
+local Used = require('render-markdown.request.used')
 local View = require('render-markdown.request.view')
 
 ---@class render.md.request.Context
@@ -16,7 +17,7 @@ local View = require('render-markdown.request.view')
 ---@field callout render.md.request.Callout
 ---@field checkbox render.md.request.Checkbox
 ---@field offset render.md.request.Offset
----@field last_heading? integer
+---@field used render.md.request.Used
 local Context = {}
 Context.__index = Context
 
@@ -37,7 +38,7 @@ function Context.new(buf, win, config, mode, view)
     self.callout = Callout.new()
     self.checkbox = Checkbox.new()
     self.offset = Offset.new()
-    self.last_heading = nil
+    self.used = Used.new()
     return self
 end
 

@@ -655,6 +655,9 @@ require('render-markdown').setup({
             '└', '┴', '┘',
             '│', '─',
         },
+        -- Always use virtual lines for table borders instead of attempting to use empty lines.
+        -- Will be automatically enabled if indentation module is enabled.
+        border_virtual = false,
         -- Gets placed in delimiter row for each column, position is based on alignment.
         alignment_indicator = '━',
         -- Highlight for table heading, delimiter, and the line above.
@@ -1322,6 +1325,9 @@ require('render-markdown').setup({
             '└', '┴', '┘',
             '│', '─',
         },
+        -- Always use virtual lines for table borders instead of attempting to use empty lines.
+        -- Will be automatically enabled if indentation module is enabled.
+        border_virtual = false,
         -- Gets placed in delimiter row for each column, position is based on alignment.
         alignment_indicator = '━',
         -- Highlight for table heading, delimiter, and the line above.
