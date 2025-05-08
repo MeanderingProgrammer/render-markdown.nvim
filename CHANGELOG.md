@@ -20,6 +20,7 @@
 - use selene to prevent accidental print statements [7f81e9d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7f81e9dcc15504c044f20df39d28a590cd5c6ca5)
 - configurable indent for first line of paragraph [#417](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/417)
   [57c7f33](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/57c7f33f276876c994898683680da9e3a3590d0d)
+- use physical lines for table border if possible [ff577b4](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/ff577b44bd3ab642acec0f134a7bf26b7278d137)
 
 ### Bug Fixes
 
@@ -29,6 +30,7 @@
   [080104e](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/080104e4dce26819efb4f4c83d1b7b2d82b96f7c)
 - handle spaces before atx headings [bd56575](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/bd5657594bf1a96b04f900c87e8d74226a54d832)
 - remove accidental vim.print [bff12b4](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/bff12b4655d1537cf0f10859fcd63ef2cec65010)
+- ignore callouts outside of quotes and checkboxes outside of lists [b4016e8](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b4016e812c9a18784d8c1c6b4f0b2858a4cf502d)
 
 ### Collaborator Shoutouts
 

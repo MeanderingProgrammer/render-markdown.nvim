@@ -1,67 +1,120 @@
 local Context = require('render-markdown.request.context')
+local Indent = require('render-markdown.lib.indent')
 local Iter = require('render-markdown.lib.iter')
 local Marks = require('render-markdown.lib.marks')
 local Node = require('render-markdown.lib.node')
 local Str = require('render-markdown.lib.str')
 local log = require('render-markdown.core.log')
 
----@class render.md.handler.Latex: render.md.Handler
-local M = {}
+---@class render.md.handler.buf.Latex
+---@field private context render.md.request.Context
+---@field private config render.md.latex.Config
+local Handler = {}
+Handler.__index = Handler
 
 ---@private
 ---@type table<string, string>
-M.cache = {}
+Handler.cache = {}
 
----@param ctx render.md.handler.Context
+---@param buf integer
+---@return render.md.handler.buf.Latex
+function Handler.new(buf)
+    local self = setmetatable({}, Handler)
+    self.context = Context.get(buf)
+    self.config = self.context.config.latex
+    return self
+end
+
+---@param root TSNode
 ---@return render.md.Mark[]
-function M.parse(ctx)
-    local context = Context.get(ctx.buf)
-    local config = context.config.latex
-    if context:skip(config) then
+function Handler:run(root)
+    if self.context:skip(self.config) then
         return {}
     end
-    if vim.fn.executable(config.converter) ~= 1 then
-        log.add('debug', 'executable not found', config.converter)
+    if vim.fn.executable(self.config.converter) ~= 1 then
+        log.add('debug', 'executable not found', self.config.converter)
         return {}
     end
 
-    local node = Node.new(ctx.buf, ctx.root)
+    local node = Node.new(self.context.buf, root)
     log.node('latex', node)
 
-    local raw_expression = M.cache[node.text]
-    if not raw_expression then
-        raw_expression = vim.fn.system(config.converter, node.text)
-        if vim.v.shell_error == 1 then
-            log.add('error', config.converter, raw_expression)
-            raw_expression = 'error'
-        end
-        M.cache[node.text] = raw_expression
-    end
-
-    local expressions = {} ---@type string[]
-    for _ = 1, config.top_pad do
-        expressions[#expressions + 1] = ''
-    end
-    for _, expression in ipairs(Str.split(raw_expression, '\n', true)) do
-        expressions[#expressions + 1] = Str.pad(node.start_col) .. expression
-    end
-    for _ = 1, config.bottom_pad do
-        expressions[#expressions + 1] = ''
-    end
-
-    local lines = Iter.list.map(expressions, function(expression)
-        return { { expression, config.highlight } }
+    local indent = self:indent(node.start_row, node.start_col)
+    local lines = Iter.list.map(self:expressions(node), function(expression)
+        local line = vim.list_extend({}, indent)
+        line[#line + 1] = { expression, self.config.highlight }
+        return line
     end)
 
-    local above = config.position == 'above'
+    local above = self.config.position == 'above'
     local row = above and node.start_row or node.end_row
 
-    local marks = Marks.new(context, true)
+    local marks = Marks.new(self.context, true)
     marks:add(false, row, 0, {
         virt_lines = lines,
         virt_lines_above = above,
     })
     return marks:get()
+end
+
+---@private
+---@param node render.md.Node
+---@return string[]
+function Handler:expressions(node)
+    local result = {} ---@type string[]
+    for _ = 1, self.config.top_pad do
+        result[#result + 1] = ''
+    end
+    for _, line in ipairs(self:convert(node.text)) do
+        result[#result + 1] = Str.pad(node.start_col) .. line
+    end
+    for _ = 1, self.config.bottom_pad do
+        result[#result + 1] = ''
+    end
+    return result
+end
+
+---@private
+---@param text string
+---@return string[]
+function Handler:convert(text)
+    local result = Handler.cache[text]
+    if not result then
+        local converter = self.config.converter
+        result = vim.fn.system(converter, text)
+        if vim.v.shell_error == 1 then
+            log.add('error', converter, result)
+            result = 'error'
+        end
+        Handler.cache[text] = result
+    end
+    return Str.split(result, '\n', true)
+end
+
+---@private
+---@param row integer
+---@param col integer
+---@return render.md.mark.Line
+function Handler:indent(row, col)
+    local buf = self.context.buf
+    local node = vim.treesitter.get_node({
+        bufnr = buf,
+        pos = { row, col },
+        lang = 'markdown',
+    })
+    if not node then
+        return {}
+    end
+    return Indent.new(self.context, Node.new(buf, node)):line(true):get()
+end
+
+---@class render.md.handler.Latex: render.md.Handler
+local M = {}
+
+---@param ctx render.md.handler.Context
+---@return render.md.Mark[]
+function M.parse(ctx)
+    return Handler.new(ctx.buf):run(ctx.root)
 end
 
 return M

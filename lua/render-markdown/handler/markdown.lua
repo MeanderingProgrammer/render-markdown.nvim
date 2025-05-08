@@ -59,7 +59,7 @@ end
 
 ---@param root TSNode
 ---@return render.md.Mark[]
-function Handler:parse(root)
+function Handler:run(root)
     local marks = Marks.new(self.context, false)
     self.context.view:nodes(root, self.query, function(capture, node)
         local render = self.renders[capture]
@@ -75,7 +75,7 @@ local M = {}
 ---@param ctx render.md.handler.Context
 ---@return render.md.Mark[]
 function M.parse(ctx)
-    return Handler.new(ctx.buf):parse(ctx.root)
+    return Handler.new(ctx.buf):run(ctx.root)
 end
 
 return M

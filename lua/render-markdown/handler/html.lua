@@ -30,7 +30,7 @@ end
 
 ---@param root TSNode
 ---@return render.md.Mark[]
-function Handler:parse(root)
+function Handler:run(root)
     if self.context:skip(self.context.config.html) then
         return {}
     end
@@ -49,7 +49,7 @@ local M = {}
 ---@param ctx render.md.handler.Context
 ---@return render.md.Mark[]
 function M.parse(ctx)
-    return Handler.new(ctx.buf):parse(ctx.root)
+    return Handler.new(ctx.buf):run(ctx.root)
 end
 
 return M
