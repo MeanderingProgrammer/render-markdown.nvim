@@ -2,9 +2,9 @@ local Compat = require('render-markdown.lib.compat')
 
 ---@class render.md.Buffer
 ---@field private buf integer
+---@field private debounced_run_callback? fun()
 ---@field private empty boolean
----@field private timer uv.uv_timer_t
----@field private running boolean
+---@field private timer? uv.uv_timer_t
 ---@field private marks? render.md.Extmark[]
 local Buffer = {}
 Buffer.__index = Buffer
@@ -14,9 +14,9 @@ Buffer.__index = Buffer
 function Buffer.new(buf)
     local self = setmetatable({}, Buffer)
     self.buf = buf
+    self.debounced_run_callback = nil
     self.empty = true
-    self.timer = assert(Compat.uv.new_timer())
-    self.running = false
+    self.timer = nil
     self.marks = nil
     return self
 end
@@ -39,14 +39,25 @@ end
 ---@param callback fun()
 function Buffer:run(debounce, ms, callback)
     if debounce and ms > 0 then
-        self.timer:start(ms, 0, function()
-            self.running = false
-        end)
-        if not self.running then
-            self.running = true
-            vim.schedule(callback)
+        -- always keep the last callback, discard previous ones
+        self.debounced_run_callback = callback
+        if not self.timer then
+            self.timer = assert(Compat.uv.new_timer())
+            self.timer:start(ms, 0, function()
+                if self.debounced_run_callback ~= nil then
+                    -- invoke the last received callback
+                    vim.schedule(self.debounced_run_callback)
+                end
+                self.timer:close()
+                self.timer = nil
+            end)
         end
     else
+        if self.timer then
+            self.timer:stop()
+            self.timer:close()
+            self.timer = nil
+        end
         vim.schedule(callback)
     end
 end
