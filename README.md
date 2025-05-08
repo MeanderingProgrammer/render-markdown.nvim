@@ -6,10 +6,10 @@ Plugin to improve viewing Markdown files in Neovim
 
 | Screenshot | Video     |
 | ---------- | --------- |
-| ![Heading](https://github.com/user-attachments/assets/36f0fbb6-99bc-4cb2-8f69-fbea3d10abf1) | ![Heading](https://github.com/user-attachments/assets/e57a53ea-f0bf-48db-90c1-0c2365ab3c54) |
-| ![Table](https://github.com/user-attachments/assets/cbb81758-820d-467c-bc44-07003cb532bb)   | ![Table](https://github.com/user-attachments/assets/5cd2b69d-ef17-4c6e-9510-59ed10e385d5)   |
+| ![Heading](https://github.com/user-attachments/assets/40655575-b091-4ab8-b830-38f8004d7746) | ![Heading](https://github.com/user-attachments/assets/03f629ea-f6da-4f05-a035-827fd944e8be) |
+| ![Table](https://github.com/user-attachments/assets/7d021918-e89c-4b7d-b33a-869390f9a826)   | ![Table](https://github.com/user-attachments/assets/fdbcfbfa-5f9e-49b7-8c19-f7e837979a7a)   |
 | ![Quote](https://github.com/user-attachments/assets/822ae62c-bc0f-40a7-b8bb-fb3a885a95f9)   | ![Quote](https://github.com/user-attachments/assets/aa002ac7-b30f-4079-bba9-505160a4ad78)   |
-| ![Callout](https://github.com/user-attachments/assets/397ddd7b-bb82-47d0-ad9d-bdbe2f9858d7) | ![Callout](https://github.com/user-attachments/assets/250aaeda-6141-4f4c-b72c-103875ca6eb8) |
+| ![Callout](https://github.com/user-attachments/assets/e468a463-bc8d-420c-bb4c-da1263795092) | ![Callout](https://github.com/user-attachments/assets/d56cc5c7-43cd-4ce7-ad33-6164c2e23875) |
 | ![Latex](https://github.com/user-attachments/assets/7b859c0a-1bf6-4398-88b5-7bcde12f2390)   | ![Latex](https://github.com/user-attachments/assets/9ef14030-f688-47fd-95ff-befab1253322)   |
 
 <!-- panvimdoc-ignore-end -->

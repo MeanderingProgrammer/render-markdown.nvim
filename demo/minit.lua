@@ -28,6 +28,22 @@ require('lazy').setup({
             end,
         },
         {
+            'nvim-lualine/lualine.nvim',
+            dependencies = { 'nvim-tree/nvim-web-devicons' },
+            config = function()
+                require('lualine').setup({
+                    sections = {
+                        lualine_a = { 'mode' },
+                        lualine_b = { { 'filename', path = 0 } },
+                        lualine_c = {},
+                        lualine_x = {},
+                        lualine_y = {},
+                        lualine_z = { 'location' },
+                    },
+                })
+            end,
+        },
+        {
             'nvim-treesitter/nvim-treesitter',
             build = ':TSUpdate',
             config = function()
@@ -44,19 +60,9 @@ require('lazy').setup({
             end,
         },
         {
-            'nvim-lualine/lualine.nvim',
-            dependencies = { 'nvim-tree/nvim-web-devicons' },
+            'echasnovski/mini.nvim',
             config = function()
-                require('lualine').setup({
-                    sections = {
-                        lualine_a = { 'mode' },
-                        lualine_b = { { 'filename', path = 0 } },
-                        lualine_c = {},
-                        lualine_x = {},
-                        lualine_y = {},
-                        lualine_z = { 'location' },
-                    },
-                })
+                require('mini.icons').setup({})
             end,
         },
         {
