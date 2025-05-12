@@ -62,7 +62,8 @@ function M.items(buf, row, col)
     if node:type() == 'block_quote' then
         for _, value in pairs(config.callout) do
             if filter.callout(value) then
-                items[#items + 1] = M.item(prefix, value.raw, value.rendered)
+                local detail = ' ' .. value.rendered
+                items[#items + 1] = M.item(prefix, value.raw, detail)
             end
         end
     elseif node:type() == 'list_item' then
@@ -141,7 +142,8 @@ function M.item(prefix, label, detail, description)
     ---@type lsp.CompletionItem
     return {
         kind = 12,
-        label = prefix .. label,
+        label = label,
+        insertText = prefix .. label,
         labelDetails = {
             detail = detail,
             description = description,

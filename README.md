@@ -563,6 +563,8 @@ require('render-markdown').setup({
         enabled = true,
         -- Additional modes to render checkboxes.
         render_modes = false,
+        -- Render the bullet point before the checkbox.
+        bullet = false,
         -- Padding to add to the right of checkboxes.
         right_pad = 1,
         unchecked = {
@@ -1203,6 +1205,8 @@ require('render-markdown').setup({
         enabled = true,
         -- Additional modes to render checkboxes.
         render_modes = false,
+        -- Render the bullet point before the checkbox.
+        bullet = false,
         -- Padding to add to the right of checkboxes.
         right_pad = 1,
         unchecked = {

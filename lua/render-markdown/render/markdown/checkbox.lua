@@ -1,4 +1,5 @@
 local Base = require('render-markdown.render.base')
+local Bullet = require('render-markdown.render.markdown.bullet')
 local Str = require('render-markdown.lib.str')
 
 ---@class render.md.checkbox.Data
@@ -65,10 +66,14 @@ end
 
 ---@private
 function Render:marker()
-    -- https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
-    local node = self.data.marker
-    local offset = { 0, Str.spaces('start', node.text), 0, 0 }
-    self.marks:over('check_icon', node, { conceal = '' }, offset)
+    if self.config.bullet then
+        Bullet:execute(self.context, self.marks, self.node)
+    else
+        -- https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
+        local node = self.data.marker
+        local offset = { 0, Str.spaces('start', node.text), 0, 0 }
+        self.marks:over('check_icon', node, { conceal = '' }, offset)
+    end
 end
 
 ---@private

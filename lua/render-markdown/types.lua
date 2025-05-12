@@ -63,6 +63,7 @@
 ---@field category? string
 
 ---@class (exact) render.md.checkbox.UserConfig: render.md.base.UserConfig
+---@field bullet? boolean
 ---@field right_pad? integer
 ---@field unchecked? render.md.checkbox.component.UserConfig
 ---@field checked? render.md.checkbox.component.UserConfig

@@ -1,4 +1,5 @@
 ---@class (exact) render.md.checkbox.Config: render.md.base.Config
+---@field bullet boolean
 ---@field right_pad integer
 ---@field unchecked render.md.checkbox.component.Config
 ---@field checked render.md.checkbox.component.Config
@@ -27,6 +28,8 @@ M.default = {
     enabled = true,
     -- Additional modes to render checkboxes.
     render_modes = false,
+    -- Render the bullet point before the checkbox.
+    bullet = false,
     -- Padding to add to the right of checkboxes.
     right_pad = 1,
     unchecked = {
@@ -62,6 +65,7 @@ M.default = {
 function M.validate(spec)
     local Base = require('render-markdown.config.base')
     Base.validate(spec)
+    spec:type('bullet', 'boolean')
     spec:type('right_pad', 'number')
     spec:nested({ 'unchecked', 'checked' }, function(box)
         box:type('icon', 'string')
