@@ -79,39 +79,45 @@ end
 ---@private
 function Render:checkbox()
     local node = self.data.checkbox
+    local right = self.config.right_pad
+
+    -- add 1 to account for space after checkbox
+    local width = self.context:width(node) + 1
+    local space = width - Str.width(self.data.icon)
+
     local line = self:line():text(self.data.icon, self.data.highlight)
-    local space = self.context:width(node) + 1 - Str.width(self.data.icon)
-    local right_pad = self.config.right_pad
     if space < 0 then
         -- not enough space to fit the icon in-place
         self.marks:over('check_icon', node, {
-            virt_text = line:pad(right_pad):get(),
+            virt_text = line:pad(right):get(),
             virt_text_pos = 'inline',
             conceal = '',
         }, { 0, 0, 0, 1 })
     else
-        local fits = math.min(space, right_pad)
+        local fits = math.min(space, right)
         space = space - fits
-        right_pad = right_pad - fits
+        right = right - fits
+
         local row = node.start_row
         local start_col = node.start_col
         local end_col = node.end_col + 1
+
         self.marks:add('check_icon', row, start_col, {
             end_col = end_col - space,
             virt_text = line:pad(fits):get(),
             virt_text_pos = 'overlay',
         })
         if space > 0 then
-            -- hide extra space after the icon
+            -- remove extra space after the icon
             self.marks:add('check_icon', row, end_col - space, {
                 end_col = end_col,
                 conceal = '',
             })
         end
-        if right_pad > 0 then
+        if right > 0 then
             -- add padding
             self.marks:add('check_icon', row, end_col, {
-                virt_text = self:line():pad(right_pad):get(),
+                virt_text = self:line():pad(right):get(),
                 virt_text_pos = 'inline',
             })
         end

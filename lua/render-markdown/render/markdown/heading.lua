@@ -115,7 +115,8 @@ end
 ---@private
 ---@return integer
 function Render:marker()
-    local icon, highlight = self.data.icon, {}
+    local icon = self.data.icon
+    local highlight = {} ---@type string[]
     if self.data.fg then
         highlight[#highlight + 1] = self.data.fg
     end
@@ -123,15 +124,15 @@ function Render:marker()
         highlight[#highlight + 1] = self.data.bg
     end
     if self.data.atx then
-        local marker = self.data.marker
-        -- add 1 to account for space after last `#`
-        local width = self.context:width(marker) + 1
+        local node = self.data.marker
+        -- add 1 to account for space after last '#'
+        local width = self.context:width(node) + 1
         if not icon or #highlight == 0 then
             return width
         end
         if self.config.position == 'right' then
-            self.marks:over(true, marker, { conceal = '' }, { 0, 0, 0, 1 })
-            self.marks:start('head_icon', marker, {
+            self.marks:over(true, node, { conceal = '' }, { 0, 0, 0, 1 })
+            self.marks:start('head_icon', node, {
                 priority = 1000,
                 virt_text = { { icon, highlight } },
                 virt_text_pos = 'eol',
@@ -140,14 +141,14 @@ function Render:marker()
         else
             local padding = width - Str.width(icon)
             if self.config.position == 'inline' or padding < 0 then
-                local added = self.marks:over('head_icon', marker, {
+                local added = self.marks:over('head_icon', node, {
                     virt_text = { { icon, highlight } },
                     virt_text_pos = 'inline',
                     conceal = '',
                 }, { 0, 0, 0, 1 })
                 return added and Str.width(icon) or width
             else
-                self.marks:over('head_icon', marker, {
+                self.marks:over('head_icon', node, {
                     virt_text = { { Str.pad(padding) .. icon, highlight } },
                     virt_text_pos = 'overlay',
                 })
