@@ -59,7 +59,7 @@ function Render:offset(value, used)
     end
     local result = Env.win.percent(self.context.win, value, used)
     if self.node.text:find('\t') then
-        -- rounds to the next multiple of tab
+        -- round to the next multiple of tab
         local tab = Env.buf.get(self.context.buf, 'tabstop')
         result = math.ceil(result / tab) * tab
     end
@@ -73,17 +73,17 @@ function Render:run()
     self.marks:over(true, language, { conceal = '' })
 
     local start_row = self.node.start_row
-    local top = self.node:child('fenced_code_block_delimiter', start_row)
-    self.marks:over(true, top, { conceal = '' })
+    local above = self.node:child('fenced_code_block_delimiter', start_row)
+    self.marks:over(true, above, { conceal = '' })
 
     local end_row = self.node.end_row - 1
-    local bottom = self.node:child('fenced_code_block_delimiter', end_row)
-    self.marks:over(true, bottom, { conceal = '' })
+    local below = self.node:child('fenced_code_block_delimiter', end_row)
+    self.marks:over(true, below, { conceal = '' })
 
-    local icon = self:language(language, top)
+    local icon = self:language(language, above)
     local has_more = info and language and info.end_col > language.end_col
-    self:border(top, true, not icon and not has_more)
-    self:border(bottom, false, true)
+    self:border(above, self.config.above, not icon and not has_more)
+    self:border(below, self.config.below, true)
 
     local background = self:background_enabled(language)
     if background then
@@ -158,29 +158,31 @@ end
 
 ---@private
 ---@param node? render.md.Node
----@param above boolean
+---@param icon string
 ---@param empty boolean
-function Render:border(node, above, empty)
+function Render:border(node, icon, empty)
     local kind = self.config.border
     local highlight = self.config.highlight_border
-    if kind == 'none' or type(highlight) == 'boolean' or not node then
-        -- skip
-    elseif kind == 'thick' or not empty then
-        self:background(node.start_row, node.start_row, highlight)
-    elseif
-        kind == 'hide' and self.marks:over(true, node, { conceal_lines = '' })
-    then
-        -- successfully added
-    else
-        local row, col = node.start_row, self.node.start_col
-        local border = above and self.config.above or self.config.below
-        local width = self.config.width == 'block' and self.data.body - col
-            or vim.o.columns
-        self.marks:add('code_border', row, col, {
-            virt_text = { { border:rep(width), colors.bg_as_fg(highlight) } },
-            virt_text_pos = 'overlay',
-        })
+    if not node or kind == 'none' or type(highlight) == 'boolean' then
+        return
     end
+    local row = node.start_row
+    if kind == 'thick' or not empty then
+        self:background(row, row, highlight)
+        return
+    end
+    if kind == 'hide' then
+        if self.marks:over(true, node, { conceal_lines = '' }) then
+            return
+        end
+    end
+    local col = self.node.start_col
+    local block = self.config.width == 'block'
+    local width = block and self.data.body - col or vim.o.columns
+    self.marks:add('code_border', row, col, {
+        virt_text = { { icon:rep(width), colors.bg_as_fg(highlight) } },
+        virt_text_pos = 'overlay',
+    })
 end
 
 ---@private
@@ -241,8 +243,8 @@ function Render:padding(background)
         return
     end
 
-    -- use lowest priority (0) to include all other marks in padding when code block is at edge
-    -- use medium priority (1000) to include border marks while likely avoiding other plugins
+    -- 0    | low    | includes other marks in padding when code block is at edge
+    -- 1000 | medium | includes border marks while likely avoiding other plugins
     local priority = col == 0 and 0 or 1000
     local highlight = background and self.config.highlight or nil
 

@@ -2,6 +2,12 @@
 
 ## Pre-release
 
+### Features
+
+- allow checkbox to render bullet [#423](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/423)
+  [a1b0988](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/a1b0988f5ab26698afb56b9c2f0525a4de1195c1)
+- include highlight query files in checkhealth [4f05de7](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4f05de7536571e231b66dd0363af347b162b5fd7)
+
 ## 8.4.0 (2025-05-08)
 
 ### Features

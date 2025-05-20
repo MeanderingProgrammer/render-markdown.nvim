@@ -13,7 +13,7 @@ local Kind = {
 
 ---@class render.md.debug.ValidatorSpec
 ---@field private validator render.md.debug.Validator
----@field private data? table<string, any>
+---@field private config? table<string, any>
 ---@field private nilable boolean
 ---@field private path string[]
 ---@field private specs table<string, render.md.debug.Spec>
@@ -21,20 +21,20 @@ local Spec = {}
 Spec.__index = Spec
 
 ---@param validator render.md.debug.Validator
----@param data? table<string, any>
+---@param config? table<string, any>
 ---@param nilable boolean
 ---@param path? string[]
 ---@param key any
 ---@return render.md.debug.ValidatorSpec
-function Spec.new(validator, data, nilable, path, key)
+function Spec.new(validator, config, nilable, path, key)
     local self = setmetatable({}, Spec)
     self.validator = validator
-    self.data = data
+    self.config = config
     self.nilable = nilable
     self.path = vim.list_extend({}, path or {})
-    if self.data and key then
-        self.data = self.data[key]
-        self.data = type(self.data) == 'table' and self.data or nil
+    if self.config and key then
+        self.config = self.config[key]
+        self.config = type(self.config) == 'table' and self.config or nil
         self.path[#self.path + 1] = tostring(key)
     end
     self.specs = {}
@@ -44,7 +44,7 @@ end
 ---@param f fun(spec: render.md.debug.ValidatorSpec)
 ---@param nilable? boolean
 function Spec:each(f, nilable)
-    local keys = self.data and vim.tbl_keys(self.data) or {}
+    local keys = self.config and vim.tbl_keys(self.config) or {}
     self:nested(keys, f, nilable)
 end
 
@@ -58,7 +58,7 @@ function Spec:nested(keys, f, nilable)
     end
     for _, key in ipairs(keys) do
         self:type(key, 'table')
-        f(Spec.new(self.validator, self.data, nilable, self.path, key))
+        f(Spec.new(self.validator, self.config, nilable, self.path, key))
     end
 end
 
@@ -187,7 +187,7 @@ end
 ---@param message string
 ---@param validation fun(v: any): boolean, string?
 function Spec:add(keys, kind, message, validation)
-    if self.data then
+    if self.config then
         keys = type(keys) == 'table' and keys or { keys }
         for _, key in ipairs(keys) do
             self.specs[key] = {
@@ -200,10 +200,10 @@ function Spec:add(keys, kind, message, validation)
 end
 
 function Spec:check()
-    if not self.data or vim.tbl_count(self.specs) == 0 then
+    if not self.config or vim.tbl_count(self.specs) == 0 then
         return
     end
-    self.validator:check(self.path, self.data, self.specs)
+    self.validator:check(self.path, self.config, self.specs)
 end
 
 ---@class render.md.debug.Validator
@@ -221,13 +221,13 @@ end
 Validator.spec = Spec.new
 
 ---@param path string[]
----@param data table<string, any>
+---@param config table<string, any>
 ---@param specs table<string, render.md.debug.Spec>
-function Validator:check(path, data, specs)
+function Validator:check(path, config, specs)
     for key, spec in pairs(specs) do
         local root = vim.list_extend({}, path)
         root[#root + 1] = tostring(key)
-        local value = data[key]
+        local value = config[key]
         local ok, info = spec.validation(value)
         if not ok then
             local actual
@@ -246,7 +246,7 @@ function Validator:check(path, data, specs)
             self.errors[#self.errors + 1] = message
         end
     end
-    for key in pairs(data) do
+    for key in pairs(config) do
         local root = vim.list_extend({}, path)
         root[#root + 1] = tostring(key)
         if not specs[key] then

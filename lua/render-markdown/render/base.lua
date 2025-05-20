@@ -5,8 +5,6 @@ local colors = require('render-markdown.core.colors')
 ---@field protected context render.md.request.Context
 ---@field protected marks render.md.Marks
 ---@field protected node render.md.Node
----@field protected setup fun(self: render.md.Render): boolean
----@field protected run fun(self: render.md.Render)
 local Base = {}
 Base.__index = Base
 
@@ -28,6 +26,17 @@ function Base:execute(context, marks, node)
 end
 
 ---@protected
+---@return boolean
+function Base:setup()
+    error('unimplemented', 2)
+end
+
+---@protected
+function Base:run()
+    error('unimplemented', 2)
+end
+
+---@protected
 ---@return render.md.Line
 function Base:line()
     return self.context.config:line()
@@ -45,7 +54,7 @@ end
 ---@param highlight? string
 function Base:sign(enabled, text, highlight)
     local config = self.context.config.sign
-    if not config.enabled or not enabled or not text then
+    if not enabled or not text or not config.enabled then
         return
     end
     local sign_highlight = config.highlight
