@@ -5,6 +5,8 @@ local M = {}
 M.prefix = 'RenderMarkdown'
 
 -- stylua: ignore
+-- @see :h highlight-groups
+-- @see :h treesitter-highlight-groups
 ---@private
 ---@type table<string, string>
 M.colors = {
@@ -15,12 +17,12 @@ M.colors = {
     H4              = '@markup.heading.4.markdown',
     H5              = '@markup.heading.5.markdown',
     H6              = '@markup.heading.6.markdown',
-    H1Bg            = 'DiffAdd',
-    H2Bg            = 'DiffChange',
-    H3Bg            = 'DiffDelete',
+    H1Bg            = 'DiffText',
+    H2Bg            = 'DiffAdd',
+    H3Bg            = 'DiffChange',
     H4Bg            = 'DiffDelete',
-    H5Bg            = 'DiffDelete',
-    H6Bg            = 'DiffDelete',
+    H5Bg            = 'Visual',
+    H6Bg            = 'CursorColumn',
     -- Code
     Code            = 'ColorColumn',
     CodeBorder      = 'RenderMarkdownCode',

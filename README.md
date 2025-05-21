@@ -1538,12 +1538,12 @@ The table below shows all the highlight groups with their default link
 | RenderMarkdownH4              | @markup.heading.4.markdown         | H4 icons                   |
 | RenderMarkdownH5              | @markup.heading.5.markdown         | H5 icons                   |
 | RenderMarkdownH6              | @markup.heading.6.markdown         | H6 icons                   |
-| RenderMarkdownH1Bg            | DiffAdd                            | H1 background line         |
-| RenderMarkdownH2Bg            | DiffChange                         | H2 background line         |
-| RenderMarkdownH3Bg            | DiffDelete                         | H3 background line         |
+| RenderMarkdownH1Bg            | DiffText                           | H1 background line         |
+| RenderMarkdownH2Bg            | DiffAdd                            | H2 background line         |
+| RenderMarkdownH3Bg            | DiffChange                         | H3 background line         |
 | RenderMarkdownH4Bg            | DiffDelete                         | H4 background line         |
-| RenderMarkdownH5Bg            | DiffDelete                         | H5 background line         |
-| RenderMarkdownH6Bg            | DiffDelete                         | H6 background line         |
+| RenderMarkdownH5Bg            | Visual                             | H5 background line         |
+| RenderMarkdownH6Bg            | CursorColumn                       | H6 background line         |
 | RenderMarkdownCode            | ColorColumn                        | Code block background      |
 | RenderMarkdownCodeBorder      | RenderMarkdownCode                 | Code border background     |
 | RenderMarkdownCodeFallback    | Normal                             | Fallback for code language |
