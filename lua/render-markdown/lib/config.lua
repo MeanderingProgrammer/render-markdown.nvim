@@ -1,24 +1,19 @@
 local Env = require('render-markdown.lib.env')
 local Iter = require('render-markdown.lib.iter')
 local Line = require('render-markdown.lib.line')
-local Range = require('render-markdown.lib.range')
+local Resolved = require('render-markdown.lib.resolved')
 
----@class render.md.main.Full
----@field modes render.md.Modes
----@field callout table<string, render.md.callout.Config>
----@field checkbox table<string, render.md.checkbox.custom.Config>
-
----@class render.md.main.Config: render.md.buffer.Config
----@field private full render.md.main.Full
+---@class render.md.buf.Config: render.md.partial.Config
+---@field resolved render.md.resolved.Config
 local Config = {}
 Config.__index = Config
 
 ---@param root render.md.Config
 ---@param enabled boolean
 ---@param buf integer
----@return render.md.main.Config
+---@return render.md.buf.Config
 function Config.new(root, enabled, buf)
-    ---@type render.md.buffer.Config
+    ---@type render.md.partial.Config
     local config = {
         enabled = enabled,
         render_modes = root.render_modes,
@@ -52,82 +47,15 @@ function Config.new(root, enabled, buf)
             config = vim.tbl_deep_extend('force', config, override)
         end
     end
-
-    -- super set of render modes across top level and individual components
-    local modes = config.render_modes
-    for _, component in pairs(config) do
-        if type(component) == 'table' then
-            modes = Config.fold(modes, component['render_modes'])
-        end
-    end
-
-    ---@type render.md.main.Full
-    local full = {
-        modes = modes,
-        callout = Config.normalize(config.callout),
-        checkbox = Config.normalize(config.checkbox.custom),
-    }
-
-    local instance = vim.tbl_deep_extend('force', { full = full }, config)
-    return setmetatable(instance, Config)
-end
-
----@private
----@param acc render.md.Modes
----@param new? render.md.Modes
----@return render.md.Modes
-function Config.fold(acc, new)
-    if type(acc) == 'boolean' and type(new) == 'boolean' then
-        return acc or new
-    elseif type(acc) == 'boolean' and type(new) == 'table' then
-        return acc or new
-    elseif type(acc) == 'table' and type(new) == 'boolean' then
-        return new or acc
-    elseif type(acc) == 'table' and type(new) == 'table' then
-        -- copy to avoid modifying inputs
-        local result = {}
-        vim.list_extend(result, acc)
-        vim.list_extend(result, new)
-        return result
-    else
-        -- should only occur if new is nil, keep current value
-        return acc
-    end
-end
-
----@private
----@generic T: render.md.callout.Config|render.md.checkbox.custom.Config
----@param component table<string, T>
----@return table<string, T>
-function Config.normalize(component)
-    local result = {}
-    for _, value in pairs(component) do
-        result[value.raw:lower()] = value
-    end
-    return result
+    local self = setmetatable(config, Config)
+    self.resolved = Resolved.new(config)
+    ---@cast self -render.md.partial.Config
+    return self
 end
 
 ---@return render.md.Line
 function Config:line()
     return Line.new(self)
-end
-
----@param mode string
----@return boolean
-function Config:render(mode)
-    return Env.mode.is(mode, self.full.modes)
-end
-
----@param node render.md.Node
----@return render.md.callout.Config?
-function Config:get_callout(node)
-    return self.full.callout[node.text:lower()]
-end
-
----@param node render.md.Node
----@return render.md.checkbox.custom.Config?
-function Config:get_checkbox(node)
-    return self.full.checkbox[node.text:lower()]
 end
 
 ---@param destination string
@@ -147,24 +75,6 @@ function Config:set_link_text(destination, icon)
     if result then
         icon[1] = result.icon
         icon[2] = result.highlight or icon[2]
-    end
-end
-
----@param mode string
----@param row? integer
----@return render.md.Range?
-function Config:hidden(mode, row)
-    -- anti-conceal is not enabled -> hide nothing
-    -- row is not known -> buffer is not active -> hide nothing
-    local config = self.anti_conceal
-    if not config.enabled or not row then
-        return nil
-    end
-    if Env.mode.is(mode, { 'v', 'V', '\22' }) then
-        local start = vim.fn.getpos('v')[2] - 1
-        return Range.new(math.min(row, start), math.max(row, start))
-    else
-        return Range.new(row - config.above, row + config.below)
     end
 end
 

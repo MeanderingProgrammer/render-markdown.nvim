@@ -7,8 +7,13 @@ local M = {}
 ---@type boolean
 M.initialized = false
 
----called from manager on buffer attach or directly by user
+---kept around to avoid breaking users
 function M.setup()
+    M.init()
+end
+
+---called from manager on buffer attach or directly by user
+function M.init()
     if M.initialized then
         return
     end

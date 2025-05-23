@@ -10,7 +10,7 @@ local View = require('render-markdown.request.view')
 ---@class render.md.request.Context
 ---@field buf integer
 ---@field win integer
----@field config render.md.main.Config
+---@field config render.md.buf.Config
 ---@field mode string
 ---@field view render.md.request.View
 ---@field conceal render.md.request.Conceal
@@ -23,7 +23,7 @@ Context.__index = Context
 
 ---@param buf integer
 ---@param win integer
----@param config render.md.main.Config
+---@param config render.md.buf.Config
 ---@param mode string
 ---@param view render.md.request.View
 ---@return render.md.request.Context
@@ -83,10 +83,10 @@ end
 
 ---@param buf integer
 ---@param win integer
----@param config render.md.main.Config
+---@param config render.md.buf.Config
 ---@param mode string
 ---@return render.md.request.Context
-function M.start(buf, win, config, mode)
+function M.new(buf, win, config, mode)
     local view = View.new(buf)
     local context = Context.new(buf, win, config, mode, view)
     M.cache[buf] = context

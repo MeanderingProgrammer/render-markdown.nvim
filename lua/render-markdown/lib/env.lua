@@ -150,6 +150,17 @@ function M.buf.set(buf, name, value)
 end
 
 ---@param buf integer
+---@return boolean
+function M.buf.empty(buf)
+    if vim.api.nvim_buf_line_count(buf) > 1 then
+        return false
+    else
+        local line = vim.api.nvim_buf_get_lines(buf, 0, -1, false)[1]
+        return not line or line == ''
+    end
+end
+
+---@param buf integer
 ---@return integer
 function M.buf.win(buf)
     return vim.fn.bufwinid(buf)

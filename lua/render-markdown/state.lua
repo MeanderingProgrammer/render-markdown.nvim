@@ -4,11 +4,10 @@ local Config = require('render-markdown.lib.config')
 ---@class render.md.State
 ---@field private config render.md.Config
 ---@field enabled boolean
----@field file_types string[]
 local M = {}
 
 ---@private
----@type table<integer, render.md.main.Config>
+---@type table<integer, render.md.buf.Config>
 M.cache = {}
 
 ---called from init on setup
@@ -16,7 +15,6 @@ M.cache = {}
 function M.setup(config)
     M.config = config
     M.enabled = config.enabled
-    M.file_types = config.file_types
     require('render-markdown.core.handlers').setup({
         custom = config.custom_handlers,
     })
@@ -25,6 +23,7 @@ function M.setup(config)
         runtime = config.log_runtime,
     })
     require('render-markdown.core.manager').setup({
+        file_types = config.file_types,
         ignore = config.ignore,
         change_events = config.change_events,
         on = config.on,
@@ -38,6 +37,9 @@ function M.setup(config)
     require('render-markdown.core.ui').setup({
         on = config.on,
     })
+    require('render-markdown.integ.blink').setup({
+        file_types = config.file_types,
+    })
     require('render-markdown.integ.source').setup({
         completions = config.completions,
     })
@@ -46,7 +48,7 @@ function M.setup(config)
 end
 
 ---@param buf integer
----@return render.md.main.Config
+---@return render.md.buf.Config
 function M.get(buf)
     local result = M.cache[buf]
     if not result then

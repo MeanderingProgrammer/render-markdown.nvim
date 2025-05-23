@@ -1,7 +1,7 @@
 ---@class render.md.Init: render.md.Api
 local M = {}
 
----@class (exact) render.md.Config: render.md.buffer.Config
+---@class (exact) render.md.Config: render.md.partial.Config
 ---@field preset render.md.config.Preset
 ---@field log_level render.md.log.Level
 ---@field log_runtime boolean
@@ -15,7 +15,7 @@ local M = {}
 ---@field overrides render.md.overrides.Config
 ---@field custom_handlers table<string, render.md.Handler>
 
----@class (exact) render.md.buffer.Config: render.md.base.Config
+---@class (exact) render.md.partial.Config: render.md.base.Config
 ---@field max_file_size number
 ---@field debounce integer
 ---@field anti_conceal render.md.anti.conceal.Config

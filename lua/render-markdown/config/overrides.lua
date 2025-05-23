@@ -1,7 +1,7 @@
 ---@class (exact) render.md.overrides.Config
----@field buflisted table<boolean, render.md.buffer.UserConfig>
----@field buftype table<string, render.md.buffer.UserConfig>
----@field filetype table<string, render.md.buffer.UserConfig>
+---@field buflisted table<boolean, render.md.partial.UserConfig>
+---@field buftype table<string, render.md.partial.UserConfig>
+---@field filetype table<string, render.md.partial.UserConfig>
 
 ---@class render.md.overrides.Cfg
 local M = {}

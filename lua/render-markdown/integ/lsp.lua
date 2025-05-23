@@ -4,7 +4,7 @@ local source = require('render-markdown.integ.source')
 local M = {}
 
 ---called from manager on buffer attach
-function M.setup()
+function M.init()
     local name = 'render-markdown'
     ---@type vim.lsp.ClientConfig
     local config = {

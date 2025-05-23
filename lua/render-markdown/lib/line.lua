@@ -4,7 +4,7 @@
 local Line = {}
 Line.__index = Line
 
----@param config render.md.main.Config
+---@param config render.md.buf.Config
 ---@return render.md.Line
 function Line.new(config)
     local self = setmetatable({}, Line)

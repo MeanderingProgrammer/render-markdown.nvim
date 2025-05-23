@@ -2,9 +2,43 @@
 
 local source = require('render-markdown.integ.source')
 
+---@class render.md.source.blink.Config
+---@field file_types string[]
+
 ---@class render.md.blink.Source: blink.cmp.Source
+---@field private config render.md.source.blink.Config
 local Source = {}
 Source.__index = Source
+
+---@private
+---@type boolean
+Source.initialized = false
+
+---called from state on setup
+---@param config render.md.source.blink.Config
+function Source.setup(config)
+    Source.config = config
+end
+
+---called from manager on buffer attach
+function Source.init()
+    if Source.initialized then
+        return
+    end
+    Source.initialized = true
+    local has_blink, blink = pcall(require, 'blink.cmp')
+    if not has_blink or not blink then
+        return
+    end
+    local id = 'markdown'
+    pcall(blink.add_source_provider, id, {
+        name = 'RenderMarkdown',
+        module = 'render-markdown.integ.blink',
+    })
+    for _, file_type in ipairs(Source.config.file_types) do
+        pcall(blink.add_filetype_source, file_type, id)
+    end
+end
 
 ---@return blink.cmp.Source
 function Source.new()
@@ -35,34 +69,6 @@ function Source:get_completions(context, callback)
             is_incomplete_backward = false,
             items = items,
         })
-    end
-end
-
----@class render.md.integ.Blink
-local M = {}
-
----@private
----@type boolean
-M.initialized = false
-
----called from manager on buffer attach
-function Source.setup()
-    if M.initialized then
-        return
-    end
-    M.initialized = true
-    local has_blink, blink = pcall(require, 'blink.cmp')
-    if not has_blink or not blink then
-        return
-    end
-    local id = 'markdown'
-    pcall(blink.add_source_provider, id, {
-        name = 'RenderMarkdown',
-        module = 'render-markdown.integ.blink',
-    })
-    local state = require('render-markdown.state')
-    for _, file_type in ipairs(state.file_types) do
-        pcall(blink.add_filetype_source, file_type, id)
     end
 end
 

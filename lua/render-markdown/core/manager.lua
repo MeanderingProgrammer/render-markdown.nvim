@@ -4,6 +4,7 @@ local state = require('render-markdown.state')
 local ui = require('render-markdown.core.ui')
 
 ---@class render.md.manager.Config
+---@field file_types string[]
 ---@field ignore fun(buf: integer): boolean
 ---@field change_events string[]
 ---@field on render.md.on.Config
@@ -103,13 +104,13 @@ function M.attach(buf)
     M.config.on.attach({ buf = buf })
     require('render-markdown.core.ts').init()
     if M.config.completions.lsp.enabled then
-        require('render-markdown.integ.lsp').setup()
+        require('render-markdown.integ.lsp').init()
     elseif M.config.completions.blink.enabled then
-        require('render-markdown.integ.blink').setup()
+        require('render-markdown.integ.blink').init()
     elseif M.config.completions.coq.enabled then
-        require('render-markdown.integ.coq').setup()
+        require('render-markdown.integ.coq').init()
     else
-        require('render-markdown.integ.cmp').setup()
+        require('render-markdown.integ.cmp').init()
     end
 
     local events = {
@@ -122,7 +123,7 @@ function M.attach(buf)
     }
     local change_events = { 'DiffUpdated', 'ModeChanged', 'TextChanged' }
     vim.list_extend(change_events, M.config.change_events)
-    if config:render('i') then
+    if config.resolved:render('i') then
         vim.list_extend(events, { 'CursorHoldI', 'CursorMovedI' })
         vim.list_extend(change_events, { 'TextChangedI' })
     end
@@ -171,7 +172,8 @@ function M.should_attach(buf)
         return false
     end
 
-    local file_type, file_types = Env.buf.get(buf, 'filetype'), state.file_types
+    local file_type = Env.buf.get(buf, 'filetype')
+    local file_types = M.config.file_types
     if not vim.tbl_contains(file_types, file_type) then
         local reason = file_type .. ' /∈ ' .. vim.inspect(file_types)
         log.buf('info', 'attach', buf, 'skip', 'file type', reason)
@@ -179,7 +181,8 @@ function M.should_attach(buf)
     end
 
     local config = state.get(buf)
-    local file_size, max_file_size = Env.file_size_mb(buf), config.max_file_size
+    local file_size = Env.file_size_mb(buf)
+    local max_file_size = config.max_file_size
     if file_size > max_file_size then
         local reason = ('%f > %f'):format(file_size, max_file_size)
         log.buf('info', 'attach', buf, 'skip', 'file size', reason)

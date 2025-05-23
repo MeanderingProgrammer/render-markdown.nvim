@@ -1,6 +1,6 @@
 ---@meta
 
----@class (exact) render.md.UserConfig: render.md.buffer.UserConfig
+---@class (exact) render.md.UserConfig: render.md.partial.UserConfig
 ---@field preset? render.md.config.Preset
 ---@field log_level? render.md.log.Level
 ---@field log_runtime? boolean
@@ -14,7 +14,7 @@
 ---@field overrides? render.md.overrides.UserConfig
 ---@field custom_handlers? table<string, render.md.Handler>
 
----@class (exact) render.md.buffer.UserConfig: render.md.base.UserConfig
+---@class (exact) render.md.partial.UserConfig: render.md.base.UserConfig
 ---@field max_file_size? number
 ---@field debounce? integer
 ---@field anti_conceal? render.md.anti.conceal.UserConfig
@@ -216,9 +216,9 @@
 ---@field clear? fun(ctx: render.md.on.render.Context)
 
 ---@class (exact) render.md.overrides.UserConfig
----@field buflisted? table<boolean, render.md.buffer.UserConfig>
----@field buftype? table<string, render.md.buffer.UserConfig>
----@field filetype? table<string, render.md.buffer.UserConfig>
+---@field buflisted? table<boolean, render.md.partial.UserConfig>
+---@field buftype? table<string, render.md.partial.UserConfig>
+---@field filetype? table<string, render.md.partial.UserConfig>
 
 ---@class (exact) render.md.padding.UserConfig
 ---@field highlight? string

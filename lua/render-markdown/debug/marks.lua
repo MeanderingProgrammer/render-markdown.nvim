@@ -158,7 +158,7 @@ function M.show()
     local range = Range.new(row, row)
 
     local marks = {} ---@type render.md.debug.Mark[]
-    for _, extmark in ipairs(ui.get(buf):get_marks()) do
+    for _, extmark in ipairs(ui.get(buf):get()) do
         if extmark:overlaps(range) then
             marks[#marks + 1] = Mark.new(extmark:get())
         end

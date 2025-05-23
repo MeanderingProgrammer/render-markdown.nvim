@@ -37,7 +37,7 @@ local M = {}
 M.initialized = false
 
 ---called from manager on buffer attach
-function M.setup()
+function M.init()
     if M.initialized then
         return
     end
