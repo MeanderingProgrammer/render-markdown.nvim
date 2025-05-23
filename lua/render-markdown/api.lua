@@ -6,7 +6,7 @@ function M.enable()
 end
 
 function M.buf_enable()
-    require('render-markdown.core.manager').set_current(true)
+    require('render-markdown.core.manager').set_buf(nil, true)
 end
 
 function M.disable()
@@ -14,15 +14,15 @@ function M.disable()
 end
 
 function M.buf_disable()
-    require('render-markdown.core.manager').set_current(false)
+    require('render-markdown.core.manager').set_buf(nil, false)
 end
 
 function M.toggle()
-    require('render-markdown.core.manager').set_all()
+    require('render-markdown.core.manager').set_all(nil)
 end
 
 function M.buf_toggle()
-    require('render-markdown.core.manager').set_current()
+    require('render-markdown.core.manager').set_buf(nil, nil)
 end
 
 function M.log()

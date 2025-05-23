@@ -43,13 +43,12 @@ function M.init()
     vim.api.nvim_create_autocmd('WinResized', {
         group = M.group,
         callback = function(args)
-            if not state.enabled then
-                return
-            end
             for _, win in ipairs(vim.v.event.windows) do
                 local buf = Env.win.buf(win)
                 if M.attached(buf) then
-                    ui.update(buf, win, args.event, true)
+                    if state.get(buf).enabled then
+                        ui.update(buf, win, args.event, true)
+                    end
                 end
             end
         end,
@@ -74,13 +73,14 @@ function M.set_all(enabled)
         state.enabled = not state.enabled
     end
     for _, buf in ipairs(M.buffers) do
-        M.update(buf, 'UserCommand')
+        M.set_buf(buf, state.enabled)
     end
 end
 
+---@param buf? integer
 ---@param enabled? boolean
-function M.set_current(enabled)
-    local buf = Env.buf.current()
+function M.set_buf(buf, enabled)
+    buf = buf or Env.buf.current()
     if M.attached(buf) then
         local config = state.get(buf)
         if enabled ~= nil then
@@ -130,7 +130,7 @@ function M.attach(buf)
         group = M.group,
         buffer = buf,
         callback = function(args)
-            if not state.enabled then
+            if not state.get(buf).enabled then
                 return
             end
             local win, windows = Env.win.current(), Env.buf.windows(buf)
@@ -143,7 +143,9 @@ function M.attach(buf)
         end,
     })
 
-    M.update(buf, 'Initial')
+    if config.enabled then
+        M.update(buf, 'Initial')
+    end
 end
 
 ---@private
@@ -177,11 +179,6 @@ function M.should_attach(buf)
     end
 
     local config = state.get(buf)
-    if not config.enabled then
-        log.buf('info', 'attach', buf, 'skip', 'state disabled')
-        return false
-    end
-
     local file_size, max_file_size = Env.file_size_mb(buf), config.max_file_size
     if file_size > max_file_size then
         local reason = ('%f > %f'):format(file_size, max_file_size)

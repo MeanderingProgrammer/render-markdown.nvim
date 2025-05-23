@@ -50,7 +50,7 @@ end
 function M.get(buf)
     local result = M.cache[buf]
     if not result then
-        result = Config.new(M.config, buf)
+        result = Config.new(M.config, M.enabled, buf)
         M.cache[buf] = result
     end
     return result

@@ -14,12 +14,13 @@ local Config = {}
 Config.__index = Config
 
 ---@param root render.md.Config
+---@param enabled boolean
 ---@param buf integer
 ---@return render.md.main.Config
-function Config.new(root, buf)
+function Config.new(root, enabled, buf)
     ---@type render.md.buffer.Config
     local config = {
-        enabled = true,
+        enabled = enabled,
         render_modes = root.render_modes,
         max_file_size = root.max_file_size,
         debounce = root.debounce,
@@ -96,12 +97,12 @@ end
 
 ---@private
 ---@generic T: render.md.callout.Config|render.md.checkbox.custom.Config
----@param components table<string, T>
+---@param component table<string, T>
 ---@return table<string, T>
-function Config.normalize(components)
+function Config.normalize(component)
     local result = {}
-    for _, component in pairs(components) do
-        result[component.raw:lower()] = component
+    for _, value in pairs(component) do
+        result[value.raw:lower()] = value
     end
     return result
 end
@@ -131,7 +132,7 @@ end
 
 ---@param destination string
 ---@param icon render.md.mark.Text
-function Config:link_text(destination, icon)
+function Config:set_link_text(destination, icon)
     local options = Iter.table.filter(self.link.custom, function(custom)
         if custom.kind == 'suffix' then
             return vim.endswith(destination, custom.pattern)

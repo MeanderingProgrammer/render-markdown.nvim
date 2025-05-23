@@ -62,7 +62,7 @@ function Render:wiki_link()
     self:hide(ctx.end_col - 1, 1)
     ---@type render.md.mark.Text
     local icon = { config.icon, config.highlight }
-    self.context.config:link_text(ctx.destination, icon)
+    self.context.config:set_link_text(ctx.destination, icon)
     local body = config.body(ctx)
     if not body then
         -- add icon

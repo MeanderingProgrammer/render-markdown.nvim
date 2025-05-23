@@ -30,11 +30,11 @@ function Render:setup()
     elseif self.node.type == 'inline_link' then
         local destination = self.node:child('link_destination')
         if destination then
-            self.context.config:link_text(destination.text, icon)
+            self.context.config:set_link_text(destination.text, icon)
         end
     elseif self.node.type == 'uri_autolink' then
         local destination = self.node.text:sub(2, -2)
-        self.context.config:link_text(destination, icon)
+        self.context.config:set_link_text(destination, icon)
         autolink = true
     end
     self.data = { icon = icon, autolink = autolink }

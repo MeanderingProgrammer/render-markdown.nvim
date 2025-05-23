@@ -82,8 +82,7 @@ function M.run_update(buf, win, change)
     local mode = Env.mode.get()
     local row = Env.row.get(buf, win)
 
-    local render = state.enabled
-        and config.enabled
+    local render = config.enabled
         and config:render(mode)
         and not Env.win.get(win, 'diff')
         and Env.win.view(win).leftcol == 0
