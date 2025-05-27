@@ -32,7 +32,7 @@ function Handler:run(root)
         return {}
     end
     if vim.fn.executable(self.config.converter) ~= 1 then
-        log.add('debug', 'executable not found', self.config.converter)
+        log.add('debug', 'ConverterNotFound', self.config.converter)
         return {}
     end
 
@@ -83,7 +83,7 @@ function Handler:convert(text)
         local converter = self.config.converter
         result = vim.fn.system(converter, text)
         if vim.v.shell_error == 1 then
-            log.add('error', converter, result)
+            log.add('error', 'ConverterFailed', converter, result)
             result = 'error'
         end
         Handler.cache[text] = result

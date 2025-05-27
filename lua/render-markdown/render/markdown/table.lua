@@ -70,7 +70,7 @@ function Render:setup()
             if vim.tbl_contains(row_types, node.type) then
                 row_nodes[#row_nodes + 1] = node
             else
-                log.unhandled_type('markdown', 'row', node.type)
+                log.unhandled(self.context.buf, 'markdown', 'row', node.type)
             end
         end
     end)
@@ -124,7 +124,7 @@ end
 ---@param node render.md.Node
 ---@return render.md.table.DelimRow?
 function Render:parse_delim(node)
-    local pipes, cells = Render.parse_cells(node, 'pipe_table_delimiter_cell')
+    local pipes, cells = self:parse_cells(node, 'pipe_table_delimiter_cell')
     if not pipes or not cells then
         return nil
     end
@@ -169,7 +169,7 @@ end
 ---@param num_cols integer
 ---@return render.md.table.Row?
 function Render:parse_row(node, num_cols)
-    local pipes, cells = Render.parse_cells(node, 'pipe_table_cell')
+    local pipes, cells = self:parse_cells(node, 'pipe_table_cell')
     if not pipes or not cells or #cells ~= num_cols then
         return nil
     end
@@ -203,7 +203,7 @@ end
 ---@param node render.md.Node
 ---@param cell string
 ---@return render.md.Node[]?, render.md.Node[]?
-function Render.parse_cells(node, cell)
+function Render:parse_cells(node, cell)
     local pipes = {} ---@type render.md.Node[]
     local cells = {} ---@type render.md.Node[]
     node:for_each_child(function(child)
@@ -212,7 +212,7 @@ function Render.parse_cells(node, cell)
         elseif child.type == cell then
             cells[#cells + 1] = child
         else
-            log.unhandled_type('markdown', 'cell', child.type)
+            log.unhandled(self.context.buf, 'markdown', 'cell', child.type)
         end
     end)
     if #pipes == 0 or #cells == 0 or #pipes ~= #cells + 1 then

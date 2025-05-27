@@ -50,7 +50,7 @@ end
 ---@param event string
 ---@param change boolean
 function M.update(buf, win, event, change)
-    log.buf('info', 'update', buf, event, ('change %s'):format(change))
+    log.buf('info', 'Update', buf, event, ('change %s'):format(change))
     M.updater.new(buf, win, change):start()
 end
 
@@ -119,7 +119,7 @@ function Updater:run()
         and self.config.resolved:render(self.mode)
         and not Env.win.get(self.win, 'diff')
         and Env.win.view(self.win).leftcol == 0
-    log.buf('info', 'render', self.buf, render)
+    log.buf('info', 'Render', self.buf, render)
     local next_state = render and 'rendered' or 'default'
     for _, window in ipairs(Env.buf.windows(self.buf)) do
         for name, value in pairs(self.config.win_options) do
@@ -163,7 +163,7 @@ end
 function Updater:get_extmarks()
     local has_parser, parser = pcall(vim.treesitter.get_parser, self.buf)
     if not has_parser or not parser then
-        log.buf('error', 'fail', self.buf, 'no treesitter parser found')
+        log.buf('error', 'Fail', self.buf, 'no treesitter parser found')
         return {}
     end
     -- reset buffer context

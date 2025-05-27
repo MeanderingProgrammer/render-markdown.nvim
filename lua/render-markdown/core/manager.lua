@@ -160,15 +160,15 @@ end
 ---@param buf integer
 ---@return boolean
 function M.should_attach(buf)
-    log.buf('info', 'attach', buf, 'start')
+    log.buf('info', 'Attach', buf, 'start')
 
     if M.attached(buf) then
-        log.buf('info', 'attach', buf, 'skip', 'already attached')
+        log.buf('info', 'Attach', buf, 'skip', 'already attached')
         return false
     end
 
     if not vim.api.nvim_buf_is_valid(buf) then
-        log.buf('info', 'attach', buf, 'skip', 'invalid')
+        log.buf('info', 'Attach', buf, 'skip', 'invalid')
         return false
     end
 
@@ -176,7 +176,7 @@ function M.should_attach(buf)
     local file_types = M.config.file_types
     if not vim.tbl_contains(file_types, file_type) then
         local reason = file_type .. ' /∈ ' .. vim.inspect(file_types)
-        log.buf('info', 'attach', buf, 'skip', 'file type', reason)
+        log.buf('info', 'Attach', buf, 'skip', 'file type', reason)
         return false
     end
 
@@ -185,16 +185,16 @@ function M.should_attach(buf)
     local max_file_size = config.max_file_size
     if file_size > max_file_size then
         local reason = ('%f > %f'):format(file_size, max_file_size)
-        log.buf('info', 'attach', buf, 'skip', 'file size', reason)
+        log.buf('info', 'Attach', buf, 'skip', 'file size', reason)
         return false
     end
 
     if M.config.ignore(buf) then
-        log.buf('info', 'attach', buf, 'skip', 'user ignore')
+        log.buf('info', 'Attach', buf, 'skip', 'user ignore')
         return false
     end
 
-    log.buf('info', 'attach', buf, 'success')
+    log.buf('info', 'Attach', buf, 'success')
     M.buffers[#M.buffers + 1] = buf
     return true
 end

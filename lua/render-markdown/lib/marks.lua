@@ -91,10 +91,10 @@ function Marks:add(element, start_row, start_col, opts)
     local valid, feature, min_version = self:validate(opts)
     if not valid then
         local message = feature .. ' requires neovim >= ' .. min_version
-        log.add('error', 'mark', message, mark)
+        log.add('error', 'Mark', message, mark)
         return false
     end
-    log.add('debug', 'mark', mark)
+    log.add('debug', 'Mark', mark)
     if self.update then
         self:run_update(mark)
     end

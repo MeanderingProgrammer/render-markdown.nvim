@@ -74,7 +74,7 @@ end
 ---@param capture string
 ---@param node render.md.Node
 function M.node(capture, node)
-    M.add('debug', 'node', {
+    M.add('debug', 'Node', {
         capture = capture,
         text = node.text,
         rows = { node.start_row, node.end_row },
@@ -82,13 +82,11 @@ function M.node(capture, node)
     })
 end
 
----Encountered if new type is seen for a particular group
----@param language string
----@param group string
----@param value string
-function M.unhandled_type(language, group, value)
-    local message = ('%s -> %s -> %s'):format(language, group, value)
-    M.add('error', 'unhandled type', message)
+---Encountered if new type is seen in a particular node
+---@param buf integer
+---@param ... string
+function M.unhandled(buf, ...)
+    M.buf('error', 'UnhandledType', buf, table.concat({ ... }, ' -> '))
 end
 
 ---@param level render.md.log.Level

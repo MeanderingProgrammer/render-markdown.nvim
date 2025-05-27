@@ -53,14 +53,14 @@ end
 ---@param language string
 ---@return render.md.Mark[]
 function M.tree(context, ctx, language)
-    log.buf('debug', 'language', ctx.buf, language)
+    log.buf('debug', 'Language', ctx.buf, language)
     if not context.view:overlaps(ctx.root) then
         return {}
     end
     local marks = {} ---@type render.md.Mark[]
     local custom = M.config.custom[language]
     if custom then
-        log.buf('debug', 'handler', ctx.buf, 'custom')
+        log.buf('debug', 'Handler', ctx.buf, 'custom')
         vim.list_extend(marks, custom.parse(ctx))
         if not custom.extends then
             return marks
@@ -68,7 +68,7 @@ function M.tree(context, ctx, language)
     end
     local builtin = M.builtin[language]
     if builtin then
-        log.buf('debug', 'handler', ctx.buf, 'builtin')
+        log.buf('debug', 'Handler', ctx.buf, 'builtin')
         vim.list_extend(marks, builtin.parse(ctx))
     end
     return marks
