@@ -26,7 +26,7 @@ vim.cmd.runtime('plugin/plenary.vim')
 
 require('nvim-treesitter')
     .install({ 'html', 'latex', 'markdown', 'markdown_inline' })
-    :wait(60000)
+    :wait()
 
 vim.api.nvim_create_autocmd('FileType', {
     group = vim.api.nvim_create_augroup('Highlighter', {}),

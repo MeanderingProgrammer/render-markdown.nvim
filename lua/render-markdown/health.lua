@@ -5,7 +5,7 @@ local state = require('render-markdown.state')
 local M = {}
 
 ---@private
-M.version = '8.4.7'
+M.version = '8.4.8'
 
 function M.check()
     M.start('version')
@@ -119,8 +119,7 @@ end
 ---@private
 ---@param language string
 function M.highlighter(language)
-    -- nvim-treesitter is removing module support so cannot be used to check
-    -- if highlights are enabled, so we create a buffer and check the state
+    -- create a temporary buffer to check if vim.treesitter.start gets called
     local buf = vim.api.nvim_create_buf(false, true)
     vim.bo[buf].filetype = language
     local ok = vim.treesitter.highlighter.active[buf] ~= nil
@@ -128,10 +127,8 @@ function M.highlighter(language)
     if ok then
         vim.health.ok(language .. ': highlighter enabled')
     else
-        -- TODO(1.0): update advice once module support is removed
         vim.health.error(language .. ': highlighter not enabled', {
-            'enable the highlight module in your nvim-treesitter config',
-            "require('nvim-treesitter.configs').setup({ highlight = { enable = true } })",
+            ('call vim.treesitter.start on %s buffers'):format(language),
         })
     end
 end

@@ -48,16 +48,12 @@ require('lazy').setup({
             branch = 'main',
             build = ':TSUpdate',
             config = function()
-                require('nvim-treesitter').install({
-                    'html',
-                    'latex',
-                    'markdown',
-                    'markdown_inline',
-                })
+                require('nvim-treesitter')
+                    .install({ 'html', 'latex', 'markdown', 'markdown_inline' })
+                    :wait()
 
-                local group = vim.api.nvim_create_augroup('Highlighter', {})
                 vim.api.nvim_create_autocmd('FileType', {
-                    group = group,
+                    group = vim.api.nvim_create_augroup('Highlighter', {}),
                     pattern = 'markdown',
                     callback = function(args)
                         vim.treesitter.start(args.buf)
