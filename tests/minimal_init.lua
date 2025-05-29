@@ -7,18 +7,6 @@ local function get_path(name)
     return plugin_path[1]
 end
 
----https://github.com/ThePrimeagen/refactoring.nvim/blob/master/scripts/minimal.vim
----@param parsers string[]
-local function ensure_installed(parsers)
-    local installed = require('nvim-treesitter.info').installed_parsers()
-    local missing = vim.tbl_filter(function(parser)
-        return not vim.tbl_contains(installed, parser)
-    end, parsers)
-    if #missing > 0 then
-        vim.cmd.TSInstallSync({ bang = true, args = missing })
-    end
-end
-
 -- settings
 vim.opt.lines = 40
 vim.opt.columns = 80
@@ -36,11 +24,16 @@ vim.cmd.runtime('plugin/render-markdown.lua')
 vim.opt.rtp:prepend(get_path('plenary.nvim'))
 vim.cmd.runtime('plugin/plenary.vim')
 
-ensure_installed({ 'html', 'latex', 'markdown', 'markdown_inline' })
+require('nvim-treesitter')
+    .install({ 'html', 'latex', 'markdown', 'markdown_inline' })
+    :wait(60000)
 
----@diagnostic disable-next-line: missing-fields
-require('nvim-treesitter.configs').setup({
-    highlight = { enable = true },
+vim.api.nvim_create_autocmd('FileType', {
+    group = vim.api.nvim_create_augroup('Highlighter', {}),
+    pattern = 'markdown',
+    callback = function(args)
+        vim.treesitter.start(args.buf)
+    end,
 })
 
 require('mini.icons').setup({})

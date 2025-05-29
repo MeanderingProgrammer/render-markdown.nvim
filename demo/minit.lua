@@ -45,17 +45,23 @@ require('lazy').setup({
         },
         {
             'nvim-treesitter/nvim-treesitter',
+            branch = 'main',
             build = ':TSUpdate',
             config = function()
-                ---@diagnostic disable-next-line: missing-fields
-                require('nvim-treesitter.configs').setup({
-                    ensure_installed = {
-                        'html',
-                        'latex',
-                        'markdown',
-                        'markdown_inline',
-                    },
-                    highlight = { enable = true },
+                require('nvim-treesitter').install({
+                    'html',
+                    'latex',
+                    'markdown',
+                    'markdown_inline',
+                })
+
+                local group = vim.api.nvim_create_augroup('Highlighter', {})
+                vim.api.nvim_create_autocmd('FileType', {
+                    group = group,
+                    pattern = 'markdown',
+                    callback = function(args)
+                        vim.treesitter.start(args.buf)
+                    end,
                 })
             end,
         },
