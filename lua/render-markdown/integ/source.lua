@@ -88,9 +88,9 @@ end
 ---@param lang string
 ---@return TSNode?
 function M.node(buf, row, col, lang)
-    -- Parse current row to get up to date node
-    local has_parser, parser = pcall(vim.treesitter.get_parser, buf, lang)
-    if not has_parser or not parser then
+    -- parse current row to get up to date node
+    local ok, parser = pcall(vim.treesitter.get_parser, buf, lang)
+    if not ok or not parser then
         return nil
     end
     parser:parse({ row, row })

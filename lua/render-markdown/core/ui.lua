@@ -26,9 +26,9 @@ M.cache = {}
 ---@param config render.md.ui.Config
 function M.setup(config)
     M.config = config
-    -- reset cache
-    for buf, decorator in pairs(M.cache) do
-        M.clear(buf, decorator)
+    -- clear marks and reset cache
+    for buf in pairs(M.cache) do
+        vim.api.nvim_buf_clear_namespace(buf, M.ns, 0, -1)
     end
     M.cache = {}
 end
@@ -38,7 +38,7 @@ end
 function M.get(buf)
     local result = M.cache[buf]
     if not result then
-        result = Decorator.new()
+        result = Decorator.new(buf)
         M.cache[buf] = result
     end
     return result
@@ -48,24 +48,16 @@ end
 ---@param buf integer
 ---@param win integer
 ---@param event string
----@param change boolean
-function M.update(buf, win, event, change)
-    log.buf('info', 'Update', buf, event, ('change %s'):format(change))
-    M.updater.new(buf, win, change):start()
-end
-
----@private
----@param buf integer
----@param decorator render.md.Decorator
-function M.clear(buf, decorator)
-    vim.api.nvim_buf_clear_namespace(buf, M.ns, 0, -1)
-    decorator:clear()
+---@param force boolean
+function M.update(buf, win, event, force)
+    log.buf('info', 'Update', buf, event, ('force %s'):format(force))
+    M.updater.new(buf, win, force):start()
 end
 
 ---@class render.md.ui.Updater
 ---@field private buf integer
 ---@field private win integer
----@field private change boolean
+---@field private force boolean
 ---@field private decorator render.md.Decorator
 ---@field private config render.md.buf.Config
 ---@field private mode string
@@ -74,13 +66,13 @@ Updater.__index = Updater
 
 ---@param buf integer
 ---@param win integer
----@param change boolean
+---@param force boolean
 ---@return render.md.ui.Updater
-function Updater.new(buf, win, change)
+function Updater.new(buf, win, force)
     local self = setmetatable({}, Updater)
     self.buf = buf
     self.win = win
-    self.change = change
+    self.force = force
     self.decorator = M.get(buf)
     self.config = state.get(buf)
     return self
@@ -94,7 +86,7 @@ function Updater:start()
         return
     end
     self.decorator:schedule(
-        self:should_parse(),
+        self:changed(),
         self.config.debounce,
         log.runtime('update', function()
             self:run()
@@ -104,9 +96,11 @@ end
 
 ---@private
 ---@return boolean
-function Updater:should_parse()
-    -- need to parse on changes or when we have not parsed the visible range yet
-    return self.change or not Context.contains(self.buf, self.win)
+function Updater:changed()
+    -- force or buffer has changed or we have not handled the visible range yet
+    return self.force
+        or self.decorator:changed()
+        or not Context.contains(self.buf, self.win)
 end
 
 ---@private
@@ -126,20 +120,28 @@ function Updater:run()
             Env.win.set(window, name, value[next_state])
         end
     end
-    if render then
+    if not render then
+        self:clear()
+        M.config.on.clear({ buf = self.buf, win = self.win })
+    else
         self:render()
         M.config.on.render({ buf = self.buf, win = self.win })
-    else
-        M.clear(self.buf, self.decorator)
-        M.config.on.clear({ buf = self.buf, win = self.win })
+    end
+end
+
+---@private
+function Updater:clear()
+    local extmarks = self.decorator:get()
+    for _, extmark in ipairs(extmarks) do
+        extmark:hide(M.ns, self.buf)
     end
 end
 
 ---@private
 function Updater:render()
-    local initial = self.decorator:initial()
-    if initial or self:should_parse() then
-        M.clear(self.buf, self.decorator)
+    if self:changed() then
+        local initial = self.decorator:initial()
+        self:clear()
         local extmarks = self:get_extmarks()
         self.decorator:set(extmarks)
         if initial then
@@ -161,8 +163,8 @@ end
 ---@private
 ---@return render.md.Extmark[]
 function Updater:get_extmarks()
-    local has_parser, parser = pcall(vim.treesitter.get_parser, self.buf)
-    if not has_parser or not parser then
+    local ok, parser = pcall(vim.treesitter.get_parser, self.buf)
+    if not ok or not parser then
         log.buf('error', 'Fail', self.buf, 'no treesitter parser found')
         return {}
     end
@@ -179,9 +181,10 @@ end
 function Updater:hidden()
     -- anti-conceal is not enabled -> hide nothing
     -- row is not known -> buffer is not active -> hide nothing
+    -- in command mode -> cursor is not in buffer -> hide nothing
     local config = self.config.anti_conceal
     local row = Env.row.get(self.buf, self.win)
-    if not config.enabled or not row then
+    if not config.enabled or not row or Env.mode.is(self.mode, { 'c' }) then
         return nil
     end
     if Env.mode.is(self.mode, { 'v', 'V', '\22' }) then

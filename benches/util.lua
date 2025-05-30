@@ -7,7 +7,10 @@ local M = {}
 ---@return number
 function M.setup(file)
     return M.time(function()
-        require('render-markdown').setup({ debounce = 0 })
+        require('render-markdown').setup({
+            debounce = 0,
+            change_events = { 'TextChanged' },
+        })
         vim.cmd('e ' .. file)
     end)
 end
@@ -16,16 +19,17 @@ end
 ---@return number
 function M.move_down(n)
     return M.time(function()
-        M.feed(('%dj'):format(n))
-        -- Unsure why, but the CursorMoved event needs to be triggered manually
+        local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+        vim.api.nvim_win_set_cursor(0, { row + n, col })
+        -- CursorMoved event needs to be triggered manually
         vim.api.nvim_exec_autocmds('CursorMoved', {})
     end)
 end
 
 ---@return number
-function M.insert_mode()
+function M.modify()
     return M.time(function()
-        M.feed('i')
+        vim.api.nvim_exec_autocmds('TextChanged', {})
     end)
 end
 
@@ -38,13 +42,6 @@ function M.time(callback)
     vim.wait(0)
     local end_time = vim.uv.hrtime()
     return (end_time - start_time) / 1e+6
-end
-
----@private
----@param keys string
-function M.feed(keys)
-    local escape = vim.api.nvim_replace_termcodes(keys, true, false, true)
-    vim.api.nvim_feedkeys(escape, 'nx', false)
 end
 
 ---@param actual number

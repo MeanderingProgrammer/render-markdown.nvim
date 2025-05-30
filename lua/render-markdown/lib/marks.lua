@@ -94,7 +94,7 @@ function Marks:add(element, start_row, start_col, opts)
         log.add('error', 'Mark', message, mark)
         return false
     end
-    log.add('debug', 'Mark', mark)
+    log.add('trace', 'Mark', mark)
     if self.update then
         self:run_update(mark)
     end

@@ -10,12 +10,14 @@ local Env = require('render-markdown.lib.env')
 ---@field level render.md.log.Level
 ---@field runtime boolean
 
----@enum render.md.log.Level
+---@enum (key) render.md.log.Level
 local Level = {
-    debug = 'debug',
-    info = 'info',
-    error = 'error',
-    off = 'off',
+    trace = 0,
+    debug = 1,
+    info = 2,
+    warn = 3,
+    error = 4,
+    off = 5,
 }
 
 ---@class render.md.Log
@@ -74,9 +76,10 @@ end
 ---@param capture string
 ---@param node render.md.Node
 function M.node(capture, node)
-    M.add('debug', 'Node', {
+    M.add('trace', 'Node', {
         capture = capture,
-        text = node.text,
+        type = node.type,
+        length = #node.text,
         rows = { node.start_row, node.end_row },
         cols = { node.start_col, node.end_col },
     })
@@ -138,19 +141,9 @@ end
 
 ---@private
 ---@param level render.md.log.Level
----@return integer
+---@return number
 function M.level(level)
-    if level == Level.debug then
-        return 1
-    elseif level == Level.info then
-        return 2
-    elseif level == Level.error then
-        return 3
-    elseif level == Level.off then
-        return 4
-    else
-        return 0
-    end
+    return Level[level] or math.huge
 end
 
 ---@private

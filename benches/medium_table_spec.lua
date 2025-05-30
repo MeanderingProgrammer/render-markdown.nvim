@@ -11,7 +11,7 @@ describe('medium-table.md', function()
         util.less_than(util.move_down(1), 0.5)
         util.num_marks(base_marks + 1)
 
-        util.less_than(util.insert_mode(), 15)
+        util.less_than(util.modify(), 7.5)
         util.num_marks(base_marks + 1)
     end)
 end)

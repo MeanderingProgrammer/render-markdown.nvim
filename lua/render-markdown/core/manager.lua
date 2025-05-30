@@ -119,15 +119,24 @@ function M.attach(buf)
         'CmdlineChanged',
         'CursorHold',
         'CursorMoved',
+        'DiffUpdated',
+        'ModeChanged',
+        'TextChanged',
         'WinScrolled',
     }
-    local change_events = { 'DiffUpdated', 'ModeChanged', 'TextChanged' }
-    vim.list_extend(change_events, M.config.change_events)
     if config.resolved:render('i') then
-        vim.list_extend(events, { 'CursorHoldI', 'CursorMovedI' })
-        vim.list_extend(change_events, { 'TextChangedI' })
+        events[#events + 1] = 'CursorHoldI'
+        events[#events + 1] = 'CursorMovedI'
+        events[#events + 1] = 'TextChangedI'
     end
-    vim.api.nvim_create_autocmd(vim.list_extend(events, change_events), {
+    local force = M.config.change_events
+    for _, event in ipairs(force) do
+        if not vim.tbl_contains(events, event) then
+            events[#events + 1] = event
+        end
+    end
+
+    vim.api.nvim_create_autocmd(events, {
         group = M.group,
         buffer = buf,
         callback = function(args)
@@ -140,7 +149,7 @@ function M.attach(buf)
                 return
             end
             local event = args.event
-            ui.update(buf, win, event, vim.tbl_contains(change_events, event))
+            ui.update(buf, win, event, vim.tbl_contains(force, event))
         end,
     })
 

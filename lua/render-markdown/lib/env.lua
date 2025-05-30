@@ -60,7 +60,6 @@ end
 ---@return integer, integer
 function M.range(buf, win, offset)
     local top = math.max(M.win.view(win).topline - 1 - offset, 0)
-
     local bottom = top
     local lines = vim.api.nvim_buf_line_count(buf)
     local size = vim.api.nvim_win_get_height(win) + (2 * offset)
@@ -70,7 +69,6 @@ function M.range(buf, win, offset)
             size = size - 1
         end
     end
-
     return top, bottom
 end
 

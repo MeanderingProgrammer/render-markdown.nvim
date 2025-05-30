@@ -122,7 +122,7 @@ describe('state', function()
             'debounce - expected: number, got: table',
             'enabled - expected: boolean, got: string',
             'heading.enabled - expected: boolean, got: string',
-            'log_level - expected: "off" or "debug" or "info" or "error", got: "invalid"',
+            'log_level - expected: "trace" or "debug" or "info" or "warn" or "error" or "off", got: "invalid"',
             'log_runtime - expected: boolean, got: string',
             'max_file_size - expected: number, got: boolean',
             'overrides.buftype.nofile.sign.highlight - expected: string or nil, got: boolean',

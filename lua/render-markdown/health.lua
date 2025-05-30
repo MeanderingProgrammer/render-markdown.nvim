@@ -5,7 +5,7 @@ local state = require('render-markdown.state')
 local M = {}
 
 ---@private
-M.version = '8.4.8'
+M.version = '8.4.9'
 
 function M.check()
     M.start('version')
@@ -89,8 +89,8 @@ end
 ---@param language string
 ---@param required boolean
 function M.parser(language, required)
-    local ok = pcall(vim.treesitter.get_parser, 0, language)
-    if ok then
+    local ok, parser = pcall(vim.treesitter.get_parser, 0, language)
+    if ok and parser then
         vim.health.ok(language .. ': parser installed')
     else
         local message = language .. ': parser not installed'

@@ -39,7 +39,7 @@ to some default the author prefers. So the settings you think you are using are 
 necessarily the only ones be used.
 
 Run `:RenderMarkdown config`, which will output only the non-default values being
-used, you might be surprised what you find.
+used, you might be surprised by what you find.
 
 ## Validate Parse Tree
 
@@ -92,7 +92,7 @@ Run `:InspectTree` which should output the following:
 If this is not what you see you likely need to update `nvim-treesitter` and your
 treesitter parsers.
 
-## Generate Debug Logs
+## Generate Trace Logs
 
 If all else fails hopefully the logs can provide some insight. This plugin
 ships with logging, however it only includes errors by default.
@@ -105,11 +105,11 @@ Use the same file from [Validate Parse Tree](#validate-parse-tree).
 
 ### 2) Update Log Level
 
-Change plugin configuration to output `debug` logs:
+Change plugin configuration to output `trace` logs:
 
 ```lua
 require('render-markdown').setup({
-    log_level = 'debug',
+    log_level = 'trace',
 })
 ```
 
