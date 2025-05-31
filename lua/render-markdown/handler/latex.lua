@@ -65,8 +65,12 @@ function Handler:expressions(node)
     for _ = 1, self.config.top_pad do
         result[#result + 1] = ''
     end
-    for _, line in ipairs(self:convert(node.text)) do
-        result[#result + 1] = Str.pad(node.start_col) .. line
+    local lines = Str.split(self:convert(node.text), '\n', true)
+    local width = vim.fn.max(Iter.list.map(lines, Str.width))
+    for _, line in ipairs(lines) do
+        local prefix = Str.pad(node.start_col)
+        local suffix = Str.pad(width - Str.width(line))
+        result[#result + 1] = prefix .. line .. suffix
     end
     for _ = 1, self.config.bottom_pad do
         result[#result + 1] = ''
@@ -76,7 +80,7 @@ end
 
 ---@private
 ---@param text string
----@return string[]
+---@return string
 function Handler:convert(text)
     local result = Handler.cache[text]
     if not result then
@@ -88,7 +92,7 @@ function Handler:convert(text)
         end
         Handler.cache[text] = result
     end
-    return Str.split(result, '\n', true)
+    return result
 end
 
 ---@private

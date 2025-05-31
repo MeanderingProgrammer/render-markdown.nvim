@@ -19,11 +19,12 @@ local function set_responses(converter, responses)
 end
 
 ---@param lines string[]
+---@param width integer
 ---@return vim.api.keyset.set_extmark
-local function latex(lines)
+local function latex(lines, width)
     local virt_lines = vim.iter(lines)
         :map(function(line)
-            return { { line, 'RmMath' } }
+            return { { line .. (' '):rep(width - #line), 'RmMath' } }
         end)
         :totable()
     ---@type vim.api.keyset.set_extmark
@@ -70,8 +71,8 @@ describe('latex.md', function()
         marks:add(row:get(), row:get(), 0, 1, util.heading.icon(1))
         marks:add(row:get(), row:inc(), 0, 0, util.heading.bg(1))
 
-        marks:add(row:inc(), nil, 0, nil, latex(inline.out))
-        marks:add(row:inc(2), nil, 0, nil, latex(block.out))
+        marks:add(row:inc(), nil, 0, nil, latex(inline.out, 17))
+        marks:add(row:inc(2), nil, 0, nil, latex(block.out, 28))
 
         util.assert_view(marks, {
             '󰫎 󰲡 LaTeX',
