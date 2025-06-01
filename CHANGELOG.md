@@ -4,9 +4,13 @@
 
 ### Features
 
+- use changed tick to determine whether we should parse instead of event [d69f0d8](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/d69f0d8c80ba293d25dad498ec86e9b583a6bbbf)
+- rely on buffer enabled value rather than state enabled [ca5c29f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/ca5c29f6032338b71bdcae9b3e525d131557d363)
+- change heading background default links [dac01bd](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/dac01bd6660af337613e8cfcb23a4aec5d3c0e38)
 - allow checkbox to render bullet [#423](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/423)
   [a1b0988](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/a1b0988f5ab26698afb56b9c2f0525a4de1195c1)
 - include highlight query files in checkhealth [4f05de7](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4f05de7536571e231b66dd0363af347b162b5fd7)
+- pad suffix of latex so backgrounds are aligned [a212596](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/a2125961287c78dfc03cb628b7bed7f91b70fd45)
 
 ## 8.4.0 (2025-05-08)
 

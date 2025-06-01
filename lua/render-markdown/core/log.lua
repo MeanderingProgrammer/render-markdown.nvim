@@ -85,6 +85,12 @@ function M.node(capture, node)
     })
 end
 
+---@param buf integer
+---@param ... string
+function M.attach(buf, ...)
+    M.buf('info', 'Attach', buf, ...)
+end
+
 ---Encountered if new type is seen in a particular node
 ---@param buf integer
 ---@param ... string

@@ -89,7 +89,7 @@ function M.set_buf(buf, enabled)
         else
             config.enabled = not config.enabled
         end
-        M.update(buf, 'UserCommand')
+        ui.update(buf, Env.buf.win(buf), 'UserCommand', true)
     end
 end
 
@@ -143,8 +143,8 @@ function M.attach(buf)
             if not state.get(buf).enabled then
                 return
             end
-            local win, windows = Env.win.current(), Env.buf.windows(buf)
-            win = vim.tbl_contains(windows, win) and win or windows[1]
+            local win, wins = Env.win.current(), Env.buf.windows(buf)
+            win = vim.tbl_contains(wins, win) and win or wins[1]
             if not win then
                 return
             end
@@ -154,56 +154,48 @@ function M.attach(buf)
     })
 
     if config.enabled then
-        M.update(buf, 'Initial')
+        ui.update(buf, Env.buf.win(buf), 'Initial', true)
     end
-end
-
----@private
----@param buf integer
----@param event string
-function M.update(buf, event)
-    ui.update(buf, Env.buf.win(buf), event, true)
 end
 
 ---@private
 ---@param buf integer
 ---@return boolean
 function M.should_attach(buf)
-    log.buf('info', 'Attach', buf, 'start')
+    log.attach(buf, 'start')
 
     if M.attached(buf) then
-        log.buf('info', 'Attach', buf, 'skip', 'already attached')
+        log.attach(buf, 'skip', 'already attached')
         return false
     end
 
     if not vim.api.nvim_buf_is_valid(buf) then
-        log.buf('info', 'Attach', buf, 'skip', 'invalid')
+        log.attach(buf, 'skip', 'invalid')
         return false
     end
 
     local file_type = Env.buf.get(buf, 'filetype')
     local file_types = M.config.file_types
     if not vim.tbl_contains(file_types, file_type) then
-        local reason = file_type .. ' /∈ ' .. vim.inspect(file_types)
-        log.buf('info', 'Attach', buf, 'skip', 'file type', reason)
+        local reason = ('%s /∈ %s'):format(file_type, vim.inspect(file_types))
+        log.attach(buf, 'skip', 'file type', reason)
         return false
     end
 
-    local config = state.get(buf)
     local file_size = Env.file_size_mb(buf)
-    local max_file_size = config.max_file_size
+    local max_file_size = state.get(buf).max_file_size
     if file_size > max_file_size then
         local reason = ('%f > %f'):format(file_size, max_file_size)
-        log.buf('info', 'Attach', buf, 'skip', 'file size', reason)
+        log.attach(buf, 'skip', 'file size', reason)
         return false
     end
 
     if M.config.ignore(buf) then
-        log.buf('info', 'Attach', buf, 'skip', 'user ignore')
+        log.attach(buf, 'skip', 'user ignore')
         return false
     end
 
-    log.buf('info', 'Attach', buf, 'success')
+    log.attach(buf, 'success')
     M.buffers[#M.buffers + 1] = buf
     return true
 end

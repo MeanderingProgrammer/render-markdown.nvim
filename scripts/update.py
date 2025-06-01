@@ -62,16 +62,15 @@ class LuaClass:
 
 
 def main() -> None:
-    init = Path("lua/render-markdown/init.lua")
-    update_types(init)
-    update_readme(init)
-    update_handlers()
+    root = next(Path("lua").glob("*"))
+    update_types(root)
+    update_readme(root)
+    update_handlers(root)
 
 
-def update_types(init: Path) -> None:
-    configs = list(Path("lua/render-markdown/config").iterdir())
-    configs.sort(key=str)
-    files: list[Path] = [init] + configs
+def update_types(root: Path) -> None:
+    files: list[Path] = [root.joinpath("init.lua")]
+    files.extend(sorted(root.joinpath("config").iterdir()))
 
     classes: list[str] = ["---@meta"]
     for definition in get_definitions(files):
@@ -80,14 +79,14 @@ def update_types(init: Path) -> None:
         if definition.exact() and definition.config():
             classes.append(definition.to_user())
 
-    types = Path("lua/render-markdown/types.lua")
+    types = root.joinpath("types.lua")
     types.write_text("\n\n".join(classes) + "\n")
 
 
-def update_readme(init: Path) -> None:
+def update_readme(root: Path) -> None:
     readme = Path("README.md")
     old = get_code_block(readme, "log_level", 1)
-    new = wrap_setup(get_default(init))
+    new = wrap_setup(root, get_default(root.joinpath("init.lua")))
     while True:
         match = re.search(r"require\('(.*?)'\)\.default", new)
         if match is None:
@@ -116,20 +115,20 @@ def update_readme(init: Path) -> None:
     ]
     for parameter in parameters:
         old_param = get_code_block(readme, f"\n    {parameter} = {{", 2)
-        new_param = wrap_setup(get_config_for(new, parameter))
+        new_param = wrap_setup(root, get_config_for(new, parameter))
         text = text.replace(old_param, new_param)
 
     readme.write_text(text)
 
 
-def wrap_setup(s: str) -> str:
-    return f"require('render-markdown').setup({s})\n"
+def wrap_setup(root: Path, s: str) -> str:
+    return f"require('{root.name}').setup({s})\n"
 
 
-def update_handlers() -> None:
+def update_handlers(root: Path) -> None:
     files: list[Path] = [
-        Path("lua/render-markdown/config/handlers.lua"),
-        Path("lua/render-markdown/lib/marks.lua"),
+        root.joinpath("config/handlers.lua"),
+        root.joinpath("lib/marks.lua"),
     ]
     name_lua = {lua.name(): lua for lua in get_definitions(files)}
     names = [
