@@ -10,8 +10,9 @@ function M.lazy(key)
     if type(package.loaded.lazy) ~= 'table' then
         return {}
     end
-    local ok, lazy_config = pcall(require, 'lazy.core.config')
-    if not ok then
+    local config_ok, lazy_config = pcall(require, 'lazy.core.config')
+    local plugin_ok, lazy_plugin = pcall(require, 'lazy.core.plugin')
+    if not config_ok or not plugin_ok then
         return {}
     end
     local name = 'render-markdown.nvim'
@@ -19,14 +20,8 @@ function M.lazy(key)
     if not plugin then
         return {}
     end
-    local values = plugin[key]
-    if type(values) == 'table' then
-        return values
-    elseif type(values) == 'string' then
-        return { values }
-    else
-        return {}
-    end
+
+    return lazy_plugin.values(plugin, key, true)
 end
 
 ---@param file string|integer
