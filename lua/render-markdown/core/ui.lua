@@ -180,11 +180,14 @@ end
 ---@return render.md.Range?
 function Updater:hidden()
     -- anti-conceal is not enabled -> hide nothing
-    -- row is not known -> buffer is not active -> hide nothing
-    -- in command mode -> cursor is not in buffer -> hide nothing
+    -- in disabled mode -> hide nothing
     local config = self.config.anti_conceal
+    if not config.enabled or Env.mode.is(self.mode, config.disabled_modes) then
+        return nil
+    end
+    -- row is not known -> buffer is not active -> hide nothing
     local row = Env.row.get(self.buf, self.win)
-    if not config.enabled or not row or Env.mode.is(self.mode, { 'c' }) then
+    if not row then
         return nil
     end
     if Env.mode.is(self.mode, { 'v', 'V', '\22' }) then

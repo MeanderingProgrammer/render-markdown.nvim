@@ -20,8 +20,8 @@ function M.lazy(key)
     if not plugin then
         return {}
     end
-
-    return lazy_plugin.values(plugin, key, true)
+    local ok, values = pcall(lazy_plugin.values, plugin, key, true)
+    return ok and values or {}
 end
 
 ---@param file string|integer

@@ -39,9 +39,10 @@
 
 ---@class (exact) render.md.anti.conceal.UserConfig
 ---@field enabled? boolean
----@field ignore? render.md.conceal.Ignore
+---@field disabled_modes? render.md.Modes
 ---@field above? integer
 ---@field below? integer
+---@field ignore? render.md.conceal.Ignore
 
 ---@class (exact) render.md.base.UserConfig
 ---@field enabled? boolean

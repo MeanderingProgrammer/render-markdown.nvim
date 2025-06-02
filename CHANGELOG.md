@@ -12,6 +12,14 @@
 - include highlight query files in checkhealth [4f05de7](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4f05de7536571e231b66dd0363af347b162b5fd7)
 - pad suffix of latex so backgrounds are aligned [a212596](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/a2125961287c78dfc03cb628b7bed7f91b70fd45)
 
+### Bug Fixes
+
+- get correct list of ft and cmd from lazy [#442](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/442)
+
+### Collaborator Shoutouts
+
+- @carloscalla
+
 ## 8.4.0 (2025-05-08)
 
 ### Features

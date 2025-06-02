@@ -239,6 +239,12 @@ require('render-markdown').setup({
     anti_conceal = {
         -- This enables hiding any added text on the line the cursor is on.
         enabled = true,
+        -- Modes to disable anti conceal feature.
+        disabled_modes = false,
+        -- Number of lines above cursor to show.
+        above = 0,
+        -- Number of lines below cursor to show.
+        below = 0,
         -- Which elements to always show, ignoring anti conceal behavior. Values can either be
         -- booleans to fix the behavior or string lists representing modes where anti conceal
         -- behavior will be ignored. Valid values are:
@@ -248,10 +254,6 @@ require('render-markdown').setup({
             code_background = true,
             sign = true,
         },
-        -- Number of lines above cursor to show.
-        above = 0,
-        -- Number of lines below cursor to show.
-        below = 0,
     },
     padding = {
         -- Highlight to use when adding whitespace, should match background.
