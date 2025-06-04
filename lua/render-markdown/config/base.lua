@@ -7,12 +7,6 @@
 ---@class render.md.base.Cfg
 local M = {}
 
----@enum render.md.base.Width
-M.Width = {
-    full = 'full',
-    block = 'block',
-}
-
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
     spec:type('enabled', 'boolean')

@@ -88,8 +88,7 @@ M.default = {
 
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
-    local Base = require('render-markdown.config.base')
-    Base.validate(spec)
+    require('render-markdown.config.base').validate(spec)
     spec:one_of('preset', vim.tbl_values(Preset))
     spec:one_of('style', vim.tbl_values(Style))
     spec:one_of('cell', vim.tbl_values(Cell))

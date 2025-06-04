@@ -37,8 +37,7 @@ M.default = {
 
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
-    local Base = require('render-markdown.config.base')
-    Base.validate(spec)
+    require('render-markdown.config.base').validate(spec)
     spec:list('icon', 'string', 'string')
     spec:type('repeat_linebreak', 'boolean')
     spec:list('highlight', 'string', 'string')

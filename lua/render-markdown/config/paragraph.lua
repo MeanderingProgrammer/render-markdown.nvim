@@ -37,8 +37,7 @@ M.default = {
 
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
-    local Base = require('render-markdown.config.base')
-    Base.validate(spec)
+    require('render-markdown.config.base').validate(spec)
     spec:type('left_margin', { 'number', 'function' })
     spec:type('indent', { 'number', 'function' })
     spec:type('min_width', 'number')

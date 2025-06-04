@@ -68,8 +68,7 @@ M.default = {
 
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
-    local Base = require('render-markdown.config.base')
-    Base.validate(spec)
+    require('render-markdown.config.base').validate(spec)
     spec:nested_list('icons', 'string', 'function')
     spec:nested_list('ordered_icons', 'string', 'function')
     spec:type('left_pad', { 'number', 'function' })

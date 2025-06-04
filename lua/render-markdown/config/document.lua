@@ -26,8 +26,7 @@ M.default = {
 
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
-    local Base = require('render-markdown.config.base')
-    Base.validate(spec)
+    require('render-markdown.config.base').validate(spec)
     spec:nested('conceal', function(conceal)
         conceal:list('char_patterns', 'string')
         conceal:list('line_patterns', 'string')

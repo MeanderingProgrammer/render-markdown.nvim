@@ -46,10 +46,8 @@ function M.init()
         callback = function(args)
             for _, win in ipairs(vim.v.event.windows) do
                 local buf = Env.win.buf(win)
-                if M.attached(buf) then
-                    if state.get(buf).enabled then
-                        ui.update(buf, win, args.event, true)
-                    end
+                if M.attached(buf) and state.get(buf).enabled then
+                    ui.update(buf, win, args.event, true)
                 end
             end
         end,
