@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 8.5.0 (2025-06-10)
+
 ### Features
 
 - use changed tick to determine whether we should parse instead of event [d69f0d8](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/d69f0d8c80ba293d25dad498ec86e9b583a6bbbf)
