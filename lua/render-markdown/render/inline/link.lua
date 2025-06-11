@@ -27,6 +27,10 @@ function Render:setup()
         autolink = true
     elseif self.node.type == 'image' then
         icon[1] = config.image
+        local destination = self.node:child('link_destination')
+        if destination then
+            self.context.config:set_link_text(destination.text, icon)
+        end
     elseif self.node.type == 'inline_link' then
         local destination = self.node:child('link_destination')
         if destination then
