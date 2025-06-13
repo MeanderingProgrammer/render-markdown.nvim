@@ -102,7 +102,7 @@
 ---@field inline_pad? integer
 ---@field highlight? string
 ---@field highlight_language? string
----@field highlight_border? string|boolean
+---@field highlight_border? false|string
 ---@field highlight_fallback? string
 ---@field highlight_inline? string
 

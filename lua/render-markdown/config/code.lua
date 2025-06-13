@@ -19,7 +19,7 @@
 ---@field inline_pad integer
 ---@field highlight string
 ---@field highlight_language? string
----@field highlight_border string|boolean
+---@field highlight_border false|string
 ---@field highlight_fallback string
 ---@field highlight_inline string
 
@@ -151,7 +151,7 @@ function M.validate(spec)
     spec:type('inline_pad', 'number')
     spec:type('highlight', 'string')
     spec:type('highlight_language', { 'string', 'nil' })
-    spec:type('highlight_border', { 'string', 'boolean' })
+    spec:one_of('highlight_border', { false }, 'string')
     spec:type('highlight_fallback', 'string')
     spec:type('highlight_inline', 'string')
     spec:check()

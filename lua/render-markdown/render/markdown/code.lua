@@ -122,11 +122,11 @@ function Render:language(language, delim)
         return false
     end
 
-    local highlight = {}
+    local highlight = {} ---@type string[]
     local fallback_highlight = self.config.highlight_fallback
     highlight[#highlight + 1] = (icon_highlight or fallback_highlight)
     local border_highlight = self.config.highlight_border
-    if type(border_highlight) == 'string' then
+    if border_highlight ~= false then
         highlight[#highlight + 1] = border_highlight
     end
 
@@ -163,7 +163,7 @@ end
 function Render:border(node, icon, empty)
     local kind = self.config.border
     local highlight = self.config.highlight_border
-    if not node or kind == 'none' or type(highlight) == 'boolean' then
+    if not node or kind == 'none' or highlight == false then
         return
     end
     local row = node.start_row

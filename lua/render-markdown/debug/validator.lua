@@ -72,7 +72,7 @@ function Spec:type(keys, ts)
 end
 
 ---@param keys string|string[]
----@param values string[]
+---@param values any[]
 ---@param ts? type|type[]
 function Spec:one_of(keys, values, ts)
     local options = Iter.list.map(values, vim.inspect)
@@ -138,7 +138,7 @@ function Spec:nested_list(keys, t, ts)
 end
 
 ---@param keys string|string[]
----@param values string[]
+---@param values any[]
 ---@param ts? type|type[]
 function Spec:one_or_list_of(keys, values, ts)
     local body = table.concat(Iter.list.map(values, vim.inspect), '|')
@@ -147,17 +147,15 @@ function Spec:one_or_list_of(keys, values, ts)
     self:add(keys, Kind.type, message, function(value)
         if vim.tbl_contains(types, type(value)) then
             return true
-        elseif type(value) == 'string' then
+        elseif type(value) ~= 'table' then
             return vim.tbl_contains(values, value)
-        elseif type(value) == 'table' then
+        else
             for i, item in ipairs(value) do
                 if not vim.tbl_contains(values, item) then
                     return false, ('[%d] is %s'):format(i, item)
                 end
             end
             return true
-        else
-            return false
         end
     end)
 end
