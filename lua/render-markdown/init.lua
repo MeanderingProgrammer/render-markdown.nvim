@@ -128,10 +128,13 @@ function M.resolve_config(user)
     if config.indent.enabled then
         config.pipe_table.border_virtual = true
     end
-    -- override settings that require neovim >= 0.10.0 and have compatible alternatives
-    local has_10 = require('render-markdown.lib.compat').has_10
-    if not has_10 then
+    -- override settings incompatible with neovim version with compatible alternatives
+    local Compat = require('render-markdown.lib.compat')
+    if config.code.position == 'left' and not Compat.has_10 then
         config.code.position = 'right'
+    end
+    if config.code.border == 'hide' and not Compat.has_11 then
+        config.code.border = 'thin'
     end
     -- use lazy.nvim file type configuration if available and no user value is specified
     if not user.file_types then

@@ -169,20 +169,17 @@ function Render:border(node, icon, empty)
     local row = node.start_row
     if kind == 'thick' or not empty then
         self:background(row, row, highlight)
-        return
+    elseif kind == 'hide' then
+        self.marks:over(true, node, { conceal_lines = '' })
+    else
+        local col = self.node.start_col
+        local block = self.config.width == 'block'
+        local width = block and self.data.body - col or vim.o.columns
+        self.marks:add('code_border', row, col, {
+            virt_text = { { icon:rep(width), colors.bg_as_fg(highlight) } },
+            virt_text_pos = 'overlay',
+        })
     end
-    if kind == 'hide' then
-        if self.marks:over(true, node, { conceal_lines = '' }) then
-            return
-        end
-    end
-    local col = self.node.start_col
-    local block = self.config.width == 'block'
-    local width = block and self.data.body - col or vim.o.columns
-    self.marks:add('code_border', row, col, {
-        virt_text = { { icon:rep(width), colors.bg_as_fg(highlight) } },
-        virt_text_pos = 'overlay',
-    })
 end
 
 ---@private
