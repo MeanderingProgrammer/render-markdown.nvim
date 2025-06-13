@@ -122,10 +122,8 @@ function Updater:run()
     end
     if not render then
         self:clear()
-        M.config.on.clear({ buf = self.buf, win = self.win })
     else
         self:render()
-        M.config.on.render({ buf = self.buf, win = self.win })
     end
 end
 
@@ -135,20 +133,49 @@ function Updater:clear()
     for _, extmark in ipairs(extmarks) do
         extmark:hide(M.ns, self.buf)
     end
+    M.config.on.clear({ buf = self.buf, win = self.win })
 end
 
 ---@private
 function Updater:render()
     if self:changed() then
-        local initial = self.decorator:initial()
-        self:clear()
-        local extmarks = self:get_extmarks()
-        self.decorator:set(extmarks)
-        if initial then
-            compat.fix_lsp_window(self.buf, self.win, extmarks)
-            M.config.on.initial({ buf = self.buf, win = self.win })
-        end
+        self:parse(function(extmarks)
+            if not extmarks then
+                return
+            end
+            local initial = self.decorator:initial()
+            self:clear()
+            self.decorator:set(extmarks)
+            if initial then
+                compat.fix_lsp_window(self.buf, self.win, extmarks)
+                M.config.on.initial({ buf = self.buf, win = self.win })
+            end
+            self:display()
+        end)
+    else
+        self:display()
     end
+end
+
+---@private
+---@param callback fun(extmarks: render.md.Extmark[]|nil)
+function Updater:parse(callback)
+    local ok, parser = pcall(vim.treesitter.get_parser, self.buf)
+    if ok and parser then
+        -- reset buffer context
+        local context = Context.new(self.buf, self.win, self.config, self.mode)
+        -- make sure injections are processed
+        context.view:parse(parser)
+        local marks = handlers.run(context, parser)
+        callback(iter.list.map(marks, Extmark.new))
+    else
+        log.buf('error', 'Fail', self.buf, 'no treesitter parser found')
+        callback(nil)
+    end
+end
+
+---@private
+function Updater:display()
     local range = self:hidden()
     local extmarks = self.decorator:get()
     for _, extmark in ipairs(extmarks) do
@@ -158,22 +185,7 @@ function Updater:render()
             extmark:show(M.ns, self.buf)
         end
     end
-end
-
----@private
----@return render.md.Extmark[]
-function Updater:get_extmarks()
-    local ok, parser = pcall(vim.treesitter.get_parser, self.buf)
-    if not ok or not parser then
-        log.buf('error', 'Fail', self.buf, 'no treesitter parser found')
-        return {}
-    end
-    -- reset buffer context
-    local context = Context.new(self.buf, self.win, self.config, self.mode)
-    -- make sure injections are processed
-    context.view:parse(parser)
-    local marks = handlers.run(context, parser)
-    return iter.list.map(marks, Extmark.new)
+    M.config.on.render({ buf = self.buf, win = self.win })
 end
 
 ---@private
