@@ -1,7 +1,7 @@
-local Env = require('render-markdown.lib.env')
-local Iter = require('render-markdown.lib.iter')
 local Line = require('render-markdown.lib.line')
 local Resolved = require('render-markdown.lib.resolved')
+local env = require('render-markdown.lib.env')
+local iter = require('render-markdown.lib.iter')
 
 ---@class render.md.buf.Config: render.md.partial.Config
 ---@field resolved render.md.resolved.Config
@@ -41,7 +41,7 @@ function Config.new(root, enabled, buf)
     }
     config = vim.deepcopy(config)
     for _, name in ipairs({ 'buflisted', 'buftype', 'filetype' }) do
-        local value = Env.buf.get(buf, name)
+        local value = env.buf.get(buf, name)
         local override = root.overrides[name][value]
         if override then
             config = vim.tbl_deep_extend('force', config, override)
@@ -61,14 +61,14 @@ end
 ---@param destination string
 ---@param icon render.md.mark.Text
 function Config:set_link_text(destination, icon)
-    local options = Iter.table.filter(self.link.custom, function(custom)
+    local options = iter.table.filter(self.link.custom, function(custom)
         if custom.kind == 'suffix' then
             return vim.endswith(destination, custom.pattern)
         else
             return destination:find(custom.pattern) ~= nil
         end
     end)
-    Iter.list.sort(options, function(custom)
+    iter.list.sort(options, function(custom)
         return custom.priority or #custom.pattern
     end)
     local result = options[#options]

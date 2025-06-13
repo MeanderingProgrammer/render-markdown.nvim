@@ -17,8 +17,8 @@ function M.fix_lsp_window(buf, win, extmarks)
         return
     end
 
-    local Env = require('render-markdown.lib.env')
-    local Str = require('render-markdown.lib.str')
+    local env = require('render-markdown.lib.env')
+    local str = require('render-markdown.lib.str')
 
     -- account for conceal lines marks allowing us to reduce window height
     local height = vim.api.nvim_win_text_height(win, {}).all
@@ -34,10 +34,10 @@ function M.fix_lsp_window(buf, win, extmarks)
     -- disable line wrapping if it is not needed to contain the text
     local width = 0
     for _, line in ipairs(vim.api.nvim_buf_get_lines(buf, 0, -1, false)) do
-        width = math.max(width, Str.width(line))
+        width = math.max(width, str.width(line))
     end
     if width <= vim.api.nvim_win_get_width(win) then
-        Env.win.set(win, 'wrap', false)
+        env.win.set(win, 'wrap', false)
     end
 end
 

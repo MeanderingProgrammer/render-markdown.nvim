@@ -1,10 +1,10 @@
 local Context = require('render-markdown.request.context')
 local Indent = require('render-markdown.lib.indent')
-local Iter = require('render-markdown.lib.iter')
 local Marks = require('render-markdown.lib.marks')
 local Node = require('render-markdown.lib.node')
-local Str = require('render-markdown.lib.str')
+local iter = require('render-markdown.lib.iter')
 local log = require('render-markdown.core.log')
+local str = require('render-markdown.lib.str')
 
 ---@class render.md.handler.buf.Latex
 ---@field private context render.md.request.Context
@@ -40,7 +40,7 @@ function Handler:run(root)
     log.node('latex', node)
 
     local indent = self:indent(node.start_row, node.start_col)
-    local lines = Iter.list.map(self:expressions(node), function(expression)
+    local lines = iter.list.map(self:expressions(node), function(expression)
         local line = vim.list_extend({}, indent)
         line[#line + 1] = { expression, self.config.highlight }
         return line
@@ -65,11 +65,11 @@ function Handler:expressions(node)
     for _ = 1, self.config.top_pad do
         result[#result + 1] = ''
     end
-    local lines = Str.split(self:convert(node.text), '\n', true)
-    local width = vim.fn.max(Iter.list.map(lines, Str.width))
+    local lines = str.split(self:convert(node.text), '\n', true)
+    local width = vim.fn.max(iter.list.map(lines, str.width))
     for _, line in ipairs(lines) do
-        local prefix = Str.pad(node.start_col)
-        local suffix = Str.pad(width - Str.width(line))
+        local prefix = str.pad(node.start_col)
+        local suffix = str.pad(width - str.width(line))
         result[#result + 1] = prefix .. line .. suffix
     end
     for _ = 1, self.config.bottom_pad do

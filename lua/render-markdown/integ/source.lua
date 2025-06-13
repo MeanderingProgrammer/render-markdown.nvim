@@ -1,7 +1,7 @@
-local Env = require('render-markdown.lib.env')
-local Str = require('render-markdown.lib.str')
+local env = require('render-markdown.lib.env')
 local manager = require('render-markdown.core.manager')
 local state = require('render-markdown.state')
+local str = require('render-markdown.lib.str')
 
 local markers = {
     list_marker_minus = '-',
@@ -25,7 +25,7 @@ end
 
 ---@return boolean
 function M.enabled()
-    return manager.attached(Env.buf.current())
+    return manager.attached(env.buf.current())
 end
 
 ---@return string[]
@@ -38,7 +38,7 @@ end
 ---@param col integer 0-indexed
 ---@return lsp.CompletionItem[]?
 function M.items(buf, row, col)
-    buf = buf == 0 and Env.buf.current() or buf
+    buf = buf == 0 and env.buf.current() or buf
     local node = M.node(buf, row, col, 'markdown')
     if not node or node:range() ~= row then
         return nil
@@ -58,7 +58,7 @@ function M.items(buf, row, col)
     local items = {}
     local config = state.get(buf)
     local filter = M.config.completions.filter
-    local prefix = Str.spaces('end', marker) == 0 and ' ' or ''
+    local prefix = str.spaces('end', marker) == 0 and ' ' or ''
     if node:type() == 'block_quote' then
         for _, value in pairs(config.callout) do
             if filter.callout(value) then

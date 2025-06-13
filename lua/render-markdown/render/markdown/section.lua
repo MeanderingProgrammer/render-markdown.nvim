@@ -1,5 +1,5 @@
 local Base = require('render-markdown.render.base')
-local Str = require('render-markdown.lib.str')
+local str = require('render-markdown.lib.str')
 
 ---@class render.md.indent.Data
 ---@field level_change integer
@@ -77,7 +77,7 @@ end
 ---@return boolean
 function Render:empty(position, by)
     local _, line = self.node:line(position, by)
-    return Str.width(line) == 0
+    return str.width(line) == 0
 end
 
 ---@private
@@ -86,7 +86,7 @@ end
 ---@return boolean
 function Render:section(position, by)
     local _, line = self.node:line(position, by)
-    return line and Str.level(line) > 0 or false
+    return line and str.level(line) > 0 or false
 end
 
 return Render

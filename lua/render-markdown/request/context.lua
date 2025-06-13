@@ -1,11 +1,11 @@
 local Callout = require('render-markdown.request.callout')
 local Checkbox = require('render-markdown.request.checkbox')
 local Conceal = require('render-markdown.request.conceal')
-local Env = require('render-markdown.lib.env')
 local Offset = require('render-markdown.request.offset')
-local Str = require('render-markdown.lib.str')
 local Used = require('render-markdown.request.used')
 local View = require('render-markdown.request.view')
+local env = require('render-markdown.lib.env')
+local str = require('render-markdown.lib.str')
 
 ---@class render.md.request.Context
 ---@field buf integer
@@ -50,11 +50,11 @@ function Context:skip(config)
         return true
     end
     -- enabled config in top level modes should not be skipped
-    if Env.mode.is(self.mode, self.config.render_modes) then
+    if env.mode.is(self.mode, self.config.render_modes) then
         return false
     end
     -- enabled config in config modes should not be skipped
-    return not Env.mode.is(self.mode, config.render_modes)
+    return not env.mode.is(self.mode, config.render_modes)
 end
 
 ---@param node? render.md.Node
@@ -63,7 +63,7 @@ function Context:width(node)
     if not node then
         return 0
     end
-    return Str.width(node.text) + self.offset:get(node) - self.conceal:get(node)
+    return str.width(node.text) + self.offset:get(node) - self.conceal:get(node)
 end
 
 ---@class render.md.request.context.Manager

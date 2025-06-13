@@ -1,6 +1,6 @@
 local Base = require('render-markdown.render.base')
-local List = require('render-markdown.lib.list')
-local Str = require('render-markdown.lib.str')
+local list = require('render-markdown.lib.list')
+local str = require('render-markdown.lib.str')
 local ts = require('render-markdown.core.ts')
 
 ---@class render.md.quote.Data
@@ -29,8 +29,8 @@ function Render:setup()
     self.data = {
         callout = callout,
         level = level,
-        icon = assert(List.cycle(icon, level)),
-        highlight = assert(List.cycle(highlight, level)),
+        icon = assert(list.cycle(icon, level)),
+        highlight = assert(list.cycle(highlight, level)),
         repeat_linebreak = config.repeat_linebreak or nil,
     }
     return true
@@ -66,10 +66,10 @@ function Render.title(node, config)
     -- https://help.obsidian.md/Editing+and+formatting/Callouts#Change+the+title
     local content = node:parent('inline')
     if content then
-        local line = Str.split(content.text, '\n', true)[1]
+        local line = str.split(content.text, '\n', true)[1]
         local prefix = config.raw:lower()
         if #line > #prefix and vim.startswith(line:lower(), prefix) then
-            local icon = Str.split(config.rendered, ' ', true)[1]
+            local icon = str.split(config.rendered, ' ', true)[1]
             local title = vim.trim(line:sub(#prefix + 1))
             return icon .. ' ' .. title
         end

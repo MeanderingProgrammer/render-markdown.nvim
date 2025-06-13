@@ -1,5 +1,5 @@
 local Base = require('render-markdown.render.base')
-local Env = require('render-markdown.lib.env')
+local env = require('render-markdown.lib.env')
 
 ---@class render.md.dash.Data
 ---@field width integer
@@ -33,7 +33,7 @@ end
 ---@return integer
 function Render:get_width(width, used)
     if type(width) == 'number' then
-        return Env.win.percent(self.context.win, width, used)
+        return env.win.percent(self.context.win, width, used)
     else
         return vim.o.columns
     end

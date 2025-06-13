@@ -1,5 +1,5 @@
 local Base = require('render-markdown.render.base')
-local Env = require('render-markdown.lib.env')
+local env = require('render-markdown.lib.env')
 
 ---@class render.md.paragraph.Data
 ---@field margin number
@@ -42,9 +42,9 @@ end
 function Render:run()
     local widths = self.node:widths()
     local width = math.max(vim.fn.max(widths), self.config.min_width)
-    local margin = Env.win.percent(self.context.win, self.data.margin, width)
+    local margin = env.win.percent(self.context.win, self.data.margin, width)
     self:padding(self.node.start_row, self.node.end_row - 1, margin)
-    local indent = Env.win.percent(self.context.win, self.data.indent, width)
+    local indent = env.win.percent(self.context.win, self.data.indent, width)
     self:padding(self.node.start_row, self.node.start_row, indent)
 end
 

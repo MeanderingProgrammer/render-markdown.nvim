@@ -1,6 +1,6 @@
-local Env = require('render-markdown.lib.env')
 local Node = require('render-markdown.lib.node')
 local Range = require('render-markdown.lib.range')
+local env = require('render-markdown.lib.env')
 local log = require('render-markdown.core.log')
 
 ---@class render.md.request.View
@@ -15,8 +15,8 @@ function View.new(buf)
     local self = setmetatable({}, View)
     self.buf = buf
     local ranges = {} ---@type render.md.Range[]
-    for _, win in ipairs(Env.buf.windows(buf)) do
-        local top, bottom = Env.range(buf, win, 10)
+    for _, win in ipairs(env.buf.windows(buf)) do
+        local top, bottom = env.range(buf, win, 10)
         ranges[#ranges + 1] = Range.new(top, bottom)
     end
     self.ranges = Range.coalesce(ranges)
@@ -35,7 +35,7 @@ end
 ---@param win integer
 ---@return boolean
 function View:contains(win)
-    local top, bottom = Env.range(self.buf, win, 0)
+    local top, bottom = env.range(self.buf, win, 0)
     for _, range in ipairs(self.ranges) do
         if range:contains(top, bottom) then
             return true

@@ -1,4 +1,4 @@
-local Str = require('render-markdown.lib.str')
+local str = require('render-markdown.lib.str')
 
 ---@class render.md.Indent
 ---@field private context render.md.request.Context
@@ -29,7 +29,7 @@ function Indent:line(virtual, level)
     end
     local line = self.context.config:line()
     if level > 0 then
-        local icon_width = Str.width(self.config.icon)
+        local icon_width = str.width(self.config.icon)
         if icon_width == 0 then
             line:pad(self.config.per_level * level)
         else

@@ -1,11 +1,11 @@
-local Icons = require('render-markdown.lib.icons')
+local icons = require('render-markdown.lib.icons')
 local state = require('render-markdown.state')
 
 ---@class render.md.Health
 local M = {}
 
 ---@private
-M.version = '8.5.3'
+M.version = '8.5.4'
 
 function M.check()
     M.start('version')
@@ -39,7 +39,7 @@ function M.check()
     end
 
     M.start('icons')
-    local provider = Icons.name()
+    local provider = icons.name()
     if provider then
         vim.health.ok('using: ' .. provider)
     else

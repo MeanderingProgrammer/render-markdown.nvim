@@ -1,5 +1,5 @@
-local Iter = require('render-markdown.lib.iter')
-local Str = require('render-markdown.lib.str')
+local iter = require('render-markdown.lib.iter')
+local str = require('render-markdown.lib.str')
 
 ---@enum render.md.node.Position
 local Position = {
@@ -92,7 +92,7 @@ function Node:level(parent)
     if not node then
         return 0
     end
-    return Str.level(vim.treesitter.get_node_text(node, self.buf))
+    return str.level(vim.treesitter.get_node_text(node, self.buf))
 end
 
 ---@param target string
@@ -238,7 +238,7 @@ function Node:widths()
         self.end_row,
         false
     )
-    return Iter.list.map(lines, Str.width)
+    return iter.list.map(lines, str.width)
 end
 
 ---@param pattern string
@@ -267,7 +267,7 @@ end
 ---@param offset integer
 ---@return integer, integer
 function Node:position(index, offset)
-    local lines = Str.split(self.text:sub(1, index), '\n', false)
+    local lines = str.split(self.text:sub(1, index), '\n', false)
     -- start row includes first line
     local row = self.start_row + #lines - 1
     local col = #lines[#lines] + offset

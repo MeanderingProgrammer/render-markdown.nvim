@@ -1,6 +1,6 @@
 local Base = require('render-markdown.render.base')
 local Bullet = require('render-markdown.render.markdown.bullet')
-local Str = require('render-markdown.lib.str')
+local str = require('render-markdown.lib.str')
 
 ---@class render.md.checkbox.Data
 ---@field marker render.md.Node
@@ -71,7 +71,7 @@ function Render:marker()
     else
         -- https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
         local node = self.data.marker
-        local offset = { 0, Str.spaces('start', node.text), 0, 0 }
+        local offset = { 0, str.spaces('start', node.text), 0, 0 }
         self.marks:over('check_icon', node, { conceal = '' }, offset)
     end
 end
@@ -83,7 +83,7 @@ function Render:checkbox()
 
     -- add 1 to account for space after checkbox
     local width = self.context:width(node) + 1
-    local space = width - Str.width(self.data.icon)
+    local space = width - str.width(self.data.icon)
 
     local line = self:line():text(self.data.icon, self.data.highlight)
     if space < 0 then

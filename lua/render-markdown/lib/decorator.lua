@@ -1,4 +1,4 @@
-local Compat = require('render-markdown.lib.compat')
+local compat = require('render-markdown.lib.compat')
 
 ---@class render.md.Decorator
 ---@field private buf integer
@@ -14,7 +14,7 @@ Decorator.__index = Decorator
 function Decorator.new(buf)
     local self = setmetatable({}, Decorator)
     self.buf = buf
-    self.timer = assert(Compat.uv.new_timer())
+    self.timer = assert(compat.uv.new_timer())
     self.running = false
     self.marks = {}
     self.tick = nil
@@ -28,7 +28,7 @@ end
 
 ---@return boolean
 function Decorator:changed()
-    return self.tick ~= vim.api.nvim_buf_get_changedtick(self.buf)
+    return self.tick ~= self:get_tick()
 end
 
 ---@return render.md.Extmark[]
@@ -39,7 +39,7 @@ end
 ---@param marks render.md.Extmark[]
 function Decorator:set(marks)
     self.marks = marks
-    self.tick = vim.api.nvim_buf_get_changedtick(self.buf)
+    self.tick = self:get_tick()
 end
 
 ---@param debounce boolean
@@ -57,6 +57,12 @@ function Decorator:schedule(debounce, ms, callback)
     else
         vim.schedule(callback)
     end
+end
+
+---@private
+---@return integer
+function Decorator:get_tick()
+    return vim.api.nvim_buf_get_changedtick(self.buf)
 end
 
 return Decorator

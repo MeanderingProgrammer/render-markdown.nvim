@@ -1,7 +1,7 @@
 local Base = require('render-markdown.render.base')
-local Iter = require('render-markdown.lib.iter')
-local Str = require('render-markdown.lib.str')
+local iter = require('render-markdown.lib.iter')
 local log = require('render-markdown.core.log')
+local str = require('render-markdown.lib.str')
 
 ---@class render.md.table.Data
 ---@field delim render.md.table.DelimRow
@@ -191,7 +191,7 @@ function Render:parse_row(node, num_cols)
                 -- gap between the cell start and the pipe start
                 left = math.max(cell.start_col - start_col, 0),
                 -- attached to the end of the cell itself
-                right = math.max(Str.spaces('end', cell.text), 0),
+                right = math.max(str.spaces('end', cell.text), 0),
             },
         }
     end
@@ -239,12 +239,12 @@ function Render:delimiter()
     local delim, border = self.data.delim, self.config.border
 
     local indicator, icon = self.config.alignment_indicator, border[11]
-    local parts = Iter.list.map(delim.cols, function(col)
+    local parts = iter.list.map(delim.cols, function(col)
         -- must have enough space to put the alignment indicator
         -- alignment indicator must be exactly one character wide
         -- do not put an indicator for default alignment
         local add_indicator = col.width >= 3
-            and Str.width(indicator) == 1
+            and str.width(indicator) == 1
             and col.alignment ~= Alignment.default
         if not add_indicator then
             return icon:rep(col.width)
@@ -260,9 +260,9 @@ function Render:delimiter()
     local delimiter = border[4] .. table.concat(parts, border[5]) .. border[6]
 
     local line = self:line()
-    line:pad(Str.spaces('start', delim.node.text))
+    line:pad(str.spaces('start', delim.node.text))
     line:text(delimiter, self.config.head)
-    line:pad(Str.width(delim.node.text) - Str.line_width(line:get()))
+    line:pad(str.width(delim.node.text) - str.line_width(line:get()))
     self.marks:over('table_border', delim.node, {
         virt_text = line:get(),
         virt_text_pos = 'overlay',
@@ -361,7 +361,7 @@ function Render:border()
             return true
         elseif self.config.cell == 'overlay' then
             -- want the underlying text widths to match
-            return Str.width(delim.node.text) == Str.width(row.node.text)
+            return str.width(delim.node.text) == str.width(row.node.text)
         else
             return false
         end
@@ -376,7 +376,7 @@ function Render:border()
     ---@return integer
     local function get_spaces(node)
         local _, line = node:line('first', 0)
-        return math.max(Str.spaces('start', line or ''), node.start_col)
+        return math.max(str.spaces('start', line or ''), node.start_col)
     end
 
     local first_node = first.node
@@ -386,7 +386,7 @@ function Render:border()
         return
     end
 
-    local sections = Iter.list.map(delim.cols, function(col)
+    local sections = iter.list.map(delim.cols, function(col)
         return border[11]:rep(col.width)
     end)
 
@@ -400,7 +400,7 @@ function Render:border()
 
         local virtual = self.config.border_virtual
         local row, target = node:line(above and 'above' or 'below', 1)
-        local available = target and Str.width(target) == 0
+        local available = target and str.width(target) == 0
 
         if not virtual and available and self.context.used:take(row) then
             self.marks:add('table_border', row, 0, {

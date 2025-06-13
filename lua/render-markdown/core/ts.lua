@@ -1,4 +1,4 @@
-local Compat = require('render-markdown.lib.compat')
+local compat = require('render-markdown.lib.compat')
 
 ---@class render.md.ts.Config
 ---@field file_types string[]
@@ -57,7 +57,7 @@ function M.inject(language)
         return
     end
     local query = ''
-    if Compat.has_11 then
+    if compat.has_11 then
         query = query .. ';; extends' .. '\n'
     else
         local files = vim.treesitter.query.get_files(language, 'injections')
@@ -80,7 +80,7 @@ function M.disable(language)
     if not pattern or not pattern.disable then
         return
     end
-    if not Compat.has_11 then
+    if not compat.has_11 then
         return
     end
     local query = vim.treesitter.query.get(language, 'highlights')
@@ -88,7 +88,7 @@ function M.disable(language)
         return
     end
     if not query.query.disable_pattern then
-        Compat.release('TSQuery missing disable_pattern API')
+        compat.release('TSQuery missing disable_pattern API')
         return
     end
     local query_directives = query.info.patterns

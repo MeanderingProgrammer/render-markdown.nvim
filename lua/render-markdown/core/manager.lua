@@ -1,4 +1,4 @@
-local Env = require('render-markdown.lib.env')
+local env = require('render-markdown.lib.env')
 local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
 local ui = require('render-markdown.core.ui')
@@ -30,8 +30,8 @@ end
 ---called from plugin directory
 function M.init()
     -- lazy loading: ignores current buffer as FileType event already executed
-    if #Env.lazy('ft') == 0 and #Env.lazy('cmd') == 0 then
-        M.attach(Env.buf.current())
+    if #env.lazy('ft') == 0 and #env.lazy('cmd') == 0 then
+        M.attach(env.buf.current())
     end
     -- attempt to attach to all buffers, cannot use pattern to support plugin directory
     vim.api.nvim_create_autocmd('FileType', {
@@ -45,7 +45,7 @@ function M.init()
         group = M.group,
         callback = function(args)
             for _, win in ipairs(vim.v.event.windows) do
-                local buf = Env.win.buf(win)
+                local buf = env.win.buf(win)
                 if M.attached(buf) and state.get(buf).enabled then
                     ui.update(buf, win, args.event, true)
                 end
@@ -63,8 +63,8 @@ end
 ---@param enabled? boolean
 function M.set_all(enabled)
     -- lazy loading: all previously opened buffers have been ignored
-    if #Env.lazy('cmd') > 0 then
-        M.attach(Env.buf.current())
+    if #env.lazy('cmd') > 0 then
+        M.attach(env.buf.current())
     end
     if enabled ~= nil then
         state.enabled = enabled
@@ -79,7 +79,7 @@ end
 ---@param buf? integer
 ---@param enabled? boolean
 function M.set_buf(buf, enabled)
-    buf = buf or Env.buf.current()
+    buf = buf or env.buf.current()
     if M.attached(buf) then
         local config = state.get(buf)
         if enabled ~= nil then
@@ -87,7 +87,7 @@ function M.set_buf(buf, enabled)
         else
             config.enabled = not config.enabled
         end
-        ui.update(buf, Env.buf.win(buf), 'UserCommand', true)
+        ui.update(buf, env.buf.win(buf), 'UserCommand', true)
     end
 end
 
@@ -141,7 +141,7 @@ function M.attach(buf)
             if not state.get(buf).enabled then
                 return
             end
-            local win, wins = Env.win.current(), Env.buf.windows(buf)
+            local win, wins = env.win.current(), env.buf.windows(buf)
             win = vim.tbl_contains(wins, win) and win or wins[1]
             if not win then
                 return
@@ -152,7 +152,7 @@ function M.attach(buf)
     })
 
     if config.enabled then
-        ui.update(buf, Env.buf.win(buf), 'Initial', true)
+        ui.update(buf, env.buf.win(buf), 'Initial', true)
     end
 end
 
@@ -172,7 +172,7 @@ function M.should_attach(buf)
         return false
     end
 
-    local file_type = Env.buf.get(buf, 'filetype')
+    local file_type = env.buf.get(buf, 'filetype')
     local file_types = M.config.file_types
     if not vim.tbl_contains(file_types, file_type) then
         local reason = ('%s /∈ %s'):format(file_type, vim.inspect(file_types))
@@ -180,7 +180,7 @@ function M.should_attach(buf)
         return false
     end
 
-    local file_size = Env.file_size_mb(buf)
+    local file_size = env.file_size_mb(buf)
     local max_file_size = state.get(buf).max_file_size
     if file_size > max_file_size then
         local reason = ('%f > %f'):format(file_size, max_file_size)

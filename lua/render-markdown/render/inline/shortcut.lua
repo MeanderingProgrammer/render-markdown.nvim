@@ -1,6 +1,6 @@
 local Base = require('render-markdown.render.base')
-local Converter = require('render-markdown.lib.converter')
-local Str = require('render-markdown.lib.str')
+local converter = require('render-markdown.lib.converter')
+local str = require('render-markdown.lib.str')
 
 ---@class render.md.render.inline.Shortcut: render.md.Render
 ---@field private config render.md.link.Config
@@ -47,7 +47,7 @@ end
 ---@private
 function Render:wiki_link()
     local config = self.config.wiki
-    local sections = Str.split(self.node.text:sub(2, -2), '|', true)
+    local sections = str.split(self.node.text:sub(2, -2), '|', true)
     ---@type render.md.link.Context
     local ctx = {
         buf = self.context.buf,
@@ -112,7 +112,7 @@ function Render:footnote(text)
     local body = config.prefix .. text .. config.suffix
     local value = body ---@type string?
     if config.superscript then
-        value = Converter.superscript(body)
+        value = converter.superscript(body)
     end
     if not value then
         return

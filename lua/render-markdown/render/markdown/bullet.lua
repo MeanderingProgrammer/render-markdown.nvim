@@ -1,6 +1,6 @@
 local Base = require('render-markdown.render.base')
-local List = require('render-markdown.lib.list')
-local Str = require('render-markdown.lib.str')
+local list = require('render-markdown.lib.list')
+local str = require('render-markdown.lib.str')
 
 ---@class render.md.bullet.Data
 ---@field marker render.md.Node
@@ -59,9 +59,9 @@ function Render.get_string(values, ctx)
     elseif type(values) == 'string' then
         return values
     else
-        local value = List.cycle(values, ctx.level)
+        local value = list.cycle(values, ctx.level)
         if type(value) == 'table' then
-            return List.clamp(value, ctx.index)
+            return list.clamp(value, ctx.index)
         else
             return value
         end
@@ -96,8 +96,8 @@ function Render:marker()
     end
     -- https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
     local node = self.data.marker
-    local text = Str.pad(Str.spaces('start', node.text)) .. icon
-    local overflow = Str.width(text) > Str.width(node.text)
+    local text = str.pad(str.spaces('start', node.text)) .. icon
+    local overflow = str.width(text) > str.width(node.text)
     self.marks:over('bullet', node, {
         virt_text = { { text, highlight } },
         virt_text_pos = overflow and 'inline' or 'overlay',
@@ -148,7 +148,7 @@ function Render:end_row()
     -- on the last item of the root list ignore the last line if empty
     local row = self.node.end_row
     local _, line = root:line('last', 0)
-    local ignore_last = root.end_row == row and Str.width(line) == 0
+    local ignore_last = root.end_row == row and str.width(line) == 0
     local offset = ignore_last and 1 or 0
     return row - offset
 end

@@ -1,4 +1,4 @@
-local Iter = require('render-markdown.lib.iter')
+local iter = require('render-markdown.lib.iter')
 
 ---@enum render.md.debug.spec.Kind
 local Kind = {
@@ -75,7 +75,7 @@ end
 ---@param values any[]
 ---@param ts? type|type[]
 function Spec:one_of(keys, values, ts)
-    local options = Iter.list.map(values, vim.inspect)
+    local options = iter.list.map(values, vim.inspect)
     local types, message = self:handle_types(options, ts)
     self:add(keys, Kind.data, message, function(value)
         local valid_value = vim.tbl_contains(values, value)
@@ -141,7 +141,7 @@ end
 ---@param values any[]
 ---@param ts? type|type[]
 function Spec:one_or_list_of(keys, values, ts)
-    local body = table.concat(Iter.list.map(values, vim.inspect), '|')
+    local body = table.concat(iter.list.map(values, vim.inspect), '|')
     local options = '(' .. body .. ')'
     local types, message = self:handle_types({ options, options .. '[]' }, ts)
     self:add(keys, Kind.type, message, function(value)

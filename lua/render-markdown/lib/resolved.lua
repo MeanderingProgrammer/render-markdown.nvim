@@ -1,4 +1,4 @@
-local Env = require('render-markdown.lib.env')
+local env = require('render-markdown.lib.env')
 
 ---@class render.md.resolved.Config
 ---@field private modes render.md.Modes
@@ -61,7 +61,7 @@ end
 ---@param mode string
 ---@return boolean
 function Resolved:render(mode)
-    return Env.mode.is(mode, self.modes)
+    return env.mode.is(mode, self.modes)
 end
 
 ---@param node render.md.Node

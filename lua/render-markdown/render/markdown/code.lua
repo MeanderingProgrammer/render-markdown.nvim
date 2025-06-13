@@ -1,8 +1,8 @@
 local Base = require('render-markdown.render.base')
-local Env = require('render-markdown.lib.env')
-local Icons = require('render-markdown.lib.icons')
-local Str = require('render-markdown.lib.str')
 local colors = require('render-markdown.core.colors')
+local env = require('render-markdown.lib.env')
+local icons = require('render-markdown.lib.icons')
+local str = require('render-markdown.lib.str')
 
 ---@class render.md.code.Data
 ---@field language integer
@@ -57,10 +57,10 @@ function Render:offset(value, used)
     if value <= 0 then
         return 0
     end
-    local result = Env.win.percent(self.context.win, value, used)
+    local result = env.win.percent(self.context.win, value, used)
     if self.node.text:find('\t') then
         -- round to the next multiple of tab
-        local tab = Env.buf.get(self.context.buf, 'tabstop')
+        local tab = env.buf.get(self.context.buf, 'tabstop')
         result = math.ceil(result / tab) * tab
     end
     return result
@@ -104,7 +104,7 @@ function Render:language(language, delim)
         return false
     end
 
-    local icon, icon_highlight = Icons.get(language.text)
+    local icon, icon_highlight = icons.get(language.text)
     if self.config.highlight_language then
         icon_highlight = self.config.highlight_language
     end
@@ -131,15 +131,15 @@ function Render:language(language, delim)
     end
 
     if self.config.position == 'left' then
-        text = Str.pad(self.data.language) .. text
+        text = str.pad(self.data.language) .. text
         -- code blocks can pick up varying amounts of leading white space
         -- this is lumped into the delimiter node and needs to be handled
-        local spaces = Str.spaces('start', delim.text)
+        local spaces = str.spaces('start', delim.text)
         local width = self.context:width(delim)
         if self.context.conceal:enabled() then
             width = self.context.conceal:width('')
         end
-        text = Str.pad(spaces - width) .. text
+        text = str.pad(spaces - width) .. text
         return self.marks:start('code_language', language, {
             virt_text = { { text, highlight } },
             virt_text_pos = 'inline',
@@ -147,7 +147,7 @@ function Render:language(language, delim)
     else
         local start = self.data.body - self.data.language
         if self.config.width == 'block' then
-            start = start - Str.width(text)
+            start = start - str.width(text)
         end
         return self.marks:add('code_language', language.start_row, 0, {
             virt_text = { { text, highlight } },

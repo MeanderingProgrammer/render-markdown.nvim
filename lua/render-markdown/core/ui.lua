@@ -1,11 +1,11 @@
-local Compat = require('render-markdown.lib.compat')
 local Context = require('render-markdown.request.context')
 local Decorator = require('render-markdown.lib.decorator')
-local Env = require('render-markdown.lib.env')
 local Extmark = require('render-markdown.lib.extmark')
-local Iter = require('render-markdown.lib.iter')
 local Range = require('render-markdown.lib.range')
+local compat = require('render-markdown.lib.compat')
+local env = require('render-markdown.lib.env')
 local handlers = require('render-markdown.core.handlers')
+local iter = require('render-markdown.lib.iter')
 local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
 
@@ -79,10 +79,10 @@ function Updater.new(buf, win, force)
 end
 
 function Updater:start()
-    if not Env.valid(self.buf, self.win) then
+    if not env.valid(self.buf, self.win) then
         return
     end
-    if Env.buf.empty(self.buf) then
+    if env.buf.empty(self.buf) then
         return
     end
     self.decorator:schedule(
@@ -105,19 +105,19 @@ end
 
 ---@private
 function Updater:run()
-    if not Env.valid(self.buf, self.win) then
+    if not env.valid(self.buf, self.win) then
         return
     end
-    self.mode = Env.mode.get() -- mode is only available after this point
+    self.mode = env.mode.get() -- mode is only available after this point
     local render = self.config.enabled
         and self.config.resolved:render(self.mode)
-        and not Env.win.get(self.win, 'diff')
-        and Env.win.view(self.win).leftcol == 0
+        and not env.win.get(self.win, 'diff')
+        and env.win.view(self.win).leftcol == 0
     log.buf('info', 'Render', self.buf, render)
     local next_state = render and 'rendered' or 'default'
-    for _, win in ipairs(Env.buf.windows(self.buf)) do
+    for _, win in ipairs(env.buf.windows(self.buf)) do
         for name, value in pairs(self.config.win_options) do
-            Env.win.set(win, name, value[next_state])
+            env.win.set(win, name, value[next_state])
         end
     end
     if not render then
@@ -145,7 +145,7 @@ function Updater:render()
         local extmarks = self:get_extmarks()
         self.decorator:set(extmarks)
         if initial then
-            Compat.fix_lsp_window(self.buf, self.win, extmarks)
+            compat.fix_lsp_window(self.buf, self.win, extmarks)
             M.config.on.initial({ buf = self.buf, win = self.win })
         end
     end
@@ -173,7 +173,7 @@ function Updater:get_extmarks()
     -- make sure injections are processed
     context.view:parse(parser)
     local marks = handlers.run(context, parser)
-    return Iter.list.map(marks, Extmark.new)
+    return iter.list.map(marks, Extmark.new)
 end
 
 ---@private
@@ -182,15 +182,15 @@ function Updater:hidden()
     -- anti-conceal is not enabled -> hide nothing
     -- in disabled mode -> hide nothing
     local config = self.config.anti_conceal
-    if not config.enabled or Env.mode.is(self.mode, config.disabled_modes) then
+    if not config.enabled or env.mode.is(self.mode, config.disabled_modes) then
         return nil
     end
     -- row is not known -> buffer is not active -> hide nothing
-    local row = Env.row.get(self.buf, self.win)
+    local row = env.row.get(self.buf, self.win)
     if not row then
         return nil
     end
-    if Env.mode.is(self.mode, { 'v', 'V', '\22' }) then
+    if env.mode.is(self.mode, { 'v', 'V', '\22' }) then
         local start = vim.fn.getpos('v')[2] - 1
         return Range.new(math.min(row, start), math.max(row, start))
     else

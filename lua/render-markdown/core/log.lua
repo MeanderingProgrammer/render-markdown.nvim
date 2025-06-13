@@ -1,4 +1,4 @@
-local Env = require('render-markdown.lib.env')
+local env = require('render-markdown.lib.env')
 
 ---@class render.md.log.Entry
 ---@field date string
@@ -38,7 +38,7 @@ end
 ---called from plugin directory
 function M.init()
     -- clear the file contents if it is too big
-    if Env.file_size_mb(M.file) > 5 then
+    if env.file_size_mb(M.file) > 5 then
         assert(io.open(M.file, 'w')):close()
     end
     -- write out any logs before closing
@@ -54,10 +54,10 @@ end
 function M.runtime(name, callback)
     if M.config.runtime then
         return function()
-            local Compat = require('render-markdown.lib.compat')
-            local start_time = Compat.uv.hrtime()
+            local compat = require('render-markdown.lib.compat')
+            local start_time = compat.uv.hrtime()
             callback()
-            local end_time = Compat.uv.hrtime()
+            local end_time = compat.uv.hrtime()
             local elapsed = (end_time - start_time) / 1e+6
             assert(elapsed < 1000, 'invalid elapsed time')
             -- selene: allow(deprecated)
@@ -110,7 +110,7 @@ end
 ---@param buf integer
 ---@return string
 function M.file_name(buf)
-    if not Env.buf.valid(buf) then
+    if not env.buf.valid(buf) then
         return 'INVALID'
     end
     local file = vim.api.nvim_buf_get_name(buf)

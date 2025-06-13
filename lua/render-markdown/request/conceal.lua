@@ -1,6 +1,6 @@
-local Compat = require('render-markdown.lib.compat')
-local Env = require('render-markdown.lib.env')
-local Str = require('render-markdown.lib.str')
+local compat = require('render-markdown.lib.compat')
+local env = require('render-markdown.lib.env')
+local str = require('render-markdown.lib.str')
 
 ---@class render.md.request.conceal.Section
 ---@field start_col integer
@@ -28,7 +28,7 @@ Conceal.__index = Conceal
 function Conceal.new(buf, win, view)
     local self = setmetatable({}, Conceal)
     self.buf = buf
-    self.level = Env.win.get(win, 'conceallevel')
+    self.level = env.win.get(win, 'conceallevel')
     self.view = view
     self.computed = false
     self.lines = {}
@@ -83,7 +83,7 @@ function Conceal:width(character)
         return 1
     elseif self.level == 2 then
         -- replacement character width is used
-        return Str.width(character)
+        return str.width(character)
     else
         -- text is completely hidden
         return 0
@@ -94,7 +94,7 @@ end
 ---@return boolean
 function Conceal:hidden(node)
     -- conceal lines metadata require neovim >= 0.11.0 to function
-    return Compat.has_11 and self:line(node).hidden
+    return compat.has_11 and self:line(node).hidden
 end
 
 ---@param node render.md.Node
@@ -170,7 +170,7 @@ function Conceal:tree(language, root)
             self:add(row, {
                 start_col = start_col,
                 end_col = end_col,
-                width = Str.width(text),
+                width = str.width(text),
                 character = data.conceal,
             })
         end
