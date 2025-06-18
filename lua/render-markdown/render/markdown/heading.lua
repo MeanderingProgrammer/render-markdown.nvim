@@ -266,9 +266,9 @@ function Render:border(box, above)
     local icon = above and self.config.above or self.config.below
 
     local line = self:line():pad(box.margin)
-    line:text(icon:rep(box.padding), bg)
-    line:text(icon:rep(prefix), fg)
-    line:text(icon:rep(width - box.padding - prefix), bg)
+    line:rep(icon, box.padding, bg)
+    line:rep(icon, prefix, fg)
+    line:rep(icon, width - box.padding - prefix, bg)
 
     local virtual = self.config.border_virtual
     local row, target = self.node:line(above and 'above' or 'below', 1)

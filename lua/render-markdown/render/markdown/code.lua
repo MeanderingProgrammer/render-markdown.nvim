@@ -68,10 +68,6 @@ end
 
 ---@protected
 function Render:run()
-    local info = self.node:child('info_string')
-    local language = info and info:child('language')
-    self.marks:over(true, language, { conceal = '' })
-
     local start_row = self.node.start_row
     local above = self.node:child('fenced_code_block_delimiter', start_row)
     self.marks:over(true, above, { conceal = '' })
@@ -80,102 +76,104 @@ function Render:run()
     local below = self.node:child('fenced_code_block_delimiter', end_row)
     self.marks:over(true, below, { conceal = '' })
 
-    local icon = self:language(language, above)
-    local has_more = info and language and info.end_col > language.end_col
-    self:border(above, self.config.above, not icon and not has_more)
-    self:border(below, self.config.below, true)
+    local info = self.node:child('info_string')
+    self.marks:over(true, info, { conceal = '' })
+
+    local language = info and info:child('language')
+    if not self:language(info, language, above) then
+        self:border(above, self.config.above)
+    end
+    self:border(below, self.config.below)
 
     local background = self:background_enabled(language)
     if background then
-        self:background(start_row + 1, end_row - 1, self.config.highlight)
+        self:background(start_row + 1, end_row - 1)
     end
     self:padding(background)
 end
 
 ---@private
+---@param info? render.md.Node
 ---@param language? render.md.Node
 ---@param delim? render.md.Node
 ---@return boolean
-function Render:language(language, delim)
+function Render:language(info, language, delim)
     if not vim.tbl_contains({ 'language', 'full' }, self.config.style) then
         return false
     end
-    if not language or not delim then
+    if not info or not language or not delim then
         return false
     end
 
-    local icon, icon_highlight = icons.get(language.text)
+    local icon, icon_hl = icons.get(language.text)
     if self.config.highlight_language then
-        icon_highlight = self.config.highlight_language
+        icon_hl = self.config.highlight_language
+    end
+    self:sign(self.config.sign, icon, icon_hl)
+
+    local language_hl = { icon_hl or self.config.highlight_fallback } ---@type string[]
+    local info_hl = { self.config.highlight_info } ---@type string[]
+    local border_hl = self.config.highlight_border or nil
+    if border_hl then
+        language_hl[#language_hl + 1] = border_hl
+        info_hl[#info_hl + 1] = border_hl
+        border_hl = colors.bg_as_fg(border_hl)
     end
 
-    self:sign(self.config.sign, icon, icon_highlight)
-
-    local text = ''
+    local body = self:line()
     if self.config.language_icon and icon then
-        text = text .. icon .. ' '
+        body:text(icon .. ' ', language_hl)
     end
     if self.config.language_name then
-        text = text .. language.text
+        body:text(language.text, language_hl)
     end
-    if #text == 0 then
+    if self.config.language_info then
+        body:text(info.text:sub(#language.text + 1), info_hl)
+    end
+    if body:empty() then
         return false
     end
 
-    local highlight = {} ---@type string[]
-    local fallback_highlight = self.config.highlight_fallback
-    highlight[#highlight + 1] = (icon_highlight or fallback_highlight)
-    local border_highlight = self.config.highlight_border
-    if border_highlight ~= false then
-        highlight[#highlight + 1] = border_highlight
+    local border = border_hl and self.config.language_border or ' '
+    local width = self.data.body - delim.start_col
+
+    local prefix = self:line()
+    -- code blocks can pick up varying amounts of leading white space
+    -- this is lumped into the delimiter node and needs to be handled
+    prefix:rep(border, str.spaces('start', delim.text), border_hl)
+    if self.config.position == 'left' then
+        prefix:rep(border, self.data.language, border_hl)
+        body:rep(border, width - prefix:width() - body:width(), border_hl)
+    else
+        body:rep(border, self.data.language, border_hl)
+        prefix:rep(border, width - prefix:width() - body:width(), border_hl)
     end
 
-    if self.config.position == 'left' then
-        text = str.pad(self.data.language) .. text
-        -- code blocks can pick up varying amounts of leading white space
-        -- this is lumped into the delimiter node and needs to be handled
-        local spaces = str.spaces('start', delim.text)
-        local width = self.context:width(delim)
-        if self.context.conceal:enabled() then
-            width = self.context.conceal:width('')
-        end
-        text = str.pad(spaces - width) .. text
-        return self.marks:start('code_language', language, {
-            virt_text = { { text, highlight } },
-            virt_text_pos = 'inline',
-        })
-    else
-        local start = self.data.body - self.data.language
-        if self.config.width == 'block' then
-            start = start - str.width(text)
-        end
-        return self.marks:add('code_language', language.start_row, 0, {
-            virt_text = { { text, highlight } },
-            virt_text_win_col = start + self:indent():size(),
-        })
+    local line = prefix:extend(body)
+    if self.config.width == 'full' then
+        line:rep(border, vim.o.columns, border_hl)
     end
+    return self.marks:start('code_language', delim, {
+        virt_text = line:get(),
+        virt_text_pos = 'overlay',
+    })
 end
 
 ---@private
 ---@param node? render.md.Node
----@param icon string
----@param empty boolean
-function Render:border(node, icon, empty)
+---@param thin string
+function Render:border(node, thin)
     local kind = self.config.border
     local highlight = self.config.highlight_border
-    if not node or kind == 'none' or highlight == false then
-        return
-    end
-    local row = node.start_row
-    if kind == 'thick' or not empty then
-        self:background(row, row, highlight)
+    if kind == 'none' or not node or not highlight then
+        -- do nothing
     elseif kind == 'hide' then
         self.marks:over(true, node, { conceal_lines = '' })
     else
-        local col = self.node.start_col
+        local icon = kind == 'thin' and thin or '█'
         local block = self.config.width == 'block'
-        local width = block and self.data.body - col or vim.o.columns
-        self.marks:add('code_border', row, col, {
+        local width = block and self.data.body - node.start_col or vim.o.columns
+        self.marks:start('code_border', node, {
             virt_text = { { icon:rep(width), colors.bg_as_fg(highlight) } },
             virt_text_pos = 'overlay',
         })
@@ -200,8 +198,7 @@ end
 ---@private
 ---@param start_row integer
 ---@param end_row integer
----@param highlight string
-function Render:background(start_row, end_row, highlight)
+function Render:background(start_row, end_row)
     local padding = self:line()
     local win_col = 0
     if self.config.width == 'block' then
@@ -211,7 +208,7 @@ function Render:background(start_row, end_row, highlight)
     for row = start_row, end_row do
         self.marks:add('code_background', row, self.node.start_col, {
             end_row = row + 1,
-            hl_group = highlight,
+            hl_group = self.config.highlight,
             hl_eol = true,
         })
         if not padding:empty() and win_col > 0 then

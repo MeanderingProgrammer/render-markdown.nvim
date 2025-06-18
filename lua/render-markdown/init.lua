@@ -130,9 +130,6 @@ function M.resolve_config(user)
     end
     -- override settings incompatible with neovim version with compatible alternatives
     local compat = require('render-markdown.lib.compat')
-    if config.code.position == 'left' and not compat.has_10 then
-        config.code.position = 'right'
-    end
     if config.code.border == 'hide' and not compat.has_11 then
         config.code.border = 'thin'
     end

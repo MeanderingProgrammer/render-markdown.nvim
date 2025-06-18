@@ -25,6 +25,7 @@ M.colors = {
     H6Bg            = 'CursorColumn',
     -- Code
     Code            = 'ColorColumn',
+    CodeInfo        = '@label',
     CodeBorder      = 'RenderMarkdownCode',
     CodeFallback    = 'Normal',
     CodeInline      = 'RenderMarkdownCode',

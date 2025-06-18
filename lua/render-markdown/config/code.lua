@@ -5,6 +5,7 @@
 ---@field language_pad number
 ---@field language_icon boolean
 ---@field language_name boolean
+---@field language_info boolean
 ---@field disable_background boolean|string[]
 ---@field width render.md.code.Width
 ---@field left_margin number
@@ -12,12 +13,14 @@
 ---@field right_pad number
 ---@field min_width integer
 ---@field border render.md.code.Border
+---@field language_border string
 ---@field above string
 ---@field below string
 ---@field inline_left string
 ---@field inline_right string
 ---@field inline_pad integer
 ---@field highlight string
+---@field highlight_info string
 ---@field highlight_language? string
 ---@field highlight_border false|string
 ---@field highlight_fallback string
@@ -79,6 +82,8 @@ M.default = {
     language_icon = true,
     -- Whether to include the language name above code blocks.
     language_name = true,
+    -- Whether to include the language info above code blocks.
+    language_info = true,
     -- A list of language names for which background highlighting will be disabled.
     -- Likely because that language has background highlights itself.
     -- Use a boolean to make behavior apply to all languages.
@@ -106,6 +111,8 @@ M.default = {
     -- | thin  | when lines are empty overlay the above & below icons |
     -- | hide  | conceal lines unless language name or icon is added  |
     border = 'hide',
+    -- Used above code blocks to fill remaining space around language.
+    language_border = '█',
     -- Used above code blocks for thin border.
     above = '▄',
     -- Used below code blocks for thin border.
@@ -118,6 +125,8 @@ M.default = {
     inline_pad = 0,
     -- Highlight for code blocks.
     highlight = 'RenderMarkdownCode',
+    -- Highlight for code info section, after the language.
+    highlight_info = 'RenderMarkdownCodeInfo',
     -- Highlight for language, overrides icon provider value.
     highlight_language = nil,
     -- Highlight for border, use false to add no highlight.
@@ -137,6 +146,7 @@ function M.validate(spec)
     spec:type('language_pad', 'number')
     spec:type('language_icon', 'boolean')
     spec:type('language_name', 'boolean')
+    spec:type('language_info', 'boolean')
     spec:list('disable_background', 'string', 'boolean')
     spec:one_of('width', vim.tbl_values(Width))
     spec:type('left_margin', 'number')
@@ -144,12 +154,14 @@ function M.validate(spec)
     spec:type('right_pad', 'number')
     spec:type('min_width', 'number')
     spec:one_of('border', vim.tbl_values(Border))
+    spec:type('language_border', 'string')
     spec:type('above', 'string')
     spec:type('below', 'string')
     spec:type('inline_left', 'string')
     spec:type('inline_right', 'string')
     spec:type('inline_pad', 'number')
     spec:type('highlight', 'string')
+    spec:type('highlight_info', 'string')
     spec:type('highlight_language', { 'string', 'nil' })
     spec:one_of('highlight_border', { false }, 'string')
     spec:type('highlight_fallback', 'string')

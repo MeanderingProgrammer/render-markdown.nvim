@@ -31,10 +31,14 @@ describe('heading_code.md', function()
         marks:add(row:get(1), 0, util.link('image'))
 
         marks:add(row:get(2), 0, util.code.sign('python'))
+        marks:add(
+            row:get(0),
+            0,
+            util.code.border('█', true, 'python', ' {filename="demo.py"}', 1)
+        )
         marks:add(row:get(0, 0), { 0, 3 }, util.conceal())
-        marks:add(row:get(0), 3, util.code.icon('python'))
-        marks:add(row:get(0, 0), { 3, 9 }, util.conceal())
-        marks:add(row:get(0, 1), { 0, 0 }, util.code.border('above'))
+        marks:add(row:get(0, 0), { 3, 30 }, util.conceal())
+        row:get(1)
         for _ = 14, 22 do
             marks:add(row:get(0, 1), { 0, 0 }, util.code.bg())
         end
@@ -54,7 +58,7 @@ describe('heading_code.md', function()
             '',
             '  󰥶 Image',
             '',
-            '󰌠 󰌠 python {filename="demo.py"}',
+            '󰌠 󰌠 python {filename="demo.py"}█████████████████████████████████████████████████',
             '  def main() -> None:',
             '      sum = 0',
             '      for i in range(10):',

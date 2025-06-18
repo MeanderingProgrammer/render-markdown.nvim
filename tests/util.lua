@@ -225,42 +225,71 @@ end
 ---@class render.md.test.Code
 M.code = {}
 
----@param name 'python'|'py'|'rust'|'rs'|'lua'
+---@param name render.md.test.Language
 ---@return vim.api.keyset.set_extmark
 function M.code.sign(name)
-    local icon, highlight
-    if name == 'python' or name == 'py' then
-        icon, highlight = '󰌠 ', 'MiniIconsYellow'
-    elseif name == 'rust' or name == 'rs' then
-        icon, highlight = '󱘗 ', 'MiniIconsOrange'
-    elseif name == 'lua' then
-        icon, highlight = '󰢱 ', 'MiniIconsAzure'
-    end
+    local icon = assert(M.code.icon(name))
     ---@type vim.api.keyset.set_extmark
     return {
-        sign_text = icon,
-        sign_hl_group = ('Rm_%s_RmSign'):format(highlight),
+        sign_text = icon[1],
+        sign_hl_group = ('Rm_%s_RmSign'):format(icon[2]),
     }
 end
 
----@param name 'python'|'py'|'rust'|'rs'|'lua'
----@param padding? integer
+---@param border string
+---@param full boolean
+---@param ... render.md.test.Language|string|integer
 ---@return vim.api.keyset.set_extmark
-function M.code.icon(name, padding)
-    local icon, highlight
-    if name == 'python' or name == 'py' then
-        icon, highlight = '󰌠 ', 'MiniIconsYellow'
-    elseif name == 'rust' or name == 'rs' then
-        icon, highlight = '󱘗 ', 'MiniIconsOrange'
-    elseif name == 'lua' then
-        icon, highlight = '󰢱 ', 'MiniIconsAzure'
+function M.code.border(border, full, ...)
+    local parts = { ... }
+    parts[#parts + 1] = full and vim.o.columns or nil
+
+    local line = {}
+    for _, part in ipairs(parts) do
+        if type(part) == 'string' then
+            local icon = M.code.icon(part)
+            if icon then
+                local icon_hl = ('%s:RmCodeBorder'):format(icon[2])
+                line[#line + 1] = { icon[1], icon_hl }
+                line[#line + 1] = { part, icon_hl }
+            else
+                line[#line + 1] = { part, 'RmCodeInfo:RmCodeBorder' }
+            end
+        elseif type(part) == 'number' then
+            line[#line + 1] = { border:rep(part), 'Rm_RmCodeBorder_bg_as_fg' }
+        else
+            error(('invalid border part type: %s'):format(type(part)))
+        end
     end
-    local text = ('%s%s%s'):format((' '):rep(padding or 0), icon, name)
     ---@type vim.api.keyset.set_extmark
     return {
-        virt_text = { { text, ('%s:RmCodeBorder'):format(highlight) } },
-        virt_text_pos = 'inline',
+        virt_text = line,
+        virt_text_pos = 'overlay',
     }
+end
+
+---@alias render.md.test.Language 'python'|'py'|'rust'|'rs'|'lua'
+
+---@class render.md.test.Icon
+---@field [1] string
+---@field [2] string
+
+---@private
+---@param name render.md.test.Language
+---@return render.md.test.Icon?
+function M.code.icon(name)
+    if name == 'python' or name == 'py' then
+        ---@type render.md.test.Icon
+        return { '󰌠 ', 'MiniIconsYellow' }
+    elseif name == 'rust' or name == 'rs' then
+        ---@type render.md.test.Icon
+        return { '󱘗 ', 'MiniIconsOrange' }
+    elseif name == 'lua' then
+        ---@type render.md.test.Icon
+        return { '󰢱 ', 'MiniIconsAzure' }
+    else
+        return nil
+    end
 end
 
 ---@return vim.api.keyset.set_extmark
@@ -282,26 +311,6 @@ function M.code.hide(width)
         virt_text_pos = 'win_col',
         virt_text_win_col = width,
     }
-end
-
----@param kind 'above'|'below'
----@param width? integer
----@return vim.api.keyset.set_extmark
-function M.code.border(kind, width)
-    if not width then
-        ---@type vim.api.keyset.set_extmark
-        return {
-            hl_eol = true,
-            hl_group = 'RmCodeBorder',
-        }
-    else
-        local icon = kind == 'above' and '▄' or '▀'
-        ---@type vim.api.keyset.set_extmark
-        return {
-            virt_text = { { icon:rep(width), 'Rm_RmCodeBorder_bg_as_fg' } },
-            virt_text_pos = 'overlay',
-        }
-    end
 end
 
 ---@param spaces integer

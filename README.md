@@ -436,6 +436,8 @@ require('render-markdown').setup({
         language_icon = true,
         -- Whether to include the language name above code blocks.
         language_name = true,
+        -- Whether to include the language info above code blocks.
+        language_info = true,
         -- A list of language names for which background highlighting will be disabled.
         -- Likely because that language has background highlights itself.
         -- Use a boolean to make behavior apply to all languages.
@@ -463,6 +465,8 @@ require('render-markdown').setup({
         -- | thin  | when lines are empty overlay the above & below icons |
         -- | hide  | conceal lines unless language name or icon is added  |
         border = 'hide',
+        -- Used above code blocks to fill remaining space around language.
+        language_border = '█',
         -- Used above code blocks for thin border.
         above = '▄',
         -- Used below code blocks for thin border.
@@ -475,6 +479,8 @@ require('render-markdown').setup({
         inline_pad = 0,
         -- Highlight for code blocks.
         highlight = 'RenderMarkdownCode',
+        -- Highlight for code info section, after the language.
+        highlight_info = 'RenderMarkdownCodeInfo',
         -- Highlight for language, overrides icon provider value.
         highlight_language = nil,
         -- Highlight for border, use false to add no highlight.
@@ -1047,6 +1053,8 @@ require('render-markdown').setup({
         language_icon = true,
         -- Whether to include the language name above code blocks.
         language_name = true,
+        -- Whether to include the language info above code blocks.
+        language_info = true,
         -- A list of language names for which background highlighting will be disabled.
         -- Likely because that language has background highlights itself.
         -- Use a boolean to make behavior apply to all languages.
@@ -1074,6 +1082,8 @@ require('render-markdown').setup({
         -- | thin  | when lines are empty overlay the above & below icons |
         -- | hide  | conceal lines unless language name or icon is added  |
         border = 'hide',
+        -- Used above code blocks to fill remaining space around language.
+        language_border = '█',
         -- Used above code blocks for thin border.
         above = '▄',
         -- Used below code blocks for thin border.
@@ -1086,6 +1096,8 @@ require('render-markdown').setup({
         inline_pad = 0,
         -- Highlight for code blocks.
         highlight = 'RenderMarkdownCode',
+        -- Highlight for code info section, after the language.
+        highlight_info = 'RenderMarkdownCodeInfo',
         -- Highlight for language, overrides icon provider value.
         highlight_language = nil,
         -- Highlight for border, use false to add no highlight.
@@ -1547,6 +1559,7 @@ The table below shows all the highlight groups with their default link
 | RenderMarkdownH5Bg            | Visual                             | H5 background line         |
 | RenderMarkdownH6Bg            | CursorColumn                       | H6 background line         |
 | RenderMarkdownCode            | ColorColumn                        | Code block background      |
+| RenderMarkdownCodeInfo        | @label                             | Code info, after language  |
 | RenderMarkdownCodeBorder      | RenderMarkdownCode                 | Code border background     |
 | RenderMarkdownCodeFallback    | Normal                             | Fallback for code language |
 | RenderMarkdownCodeInline      | RenderMarkdownCode                 | Inline code background     |

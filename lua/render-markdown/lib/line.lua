@@ -1,3 +1,5 @@
+local str = require('render-markdown.lib.str')
+
 ---@class render.md.Line
 ---@field private highlight string
 ---@field private line render.md.mark.Line
@@ -23,6 +25,11 @@ function Line:empty()
     return #self.line == 0
 end
 
+---@return integer
+function Line:width()
+    return str.line_width(self.line)
+end
+
 ---@param other render.md.Line
 ---@return render.md.Line
 function Line:extend(other)
@@ -44,8 +51,16 @@ end
 ---@param highlight? render.md.mark.Hl
 ---@return render.md.Line
 function Line:pad(n, highlight)
+    return self:rep(' ', n, highlight)
+end
+
+---@param s string
+---@param n integer
+---@param highlight? render.md.mark.Hl
+---@return render.md.Line
+function Line:rep(s, n, highlight)
     if n > 0 then
-        self:add((' '):rep(n), highlight)
+        self:add(s:rep(n), highlight)
     end
     return self
 end

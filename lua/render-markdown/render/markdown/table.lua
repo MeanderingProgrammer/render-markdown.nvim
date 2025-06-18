@@ -262,7 +262,7 @@ function Render:delimiter()
     local line = self:line()
     line:pad(str.spaces('start', delim.node.text))
     line:text(delimiter, self.config.head)
-    line:pad(str.width(delim.node.text) - str.line_width(line:get()))
+    line:pad(str.width(delim.node.text) - line:width())
     self.marks:over('table_border', delim.node, {
         virt_text = line:get(),
         virt_text_pos = 'overlay',

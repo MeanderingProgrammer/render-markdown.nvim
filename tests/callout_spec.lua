@@ -36,11 +36,10 @@ describe('callout.md', function()
         marks:add(row:get(1, 0), { 0, 1 }, util.quote(ok))
         marks:add(row:get(1, 0), { 0, 1 }, util.quote(ok))
         marks:add(row:get(0), 2, util.code.sign('lua'))
+        marks:add(row:get(0), 2, util.code.border('█', true, 'lua', 16))
         marks:add(row:get(0, 0), { 2, 5 }, util.conceal())
-        marks:add(row:get(0), 5, util.code.icon('lua'))
         marks:add(row:get(0, 0), { 5, 8 }, util.conceal())
-        marks:add(row:get(0, 1), { 2, 0 }, util.code.border('above'))
-        marks:add(row:get(0, 0), { 0, 1 }, util.quote(ok))
+        marks:add(row:get(1, 0), { 0, 1 }, util.quote(ok))
         marks:add(row:get(0, 1), { 2, 0 }, util.code.bg())
         marks:add(row:get(0, 0), { 0, 1 }, util.quote(ok))
         marks:add(row:get(0, 0), { 2, 5 }, util.conceal())
@@ -107,7 +106,7 @@ describe('callout.md', function()
             '',
             '  ▋ 󰌶 Tip',
             '  ▋',
-            '󰢱 ▋ 󰢱 lua',
+            '󰢱 ▋ 󰢱 lua███████████████████████████████████████████████████████████████████████',
             "  ▋ print('Standard tip')",
             '',
             '󰫎 󰲡 Important',

@@ -42,7 +42,7 @@ end
 ---@protected
 function Render:run()
     local line = self:line():pad(self.data.margin)
-    line:text(self.config.icon:rep(self.data.width), self.config.highlight)
+    line:rep(self.config.icon, self.data.width, self.config.highlight)
     local start_row, end_row = self.node.start_row, self.node.end_row - 1
     self:dash(line, start_row)
     if end_row > start_row then

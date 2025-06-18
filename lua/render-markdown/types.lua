@@ -88,6 +88,7 @@
 ---@field language_pad? number
 ---@field language_icon? boolean
 ---@field language_name? boolean
+---@field language_info? boolean
 ---@field disable_background? boolean|string[]
 ---@field width? render.md.code.Width
 ---@field left_margin? number
@@ -95,12 +96,14 @@
 ---@field right_pad? number
 ---@field min_width? integer
 ---@field border? render.md.code.Border
+---@field language_border? string
 ---@field above? string
 ---@field below? string
 ---@field inline_left? string
 ---@field inline_right? string
 ---@field inline_pad? integer
 ---@field highlight? string
+---@field highlight_info? string
 ---@field highlight_language? string
 ---@field highlight_border? false|string
 ---@field highlight_fallback? string
