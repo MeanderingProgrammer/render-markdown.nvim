@@ -20,6 +20,7 @@
 ---@field highlight string
 ---@field highlight_language? string
 ---@field highlight_border false|string
+---@field highlight_thin_border string
 ---@field highlight_fallback string
 ---@field highlight_inline string
 
@@ -122,6 +123,8 @@ M.default = {
     highlight_language = nil,
     -- Highlight for border, use false to add no highlight.
     highlight_border = 'RenderMarkdownCodeBorder',
+    -- Highlight for thin border, defaults to highlight_border.
+    highlight_thin_border = 'RenderMarkdownCodeBorder',
     -- Highlight for language, used if icon provider does not have a value.
     highlight_fallback = 'RenderMarkdownCodeFallback',
     -- Highlight for inline code.

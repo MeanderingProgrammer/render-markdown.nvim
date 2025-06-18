@@ -231,4 +231,238 @@ describe('code', function()
             '  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
         })
     end)
+
+    describe('thin border', function()
+        lines = {
+            '```rust',
+            '```',
+            '',
+            '```rust {filename="test.rs"}',
+            '```',
+            '',
+            '```rust',
+            'println!("long line beyond header width");',
+            '```',
+            '',
+            '```rust {filename="test.rs"}',
+            'println!("long line beyond header width");',
+            '```',
+        }
+
+        local code = {
+            sign = false,
+            -- min_width = 34,
+            border = 'thin',
+            above = '─',
+            below = '─',
+            thin_border_pad = 1,
+            thin_border_pad_char = ' ',
+        }
+
+        it('block left pad 0', function()
+            require('mini.icons').setup({})
+            local has, icons_or_err = pcall(require, 'mini.icons')
+            assert(has, 'mini.icons not found: ' .. tostring(icons_or_err))
+
+            code.width = 'block'
+            code.position = 'left'
+            code.language_pad = 0
+
+            util.setup.text(lines, { code = code })
+
+            util.assert_screen({
+                '󱘗 rust',
+                '──────',
+                '',
+                '󱘗 rust {filename="test.rs"}',
+                '───────────────────────────',
+                '',
+                '󱘗 rust ───────────────────────────────────',
+                'println!("long line beyond header width");',
+                '──────────────────────────────────────────',
+                '',
+                '󱘗 rust {filename="test.rs"} ──────────────',
+                'println!("long line beyond header width");',
+                '──────────────────────────────────────────',
+            })
+        end)
+
+        it('block left pad 0 no conceal', function()
+            code.width = 'block'
+            code.position = 'left'
+            code.language_pad = 0
+
+            util.setup.text(lines, {
+                code = code,
+                win_options = { conceallevel = { rendered = 0 } },
+            })
+
+            util.assert_screen({
+                '```󱘗 rustrust',
+                '```──────────',
+                '',
+                '```󱘗 rustrust {filename="test.rs"}',
+                '```───────────────────────────────',
+                '',
+                '```󱘗 rustrust ────────────────────────────',
+                'println!("long line beyond header width");',
+                '```───────────────────────────────────────',
+                '',
+                '```󱘗 rustrust {filename="test.rs"} ───────',
+                'println!("long line beyond header width");',
+                '```───────────────────────────────────────',
+            })
+        end)
+
+        it('block left pad 2', function()
+            code.width = 'block'
+            code.position = 'left'
+            code.language_pad = 2
+
+            util.setup.text(lines, { code = code })
+
+            util.assert_screen({
+                '─ 󱘗 rust',
+                '────────',
+                '',
+                '─ 󱘗 rust {filename="test.rs"}',
+                '─────────────────────────────',
+                '',
+                '─ 󱘗 rust ─────────────────────────────────',
+                'println!("long line beyond header width");',
+                '──────────────────────────────────────────',
+                '',
+                '─ 󱘗 rust {filename="test.rs"} ────────────',
+                'println!("long line beyond header width");',
+                '──────────────────────────────────────────',
+            })
+        end)
+
+        it('block left pad 2 no conceal', function()
+            code.width = 'block'
+            code.position = 'left'
+            code.language_pad = 2
+
+            util.setup.text(lines, {
+                code = code,
+                win_options = { conceallevel = { rendered = 0 } },
+            })
+
+            util.assert_screen({
+                '```─ 󱘗 rustrust',
+                '```────────────',
+                '',
+                '```─ 󱘗 rustrust {filename="test.rs"}',
+                '```─────────────────────────────────',
+                '',
+                '```─ 󱘗 rustrust ──────────────────────────',
+                'println!("long line beyond header width");',
+                '```───────────────────────────────────────',
+                '',
+                '```─ 󱘗 rustrust {filename="test.rs"} ─────',
+                'println!("long line beyond header width");',
+                '```───────────────────────────────────────',
+            })
+        end)
+
+        it('block right pad 0', function()
+            code.width = 'block'
+            code.position = 'right'
+            code.language_pad = 0
+            util.setup.text(lines, { code = code })
+
+            util.assert_screen({
+                '󱘗 rust',
+                '──────',
+                '',
+                ' {filename="test.rs"} 󱘗 rust',
+                '────────────────────────────',
+                '',
+                '─────────────────────────────────── 󱘗 rust',
+                'println!("long line beyond header width");',
+                '──────────────────────────────────────────',
+                '',
+                ' {filename="test.rs"} ───────────── 󱘗 rust',
+                'println!("long line beyond header width");',
+                '──────────────────────────────────────────',
+            })
+        end)
+
+        it('block right pad 0 no conceal', function()
+            code.width = 'block'
+            code.position = 'right'
+            code.language_pad = 0
+
+            util.setup.text(lines, {
+                code = code,
+                win_options = { conceallevel = { rendered = 0 } },
+            })
+
+            util.assert_screen({
+                '```rust󱘗 rust',
+                '```──────────',
+                '',
+                '```rust {filename="test.rs"} 󱘗 rust',
+                '```────────────────────────────────',
+                '',
+                '```rust──────────────────────────── 󱘗 rust',
+                'println!("long line beyond header width");',
+                '```───────────────────────────────────────',
+                '',
+                '```rust {filename="test.rs"} ────── 󱘗 rust',
+                'println!("long line beyond header width");',
+                '```───────────────────────────────────────',
+            })
+        end)
+
+        it('block right pad 2', function()
+            code.width = 'block'
+            code.position = 'right'
+            code.language_pad = 2
+            util.setup.text(lines, { code = code })
+
+            util.assert_screen({
+                '󱘗 rust ─',
+                '────────',
+                '',
+                ' {filename="test.rs"} 󱘗 rust ─',
+                '──────────────────────────────',
+                '',
+                '───────────────────────────────── 󱘗 rust ─',
+                'println!("long line beyond header width");',
+                '──────────────────────────────────────────',
+                '',
+                ' {filename="test.rs"} ─────────── 󱘗 rust ─',
+                'println!("long line beyond header width");',
+                '──────────────────────────────────────────',
+            })
+        end)
+
+        it('block right pad 2 no conceal', function()
+            code.width = 'block'
+            code.position = 'right'
+            code.language_pad = 2
+
+            util.setup.text(lines, {
+                code = code,
+                win_options = { conceallevel = { rendered = 0 } },
+            })
+
+            util.assert_screen({
+                '```rust󱘗 rust ─',
+                '```────────────',
+                '',
+                '```rust {filename="test.rs"} 󱘗 rust ─',
+                '```──────────────────────────────────',
+                '',
+                '```rust────────────────────────── 󱘗 rust ─',
+                'println!("long line beyond header width");',
+                '```───────────────────────────────────────',
+                '',
+                '```rust {filename="test.rs"} ──── 󱘗 rust ─',
+                'println!("long line beyond header width");',
+                '```───────────────────────────────────────',
+            })
+        end)
+    end)
 end)
