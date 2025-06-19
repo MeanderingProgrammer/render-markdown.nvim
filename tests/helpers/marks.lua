@@ -15,17 +15,15 @@ function Marks:get()
     return self.marks
 end
 
----@param start_row integer
----@param end_row? integer
----@param start_col integer
----@param end_col? integer
+---@param row render.md.test.Range
+---@param col render.md.test.Range
 ---@param opts vim.api.keyset.set_extmark
-function Marks:add(start_row, end_row, start_col, end_col, opts)
+function Marks:add(row, col, opts)
     ---@type render.md.test.MarkInfo
     ---@diagnostic disable-next-line: assign-type-mismatch
     local mark = opts
-    mark.row = { start_row, end_row }
-    mark.col = { start_col, end_col }
+    mark.row = row
+    mark.col = col
     self.marks[#self.marks + 1] = mark
 end
 

@@ -32,7 +32,7 @@ describe('custom handler', function()
         util.setup.text(lines)
         -- inline code + no backslash escapes
         local marks = util.marks()
-        marks:add(0, 0, 0, 8, util.highlight('code'))
+        marks:add({ 0, 0 }, { 0, 8 }, util.highlight('code'))
         util.assert_view(marks, {
             'Inline code',
             '\\$1.50 \\$3.55',
@@ -47,8 +47,8 @@ describe('custom handler', function()
         })
         -- no inline code + backslash escapes
         local marks = util.marks()
-        marks:add(1, 1, 0, 1, util.conceal())
-        marks:add(1, 1, 7, 8, util.conceal())
+        marks:add({ 1, 1 }, { 0, 1 }, util.conceal())
+        marks:add({ 1, 1 }, { 7, 8 }, util.conceal())
         util.assert_view(marks, {
             'Inline code',
             '$1.50 $3.55',
@@ -63,9 +63,9 @@ describe('custom handler', function()
         })
         -- inline code + backslash escapes
         local marks = util.marks()
-        marks:add(0, 0, 0, 8, util.highlight('code'))
-        marks:add(1, 1, 0, 1, util.conceal())
-        marks:add(1, 1, 7, 8, util.conceal())
+        marks:add({ 0, 0 }, { 0, 8 }, util.highlight('code'))
+        marks:add({ 1, 1 }, { 0, 1 }, util.conceal())
+        marks:add({ 1, 1 }, { 7, 8 }, util.conceal())
         util.assert_view(marks, {
             'Inline code',
             '$1.50 $3.55',

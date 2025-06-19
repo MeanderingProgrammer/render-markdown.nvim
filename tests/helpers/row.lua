@@ -10,15 +10,19 @@ function Row.new()
     return self
 end
 
----@return integer
-function Row:get()
-    return self.value
+---@param soff integer
+---@param eoff? integer
+---@return render.md.test.Range
+function Row:get(soff, eoff)
+    ---@type render.md.test.Range
+    return { self:inc(soff), eoff and self:inc(eoff) or nil }
 end
 
----@param n? integer
+---@private
+---@param n integer
 ---@return integer
 function Row:inc(n)
-    self.value = self.value + (n or 1)
+    self.value = self.value + n
     return self.value
 end
 

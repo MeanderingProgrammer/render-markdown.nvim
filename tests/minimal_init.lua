@@ -10,6 +10,7 @@ end
 -- settings
 vim.opt.lines = 40
 vim.opt.columns = 80
+vim.opt.tabstop = 4
 
 -- source dependencies first
 vim.opt.rtp:prepend(get_path('nvim-treesitter'))

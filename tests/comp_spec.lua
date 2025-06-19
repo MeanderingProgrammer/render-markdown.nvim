@@ -2,12 +2,13 @@
 
 local util = require('tests.util')
 
----@param row integer
+---@param row render.md.test.Row
+---@param n integer
 ---@param col integer
 ---@param expected lsp.CompletionItem[]
-local function assert_items(row, col, expected)
+local function assert_items(row, n, col, expected)
     local source = require('render-markdown.integ.source')
-    local actual = source.items(0, row, col) or {}
+    local actual = source.items(0, row:get(n)[1], col) or {}
     table.sort(actual, function(a, b)
         return a.label < b.label
     end)
@@ -85,15 +86,15 @@ describe('comp.md', function()
         end
 
         local row = util.row()
-        assert_items(row:inc(2), 1, items(' '))
-        assert_items(row:inc(2), 2, items(''))
-        assert_items(row:inc(2), 3, items(''))
-        assert_items(row:inc(2), 4, items(''))
-        assert_items(row:inc(2), 5, {})
-        assert_items(row:inc(2), 6, {})
-        assert_items(row:inc(2), 10, {})
-        assert_items(row:inc(2), 6, {})
-        assert_items(row:inc(), 0, {})
+        assert_items(row, 2, 1, items(' '))
+        assert_items(row, 2, 2, items(''))
+        assert_items(row, 2, 3, items(''))
+        assert_items(row, 2, 4, items(''))
+        assert_items(row, 2, 5, {})
+        assert_items(row, 2, 6, {})
+        assert_items(row, 2, 10, {})
+        assert_items(row, 2, 6, {})
+        assert_items(row, 1, 0, {})
     end)
 
     it('callout', function()
@@ -134,13 +135,13 @@ describe('comp.md', function()
         end
 
         local row = util.row()
-        assert_items(row:inc(20), 1, items(' '))
-        assert_items(row:inc(2), 2, items(''))
-        assert_items(row:inc(2), 3, items(''))
-        assert_items(row:inc(2), 4, items(''))
-        assert_items(row:inc(2), 7, items(''))
-        assert_items(row:inc(2), 8, {})
-        assert_items(row:inc(2), 15, {})
-        assert_items(row:inc(2), 6, {})
+        assert_items(row, 20, 1, items(' '))
+        assert_items(row, 2, 2, items(''))
+        assert_items(row, 2, 3, items(''))
+        assert_items(row, 2, 4, items(''))
+        assert_items(row, 2, 7, items(''))
+        assert_items(row, 2, 8, {})
+        assert_items(row, 2, 15, {})
+        assert_items(row, 2, 6, {})
     end)
 end)
