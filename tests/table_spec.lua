@@ -21,9 +21,9 @@ describe('table', function()
         local marks, row = util.marks(), util.row()
 
         local sections1 = {
-            util.table.border(false, true, { 11, 24 }),
-            util.table.delimiter({ { 11 }, { 23, 1 } }),
-            util.table.border(false, false, { 11, 24 }),
+            util.table.border(false, true, 11, 24),
+            util.table.delimiter(0, { 11 }, { 23, 1 }),
+            util.table.border(false, false, 11, 24),
         }
         marks:add(row:get(0), { 0 }, sections1[1])
         marks:add(row:get(1, 0), { 0, 1 }, util.table.pipe(true))
@@ -52,9 +52,9 @@ describe('table', function()
         marks:add(row:get(1), { 0 }, sections1[3])
 
         local sections2 = {
-            util.table.border(true, true, { 11, 11 }),
-            util.table.delimiter({ { 11 }, { 11 } }),
-            util.table.border(true, false, { 11, 11 }),
+            util.table.border(true, true, 11, 11),
+            util.table.delimiter(0, { 11 }, { 11 }),
+            util.table.border(true, false, 11, 11),
         }
         marks:add(row:get(1), { 0 }, sections2[1])
         marks:add(row:get(0, 0), { 0, 1 }, util.table.pipe(true))
@@ -89,9 +89,9 @@ describe('table', function()
         local marks, row = util.marks(), util.row()
 
         local sections1 = {
-            util.table.border(false, true, { 11, 11 }),
-            util.table.delimiter({ { 11 }, { 10, 1 } }, 13),
-            util.table.border(false, false, { 11, 11 }),
+            util.table.border(false, true, 11, 11),
+            util.table.delimiter(13, { 11 }, { 10, 1 }),
+            util.table.border(false, false, 11, 11),
         }
         marks:add(row:get(0), { 0 }, sections1[1])
         marks:add(row:get(1, 0), { 0, 1 }, util.table.pipe(true))
@@ -119,9 +119,9 @@ describe('table', function()
         marks:add(row:get(1), { 0 }, sections1[3])
 
         local sections2 = {
-            util.table.border(true, true, { 11, 11 }),
-            util.table.delimiter({ { 11 }, { 11 } }),
-            util.table.border(true, false, { 11, 11 }),
+            util.table.border(true, true, 11, 11),
+            util.table.delimiter(0, { 11 }, { 11 }),
+            util.table.border(true, false, 11, 11),
         }
         marks:add(row:get(1), { 0 }, sections2[1])
         marks:add(row:get(0, 0), { 0, 1 }, util.table.pipe(true))
@@ -156,7 +156,7 @@ describe('table', function()
         local marks, row = util.marks(), util.row()
 
         local sections1 = {
-            util.table.delimiter({ { 11 }, { 23, 1 } }),
+            util.table.delimiter(0, { 11 }, { 23, 1 }),
         }
         marks:add(row:get(1, 0), { 0, 1 }, util.table.pipe(true))
         marks:add(row:get(0, 0), { 12, 13 }, util.table.pipe(true))
@@ -176,9 +176,9 @@ describe('table', function()
         marks:add(row:get(0, 0), { 38, 39 }, util.table.pipe(false))
 
         local sections2 = {
-            util.table.border(false, true, { 11, 11 }),
-            util.table.delimiter({ { 11 }, { 11 } }),
-            util.table.border(true, false, { 11, 11 }),
+            util.table.border(false, true, 11, 11),
+            util.table.delimiter(0, { 11 }, { 11 }),
+            util.table.border(true, false, 11, 11),
         }
         marks:add(row:get(1), { 0 }, sections2[1])
         marks:add(row:get(1, 0), { 0, 1 }, util.table.pipe(true))
@@ -212,9 +212,9 @@ describe('table', function()
         local marks, row = util.marks(), util.row()
 
         local sections1 = {
-            util.table.border(false, true, { 11, 24 }),
-            util.table.delimiter({ { 11 }, { 23, 1 } }),
-            util.table.border(false, false, { 11, 24 }),
+            util.table.border(false, true, 11, 24),
+            util.table.delimiter(0, { 11 }, { 23, 1 }),
+            util.table.border(false, false, 11, 24),
         }
         marks:add(row:get(0), { 0 }, sections1[1])
         marks:add(row:get(1, 0), { 0, 38 }, {
@@ -254,9 +254,9 @@ describe('table', function()
         marks:add(row:get(1), { 0 }, sections1[3])
 
         local sections2 = {
-            util.table.border(true, true, { 11, 11 }),
-            util.table.delimiter({ { 11 }, { 11 } }),
-            util.table.border(true, false, { 11, 11 }),
+            util.table.border(true, true, 11, 11),
+            util.table.delimiter(0, { 11 }, { 11 }),
+            util.table.border(true, false, 11, 11),
         }
         marks:add(row:get(1), { 0 }, sections2[1])
         marks:add(row:get(0, 0), { 0, 25 }, {

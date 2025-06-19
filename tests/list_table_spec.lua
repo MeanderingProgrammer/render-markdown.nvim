@@ -42,9 +42,9 @@ describe('list_table.md', function()
         marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(1))
 
         local sections = {
-            util.table.border(false, true, { 8, 15, 7, 6 }),
-            util.table.delimiter({ { 1, 7 }, { 1, 13, 1 }, { 6, 1 }, { 6 } }),
-            util.table.border(false, false, { 8, 15, 7, 6 }),
+            util.table.border(false, true, 8, 15, 7, 6),
+            util.table.delimiter(0, { 1, 7 }, { 1, 13, 1 }, { 6, 1 }, { 6 }),
+            util.table.border(false, false, 8, 15, 7, 6),
         }
         marks:add(row:get(0), { 0 }, sections[1])
         marks:add(row:get(1, 0), { 0, 1 }, util.table.pipe(true))
@@ -169,9 +169,9 @@ describe('list_table.md', function()
         marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(1))
 
         local sections = {
-            util.table.border(false, true, { 10, 15, 7, 6 }),
-            util.table.delimiter({ { 1, 9 }, { 1, 13, 1 }, { 6, 1 }, { 6 } }),
-            util.table.border(false, false, { 10, 15, 7, 6 }),
+            util.table.border(false, true, 10, 15, 7, 6),
+            util.table.delimiter(0, { 1, 9 }, { 1, 13, 1 }, { 6, 1 }, { 6 }),
+            util.table.border(false, false, 10, 15, 7, 6),
         }
         marks:add(row:get(0), { 0 }, sections[1])
         marks:add(row:get(1, 0), { 0, 1 }, util.table.pipe(true))

@@ -326,14 +326,14 @@ end
 
 ---@param virtual boolean
 ---@param above boolean
----@param lengths integer[]
+---@param ... integer
 ---@return vim.api.keyset.set_extmark
-function M.table.border(virtual, above, lengths)
+function M.table.border(virtual, above, ...)
     local chars = above and { '┌', '┬', '┐' } or { '└', '┴', '┘' }
     local highlight = above and 'RmTableHead' or 'RmTableRow'
     local parts = vim.tbl_map(function(length)
         return ('─'):rep(length)
-    end, lengths)
+    end, { ... })
     local text = chars[1] .. table.concat(parts, chars[2]) .. chars[3]
     if virtual then
         ---@type vim.api.keyset.set_extmark
@@ -350,20 +350,20 @@ function M.table.border(virtual, above, lengths)
     end
 end
 
----@param sections integer[][]
----@param padding? integer
+---@param padding integer
+---@param ... integer[]
 ---@return vim.api.keyset.set_extmark
-function M.table.delimiter(sections, padding)
+function M.table.delimiter(padding, ...)
     local parts = vim.tbl_map(function(widths)
         local section = vim.tbl_map(function(amount)
             return amount == 1 and '━' or ('─'):rep(amount)
         end, widths)
         return table.concat(section, '')
-    end, sections)
+    end, { ... })
     local line = {
         { '├' .. table.concat(parts, '┼') .. '┤', 'RmTableHead' },
     }
-    if padding then
+    if padding > 0 then
         line[#line + 1] = { (' '):rep(padding), 'Normal' }
     end
     ---@type vim.api.keyset.set_extmark

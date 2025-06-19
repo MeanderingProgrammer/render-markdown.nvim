@@ -52,8 +52,8 @@ describe('indent', function()
         marks:add(row:get(0), { 0 }, border(2, 'below'))
 
         local sections = {
-            util.table.border(true, true, { 5, 5 }),
-            util.table.delimiter({ { 5 }, { 5 } }),
+            util.table.border(true, true, 5, 5),
+            util.table.delimiter(0, { 5 }, { 5 }),
         }
         marks:add(row:get(1), { 0 }, util.indent.virtual(sections[1], l2))
         marks:add(row:get(0), { 0 }, util.indent.inline(l2))
@@ -116,8 +116,8 @@ describe('indent', function()
         marks:add(row:get(0), { 0 }, util.indent.inline(l2))
 
         local sections = {
-            util.table.border(true, true, { 5, 5 }),
-            util.table.delimiter({ { 5 }, { 5 } }),
+            util.table.border(true, true, 5, 5),
+            util.table.delimiter(0, { 5 }, { 5 }),
         }
         marks:add(row:get(1), { 0 }, util.indent.virtual(sections[1], l2))
         marks:add(row:get(0), { 0 }, util.indent.inline(l2))
