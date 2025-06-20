@@ -67,12 +67,12 @@ describe('latex.md', function()
 
         local marks, row = util.marks(), util.row()
 
-        marks:add(row:get(0), { 0 }, util.heading.sign(1))
+        marks:add(row:get(0), 0, util.heading.sign(1))
         marks:add(row:get(0, 0), { 0, 1 }, util.heading.icon(1))
         marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(1))
 
-        marks:add(row:get(1), { 0 }, latex(inline.out, 17))
-        marks:add(row:get(2), { 0 }, latex(block.out, 28))
+        marks:add(row:get(1), 0, latex(inline.out, 17))
+        marks:add(row:get(2), 0, latex(block.out, 28))
 
         util.assert_view(marks, {
             '󰫎 󰲡 LaTeX',

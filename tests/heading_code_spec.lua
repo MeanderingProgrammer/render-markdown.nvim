@@ -8,31 +8,31 @@ describe('heading_code.md', function()
 
         local marks, row = util.marks(), util.row()
 
-        marks:add(row:get(0), { 0 }, util.heading.sign(1))
+        marks:add(row:get(0), 0, util.heading.sign(1))
         marks:add(row:get(0, 0), { 0, 1 }, util.heading.icon(1))
         marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(1))
 
-        marks:add(row:get(1), { 0 }, util.heading.sign(3))
+        marks:add(row:get(1), 0, util.heading.sign(3))
         marks:add(row:get(0, 0), { 0, 3 }, util.heading.icon(3))
         marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(3))
 
-        marks:add(row:get(1), { 0 }, util.heading.sign(4))
+        marks:add(row:get(1), 0, util.heading.sign(4))
         marks:add(row:get(0, 0), { 0, 4 }, util.heading.icon(4))
         marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(4))
 
-        marks:add(row:get(1), { 0 }, util.heading.sign(5))
+        marks:add(row:get(1), 0, util.heading.sign(5))
         marks:add(row:get(0, 0), { 0, 5 }, util.heading.icon(5))
         marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(5))
 
-        marks:add(row:get(1), { 0 }, util.heading.sign(6))
+        marks:add(row:get(1), 0, util.heading.sign(6))
         marks:add(row:get(0, 0), { 0, 6 }, util.heading.icon(6))
         marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(6))
 
-        marks:add(row:get(1), { 0 }, util.link('image'))
+        marks:add(row:get(1), 0, util.link('image'))
 
-        marks:add(row:get(2), { 0 }, util.code.sign('python'))
+        marks:add(row:get(2), 0, util.code.sign('python'))
         marks:add(row:get(0, 0), { 0, 3 }, util.conceal())
-        marks:add(row:get(0), { 3 }, util.code.icon('python'))
+        marks:add(row:get(0), 3, util.code.icon('python'))
         marks:add(row:get(0, 0), { 3, 9 }, util.conceal())
         marks:add(row:get(0, 1), { 0, 0 }, util.code.border('above'))
         for _ = 14, 22 do

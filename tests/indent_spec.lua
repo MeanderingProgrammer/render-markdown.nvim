@@ -42,43 +42,43 @@ describe('indent', function()
 
         local l2, l3 = { 2 }, { 4 }
 
-        marks:add(row:get(0), { 0 }, util.indent.inline(l2))
-        marks:add(row:get(0), { 0 }, border(2, 'above'))
-        marks:add(row:get(1), { 0 }, util.heading.sign(2))
-        marks:add(row:get(0), { 0 }, util.indent.inline(l2))
+        marks:add(row:get(0), 0, util.indent.inline(l2))
+        marks:add(row:get(0), 0, border(2, 'above'))
+        marks:add(row:get(1), 0, util.heading.sign(2))
+        marks:add(row:get(0), 0, util.indent.inline(l2))
         marks:add(row:get(0, 0), { 0, 2 }, util.heading.icon(2))
         marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(2))
-        marks:add(row:get(0), { 0 }, util.indent.inline(l2))
-        marks:add(row:get(0), { 0 }, border(2, 'below'))
+        marks:add(row:get(0), 0, util.indent.inline(l2))
+        marks:add(row:get(0), 0, border(2, 'below'))
 
         local sections = {
             util.table.border(true, true, 5, 5),
             util.table.delimiter(0, { 5 }, { 5 }),
         }
-        marks:add(row:get(1), { 0 }, util.indent.virtual(sections[1], l2))
-        marks:add(row:get(0), { 0 }, util.indent.inline(l2))
+        marks:add(row:get(1), 0, util.indent.virtual(sections[1], l2))
+        marks:add(row:get(0), 0, util.indent.inline(l2))
         marks:add(row:get(0, 0), { 0, 1 }, util.table.pipe(true))
         marks:add(row:get(0, 0), { 6, 7 }, util.table.pipe(true))
         marks:add(row:get(0, 0), { 12, 13 }, util.table.pipe(true))
-        marks:add(row:get(1), { 0 }, util.indent.inline(l2))
+        marks:add(row:get(1), 0, util.indent.inline(l2))
         marks:add(row:get(0, 0), { 0, 13 }, sections[2])
 
-        marks:add(row:get(1), { 0 }, border(1, 'above'))
-        marks:add(row:get(1), { 0 }, util.heading.sign(1))
+        marks:add(row:get(1), 0, border(1, 'above'))
+        marks:add(row:get(1), 0, util.heading.sign(1))
         marks:add(row:get(0, 0), { 0, 1 }, util.heading.icon(1))
         marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(1))
-        marks:add(row:get(0), { 0 }, border(1, 'below'))
+        marks:add(row:get(0), 0, border(1, 'below'))
 
-        marks:add(row:get(2), { 0 }, util.indent.inline(l3))
-        marks:add(row:get(0), { 0 }, border(3, 'above'))
-        marks:add(row:get(1), { 0 }, util.heading.sign(3))
-        marks:add(row:get(0), { 0 }, util.indent.inline(l3))
+        marks:add(row:get(2), 0, util.indent.inline(l3))
+        marks:add(row:get(0), 0, border(3, 'above'))
+        marks:add(row:get(1), 0, util.heading.sign(3))
+        marks:add(row:get(0), 0, util.indent.inline(l3))
         marks:add(row:get(0, 0), { 0, 3 }, util.heading.icon(3))
         marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(3))
-        marks:add(row:get(0), { 0 }, util.indent.inline(l3))
-        marks:add(row:get(0), { 0 }, border(3, 'below'))
+        marks:add(row:get(0), 0, util.indent.inline(l3))
+        marks:add(row:get(0), 0, border(3, 'below'))
 
-        marks:add(row:get(1), { 0 }, util.indent.inline(l3))
+        marks:add(row:get(1), 0, util.indent.inline(l3))
 
         util.assert_view(marks, {
             '    ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
@@ -107,51 +107,51 @@ describe('indent', function()
 
         local l1, l2 = { 1, 3 }, { 1, 3, 1, 3 }
 
-        marks:add(row:get(0), { 0 }, util.indent.inline(l2))
-        marks:add(row:get(1), { 0 }, util.heading.sign(2))
-        marks:add(row:get(0), { 0 }, util.indent.inline(l2))
+        marks:add(row:get(0), 0, util.indent.inline(l2))
+        marks:add(row:get(1), 0, util.heading.sign(2))
+        marks:add(row:get(0), 0, util.indent.inline(l2))
         marks:add(row:get(0, 0), { 0, 2 }, util.heading.icon(2))
         marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(2))
 
-        marks:add(row:get(0), { 0 }, util.indent.inline(l2))
+        marks:add(row:get(0), 0, util.indent.inline(l2))
 
         local sections = {
             util.table.border(true, true, 5, 5),
             util.table.delimiter(0, { 5 }, { 5 }),
         }
-        marks:add(row:get(1), { 0 }, util.indent.virtual(sections[1], l2))
-        marks:add(row:get(0), { 0 }, util.indent.inline(l2))
+        marks:add(row:get(1), 0, util.indent.virtual(sections[1], l2))
+        marks:add(row:get(0), 0, util.indent.inline(l2))
         marks:add(row:get(0, 0), { 0, 1 }, util.table.pipe(true))
         marks:add(row:get(0, 0), { 6, 7 }, util.table.pipe(true))
         marks:add(row:get(0, 0), { 12, 13 }, util.table.pipe(true))
-        marks:add(row:get(1), { 0 }, util.indent.inline(l2))
+        marks:add(row:get(1), 0, util.indent.inline(l2))
         marks:add(row:get(0, 0), { 0, 13 }, sections[2])
 
-        marks:add(row:get(1), { 0 }, util.indent.inline(l1))
+        marks:add(row:get(1), 0, util.indent.inline(l1))
 
-        marks:add(row:get(1), { 0 }, util.heading.sign(1))
-        marks:add(row:get(0), { 0 }, util.indent.inline(l1))
+        marks:add(row:get(1), 0, util.heading.sign(1))
+        marks:add(row:get(0), 0, util.indent.inline(l1))
         marks:add(row:get(0, 0), { 0, 1 }, util.heading.icon(1))
         marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(1))
 
-        marks:add(row:get(0), { 0 }, util.indent.inline(l1))
+        marks:add(row:get(0), 0, util.indent.inline(l1))
 
-        marks:add(row:get(1), { 0 }, util.indent.inline(l1))
+        marks:add(row:get(1), 0, util.indent.inline(l1))
 
-        marks:add(row:get(1), { 0 }, util.indent.inline(l1))
-        marks:add(row:get(0), { 0 }, util.indent.inline(l2))
+        marks:add(row:get(1), 0, util.indent.inline(l1))
+        marks:add(row:get(0), 0, util.indent.inline(l2))
 
-        marks:add(row:get(1), { 0 }, util.heading.sign(3))
-        marks:add(row:get(0), { 0 }, util.indent.inline(l1))
-        marks:add(row:get(0), { 0 }, util.indent.inline(l2))
+        marks:add(row:get(1), 0, util.heading.sign(3))
+        marks:add(row:get(0), 0, util.indent.inline(l1))
+        marks:add(row:get(0), 0, util.indent.inline(l2))
         marks:add(row:get(0, 0), { 0, 3 }, util.heading.icon(3))
         marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(3))
 
-        marks:add(row:get(0), { 0 }, util.indent.inline(l1))
-        marks:add(row:get(0), { 0 }, util.indent.inline(l2))
+        marks:add(row:get(0), 0, util.indent.inline(l1))
+        marks:add(row:get(0), 0, util.indent.inline(l2))
 
-        marks:add(row:get(1), { 0 }, util.indent.inline(l1))
-        marks:add(row:get(0), { 0 }, util.indent.inline(l2))
+        marks:add(row:get(1), 0, util.indent.inline(l1))
+        marks:add(row:get(0), 0, util.indent.inline(l2))
 
         util.assert_view(marks, {
             '  ▎   ▎',

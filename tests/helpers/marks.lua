@@ -15,16 +15,30 @@ function Marks:get()
     return self.marks
 end
 
----@param row render.md.test.Range
----@param col render.md.test.Range
+---@param row render.md.test.Range|integer
+---@param col render.md.test.Range|integer
 ---@param opts vim.api.keyset.set_extmark
 function Marks:add(row, col, opts)
     ---@type render.md.test.MarkInfo
     ---@diagnostic disable-next-line: assign-type-mismatch
     local mark = opts
-    mark.row = row
-    mark.col = col
+    mark.row = Marks.range(row)
+    mark.col = Marks.range(col)
     self.marks[#self.marks + 1] = mark
+end
+
+---@private
+---@param r render.md.test.Range|integer
+---@return render.md.test.Range
+function Marks.range(r)
+    if type(r) == 'table' then
+        return r
+    elseif type(r) == 'number' then
+        ---@type render.md.test.Range
+        return { r }
+    else
+        error(('invalid range type: %s'):format(type(r)))
+    end
 end
 
 return Marks
