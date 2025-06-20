@@ -4,8 +4,13 @@
 
 ### Features
 
+- configurable language border [b8ee8bc](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b8ee8bcefd6f5319beb7d3df5237c68e5c5376ac)
 - change code.border to thin instead of hide if version < 0.11.0 [a706be7](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/a706be739257a6203524741da2da540bc190bbe2)
 - allow image links to use custom icons based on destination [ac3e74f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/ac3e74ffdb0bcf7282445ac12083fb6bd44858a1)
+
+### Collaborator Shoutouts
+
+- @malasee
 
 ## 8.5.0 (2025-06-10)
 

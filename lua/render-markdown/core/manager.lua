@@ -44,7 +44,7 @@ function M.init()
     vim.api.nvim_create_autocmd('WinResized', {
         group = M.group,
         callback = function(args)
-            for _, win in ipairs(vim.v.event.windows) do
+            for _, win in ipairs(vim.v.event.windows or {}) do
                 local buf = env.win.buf(win)
                 if M.attached(buf) and state.get(buf).enabled then
                     ui.update(buf, win, args.event, true)
