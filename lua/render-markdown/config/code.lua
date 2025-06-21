@@ -14,6 +14,8 @@
 ---@field min_width integer
 ---@field border render.md.code.Border
 ---@field language_border string
+---@field language_left string
+---@field language_right string
 ---@field above string
 ---@field below string
 ---@field inline_left string
@@ -113,6 +115,10 @@ M.default = {
     border = 'hide',
     -- Used above code blocks to fill remaining space around language.
     language_border = '█',
+    -- Added to the left of language.
+    language_left = '',
+    -- Added to the right of language.
+    language_right = '',
     -- Used above code blocks for thin border.
     above = '▄',
     -- Used below code blocks for thin border.
@@ -155,6 +161,8 @@ function M.validate(spec)
     spec:type('min_width', 'number')
     spec:one_of('border', vim.tbl_values(Border))
     spec:type('language_border', 'string')
+    spec:type('language_left', 'string')
+    spec:type('language_right', 'string')
     spec:type('above', 'string')
     spec:type('below', 'string')
     spec:type('inline_left', 'string')

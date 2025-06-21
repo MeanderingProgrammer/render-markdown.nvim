@@ -467,6 +467,10 @@ require('render-markdown').setup({
         border = 'hide',
         -- Used above code blocks to fill remaining space around language.
         language_border = '█',
+        -- Added to the left of language.
+        language_left = '',
+        -- Added to the right of language.
+        language_right = '',
         -- Used above code blocks for thin border.
         above = '▄',
         -- Used below code blocks for thin border.
@@ -1084,6 +1088,10 @@ require('render-markdown').setup({
         border = 'hide',
         -- Used above code blocks to fill remaining space around language.
         language_border = '█',
+        -- Added to the left of language.
+        language_left = '',
+        -- Added to the right of language.
+        language_right = '',
         -- Used above code blocks for thin border.
         above = '▄',
         -- Used below code blocks for thin border.

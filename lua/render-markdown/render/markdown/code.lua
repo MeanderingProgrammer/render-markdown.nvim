@@ -32,14 +32,17 @@ function Render:setup()
     end
     local widths = self.node:widths()
     local width = vim.fn.max(widths)
+
     local language = self:offset(self.config.language_pad, width)
     local left = self:offset(self.config.left_pad, width)
     local right = self:offset(self.config.right_pad, width)
-    local body = math.max(
-        widths[1] + language,
-        left + width + right,
-        self.config.min_width
-    )
+
+    local body = str.width(self.config.language_left)
+        + str.width(self.config.language_right)
+        + language
+        + widths[1]
+    body = math.max(body, left + width + right, self.config.min_width)
+
     self.data = {
         language = language,
         padding = left,
@@ -120,19 +123,23 @@ function Render:language(info, language, delim)
         border_hl = colors.bg_as_fg(border_hl)
     end
 
-    local body = self:line()
+    local text = self:line()
     if self.config.language_icon and icon then
-        body:text(icon .. ' ', language_hl)
+        text:text(icon .. ' ', language_hl)
     end
     if self.config.language_name then
-        body:text(language.text, language_hl)
+        text:text(language.text, language_hl)
     end
     if self.config.language_info then
-        body:text(info.text:sub(#language.text + 1), info_hl)
+        text:text(info.text:sub(#language.text + 1), info_hl)
     end
-    if body:empty() then
+    if text:empty() then
         return false
     end
+
+    local left = self:line():text(self.config.language_left, border_hl)
+    local right = self:line():text(self.config.language_right, border_hl)
+    local body = left:extend(text):extend(right)
 
     local border = border_hl and self.config.language_border or ' '
     local width = self.data.body - delim.start_col

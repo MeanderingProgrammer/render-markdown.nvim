@@ -97,6 +97,8 @@
 ---@field min_width? integer
 ---@field border? render.md.code.Border
 ---@field language_border? string
+---@field language_left? string
+---@field language_right? string
 ---@field above? string
 ---@field below? string
 ---@field inline_left? string
