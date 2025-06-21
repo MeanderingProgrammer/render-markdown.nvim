@@ -226,4 +226,48 @@ describe('code', function()
             '  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
         })
     end)
+
+    it('block right thin', function()
+        util.setup.text(lines, {
+            code = {
+                width = 'block',
+                position = 'right',
+                border = 'thin',
+                language_border = '▁',
+                language_left = '█',
+                language_right = '█',
+                above = '▁',
+                below = '▔',
+            },
+        })
+        util.assert_screen({
+            '󱘗 ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁█󱘗 rust█',
+            '  fn main() {',
+            '      println!("Hello, World!");',
+            '  }',
+            '  ▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔',
+            '',
+            '  ● List Divider',
+            '',
+            '󰌠   ▁▁▁▁▁▁▁▁█󰌠 py█',
+            '    print("hello")',
+            '',
+            '    print("world")',
+            '    ▔▔▔▔▔▔▔▔▔▔▔▔▔▔',
+            '',
+            '  Paragraph Divider',
+            '',
+            '󰢱 ▁▁▁▁▁▁▁▁▁█󰢱 lua█',
+            "    print('hello')",
+            '',
+            "    print('world')",
+            '  ▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔',
+            '',
+            '  ● List Divider',
+            '',
+            '  ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁',
+            "      print('Hello, World!')",
+            '  ▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔',
+        })
+    end)
 end)
