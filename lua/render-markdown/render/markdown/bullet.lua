@@ -119,14 +119,14 @@ function Render:padding()
         local right = row == start_row and self.data.marker.end_col - 1 or left
         if #left_line > 0 then
             self.marks:add(false, row, left, {
-                priority = 0,
+                priority = 100,
                 virt_text = left_line,
                 virt_text_pos = 'inline',
             })
         end
         if #right_line > 0 then
             self.marks:add(false, row, right, {
-                priority = 0,
+                priority = 100,
                 virt_text = right_line,
                 virt_text_pos = 'inline',
             })

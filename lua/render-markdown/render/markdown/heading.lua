@@ -244,7 +244,7 @@ function Render:padding(box)
     end
     for row = self.node.start_row, self.node.end_row - 1 do
         self.marks:add(false, row, 0, {
-            priority = 0,
+            priority = 100,
             virt_text = line:get(),
             virt_text_pos = 'inline',
         })

@@ -243,12 +243,7 @@ function Render:padding(background)
     if #empty == 0 and self.data.margin <= 0 and self.data.padding <= 0 then
         return
     end
-
-    -- 0    | low    | includes other marks in padding when code block is at edge
-    -- 1000 | medium | includes border marks while likely avoiding other plugins
-    local priority = col == 0 and 0 or 1000
     local highlight = background and self.config.highlight or nil
-
     for row = start_row, end_row do
         local line = self:line()
         if vim.tbl_contains(empty, row) then
@@ -260,7 +255,7 @@ function Render:padding(background)
         end
         if not line:empty() then
             self.marks:add(false, row, col, {
-                priority = priority,
+                priority = 100,
                 virt_text = line:get(),
                 virt_text_pos = 'inline',
             })

@@ -59,7 +59,7 @@ function Render:padding(start_row, end_row, amount)
     end
     for row = start_row, end_row do
         self.marks:add(false, row, 0, {
-            priority = 0,
+            priority = 100,
             virt_text = line,
             virt_text_pos = 'inline',
         })

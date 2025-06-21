@@ -103,6 +103,16 @@ function M.bullet(level, spaces)
     }
 end
 
+---@param level integer
+---@return vim.api.keyset.set_extmark
+function M.ordered(level)
+    ---@type vim.api.keyset.set_extmark
+    return {
+        virt_text = { { ('%d.'):format(level), 'RmBullet' } },
+        virt_text_pos = 'overlay',
+    }
+end
+
 ---@param kind 'email'|'git'|'image'|'link'|'web'|'wiki'|'youtube'
 ---@return vim.api.keyset.set_extmark
 function M.link(kind)
@@ -135,13 +145,13 @@ function M.quote(highlight)
 end
 
 ---@param spaces integer
----@param priority integer
+---@param priority? integer
 ---@param highlight? string
 ---@return vim.api.keyset.set_extmark
 function M.padding(spaces, priority, highlight)
     ---@type vim.api.keyset.set_extmark
     return {
-        priority = priority,
+        priority = priority or 100,
         virt_text = { { (' '):rep(spaces), highlight or 'Normal' } },
         virt_text_pos = 'inline',
     }
@@ -313,10 +323,13 @@ function M.code.hide(width)
     }
 end
 
+---@param kind 'block'|'inline'
 ---@param spaces integer
 ---@return vim.api.keyset.set_extmark
-function M.code.padding(spaces)
-    return M.padding(spaces, 0, 'RmCodeInline')
+function M.code.padding(kind, spaces)
+    local priority = kind == 'inline' and 0 or nil
+    local highlight = kind == 'inline' and 'RmCodeInline' or 'RmCode'
+    return M.padding(spaces, priority, highlight)
 end
 
 ---@class render.md.test.Table
