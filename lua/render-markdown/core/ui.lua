@@ -27,7 +27,7 @@ M.cache = {}
 function M.setup(config)
     M.config = config
     -- clear marks and reset cache
-    for buf in pairs(M.cache) do
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
         vim.api.nvim_buf_clear_namespace(buf, M.ns, 0, -1)
     end
     M.cache = {}
@@ -133,6 +133,7 @@ function Updater:clear()
     for _, extmark in ipairs(extmarks) do
         extmark:hide(M.ns, self.buf)
     end
+    vim.api.nvim_buf_clear_namespace(self.buf, M.ns, 0, -1)
     M.config.on.clear({ buf = self.buf, win = self.win })
 end
 
