@@ -9,21 +9,42 @@ local function validate(config, expected)
     assert.same(expected, state.validate())
 end
 
+---@param expected any
+---@param path string[]
+local function option(expected, path)
+    local config = state.get(0)
+    assert.same(expected, vim.tbl_get(config, unpack(path)))
+end
+
 describe('state', function()
-    it('override', function()
-        local config = { enabled = true }
+    it('default', function()
+        validate({}, {})
+    end)
+
+    it('buftype override', function()
+        local config = { sign = { enabled = true } }
+        local path = { 'sign', 'enabled' }
 
         vim.bo.buftype = ''
         validate(config, {})
-        assert.same(true, state.get(0).sign.enabled)
+        option(true, path)
 
         vim.bo.buftype = 'nofile'
         validate(config, {})
-        assert.same(false, state.get(0).sign.enabled)
+        option(false, path)
     end)
 
-    it('default', function()
+    it('anti conceal preset', function()
+        local path = { 'win_options', 'concealcursor', 'rendered' }
+
         validate({}, {})
+        option('', path)
+
+        validate({ anti_conceal = { enabled = true } }, {})
+        option('', path)
+
+        validate({ anti_conceal = { enabled = false } }, {})
+        option('nvic', path)
     end)
 
     it('valid', function()

@@ -11,8 +11,10 @@ local M = {}
 ---@param user render.md.UserConfig
 ---@return render.md.UserConfig
 function M.get(user)
+    -- NOTE: only works while no options overlap
     local config = M.config(user.preset)
     config.pipe_table = M.pipe_table((user.pipe_table or {}).preset)
+    config.win_options = M.win_options((user.anti_conceal or {}).enabled)
     return config
 end
 
@@ -89,6 +91,19 @@ function M.pipe_table(preset)
         }
     else
         ---@type render.md.table.UserConfig
+        return {}
+    end
+end
+
+---@private
+---@param anti_conceal? boolean
+---@return render.md.window.UserConfigs
+function M.win_options(anti_conceal)
+    if anti_conceal == false then
+        ---@type render.md.window.UserConfigs
+        return { concealcursor = { rendered = 'nvic' } }
+    else
+        ---@type render.md.window.UserConfigs
         return {}
     end
 end

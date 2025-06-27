@@ -1,3 +1,5 @@
+---@alias render.md.pattern.Configs table<string, render.md.pattern.Config>
+
 ---@class (exact) render.md.pattern.Config
 ---@field disable boolean
 ---@field directives render.md.directive.Config[]
@@ -9,7 +11,7 @@
 ---@class render.md.pattern.Cfg
 local M = {}
 
----@type table<string, render.md.pattern.Config>
+---@type render.md.pattern.Configs
 M.default = {
     -- Highlight patterns to disable for filetypes, i.e. lines concealed around code blocks
 

@@ -7,8 +7,8 @@
 ---@field file_types? string[]
 ---@field ignore? fun(buf: integer): boolean
 ---@field change_events? string[]
----@field injections? table<string, render.md.injection.UserConfig>
----@field patterns? table<string, render.md.pattern.UserConfig>
+---@field injections? render.md.injection.UserConfigs
+---@field patterns? render.md.pattern.UserConfigs
 ---@field on? render.md.on.UserConfig
 ---@field completions? render.md.completions.UserConfig
 ---@field overrides? render.md.overrides.UserConfig
@@ -19,7 +19,7 @@
 ---@field debounce? integer
 ---@field anti_conceal? render.md.anti.conceal.UserConfig
 ---@field bullet? render.md.bullet.UserConfig
----@field callout? table<string, render.md.callout.UserConfig>
+---@field callout? render.md.callout.UserConfigs
 ---@field checkbox? render.md.checkbox.UserConfig
 ---@field code? render.md.code.UserConfig
 ---@field dash? render.md.dash.UserConfig
@@ -35,7 +35,7 @@
 ---@field pipe_table? render.md.table.UserConfig
 ---@field quote? render.md.quote.UserConfig
 ---@field sign? render.md.sign.UserConfig
----@field win_options? table<string, render.md.window.UserConfig>
+---@field win_options? render.md.window.UserConfigs
 
 ---@class (exact) render.md.anti.conceal.UserConfig
 ---@field enabled? boolean
@@ -55,6 +55,8 @@
 ---@field right_pad? render.md.bullet.Integer
 ---@field highlight? render.md.bullet.String
 ---@field scope_highlight? render.md.bullet.String
+
+---@alias render.md.callout.UserConfigs table<string, render.md.callout.UserConfig>
 
 ---@class (exact) render.md.callout.UserConfig
 ---@field raw? string
@@ -174,6 +176,8 @@
 ---@field icon? string
 ---@field highlight? string
 
+---@alias render.md.injection.UserConfigs table<string, render.md.injection.UserConfig>
+
 ---@class (exact) render.md.injection.UserConfig
 ---@field enabled? boolean
 ---@field query? string
@@ -234,6 +238,8 @@
 ---@field indent? render.md.paragraph.Number
 ---@field min_width? integer
 
+---@alias render.md.pattern.UserConfigs table<string, render.md.pattern.UserConfig>
+
 ---@class (exact) render.md.pattern.UserConfig
 ---@field disable? boolean
 ---@field directives? render.md.directive.UserConfig[]
@@ -263,6 +269,8 @@
 ---@class (exact) render.md.sign.UserConfig
 ---@field enabled? boolean
 ---@field highlight? string
+
+---@alias render.md.window.UserConfigs table<string, render.md.window.UserConfig>
 
 ---@class (exact) render.md.window.UserConfig
 ---@field default? render.md.option.Value

@@ -1,3 +1,5 @@
+---@alias render.md.window.Configs table<string, render.md.window.Config>
+
 ---@class (exact) render.md.window.Config
 ---@field default render.md.option.Value
 ---@field rendered render.md.option.Value
@@ -7,7 +9,7 @@
 ---@class render.md.window.Cfg
 local M = {}
 
----@type table<string, render.md.window.Config>
+---@type render.md.window.Configs
 M.default = {
     -- Window options to use that change between rendered and raw view.
 

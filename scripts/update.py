@@ -20,6 +20,22 @@ class LuaAlias:
         # ---@alias md.mark.Line md.mark.Text[] -> md.mark.Line
         return self.value.split()[1]
 
+    def to_user(self) -> str | None:
+        if not self.config():
+            return None
+
+        def user(s: str) -> str:
+            return s.replace(".Config", ".UserConfig")
+
+        lines: list[str] = [user(self.value)]
+        for s in self.options:
+            option = user(s)
+            lines.append(option)
+        return "\n".join(lines)
+
+    def config(self) -> bool:
+        return self.name().split(".")[-1] == "Configs"
+
     def to_str(self) -> str:
         return "\n".join([self.value] + self.options)
 
@@ -32,30 +48,33 @@ class LuaClass:
     def add(self, value: str) -> None:
         self.fields.append(value)
 
-    def exact(self) -> bool:
-        return self.value.split()[1] == "(exact)"
-
     def name(self) -> str:
         # ---@class md.Init: md.Api                     -> md.Init
         # ---@class (exact) md.buffer.Config            -> md.buffer.Config
         # ---@class (exact) md.Config: md.buffer.Config -> md.Config
         return self.value.split(":")[0].split()[-1]
 
-    def config(self) -> bool:
-        return self.name().split(".")[-1] == "Config"
+    def to_user(self) -> str | None:
+        if not self.exact() or not self.config():
+            return None
 
-    def to_user(self) -> str:
         def user(s: str) -> str:
             return s.replace(".Config", ".UserConfig")
 
         lines: list[str] = [user(self.value)]
-        for field in self.fields:
-            field = user(field)
+        for s in self.fields:
+            field = user(s)
             name = field.split()[1]
             if not name.endswith("?"):
                 field = field.replace(f" {name} ", f" {name}? ")
             lines.append(field)
         return "\n".join(lines)
+
+    def exact(self) -> bool:
+        return self.value.split()[1] == "(exact)"
+
+    def config(self) -> bool:
+        return self.name().split(".")[-1] == "Config"
 
     def to_str(self) -> str:
         return "\n".join([self.value] + self.fields)
@@ -74,10 +93,9 @@ def update_types(root: Path) -> None:
 
     classes: list[str] = ["---@meta"]
     for definition in get_definitions(files):
-        if not isinstance(definition, LuaClass):
-            continue
-        if definition.exact() and definition.config():
-            classes.append(definition.to_user())
+        user = definition.to_user()
+        if user is not None:
+            classes.append(user)
 
     types = root.joinpath("types.lua")
     types.write_text("\n\n".join(classes) + "\n")

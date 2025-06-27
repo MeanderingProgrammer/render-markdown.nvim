@@ -5,8 +5,17 @@
 ### Features
 
 - configurable language border [b8ee8bc](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b8ee8bcefd6f5319beb7d3df5237c68e5c5376ac)
+- configurable left and right language text [ba50c2f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/ba50c2fa9178a9b7e35c9410fb7c952bdf6de50e)
 - change code.border to thin instead of hide if version < 0.11.0 [a706be7](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/a706be739257a6203524741da2da540bc190bbe2)
 - allow image links to use custom icons based on destination [ac3e74f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/ac3e74ffdb0bcf7282445ac12083fb6bd44858a1)
+- better support for reloading with lazy.nvim [24aacee](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/24aacee83544ca113055564ed22be7852067c342)
+
+### Bug Fixes
+
+- handle nil windows on WinResized [#455](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/455)
+  [ec92f60](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/ec92f60b28be3e63007e62bb4084af5633eaf1d6)
+- correctly order indent & padding [#457](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/457)
+  [0944ba0](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/0944ba04ea7fc9e9087c1dedc76562d6e0d110cf)
 
 ### Collaborator Shoutouts
 

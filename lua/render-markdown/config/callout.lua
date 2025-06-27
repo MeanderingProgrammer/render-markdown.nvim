@@ -1,3 +1,5 @@
+---@alias render.md.callout.Configs table<string, render.md.callout.Config>
+
 ---@class (exact) render.md.callout.Config
 ---@field raw string
 ---@field rendered string
@@ -9,7 +11,7 @@
 local M = {}
 
 -- stylua: ignore
----@type table<string, render.md.callout.Config>
+---@type render.md.callout.Configs
 M.default = {
     -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'.
     -- The key is for healthcheck and to allow users to change its values, value type below.

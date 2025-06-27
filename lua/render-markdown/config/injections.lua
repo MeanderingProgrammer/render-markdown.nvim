@@ -1,3 +1,5 @@
+---@alias render.md.injection.Configs table<string, render.md.injection.Config>
+
 ---@class (exact) render.md.injection.Config
 ---@field enabled boolean
 ---@field query string
@@ -5,7 +7,7 @@
 ---@class render.md.injection.Cfg
 local M = {}
 
----@type table<string, render.md.injection.Config>
+---@type render.md.injection.Configs
 M.default = {
     -- Out of the box language injections for known filetypes that allow markdown to be interpreted
     -- in specified locations, see :h treesitter-language-injections.

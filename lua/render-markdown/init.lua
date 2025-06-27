@@ -8,8 +8,8 @@ local M = {}
 ---@field file_types string[]
 ---@field ignore fun(buf: integer): boolean
 ---@field change_events string[]
----@field injections table<string, render.md.injection.Config>
----@field patterns table<string, render.md.pattern.Config>
+---@field injections render.md.injection.Configs
+---@field patterns render.md.pattern.Configs
 ---@field on render.md.on.Config
 ---@field completions render.md.completions.Config
 ---@field overrides render.md.overrides.Config
@@ -20,7 +20,7 @@ local M = {}
 ---@field debounce integer
 ---@field anti_conceal render.md.anti.conceal.Config
 ---@field bullet render.md.bullet.Config
----@field callout table<string, render.md.callout.Config>
+---@field callout render.md.callout.Configs
 ---@field checkbox render.md.checkbox.Config
 ---@field code render.md.code.Config
 ---@field dash render.md.dash.Config
@@ -36,7 +36,7 @@ local M = {}
 ---@field pipe_table render.md.table.Config
 ---@field quote render.md.quote.Config
 ---@field sign render.md.sign.Config
----@field win_options table<string, render.md.window.Config>
+---@field win_options render.md.window.Configs
 
 ---@private
 ---@type boolean
