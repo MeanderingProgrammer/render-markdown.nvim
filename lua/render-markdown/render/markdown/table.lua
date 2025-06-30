@@ -55,9 +55,6 @@ function Render:setup()
     if self.config.style == 'none' then
         return false
     end
-    if self.node:get():has_error() then
-        return false
-    end
 
     -- ensure delimiter and rows exist
     local delim_node = nil ---@type render.md.Node?

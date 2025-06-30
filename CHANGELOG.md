@@ -9,6 +9,8 @@
 - change code.border to thin instead of hide if version < 0.11.0 [a706be7](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/a706be739257a6203524741da2da540bc190bbe2)
 - allow image links to use custom icons based on destination [ac3e74f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/ac3e74ffdb0bcf7282445ac12083fb6bd44858a1)
 - better support for reloading with lazy.nvim [24aacee](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/24aacee83544ca113055564ed22be7852067c342)
+- change concealcursor value to nvic when user disables anti conceal [#463](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/463)
+  [c809fc1](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c809fc129f842a7055c672593d24be6346bcc673)
 
 ### Bug Fixes
 
