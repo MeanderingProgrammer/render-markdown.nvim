@@ -270,4 +270,11 @@ describe('code', function()
             '  ▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔',
         })
     end)
+
+    it('quarto executable', function()
+        util.setup.text({ '```  {{rust} info', '```' })
+        util.assert_screen({
+            '󱘗 {{󱘗 rust} info████████████████████████████████████████████████████████████████',
+        })
+    end)
 end)

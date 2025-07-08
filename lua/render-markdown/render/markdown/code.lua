@@ -131,7 +131,11 @@ function Render:language(info, language, delim)
         text:text(language.text, language_hl)
     end
     if self.config.language_info then
-        text:text(info.text:sub(#language.text + 1), info_hl)
+        local offset = info.start_col
+        text = self:line()
+            :text(info.text:sub(1, language.start_col - offset), info_hl)
+            :extend(text)
+            :text(info.text:sub(language.end_col - offset + 1), info_hl)
     end
     if text:empty() then
         return false

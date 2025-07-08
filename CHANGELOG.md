@@ -18,6 +18,8 @@
   [ec92f60](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/ec92f60b28be3e63007e62bb4084af5633eaf1d6)
 - correctly order indent & padding [#457](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/457)
   [0944ba0](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/0944ba04ea7fc9e9087c1dedc76562d6e0d110cf)
+- skip nodes with errors [#451](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/451)
+  [3115ff7](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/3115ff748d6885fe1af349feb6b73de03eda8e12)
 
 ### Collaborator Shoutouts
 
