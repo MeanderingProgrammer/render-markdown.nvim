@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 8.6.0 (2025-07-09)
+
 ### Features
 
 - configurable language border [b8ee8bc](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b8ee8bcefd6f5319beb7d3df5237c68e5c5376ac)
@@ -12,6 +14,7 @@
 - change concealcursor value to nvic when user disables anti conceal [#463](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/463)
   [c809fc1](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c809fc129f842a7055c672593d24be6346bcc673)
 - support quarto executable code block syntax [c301209](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c3012098bd44381e3b96bbbbbcc21a54d45a286c)
+- add get, set, and set_buf APIs [accaa60](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/accaa600ba59022171275adf6640dda13004bd6f)
 
 ### Bug Fixes
 
