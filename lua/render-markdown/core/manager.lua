@@ -60,14 +60,14 @@ function M.attached(buf)
     return vim.tbl_contains(M.buffers, buf)
 end
 
----@param enabled? boolean
-function M.set_all(enabled)
+---@param enable? boolean
+function M.set(enable)
     -- lazy loading: all previously opened buffers have been ignored
     if #env.lazy('cmd') > 0 then
         M.attach(env.buf.current())
     end
-    if enabled ~= nil then
-        state.enabled = enabled
+    if enable ~= nil then
+        state.enabled = enable
     else
         state.enabled = not state.enabled
     end
@@ -77,13 +77,13 @@ function M.set_all(enabled)
 end
 
 ---@param buf? integer
----@param enabled? boolean
-function M.set_buf(buf, enabled)
+---@param enable? boolean
+function M.set_buf(buf, enable)
     buf = buf or env.buf.current()
     if M.attached(buf) then
         local config = state.get(buf)
-        if enabled ~= nil then
-            config.enabled = enabled
+        if enable ~= nil then
+            config.enabled = enable
         else
             config.enabled = not config.enabled
         end

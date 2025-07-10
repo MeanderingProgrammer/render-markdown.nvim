@@ -11,6 +11,7 @@
 - better support for reloading with lazy.nvim [24aacee](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/24aacee83544ca113055564ed22be7852067c342)
 - change concealcursor value to nvic when user disables anti conceal [#463](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/463)
   [c809fc1](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c809fc129f842a7055c672593d24be6346bcc673)
+- support quarto executable code block syntax [c301209](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c3012098bd44381e3b96bbbbbcc21a54d45a286c)
 
 ### Bug Fixes
 

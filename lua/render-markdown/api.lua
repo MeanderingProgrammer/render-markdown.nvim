@@ -1,28 +1,43 @@
 ---@class render.md.Api
 local M = {}
 
+---@return boolean
+function M.get()
+    return require('render-markdown.state').enabled
+end
+
+---@param enable? boolean
+function M.set(enable)
+    require('render-markdown.core.manager').set(enable)
+end
+
+---@param enable? boolean
+function M.set_buf(enable)
+    require('render-markdown.core.manager').set_buf(nil, enable)
+end
+
 function M.enable()
-    require('render-markdown.core.manager').set_all(true)
+    M.set(true)
 end
 
 function M.buf_enable()
-    require('render-markdown.core.manager').set_buf(nil, true)
+    M.set_buf(true)
 end
 
 function M.disable()
-    require('render-markdown.core.manager').set_all(false)
+    M.set(false)
 end
 
 function M.buf_disable()
-    require('render-markdown.core.manager').set_buf(nil, false)
+    M.set_buf(false)
 end
 
 function M.toggle()
-    require('render-markdown.core.manager').set_all(nil)
+    M.set()
 end
 
 function M.buf_toggle()
-    require('render-markdown.core.manager').set_buf(nil, nil)
+    M.set_buf()
 end
 
 function M.log()

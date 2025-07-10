@@ -103,20 +103,23 @@ use({
 
 # Commands
 
-| Command                       | Lua Function                               | Description                                       |
-| ----------------------------- | ------------------------------------------ | ------------------------------------------------- |
-| `:RenderMarkdown`             | `require('render-markdown').enable()`      | Enable this plugin                                |
-| `:RenderMarkdown enable`      | `require('render-markdown').enable()`      | Enable this plugin                                |
-| `:RenderMarkdown buf_enable`  | `require('render-markdown').buf_enable()`  | Enable this plugin for current buffer             |
-| `:RenderMarkdown disable`     | `require('render-markdown').disable()`     | Disable this plugin                               |
-| `:RenderMarkdown buf_disable` | `require('render-markdown').buf_disable()` | Disable this plugin for current buffer            |
-| `:RenderMarkdown toggle`      | `require('render-markdown').toggle()`      | Toggle state of this plugin                       |
-| `:RenderMarkdown buf_toggle`  | `require('render-markdown').buf_toggle()`  | Toggle state of this plugin for current buffer    |
-| `:RenderMarkdown log`         | `require('render-markdown').log()`         | Opens the log file for this plugin                |
-| `:RenderMarkdown expand`      | `require('render-markdown').expand()`      | Increase anti-conceal margin above and below by 1 |
-| `:RenderMarkdown contract`    | `require('render-markdown').contract()`    | Decrease anti-conceal margin above and below by 1 |
-| `:RenderMarkdown debug`       | `require('render-markdown').debug()`       | Prints information about marks on current line    |
-| `:RenderMarkdown config`      | `require('render-markdown').config()`      | Prints difference between config and default      |
+| Command                         | Lua Function                                | Description                                       |
+| ------------------------------- | ------------------------------------------- | ------------------------------------------------- |
+| `:RenderMarkdown`               | `require('render-markdown').enable()`       | Alias for `enable`                                |
+| `:RenderMarkdown enable`        | `require('render-markdown').enable()`       | Alias for `set(true)`                             |
+| `:RenderMarkdown buf_enable`    | `require('render-markdown').buf_enable()`   | Alias for `set_buf(true)`                         |
+| `:RenderMarkdown disable`       | `require('render-markdown').disable()`      | Alias for `set(false)`                            |
+| `:RenderMarkdown buf_disable`   | `require('render-markdown').buf_disable()`  | Alias for `set_buf(false)`                        |
+| `:RenderMarkdown toggle`        | `require('render-markdown').toggle()`       | Alias for `set()`                                 |
+| `:RenderMarkdown buf_toggle`    | `require('render-markdown').buf_toggle()`   | Alias for `set_buf()`                             |
+| `:RenderMarkdown get`           | `require('render-markdown').get()`          | Return current state                              |
+| `:RenderMarkdown set bool?`     | `require('render-markdown').set(bool?)`     | Sets state, `nil` to toggle                       |
+| `:RenderMarkdown set_buf bool?` | `require('render-markdown').set_buf(bool?)` | Sets state for current buffer, `nil` to toggle    |
+| `:RenderMarkdown log`           | `require('render-markdown').log()`          | Opens the log file for this plugin                |
+| `:RenderMarkdown expand`        | `require('render-markdown').expand()`       | Increase anti-conceal margin above and below by 1 |
+| `:RenderMarkdown contract`      | `require('render-markdown').contract()`     | Decrease anti-conceal margin above and below by 1 |
+| `:RenderMarkdown debug`         | `require('render-markdown').debug()`        | Prints information about marks on current line    |
+| `:RenderMarkdown config`        | `require('render-markdown').config()`       | Prints difference between config and default      |
 
 # Completions
 
