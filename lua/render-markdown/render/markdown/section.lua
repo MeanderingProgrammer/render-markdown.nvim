@@ -38,7 +38,7 @@ function Render:run()
     local line = self:indent():line(false, self.data.level_change):get()
     for row = start_row, end_row do
         self.marks:add(false, row, 0, {
-            priority = 0,
+            priority = self.config.priority,
             virt_text = line,
             virt_text_pos = 'inline',
         })

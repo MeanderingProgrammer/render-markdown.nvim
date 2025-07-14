@@ -1,4 +1,4 @@
-*render-markdown.txt*        For NVIM v0.11.2        Last change: 2025 July 09
+*render-markdown.txt*        For NVIM v0.11.2        Last change: 2025 July 14
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -878,6 +878,8 @@ Default Configuration ~
             skip_heading = false,
             -- Prefix added when indenting, one per level.
             icon = '▎',
+            -- Priority to assign to extmarks.
+            priority = 0,
             -- Applied to icon.
             highlight = 'RenderMarkdownIndent',
         },
@@ -1585,6 +1587,8 @@ Indent Configuration ~
             skip_heading = false,
             -- Prefix added when indenting, one per level.
             icon = '▎',
+            -- Priority to assign to extmarks.
+            priority = 0,
             -- Applied to icon.
             highlight = 'RenderMarkdownIndent',
         },

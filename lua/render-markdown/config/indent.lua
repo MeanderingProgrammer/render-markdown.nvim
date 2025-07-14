@@ -3,6 +3,7 @@
 ---@field skip_level integer
 ---@field skip_heading boolean
 ---@field icon string
+---@field priority integer
 ---@field highlight string
 
 ---@class render.md.indent.Cfg
@@ -26,6 +27,8 @@ M.default = {
     skip_heading = false,
     -- Prefix added when indenting, one per level.
     icon = '▎',
+    -- Priority to assign to extmarks.
+    priority = 0,
     -- Applied to icon.
     highlight = 'RenderMarkdownIndent',
 }
@@ -37,6 +40,7 @@ function M.validate(spec)
     spec:type('skip_level', 'number')
     spec:type('skip_heading', 'boolean')
     spec:type('icon', 'string')
+    spec:type('priority', 'number')
     spec:type('highlight', 'string')
     spec:check()
 end

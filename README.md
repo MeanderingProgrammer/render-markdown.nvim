@@ -812,6 +812,8 @@ require('render-markdown').setup({
         skip_heading = false,
         -- Prefix added when indenting, one per level.
         icon = '▎',
+        -- Priority to assign to extmarks.
+        priority = 0,
         -- Applied to icon.
         highlight = 'RenderMarkdownIndent',
     },
@@ -1543,6 +1545,8 @@ require('render-markdown').setup({
         skip_heading = false,
         -- Prefix added when indenting, one per level.
         icon = '▎',
+        -- Priority to assign to extmarks.
+        priority = 0,
         -- Applied to icon.
         highlight = 'RenderMarkdownIndent',
     },

@@ -174,6 +174,7 @@
 ---@field skip_level? integer
 ---@field skip_heading? boolean
 ---@field icon? string
+---@field priority? integer
 ---@field highlight? string
 
 ---@alias render.md.injection.UserConfigs table<string, render.md.injection.UserConfig>
