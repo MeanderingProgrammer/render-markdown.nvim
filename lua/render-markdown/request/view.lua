@@ -57,10 +57,12 @@ function View:overlaps(node)
 end
 
 ---@param parser vim.treesitter.LanguageTree
-function View:parse(parser)
+---@param callback fun()
+function View:parse(parser, callback)
     for _, range in ipairs(self.ranges) do
         parser:parse({ range.top, range.bottom })
     end
+    callback()
 end
 
 ---@param root TSNode

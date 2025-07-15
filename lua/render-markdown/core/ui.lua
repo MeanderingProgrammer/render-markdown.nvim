@@ -167,10 +167,12 @@ function Updater:parse(callback)
         local context = Context.new(self.buf, self.win, self.config, self.mode)
         if context then
             -- make sure injections are processed
-            context.view:parse(parser)
-            local marks = handlers.run(context, parser)
-            callback(iter.list.map(marks, Extmark.new))
+            context.view:parse(parser, function()
+                local marks = handlers.run(context, parser)
+                callback(iter.list.map(marks, Extmark.new))
+            end)
         else
+            log.buf('debug', 'Skip', self.buf, 'in progress')
             callback(nil)
         end
     else
