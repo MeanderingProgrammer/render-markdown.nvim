@@ -50,7 +50,7 @@ function M.items(buf, row, col)
     end
 
     local marker = vim.treesitter.get_node_text(marker_node, buf)
-    local text = vim.treesitter.get_node_text(node, buf):gsub('\n$', '')
+    local text = vim.treesitter.get_node_text(node, buf):gsub('\n%s*$', '')
     if M.ignore(marker, text) then
         return nil
     end
@@ -142,6 +142,7 @@ function M.ignore(marker, text)
     patterns[#patterns + 1] = prefix .. '%[.*%]'
     for _, pattern in ipairs(patterns) do
         if text:find(pattern) then
+            local i, j = text:find(pattern)
             return true
         end
     end
