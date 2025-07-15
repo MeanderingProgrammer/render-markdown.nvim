@@ -165,10 +165,14 @@ function Updater:parse(callback)
     if ok and parser then
         -- reset buffer context
         local context = Context.new(self.buf, self.win, self.config, self.mode)
-        -- make sure injections are processed
-        context.view:parse(parser)
-        local marks = handlers.run(context, parser)
-        callback(iter.list.map(marks, Extmark.new))
+        if context then
+            -- make sure injections are processed
+            context.view:parse(parser)
+            local marks = handlers.run(context, parser)
+            callback(iter.list.map(marks, Extmark.new))
+        else
+            callback(nil)
+        end
     else
         log.buf('error', 'Fail', self.buf, 'no treesitter parser found')
         callback(nil)

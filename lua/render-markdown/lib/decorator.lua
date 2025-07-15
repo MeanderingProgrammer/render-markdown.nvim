@@ -6,6 +6,7 @@ local compat = require('render-markdown.lib.compat')
 ---@field private running boolean
 ---@field private marks render.md.Extmark[]
 ---@field private tick integer?
+---@field n integer
 local Decorator = {}
 Decorator.__index = Decorator
 
@@ -18,6 +19,7 @@ function Decorator.new(buf)
     self.running = false
     self.marks = {}
     self.tick = nil
+    self.n = 0
     return self
 end
 
@@ -40,6 +42,7 @@ end
 function Decorator:set(marks)
     self.marks = marks
     self.tick = self:get_tick()
+    self.n = self.n + 1
 end
 
 ---@param debounce boolean

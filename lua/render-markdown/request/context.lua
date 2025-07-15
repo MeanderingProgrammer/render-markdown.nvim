@@ -85,7 +85,7 @@ end
 ---@param win integer
 ---@param config render.md.buf.Config
 ---@param mode string
----@return render.md.request.Context
+---@return render.md.request.Context?
 function M.new(buf, win, config, mode)
     local view = View.new(buf)
     local context = Context.new(buf, win, config, mode, view)
