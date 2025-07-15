@@ -405,7 +405,7 @@ function Render:border()
                 virt_text_pos = 'overlay',
             })
         else
-            self.marks:add(false, node.start_row, 0, {
+            self.marks:add('virtual_lines', node.start_row, 0, {
                 virt_lines = { self:indent():line(true):extend(line):get() },
                 virt_lines_above = above,
             })

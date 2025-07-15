@@ -50,7 +50,7 @@ function Handler:run(root)
     local row = above and node.start_row or node.end_row
 
     local marks = Marks.new(self.context, true)
-    marks:add(false, row, 0, {
+    marks:add('virtual_lines', row, 0, {
         virt_lines = lines,
         virt_lines_above = above,
     })

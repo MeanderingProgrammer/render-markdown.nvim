@@ -37,7 +37,7 @@ function Render:run()
     -- each level stacks inline marks so we only add changes in level
     local line = self:indent():line(false, self.data.level_change):get()
     for row = start_row, end_row do
-        self.marks:add(false, row, 0, {
+        self.marks:add('indent', row, 0, {
             priority = self.config.priority,
             virt_text = line,
             virt_text_pos = 'inline',

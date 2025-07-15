@@ -9,21 +9,23 @@
 
 ---@enum render.md.Element
 local Element = {
-    head_icon = 'head_icon',
-    head_background = 'head_background',
-    head_border = 'head_border',
-    code_language = 'code_language',
-    code_background = 'code_background',
-    code_border = 'code_border',
-    dash = 'dash',
     bullet = 'bullet',
+    callout = 'callout',
     check_icon = 'check_icon',
     check_scope = 'check_scope',
-    quote = 'quote',
-    table_border = 'table_border',
-    callout = 'callout',
+    code_background = 'code_background',
+    code_border = 'code_border',
+    code_language = 'code_language',
+    dash = 'dash',
+    head_background = 'head_background',
+    head_border = 'head_border',
+    head_icon = 'head_icon',
+    indent = 'indent',
     link = 'link',
+    quote = 'quote',
     sign = 'sign',
+    table_border = 'table_border',
+    virtual_lines = 'virtual_lines',
 }
 
 ---@class render.md.anti.conceal.Cfg
@@ -42,11 +44,23 @@ M.default = {
     -- Which elements to always show, ignoring anti conceal behavior. Values can either be
     -- booleans to fix the behavior or string lists representing modes where anti conceal
     -- behavior will be ignored. Valid values are:
-    --   head_icon, head_background, head_border, code_language, code_background, code_border,
-    --   dash, bullet, check_icon, check_scope, quote, table_border, callout, link, sign
+    --   bullet
+    --   callout
+    --   check_icon, check_scope
+    --   code_background, code_border, code_language
+    --   dash
+    --   head_background, head_border, head_icon
+    --   indent
+    --   link
+    --   quote
+    --   sign
+    --   table_border
+    --   virtual_lines
     ignore = {
         code_background = true,
+        indent = true,
         sign = true,
+        virtual_lines = true,
     },
 }
 
