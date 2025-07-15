@@ -50,8 +50,8 @@ function M.items(buf, row, col)
     end
 
     local marker = vim.treesitter.get_node_text(marker_node, buf)
-    local text = vim.treesitter.get_node_text(node, buf)
-    if M.ignore(marker, text:gsub('\n$', '')) then
+    local text = vim.treesitter.get_node_text(node, buf):gsub('\n$', '')
+    if M.ignore(marker, text) then
         return nil
     end
 
@@ -67,14 +67,30 @@ function M.items(buf, row, col)
             end
         end
     elseif node:type() == 'list_item' then
+        local opened_bracket = text:sub(-1) == '[' and 2 or 1
         local unchecked = config.checkbox.unchecked
-        items[#items + 1] = M.item(prefix, '[ ] ', unchecked.icon, 'unchecked')
+        items[#items + 1] = M.item(
+            prefix,
+            string.sub('[ ] ', opened_bracket),
+            unchecked.icon,
+            'unchecked'
+        )
         local checked = config.checkbox.checked
-        items[#items + 1] = M.item(prefix, '[x] ', checked.icon, 'checked')
+        items[#items + 1] = M.item(
+            prefix,
+            string.sub('[x] ', opened_bracket),
+            checked.icon,
+            'checked'
+        )
         for name, value in pairs(config.checkbox.custom) do
             if filter.checkbox(value) then
                 local label = value.raw .. ' '
-                items[#items + 1] = M.item(prefix, label, value.rendered, name)
+                items[#items + 1] = M.item(
+                    prefix,
+                    string.sub(label, opened_bracket),
+                    value.rendered,
+                    name
+                )
             end
         end
     end
