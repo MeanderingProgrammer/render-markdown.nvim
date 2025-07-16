@@ -41,17 +41,21 @@ function M.items(buf, row, col)
     buf = buf == 0 and env.buf.current() or buf
     local node = M.node(buf, row, col, 'markdown')
     if not node or node:range() ~= row then
+        vim.notify('one')
+        print(vim.inspect(node))
         return nil
     end
 
     local marker_node = node:named_child(0)
     if not marker_node then
+        vim.notify('two')
         return nil
     end
 
     local marker = vim.treesitter.get_node_text(marker_node, buf)
     local text = vim.treesitter.get_node_text(node, buf):gsub('\n%s*$', '')
     if M.ignore(marker, text) then
+        vim.notify('three')
         return nil
     end
 
@@ -133,6 +137,11 @@ end
 ---@return boolean
 function M.ignore(marker, text)
     local prefix = vim.pesc(vim.trim(marker)) .. '%s+'
+    local i, j = text:find(prefix)
+    assert(i and j)
+    if text:sub(i, j):find('\n') then
+        return false
+    end
     local patterns = {} ---@type string[]
     -- first non-space after the marker is not '['
     patterns[#patterns + 1] = prefix .. '[^%[]'
@@ -142,7 +151,11 @@ function M.ignore(marker, text)
     patterns[#patterns + 1] = prefix .. '%[.*%]'
     for _, pattern in ipairs(patterns) do
         if text:find(pattern) then
-            local i, j = text:find(pattern)
+            print(table.concat({
+                pattern,
+                '|' .. text .. '|',
+                '|' .. marker .. '|',
+            }, '\n'))
             return true
         end
     end
