@@ -67,30 +67,14 @@ function M.items(buf, row, col)
             end
         end
     elseif node:type() == 'list_item' then
-        local opened_bracket = text:sub(-1) == '[' and 2 or 1
         local unchecked = config.checkbox.unchecked
-        items[#items + 1] = M.item(
-            prefix,
-            string.sub('[ ] ', opened_bracket),
-            unchecked.icon,
-            'unchecked'
-        )
+        items[#items + 1] = M.item(prefix, '[ ] ', unchecked.icon, 'unchecked')
         local checked = config.checkbox.checked
-        items[#items + 1] = M.item(
-            prefix,
-            string.sub('[x] ', opened_bracket),
-            checked.icon,
-            'checked'
-        )
+        items[#items + 1] = M.item(prefix, '[x] ', checked.icon, 'checked')
         for name, value in pairs(config.checkbox.custom) do
             if filter.checkbox(value) then
                 local label = value.raw .. ' '
-                items[#items + 1] = M.item(
-                    prefix,
-                    string.sub(label, opened_bracket),
-                    value.rendered,
-                    name
-                )
+                items[#items + 1] = M.item(prefix, label, value.rendered, name)
             end
         end
     end
