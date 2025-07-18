@@ -435,24 +435,28 @@ require('render-markdown').setup({
         -- Turn on / off any sign column related rendering.
         sign = true,
         -- Determines how code blocks & inline code are rendered.
-        -- | none     | disables all rendering                                                    |
-        -- | normal   | highlight group to code blocks & inline code, adds padding to code blocks |
-        -- | language | language icon to sign column if enabled and icon + name above code blocks |
-        -- | full     | normal + language                                                         |
+        -- | none     | disables all rendering                   |
+        -- | normal   | background highlighting + padding        |
+        -- | language | language heading with icon + sign column |
+        -- | full     | normal + language                        |
         style = 'full',
+        -- Whether to conceal nodes at the top and bottom of code blocks.
+        conceal_delimiters = true,
+        -- Turn on / off any language heading related rendering.
+        language = true,
         -- Determines where language icon is rendered.
         -- | right | right side of code block |
         -- | left  | left side of code block  |
         position = 'left',
-        -- Amount of padding to add around the language.
-        -- If a float < 1 is provided it is treated as a percentage of available window space.
-        language_pad = 0,
         -- Whether to include the language icon above code blocks.
         language_icon = true,
         -- Whether to include the language name above code blocks.
         language_name = true,
         -- Whether to include the language info above code blocks.
         language_info = true,
+        -- Amount of padding to add around the language.
+        -- If a float < 1 is provided it is treated as a percentage of available window space.
+        language_pad = 0,
         -- A list of language names for which background highlighting will be disabled.
         -- Likely because that language has background highlights itself.
         -- Use a boolean to make behavior apply to all languages.
@@ -1058,24 +1062,28 @@ require('render-markdown').setup({
         -- Turn on / off any sign column related rendering.
         sign = true,
         -- Determines how code blocks & inline code are rendered.
-        -- | none     | disables all rendering                                                    |
-        -- | normal   | highlight group to code blocks & inline code, adds padding to code blocks |
-        -- | language | language icon to sign column if enabled and icon + name above code blocks |
-        -- | full     | normal + language                                                         |
+        -- | none     | disables all rendering                   |
+        -- | normal   | background highlighting + padding        |
+        -- | language | language heading with icon + sign column |
+        -- | full     | normal + language                        |
         style = 'full',
+        -- Whether to conceal nodes at the top and bottom of code blocks.
+        conceal_delimiters = true,
+        -- Turn on / off any language heading related rendering.
+        language = true,
         -- Determines where language icon is rendered.
         -- | right | right side of code block |
         -- | left  | left side of code block  |
         position = 'left',
-        -- Amount of padding to add around the language.
-        -- If a float < 1 is provided it is treated as a percentage of available window space.
-        language_pad = 0,
         -- Whether to include the language icon above code blocks.
         language_icon = true,
         -- Whether to include the language name above code blocks.
         language_name = true,
         -- Whether to include the language info above code blocks.
         language_info = true,
+        -- Amount of padding to add around the language.
+        -- If a float < 1 is provided it is treated as a percentage of available window space.
+        language_pad = 0,
         -- A list of language names for which background highlighting will be disabled.
         -- Likely because that language has background highlights itself.
         -- Use a boolean to make behavior apply to all languages.

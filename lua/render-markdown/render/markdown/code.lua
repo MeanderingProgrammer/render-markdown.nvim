@@ -72,15 +72,17 @@ end
 ---@protected
 function Render:run()
     local start_row = self.node.start_row
-    local above = self.node:child('fenced_code_block_delimiter', start_row)
-    self.marks:over(true, above, { conceal = '' })
-
     local end_row = self.node.end_row - 1
-    local below = self.node:child('fenced_code_block_delimiter', end_row)
-    self.marks:over(true, below, { conceal = '' })
 
+    local above = self.node:child('fenced_code_block_delimiter', start_row)
+    local below = self.node:child('fenced_code_block_delimiter', end_row)
     local info = self.node:child('info_string')
-    self.marks:over(true, info, { conceal = '' })
+
+    if self.config.conceal_delimiters then
+        self.marks:over(true, above, { conceal = '' })
+        self.marks:over(true, below, { conceal = '' })
+        self.marks:over(true, info, { conceal = '' })
+    end
 
     local language = info and info:child('language')
     if not self:language(info, language, above) then
@@ -102,6 +104,9 @@ end
 ---@return boolean
 function Render:language(info, language, delim)
     if not vim.tbl_contains({ 'language', 'full' }, self.config.style) then
+        return false
+    end
+    if not self.config.language then
         return false
     end
     if not info or not language or not delim then

@@ -86,11 +86,13 @@
 ---@class (exact) render.md.code.UserConfig: render.md.base.UserConfig
 ---@field sign? boolean
 ---@field style? render.md.code.Style
+---@field conceal_delimiters? boolean
+---@field language? boolean
 ---@field position? render.md.code.Position
----@field language_pad? number
 ---@field language_icon? boolean
 ---@field language_name? boolean
 ---@field language_info? boolean
+---@field language_pad? number
 ---@field disable_background? boolean|string[]
 ---@field width? render.md.code.Width
 ---@field left_margin? number
