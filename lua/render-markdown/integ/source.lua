@@ -1,7 +1,7 @@
+local Node = require('render-markdown.lib.node')
 local env = require('render-markdown.lib.env')
 local manager = require('render-markdown.core.manager')
 local state = require('render-markdown.state')
-local str = require('render-markdown.lib.str')
 
 local markers = {
     list_marker_minus = '-',
@@ -9,6 +9,15 @@ local markers = {
     list_marker_plus = '+',
     block_quote_marker = '>',
 }
+
+local children = vim.list_extend(vim.tbl_keys(markers), {
+    'block_continuation',
+    'inline',
+    'task_list_marker_checked',
+    'task_list_marker_unchecked',
+})
+
+local siblings = { 'paragraph' }
 
 ---@class render.md.source.Config
 ---@field completions render.md.completions.Config
@@ -40,41 +49,43 @@ end
 function M.items(buf, row, col)
     buf = buf == 0 and env.buf.current() or buf
     local node = M.node(buf, row, col, 'markdown')
-    if not node or node:range() ~= row then
+    if not node or node.start_row ~= row then
+        return nil
+    end
+    local marker = node:child_at(0)
+    if not marker then
+        return nil
+    end
+    local _, line = node:line('first', 0)
+    if not line then
+        return nil
+    end
+    local before, after = math.min(marker.end_col, col), col + 1
+    local text = line:sub(before + 1, after - 1)
+    if M.ignore(text) then
         return nil
     end
 
-    local marker_node = node:named_child(0)
-    if not marker_node then
-        return nil
-    end
-
-    local marker = vim.treesitter.get_node_text(marker_node, buf)
-    local text = vim.treesitter.get_node_text(node, buf):gsub('\n%s*$', '')
-    if M.ignore(marker, text) then
-        return nil
-    end
-
-    local items = {}
+    local items = {} ---@type lsp.CompletionItem[]
     local config = state.get(buf)
     local filter = M.config.completions.filter
-    local prefix = str.spaces('end', marker) == 0 and ' ' or ''
-    if node:type() == 'block_quote' then
+    local prefix = line:sub(before, before) == ' ' and '' or ' '
+    if node.type == 'block_quote' then
+        local suffix = ''
         for _, value in pairs(config.callout) do
             if filter.callout(value) then
-                local detail = ' ' .. value.rendered
-                items[#items + 1] = M.item(prefix, value.raw, detail)
+                M.append(items, prefix, suffix, value.raw, value.rendered)
             end
         end
-    elseif node:type() == 'list_item' then
+    elseif node.type == 'list_item' then
+        local suffix = line:sub(after, after) == ' ' and '' or ' '
         local unchecked = config.checkbox.unchecked
-        items[#items + 1] = M.item(prefix, '[ ] ', unchecked.icon, 'unchecked')
+        M.append(items, prefix, suffix, '[ ]', unchecked.icon, 'unchecked')
         local checked = config.checkbox.checked
-        items[#items + 1] = M.item(prefix, '[x] ', checked.icon, 'checked')
+        M.append(items, prefix, suffix, '[x]', checked.icon, 'checked')
         for name, value in pairs(config.checkbox.custom) do
             if filter.checkbox(value) then
-                local label = value.raw .. ' '
-                items[#items + 1] = M.item(prefix, label, value.rendered, name)
+                M.append(items, prefix, suffix, value.raw, value.rendered, name)
             end
         end
     end
@@ -86,7 +97,7 @@ end
 ---@param row integer
 ---@param col integer
 ---@param lang string
----@return TSNode?
+---@return render.md.Node?
 function M.node(buf, row, col, lang)
     -- parse current row to get up to date node
     local ok, parser = pcall(vim.treesitter.get_parser, buf, lang)
@@ -94,40 +105,34 @@ function M.node(buf, row, col, lang)
         return nil
     end
     parser:parse({ row, row })
-
     local node = vim.treesitter.get_node({
         bufnr = buf,
         pos = { row, col },
         lang = lang,
     })
-    if node and node:type() == 'paragraph' then
-        node = node:prev_sibling()
+    while node do
+        if vim.tbl_contains(children, node:type()) then
+            node = node:parent()
+        elseif vim.tbl_contains(siblings, node:type()) then
+            node = node:prev_sibling()
+        else
+            return Node.new(buf, node)
+        end
     end
-    local children = vim.tbl_keys(markers)
-    children[#children + 1] = 'block_continuation'
-    if node and vim.tbl_contains(children, node:type()) then
-        node = node:parent()
-    end
-    return node
+    return nil
 end
 
 ---@private
----@param marker string
 ---@param text string
 ---@return boolean
-function M.ignore(marker, text)
-    local prefix = '^' .. vim.pesc(vim.trim(marker)) .. '%s+'
-    local i, j = text:find(prefix)
-    if not (i and j) or text:sub(i, j):find('\n') then
-        return false
-    end
+function M.ignore(text)
     local patterns = {} ---@type string[]
-    -- first non-space after the marker is not '['
-    patterns[#patterns + 1] = prefix .. '[^%[]'
+    -- first character is not '['
+    patterns[#patterns + 1] = '^[^%[]'
     -- after '[' there is another '[' or a space
-    patterns[#patterns + 1] = prefix .. '%[.*[%[%s]'
+    patterns[#patterns + 1] = '^%[.*[%[%s]'
     -- there is already text enclosed by '[' ']'
-    patterns[#patterns + 1] = prefix .. '%[.*%]'
+    patterns[#patterns + 1] = '^%[.*%]'
     for _, pattern in ipairs(patterns) do
         if text:find(pattern) then
             return true
@@ -137,21 +142,21 @@ function M.ignore(marker, text)
 end
 
 ---@private
+---@param items lsp.CompletionItem[]
 ---@param prefix string
+---@param suffix string
 ---@param label string
 ---@param detail string
 ---@param description? string
----@return lsp.CompletionItem
-function M.item(prefix, label, detail, description)
-    ---@type lsp.CompletionItem
-    return {
+function M.append(items, prefix, suffix, label, detail, description)
+    items[#items + 1] = {
         kind = 12,
         label = label,
-        insertText = prefix .. label,
         labelDetails = {
-            detail = detail,
+            detail = ' ' .. detail,
             description = description,
         },
+        insertText = prefix .. label .. suffix,
     }
 end
 

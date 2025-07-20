@@ -16,20 +16,21 @@ local function assert_items(row, n, col, expected)
 end
 
 ---@param prefix string
+---@param suffix string
 ---@param label string
 ---@param detail string
 ---@param description? string
 ---@return lsp.CompletionItem
-local function item(prefix, label, detail, description)
+local function item(prefix, suffix, label, detail, description)
     ---@type lsp.CompletionItem
     return {
         kind = 12,
         label = label,
-        insertText = prefix .. label,
         labelDetails = {
-            detail = detail,
+            detail = ' ' .. detail,
             description = description,
         },
+        insertText = prefix .. label .. suffix,
     }
 end
 
@@ -79,9 +80,9 @@ describe('comp.md', function()
         ---@return lsp.CompletionItem[]
         local function items(prefix)
             return {
-                item(prefix, '[ ] ', '󰄱 ', 'unchecked'),
-                item(prefix, '[-] ', '󰥔 ', 'todo'),
-                item(prefix, '[x] ', '󰱒 ', 'checked'),
+                item(prefix, ' ', '[ ]', '󰄱 ', 'unchecked'),
+                item(prefix, ' ', '[-]', '󰥔 ', 'todo'),
+                item(prefix, ' ', '[x]', '󰱒 ', 'checked'),
             }
         end
 
@@ -104,33 +105,33 @@ describe('comp.md', function()
         ---@return lsp.CompletionItem[]
         local function items(prefix)
             return {
-                item(prefix, '[!ABSTRACT]', ' 󰨸 Abstract'),
-                item(prefix, '[!ATTENTION]', ' 󰀪 Attention'),
-                item(prefix, '[!BUG]', ' 󰨰 Bug'),
-                item(prefix, '[!CAUTION]', ' 󰳦 Caution'),
-                item(prefix, '[!CHECK]', ' 󰄬 Check'),
-                item(prefix, '[!CITE]', ' 󱆨 Cite'),
-                item(prefix, '[!DANGER]', ' 󱐌 Danger'),
-                item(prefix, '[!DONE]', ' 󰄬 Done'),
-                item(prefix, '[!ERROR]', ' 󱐌 Error'),
-                item(prefix, '[!EXAMPLE]', ' 󰉹 Example'),
-                item(prefix, '[!FAILURE]', ' 󰅖 Failure'),
-                item(prefix, '[!FAIL]', ' 󰅖 Fail'),
-                item(prefix, '[!FAQ]', ' 󰘥 Faq'),
-                item(prefix, '[!HELP]', ' 󰘥 Help'),
-                item(prefix, '[!HINT]', ' 󰌶 Hint'),
-                item(prefix, '[!IMPORTANT]', ' 󰅾 Important'),
-                item(prefix, '[!INFO]', ' 󰋽 Info'),
-                item(prefix, '[!MISSING]', ' 󰅖 Missing'),
-                item(prefix, '[!NOTE]', ' 󰋽 Note'),
-                item(prefix, '[!QUESTION]', ' 󰘥 Question'),
-                item(prefix, '[!QUOTE]', ' 󱆨 Quote'),
-                item(prefix, '[!SUCCESS]', ' 󰄬 Success'),
-                item(prefix, '[!SUMMARY]', ' 󰨸 Summary'),
-                item(prefix, '[!TIP]', ' 󰌶 Tip'),
-                item(prefix, '[!TLDR]', ' 󰨸 Tldr'),
-                item(prefix, '[!TODO]', ' 󰗡 Todo'),
-                item(prefix, '[!WARNING]', ' 󰀪 Warning'),
+                item(prefix, '', '[!ABSTRACT]', '󰨸 Abstract'),
+                item(prefix, '', '[!ATTENTION]', '󰀪 Attention'),
+                item(prefix, '', '[!BUG]', '󰨰 Bug'),
+                item(prefix, '', '[!CAUTION]', '󰳦 Caution'),
+                item(prefix, '', '[!CHECK]', '󰄬 Check'),
+                item(prefix, '', '[!CITE]', '󱆨 Cite'),
+                item(prefix, '', '[!DANGER]', '󱐌 Danger'),
+                item(prefix, '', '[!DONE]', '󰄬 Done'),
+                item(prefix, '', '[!ERROR]', '󱐌 Error'),
+                item(prefix, '', '[!EXAMPLE]', '󰉹 Example'),
+                item(prefix, '', '[!FAILURE]', '󰅖 Failure'),
+                item(prefix, '', '[!FAIL]', '󰅖 Fail'),
+                item(prefix, '', '[!FAQ]', '󰘥 Faq'),
+                item(prefix, '', '[!HELP]', '󰘥 Help'),
+                item(prefix, '', '[!HINT]', '󰌶 Hint'),
+                item(prefix, '', '[!IMPORTANT]', '󰅾 Important'),
+                item(prefix, '', '[!INFO]', '󰋽 Info'),
+                item(prefix, '', '[!MISSING]', '󰅖 Missing'),
+                item(prefix, '', '[!NOTE]', '󰋽 Note'),
+                item(prefix, '', '[!QUESTION]', '󰘥 Question'),
+                item(prefix, '', '[!QUOTE]', '󱆨 Quote'),
+                item(prefix, '', '[!SUCCESS]', '󰄬 Success'),
+                item(prefix, '', '[!SUMMARY]', '󰨸 Summary'),
+                item(prefix, '', '[!TIP]', '󰌶 Tip'),
+                item(prefix, '', '[!TLDR]', '󰨸 Tldr'),
+                item(prefix, '', '[!TODO]', '󰗡 Todo'),
+                item(prefix, '', '[!WARNING]', '󰀪 Warning'),
             }
         end
 

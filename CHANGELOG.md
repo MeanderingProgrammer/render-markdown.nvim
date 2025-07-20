@@ -6,6 +6,12 @@
 
 - configurable indent extmark priority [1327150](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/1327150da9b272863355f28e523050ab5450412f)
 - more anti_conceal.ignore elements [b8c3d47](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b8c3d474d4da14fa1a5f9a0a18955c6e7db88f65)
+- allow users to disable code block delimiter concealing [7620d4e](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7620d4e96eb5cf8d12e76c6fcaf1267628564ba9)
+- improve completions [#474](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/474)
+
+### Collaborator Shoutouts
+
+- @Anaritus
 
 ## 8.6.0 (2025-07-09)
 
