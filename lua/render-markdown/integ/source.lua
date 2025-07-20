@@ -50,8 +50,8 @@ function M.items(buf, row, col)
     end
 
     local marker = vim.treesitter.get_node_text(marker_node, buf)
-    local text = vim.treesitter.get_node_text(node, buf)
-    if M.ignore(marker, text:gsub('\n$', '')) then
+    local text = vim.treesitter.get_node_text(node, buf):gsub('\n%s*$', '')
+    if M.ignore(marker, text) then
         return nil
     end
 
@@ -116,7 +116,11 @@ end
 ---@param text string
 ---@return boolean
 function M.ignore(marker, text)
-    local prefix = vim.pesc(vim.trim(marker)) .. '%s+'
+    local prefix = '^' .. vim.pesc(vim.trim(marker)) .. '%s+'
+    local i, j = text:find(prefix)
+    if not (i and j) or text:sub(i, j):find('\n') then
+        return false
+    end
     local patterns = {} ---@type string[]
     -- first non-space after the marker is not '['
     patterns[#patterns + 1] = prefix .. '[^%[]'
