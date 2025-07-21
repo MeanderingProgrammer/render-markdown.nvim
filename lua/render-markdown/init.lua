@@ -51,13 +51,13 @@ M.default = {
     -- unaffected by this plugin.
     render_modes = { 'n', 'c', 't' },
     -- Maximum file size (in MB) that this plugin will attempt to render.
-    -- Any file larger than this will effectively be ignored.
+    -- File larger than this will effectively be ignored.
     max_file_size = 10.0,
     -- Milliseconds that must pass before updating marks, updates occur.
     -- within the context of the visible window, not the entire buffer.
     debounce = 100,
     -- Pre configured settings that will attempt to mimic various target user experiences.
-    -- Any user provided settings will take precedence.
+    -- User provided settings will take precedence.
     -- | obsidian | mimic Obsidian UI                                          |
     -- | lazy     | will attempt to stay up to date with LazyVim configuration |
     -- | none     | does nothing                                               |

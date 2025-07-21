@@ -13,7 +13,7 @@ function Render:setup()
     if self.context:skip(self.config) then
         return false
     end
-    if not vim.tbl_contains({ 'normal', 'full' }, self.config.style) then
+    if not self.config.inline then
         return false
     end
     return true

@@ -52,9 +52,6 @@ function Render:setup()
     if self.context:skip(self.config) then
         return false
     end
-    if self.config.style == 'none' then
-        return false
-    end
 
     -- ensure delimiter and rows exist
     local delim_node = nil ---@type render.md.Node?
@@ -226,7 +223,7 @@ function Render:run()
     for _, row in ipairs(self.data.rows) do
         self:row(row)
     end
-    if self.config.style == 'full' then
+    if self.config.border_enabled then
         self:border()
     end
 end

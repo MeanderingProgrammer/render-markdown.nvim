@@ -188,13 +188,13 @@ require('render-markdown').setup({
     -- unaffected by this plugin.
     render_modes = { 'n', 'c', 't' },
     -- Maximum file size (in MB) that this plugin will attempt to render.
-    -- Any file larger than this will effectively be ignored.
+    -- File larger than this will effectively be ignored.
     max_file_size = 10.0,
     -- Milliseconds that must pass before updating marks, updates occur.
     -- within the context of the visible window, not the entire buffer.
     debounce = 100,
     -- Pre configured settings that will attempt to mimic various target user experiences.
-    -- Any user provided settings will take precedence.
+    -- User provided settings will take precedence.
     -- | obsidian | mimic Obsidian UI                                          |
     -- | lazy     | will attempt to stay up to date with LazyVim configuration |
     -- | none     | does nothing                                               |
@@ -240,7 +240,7 @@ require('render-markdown').setup({
         },
     },
     anti_conceal = {
-        -- This enables hiding any added text on the line the cursor is on.
+        -- This enables hiding added text on the line the cursor is on.
         enabled = true,
         -- Modes to disable anti conceal feature.
         disabled_modes = false,
@@ -333,7 +333,7 @@ require('render-markdown').setup({
         atx = true,
         -- Turn on / off setext heading rendering.
         setext = true,
-        -- Turn on / off any sign column related rendering.
+        -- Turn on / off sign column related rendering.
         sign = true,
         -- Replaces '#+' of 'atx_h._marker'.
         -- Output is evaluated depending on the type.
@@ -341,9 +341,9 @@ require('render-markdown').setup({
         -- | string[] | `cycle(value, context.level)` |
         icons = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
         -- Determines how icons fill the available space.
-        -- | right   | '#'s are concealed and icon is appended to right side                          |
-        -- | inline  | '#'s are concealed and icon is inlined on left side                            |
-        -- | overlay | icon is left padded with spaces and inserted on left hiding any additional '#' |
+        -- | right   | '#'s are concealed and icon is appended to right side                      |
+        -- | inline  | '#'s are concealed and icon is inlined on left side                        |
+        -- | overlay | icon is left padded with spaces and inserted on left hiding additional '#' |
         position = 'overlay',
         -- Added to the sign column if enabled.
         -- Output is evaluated by `cycle(value, context.level)`.
@@ -432,17 +432,11 @@ require('render-markdown').setup({
         enabled = true,
         -- Additional modes to render code blocks.
         render_modes = false,
-        -- Turn on / off any sign column related rendering.
+        -- Turn on / off sign column related rendering.
         sign = true,
-        -- Determines how code blocks & inline code are rendered.
-        -- | none     | disables all rendering                   |
-        -- | normal   | background highlighting + padding        |
-        -- | language | language heading with icon + sign column |
-        -- | full     | normal + language                        |
-        style = 'full',
         -- Whether to conceal nodes at the top and bottom of code blocks.
         conceal_delimiters = true,
-        -- Turn on / off any language heading related rendering.
+        -- Turn on / off language heading related rendering.
         language = true,
         -- Determines where language icon is rendered.
         -- | right | right side of code block |
@@ -494,6 +488,8 @@ require('render-markdown').setup({
         above = '▄',
         -- Used below code blocks for thin border.
         below = '▀',
+        -- Turn on / off inline code related rendering.
+        inline = true,
         -- Icon to add to the left of inline code.
         inline_left = '',
         -- Icon to add to the right of inline code.
@@ -512,6 +508,12 @@ require('render-markdown').setup({
         highlight_fallback = 'RenderMarkdownCodeFallback',
         -- Highlight for inline code.
         highlight_inline = 'RenderMarkdownCodeInline',
+        -- Determines how code blocks & inline code are rendered.
+        -- | none     | { enabled = false }                           |
+        -- | normal   | { language = false }                          |
+        -- | language | { disable_background = true, inline = false } |
+        -- | full     | uses all default values                       |
+        style = 'full',
     },
     dash = {
         -- Turn on / off thematic break rendering.
@@ -664,11 +666,6 @@ require('render-markdown').setup({
         -- | round  | use round border corners          |
         -- | none   | does nothing                      |
         preset = 'none',
-        -- Determines how the table as a whole is rendered.
-        -- | none   | disables all rendering                                                  |
-        -- | normal | applies the 'cell' style rendering to each row of the table             |
-        -- | full   | normal + a top & bottom line that fill out the table when lengths match |
-        style = 'full',
         -- Determines how individual cells of a table are rendered.
         -- | overlay | writes completely over the table, removing conceal behavior and highlights |
         -- | raw     | replaces only the '|' characters in each row, leaving the cells unmodified |
@@ -688,6 +685,8 @@ require('render-markdown').setup({
             '└', '┴', '┘',
             '│', '─',
         },
+        -- Turn on / off top & bottom lines.
+        border_enabled = true,
         -- Always use virtual lines for table borders instead of attempting to use empty lines.
         -- Will be automatically enabled if indentation module is enabled.
         border_virtual = false,
@@ -699,6 +698,11 @@ require('render-markdown').setup({
         row = 'RenderMarkdownTableRow',
         -- Highlight for inline padding used to add back concealed space.
         filler = 'RenderMarkdownTableFill',
+        -- Determines how the table as a whole is rendered.
+        -- | none   | { enabled = false }        |
+        -- | normal | { border_enabled = false } |
+        -- | full   | uses all default values    |
+        style = 'full',
     },
     callout = {
         -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'.
@@ -930,7 +934,7 @@ require('render-markdown').setup({
         atx = true,
         -- Turn on / off setext heading rendering.
         setext = true,
-        -- Turn on / off any sign column related rendering.
+        -- Turn on / off sign column related rendering.
         sign = true,
         -- Replaces '#+' of 'atx_h._marker'.
         -- Output is evaluated depending on the type.
@@ -938,9 +942,9 @@ require('render-markdown').setup({
         -- | string[] | `cycle(value, context.level)` |
         icons = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
         -- Determines how icons fill the available space.
-        -- | right   | '#'s are concealed and icon is appended to right side                          |
-        -- | inline  | '#'s are concealed and icon is inlined on left side                            |
-        -- | overlay | icon is left padded with spaces and inserted on left hiding any additional '#' |
+        -- | right   | '#'s are concealed and icon is appended to right side                      |
+        -- | inline  | '#'s are concealed and icon is inlined on left side                        |
+        -- | overlay | icon is left padded with spaces and inserted on left hiding additional '#' |
         position = 'overlay',
         -- Added to the sign column if enabled.
         -- Output is evaluated by `cycle(value, context.level)`.
@@ -1059,17 +1063,11 @@ require('render-markdown').setup({
         enabled = true,
         -- Additional modes to render code blocks.
         render_modes = false,
-        -- Turn on / off any sign column related rendering.
+        -- Turn on / off sign column related rendering.
         sign = true,
-        -- Determines how code blocks & inline code are rendered.
-        -- | none     | disables all rendering                   |
-        -- | normal   | background highlighting + padding        |
-        -- | language | language heading with icon + sign column |
-        -- | full     | normal + language                        |
-        style = 'full',
         -- Whether to conceal nodes at the top and bottom of code blocks.
         conceal_delimiters = true,
-        -- Turn on / off any language heading related rendering.
+        -- Turn on / off language heading related rendering.
         language = true,
         -- Determines where language icon is rendered.
         -- | right | right side of code block |
@@ -1121,6 +1119,8 @@ require('render-markdown').setup({
         above = '▄',
         -- Used below code blocks for thin border.
         below = '▀',
+        -- Turn on / off inline code related rendering.
+        inline = true,
         -- Icon to add to the left of inline code.
         inline_left = '',
         -- Icon to add to the right of inline code.
@@ -1139,6 +1139,12 @@ require('render-markdown').setup({
         highlight_fallback = 'RenderMarkdownCodeFallback',
         -- Highlight for inline code.
         highlight_inline = 'RenderMarkdownCodeInline',
+        -- Determines how code blocks & inline code are rendered.
+        -- | none     | { enabled = false }                           |
+        -- | normal   | { language = false }                          |
+        -- | language | { disable_background = true, inline = false } |
+        -- | full     | uses all default values                       |
+        style = 'full',
     },
 })
 ```
@@ -1352,11 +1358,6 @@ require('render-markdown').setup({
         -- | round  | use round border corners          |
         -- | none   | does nothing                      |
         preset = 'none',
-        -- Determines how the table as a whole is rendered.
-        -- | none   | disables all rendering                                                  |
-        -- | normal | applies the 'cell' style rendering to each row of the table             |
-        -- | full   | normal + a top & bottom line that fill out the table when lengths match |
-        style = 'full',
         -- Determines how individual cells of a table are rendered.
         -- | overlay | writes completely over the table, removing conceal behavior and highlights |
         -- | raw     | replaces only the '|' characters in each row, leaving the cells unmodified |
@@ -1376,6 +1377,8 @@ require('render-markdown').setup({
             '└', '┴', '┘',
             '│', '─',
         },
+        -- Turn on / off top & bottom lines.
+        border_enabled = true,
         -- Always use virtual lines for table borders instead of attempting to use empty lines.
         -- Will be automatically enabled if indentation module is enabled.
         border_virtual = false,
@@ -1387,6 +1390,11 @@ require('render-markdown').setup({
         row = 'RenderMarkdownTableRow',
         -- Highlight for inline padding used to add back concealed space.
         filler = 'RenderMarkdownTableFill',
+        -- Determines how the table as a whole is rendered.
+        -- | none   | { enabled = false }        |
+        -- | normal | { border_enabled = false } |
+        -- | full   | uses all default values    |
+        style = 'full',
     },
 })
 ```

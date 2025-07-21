@@ -23,9 +23,6 @@ function Render:setup()
     if self.context:skip(self.config) then
         return false
     end
-    if self.config.style == 'none' then
-        return false
-    end
     -- skip single line code block
     if self.node.end_row - self.node.start_row <= 1 then
         return false
@@ -103,9 +100,6 @@ end
 ---@param delim? render.md.Node
 ---@return boolean
 function Render:language(info, language, delim)
-    if not vim.tbl_contains({ 'language', 'full' }, self.config.style) then
-        return false
-    end
     if not self.config.language then
         return false
     end
@@ -200,9 +194,6 @@ end
 ---@param language? render.md.Node
 ---@return boolean
 function Render:background_enabled(language)
-    if not vim.tbl_contains({ 'normal', 'full' }, self.config.style) then
-        return false
-    end
     local disable = self.config.disable_background
     if type(disable) == 'boolean' then
         return not disable

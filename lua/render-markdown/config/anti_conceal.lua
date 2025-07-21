@@ -33,7 +33,7 @@ local M = {}
 
 ---@type render.md.anti.conceal.Config
 M.default = {
-    -- This enables hiding any added text on the line the cursor is on.
+    -- This enables hiding added text on the line the cursor is on.
     enabled = true,
     -- Modes to disable anti conceal feature.
     disabled_modes = false,

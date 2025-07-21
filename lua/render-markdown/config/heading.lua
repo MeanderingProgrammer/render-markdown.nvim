@@ -63,7 +63,7 @@ M.default = {
     atx = true,
     -- Turn on / off setext heading rendering.
     setext = true,
-    -- Turn on / off any sign column related rendering.
+    -- Turn on / off sign column related rendering.
     sign = true,
     -- Replaces '#+' of 'atx_h._marker'.
     -- Output is evaluated depending on the type.
@@ -71,9 +71,9 @@ M.default = {
     -- | string[] | `cycle(value, context.level)` |
     icons = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
     -- Determines how icons fill the available space.
-    -- | right   | '#'s are concealed and icon is appended to right side                          |
-    -- | inline  | '#'s are concealed and icon is inlined on left side                            |
-    -- | overlay | icon is left padded with spaces and inserted on left hiding any additional '#' |
+    -- | right   | '#'s are concealed and icon is appended to right side                      |
+    -- | inline  | '#'s are concealed and icon is inlined on left side                        |
+    -- | overlay | icon is left padded with spaces and inserted on left hiding additional '#' |
     position = 'overlay',
     -- Added to the sign column if enabled.
     -- Output is evaluated by `cycle(value, context.level)`.

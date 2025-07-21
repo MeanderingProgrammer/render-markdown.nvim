@@ -1,6 +1,5 @@
 ---@class (exact) render.md.code.Config: render.md.base.Config
 ---@field sign boolean
----@field style render.md.code.Style
 ---@field conceal_delimiters boolean
 ---@field language boolean
 ---@field position render.md.code.Position
@@ -20,6 +19,7 @@
 ---@field language_right string
 ---@field above string
 ---@field below string
+---@field inline boolean
 ---@field inline_left string
 ---@field inline_right string
 ---@field inline_pad integer
@@ -29,14 +29,7 @@
 ---@field highlight_border false|string
 ---@field highlight_fallback string
 ---@field highlight_inline string
-
----@enum render.md.code.Style
-local Style = {
-    full = 'full',
-    normal = 'normal',
-    language = 'language',
-    none = 'none',
-}
+---@field style render.md.code.Style
 
 ---@enum render.md.code.Position
 local Position = {
@@ -58,6 +51,14 @@ local Border = {
     none = 'none',
 }
 
+---@enum render.md.code.Style
+local Style = {
+    full = 'full',
+    normal = 'normal',
+    language = 'language',
+    none = 'none',
+}
+
 ---@class render.md.code.Cfg
 local M = {}
 
@@ -67,17 +68,11 @@ M.default = {
     enabled = true,
     -- Additional modes to render code blocks.
     render_modes = false,
-    -- Turn on / off any sign column related rendering.
+    -- Turn on / off sign column related rendering.
     sign = true,
-    -- Determines how code blocks & inline code are rendered.
-    -- | none     | disables all rendering                   |
-    -- | normal   | background highlighting + padding        |
-    -- | language | language heading with icon + sign column |
-    -- | full     | normal + language                        |
-    style = 'full',
     -- Whether to conceal nodes at the top and bottom of code blocks.
     conceal_delimiters = true,
-    -- Turn on / off any language heading related rendering.
+    -- Turn on / off language heading related rendering.
     language = true,
     -- Determines where language icon is rendered.
     -- | right | right side of code block |
@@ -129,6 +124,8 @@ M.default = {
     above = '▄',
     -- Used below code blocks for thin border.
     below = '▀',
+    -- Turn on / off inline code related rendering.
+    inline = true,
     -- Icon to add to the left of inline code.
     inline_left = '',
     -- Icon to add to the right of inline code.
@@ -147,13 +144,18 @@ M.default = {
     highlight_fallback = 'RenderMarkdownCodeFallback',
     -- Highlight for inline code.
     highlight_inline = 'RenderMarkdownCodeInline',
+    -- Determines how code blocks & inline code are rendered.
+    -- | none     | { enabled = false }                           |
+    -- | normal   | { language = false }                          |
+    -- | language | { disable_background = true, inline = false } |
+    -- | full     | uses all default values                       |
+    style = 'full',
 }
 
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
     require('render-markdown.config.base').validate(spec)
     spec:type('sign', 'boolean')
-    spec:one_of('style', vim.tbl_values(Style))
     spec:type('conceal_delimiters', 'boolean')
     spec:type('language', 'boolean')
     spec:one_of('position', vim.tbl_values(Position))
@@ -173,6 +175,7 @@ function M.validate(spec)
     spec:type('language_right', 'string')
     spec:type('above', 'string')
     spec:type('below', 'string')
+    spec:type('inline', 'boolean')
     spec:type('inline_left', 'string')
     spec:type('inline_right', 'string')
     spec:type('inline_pad', 'number')
@@ -182,6 +185,7 @@ function M.validate(spec)
     spec:one_of('highlight_border', { false }, 'string')
     spec:type('highlight_fallback', 'string')
     spec:type('highlight_inline', 'string')
+    spec:one_of('style', vim.tbl_values(Style))
     spec:check()
 end
 

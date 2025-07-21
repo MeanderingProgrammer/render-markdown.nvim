@@ -1,15 +1,16 @@
 ---@class (exact) render.md.table.Config: render.md.base.Config
 ---@field preset render.md.table.Preset
----@field style render.md.table.Style
 ---@field cell render.md.table.Cell
 ---@field padding integer
 ---@field min_width integer
 ---@field border string[]
+---@field border_enabled boolean
 ---@field border_virtual boolean
 ---@field alignment_indicator string
 ---@field head string
 ---@field row string
 ---@field filler string
+---@field style render.md.table.Style
 
 ---@enum render.md.table.Preset
 local Preset = {
@@ -19,19 +20,19 @@ local Preset = {
     heavy = 'heavy',
 }
 
----@enum render.md.table.Style
-local Style = {
-    full = 'full',
-    normal = 'normal',
-    none = 'none',
-}
-
 ---@enum render.md.table.Cell
 local Cell = {
     trimmed = 'trimmed',
     padded = 'padded',
     raw = 'raw',
     overlay = 'overlay',
+}
+
+---@enum render.md.table.Style
+local Style = {
+    full = 'full',
+    normal = 'normal',
+    none = 'none',
 }
 
 ---@class render.md.table.Cfg
@@ -49,11 +50,6 @@ M.default = {
     -- | round  | use round border corners          |
     -- | none   | does nothing                      |
     preset = 'none',
-    -- Determines how the table as a whole is rendered.
-    -- | none   | disables all rendering                                                  |
-    -- | normal | applies the 'cell' style rendering to each row of the table             |
-    -- | full   | normal + a top & bottom line that fill out the table when lengths match |
-    style = 'full',
     -- Determines how individual cells of a table are rendered.
     -- | overlay | writes completely over the table, removing conceal behavior and highlights |
     -- | raw     | replaces only the '|' characters in each row, leaving the cells unmodified |
@@ -73,6 +69,8 @@ M.default = {
         '└', '┴', '┘',
         '│', '─',
     },
+    -- Turn on / off top & bottom lines.
+    border_enabled = true,
     -- Always use virtual lines for table borders instead of attempting to use empty lines.
     -- Will be automatically enabled if indentation module is enabled.
     border_virtual = false,
@@ -84,22 +82,28 @@ M.default = {
     row = 'RenderMarkdownTableRow',
     -- Highlight for inline padding used to add back concealed space.
     filler = 'RenderMarkdownTableFill',
+    -- Determines how the table as a whole is rendered.
+    -- | none   | { enabled = false }        |
+    -- | normal | { border_enabled = false } |
+    -- | full   | uses all default values    |
+    style = 'full',
 }
 
 ---@param spec render.md.debug.ValidatorSpec
 function M.validate(spec)
     require('render-markdown.config.base').validate(spec)
     spec:one_of('preset', vim.tbl_values(Preset))
-    spec:one_of('style', vim.tbl_values(Style))
     spec:one_of('cell', vim.tbl_values(Cell))
     spec:type('padding', 'number')
     spec:type('min_width', 'number')
     spec:list('border', 'string')
+    spec:type('border_enabled', 'boolean')
     spec:type('border_virtual', 'boolean')
     spec:type('alignment_indicator', 'string')
     spec:type('head', 'string')
     spec:type('row', 'string')
     spec:type('filler', 'string')
+    spec:one_of('style', vim.tbl_values(Style))
     spec:check()
 end
 

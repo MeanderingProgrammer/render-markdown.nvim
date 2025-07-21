@@ -85,7 +85,6 @@
 
 ---@class (exact) render.md.code.UserConfig: render.md.base.UserConfig
 ---@field sign? boolean
----@field style? render.md.code.Style
 ---@field conceal_delimiters? boolean
 ---@field language? boolean
 ---@field position? render.md.code.Position
@@ -105,6 +104,7 @@
 ---@field language_right? string
 ---@field above? string
 ---@field below? string
+---@field inline? boolean
 ---@field inline_left? string
 ---@field inline_right? string
 ---@field inline_pad? integer
@@ -114,6 +114,7 @@
 ---@field highlight_border? false|string
 ---@field highlight_fallback? string
 ---@field highlight_inline? string
+---@field style? render.md.code.Style
 
 ---@class (exact) render.md.completions.UserConfig
 ---@field blink? render.md.completion.UserConfig
@@ -253,16 +254,17 @@
 
 ---@class (exact) render.md.table.UserConfig: render.md.base.UserConfig
 ---@field preset? render.md.table.Preset
----@field style? render.md.table.Style
 ---@field cell? render.md.table.Cell
 ---@field padding? integer
 ---@field min_width? integer
 ---@field border? string[]
+---@field border_enabled? boolean
 ---@field border_virtual? boolean
 ---@field alignment_indicator? string
 ---@field head? string
 ---@field row? string
 ---@field filler? string
+---@field style? render.md.table.Style
 
 ---@class (exact) render.md.quote.UserConfig: render.md.base.UserConfig
 ---@field icon? string|string[]
