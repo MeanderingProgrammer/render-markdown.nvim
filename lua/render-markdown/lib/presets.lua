@@ -11,91 +11,107 @@ local M = {}
 ---@param user render.md.UserConfig
 ---@return render.md.UserConfig
 function M.get(user)
-    return vim.tbl_deep_extend('force', M.config_preset[user.preset] or {}, {
-        code = M.code_style[(user.code or {}).style] or {},
-        pipe_table = vim.tbl_deep_extend(
-            'force',
-            M.table_preset[(user.pipe_table or {}).preset] or {},
-            M.table_style[(user.pipe_table or {}).style] or {}
-        ),
-        win_options = M.win_options[(user.anti_conceal or {}).enabled] or {},
+    return vim.tbl_deep_extend('force', M.config(user), {
+        code = M.code(user),
+        pipe_table = M.pipe_table(user),
+        win_options = M.win_options(user),
     })
 end
 
 ---@private
----@type table<render.md.config.Preset?, render.md.UserConfig?>
-M.config_preset = {
-    [Preset.obsidian] = { render_modes = true },
-    ---https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/extras/lang/markdown.lua
-    [Preset.lazy] = {
-        file_types = { 'markdown', 'norg', 'rmd', 'org', 'codecompanion' },
-        code = {
-            sign = false,
-            width = 'block',
-            right_pad = 1,
+---@param user render.md.UserConfig
+---@return render.md.UserConfig
+function M.config(user)
+    ---@type table<render.md.config.Preset?, render.md.UserConfig?>
+    local presets = {
+        [Preset.obsidian] = { render_modes = true },
+        ---https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/extras/lang/markdown.lua
+        [Preset.lazy] = {
+            file_types = { 'markdown', 'norg', 'rmd', 'org', 'codecompanion' },
+            code = {
+                sign = false,
+                width = 'block',
+                right_pad = 1,
+            },
+            heading = {
+                sign = false,
+                icons = {},
+            },
+            checkbox = {
+                enabled = false,
+            },
         },
-        heading = {
-            sign = false,
-            icons = {},
-        },
-        checkbox = {
-            enabled = false,
-        },
-    },
-}
+    }
+    return presets[user.preset] or {}
+end
 
 ---@private
----@type table<render.md.code.Style?, render.md.code.UserConfig?>
-M.code_style = {
-    ['none'] = { enabled = false },
-    ['normal'] = { language = false },
-    ['language'] = { disable_background = true, inline = false },
-}
+---@param user render.md.UserConfig
+---@return render.md.code.UserConfig
+function M.code(user)
+    ---@type table<render.md.code.Style?, render.md.code.UserConfig?>
+    local styles = {
+        ['none'] = { enabled = false },
+        ['normal'] = { language = false },
+        ['language'] = { disable_background = true, inline = false },
+    }
+    return styles[(user.code or {}).style] or {}
+end
 
 ---@private
----@type table<render.md.table.Preset?, render.md.table.UserConfig?>
-M.table_preset = {
-    ['round'] = {
-        -- stylua: ignore
-        border = {
-            '╭', '┬', '╮',
-            '├', '┼', '┤',
-            '╰', '┴', '╯',
-            '│', '─',
+---@param user render.md.UserConfig
+---@return render.md.table.UserConfig
+function M.pipe_table(user)
+    ---@type table<render.md.table.Preset?, render.md.table.UserConfig?>
+    local presets = {
+        ['round'] = {
+            -- stylua: ignore
+            border = {
+                '╭', '┬', '╮',
+                '├', '┼', '┤',
+                '╰', '┴', '╯',
+                '│', '─',
+            },
         },
-    },
-    ['double'] = {
-        -- stylua: ignore
-        border = {
-            '╔', '╦', '╗',
-            '╠', '╬', '╣',
-            '╚', '╩', '╝',
-            '║', '═',
+        ['double'] = {
+            -- stylua: ignore
+            border = {
+                '╔', '╦', '╗',
+                '╠', '╬', '╣',
+                '╚', '╩', '╝',
+                '║', '═',
+            },
         },
-    },
-    ['heavy'] = {
-        alignment_indicator = '─',
-        -- stylua: ignore
-        border = {
-            '┏', '┳', '┓',
-            '┣', '╋', '┫',
-            '┗', '┻', '┛',
-            '┃', '━',
+        ['heavy'] = {
+            alignment_indicator = '─',
+            -- stylua: ignore
+            border = {
+                '┏', '┳', '┓',
+                '┣', '╋', '┫',
+                '┗', '┻', '┛',
+                '┃', '━',
+            },
         },
-    },
-}
+    }
+    ---@type table<render.md.table.Style?, render.md.table.UserConfig?>
+    local styles = {
+        ['none'] = { enabled = false },
+        ['normal'] = { border_enabled = false },
+    }
+    local preset = presets[(user.pipe_table or {}).preset] or {}
+    local style = styles[(user.pipe_table or {}).style] or {}
+    return vim.tbl_deep_extend('force', preset, style)
+end
 
 ---@private
----@type table<render.md.table.Style?, render.md.table.UserConfig?>
-M.table_style = {
-    ['none'] = { enabled = false },
-    ['normal'] = { border_enabled = false },
-}
-
----@private
----@type table<boolean?, render.md.window.UserConfigs?>
-M.win_options = {
-    [false] = { concealcursor = { rendered = 'nvic' } },
-}
+---@param user render.md.UserConfig
+---@return render.md.window.UserConfigs
+function M.win_options(user)
+    ---@type table<boolean?, render.md.window.UserConfigs?>
+    local anti_conceals = {
+        [false] = { concealcursor = { rendered = 'nvic' } },
+    }
+    return anti_conceals[(user.anti_conceal or {}).enabled] or {}
+end
 
 return M
