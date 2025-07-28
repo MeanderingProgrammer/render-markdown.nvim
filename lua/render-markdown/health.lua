@@ -5,7 +5,7 @@ local state = require('render-markdown.state')
 local M = {}
 
 ---@private
-M.version = '8.6.8'
+M.version = '8.6.9'
 
 function M.check()
     M.start('version')
@@ -153,7 +153,7 @@ end
 ---@param name string
 ---@param validate? fun(plugin: any): string[]?
 function M.plugin(name, validate)
-    local has_plugin, plugin = pcall(require, name)
+    local has_plugin, plugin = pcall(require, name) ---@type boolean, any
     if not has_plugin then
         vim.health.ok(name .. ': not installed')
     elseif not validate then

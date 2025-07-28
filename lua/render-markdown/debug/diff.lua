@@ -7,15 +7,15 @@ local M = {}
 ---@param t2 table<render.md.debug.Key, any>
 ---@return table<render.md.debug.Key, any>?
 function M.get(t1, t2)
-    local keys = vim.tbl_keys(t1)
+    local keys = vim.tbl_keys(t1) ---@type render.md.debug.Key[]
     for key in pairs(t2) do
         if not vim.tbl_contains(keys, key) then
             keys[#keys + 1] = key
         end
     end
-    local result = {}
+    local result = {} ---@type table<render.md.debug.Key, any>
     for _, key in ipairs(keys) do
-        local difference
+        local difference ---@type any
         local v1, v2 = t1[key], t2[key]
         if type(v1) == 'table' and type(v2) == 'table' then
             difference = M.get(v1, v2)

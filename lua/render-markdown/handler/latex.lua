@@ -41,7 +41,7 @@ function Handler:run(root)
 
     local indent = self:indent(node.start_row, node.start_col)
     local lines = iter.list.map(self:expressions(node), function(expression)
-        local line = vim.list_extend({}, indent)
+        local line = vim.list_extend({}, indent) ---@type render.md.mark.Line
         line[#line + 1] = { expression, self.config.highlight }
         return line
     end)

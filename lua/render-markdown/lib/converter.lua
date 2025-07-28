@@ -76,7 +76,7 @@ M.superscripts = {
 ---@param s string
 ---@return string?
 function M.superscript(s)
-    local chars = {}
+    local chars = {} ---@type string[]
     for char in s:gmatch('.') do
         char = M.superscripts[char]
         if not char then

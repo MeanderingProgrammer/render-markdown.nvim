@@ -21,6 +21,9 @@ function M.init()
     vim.api.nvim_create_user_command(M.name, M.command, {
         nargs = '*',
         desc = M.plugin .. ' commands',
+        ---@param cmdline string
+        ---@param col integer
+        ---@return string[]
         complete = function(_, cmdline, col)
             local line = cmdline:sub(1, col):match('^' .. M.name .. '%s+(.*)$')
             if line then
@@ -44,7 +47,7 @@ end
 ---@param values string[]
 ---@return string[]
 function M.matches(prefix, values)
-    local result = {}
+    local result = {} ---@type string[]
     for _, value in ipairs(values) do
         if vim.startswith(value, prefix) then
             result[#result + 1] = value
@@ -70,7 +73,7 @@ function M.run(fargs)
         return ('invalid # arguments - %d'):format(#fargs)
     end
     local name = fargs[1] or 'enable'
-    local command = api[name]
+    local command = api[name] --[[@as fun(enable?: boolean)?]]
     if not command then
         return ('invalid command - %s'):format(name)
     end

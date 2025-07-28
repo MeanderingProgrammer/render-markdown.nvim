@@ -42,7 +42,7 @@ function Config.new(root, enabled, buf)
     config = vim.deepcopy(config)
     for _, name in ipairs({ 'buflisted', 'buftype', 'filetype' }) do
         local value = env.buf.get(buf, name)
-        local override = root.overrides[name][value]
+        local override = root.overrides[name][value] ---@type render.md.partial.UserConfig?
         if override then
             config = vim.tbl_deep_extend('force', config, override)
         end

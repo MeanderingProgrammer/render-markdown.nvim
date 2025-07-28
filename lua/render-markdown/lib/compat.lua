@@ -21,7 +21,7 @@ function M.fix_lsp_window(buf, win, extmarks)
     local str = require('render-markdown.lib.str')
 
     -- account for conceal lines marks allowing us to reduce window height
-    local height = vim.api.nvim_win_text_height(win, {}).all
+    local height = vim.api.nvim_win_text_height(win, {}).all ---@type integer
     for _, extmark in ipairs(extmarks) do
         if extmark:get().opts.conceal_lines then
             height = height - 1

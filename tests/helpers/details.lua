@@ -90,11 +90,11 @@ function MarkDetails:priorities()
     local win_col = self.virt_text_win_col or 0
     local width = 0
     for _, text in ipairs(self.virt_text or {}) do
-        width = width + #text[1]
+        width = width + #text[1] ---@type number
     end
     for _, line in ipairs(self.virt_lines or {}) do
         for _, text in ipairs(line) do
-            width = width + #text[1]
+            width = width + #text[1] ---@type number
         end
     end
     ---@type number[]

@@ -55,7 +55,7 @@ end
 
 ---@return string
 function Mark:__tostring()
-    local lines = {}
+    local lines = {} ---@type string[]
     lines[#lines + 1] = ('='):rep(vim.o.columns - 1)
     lines[#lines + 1] = ('row: %s'):format(Mark.collapse(self.row))
     lines[#lines + 1] = ('column: %s'):format(Mark.collapse(self.col))
@@ -64,7 +64,7 @@ function Mark:__tostring()
     ---@param name string
     ---@param f fun(value: any): string
     local function add(name, f)
-        local value = self.opts[name]
+        local value = self.opts[name] ---@type any
         if value ~= nil then
             lines[#lines + 1] = ('  %s: %s'):format(name, f(value))
         end
@@ -106,7 +106,7 @@ end
 ---@param line render.md.mark.Line
 ---@return string
 function Mark.line(line)
-    local result = {}
+    local result = {} ---@type string[]
     for _, text in ipairs(line) do
         result[#result + 1] = ('(%s, %s)'):format(
             Mark.text(text[1]),
@@ -120,7 +120,7 @@ end
 ---@param text string
 ---@return string
 function Mark.text(text)
-    local chars = vim.fn.str2list(text)
+    local chars = vim.fn.str2list(text) ---@type integer[]
     local first, same = chars[1], true
     for _, char in ipairs(chars) do
         same = same and (first == char)

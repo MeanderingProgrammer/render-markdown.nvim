@@ -93,6 +93,7 @@ function Spec:list(keys, t, ts)
         if vim.tbl_contains(types, type(value)) then
             return true
         elseif type(value) == 'table' then
+            ---@cast value any[]
             for i, item in ipairs(value) do
                 if type(item) ~= t then
                     return false, ('[%d] is %s'):format(i, type(item))
@@ -114,8 +115,10 @@ function Spec:nested_list(keys, t, ts)
         if type(value) == t or vim.tbl_contains(types, type(value)) then
             return true
         elseif type(value) == 'table' then
+            ---@cast value any[]
             for i, item in ipairs(value) do
                 if type(item) == 'table' then
+                    ---@cast item any[]
                     for j, nested in ipairs(item) do
                         if type(nested) ~= t then
                             local info = ('[%d][%d] is %s'):format(
@@ -150,6 +153,7 @@ function Spec:one_or_list_of(keys, values, ts)
         elseif type(value) ~= 'table' then
             return vim.tbl_contains(values, value)
         else
+            ---@cast value any[]
             for i, item in ipairs(value) do
                 if not vim.tbl_contains(values, item) then
                     return false, ('[%d] is %s'):format(i, item)
@@ -165,7 +169,7 @@ end
 ---@param ts? type|type[]
 ---@return type[], string
 function Spec:handle_types(custom, ts)
-    local types
+    local types ---@type type[]
     if not ts then
         types = {}
     elseif type(ts) == 'string' then
@@ -186,7 +190,7 @@ end
 ---@param validation fun(v: any): boolean, string?
 function Spec:add(keys, kind, message, validation)
     if self.config then
-        keys = type(keys) == 'table' and keys or { keys }
+        keys = type(keys) == 'table' and keys or { keys } ---@type string[]
         for _, key in ipairs(keys) do
             self.specs[key] = {
                 kind = kind,
@@ -223,12 +227,12 @@ Validator.spec = Spec.new
 ---@param specs table<string, render.md.debug.Spec>
 function Validator:check(path, config, specs)
     for key, spec in pairs(specs) do
-        local root = vim.list_extend({}, path)
+        local root = vim.list_extend({}, path) ---@type string[]
         root[#root + 1] = tostring(key)
         local value = config[key]
         local ok, info = spec.validation(value)
         if not ok then
-            local actual
+            local actual ---@type string
             if spec.kind == Kind.data then
                 actual = vim.inspect(value)
             elseif spec.kind == Kind.type then
@@ -245,7 +249,7 @@ function Validator:check(path, config, specs)
         end
     end
     for key in pairs(config) do
-        local root = vim.list_extend({}, path)
+        local root = vim.list_extend({}, path) ---@type string[]
         root[#root + 1] = tostring(key)
         if not specs[key] then
             local message = ('%s - invalid key'):format(table.concat(root, '.'))

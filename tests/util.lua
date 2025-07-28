@@ -74,7 +74,7 @@ end
 ---@param kind 'code'|'inline'|'link'
 ---@return vim.api.keyset.set_extmark
 function M.highlight(kind)
-    local highlight
+    local highlight ---@type string
     if kind == 'code' then
         highlight = 'RmCodeInline'
     elseif kind == 'inline' then
@@ -185,7 +185,7 @@ end
 ---@param lengths integer[]
 ---@return render.md.mark.Line
 function M.indent.line(lengths)
-    local result = {}
+    local result = {} ---@type render.md.mark.Line
     for _, length in ipairs(lengths) do
         if length == 1 then
             result[#result + 1] = { '▎', 'RmIndent' }
@@ -254,7 +254,7 @@ function M.code.border(border, full, ...)
     local parts = { ... }
     parts[#parts + 1] = full and vim.o.columns or nil
 
-    local line = {}
+    local line = {} ---@type render.md.mark.Line
     for _, part in ipairs(parts) do
         if type(part) == 'string' then
             local icon = M.code.icon(part)
@@ -427,7 +427,8 @@ function M.actual_marks()
     })
     local actual = {} ---@type render.md.test.MarkDetails[]
     for _, mark in ipairs(marks) do
-        local _, row, col, details = unpack(mark)
+        local row, col = mark[2], mark[3]
+        local details = assert(mark[4], 'missing details')
         local info = require('tests.helpers.details').new(row, col, details)
         actual[#actual + 1] = info
     end
@@ -446,7 +447,7 @@ end
 function M.actual_screen()
     vim.cmd('redraw')
 
-    local actual = {}
+    local actual = {} ---@type string[]
     for row = 1, vim.o.lines do
         local line = ''
         for col = 1, vim.o.columns do

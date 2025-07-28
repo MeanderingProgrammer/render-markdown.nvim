@@ -62,11 +62,10 @@ function M.inject(language)
     else
         local files = vim.treesitter.query.get_files(language, 'injections')
         for _, file in ipairs(files) do
-            local f = io.open(file, 'r')
-            if f then
-                query = query .. f:read('*all') .. '\n'
-                f:close()
-            end
+            local f = assert(io.open(file, 'r'))
+            local body = f:read('*a') --[[@as string]]
+            f:close()
+            query = query .. body .. '\n'
         end
     end
     query = query .. injection.query

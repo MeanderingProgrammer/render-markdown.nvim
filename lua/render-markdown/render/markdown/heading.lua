@@ -40,7 +40,9 @@ function Render:setup()
     if self.context.conceal:hidden(self.node) then
         return false
     end
-    local atx, marker, level
+    local atx ---@type boolean
+    local marker ---@type render.md.Node
+    local level ---@type integer
     if self.node.type == 'atx_heading' and self.config.atx then
         atx = true
         marker = assert(self.node:child_at(0), 'atx heading missing marker')

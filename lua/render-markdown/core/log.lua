@@ -125,7 +125,7 @@ function M.add(level, name, ...)
     if M.level(level) < M.level(M.config.level) then
         return
     end
-    local messages = {}
+    local messages = {} ---@type string[]
     for i = 1, select('#', ...) do
         local value = select(i, ...)
         local message = type(value) == 'string' and value or vim.inspect(value)

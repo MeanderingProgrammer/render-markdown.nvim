@@ -214,7 +214,7 @@ end
 ---@param by integer
 ---@return integer, string?
 function Node:line(position, by)
-    local row
+    local row ---@type integer
     local single = self.start_row == self.end_row
     if position == Position.above then
         row = self.start_row - by
