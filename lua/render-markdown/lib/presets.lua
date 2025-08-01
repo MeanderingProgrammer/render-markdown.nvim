@@ -11,11 +11,12 @@ local M = {}
 ---@param user render.md.UserConfig
 ---@return render.md.UserConfig
 function M.get(user)
-    return vim.tbl_deep_extend('force', M.config(user), {
-        code = M.code(user),
-        pipe_table = M.pipe_table(user),
-        win_options = M.win_options(user),
-    })
+    return vim.tbl_deep_extend(
+        'force',
+        M.config(user),
+        M.partial(user),
+        M.overrides(user)
+    )
 end
 
 ---@private
@@ -46,7 +47,40 @@ function M.config(user)
 end
 
 ---@private
+---@param user render.md.partial.UserConfig
+---@return render.md.partial.UserConfig
+function M.partial(user)
+    ---@type render.md.partial.UserConfig
+    return {
+        code = M.code(user),
+        pipe_table = M.pipe_table(user),
+        win_options = M.win_options(user),
+    }
+end
+
+---@private
 ---@param user render.md.UserConfig
+---@return render.md.UserConfig
+function M.overrides(user)
+    local configs = {} ---@type render.md.overrides.UserConfig
+    for _, name in ipairs({ 'buflisted', 'buftype', 'filetype' }) do
+        local overrides = (user.overrides or {})[name] ---@type table<any, render.md.partial.UserConfig>?
+        if type(overrides) == 'table' then
+            local config = {} ---@type table<any, render.md.partial.UserConfig>
+            for value, override in pairs(overrides) do
+                if type(override) == 'table' then
+                    config[value] = M.partial(override)
+                end
+            end
+            configs[name] = config
+        end
+    end
+    ---@type render.md.UserConfig
+    return { overrides = configs }
+end
+
+---@private
+---@param user render.md.partial.UserConfig
 ---@return render.md.code.UserConfig
 function M.code(user)
     ---@type table<render.md.code.Style?, render.md.code.UserConfig?>
@@ -59,7 +93,7 @@ function M.code(user)
 end
 
 ---@private
----@param user render.md.UserConfig
+---@param user render.md.partial.UserConfig
 ---@return render.md.table.UserConfig
 function M.pipe_table(user)
     ---@type table<render.md.table.Preset?, render.md.table.UserConfig?>
@@ -104,7 +138,7 @@ function M.pipe_table(user)
 end
 
 ---@private
----@param user render.md.UserConfig
+---@param user render.md.partial.UserConfig
 ---@return render.md.window.UserConfigs
 function M.win_options(user)
     ---@type table<boolean?, render.md.window.UserConfigs?>
