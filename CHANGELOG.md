@@ -10,6 +10,10 @@
 - improve completions [#474](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/474)
   [3254863](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/3254863eb91fed3d9a7433b54327716528f1eacc)
 
+### Bug Fixes
+
+- resolve styles & presets in overrides [eec00fb](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/eec00fbfd7273cdfa0a1154dbef0bb983641eaf8)
+
 ### Collaborator Shoutouts
 
 - @Anaritus

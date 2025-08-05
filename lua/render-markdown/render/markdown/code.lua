@@ -140,9 +140,10 @@ function Render:language(info, language, delim)
         return false
     end
 
-    local left = self:line():text(self.config.language_left, border_hl)
-    local right = self:line():text(self.config.language_right, border_hl)
-    local body = left:extend(text):extend(right)
+    local body = self:line()
+        :text(self.config.language_left, border_hl)
+        :extend(text)
+        :text(self.config.language_right, border_hl)
 
     local border = border_hl and self.config.language_border or ' '
     local width = self.data.body - delim.start_col
@@ -180,11 +181,14 @@ function Render:border(node, thin)
     elseif kind == 'hide' then
         self.marks:over(true, node, { conceal_lines = '' })
     else
-        local icon = kind == 'thin' and thin or '█'
+        local icon = kind == 'thin' and thin or ' '
+        if icon ~= ' ' then
+            highlight = colors.bg_as_fg(highlight)
+        end
         local block = self.config.width == 'block'
         local width = block and self.data.body - node.start_col or vim.o.columns
         self.marks:start('code_border', node, {
-            virt_text = { { icon:rep(width), colors.bg_as_fg(highlight) } },
+            virt_text = { { icon:rep(width), highlight } },
             virt_text_pos = 'overlay',
         })
     end
@@ -234,7 +238,8 @@ end
 function Render:padding(background)
     local col = self.node.start_col
     local start_row, end_row = self.node.start_row, self.node.end_row - 1
-    local empty, widths = {}, col == 0 and {} or self.node:widths()
+    local empty = {} ---@type integer[]
+    local widths = col == 0 and {} or self.node:widths()
     for i, width in ipairs(widths) do
         if width == 0 then
             empty[#empty + 1] = (start_row + i - 1)
