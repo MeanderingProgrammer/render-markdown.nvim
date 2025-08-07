@@ -5,12 +5,13 @@ local state = require('render-markdown.state')
 local M = {}
 
 ---@private
-M.version = '8.6.11'
+M.version = '8.6.12'
 
 function M.check()
-    M.start('version')
-    vim.health.ok('plugin ' .. M.version)
+    M.start('versions')
     M.neovim('0.9', '0.11')
+    vim.health.ok('tree-sitter ABI: ' .. vim.treesitter.language_version)
+    vim.health.ok('plugin: ' .. M.version)
 
     M.start('configuration')
     local errors = state.validate()
@@ -25,17 +26,13 @@ function M.check()
     local latex = config.latex
     local html = config.html
 
-    M.start('treesitter')
-    M.parser('markdown', true)
-    M.highlights('markdown')
-    M.highlighter('markdown')
-    M.parser('markdown_inline', true)
-    M.highlights('markdown_inline')
+    M.ts_info('markdown', true, true)
+    M.ts_info('markdown_inline', true, false)
     if latex.enabled then
-        M.parser('latex', false)
+        M.ts_info('latex', false, false)
     end
     if html.enabled then
-        M.parser('html', false)
+        M.ts_info('html', false, false)
     end
 
     M.start('icons')
@@ -88,48 +85,59 @@ end
 ---@private
 ---@param language string
 ---@param required boolean
-function M.parser(language, required)
-    local ok, parser = pcall(vim.treesitter.get_parser, 0, language)
-    if ok and parser then
-        vim.health.ok(language .. ': parser installed')
+---@param active boolean
+function M.ts_info(language, required, active)
+    M.start('tree-sitter ' .. language)
+
+    local has_parser, parser = pcall(vim.treesitter.get_parser, 0, language)
+    if has_parser and parser then
+        vim.health.ok('parser: installed')
     else
-        local message = language .. ': parser not installed'
+        local message = 'parser: not installed'
         if not required then
             vim.health.warn(message, M.disable(language))
         else
             vim.health.error(message)
         end
     end
-end
 
----@private
----@param language string
-function M.highlights(language)
-    local files = vim.treesitter.query.get_files(language, 'highlights')
-    if #files > 0 then
-        for _, file in ipairs(files) do
-            local path = vim.fn.fnamemodify(file, ':~')
-            vim.health.ok(language .. ': highlights ' .. path)
+    local has_info, info = pcall(vim.treesitter.language.inspect, language)
+    if has_info and info then
+        vim.health.ok('ABI: ' .. info.abi_version)
+    else
+        local message = 'ABI: unknown'
+        if not required then
+            vim.health.warn(message, M.disable(language))
+        else
+            vim.health.error(message)
         end
-    else
-        vim.health.error(language .. ': highlights missing')
     end
-end
 
----@private
----@param language string
-function M.highlighter(language)
-    -- create a temporary buffer to check if vim.treesitter.start gets called
-    local buf = vim.api.nvim_create_buf(false, true)
-    vim.bo[buf].filetype = language
-    local ok = vim.treesitter.highlighter.active[buf] ~= nil
-    vim.api.nvim_buf_delete(buf, { force = true })
-    if ok then
-        vim.health.ok(language .. ': highlighter enabled')
-    else
-        vim.health.error(language .. ': highlighter not enabled', {
-            ('call vim.treesitter.start on %s buffers'):format(language),
-        })
+    if required then
+        local files = vim.treesitter.query.get_files(language, 'highlights')
+        if #files > 0 then
+            for _, file in ipairs(files) do
+                local path = vim.fn.fnamemodify(file, ':~')
+                vim.health.ok('highlights: ' .. path)
+            end
+        else
+            vim.health.error('highlights: unknown')
+        end
+    end
+
+    if active then
+        -- create a temporary buffer to check if vim.treesitter.start gets called
+        local buf = vim.api.nvim_create_buf(false, true)
+        vim.bo[buf].filetype = language
+        local ok = vim.treesitter.highlighter.active[buf] ~= nil
+        vim.api.nvim_buf_delete(buf, { force = true })
+        if ok then
+            vim.health.ok('highlighter: enabled')
+        else
+            vim.health.error('highlighter: not enabled', {
+                ('call vim.treesitter.start on %s buffers'):format(language),
+            })
+        end
     end
 end
 

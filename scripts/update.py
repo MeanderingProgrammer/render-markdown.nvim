@@ -2,10 +2,24 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from textwrap import indent
+from typing import Protocol
 
 import tree_sitter_lua
 import tree_sitter_markdown
 from tree_sitter import Language, Parser
+
+
+class LuaType(Protocol):
+    @property
+    def value(self) -> str: ...
+
+    def add(self, value: str) -> None: ...
+
+    def name(self) -> str: ...
+
+    def to_user(self) -> str | None: ...
+
+    def to_str(self) -> str: ...
 
 
 @dataclass(frozen=True)
@@ -21,20 +35,16 @@ class LuaAlias:
         return self.value.split()[1]
 
     def to_user(self) -> str | None:
-        if not self.config():
+        simple = self.name().split(".")[-1]
+        if simple != "Configs":
             return None
 
-        def user(s: str) -> str:
-            return s.replace(".Config", ".UserConfig")
-
-        lines: list[str] = [user(self.value)]
-        for s in self.options:
-            option = user(s)
-            lines.append(option)
+        lines: list[str] = []
+        values = [self.value] + self.options
+        for value in values:
+            value = value.replace(".Config", ".UserConfig")
+            lines.append(value)
         return "\n".join(lines)
-
-    def config(self) -> bool:
-        return self.name().split(".")[-1] == "Configs"
 
     def to_str(self) -> str:
         return "\n".join([self.value] + self.options)
@@ -55,26 +65,21 @@ class LuaClass:
         return self.value.split(":")[0].split()[-1]
 
     def to_user(self) -> str | None:
-        if not self.exact() or not self.config():
+        kind = self.value.split()[1]
+        simple = self.name().split(".")[-1]
+        if kind != "(exact)" or simple != "Config":
             return None
 
-        def user(s: str) -> str:
-            return s.replace(".Config", ".UserConfig")
-
-        lines: list[str] = [user(self.value)]
-        for s in self.fields:
-            field = user(s)
-            name = field.split()[1]
-            if not name.endswith("?"):
-                field = field.replace(f" {name} ", f" {name}? ")
-            lines.append(field)
+        lines: list[str] = []
+        values = [self.value] + self.fields
+        for i, value in enumerate(values):
+            value = value.replace(".Config", ".UserConfig")
+            if i > 0:
+                name = value.split()[1]
+                if not name.endswith("?"):
+                    value = value.replace(f" {name} ", f" {name}? ")
+            lines.append(value)
         return "\n".join(lines)
-
-    def exact(self) -> bool:
-        return self.value.split()[1] == "(exact)"
-
-    def config(self) -> bool:
-        return self.name().split(".")[-1] == "Config"
 
     def to_str(self) -> str:
         return "\n".join([self.value] + self.fields)
@@ -91,14 +96,14 @@ def update_types(root: Path) -> None:
     files: list[Path] = [root.joinpath("init.lua")]
     files.extend(sorted(root.joinpath("config").iterdir()))
 
-    classes: list[str] = ["---@meta"]
-    for definition in get_definitions(files):
-        user = definition.to_user()
+    sections: list[str] = ["---@meta"]
+    for lua_type in get_lua_types(files):
+        user = lua_type.to_user()
         if user is not None:
-            classes.append(user)
+            sections.append(user)
 
     types = root.joinpath("types.lua")
-    types.write_text("\n\n".join(classes) + "\n")
+    types.write_text("\n\n".join(sections) + "\n")
 
 
 def update_readme(root: Path) -> None:
@@ -148,7 +153,7 @@ def update_handlers(root: Path) -> None:
         root.joinpath("config/handlers.lua"),
         root.joinpath("lib/marks.lua"),
     ]
-    name_lua = {lua.name(): lua for lua in get_definitions(files)}
+    lua_types = {lua_type.name(): lua_type for lua_type in get_lua_types(files)}
     names = [
         "render.md.Handler",
         "render.md.handler.Context",
@@ -158,17 +163,17 @@ def update_handlers(root: Path) -> None:
         "render.md.mark.Text",
         "render.md.mark.Hl",
     ]
-    definitions = [name_lua[name] for name in names]
+    sections = [lua_types[name].to_str() for name in names]
 
     handlers = Path("doc/custom-handlers.md")
-    old = get_code_block(handlers, definitions[0].value, 1)
-    new = "\n".join([lua.to_str() + "\n" for lua in definitions])
+    old = get_code_block(handlers, names[0], 1)
+    new = "\n\n".join(sections) + "\n"
     text = handlers.read_text().replace(old, new)
     handlers.write_text(text)
 
 
-def get_definitions(files: list[Path]) -> list[LuaAlias | LuaClass]:
-    result: list[LuaAlias | LuaClass] = []
+def get_lua_types(files: list[Path]) -> list[LuaType]:
+    result: list[LuaType] = []
     for file in files:
         for comment in get_comments(file):
             # ---@class md.Init: md.Api        -> class
@@ -178,12 +183,12 @@ def get_definitions(files: list[Path]) -> list[LuaAlias | LuaClass]:
             # ---@type md.Config               -> type
             # ---@param opts? md.UserConfig    -> param
             # -- Inlined with 'image' elements -> --
-            annotation = comment.split()[0].split("@")[-1]
-            if annotation == "alias":
+            kind = comment.split()[0].split("@")[-1]
+            if kind == "alias":
                 result.append(LuaAlias(comment))
-            elif annotation == "class":
+            elif kind == "class":
                 result.append(LuaClass(comment))
-            elif annotation in ["field", "---|"]:
+            elif kind in ["field", "---|"]:
                 result[-1].add(comment)
     return result
 
