@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 8.7.0 (2025-08-08)
+
 ### Features
 
 - configurable indent extmark priority [1327150](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/1327150da9b272863355f28e523050ab5450412f)
@@ -9,6 +11,8 @@
 - allow users to disable code block delimiter concealing [7620d4e](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7620d4e96eb5cf8d12e76c6fcaf1267628564ba9)
 - improve completions [#474](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/474)
   [3254863](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/3254863eb91fed3d9a7433b54327716528f1eacc)
+- use background for thick code border [5df2eab](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/5df2eab599e06c48d04ea7e89cbaa3cdb4e09538)
+- add tree-sitter ABI version info to health check [3d84dbc](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/3d84dbc1f80a2a02e560ddbd5ab29f99f88bbeda)
 
 ### Bug Fixes
 
