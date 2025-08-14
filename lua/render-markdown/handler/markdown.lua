@@ -2,18 +2,13 @@ local Context = require('render-markdown.request.context')
 local Marks = require('render-markdown.lib.marks')
 local ts = require('render-markdown.core.ts')
 
----@class render.md.handler.buf.Markdown
----@field private query vim.treesitter.Query
----@field private renders table<string, render.md.Render>
----@field private context render.md.request.Context
-local Handler = {}
-Handler.__index = Handler
+---@class render.md.handler.Markdown: render.md.Handler
+local M = {}
 
----@param buf integer
----@return render.md.handler.buf.Markdown
-function Handler.new(buf)
-    local self = setmetatable({}, Handler)
-    self.query = ts.parse(
+---@param ctx render.md.handler.Context
+---@return render.md.Mark[]
+function M.parse(ctx)
+    local query = ts.parse(
         'markdown',
         [[
             (fenced_code_block) @code
@@ -42,7 +37,8 @@ function Handler.new(buf)
             (pipe_table) @table
         ]]
     )
-    self.renders = {
+    ---@type table<string, render.md.Render>
+    local renders = {
         code = require('render-markdown.render.markdown.code'),
         dash = require('render-markdown.render.markdown.dash'),
         document = require('render-markdown.render.markdown.document'),
@@ -53,29 +49,14 @@ function Handler.new(buf)
         section = require('render-markdown.render.markdown.section'),
         table = require('render-markdown.render.markdown.table'),
     }
-    self.context = Context.get(buf)
-    return self
-end
-
----@param root TSNode
----@return render.md.Mark[]
-function Handler:run(root)
-    local marks = Marks.new(self.context, false)
-    self.context.view:nodes(root, self.query, function(capture, node)
-        local render = self.renders[capture]
-        assert(render, 'unhandled markdown capture: ' .. capture)
-        render:execute(self.context, marks, node)
+    local context = Context.get(ctx.buf)
+    local marks = Marks.new(context, false)
+    context.view:nodes(ctx.root, query, function(capture, node)
+        local render = renders[capture]
+        assert(render, ('unhandled markdown capture: %s'):format(capture))
+        render:execute(context, marks, node)
     end)
     return marks:get()
-end
-
----@class render.md.handler.Markdown: render.md.Handler
-local M = {}
-
----@param ctx render.md.handler.Context
----@return render.md.Mark[]
-function M.parse(ctx)
-    return Handler.new(ctx.buf):run(ctx.root)
 end
 
 return M

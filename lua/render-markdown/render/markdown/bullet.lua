@@ -27,7 +27,7 @@ function Render:setup()
     if not marker then
         return false
     end
-    local level, root = self.node:level_in_section('list')
+    local level, root = self.node:level_in('list', 'section')
     ---@type render.md.bullet.Context
     local ctx = {
         level = level,
@@ -54,17 +54,17 @@ end
 ---@param ctx render.md.bullet.Context
 ---@return string?
 function Render.get_string(values, ctx)
-    if type(values) == 'function' then
-        return values(ctx)
-    elseif type(values) == 'string' then
-        return values
-    else
+    if type(values) == 'table' then
         local value = list.cycle(values, ctx.level)
         if type(value) == 'table' then
             return list.clamp(value, ctx.index)
         else
             return value
         end
+    elseif type(values) == 'function' then
+        return values(ctx)
+    else
+        return values
     end
 end
 

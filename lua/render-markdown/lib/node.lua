@@ -64,7 +64,7 @@ end
 ---@return integer[]
 function Node:sections()
     local result = {} ---@type integer[]
-    local levels = 0
+    local levels = 0 ---@type integer
     local section = self:parent('section')
     while section do
         local level = section:level(false)
@@ -96,12 +96,13 @@ function Node:level(parent)
 end
 
 ---@param target string
+---@param outside string
 ---@return integer, render.md.Node?
-function Node:level_in_section(target)
+function Node:level_in(target, outside)
     local level = 0
     local root = nil ---@type TSNode?
     local node = self.node ---@type TSNode?
-    while node and node:type() ~= 'section' do
+    while node and node:type() ~= outside do
         if node:type() == target then
             level = level + 1
             root = node

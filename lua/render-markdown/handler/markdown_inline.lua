@@ -2,18 +2,13 @@ local Context = require('render-markdown.request.context')
 local Marks = require('render-markdown.lib.marks')
 local ts = require('render-markdown.core.ts')
 
----@class render.md.handler.buf.MarkdownInline
----@field private query vim.treesitter.Query
----@field private renders table<string, render.md.Render>
----@field private context render.md.request.Context
-local Handler = {}
-Handler.__index = Handler
+---@class render.md.handler.MarkdownInline: render.md.Handler
+local M = {}
 
----@param buf integer
----@return render.md.handler.buf.MarkdownInline
-function Handler.new(buf)
-    local self = setmetatable({}, Handler)
-    self.query = ts.parse(
+---@param ctx render.md.handler.Context
+---@return render.md.Mark[]
+function M.parse(ctx)
+    local query = ts.parse(
         'markdown_inline',
         [[
             (code_span) @code
@@ -32,35 +27,21 @@ function Handler.new(buf)
             (shortcut_link) @shortcut
         ]]
     )
-    self.renders = {
+    ---@type table<string, render.md.Render>
+    local renders = {
         code = require('render-markdown.render.inline.code'),
         highlight = require('render-markdown.render.inline.highlight'),
         link = require('render-markdown.render.inline.link'),
         shortcut = require('render-markdown.render.inline.shortcut'),
     }
-    self.context = Context.get(buf)
-    return self
-end
-
----@param root TSNode
----@return render.md.Mark[]
-function Handler:run(root)
-    local marks = Marks.new(self.context, true)
-    self.context.view:nodes(root, self.query, function(capture, node)
-        local render = self.renders[capture]
-        assert(render, 'unhandled inline capture: ' .. capture)
-        render:execute(self.context, marks, node)
+    local context = Context.get(ctx.buf)
+    local marks = Marks.new(context, true)
+    context.view:nodes(ctx.root, query, function(capture, node)
+        local render = renders[capture]
+        assert(render, ('unhandled inline capture: %s'):format(capture))
+        render:execute(context, marks, node)
     end)
     return marks:get()
-end
-
----@class render.md.handler.MarkdownInline: render.md.Handler
-local M = {}
-
----@param ctx render.md.handler.Context
----@return render.md.Mark[]
-function M.parse(ctx)
-    return Handler.new(ctx.buf):run(ctx.root)
 end
 
 return M

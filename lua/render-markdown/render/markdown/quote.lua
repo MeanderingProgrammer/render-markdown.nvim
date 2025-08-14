@@ -23,7 +23,7 @@ function Render:setup()
         return false
     end
     local callout = self.context.callout:get(self.node)
-    local level = self.node:level_in_section('block_quote')
+    local level = self.node:level_in('block_quote', 'section')
     local icon = callout and callout.config.quote_icon or config.icon
     local highlight = callout and callout.config.highlight or config.highlight
     self.data = {
@@ -90,7 +90,7 @@ function Render:markers()
         if capture == 'marker' then
             -- marker nodes are a single '>' at the start of a block quote
             -- overlay the only range if it is at the current level
-            if node:level_in_section('block_quote') == self.data.level then
+            if node:level_in('block_quote', 'section') == self.data.level then
                 self:marker(node, 1)
             end
         elseif capture == 'continuation' then
