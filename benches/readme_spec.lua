@@ -4,7 +4,7 @@ local util = require('benches.util')
 
 describe('README.md', function()
     it('default', function()
-        local base_marks = 113
+        local base_marks = 114
         util.less_than(util.setup('README.md'), 40)
         util.num_marks(base_marks)
 

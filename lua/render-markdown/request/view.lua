@@ -69,10 +69,10 @@ end
 ---@param query vim.treesitter.Query
 ---@param callback fun(capture: string, node: render.md.Node)
 function View:nodes(root, query, callback)
-    self:query(root, query, function(id, ts)
-        if not ts:has_error() then
+    self:query(root, query, function(id, ts_node)
+        if not ts_node:has_error() then
             local capture = query.captures[id]
-            local node = Node.new(self.buf, ts)
+            local node = Node.new(self.buf, ts_node)
             log.node(capture, node)
             callback(capture, node)
         end

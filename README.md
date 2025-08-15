@@ -51,10 +51,12 @@ Plugin to improve viewing Markdown files in Neovim
 - [treesitter](https://github.com/nvim-treesitter/nvim-treesitter) parsers:
   - [markdown & markdown_inline](https://github.com/tree-sitter-grammars/tree-sitter-markdown):
     Used to parse `markdown` files
-  - [latex](https://github.com/latex-lsp/tree-sitter-latex) (Optional):
-    Used to get `latex` blocks from `markdown` files
   - [html](https://github.com/tree-sitter/tree-sitter-html) (Optional):
     Used to conceal `HTML` comments
+  - [latex](https://github.com/latex-lsp/tree-sitter-latex) (Optional):
+    Used to get `latex` blocks from `markdown` files
+  - [yaml](https://github.com/tree-sitter-grammars/tree-sitter-yaml) (Optional):
+    Used to render elements in `frontmatter` metadata
 - Icon provider plugin (Optional): Used for icon above code blocks
   - [mini.icons](https://github.com/echasnovski/mini.nvim/blob/main/readmes/mini-icons.md)
   - [nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons)

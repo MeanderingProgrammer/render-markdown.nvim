@@ -2,6 +2,15 @@
 
 ## Pre-release
 
+### Features
+
+- render list item bullet points in yaml [#496](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/496)
+  [d7be79b](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/d7be79b1a006a2afd9945b5d48d3f1f3ce41ce69)
+
+### Bug Fixes
+
+- prioritize hide over highlight_border [7b37aab](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7b37aaba005df5744fc7a6bd4225983576b2a950)
+
 ## 8.7.0 (2025-08-08)
 
 ### Features

@@ -98,7 +98,7 @@ function Render:markers()
             -- overlay the range of the one at the current level if it exists
             self:marker(node, self.data.level)
         else
-            error('unhandled quote capture: ' .. capture)
+            error(('unhandled quote capture: %s'):format(capture))
         end
     end)
 end
