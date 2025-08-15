@@ -176,10 +176,10 @@ end
 function Render:border(node, thin)
     local kind = self.config.border
     local highlight = self.config.highlight_border
-    if kind == 'none' or not node or not highlight then
-        -- do nothing
-    elseif kind == 'hide' then
+    if kind == 'hide' then
         self.marks:over(true, node, { conceal_lines = '' })
+    elseif kind == 'none' or not node or not highlight then
+        -- do nothing
     else
         local icon = kind == 'thin' and thin or ' '
         if icon ~= ' ' then
