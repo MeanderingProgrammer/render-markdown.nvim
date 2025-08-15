@@ -37,6 +37,7 @@ local M = {}
 ---@field quote render.md.quote.Config
 ---@field sign render.md.sign.Config
 ---@field win_options render.md.window.Configs
+---@field yaml render.md.yaml.Config
 
 ---@private
 ---@type boolean
@@ -101,6 +102,7 @@ M.default = {
     win_options = require('render-markdown.config.win_options').default,
     overrides = require('render-markdown.config.overrides').default,
     custom_handlers = require('render-markdown.config.handlers').default,
+    yaml = require('render-markdown.config.yaml').default,
 }
 
 ---@param opts? render.md.UserConfig

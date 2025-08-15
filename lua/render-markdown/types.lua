@@ -36,6 +36,7 @@
 ---@field quote? render.md.quote.UserConfig
 ---@field sign? render.md.sign.UserConfig
 ---@field win_options? render.md.window.UserConfigs
+---@field yaml? render.md.yaml.UserConfig
 
 ---@class (exact) render.md.anti.conceal.UserConfig
 ---@field enabled? boolean
@@ -280,3 +281,5 @@
 ---@class (exact) render.md.window.UserConfig
 ---@field default? render.md.option.Value
 ---@field rendered? render.md.option.Value
+
+---@class (exact) render.md.yaml.UserConfig: render.md.base.UserConfig

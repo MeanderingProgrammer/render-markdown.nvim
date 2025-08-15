@@ -11,9 +11,9 @@ M.default = {
     -- More granular configuration mechanism, allows different aspects of buffers to have their own
     -- behavior. Values default to the top level configuration if no override is provided. Supports
     -- the following fields:
-    --   enabled, max_file_size, debounce, render_modes, anti_conceal, padding, heading, paragraph,
-    --   code, dash, bullet, checkbox, quote, pipe_table, callout, link, sign, indent, latex, html,
-    --   win_options
+    --   enabled, render_modes, max_file_size, debounce, anti_conceal, bullet, callout, checkbox,
+    --   code, dash, document, heading, html, indent, inline_highlight, latex, link, padding,
+    --   paragraph, pipe_table, quote, sign, win_options, yaml
 
     -- Override for different buflisted values, @see :h 'buflisted'.
     buflisted = {},

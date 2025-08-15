@@ -5,7 +5,7 @@ local state = require('render-markdown.state')
 local M = {}
 
 ---@private
-M.version = '8.7.1'
+M.version = '8.7.2'
 
 function M.check()
     M.start('versions')
@@ -23,16 +23,20 @@ function M.check()
     end
 
     local config = state.get(0)
-    local latex = config.latex
     local html = config.html
+    local latex = config.latex
+    local yaml = config.yaml
 
     M.ts_info('markdown', true, true)
     M.ts_info('markdown_inline', true, false)
+    if html.enabled then
+        M.ts_info('html', false, false)
+    end
     if latex.enabled then
         M.ts_info('latex', false, false)
     end
-    if html.enabled then
-        M.ts_info('html', false, false)
+    if yaml.enabled then
+        M.ts_info('yaml', false, false)
     end
 
     M.start('icons')

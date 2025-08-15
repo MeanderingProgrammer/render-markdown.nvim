@@ -14,6 +14,7 @@ M.builtin = {
     latex = require('render-markdown.handler.latex'),
     markdown = require('render-markdown.handler.markdown'),
     markdown_inline = require('render-markdown.handler.markdown_inline'),
+    yaml = require('render-markdown.handler.yaml'),
 }
 
 ---called from state on setup

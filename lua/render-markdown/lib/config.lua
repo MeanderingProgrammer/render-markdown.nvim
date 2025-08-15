@@ -38,6 +38,7 @@ function Config.new(root, enabled, buf)
         quote = root.quote,
         sign = root.sign,
         win_options = root.win_options,
+        yaml = root.yaml,
     }
     config = vim.deepcopy(config)
     for _, name in ipairs({ 'buflisted', 'buftype', 'filetype' }) do
@@ -103,6 +104,7 @@ function Config.validate(spec)
     spec:nested('quote', require('render-markdown.config.quote').validate)
     spec:nested('sign', require('render-markdown.config.sign').validate)
     spec:nested('win_options', require('render-markdown.config.win_options').validate)
+    spec:nested('yaml', require('render-markdown.config.yaml').validate)
 end
 
 return Config
