@@ -281,6 +281,26 @@ function Render:row(row)
 
     if vim.tbl_contains({ 'trimmed', 'padded' }, self.config.cell) then
         for i, col in ipairs(row.cols) do
+            -- recalculate widths should table cells contain concealed text
+            local highlights = vim.api.nvim_buf_get_extmarks(
+                0,
+                -1,
+                { col.row, col.start_col },
+                { col.row, col.end_col },
+                { details = true, type = 'highlight' }
+            )
+            for _, conceal_highlight in ipairs(highlights) do
+                if conceal_highlight[4].hl_group == 'Conceal' then
+                    local new_width = col.width
+                        - (conceal_highlight[4].end_col - conceal_highlight[3])
+                    if conceal_highlight[4].virt_text then
+                        new_width = new_width
+                            + #conceal_highlight[4].virt_text[1]
+                    end
+                    col.width = new_width
+                end
+            end
+
             local delim_col = self.data.delim.cols[i]
             -- amount of space needed to get column to target width
             local fill = delim_col.width - col.width
