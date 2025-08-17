@@ -12,11 +12,15 @@ function M.parse(ctx)
         'yaml',
         [[
             (block_sequence_item) @bullet
+
+            ((double_quote_scalar) @link
+                (#lua-match? @link "^\"%[%[.+%]%]\"$"))
         ]]
     )
     ---@type table<string, render.md.Render>
     local renders = {
         bullet = require('render-markdown.render.yaml.bullet'),
+        link = require('render-markdown.render.common.wiki'),
     }
     local context = Context.get(ctx.buf)
     if context:skip(context.config.yaml) then
