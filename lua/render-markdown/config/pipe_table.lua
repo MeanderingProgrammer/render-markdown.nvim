@@ -1,6 +1,7 @@
 ---@class (exact) render.md.table.Config: render.md.base.Config
 ---@field preset render.md.table.Preset
 ---@field cell render.md.table.Cell
+---@field cell_offset fun(ctx: render.md.table.cell.Context): integer
 ---@field padding integer
 ---@field min_width integer
 ---@field border string[]
@@ -11,6 +12,9 @@
 ---@field row string
 ---@field filler string
 ---@field style render.md.table.Style
+
+---@class (exact) render.md.table.cell.Context
+---@field node TSNode
 
 ---@enum render.md.table.Preset
 local Preset = {
@@ -56,6 +60,10 @@ M.default = {
     -- | padded  | raw + cells are padded to maximum visual width for each column             |
     -- | trimmed | padded except empty space is subtracted from visual width calculation      |
     cell = 'padded',
+    -- Adjust the computed width of table cells using custom logic.
+    cell_offset = function()
+        return 0
+    end,
     -- Amount of space to put between cell contents and border.
     padding = 1,
     -- Minimum column width to use for padded or trimmed cell.
@@ -94,6 +102,7 @@ function M.validate(spec)
     require('render-markdown.config.base').validate(spec)
     spec:one_of('preset', vim.tbl_values(Preset))
     spec:one_of('cell', vim.tbl_values(Cell))
+    spec:type('cell_offset', 'function')
     spec:type('padding', 'number')
     spec:type('min_width', 'number')
     spec:list('border', 'string')

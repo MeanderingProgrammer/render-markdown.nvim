@@ -171,10 +171,10 @@ function Render:parse_row(node, num_cols)
     for i, cell in ipairs(cells) do
         -- account for double width glyphs by replacing cell range with width
         local start_col, end_col = pipes[i].end_col, pipes[i + 1].start_col
-        local width = end_col - start_col
-        width = width
+        local width = (end_col - start_col)
             - (cell.end_col - cell.start_col)
             + self.context:width(cell)
+            + self.config.cell_offset({ node = cell:get() })
         assert(width >= 0, 'invalid table layout')
         cols[#cols + 1] = {
             row = cell.start_row,
@@ -281,23 +281,32 @@ function Render:row(row)
 
     if vim.tbl_contains({ 'trimmed', 'padded' }, self.config.cell) then
         for i, col in ipairs(row.cols) do
-            local delim_col = self.data.delim.cols[i]
-            -- amount of space needed to get column to target width
-            local fill = delim_col.width - col.width
+            local delim = self.data.delim.cols[i]
+            local space = col.space
+            local fill = delim.width - col.width
+            -- delim(20) : --------------------
+            -- col(4,7,2): ----XXXXXXX--
+            -- fill(7)   :              _______
             if not self.context.conceal:enabled() then
+                -- result: ----XXXXXXX--_______
                 -- without concealing it is impossible to do full alignment
                 self:shift(col, 'right', fill)
-            elseif delim_col.alignment == Alignment.center then
-                local shift =
-                    math.floor((fill + col.space.right - col.space.left) / 2)
+            elseif delim.alignment == Alignment.center then
+                -- (7 + 2 - 4) // 2 = 5 // 2 = 2 -> move two spaces to the right
+                -- result: __----XXXXXXX--_____
+                local shift = math.floor((fill + space.right - space.left) / 2)
                 self:shift(col, 'left', shift)
                 self:shift(col, 'right', fill - shift)
-            elseif delim_col.alignment == Alignment.right then
-                local shift = col.space.right - self.config.padding
+            elseif delim.alignment == Alignment.right then
+                -- 2 - 1 = 1 -> conceal one space on right side
+                -- result: -_______----XXXXXXX-
+                local shift = space.right - self.config.padding
                 self:shift(col, 'left', fill + shift)
                 self:shift(col, 'right', -shift)
             else
-                local shift = col.space.left - self.config.padding
+                -- 4 - 1 = 3 -> conceal three spaces on left side
+                -- result: -XXXXXXX--_______---
+                local shift = space.left - self.config.padding
                 self:shift(col, 'left', -shift)
                 self:shift(col, 'right', fill + shift)
             end

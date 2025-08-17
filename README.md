@@ -674,6 +674,10 @@ require('render-markdown').setup({
         -- | padded  | raw + cells are padded to maximum visual width for each column             |
         -- | trimmed | padded except empty space is subtracted from visual width calculation      |
         cell = 'padded',
+        -- Adjust the computed width of table cells using custom logic.
+        cell_offset = function()
+            return 0
+        end,
         -- Amount of space to put between cell contents and border.
         padding = 1,
         -- Minimum column width to use for padded or trimmed cell.
@@ -1373,6 +1377,10 @@ require('render-markdown').setup({
         -- | padded  | raw + cells are padded to maximum visual width for each column             |
         -- | trimmed | padded except empty space is subtracted from visual width calculation      |
         cell = 'padded',
+        -- Adjust the computed width of table cells using custom logic.
+        cell_offset = function()
+            return 0
+        end,
         -- Amount of space to put between cell contents and border.
         padding = 1,
         -- Minimum column width to use for padded or trimmed cell.

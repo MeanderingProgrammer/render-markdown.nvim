@@ -257,6 +257,7 @@
 ---@class (exact) render.md.table.UserConfig: render.md.base.UserConfig
 ---@field preset? render.md.table.Preset
 ---@field cell? render.md.table.Cell
+---@field cell_offset? fun(ctx: render.md.table.cell.Context): integer
 ---@field padding? integer
 ---@field min_width? integer
 ---@field border? string[]
