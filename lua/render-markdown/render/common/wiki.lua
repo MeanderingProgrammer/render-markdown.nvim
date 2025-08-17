@@ -54,6 +54,14 @@ function Render:run()
             virt_text = { icon },
             virt_text_pos = 'inline',
         })
+        -- apply scope highlight
+        local highlight = self.config.scope_highlight
+        if highlight then
+            self.marks:add('link', row, start_col, {
+                end_col = end_col,
+                hl_group = highlight,
+            })
+        end
         -- hide destination if there is an alias
         if alias then
             self:hide(start_col, #destination + 1)

@@ -216,6 +216,7 @@
 ---@field icon? string
 ---@field body? fun(ctx: render.md.link.Context): render.md.mark.Text|string?
 ---@field highlight? string
+---@field scope_highlight? string
 
 ---@class (exact) render.md.link.custom.UserConfig
 ---@field pattern? string

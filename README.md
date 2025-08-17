@@ -775,6 +775,7 @@ require('render-markdown').setup({
                 return nil
             end,
             highlight = 'RenderMarkdownWikiLink',
+            scope_highlight = nil,
         },
         -- Define custom destination patterns so icons can quickly inform you of what a link
         -- contains. Applies to 'inline_link', 'uri_autolink', and wikilink nodes. When multiple
@@ -1503,6 +1504,7 @@ require('render-markdown').setup({
                 return nil
             end,
             highlight = 'RenderMarkdownWikiLink',
+            scope_highlight = nil,
         },
         -- Define custom destination patterns so icons can quickly inform you of what a link
         -- contains. Applies to 'inline_link', 'uri_autolink', and wikilink nodes. When multiple

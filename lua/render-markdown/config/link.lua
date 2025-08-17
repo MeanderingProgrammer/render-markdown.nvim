@@ -25,6 +25,7 @@
 ---@field icon string
 ---@field body fun(ctx: render.md.link.Context): render.md.mark.Text|string?
 ---@field highlight string
+---@field scope_highlight? string
 
 ---@class (exact) render.md.link.custom.Config
 ---@field pattern string
@@ -74,6 +75,7 @@ M.default = {
             return nil
         end,
         highlight = 'RenderMarkdownWikiLink',
+        scope_highlight = nil,
     },
     -- Define custom destination patterns so icons can quickly inform you of what a link
     -- contains. Applies to 'inline_link', 'uri_autolink', and wikilink nodes. When multiple
@@ -118,6 +120,7 @@ function M.validate(spec)
         wiki:type('icon', 'string')
         wiki:type('body', 'function')
         wiki:type('highlight', 'string')
+        wiki:type('scope_highlight', { 'string', 'nil' })
         wiki:check()
     end)
     spec:nested('custom', function(patterns)
