@@ -2,15 +2,15 @@ local compat = require('render-markdown.lib.compat')
 local env = require('render-markdown.lib.env')
 local str = require('render-markdown.lib.str')
 
+---@class render.md.request.conceal.Line
+---@field hidden boolean
+---@field sections render.md.request.conceal.Section[]
+
 ---@class render.md.request.conceal.Section
 ---@field start_col integer
 ---@field end_col integer
 ---@field width integer
 ---@field character? string
-
----@class render.md.request.conceal.Line
----@field hidden boolean
----@field sections render.md.request.conceal.Section[]
 
 ---@class render.md.request.Conceal
 ---@field private buf integer
@@ -53,8 +53,7 @@ function Conceal:add(row, entry)
     if type(entry) == 'boolean' then
         line.hidden = entry
     else
-        -- If the section is covered by an existing one don't add it
-        if entry.width > 0 and not self:has(line, entry) then
+        if entry.width > 0 and not Conceal.contains(line, entry) then
             line.sections[#line.sections + 1] = entry
         end
     end
@@ -64,7 +63,7 @@ end
 ---@param line render.md.request.conceal.Line
 ---@param entry render.md.request.conceal.Section
 ---@return boolean
-function Conceal:has(line, entry)
+function Conceal.contains(line, entry)
     for _, section in ipairs(line.sections) do
         local starts_before = section.start_col <= entry.start_col
         local ends_after = section.end_col >= entry.end_col

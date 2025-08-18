@@ -31,6 +31,7 @@ function M.setup(config)
     })
     require('render-markdown.core.ts').setup({
         file_types = config.file_types,
+        restart_highlighter = config.restart_highlighter,
         injections = config.injections,
         patterns = config.patterns,
     })
@@ -89,6 +90,7 @@ function M.validate()
     spec:list('file_types', 'string')
     spec:type('ignore', 'function')
     spec:list('change_events', 'string')
+    spec:type('restart_highlighter', 'boolean')
     spec:nested('injections', require('render-markdown.config.injections').validate)
     spec:nested('patterns', require('render-markdown.config.patterns').validate)
     spec:nested('on', require('render-markdown.config.on').validate)

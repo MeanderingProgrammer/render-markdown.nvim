@@ -215,6 +215,10 @@ require('render-markdown').setup({
     end,
     -- Additional events that will trigger this plugin's render loop.
     change_events = {},
+    -- Whether the treesitter highlighter should be restarted after this plugin attaches to its
+    -- first buffer for the first time. May be necessary if this plugin is lazy loaded to clear
+    -- highlights that have been dynamically disabled.
+    restart_highlighter = false,
     injections = {
         -- Out of the box language injections for known filetypes that allow markdown to be interpreted
         -- in specified locations, see :h treesitter-language-injections.

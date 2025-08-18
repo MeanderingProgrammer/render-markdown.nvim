@@ -4,8 +4,12 @@
 
 ### Features
 
-- render list item bullet points in yaml [#496](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/496)
+- yaml render list item bullet points [#496](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/496)
   [d7be79b](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/d7be79b1a006a2afd9945b5d48d3f1f3ce41ce69)
+- yaml render wiki style links [#496](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/496)
+  [146d4ff](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/146d4ff582017f1a1a16ada841aa08175a87aaea)
+- add scope_highlight to wiki config [ca86b59](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/ca86b5941a56b04ac140837ee7a366cf3fa5cd88)
+- add cell_offset function to pipe_table configuration [e5c3c50](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/e5c3c500d66e9aaf04c116cdfdb0b040d56a1521)
 
 ### Bug Fixes
 

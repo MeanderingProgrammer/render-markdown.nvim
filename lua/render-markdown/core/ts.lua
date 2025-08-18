@@ -2,6 +2,7 @@ local compat = require('render-markdown.lib.compat')
 
 ---@class render.md.ts.Config
 ---@field file_types string[]
+---@field restart_highlighter boolean
 ---@field injections table<string, render.md.injection.Config>
 ---@field patterns table<string, render.md.pattern.Config>
 
@@ -34,6 +35,10 @@ function M.init()
     M.initialized = true
     for _, language in ipairs(M.config.file_types) do
         M.disable(language)
+    end
+    if M.config.restart_highlighter then
+        vim.treesitter.stop()
+        vim.treesitter.start()
     end
 end
 

@@ -7,6 +7,7 @@
 ---@field file_types? string[]
 ---@field ignore? fun(buf: integer): boolean
 ---@field change_events? string[]
+---@field restart_highlighter? boolean
 ---@field injections? render.md.injection.UserConfigs
 ---@field patterns? render.md.pattern.UserConfigs
 ---@field on? render.md.on.UserConfig
