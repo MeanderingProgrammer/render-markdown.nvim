@@ -148,18 +148,16 @@ end
 local M = {}
 
 function M.show()
-    local Range = require('render-markdown.lib.range')
     local env = require('render-markdown.lib.env')
     local ui = require('render-markdown.core.ui')
 
     local buf = env.buf.current()
     local win = env.win.current()
     local row = assert(env.row.get(buf, win), 'row must be known')
-    local range = Range.new(row, row)
 
     local marks = {} ---@type render.md.debug.Mark[]
     for _, extmark in ipairs(ui.get(buf):get()) do
-        if extmark:overlaps(range) then
+        if extmark:overlaps({ row, row }) then
             marks[#marks + 1] = Mark.new(extmark:get())
         end
     end

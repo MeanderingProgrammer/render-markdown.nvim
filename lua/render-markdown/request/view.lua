@@ -1,6 +1,6 @@
 local Node = require('render-markdown.lib.node')
-local Range = require('render-markdown.lib.range')
 local env = require('render-markdown.lib.env')
+local interval = require('render-markdown.lib.interval')
 local log = require('render-markdown.core.log')
 
 ---@class render.md.request.View
@@ -16,10 +16,9 @@ function View.new(buf)
     self.buf = buf
     local ranges = {} ---@type render.md.Range[]
     for _, win in ipairs(env.buf.windows(buf)) do
-        local top, bottom = env.range(buf, win, 10)
-        ranges[#ranges + 1] = Range.new(top, bottom)
+        ranges[#ranges + 1] = env.range(buf, win, 10)
     end
-    self.ranges = Range.coalesce(ranges)
+    self.ranges = interval.coalesce(ranges)
     return self
 end
 
@@ -27,7 +26,7 @@ end
 function View:__tostring()
     local ranges = {} ---@type string[]
     for _, range in ipairs(self.ranges) do
-        ranges[#ranges + 1] = tostring(range)
+        ranges[#ranges + 1] = ('%d->%d'):format(range[1], range[2])
     end
     return ('[%s]'):format(table.concat(ranges, ','))
 end
@@ -35,9 +34,9 @@ end
 ---@param win integer
 ---@return boolean
 function View:contains(win)
-    local top, bottom = env.range(self.buf, win, 0)
+    local rows = env.range(self.buf, win, 0)
     for _, range in ipairs(self.ranges) do
-        if range:contains(top, bottom) then
+        if interval.contains(range, rows) then
             return true
         end
     end
@@ -47,9 +46,9 @@ end
 ---@param node TSNode
 ---@return boolean
 function View:overlaps(node)
-    local top, _, bottom, _ = node:range()
+    local start_row, _, end_row = node:range()
     for _, range in ipairs(self.ranges) do
-        if range:overlaps(top, bottom) then
+        if interval.overlaps(range, { start_row, end_row }) then
             return true
         end
     end
@@ -60,7 +59,7 @@ end
 ---@param callback fun()
 function View:parse(parser, callback)
     for _, range in ipairs(self.ranges) do
-        parser:parse({ range.top, range.bottom })
+        parser:parse({ range[1], range[2] })
     end
     callback()
 end
@@ -84,8 +83,8 @@ end
 ---@param callback fun(id: integer, node: TSNode, data: vim.treesitter.query.TSMetadata)
 function View:query(root, query, callback)
     for _, range in ipairs(self.ranges) do
-        local top, bottom = range.top, range.bottom
-        for id, node, data in query:iter_captures(root, self.buf, top, bottom) do
+        local start, stop = range[1], range[2]
+        for id, node, data in query:iter_captures(root, self.buf, start, stop) do
             callback(id, node, data)
         end
     end

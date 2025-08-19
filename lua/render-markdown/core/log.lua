@@ -80,8 +80,8 @@ function M.node(capture, node)
         capture = capture,
         type = node.type,
         length = #node.text,
-        rows = { node.start_row, node.end_row },
-        cols = { node.start_col, node.end_col },
+        row = { node.start_row, node.end_row },
+        col = { node.start_col, node.end_col },
     })
 end
 

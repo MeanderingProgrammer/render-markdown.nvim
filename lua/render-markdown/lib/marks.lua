@@ -140,8 +140,7 @@ function Marks:run_update(mark)
     if mark.opts.conceal then
         local end_col = assert(mark.opts.end_col, 'conceal requires end_col')
         self.context.conceal:add(row, {
-            start_col = start_col,
-            end_col = end_col,
+            col = { start_col, end_col },
             width = end_col - start_col,
             character = mark.opts.conceal,
         })

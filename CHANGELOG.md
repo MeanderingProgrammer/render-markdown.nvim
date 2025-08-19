@@ -14,6 +14,8 @@
 ### Bug Fixes
 
 - prioritize hide over highlight_border [7b37aab](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7b37aaba005df5744fc7a6bd4225983576b2a950)
+- add option to restart treesitter highlighter to clear invalid state [#488](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/488)
+  [ec74afa](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/ec74afa498b6ce3ee686131adf2b3941b713f307)
 
 ## 8.7.0 (2025-08-08)
 

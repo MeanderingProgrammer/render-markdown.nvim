@@ -94,7 +94,7 @@ function Render:checkbox()
             conceal = '',
         }, { 0, 0, 0, 1 })
     else
-        local fits = math.min(space, right)
+        local fits = math.min(space, right) ---@type integer
         space = space - fits
         right = right - fits
 

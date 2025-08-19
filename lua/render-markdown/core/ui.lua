@@ -1,7 +1,6 @@
 local Context = require('render-markdown.request.context')
 local Decorator = require('render-markdown.lib.decorator')
 local Extmark = require('render-markdown.lib.extmark')
-local Range = require('render-markdown.lib.range')
 local compat = require('render-markdown.lib.compat')
 local env = require('render-markdown.lib.env')
 local handlers = require('render-markdown.core.handlers')
@@ -211,9 +210,11 @@ function Updater:hidden()
     end
     if env.mode.is(self.mode, { 'v', 'V', '\22' }) then
         local start = vim.fn.getpos('v')[2] - 1
-        return Range.new(math.min(row, start), math.max(row, start))
+        ---@type render.md.Range
+        return { math.min(row, start), math.max(row, start) }
     else
-        return Range.new(row - config.above, row + config.below)
+        ---@type render.md.Range
+        return { row - config.above, row + config.below }
     end
 end
 

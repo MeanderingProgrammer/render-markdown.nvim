@@ -32,7 +32,7 @@ function M.fix_lsp_window(buf, win, extmarks)
     end
 
     -- disable line wrapping if it is not needed to contain the text
-    local width = 0
+    local width = 0 ---@type integer
     for _, line in ipairs(vim.api.nvim_buf_get_lines(buf, 0, -1, false)) do
         width = math.max(width, str.width(line))
     end

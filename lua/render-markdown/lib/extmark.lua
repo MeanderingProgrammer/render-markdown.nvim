@@ -1,6 +1,9 @@
+local interval = require('render-markdown.lib.interval')
+
 ---@class render.md.Extmark
 ---@field private id? integer
 ---@field private mark render.md.Mark
+---@field private range render.md.Range
 local Extmark = {}
 Extmark.__index = Extmark
 
@@ -10,6 +13,13 @@ function Extmark.new(mark)
     local self = setmetatable({}, Extmark)
     self.id = nil
     self.mark = mark
+    local top = mark.start_row
+    local bottom = mark.opts.end_row or top
+    -- hl_eol should not include last line
+    if mark.opts.hl_eol then
+        bottom = bottom - 1
+    end
+    self.range = { top, bottom }
     return self
 end
 
@@ -24,13 +34,7 @@ function Extmark:overlaps(range)
     if not range then
         return false
     end
-    local top = self.mark.start_row
-    local bottom = self.mark.opts.end_row or top
-    -- overlap for hl_eol should not include last line
-    if self.mark.opts.hl_eol then
-        bottom = bottom - 1
-    end
-    return range:overlaps(top, bottom)
+    return interval.overlaps(self.range, range)
 end
 
 ---@param ns integer

@@ -52,7 +52,7 @@ end
 ---@param buf integer
 ---@param win integer
 ---@param offset integer
----@return integer, integer
+---@return render.md.Range
 function M.range(buf, win, offset)
     local top = math.max(M.win.view(win).topline - 1 - offset, 0)
     local bottom = top
@@ -64,7 +64,8 @@ function M.range(buf, win, offset)
             size = size - 1
         end
     end
-    return top, bottom
+    ---@type render.md.Range
+    return { top, bottom }
 end
 
 ---@class render.md.env.Row
