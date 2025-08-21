@@ -61,20 +61,26 @@ end
 ---@param node render.md.Node
 ---@return string[]
 function Handler:expressions(node)
+    local col = node.start_col
+    local _, first = node:line('first', 0)
+    local prefix = str.pad(first and str.width(first:sub(1, col)) or col)
+
     local result = {} ---@type string[]
     for _ = 1, self.config.top_pad do
         result[#result + 1] = ''
     end
+
     local lines = str.split(self:convert(node.text), '\n', true)
     local width = vim.fn.max(iter.list.map(lines, str.width))
     for _, line in ipairs(lines) do
-        local prefix = str.pad(node.start_col)
         local suffix = str.pad(width - str.width(line))
         result[#result + 1] = prefix .. line .. suffix
     end
+
     for _ = 1, self.config.bottom_pad do
         result[#result + 1] = ''
     end
+
     return result
 end
 

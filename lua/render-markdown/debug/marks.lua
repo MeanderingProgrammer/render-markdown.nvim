@@ -99,7 +99,11 @@ end
 ---@param lines render.md.mark.Line[]
 ---@return string
 function Mark.lines(lines)
-    return #lines > 0 and Mark.line(lines[1]) or ''
+    local result = {} ---@type string[]
+    for _, line in ipairs(lines) do
+        result[#result + 1] = Mark.line(line)
+    end
+    return ('{%s}'):format(table.concat(result, ', '))
 end
 
 ---@private
@@ -113,7 +117,7 @@ function Mark.line(line)
             Mark.highlight(text[2])
         )
     end
-    return table.concat(result, ' + ')
+    return ('[%s]'):format(table.concat(result, ', '))
 end
 
 ---@private
