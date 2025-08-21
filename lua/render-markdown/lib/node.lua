@@ -18,6 +18,8 @@ local Position = {
 ---@field start_col integer
 ---@field end_row integer
 ---@field end_col integer
+---@field display_start_col integer
+---@field display_end_col integer
 local Node = {}
 Node.__index = Node
 
@@ -30,11 +32,24 @@ function Node.new(buf, node)
     self.node = node
     self.type = node:type()
     self.text = vim.treesitter.get_node_text(node, buf)
-    local start_row, start_col, end_row, end_col = node:range()
+    local start_row, start_col_byte, end_row, end_col_byte = node:range()
+
     self.start_row = start_row
-    self.start_col = start_col
+    self.start_col = start_col_byte
     self.end_row = end_row
-    self.end_col = end_col
+    self.end_col = end_col_byte
+
+    local start_line_text =
+        vim.api.nvim_buf_get_lines(buf, start_row, start_row + 1, false)[1]
+    self.display_start_col = str.width(start_line_text:sub(1, start_col_byte))
+    if start_row == end_row then
+        self.display_end_col = str.width(start_line_text:sub(1, end_col_byte))
+    else
+        local end_lines =
+            vim.api.nvim_buf_get_lines(buf, end_row, end_row + 1, false)
+        local end_line_text = end_lines[1] or ''
+        self.display_end_col = str.width(end_line_text:sub(1, end_col_byte))
+    end
     return self
 end
 

@@ -68,7 +68,7 @@ function Handler:expressions(node)
     local lines = str.split(self:convert(node.text), '\n', true)
     local width = vim.fn.max(iter.list.map(lines, str.width))
     for _, line in ipairs(lines) do
-        local prefix = str.pad(node.start_col)
+        local prefix = str.pad(node.display_start_col)
         local suffix = str.pad(width - str.width(line))
         result[#result + 1] = prefix .. line .. suffix
     end
