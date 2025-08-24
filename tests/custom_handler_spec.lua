@@ -11,7 +11,7 @@ local function conceal_escape(ctx)
         '(backslash_escape) @escape'
     )
     for _, node in query:iter_captures(ctx.root, ctx.buf) do
-        local start_row, start_col, end_row, _ = node:range()
+        local start_row, start_col, end_row = node:range()
         marks[#marks + 1] = {
             conceal = true,
             start_row = start_row,

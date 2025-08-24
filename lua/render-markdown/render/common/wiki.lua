@@ -2,23 +2,24 @@ local Base = require('render-markdown.render.base')
 local str = require('render-markdown.lib.str')
 
 ---@class render.md.render.common.Wiki: render.md.Render
----@field private config render.md.link.wiki.Config
+---@field private config render.md.link.Config
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
 ---@protected
 ---@return boolean
 function Render:setup()
-    local config = self.context.config.link
-    if self.context:skip(config) then
+    self.config = self.context.config.link
+    if not self.config.enabled then
         return false
     end
-    self.config = config.wiki
     return true
 end
 
 ---@protected
 function Render:run()
+    local config = self.config.wiki
+
     local _, _, pre, text, post = self.node.text:find('^(.-%[+)(.-)(%]+.-)$')
     if not pre or not text or not post then
         return -- not inside square brackets
@@ -37,9 +38,9 @@ function Render:run()
     self:hide(end_col, 2)
 
     ---@type render.md.mark.Text
-    local icon = { self.config.icon, self.config.highlight }
+    local icon = { config.icon, config.highlight }
     self.context.config:set_link_text(destination, icon)
-    local body = self.config.body({
+    local body = config.body({
         buf = self.context.buf,
         row = row,
         start_col = start_col - 2,
@@ -49,15 +50,15 @@ function Render:run()
     })
     if not body then
         -- add icon
-        self.marks:add('link', row, start_col, {
+        self.marks:add(self.config, 'link', row, start_col, {
             hl_mode = 'combine',
             virt_text = { icon },
             virt_text_pos = 'inline',
         })
         -- apply scope highlight
-        local highlight = self.config.scope_highlight
+        local highlight = config.scope_highlight
         if highlight then
-            self.marks:add('link', row, start_col, {
+            self.marks:add(self.config, 'link', row, start_col, {
                 end_col = end_col,
                 hl_group = highlight,
             })
@@ -74,7 +75,7 @@ function Render:run()
             icon[2] = body[2]
         end
         -- inline icon & body, hide original text
-        self.marks:add('link', row, start_col, {
+        self.marks:add(self.config, 'link', row, start_col, {
             end_col = end_col,
             hl_mode = 'combine',
             virt_text = { icon },
@@ -88,7 +89,7 @@ end
 ---@param col integer
 ---@param length integer
 function Render:hide(col, length)
-    self.marks:add(true, self.node.start_row, col, {
+    self.marks:add(self.config, true, self.node.start_row, col, {
         end_col = col + length,
         conceal = '',
     })

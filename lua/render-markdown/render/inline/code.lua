@@ -10,7 +10,7 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     self.config = self.context.config.code
-    if self.context:skip(self.config) then
+    if not self.config.enabled then
         return false
     end
     if not self.config.inline then
@@ -22,7 +22,9 @@ end
 ---@protected
 function Render:run()
     local highlight = self.config.highlight_inline
-    self.marks:over('code_background', self.node, { hl_group = highlight })
+    self.marks:over(self.config, 'code_background', self.node, {
+        hl_group = highlight,
+    })
     self:padding(highlight, true)
     self:padding(highlight, false)
 end
@@ -43,7 +45,7 @@ function Render:padding(highlight, left)
     if not line:empty() then
         local row = left and self.node.start_row or self.node.end_row
         local col = left and self.node.start_col or self.node.end_col
-        self.marks:add(true, row, col, {
+        self.marks:add(self.config, true, row, col, {
             priority = 0,
             virt_text = line:get(),
             virt_text_pos = 'inline',

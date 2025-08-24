@@ -12,6 +12,7 @@ local str = require('render-markdown.lib.str')
 ---@field right_pad integer
 
 ---@class render.md.render.Bullet: render.md.Render
+---@field private config render.md.bullet.Config
 ---@field private data render.md.bullet.Data
 local Render = setmetatable({}, Base)
 Render.__index = Render
@@ -19,8 +20,8 @@ Render.__index = Render
 ---@protected
 ---@return boolean
 function Render:setup()
-    local config = self.context.config.bullet
-    if self.context:skip(config) then
+    self.config = self.context.config.bullet
+    if not self.config.enabled then
         return false
     end
     local marker = self.node:child_at(0)
@@ -36,15 +37,15 @@ function Render:setup()
     }
     local ordered_types = { 'list_marker_dot', 'list_marker_parenthesis' }
     local ordered = vim.tbl_contains(ordered_types, marker.type)
-    local icons = ordered and config.ordered_icons or config.icons
+    local icons = ordered and self.config.ordered_icons or self.config.icons
     self.data = {
         marker = marker,
         root = root,
         icon = Render.get_string(icons, ctx),
-        highlight = Render.get_string(config.highlight, ctx),
-        scope_highlight = Render.get_string(config.scope_highlight, ctx),
-        left_pad = Render.get_integer(config.left_pad, ctx),
-        right_pad = Render.get_integer(config.right_pad, ctx),
+        highlight = Render.get_string(self.config.highlight, ctx),
+        scope_highlight = Render.get_string(self.config.scope_highlight, ctx),
+        left_pad = Render.get_integer(self.config.left_pad, ctx),
+        right_pad = Render.get_integer(self.config.right_pad, ctx),
     }
     return true
 end
@@ -98,7 +99,7 @@ function Render:marker()
     local node = self.data.marker
     local text = str.pad(str.spaces('start', node.text)) .. icon
     local overflow = str.width(text) > str.width(node.text)
-    self.marks:over('bullet', node, {
+    self.marks:over(self.config, 'bullet', node, {
         virt_text = { { text, highlight } },
         virt_text_pos = overflow and 'inline' or 'overlay',
         conceal = overflow and '' or nil,
@@ -118,14 +119,14 @@ function Render:padding()
         local left = root and root.start_col or self.node.start_col
         local right = row == start_row and self.data.marker.end_col - 1 or left
         if #left_line > 0 then
-            self.marks:add(false, row, left, {
+            self.marks:add(self.config, false, row, left, {
                 priority = 100,
                 virt_text = left_line,
                 virt_text_pos = 'inline',
             })
         end
         if #right_line > 0 then
-            self.marks:add(false, row, right, {
+            self.marks:add(self.config, false, row, right, {
                 priority = 100,
                 virt_text = right_line,
                 virt_text_pos = 'inline',
@@ -159,7 +160,9 @@ function Render:scope()
     if not highlight then
         return
     end
-    self.marks:over(true, self.node:scope(), { hl_group = highlight })
+    self.marks:over(self.config, true, self.node:scope(), {
+        hl_group = highlight,
+    })
 end
 
 return Render

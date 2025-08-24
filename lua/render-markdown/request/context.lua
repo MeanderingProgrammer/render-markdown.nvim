@@ -4,14 +4,12 @@ local Conceal = require('render-markdown.request.conceal')
 local Offset = require('render-markdown.request.offset')
 local Used = require('render-markdown.request.used')
 local View = require('render-markdown.request.view')
-local env = require('render-markdown.lib.env')
 local str = require('render-markdown.lib.str')
 
 ---@class render.md.request.Context
 ---@field buf integer
 ---@field win integer
 ---@field config render.md.buf.Config
----@field mode string
 ---@field view render.md.request.View
 ---@field conceal render.md.request.Conceal
 ---@field callout render.md.request.Callout
@@ -24,15 +22,13 @@ Context.__index = Context
 ---@param buf integer
 ---@param win integer
 ---@param config render.md.buf.Config
----@param mode string
 ---@param view render.md.request.View
 ---@return render.md.request.Context
-function Context.new(buf, win, config, mode, view)
+function Context.new(buf, win, config, view)
     local self = setmetatable({}, Context)
     self.buf = buf
     self.win = win
     self.config = config
-    self.mode = mode
     self.view = view
     self.conceal = Conceal.new(buf, win, view)
     self.callout = Callout.new()
@@ -40,21 +36,6 @@ function Context.new(buf, win, config, mode, view)
     self.offset = Offset.new()
     self.used = Used.new()
     return self
-end
-
----@param config render.md.base.Config
----@return boolean
-function Context:skip(config)
-    -- skip disabled config regardless of mode
-    if not config.enabled then
-        return true
-    end
-    -- enabled config in top level modes should not be skipped
-    if env.mode.is(self.mode, self.config.render_modes) then
-        return false
-    end
-    -- enabled config in config modes should not be skipped
-    return not env.mode.is(self.mode, config.render_modes)
 end
 
 ---@param node? render.md.Node
@@ -84,11 +65,10 @@ end
 ---@param buf integer
 ---@param win integer
 ---@param config render.md.buf.Config
----@param mode string
 ---@return render.md.request.Context?
-function M.new(buf, win, config, mode)
+function M.new(buf, win, config)
     local view = View.new(buf)
-    local context = Context.new(buf, win, config, mode, view)
+    local context = Context.new(buf, win, config, view)
     M.cache[buf] = context
     return context
 end

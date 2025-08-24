@@ -3,10 +3,11 @@
 ---@field [2]? integer
 
 ---@class render.md.debug.Mark
+---@field modes? render.md.Modes
 ---@field conceal render.md.mark.Conceal
----@field opts render.md.mark.Opts
 ---@field row render.md.debug.Range
 ---@field col render.md.debug.Range
+---@field opts render.md.mark.Opts
 local Mark = {}
 Mark.__index = Mark
 
@@ -14,9 +15,11 @@ Mark.__index = Mark
 ---@return render.md.debug.Mark
 function Mark.new(mark)
     local self = setmetatable({}, Mark)
-    self.conceal, self.opts = mark.conceal, mark.opts
+    self.modes = mark.modes
+    self.conceal = mark.conceal
     self.row = { mark.start_row, mark.opts.end_row }
     self.col = { mark.start_col, mark.opts.end_col }
+    self.opts = mark.opts
     return self
 end
 
@@ -57,9 +60,10 @@ end
 function Mark:__tostring()
     local lines = {} ---@type string[]
     lines[#lines + 1] = ('='):rep(vim.o.columns - 1)
+    lines[#lines + 1] = ('modes: %s'):format(vim.inspect(self.modes))
+    lines[#lines + 1] = ('conceal: %s'):format(vim.inspect(self.conceal))
     lines[#lines + 1] = ('row: %s'):format(Mark.collapse(self.row))
     lines[#lines + 1] = ('column: %s'):format(Mark.collapse(self.col))
-    lines[#lines + 1] = ('hide: %s'):format(vim.inspect(self.conceal))
 
     ---@param name string
     ---@param f fun(value: any): string

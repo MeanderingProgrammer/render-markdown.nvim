@@ -20,7 +20,7 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     self.config = self.context.config.code
-    if self.context:skip(self.config) then
+    if not self.config.enabled then
         return false
     end
     -- skip single line code block
@@ -76,9 +76,9 @@ function Render:run()
     local info = self.node:child('info_string')
 
     if self.config.conceal_delimiters then
-        self.marks:over(true, above, { conceal = '' })
-        self.marks:over(true, below, { conceal = '' })
-        self.marks:over(true, info, { conceal = '' })
+        self.marks:over(self.config, true, above, { conceal = '' })
+        self.marks:over(self.config, true, below, { conceal = '' })
+        self.marks:over(self.config, true, info, { conceal = '' })
     end
 
     local language = info and info:child('language')
@@ -111,7 +111,7 @@ function Render:language(info, language, delim)
     if self.config.highlight_language then
         icon_hl = self.config.highlight_language
     end
-    self:sign(self.config.sign, icon, icon_hl)
+    self:sign(self.config, self.config.sign, icon, icon_hl)
 
     local language_hl = { icon_hl or self.config.highlight_fallback } ---@type string[]
     local info_hl = { self.config.highlight_info } ---@type string[]
@@ -164,7 +164,7 @@ function Render:language(info, language, delim)
     if self.config.width == 'full' then
         line:rep(border, vim.o.columns, border_hl)
     end
-    return self.marks:start('code_language', delim, {
+    return self.marks:start(self.config, 'code_language', delim, {
         virt_text = line:get(),
         virt_text_pos = 'overlay',
     })
@@ -177,7 +177,7 @@ function Render:border(node, thin)
     local kind = self.config.border
     local highlight = self.config.highlight_border
     if kind == 'hide' then
-        self.marks:over(true, node, { conceal_lines = '' })
+        self.marks:over(self.config, true, node, { conceal_lines = '' })
     elseif kind == 'none' or not node or not highlight then
         -- do nothing
     else
@@ -187,7 +187,7 @@ function Render:border(node, thin)
         end
         local block = self.config.width == 'block'
         local width = block and self.data.body - node.start_col or vim.o.columns
-        self.marks:start('code_border', node, {
+        self.marks:start(self.config, 'code_border', node, {
             virt_text = { { icon:rep(width), highlight } },
             virt_text_pos = 'overlay',
         })
@@ -216,15 +216,16 @@ function Render:background(start_row, end_row)
         padding:pad(vim.o.columns * 2)
         win_col = self.data.margin + self.data.body + self:indent():size()
     end
+    local col = self.node.start_col
     for row = start_row, end_row do
-        self.marks:add('code_background', row, self.node.start_col, {
+        self.marks:add(self.config, 'code_background', row, col, {
             end_row = row + 1,
             hl_group = self.config.highlight,
             hl_eol = true,
         })
         if not padding:empty() and win_col > 0 then
             -- overwrite anything beyond width with padding
-            self.marks:add('code_background', row, self.node.start_col, {
+            self.marks:add(self.config, 'code_background', row, col, {
                 priority = 0,
                 virt_text = padding:get(),
                 virt_text_win_col = win_col,
@@ -259,7 +260,7 @@ function Render:padding(background)
             line:pad(self.data.padding, highlight)
         end
         if not line:empty() then
-            self.marks:add(false, row, col, {
+            self.marks:add(self.config, false, row, col, {
                 priority = 100,
                 virt_text = line:get(),
                 virt_text_pos = 'inline',

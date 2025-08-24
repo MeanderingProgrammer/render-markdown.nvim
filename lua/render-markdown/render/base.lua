@@ -49,19 +49,20 @@ function Base:indent()
 end
 
 ---@protected
+---@param config render.md.base.Config
 ---@param enabled boolean
 ---@param text? string
 ---@param highlight? string
-function Base:sign(enabled, text, highlight)
-    local config = self.context.config.sign
-    if not enabled or not text or not config.enabled then
+function Base:sign(config, enabled, text, highlight)
+    local sign = self.context.config.sign
+    if not enabled or not text or not sign.enabled then
         return
     end
-    local sign_highlight = config.highlight
+    local sign_highlight = sign.highlight
     if highlight then
         sign_highlight = colors.combine(highlight, sign_highlight)
     end
-    self.marks:start('sign', self.node, {
+    self.marks:start(config, 'sign', self.node, {
         sign_text = text,
         sign_hl_group = sign_highlight,
     })

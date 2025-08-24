@@ -3,6 +3,7 @@ local log = require('render-markdown.core.log')
 local str = require('render-markdown.lib.str')
 
 ---@class (exact) render.md.Mark
+---@field modes? render.md.Modes
 ---@field conceal render.md.mark.Conceal
 ---@field start_row integer
 ---@field start_col integer
@@ -47,20 +48,22 @@ function Marks:get()
     return self.marks
 end
 
+---@param config render.md.base.Config
 ---@param conceal render.md.mark.Conceal
 ---@param node render.md.Node
 ---@param opts render.md.mark.Opts
 ---@return boolean
-function Marks:start(conceal, node, opts)
-    return self:add(conceal, node.start_row, node.start_col, opts)
+function Marks:start(config, conceal, node, opts)
+    return self:add(config, conceal, node.start_row, node.start_col, opts)
 end
 
+---@param config render.md.base.Config
 ---@param conceal render.md.mark.Conceal
 ---@param node? render.md.Node
 ---@param opts render.md.mark.Opts
 ---@param offset? Range4
 ---@return boolean
-function Marks:over(conceal, node, opts, offset)
+function Marks:over(config, conceal, node, opts, offset)
     if not node then
         return false
     end
@@ -69,23 +72,25 @@ function Marks:over(conceal, node, opts, offset)
     local start_col = node.start_col + offset[2]
     opts.end_row = node.end_row + offset[3]
     opts.end_col = node.end_col + offset[4]
-    return self:add(conceal, start_row, start_col, opts)
+    return self:add(config, conceal, start_row, start_col, opts)
 end
 
+---@param config render.md.base.Config
 ---@param conceal render.md.mark.Conceal
 ---@param start_row integer
 ---@param start_col integer
 ---@param opts render.md.mark.Opts
 ---@return boolean
-function Marks:add(conceal, start_row, start_col, opts)
+function Marks:add(config, conceal, start_row, start_col, opts)
     ---@type render.md.Mark
     local mark = {
+        modes = config.render_modes,
         conceal = conceal,
         start_row = start_row,
         start_col = start_col,
         opts = opts,
     }
-    local valid, feature, min_version = self:validate(opts)
+    local valid, feature, min_version = self:validate(mark.opts)
     if not valid then
         local message = feature .. ' requires neovim >= ' .. min_version
         log.add('error', 'Mark', message, mark)

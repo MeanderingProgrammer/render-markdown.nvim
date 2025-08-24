@@ -28,7 +28,7 @@ end
 ---@param root TSNode
 ---@return render.md.Mark[]
 function Handler:run(root)
-    if self.context:skip(self.config) then
+    if not self.config.enabled then
         return {}
     end
     if vim.fn.executable(self.config.converter) ~= 1 then
@@ -50,7 +50,7 @@ function Handler:run(root)
     local row = above and node.start_row or node.end_row
 
     local marks = Marks.new(self.context, true)
-    marks:add('virtual_lines', row, 0, {
+    marks:add(self.config, 'virtual_lines', row, 0, {
         virt_lines = lines,
         virt_lines_above = above,
     })

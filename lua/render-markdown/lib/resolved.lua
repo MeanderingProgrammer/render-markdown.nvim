@@ -15,35 +15,12 @@ function Resolved.new(config)
     self.modes = config.render_modes
     for _, component in pairs(config) do
         if type(component) == 'table' then
-            self.modes = Resolved.fold(self.modes, component['render_modes'])
+            self.modes = env.mode.join(self.modes, component['render_modes'])
         end
     end
     self.callouts = Resolved.normalize(config.callout)
     self.checkboxes = Resolved.normalize(config.checkbox.custom)
     return self
-end
-
----@private
----@param acc render.md.Modes
----@param new? render.md.Modes
----@return render.md.Modes
-function Resolved.fold(acc, new)
-    if type(acc) == 'boolean' and type(new) == 'boolean' then
-        return acc or new
-    elseif type(acc) == 'boolean' and type(new) == 'table' then
-        return acc or new
-    elseif type(acc) == 'table' and type(new) == 'boolean' then
-        return new or acc
-    elseif type(acc) == 'table' and type(new) == 'table' then
-        -- copy to avoid modifying inputs
-        local result = {}
-        vim.list_extend(result, acc)
-        vim.list_extend(result, new)
-        return result
-    else
-        -- should only occur if new is nil, keep current value
-        return acc
-    end
 end
 
 ---@private

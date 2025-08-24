@@ -163,7 +163,7 @@ function Updater:parse(callback)
     local ok, parser = pcall(vim.treesitter.get_parser, self.buf)
     if ok and parser then
         -- reset buffer context
-        local context = Context.new(self.buf, self.win, self.config, self.mode)
+        local context = Context.new(self.buf, self.win, self.config)
         if context then
             -- make sure injections are processed
             context.view:parse(parser, function()
@@ -185,7 +185,7 @@ function Updater:display()
     local range = self:hidden()
     local extmarks = self.decorator:get()
     for _, extmark in ipairs(extmarks) do
-        if self:conceal(extmark, range) then
+        if self:hide(extmark, range) then
             extmark:hide(M.ns, self.buf)
         else
             extmark:show(M.ns, self.buf)
@@ -222,19 +222,29 @@ end
 ---@param extmark render.md.Extmark
 ---@param range? render.md.Range
 ---@return boolean
-function Updater:conceal(extmark, range)
-    local conceal = extmark:get().conceal
-    if type(conceal) == 'boolean' then
-        if not conceal then
-            return false
-        end
-    else
-        local modes = self.config.anti_conceal.ignore[conceal]
-        if modes and env.mode.is(self.mode, modes) then
-            return false
-        end
+function Updater:hide(extmark, range)
+    local mark = extmark:get()
+
+    -- not in top level or mark level modes -> hide
+    local show = env.mode.join(self.config.render_modes, mark.modes)
+    if not env.mode.is(self.mode, show) then
+        return true
     end
-    return extmark:overlaps(range)
+
+    -- does not overlap with hidden range -> show
+    if not extmark:overlaps(range) then
+        return false
+    end
+
+    local conceal = mark.conceal
+    if type(conceal) == 'boolean' then
+        -- mark has conceal value -> respect
+        return conceal
+    else
+        -- mark has conceal element -> show if anti-conceal is ignored
+        local ignore = self.config.anti_conceal.ignore[conceal]
+        return not (ignore and env.mode.is(self.mode, ignore))
+    end
 end
 
 ---@private

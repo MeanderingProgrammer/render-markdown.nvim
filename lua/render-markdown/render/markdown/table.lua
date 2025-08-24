@@ -49,7 +49,7 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     self.config = self.context.config.pipe_table
-    if self.context:skip(self.config) then
+    if not self.config.enabled then
         return false
     end
 
@@ -257,7 +257,7 @@ function Render:delimiter()
     line:pad(str.spaces('start', delim.node.text))
     line:text(delimiter, self.config.head)
     line:pad(str.width(delim.node.text) - line:width())
-    self.marks:over('table_border', delim.node, {
+    self.marks:over(self.config, 'table_border', delim.node, {
         virt_text = line:get(),
         virt_text_pos = 'overlay',
     })
@@ -272,7 +272,7 @@ function Render:row(row)
 
     if vim.tbl_contains({ 'trimmed', 'padded', 'raw' }, self.config.cell) then
         for _, pipe in ipairs(row.pipes) do
-            self.marks:over('table_border', pipe, {
+            self.marks:over(self.config, 'table_border', pipe, {
                 virt_text = { { icon, highlight } },
                 virt_text_pos = 'overlay',
             })
@@ -312,7 +312,7 @@ function Render:row(row)
             end
         end
     elseif self.config.cell == 'overlay' then
-        self.marks:over('table_border', row.node, {
+        self.marks:over(self.config, 'table_border', row.node, {
             virt_text = { { row.node.text:gsub('|', icon), highlight } },
             virt_text_pos = 'overlay',
         })
@@ -327,14 +327,14 @@ end
 function Render:shift(col, side, amount)
     local column = side == 'left' and col.start_col or col.end_col
     if amount > 0 then
-        self.marks:add(true, col.row, column, {
+        self.marks:add(self.config, true, col.row, column, {
             priority = 0,
             virt_text = self:line():pad(amount, self.config.filler):get(),
             virt_text_pos = 'inline',
         })
     elseif amount < 0 then
         amount = amount - self.context.conceal:width('')
-        self.marks:add(true, col.row, column + amount, {
+        self.marks:add(self.config, true, col.row, column + amount, {
             priority = 0,
             end_col = column,
             conceal = '',
@@ -406,12 +406,12 @@ function Render:border()
         local available = target and str.width(target) == 0
 
         if not virtual and available and self.context.used:take(row) then
-            self.marks:add('table_border', row, 0, {
+            self.marks:add(self.config, 'table_border', row, 0, {
                 virt_text = line:get(),
                 virt_text_pos = 'overlay',
             })
         else
-            self.marks:add('virtual_lines', node.start_row, 0, {
+            self.marks:add(self.config, 'virtual_lines', node.start_row, 0, {
                 virt_lines = { self:indent():line(true):extend(line):get() },
                 virt_lines_above = above,
             })

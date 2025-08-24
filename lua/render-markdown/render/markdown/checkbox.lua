@@ -19,7 +19,7 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     self.config = self.context.config.checkbox
-    if self.context:skip(self.config) then
+    if not self.config.enabled then
         return false
     end
     local marker = self.node:child_at(0)
@@ -71,8 +71,9 @@ function Render:marker()
     else
         -- https://github.com/tree-sitter-grammars/tree-sitter-markdown/issues/127
         local node = self.data.marker
-        local offset = { 0, str.spaces('start', node.text), 0, 0 }
-        self.marks:over('check_icon', node, { conceal = '' }, offset)
+        self.marks:over(self.config, 'check_icon', node, {
+            conceal = '',
+        }, { 0, str.spaces('start', node.text), 0, 0 })
     end
 end
 
@@ -88,7 +89,7 @@ function Render:checkbox()
     local line = self:line():text(self.data.icon, self.data.highlight)
     if space < 0 then
         -- not enough space to fit the icon in-place
-        self.marks:over('check_icon', node, {
+        self.marks:over(self.config, 'check_icon', node, {
             virt_text = line:pad(right):get(),
             virt_text_pos = 'inline',
             conceal = '',
@@ -102,21 +103,21 @@ function Render:checkbox()
         local start_col = node.start_col
         local end_col = node.end_col + 1
 
-        self.marks:add('check_icon', row, start_col, {
+        self.marks:add(self.config, 'check_icon', row, start_col, {
             end_col = end_col - space,
             virt_text = line:pad(fits):get(),
             virt_text_pos = 'overlay',
         })
         if space > 0 then
             -- remove extra space after the icon
-            self.marks:add('check_icon', row, end_col - space, {
+            self.marks:add(self.config, 'check_icon', row, end_col - space, {
                 end_col = end_col,
                 conceal = '',
             })
         end
         if right > 0 then
             -- add padding
-            self.marks:add('check_icon', row, end_col, {
+            self.marks:add(self.config, 'check_icon', row, end_col, {
                 virt_text = self:line():pad(right):get(),
                 virt_text_pos = 'inline',
             })
@@ -130,7 +131,9 @@ function Render:scope()
     if not highlight then
         return
     end
-    self.marks:over('check_scope', self.node:scope(), { hl_group = highlight })
+    self.marks:over(self.config, 'check_scope', self.node:scope(), {
+        hl_group = highlight,
+    })
 end
 
 return Render

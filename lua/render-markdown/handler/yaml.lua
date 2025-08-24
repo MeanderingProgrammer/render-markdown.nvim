@@ -23,7 +23,7 @@ function M.parse(ctx)
         link = require('render-markdown.render.common.wiki'),
     }
     local context = Context.get(ctx.buf)
-    if context:skip(context.config.yaml) then
+    if not context.config.yaml.enabled then
         return {}
     end
     local marks = Marks.new(context, true)

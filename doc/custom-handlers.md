@@ -21,6 +21,7 @@ Each handler must conform to the following interface:
 ---@field root TSNode
 
 ---@class (exact) render.md.Mark
+---@field modes? render.md.Modes
 ---@field conceal render.md.mark.Conceal
 ---@field start_row integer
 ---@field start_col integer
@@ -58,6 +59,7 @@ to use patterns from the builtin handlers.
 
 For each `mark` in the return value the fields mean:
 
+- `modes`: additional modes the `mark` should be shown in
 - `conceal`: determines if the mark should be hidden when cursor enters
 - `start_row`: only value used to check whether cursor is inside the `mark`
 - `start_col`: passed to `nvim_buf_set_extmark` as the 3rd argument
@@ -92,7 +94,7 @@ This will require a treesitter query and using the range values of nodes.
 -- Parse query outside of the function to avoid doing it for each call
 local query = vim.treesitter.query.parse('python', '(function_definition) @def')
 local function parse_python(ctx)
-    local marks = {}
+    local marks = {} ---@type render.md.Mark[]
     for id, node in query:iter_captures(ctx.root, ctx.buf) do
         local capture = query.captures[id]
         local start_row = node:range()

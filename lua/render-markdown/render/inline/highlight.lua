@@ -9,7 +9,7 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     self.config = self.context.config.inline_highlight
-    if self.context:skip(self.config) then
+    if not self.config.enabled then
         return false
     end
     return true
@@ -21,7 +21,7 @@ function Render:run()
         -- hide first 2 equal signs
         self:hide(range[1], range[2], range[2] + 2)
         -- highlight contents
-        self.marks:add(false, range[1], range[2], {
+        self.marks:add(self.config, false, range[1], range[2], {
             end_row = range[3],
             end_col = range[4],
             hl_group = self.config.highlight,
@@ -36,7 +36,7 @@ end
 ---@param start_col integer
 ---@param end_col integer
 function Render:hide(row, start_col, end_col)
-    self.marks:add(true, row, start_col, {
+    self.marks:add(self.config, true, row, start_col, {
         end_col = end_col,
         conceal = '',
     })

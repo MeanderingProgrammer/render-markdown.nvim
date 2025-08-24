@@ -52,7 +52,7 @@ end
 ---@param level? integer
 ---@return integer
 function Indent:level(level)
-    if self.context:skip(self.config) then
+    if not self.config.enabled then
         return 0
     end
     if not level then

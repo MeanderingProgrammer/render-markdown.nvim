@@ -98,11 +98,34 @@ function M.mode.get()
     return vim.fn.mode(true)
 end
 
+---@param v1 render.md.Modes
+---@param v2? render.md.Modes
+---@return render.md.Modes
+function M.mode.join(v1, v2)
+    if type(v1) == 'boolean' and type(v2) == 'boolean' then
+        return v1 or v2
+    elseif type(v1) == 'boolean' and type(v2) == 'table' then
+        return v1 or v2
+    elseif type(v1) == 'table' and type(v2) == 'boolean' then
+        return v2 or v1
+    elseif type(v1) == 'table' and type(v2) == 'table' then
+        -- copy to avoid modifying inputs
+        local result = {} ---@type string[]
+        vim.list_extend(result, v1)
+        vim.list_extend(result, v2)
+        return result
+    else
+        return v1 -- should only occur if v2 is nil, keep v1
+    end
+end
+
 ---@param mode string
----@param modes render.md.Modes
+---@param modes? render.md.Modes
 ---@return boolean
 function M.mode.is(mode, modes)
-    if type(modes) == 'boolean' then
+    if modes == nil then
+        return false
+    elseif type(modes) == 'boolean' then
         return modes
     else
         return vim.tbl_contains(modes, mode)

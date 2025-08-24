@@ -15,7 +15,7 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     self.config = self.context.config.paragraph
-    if self.context:skip(self.config) then
+    if not self.config.enabled then
         return false
     end
     local margin = self:get_number(self.config.left_margin)
@@ -58,7 +58,7 @@ function Render:padding(start_row, end_row, amount)
         return
     end
     for row = start_row, end_row do
-        self.marks:add(false, row, 0, {
+        self.marks:add(self.config, false, row, 0, {
             priority = 100,
             virt_text = line,
             virt_text_pos = 'inline',

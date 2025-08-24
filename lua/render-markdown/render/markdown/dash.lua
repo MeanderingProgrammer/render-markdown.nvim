@@ -15,7 +15,7 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     self.config = self.context.config.dash
-    if self.context:skip(self.config) then
+    if not self.config.enabled then
         return false
     end
     local width = self:get_width(self.config.width, 0)
@@ -53,7 +53,7 @@ end
 ---@param line render.md.Line
 ---@param row integer
 function Render:dash(line, row)
-    self.marks:add('dash', row, 0, {
+    self.marks:add(self.config, 'dash', row, 0, {
         virt_text = line:get(),
         virt_text_pos = 'overlay',
     })

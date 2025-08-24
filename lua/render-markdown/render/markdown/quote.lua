@@ -11,6 +11,7 @@ local ts = require('render-markdown.core.ts')
 ---@field repeat_linebreak? boolean
 
 ---@class render.md.render.Quote: render.md.Render
+---@field private config render.md.quote.Config
 ---@field private data render.md.quote.Data
 local Render = setmetatable({}, Base)
 Render.__index = Render
@@ -18,20 +19,21 @@ Render.__index = Render
 ---@protected
 ---@return boolean
 function Render:setup()
-    local config = self.context.config.quote
-    if self.context:skip(config) then
+    self.config = self.context.config.quote
+    if not self.config.enabled then
         return false
     end
-    local callout = self.context.callout:get(self.node)
     local level = self.node:level_in('block_quote', 'section')
-    local icon = callout and callout.config.quote_icon or config.icon
-    local highlight = callout and callout.config.highlight or config.highlight
+    local callout = self.context.callout:get(self.node)
+    local config = callout and callout.config
+    local icon = config and config.quote_icon or self.config.icon
+    local highlight = config and config.highlight or self.config.highlight
     self.data = {
         callout = callout,
         level = level,
         icon = assert(list.cycle(icon, level)),
         highlight = assert(list.cycle(highlight, level)),
-        repeat_linebreak = config.repeat_linebreak or nil,
+        repeat_linebreak = self.config.repeat_linebreak or nil,
     }
     return true
 end
@@ -51,7 +53,7 @@ function Render:callout()
     local node = callout.node
     local config = callout.config
     local title = Render.title(node, config)
-    self.marks:over('callout', node, {
+    self.marks:over(self.config, 'callout', node, {
         virt_text = { { title or config.rendered, config.highlight } },
         virt_text_pos = 'overlay',
         conceal = title and '' or nil,
@@ -111,7 +113,7 @@ function Render:marker(node, index)
     if not range then
         return
     end
-    self.marks:add('quote', range[1], range[2], {
+    self.marks:add(self.config, 'quote', range[1], range[2], {
         end_row = range[3],
         end_col = range[4],
         virt_text = { { self.data.icon, self.data.highlight } },

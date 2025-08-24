@@ -34,7 +34,7 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     self.config = self.context.config.heading
-    if self.context:skip(self.config) then
+    if not self.config.enabled then
         return false
     end
     if self.context.conceal:hidden(self.node) then
@@ -101,7 +101,7 @@ end
 
 ---@protected
 function Render:run()
-    self:sign(self.config.sign, self.data.sign, self.data.fg)
+    self:sign(self.config, self.config.sign, self.data.sign, self.data.fg)
     local box = self:box(self:marker())
     self:background(box)
     self:padding(box)
@@ -109,8 +109,9 @@ function Render:run()
         self:border(box, true)
         self:border(box, false)
     else
-        self.marks:over(true, self.data.marker, { conceal = '' })
-        self.marks:over(true, self.data.marker, { conceal_lines = '' })
+        local node = self.data.marker
+        self.marks:over(self.config, true, node, { conceal = '' })
+        self.marks:over(self.config, true, node, { conceal_lines = '' })
     end
 end
 
@@ -133,8 +134,10 @@ function Render:marker()
             return width
         end
         if self.config.position == 'right' then
-            self.marks:over(true, node, { conceal = '' }, { 0, 0, 0, 1 })
-            self.marks:start('head_icon', node, {
+            self.marks:over(self.config, true, node, {
+                conceal = '',
+            }, { 0, 0, 0, 1 })
+            self.marks:start(self.config, 'head_icon', node, {
                 priority = 1000,
                 virt_text = { { icon, highlight } },
                 virt_text_pos = 'eol',
@@ -143,14 +146,14 @@ function Render:marker()
         else
             local padding = width - str.width(icon)
             if self.config.position == 'inline' or padding < 0 then
-                local added = self.marks:over('head_icon', node, {
+                local added = self.marks:over(self.config, 'head_icon', node, {
                     virt_text = { { icon, highlight } },
                     virt_text_pos = 'inline',
                     conceal = '',
                 }, { 0, 0, 0, 1 })
                 return added and str.width(icon) or width
             else
-                self.marks:over('head_icon', node, {
+                self.marks:over(self.config, 'head_icon', node, {
                     virt_text = { { str.pad(padding) .. icon, highlight } },
                     virt_text_pos = 'overlay',
                 })
@@ -163,19 +166,20 @@ function Render:marker()
             return 0
         end
         if self.config.position == 'right' then
-            self.marks:start('head_icon', node, {
+            self.marks:start(self.config, 'head_icon', node, {
                 priority = 1000,
                 virt_text = { { icon, highlight } },
                 virt_text_pos = 'eol',
             })
             return 1 + str.width(icon)
         else
+            local col = node.start_col
             local added = true
             for row = node.start_row, node.end_row - 1 do
                 local start = row == node.start_row
                 local text = start and icon or str.pad(str.width(icon))
                 added = added
-                    and self.marks:add('head_icon', row, node.start_col, {
+                    and self.marks:add(self.config, 'head_icon', row, col, {
                         virt_text = { { text, highlight } },
                         virt_text_pos = 'inline',
                     })
@@ -219,15 +223,16 @@ function Render:background(box)
         padding:pad(vim.o.columns * 2)
         win_col = box.margin + box.body + self:indent():size(self.data.level)
     end
+    local col = self.node.start_col
     for row = self.node.start_row, self.node.end_row - 1 do
-        self.marks:add('head_background', row, self.node.start_col, {
+        self.marks:add(self.config, 'head_background', row, col, {
             end_row = row + 1,
             hl_group = highlight,
             hl_eol = true,
         })
         if not padding:empty() and win_col > 0 then
             -- overwrite anything beyond width with padding
-            self.marks:add('head_background', row, self.node.start_col, {
+            self.marks:add(self.config, 'head_background', row, col, {
                 priority = 0,
                 virt_text = padding:get(),
                 virt_text_win_col = win_col,
@@ -245,7 +250,7 @@ function Render:padding(box)
         return
     end
     for row = self.node.start_row, self.node.end_row - 1 do
-        self.marks:add(false, row, 0, {
+        self.marks:add(self.config, false, row, 0, {
             priority = 100,
             virt_text = line:get(),
             virt_text_pos = 'inline',
@@ -277,12 +282,12 @@ function Render:border(box, above)
     local available = target and str.width(target) == 0
 
     if not virtual and available and self.context.used:take(row) then
-        self.marks:add('head_border', row, 0, {
+        self.marks:add(self.config, 'head_border', row, 0, {
             virt_text = line:get(),
             virt_text_pos = 'overlay',
         })
     else
-        self.marks:add('virtual_lines', self.node.start_row, 0, {
+        self.marks:add(self.config, 'virtual_lines', self.node.start_row, 0, {
             virt_lines = {
                 self:indent():line(true, self.data.level):extend(line):get(),
             },

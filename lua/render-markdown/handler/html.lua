@@ -21,7 +21,7 @@ function M.parse(ctx)
         tag = require('render-markdown.render.html.tag'),
     }
     local context = Context.get(ctx.buf)
-    if context:skip(context.config.html) then
+    if not context.config.html.enabled then
         return {}
     end
     local marks = Marks.new(context, true)

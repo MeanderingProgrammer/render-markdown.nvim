@@ -9,7 +9,7 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     self.config = self.context.config.document
-    if self.context:skip(self.config) then
+    if not self.config.enabled then
         return false
     end
     return true
@@ -19,7 +19,7 @@ end
 function Render:run()
     for _, pattern in ipairs(self.config.conceal.char_patterns) do
         for _, range in ipairs(self.node:find(pattern)) do
-            self.marks:add(true, range[1], range[2], {
+            self.marks:add(self.config, true, range[1], range[2], {
                 end_row = range[3],
                 end_col = range[4],
                 conceal = '',
@@ -28,7 +28,7 @@ function Render:run()
     end
     for _, pattern in ipairs(self.config.conceal.line_patterns) do
         for _, range in ipairs(self.node:find(pattern)) do
-            self.marks:add(true, range[1], 0, {
+            self.marks:add(self.config, true, range[1], 0, {
                 end_row = range[3],
                 end_col = 0,
                 conceal_lines = '',

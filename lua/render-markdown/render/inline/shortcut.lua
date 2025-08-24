@@ -23,7 +23,7 @@ function Render:setup()
         return false
     end
     self.config = self.context.config.link
-    if self.context:skip(self.config) then
+    if not self.config.enabled then
         return false
     end
     return true
@@ -59,7 +59,7 @@ function Render:footnote(text)
     if not value then
         return
     end
-    self.marks:over('link', self.node, {
+    self.marks:over(self.config, 'link', self.node, {
         virt_text = { { value, self.config.highlight } },
         virt_text_pos = 'inline',
         conceal = '',

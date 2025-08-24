@@ -14,7 +14,7 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     self.config = self.context.config.bullet
-    if self.context:skip(self.config) then
+    if not self.config.enabled then
         return false
     end
     return true
@@ -33,7 +33,7 @@ function Render:run()
     if not icon or not highlight then
         return
     end
-    self.marks:start('bullet', self.node, {
+    self.marks:start(self.config, 'bullet', self.node, {
         virt_text = { { icon, highlight } },
         virt_text_pos = 'overlay',
     })
