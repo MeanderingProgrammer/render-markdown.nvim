@@ -158,6 +158,7 @@ def update_handlers(root: Path) -> None:
         "render.md.Handler",
         "render.md.handler.Context",
         "render.md.Mark",
+        "render.md.mark.Conceal",
         "render.md.mark.Opts",
         "render.md.mark.Line",
         "render.md.mark.Text",

@@ -1,13 +1,14 @@
 local compat = require('render-markdown.lib.compat')
-local env = require('render-markdown.lib.env')
 local log = require('render-markdown.core.log')
 local str = require('render-markdown.lib.str')
 
 ---@class (exact) render.md.Mark
----@field conceal boolean
+---@field conceal render.md.mark.Conceal
 ---@field start_row integer
 ---@field start_col integer
 ---@field opts render.md.mark.Opts
+
+---@alias render.md.mark.Conceal boolean|render.md.Element
 
 ---@class render.md.mark.Opts: vim.api.keyset.set_extmark
 ---@field hl_mode? 'replace'|'combine'|'blend'
@@ -23,11 +24,8 @@ local str = require('render-markdown.lib.str')
 
 ---@alias render.md.mark.Hl string|string[]
 
----@alias render.md.mark.Element boolean|render.md.Element
-
 ---@class render.md.Marks
 ---@field private context render.md.request.Context
----@field private ignore render.md.conceal.Ignore
 ---@field private update boolean
 ---@field private marks render.md.Mark[]
 local Marks = {}
@@ -39,7 +37,6 @@ Marks.__index = Marks
 function Marks.new(context, update)
     local self = setmetatable({}, Marks)
     self.context = context
-    self.ignore = context.config.anti_conceal.ignore
     self.update = update
     self.marks = {}
     return self
@@ -50,20 +47,20 @@ function Marks:get()
     return self.marks
 end
 
----@param element render.md.mark.Element
+---@param conceal render.md.mark.Conceal
 ---@param node render.md.Node
 ---@param opts render.md.mark.Opts
 ---@return boolean
-function Marks:start(element, node, opts)
-    return self:add(element, node.start_row, node.start_col, opts)
+function Marks:start(conceal, node, opts)
+    return self:add(conceal, node.start_row, node.start_col, opts)
 end
 
----@param element render.md.mark.Element
+---@param conceal render.md.mark.Conceal
 ---@param node? render.md.Node
 ---@param opts render.md.mark.Opts
 ---@param offset? Range4
 ---@return boolean
-function Marks:over(element, node, opts, offset)
+function Marks:over(conceal, node, opts, offset)
     if not node then
         return false
     end
@@ -72,18 +69,18 @@ function Marks:over(element, node, opts, offset)
     local start_col = node.start_col + offset[2]
     opts.end_row = node.end_row + offset[3]
     opts.end_col = node.end_col + offset[4]
-    return self:add(element, start_row, start_col, opts)
+    return self:add(conceal, start_row, start_col, opts)
 end
 
----@param element render.md.mark.Element
+---@param conceal render.md.mark.Conceal
 ---@param start_row integer
 ---@param start_col integer
 ---@param opts render.md.mark.Opts
 ---@return boolean
-function Marks:add(element, start_row, start_col, opts)
+function Marks:add(conceal, start_row, start_col, opts)
     ---@type render.md.Mark
     local mark = {
-        conceal = self:conceal(element),
+        conceal = conceal,
         start_row = start_row,
         start_col = start_col,
         opts = opts,
@@ -100,21 +97,6 @@ function Marks:add(element, start_row, start_col, opts)
     end
     self.marks[#self.marks + 1] = mark
     return true
-end
-
----@private
----@param element render.md.mark.Element
----@return boolean
-function Marks:conceal(element)
-    if type(element) == 'boolean' then
-        return element
-    end
-    local modes = self.ignore[element]
-    if modes == nil then
-        return true
-    else
-        return not env.mode.is(self.context.mode, modes)
-    end
 end
 
 ---@private

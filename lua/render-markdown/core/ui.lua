@@ -185,7 +185,7 @@ function Updater:display()
     local range = self:hidden()
     local extmarks = self.decorator:get()
     for _, extmark in ipairs(extmarks) do
-        if extmark:get().conceal and extmark:overlaps(range) then
+        if self:conceal(extmark, range) then
             extmark:hide(M.ns, self.buf)
         else
             extmark:show(M.ns, self.buf)
@@ -216,6 +216,25 @@ function Updater:hidden()
         ---@type render.md.Range
         return { row - config.above, row + config.below }
     end
+end
+
+---@private
+---@param extmark render.md.Extmark
+---@param range? render.md.Range
+---@return boolean
+function Updater:conceal(extmark, range)
+    local conceal = extmark:get().conceal
+    if type(conceal) == 'boolean' then
+        if not conceal then
+            return false
+        end
+    else
+        local modes = self.config.anti_conceal.ignore[conceal]
+        if modes and env.mode.is(self.mode, modes) then
+            return false
+        end
+    end
+    return extmark:overlaps(range)
 end
 
 ---@private

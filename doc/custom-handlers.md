@@ -21,10 +21,12 @@ Each handler must conform to the following interface:
 ---@field root TSNode
 
 ---@class (exact) render.md.Mark
----@field conceal boolean
+---@field conceal render.md.mark.Conceal
 ---@field start_row integer
 ---@field start_col integer
 ---@field opts render.md.mark.Opts
+
+---@alias render.md.mark.Conceal boolean|render.md.Element
 
 ---@class render.md.mark.Opts: vim.api.keyset.set_extmark
 ---@field hl_mode? 'replace'|'combine'|'blend'

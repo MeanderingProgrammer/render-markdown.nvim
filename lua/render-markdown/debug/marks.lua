@@ -3,7 +3,7 @@
 ---@field [2]? integer
 
 ---@class render.md.debug.Mark
----@field conceal boolean
+---@field conceal render.md.mark.Conceal
 ---@field opts render.md.mark.Opts
 ---@field row render.md.debug.Range
 ---@field col render.md.debug.Range
