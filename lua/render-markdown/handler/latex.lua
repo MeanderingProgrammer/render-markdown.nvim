@@ -39,49 +39,48 @@ function Handler:run(root)
     local node = Node.new(self.context.buf, root)
     log.node('latex', node)
 
-    local indent = self:indent(node.start_row, node.start_col)
-    local lines = iter.list.map(self:expressions(node), function(expression)
-        local line = vim.list_extend({}, indent) ---@type render.md.mark.Line
-        line[#line + 1] = { expression, self.config.highlight }
-        return line
-    end)
-
-    local above = self.config.position == 'above'
-    local row = above and node.start_row or node.end_row
-
     local marks = Marks.new(self.context, true)
-    marks:add(self.config, 'virtual_lines', row, 0, {
-        virt_lines = lines,
-        virt_lines_above = above,
-    })
+    local output = str.split(self:convert(node.text), '\n', true)
+    if self.config.virtual or #output > 1 then
+        local col = node.start_col
+        local _, first = node:line('first', 0)
+        local prefix = str.pad(first and str.width(first:sub(1, col)) or col)
+        local width = vim.fn.max(iter.list.map(output, str.width))
+
+        local text = {} ---@type string[]
+        for _ = 1, self.config.top_pad do
+            text[#text + 1] = ''
+        end
+        for _, line in ipairs(output) do
+            local suffix = str.pad(width - str.width(line))
+            text[#text + 1] = prefix .. line .. suffix
+        end
+        for _ = 1, self.config.bottom_pad do
+            text[#text + 1] = ''
+        end
+
+        local indent = self:indent(node.start_row, col)
+        local lines = iter.list.map(text, function(part)
+            local line = vim.list_extend({}, indent) ---@type render.md.mark.Line
+            line[#line + 1] = { part, self.config.highlight }
+            return line
+        end)
+
+        local above = self.config.position == 'above'
+        local row = above and node.start_row or node.end_row
+
+        marks:add(self.config, 'virtual_lines', row, 0, {
+            virt_lines = lines,
+            virt_lines_above = above,
+        })
+    else
+        marks:over(self.config, true, node, {
+            virt_text = { { output[1], self.config.highlight } },
+            virt_text_pos = 'inline',
+            conceal = '',
+        })
+    end
     return marks:get()
-end
-
----@private
----@param node render.md.Node
----@return string[]
-function Handler:expressions(node)
-    local col = node.start_col
-    local _, first = node:line('first', 0)
-    local prefix = str.pad(first and str.width(first:sub(1, col)) or col)
-
-    local result = {} ---@type string[]
-    for _ = 1, self.config.top_pad do
-        result[#result + 1] = ''
-    end
-
-    local lines = str.split(self:convert(node.text), '\n', true)
-    local width = vim.fn.max(iter.list.map(lines, str.width))
-    for _, line in ipairs(lines) do
-        local suffix = str.pad(width - str.width(line))
-        result[#result + 1] = prefix .. line .. suffix
-    end
-
-    for _ = 1, self.config.bottom_pad do
-        result[#result + 1] = ''
-    end
-
-    return result
 end
 
 ---@private

@@ -297,6 +297,8 @@ require('render-markdown').setup({
         top_pad = 0,
         -- Number of empty lines below latex blocks.
         bottom_pad = 0,
+        -- Always use virtual lines for rendering instead of attempting to inline.
+        virtual = false,
     },
     on = {
         -- Called when plugin initially attaches to a buffer.

@@ -4,6 +4,7 @@
 ---@field position render.md.latex.Position
 ---@field top_pad integer
 ---@field bottom_pad integer
+---@field virtual boolean
 
 ---@enum render.md.latex.Position
 local Position = {
@@ -32,6 +33,8 @@ M.default = {
     top_pad = 0,
     -- Number of empty lines below latex blocks.
     bottom_pad = 0,
+    -- Always use virtual lines for rendering instead of attempting to inline.
+    virtual = false,
 }
 
 ---@param spec render.md.debug.ValidatorSpec
@@ -42,6 +45,7 @@ function M.validate(spec)
     spec:one_of('position', vim.tbl_values(Position))
     spec:type('top_pad', 'number')
     spec:type('bottom_pad', 'number')
+    spec:type('virtual', 'boolean')
     spec:check()
 end
 

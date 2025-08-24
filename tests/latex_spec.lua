@@ -13,25 +13,9 @@ local function set_responses(converter, responses)
     stub.new(vim.fn, 'system', function(cmd, input)
         assert.same(converter, cmd)
         local result = responses[input]
-        assert.is_true(result ~= nil, 'No output for: ' .. input)
+        assert.is_true(result ~= nil, 'missing output for: ' .. input)
         return result
     end)
-end
-
----@param lines string[]
----@param width integer
----@return vim.api.keyset.set_extmark
-local function latex(lines, width)
-    local virt_lines = vim.iter(lines)
-        :map(function(line)
-            return { { line .. (' '):rep(width - #line), 'RmMath' } }
-        end)
-        :totable()
-    ---@type vim.api.keyset.set_extmark
-    return {
-        virt_lines = virt_lines,
-        virt_lines_above = true,
-    }
 end
 
 ---@param lines string[]
@@ -71,14 +55,24 @@ describe('latex.md', function()
         marks:add(row:get(0, 0), { 0, 1 }, util.heading.icon(1))
         marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(1))
 
-        marks:add(row:get(1), 0, latex(inline.out, 17))
-        marks:add(row:get(2), 0, latex(block.out, 28))
+        marks:add(row:get(1, 0), { 0, 21 }, {
+            virt_text = { { inline.out[1], 'RmMath' } },
+            virt_text_pos = 'inline',
+            conceal = '',
+        })
+        marks:add(row:get(2), 0, {
+            virt_lines = vim.iter(block.out)
+                :map(function(line)
+                    return { { line .. (' '):rep(28 - #line), 'RmMath' } }
+                end)
+                :totable(),
+            virt_lines_above = true,
+        })
 
         util.assert_view(marks, {
             '󰫎 󰲡 LaTeX',
             '',
             '  ' .. inline.out[1],
-            '  ' .. inline.raw[1],
             '',
             '  ' .. block.out[1],
             '  ' .. block.out[2],

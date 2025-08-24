@@ -197,6 +197,7 @@
 ---@field position? render.md.latex.Position
 ---@field top_pad? integer
 ---@field bottom_pad? integer
+---@field virtual? boolean
 
 ---@class (exact) render.md.link.UserConfig: render.md.base.UserConfig
 ---@field footnote? render.md.link.footnote.UserConfig
