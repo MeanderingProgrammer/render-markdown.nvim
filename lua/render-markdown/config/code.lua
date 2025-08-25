@@ -152,41 +152,45 @@ M.default = {
     style = 'full',
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    require('render-markdown.config.base').validate(spec)
-    spec:type('sign', 'boolean')
-    spec:type('conceal_delimiters', 'boolean')
-    spec:type('language', 'boolean')
-    spec:one_of('position', vim.tbl_values(Position))
-    spec:type('language_icon', 'boolean')
-    spec:type('language_name', 'boolean')
-    spec:type('language_info', 'boolean')
-    spec:type('language_pad', 'number')
-    spec:list('disable_background', 'string', 'boolean')
-    spec:one_of('width', vim.tbl_values(Width))
-    spec:type('left_margin', 'number')
-    spec:type('left_pad', 'number')
-    spec:type('right_pad', 'number')
-    spec:type('min_width', 'number')
-    spec:one_of('border', vim.tbl_values(Border))
-    spec:type('language_border', 'string')
-    spec:type('language_left', 'string')
-    spec:type('language_right', 'string')
-    spec:type('above', 'string')
-    spec:type('below', 'string')
-    spec:type('inline', 'boolean')
-    spec:type('inline_left', 'string')
-    spec:type('inline_right', 'string')
-    spec:type('inline_pad', 'number')
-    spec:type('highlight', 'string')
-    spec:type('highlight_info', 'string')
-    spec:type('highlight_language', { 'string', 'nil' })
-    spec:one_of('highlight_border', { false }, 'string')
-    spec:type('highlight_fallback', 'string')
-    spec:type('highlight_inline', 'string')
-    spec:one_of('style', vim.tbl_values(Style))
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    return require('render-markdown.config.base').schema({
+        sign = { type = 'boolean' },
+        conceal_delimiters = { type = 'boolean' },
+        language = { type = 'boolean' },
+        position = { enum = Position },
+        language_icon = { type = 'boolean' },
+        language_name = { type = 'boolean' },
+        language_info = { type = 'boolean' },
+        language_pad = { type = 'number' },
+        disable_background = {
+            union = { { list = { type = 'string' } }, { type = 'boolean' } },
+        },
+        width = { enum = Width },
+        left_margin = { type = 'number' },
+        left_pad = { type = 'number' },
+        right_pad = { type = 'number' },
+        min_width = { type = 'number' },
+        border = { enum = Border },
+        language_border = { type = 'string' },
+        language_left = { type = 'string' },
+        language_right = { type = 'string' },
+        above = { type = 'string' },
+        below = { type = 'string' },
+        inline = { type = 'boolean' },
+        inline_left = { type = 'string' },
+        inline_right = { type = 'string' },
+        inline_pad = { type = 'number' },
+        highlight = { type = 'string' },
+        highlight_info = { type = 'string' },
+        highlight_language = { optional = true, type = 'string' },
+        highlight_border = {
+            union = { { enum = { false } }, { type = 'string' } },
+        },
+        highlight_fallback = { type = 'string' },
+        highlight_inline = { type = 'string' },
+        style = { enum = Style },
+    })
 end
 
 return M

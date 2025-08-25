@@ -35,13 +35,13 @@ M.default = {
     min_width = 0,
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    require('render-markdown.config.base').validate(spec)
-    spec:type('left_margin', { 'number', 'function' })
-    spec:type('indent', { 'number', 'function' })
-    spec:type('min_width', 'number')
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    return require('render-markdown.config.base').schema({
+        left_margin = { union = { { type = 'number' }, { type = 'function' } } },
+        indent = { union = { { type = 'number' }, { type = 'function' } } },
+        min_width = { type = 'number' },
+    })
 end
 
 return M

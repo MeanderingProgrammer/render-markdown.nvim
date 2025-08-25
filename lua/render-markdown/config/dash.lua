@@ -30,14 +30,16 @@ M.default = {
     highlight = 'RenderMarkdownDash',
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    require('render-markdown.config.base').validate(spec)
-    spec:type('icon', 'string')
-    spec:one_of('width', { 'full' }, 'number')
-    spec:type('left_margin', 'number')
-    spec:type('highlight', 'string')
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    return require('render-markdown.config.base').schema({
+        icon = { type = 'string' },
+        width = {
+            union = { { enum = { 'full' } }, { type = 'number' } },
+        },
+        left_margin = { type = 'number' },
+        highlight = { type = 'string' },
+    })
 end
 
 return M

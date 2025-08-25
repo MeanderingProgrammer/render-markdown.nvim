@@ -15,14 +15,17 @@ M.default = {
     -- @see [Custom Handlers](doc/custom-handlers.md)
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    spec:each(function(handler)
-        handler:type('extends', { 'boolean', 'nil' })
-        handler:type('parse', 'function')
-        handler:check()
-    end)
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    ---@type render.md.Schema
+    local handler = {
+        record = {
+            extends = { optional = true, type = 'boolean' },
+            parse = { type = 'function' },
+        },
+    }
+    ---@type render.md.Schema
+    return { map = { key = { type = 'string' }, value = handler } }
 end
 
 return M

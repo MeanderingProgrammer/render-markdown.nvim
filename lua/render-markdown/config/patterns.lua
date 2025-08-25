@@ -24,21 +24,24 @@ M.default = {
     },
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    spec:each(function(pattern)
-        pattern:type('disable', 'boolean')
-        pattern:nested('directives', function(directives)
-            directives:each(function(directive)
-                directive:type('id', 'number')
-                directive:type('name', 'string')
-                directive:check()
-            end)
-            directives:check()
-        end)
-        pattern:check()
-    end)
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    ---@type render.md.Schema
+    local directive = {
+        record = {
+            id = { type = 'number' },
+            name = { type = 'string' },
+        },
+    }
+    ---@type render.md.Schema
+    local pattern = {
+        record = {
+            disable = { type = 'boolean' },
+            directives = { list = directive },
+        },
+    }
+    ---@type render.md.Schema
+    return { map = { key = { type = 'string' }, value = pattern } }
 end
 
 return M

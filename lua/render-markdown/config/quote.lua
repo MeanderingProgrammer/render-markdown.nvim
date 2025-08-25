@@ -35,13 +35,17 @@ M.default = {
     },
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    require('render-markdown.config.base').validate(spec)
-    spec:list('icon', 'string', 'string')
-    spec:type('repeat_linebreak', 'boolean')
-    spec:list('highlight', 'string', 'string')
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    return require('render-markdown.config.base').schema({
+        icon = {
+            union = { { list = { type = 'string' } }, { type = 'string' } },
+        },
+        repeat_linebreak = { type = 'boolean' },
+        highlight = {
+            union = { { list = { type = 'string' } }, { type = 'string' } },
+        },
+    })
 end
 
 return M

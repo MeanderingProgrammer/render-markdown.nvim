@@ -29,17 +29,23 @@ M.default = {
     filetype = {},
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
+---@return render.md.Schema
+function M.schema()
     local Config = require('render-markdown.lib.config')
-    spec:nested({ 'buflisted', 'buftype', 'filetype' }, function(overrides)
-        overrides:each(function(override)
-            Config.validate(override)
-            override:check()
-        end, true)
-        overrides:check()
-    end)
-    spec:check()
+    ---@type render.md.Schema
+    return {
+        record = {
+            buflisted = {
+                map = { key = { type = 'boolean' }, value = Config.schema({}) },
+            },
+            buftype = {
+                map = { key = { type = 'string' }, value = Config.schema({}) },
+            },
+            filetype = {
+                map = { key = { type = 'string' }, value = Config.schema({}) },
+            },
+        },
+    }
 end
 
 return M

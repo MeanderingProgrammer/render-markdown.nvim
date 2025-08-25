@@ -64,19 +64,22 @@ M.default = {
     },
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    spec:type('enabled', 'boolean')
-    spec:list('disabled_modes', 'string', 'boolean')
-    spec:type('above', 'number')
-    spec:type('below', 'number')
-    spec:nested('ignore', function(ignore)
-        for _, element in pairs(Element) do
-            ignore:list(element, 'string', { 'boolean', 'nil' })
-        end
-        ignore:check()
-    end)
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    ---@type render.md.Schema
+    local modes = {
+        union = { { list = { type = 'string' } }, { type = 'boolean' } },
+    }
+    ---@type render.md.Schema
+    return {
+        record = {
+            enabled = { type = 'boolean' },
+            disabled_modes = modes,
+            above = { type = 'number' },
+            below = { type = 'number' },
+            ignore = { map = { key = { enum = Element }, value = modes } },
+        },
+    }
 end
 
 return M

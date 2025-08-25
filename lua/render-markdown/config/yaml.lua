@@ -11,10 +11,9 @@ M.default = {
     render_modes = false,
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    require('render-markdown.config.base').validate(spec)
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    return require('render-markdown.config.base').schema({})
 end
 
 return M

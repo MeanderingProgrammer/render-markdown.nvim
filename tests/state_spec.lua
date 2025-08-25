@@ -91,13 +91,13 @@ describe('state', function()
             },
         }
         local expected = {
-            'additional - invalid key',
-            'anti_conceal.ignore.additional - invalid key',
-            'callout.note.additional - invalid key',
-            'checkbox.checked.additional - invalid key',
-            'latex.additional - invalid key',
-            'overrides.additional - invalid key',
-            'overrides.buftype.nofile.additional - invalid key',
+            'additional - expected: nil, got: boolean',
+            'anti_conceal.ignore.additional - expected: nil, got: boolean',
+            'callout.note.additional - expected: nil, got: boolean',
+            'checkbox.checked.additional - expected: nil, got: boolean',
+            'latex.additional - expected: nil, got: boolean',
+            'overrides.additional - expected: nil, got: boolean',
+            'overrides.buftype.nofile.additional - expected: nil, got: boolean',
         }
         validate(config, expected)
     end)
@@ -116,12 +116,14 @@ describe('state', function()
             },
             debounce = {},
             enabled = 'invalid',
+            file_types = { other = false },
             heading = { enabled = 'invalid' },
             log_level = 'invalid',
             log_runtime = 'invalid',
             max_file_size = true,
             overrides = {
                 buftype = {
+                    [1] = false,
                     nofile = { sign = { highlight = false } },
                     other = false,
                 },
@@ -132,26 +134,28 @@ describe('state', function()
             render_modes = 'invalid',
         }
         local expected = {
-            'anti_conceal.ignore.sign - expected: string[] or boolean or nil, got: string',
-            'bullet.icons - expected: string or string[] or string[][] or function, got: number',
+            'anti_conceal.ignore.sign - expected: string[]|boolean, got: "invalid"',
+            'bullet.icons - expected: string|string[]|string[][]|function, got: 0',
             'callout.a.highlight - expected: string, got: nil',
             'callout.b - expected: table, got: string',
             'checkbox.checked - expected: table, got: boolean',
             'checkbox.unchecked.icon - expected: string, got: boolean',
-            'custom_handlers.markdown.extends - expected: boolean or nil, got: string',
+            'custom_handlers.markdown.extends - expected: boolean?, got: string',
             'custom_handlers.markdown.parse - expected: function, got: string',
             'debounce - expected: number, got: table',
             'enabled - expected: boolean, got: string',
+            'file_types.other - expected: nil, got: boolean',
             'heading.enabled - expected: boolean, got: string',
-            'log_level - expected: "trace" or "debug" or "info" or "warn" or "error" or "off", got: "invalid"',
+            'log_level - expected: "debug"|"error"|"info"|"off"|"trace"|"warn", got: "invalid"',
             'log_runtime - expected: boolean, got: string',
             'max_file_size - expected: number, got: boolean',
-            'overrides.buftype.nofile.sign.highlight - expected: string or nil, got: boolean',
-            'overrides.buftype.other - expected: table, got: boolean',
-            'overrides.filetype - expected: table, got: string',
+            'overrides.buftype.1 - expected: nil, got: boolean',
+            'overrides.buftype.nofile.sign.highlight - expected: string?, got: boolean',
+            'overrides.buftype.other - expected: table?, got: boolean',
+            'overrides.filetype - expected: map<string, table>?, got: string',
             'padding.highlight - expected: string, got: boolean',
-            'preset - expected: "none" or "lazy" or "obsidian", got: "invalid"',
-            'render_modes - expected: string[] or boolean, got: string',
+            'preset - expected: "lazy"|"none"|"obsidian", got: "invalid"',
+            'render_modes - expected: string[]|boolean, got: "invalid"',
         }
         validate(config, expected)
     end)
@@ -163,7 +167,7 @@ describe('state', function()
         }
         local expected = {
             'checkbox - expected: table, got: string',
-            'render_modes - expected: string[] or boolean, got: table, info: [1] is number',
+            'render_modes - expected: string[]|boolean, got: { 1, 2 }',
         }
         validate(config, expected)
     end)

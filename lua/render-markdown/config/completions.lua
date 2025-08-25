@@ -34,18 +34,24 @@ M.default = {
     },
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    spec:nested({ 'blink', 'coq', 'lsp' }, function(completion)
-        completion:type('enabled', 'boolean')
-        completion:check()
-    end)
-    spec:nested('filter', function(filter)
-        filter:type('callout', 'function')
-        filter:type('checkbox', 'function')
-        filter:check()
-    end)
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    ---@type render.md.Schema
+    local completion = { record = { enabled = { type = 'boolean' } } }
+    ---@type render.md.Schema
+    return {
+        record = {
+            blink = completion,
+            coq = completion,
+            lsp = completion,
+            filter = {
+                record = {
+                    callout = { type = 'function' },
+                    checkbox = { type = 'function' },
+                },
+            },
+        },
+    }
 end
 
 return M

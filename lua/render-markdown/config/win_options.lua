@@ -29,14 +29,20 @@ M.default = {
     },
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    spec:each(function(option)
-        option:type('default', { 'number', 'string', 'boolean' })
-        option:type('rendered', { 'number', 'string', 'boolean' })
-        option:check()
-    end, false)
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    ---@type render.md.Schema
+    local value = {
+        union = {
+            { type = 'number' },
+            { type = 'string' },
+            { type = 'boolean' },
+        },
+    }
+    ---@type render.md.Schema
+    local option = { record = { default = value, rendered = value } }
+    ---@type render.md.Schema
+    return { map = { key = { type = 'string' }, value = option } }
 end
 
 return M

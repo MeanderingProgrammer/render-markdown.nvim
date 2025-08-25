@@ -37,16 +37,16 @@ M.default = {
     virtual = false,
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    require('render-markdown.config.base').validate(spec)
-    spec:type('converter', 'string')
-    spec:type('highlight', 'string')
-    spec:one_of('position', vim.tbl_values(Position))
-    spec:type('top_pad', 'number')
-    spec:type('bottom_pad', 'number')
-    spec:type('virtual', 'boolean')
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    return require('render-markdown.config.base').schema({
+        converter = { type = 'string' },
+        highlight = { type = 'string' },
+        position = { enum = Position },
+        top_pad = { type = 'number' },
+        bottom_pad = { type = 'number' },
+        virtual = { type = 'boolean' },
+    })
 end
 
 return M

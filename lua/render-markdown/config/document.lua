@@ -24,15 +24,16 @@ M.default = {
     },
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    require('render-markdown.config.base').validate(spec)
-    spec:nested('conceal', function(conceal)
-        conceal:list('char_patterns', 'string')
-        conceal:list('line_patterns', 'string')
-        conceal:check()
-    end)
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    return require('render-markdown.config.base').schema({
+        conceal = {
+            record = {
+                char_patterns = { list = { type = 'string' } },
+                line_patterns = { list = { type = 'string' } },
+            },
+        },
+    })
 end
 
 return M

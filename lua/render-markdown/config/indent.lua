@@ -33,16 +33,16 @@ M.default = {
     highlight = 'RenderMarkdownIndent',
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    require('render-markdown.config.base').validate(spec)
-    spec:type('per_level', 'number')
-    spec:type('skip_level', 'number')
-    spec:type('skip_heading', 'boolean')
-    spec:type('icon', 'string')
-    spec:type('priority', 'number')
-    spec:type('highlight', 'string')
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    return require('render-markdown.config.base').schema({
+        per_level = { type = 'number' },
+        skip_level = { type = 'number' },
+        skip_heading = { type = 'boolean' },
+        icon = { type = 'string' },
+        priority = { type = 'number' },
+        highlight = { type = 'string' },
+    })
 end
 
 return M

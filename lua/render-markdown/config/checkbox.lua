@@ -61,28 +61,32 @@ M.default = {
     },
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    require('render-markdown.config.base').validate(spec)
-    spec:type('bullet', 'boolean')
-    spec:type('right_pad', 'number')
-    spec:nested({ 'unchecked', 'checked' }, function(box)
-        box:type('icon', 'string')
-        box:type('highlight', 'string')
-        box:type('scope_highlight', { 'string', 'nil' })
-        box:check()
-    end)
-    spec:nested('custom', function(boxes)
-        boxes:each(function(box)
-            box:type('raw', 'string')
-            box:type('rendered', 'string')
-            box:type('highlight', 'string')
-            box:type('scope_highlight', { 'string', 'nil' })
-            box:check()
-        end)
-        boxes:check()
-    end)
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    ---@type render.md.Schema
+    local component = {
+        record = {
+            icon = { type = 'string' },
+            highlight = { type = 'string' },
+            scope_highlight = { optional = true, type = 'string' },
+        },
+    }
+    ---@type render.md.Schema
+    local custom = {
+        record = {
+            raw = { type = 'string' },
+            rendered = { type = 'string' },
+            highlight = { type = 'string' },
+            scope_highlight = { optional = true, type = 'string' },
+        },
+    }
+    return require('render-markdown.config.base').schema({
+        bullet = { type = 'boolean' },
+        right_pad = { type = 'number' },
+        unchecked = component,
+        checked = component,
+        custom = { map = { key = { type = 'string' }, value = custom } },
+    })
 end
 
 return M

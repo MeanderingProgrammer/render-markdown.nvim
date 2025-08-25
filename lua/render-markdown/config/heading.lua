@@ -138,38 +138,52 @@ M.default = {
     custom = {},
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    require('render-markdown.config.base').validate(spec)
-    spec:type('atx', 'boolean')
-    spec:type('setext', 'boolean')
-    spec:type('sign', 'boolean')
-    spec:list('icons', 'string', 'function')
-    spec:one_of('position', vim.tbl_values(Position))
-    spec:list('signs', 'string')
-    spec:one_or_list_of('width', vim.tbl_values(Width))
-    spec:list('left_margin', 'number', 'number')
-    spec:list('left_pad', 'number', 'number')
-    spec:list('right_pad', 'number', 'number')
-    spec:list('min_width', 'number', 'number')
-    spec:list('border', 'boolean', 'boolean')
-    spec:type('border_virtual', 'boolean')
-    spec:type('border_prefix', 'boolean')
-    spec:type('above', 'string')
-    spec:type('below', 'string')
-    spec:list('backgrounds', 'string')
-    spec:list('foregrounds', 'string')
-    spec:nested('custom', function(customs)
-        customs:each(function(custom)
-            custom:type('pattern', 'string')
-            custom:type('icon', { 'string', 'nil' })
-            custom:type('background', { 'string', 'nil' })
-            custom:type('foreground', { 'string', 'nil' })
-            custom:check()
-        end, false)
-        customs:check()
-    end)
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    ---@type render.md.Schema
+    local custom = {
+        record = {
+            pattern = { type = 'string' },
+            icon = { optional = true, type = 'string' },
+            background = { optional = true, type = 'string' },
+            foreground = { optional = true, type = 'string' },
+        },
+    }
+    return require('render-markdown.config.base').schema({
+        atx = { type = 'boolean' },
+        setext = { type = 'boolean' },
+        sign = { type = 'boolean' },
+        icons = {
+            union = { { list = { type = 'string' } }, { type = 'function' } },
+        },
+        position = { enum = Position },
+        signs = { list = { type = 'string' } },
+        width = {
+            union = { { list = { enum = Width } }, { enum = Width } },
+        },
+        left_margin = {
+            union = { { list = { type = 'number' } }, { type = 'number' } },
+        },
+        left_pad = {
+            union = { { list = { type = 'number' } }, { type = 'number' } },
+        },
+        right_pad = {
+            union = { { list = { type = 'number' } }, { type = 'number' } },
+        },
+        min_width = {
+            union = { { list = { type = 'number' } }, { type = 'number' } },
+        },
+        border = {
+            union = { { list = { type = 'boolean' } }, { type = 'boolean' } },
+        },
+        border_virtual = { type = 'boolean' },
+        border_prefix = { type = 'boolean' },
+        above = { type = 'string' },
+        below = { type = 'string' },
+        backgrounds = { list = { type = 'string' } },
+        foregrounds = { list = { type = 'string' } },
+        custom = { map = { key = { type = 'string' }, value = custom } },
+    })
 end
 
 return M

@@ -24,14 +24,17 @@ M.default = {
     },
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    spec:each(function(injection)
-        injection:type('enabled', 'boolean')
-        injection:type('query', 'string')
-        injection:check()
-    end)
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    ---@type render.md.Schema
+    local injection = {
+        record = {
+            enabled = { type = 'boolean' },
+            query = { type = 'string' },
+        },
+    }
+    ---@type render.md.Schema
+    return { map = { key = { type = 'string' }, value = injection } }
 end
 
 return M

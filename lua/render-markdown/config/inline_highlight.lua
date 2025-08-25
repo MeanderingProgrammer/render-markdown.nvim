@@ -17,11 +17,11 @@ M.default = {
     highlight = 'RenderMarkdownInlineHighlight',
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    require('render-markdown.config.base').validate(spec)
-    spec:type('highlight', 'string')
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    return require('render-markdown.config.base').schema({
+        highlight = { type = 'string' },
+    })
 end
 
 return M

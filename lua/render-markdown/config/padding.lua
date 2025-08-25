@@ -10,10 +10,10 @@ M.default = {
     highlight = 'Normal',
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    spec:type('highlight', 'string')
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    ---@type render.md.Schema
+    return { record = { highlight = { type = 'string' } } }
 end
 
 return M

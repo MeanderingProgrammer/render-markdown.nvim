@@ -51,17 +51,20 @@ M.default = {
     cite      = { raw = '[!CITE]',      rendered = '󱆨 Cite',      highlight = 'RenderMarkdownQuote',   category = 'obsidian' },
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    spec:each(function(callout)
-        callout:type('raw', 'string')
-        callout:type('rendered', 'string')
-        callout:type('highlight', 'string')
-        callout:type('quote_icon', { 'string', 'nil' })
-        callout:type('category', { 'string', 'nil' })
-        callout:check()
-    end, false)
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    ---@type render.md.Schema
+    local callout = {
+        record = {
+            raw = { type = 'string' },
+            rendered = { type = 'string' },
+            highlight = { type = 'string' },
+            quote_icon = { optional = true, type = 'string' },
+            category = { optional = true, type = 'string' },
+        },
+    }
+    ---@type render.md.Schema
+    return { map = { key = { type = 'string' }, value = callout } }
 end
 
 return M

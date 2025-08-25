@@ -97,23 +97,23 @@ M.default = {
     style = 'full',
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    require('render-markdown.config.base').validate(spec)
-    spec:one_of('preset', vim.tbl_values(Preset))
-    spec:one_of('cell', vim.tbl_values(Cell))
-    spec:type('cell_offset', 'function')
-    spec:type('padding', 'number')
-    spec:type('min_width', 'number')
-    spec:list('border', 'string')
-    spec:type('border_enabled', 'boolean')
-    spec:type('border_virtual', 'boolean')
-    spec:type('alignment_indicator', 'string')
-    spec:type('head', 'string')
-    spec:type('row', 'string')
-    spec:type('filler', 'string')
-    spec:one_of('style', vim.tbl_values(Style))
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    return require('render-markdown.config.base').schema({
+        preset = { enum = Preset },
+        cell = { enum = Cell },
+        cell_offset = { type = 'function' },
+        padding = { type = 'number' },
+        min_width = { type = 'number' },
+        border = { list = { type = 'string' } },
+        border_enabled = { type = 'boolean' },
+        border_virtual = { type = 'boolean' },
+        alignment_indicator = { type = 'string' },
+        head = { type = 'string' },
+        row = { type = 'string' },
+        filler = { type = 'string' },
+        style = { enum = Style },
+    })
 end
 
 return M

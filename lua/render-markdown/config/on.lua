@@ -26,13 +26,17 @@ M.default = {
     clear = function() end,
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    spec:type('attach', 'function')
-    spec:type('initial', 'function')
-    spec:type('render', 'function')
-    spec:type('clear', 'function')
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    ---@type render.md.Schema
+    return {
+        record = {
+            attach = { type = 'function' },
+            initial = { type = 'function' },
+            render = { type = 'function' },
+            clear = { type = 'function' },
+        },
+    }
 end
 
 return M

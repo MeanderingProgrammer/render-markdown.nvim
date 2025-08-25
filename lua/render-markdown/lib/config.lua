@@ -79,32 +79,36 @@ function Config:set_link_text(destination, icon)
     end
 end
 
--- stylua: ignore
----@param spec render.md.debug.ValidatorSpec
-function Config.validate(spec)
-    require('render-markdown.config.base').validate(spec)
-    spec:type('max_file_size', 'number')
-    spec:type('debounce', 'number')
-    spec:nested('anti_conceal', require('render-markdown.config.anti_conceal').validate)
-    spec:nested('bullet', require('render-markdown.config.bullet').validate)
-    spec:nested('callout', require('render-markdown.config.callout').validate)
-    spec:nested('checkbox', require('render-markdown.config.checkbox').validate)
-    spec:nested('code', require('render-markdown.config.code').validate)
-    spec:nested('dash', require('render-markdown.config.dash').validate)
-    spec:nested('document', require('render-markdown.config.document').validate)
-    spec:nested('heading', require('render-markdown.config.heading').validate)
-    spec:nested('html', require('render-markdown.config.html').validate)
-    spec:nested('indent', require('render-markdown.config.indent').validate)
-    spec:nested('inline_highlight', require('render-markdown.config.inline_highlight').validate)
-    spec:nested('latex', require('render-markdown.config.latex').validate)
-    spec:nested('link', require('render-markdown.config.link').validate)
-    spec:nested('padding', require('render-markdown.config.padding').validate)
-    spec:nested('paragraph', require('render-markdown.config.paragraph').validate)
-    spec:nested('pipe_table', require('render-markdown.config.pipe_table').validate)
-    spec:nested('quote', require('render-markdown.config.quote').validate)
-    spec:nested('sign', require('render-markdown.config.sign').validate)
-    spec:nested('win_options', require('render-markdown.config.win_options').validate)
-    spec:nested('yaml', require('render-markdown.config.yaml').validate)
+---@param additional_fields render.md.schema.Fields
+---@return render.md.Schema
+function Config.schema(additional_fields)
+    ---@type render.md.schema.Fields
+    local fields = {
+        max_file_size = { type = 'number' },
+        debounce = { type = 'number' },
+        anti_conceal = require('render-markdown.config.anti_conceal').schema(),
+        bullet = require('render-markdown.config.bullet').schema(),
+        callout = require('render-markdown.config.callout').schema(),
+        checkbox = require('render-markdown.config.checkbox').schema(),
+        code = require('render-markdown.config.code').schema(),
+        dash = require('render-markdown.config.dash').schema(),
+        document = require('render-markdown.config.document').schema(),
+        heading = require('render-markdown.config.heading').schema(),
+        html = require('render-markdown.config.html').schema(),
+        indent = require('render-markdown.config.indent').schema(),
+        inline_highlight = require('render-markdown.config.inline_highlight').schema(),
+        latex = require('render-markdown.config.latex').schema(),
+        link = require('render-markdown.config.link').schema(),
+        padding = require('render-markdown.config.padding').schema(),
+        paragraph = require('render-markdown.config.paragraph').schema(),
+        pipe_table = require('render-markdown.config.pipe_table').schema(),
+        quote = require('render-markdown.config.quote').schema(),
+        sign = require('render-markdown.config.sign').schema(),
+        win_options = require('render-markdown.config.win_options').schema(),
+        yaml = require('render-markdown.config.yaml').schema(),
+    }
+    fields = vim.tbl_deep_extend('error', fields, additional_fields)
+    return require('render-markdown.config.base').schema(fields)
 end
 
 return Config

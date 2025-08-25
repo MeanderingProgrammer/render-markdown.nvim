@@ -78,27 +78,28 @@ function M.difference()
     return require('render-markdown.debug.diff').get(default, M.config)
 end
 
--- stylua: ignore
 ---@return string[]
 function M.validate()
-    local validator = require('render-markdown.debug.validator').new()
-    local spec = validator:spec(M.config, false)
-    Config.validate(spec)
-    spec:one_of('preset', { 'none', 'lazy', 'obsidian' })
-    spec:one_of('log_level', { 'trace', 'debug', 'info', 'warn', 'error', 'off' })
-    spec:type('log_runtime', 'boolean')
-    spec:list('file_types', 'string')
-    spec:type('ignore', 'function')
-    spec:list('change_events', 'string')
-    spec:type('restart_highlighter', 'boolean')
-    spec:nested('injections', require('render-markdown.config.injections').validate)
-    spec:nested('patterns', require('render-markdown.config.patterns').validate)
-    spec:nested('on', require('render-markdown.config.on').validate)
-    spec:nested('completions', require('render-markdown.config.completions').validate)
-    spec:nested('overrides', require('render-markdown.config.overrides').validate)
-    spec:nested('custom_handlers', require('render-markdown.config.handlers').validate)
-    spec:check()
-    return validator:get_errors()
+    return require('render-markdown.debug.schema').validate(
+        M.config,
+        Config.schema({
+            preset = { enum = { 'none', 'lazy', 'obsidian' } },
+            log_level = {
+                enum = { 'trace', 'debug', 'info', 'warn', 'error', 'off' },
+            },
+            log_runtime = { type = 'boolean' },
+            file_types = { list = { type = 'string' } },
+            ignore = { type = 'function' },
+            change_events = { list = { type = 'string' } },
+            restart_highlighter = { type = 'boolean' },
+            injections = require('render-markdown.config.injections').schema(),
+            patterns = require('render-markdown.config.patterns').schema(),
+            on = require('render-markdown.config.on').schema(),
+            completions = require('render-markdown.config.completions').schema(),
+            overrides = require('render-markdown.config.overrides').schema(),
+            custom_handlers = require('render-markdown.config.handlers').schema(),
+        })
+    )
 end
 
 return M

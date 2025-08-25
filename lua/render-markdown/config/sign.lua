@@ -13,11 +13,15 @@ M.default = {
     highlight = 'RenderMarkdownSign',
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    spec:type('enabled', 'boolean')
-    spec:type('highlight', 'string')
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    ---@type render.md.Schema
+    return {
+        record = {
+            enabled = { type = 'boolean' },
+            highlight = { type = 'string' },
+        },
+    }
 end
 
 return M

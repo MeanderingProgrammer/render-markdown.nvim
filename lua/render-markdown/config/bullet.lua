@@ -66,16 +66,29 @@ M.default = {
     scope_highlight = {},
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    require('render-markdown.config.base').validate(spec)
-    spec:nested_list('icons', 'string', 'function')
-    spec:nested_list('ordered_icons', 'string', 'function')
-    spec:type('left_pad', { 'number', 'function' })
-    spec:type('right_pad', { 'number', 'function' })
-    spec:nested_list('highlight', 'string', 'function')
-    spec:nested_list('scope_highlight', 'string', 'function')
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    ---@type render.md.Schema
+    local string_provider = {
+        union = {
+            { type = 'string' },
+            { list = { type = 'string' } },
+            { list = { list = { type = 'string' } } },
+            { type = 'function' },
+        },
+    }
+    ---@type render.md.Schema
+    local integer_provider = {
+        union = { { type = 'number' }, { type = 'function' } },
+    }
+    return require('render-markdown.config.base').schema({
+        icons = string_provider,
+        ordered_icons = string_provider,
+        left_pad = integer_provider,
+        right_pad = integer_provider,
+        highlight = string_provider,
+        scope_highlight = string_provider,
+    })
 end
 
 return M

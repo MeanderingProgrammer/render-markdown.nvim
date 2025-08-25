@@ -35,24 +35,25 @@ M.default = {
     tag = {},
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    require('render-markdown.config.base').validate(spec)
-    spec:nested('comment', function(comment)
-        comment:type('conceal', 'boolean')
-        comment:type('text', { 'string', 'nil' })
-        comment:type('highlight', 'string')
-        comment:check()
-    end)
-    spec:nested('tag', function(tags)
-        tags:each(function(tag)
-            tag:type('icon', 'string')
-            tag:type('highlight', 'string')
-            tag:check()
-        end, false)
-        tags:check()
-    end)
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    ---@type render.md.Schema
+    local tag = {
+        record = {
+            icon = { type = 'string' },
+            highlight = { type = 'string' },
+        },
+    }
+    return require('render-markdown.config.base').schema({
+        comment = {
+            record = {
+                conceal = { type = 'boolean' },
+                text = { optional = true, type = 'string' },
+                highlight = { type = 'string' },
+            },
+        },
+        tag = { map = { key = { type = 'string' }, value = tag } },
+    })
 end
 
 return M

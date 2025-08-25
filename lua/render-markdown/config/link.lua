@@ -102,39 +102,41 @@ M.default = {
     },
 }
 
----@param spec render.md.debug.ValidatorSpec
-function M.validate(spec)
-    require('render-markdown.config.base').validate(spec)
-    spec:nested('footnote', function(footnote)
-        footnote:type('enabled', 'boolean')
-        footnote:type('superscript', 'boolean')
-        footnote:type('prefix', 'string')
-        footnote:type('suffix', 'string')
-        footnote:check()
-    end)
-    spec:type('image', 'string')
-    spec:type('email', 'string')
-    spec:type('hyperlink', 'string')
-    spec:type('highlight', 'string')
-    spec:nested('wiki', function(wiki)
-        wiki:type('icon', 'string')
-        wiki:type('body', 'function')
-        wiki:type('highlight', 'string')
-        wiki:type('scope_highlight', { 'string', 'nil' })
-        wiki:check()
-    end)
-    spec:nested('custom', function(patterns)
-        patterns:each(function(pattern)
-            pattern:type('pattern', 'string')
-            pattern:type('icon', 'string')
-            pattern:one_of('kind', vim.tbl_values(Kind), 'nil')
-            pattern:type('priority', { 'number', 'nil' })
-            pattern:type('highlight', { 'string', 'nil' })
-            pattern:check()
-        end, false)
-        patterns:check()
-    end)
-    spec:check()
+---@return render.md.Schema
+function M.schema()
+    ---@type render.md.Schema
+    local pattern = {
+        record = {
+            pattern = { type = 'string' },
+            icon = { type = 'string' },
+            kind = { optional = true, enum = Kind },
+            priority = { optional = true, type = 'number' },
+            highlight = { optional = true, type = 'string' },
+        },
+    }
+    return require('render-markdown.config.base').schema({
+        footnote = {
+            record = {
+                enabled = { type = 'boolean' },
+                superscript = { type = 'boolean' },
+                prefix = { type = 'string' },
+                suffix = { type = 'string' },
+            },
+        },
+        image = { type = 'string' },
+        email = { type = 'string' },
+        hyperlink = { type = 'string' },
+        highlight = { type = 'string' },
+        wiki = {
+            record = {
+                icon = { type = 'string' },
+                body = { type = 'function' },
+                highlight = { type = 'string' },
+                scope_highlight = { optional = true, type = 'string' },
+            },
+        },
+        custom = { map = { key = { type = 'string' }, value = pattern } },
+    })
 end
 
 return M
