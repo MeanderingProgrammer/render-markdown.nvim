@@ -1,6 +1,7 @@
 local log = require('render-markdown.core.log')
 
 ---@class render.md.handlers.Config
+---@field nested boolean
 ---@field custom table<string, render.md.Handler>
 
 ---@class render.md.Handlers
@@ -31,19 +32,35 @@ function M.run(context, parser)
     -- parse markdown after other nodes to get accurate state
     local markdown = {} ---@type render.md.handler.Context[]
     parser:for_each_tree(function(tree, language_tree)
-        ---@type render.md.handler.Context
-        local ctx = { buf = context.buf, root = tree:root() }
-        local language = language_tree:lang()
-        if language == 'markdown' then
-            markdown[#markdown + 1] = ctx
-        else
-            vim.list_extend(marks, M.tree(context, ctx, language))
+        if M.config.nested or M.level(language_tree) == 1 then
+            ---@type render.md.handler.Context
+            local ctx = { buf = context.buf, root = tree:root() }
+            local language = language_tree:lang()
+            if language == 'markdown' then
+                markdown[#markdown + 1] = ctx
+            else
+                vim.list_extend(marks, M.tree(context, ctx, language))
+            end
         end
     end)
     for _, ctx in ipairs(markdown) do
         vim.list_extend(marks, M.tree(context, ctx, 'markdown'))
     end
     return marks
+end
+
+---@private
+---@param tree? vim.treesitter.LanguageTree
+---@return integer
+function M.level(tree)
+    local result = 0
+    while tree do
+        if tree:lang() == 'markdown' then
+            result = result + 1
+        end
+        tree = tree:parent()
+    end
+    return result
 end
 
 ---Run custom & builtin handlers when available. Custom handler is always

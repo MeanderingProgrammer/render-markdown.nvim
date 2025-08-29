@@ -10,6 +10,8 @@
   [146d4ff](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/146d4ff582017f1a1a16ada841aa08175a87aaea)
 - add scope_highlight to wiki config [ca86b59](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/ca86b5941a56b04ac140837ee7a366cf3fa5cd88)
 - add cell_offset function to pipe_table configuration [e5c3c50](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/e5c3c500d66e9aaf04c116cdfdb0b040d56a1521)
+- inline render single line latex equations [#508](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/508)
+  [b7dad79](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b7dad793f4750b7e95884c0db374b917898a979b)
 
 ### Bug Fixes
 

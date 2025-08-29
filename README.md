@@ -209,10 +209,13 @@ require('render-markdown').setup({
     log_runtime = false,
     -- Filetypes this plugin will run on.
     file_types = { 'markdown' },
-    -- Takes buffer as input, if it returns true this plugin will not attach to the buffer
+    -- Takes buffer as input, if it returns true this plugin will not attach to the buffer.
     ignore = function()
         return false
     end,
+    -- Whether markdown should be rendered when nested inside markdown, i.e. markdown code block
+    -- inside markdown file.
+    nested = true,
     -- Additional events that will trigger this plugin's render loop.
     change_events = {},
     -- Whether the treesitter highlighter should be restarted after this plugin attaches to its

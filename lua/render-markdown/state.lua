@@ -16,6 +16,7 @@ function M.setup(config)
     M.config = config
     M.enabled = config.enabled
     require('render-markdown.core.handlers').setup({
+        nested = config.nested,
         custom = config.custom_handlers,
     })
     require('render-markdown.core.log').setup({
@@ -90,6 +91,7 @@ function M.validate()
             log_runtime = { type = 'boolean' },
             file_types = { list = { type = 'string' } },
             ignore = { type = 'function' },
+            nested = { type = 'boolean' },
             change_events = { list = { type = 'string' } },
             restart_highlighter = { type = 'boolean' },
             injections = require('render-markdown.config.injections').schema(),
