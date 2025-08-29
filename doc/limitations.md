@@ -96,7 +96,7 @@ in this plugin. Different plugins will have different setups, below are some exa
     { 'ryleelyman/latex.nvim', opts = {} },
     {
         'MeanderingProgrammer/render-markdown.nvim',
-        dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' },
+        dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' },
         opts = {
             latex = { enabled = false },
             win_options = { conceallevel = { rendered = 2 } },
@@ -112,7 +112,7 @@ in this plugin. Different plugins will have different setups, below are some exa
     { 'jbyuki/nabla.nvim' },
     {
         'MeanderingProgrammer/render-markdown.nvim',
-        dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' },
+        dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' },
         opts = {
             latex = { enabled = false },
             win_options = { conceallevel = { rendered = 2 } },

@@ -26,7 +26,7 @@ vim.opt.rtp:prepend(get_path('plenary.nvim'))
 vim.cmd.runtime('plugin/plenary.vim')
 
 require('nvim-treesitter')
-    .install({ 'html', 'latex', 'markdown', 'markdown_inline' })
+    .install({ 'html', 'latex', 'markdown', 'markdown_inline', 'yaml' })
     :wait()
 
 vim.api.nvim_create_autocmd('FileType', {

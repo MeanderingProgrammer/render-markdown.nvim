@@ -12,6 +12,8 @@
 - add cell_offset function to pipe_table configuration [e5c3c50](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/e5c3c500d66e9aaf04c116cdfdb0b040d56a1521)
 - inline render single line latex equations [#508](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/508)
   [b7dad79](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b7dad793f4750b7e95884c0db374b917898a979b)
+- allow nested markdown to be skipped [#510](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/510)
+  [c203eae](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c203eae127bd3397985408038f4d74fc952532e2)
 
 ### Bug Fixes
 

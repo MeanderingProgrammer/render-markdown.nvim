@@ -58,7 +58,7 @@ Plugin to improve viewing Markdown files in Neovim
   - [yaml](https://github.com/tree-sitter-grammars/tree-sitter-yaml) (Optional):
     Used to render elements in `frontmatter` metadata
 - Icon provider plugin (Optional): Used for icon above code blocks
-  - [mini.icons](https://github.com/echasnovski/mini.nvim/blob/main/readmes/mini-icons.md)
+  - [mini.icons](https://github.com/nvim-mini/mini.nvim/blob/main/readmes/mini-icons.md)
   - [nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons)
 - System dependencies:
   - [pylatexenc](https://pypi.org/project/pylatexenc/) (Optional):
@@ -71,8 +71,8 @@ Plugin to improve viewing Markdown files in Neovim
 ```lua
 {
     'MeanderingProgrammer/render-markdown.nvim',
-    dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
-    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' }, -- if you use the mini.nvim suite
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.icons' }, -- if you use standalone mini plugins
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
     ---@module 'render-markdown'
     ---@type render.md.UserConfig
@@ -94,8 +94,8 @@ This plugin is available on [LuaRocks](https://luarocks.org/modules/MeanderingPr
 use({
     'MeanderingProgrammer/render-markdown.nvim',
     after = { 'nvim-treesitter' },
-    requires = { 'echasnovski/mini.nvim', opt = true }, -- if you use the mini.nvim suite
-    -- requires = { 'echasnovski/mini.icons', opt = true }, -- if you use standalone mini plugins
+    requires = { 'nvim-mini/mini.nvim', opt = true }, -- if you use the mini.nvim suite
+    -- requires = { 'nvim-mini/mini.icons', opt = true }, -- if you use standalone mini plugins
     -- requires = { 'nvim-tree/nvim-web-devicons', opt = true }, -- if you prefer nvim-web-devicons
     config = function()
         require('render-markdown').setup({})
@@ -1708,7 +1708,7 @@ The table below shows all the highlight groups with their default link
 > return {
 >     'MeanderingProgrammer/render-markdown.nvim',
 >     cmd = { 'RenderMarkdown' },
->     dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' },
+>     dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' },
 >     config = function()
 >         require('obsidian').get_client().opts.ui.enable = false
 >         vim.api.nvim_buf_clear_namespace(0, vim.api.nvim_get_namespaces()['ObsidianUI'], 0, -1)
