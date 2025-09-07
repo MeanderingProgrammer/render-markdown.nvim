@@ -133,28 +133,11 @@ the relevant setup.
 The recommended way of getting completions from this plugin. Only requires being
 enabled with no additional configuration, assuming you have general LSP completions.
 
+Works automatically with `nvim-cmp` and `blink.cmp`.
+
 ```lua
 require('render-markdown').setup({
     completions = { lsp = { enabled = true } },
-})
-```
-
-## nvim-cmp
-
-```lua
-local cmp = require('cmp')
-cmp.setup({
-    sources = cmp.config.sources({
-        { name = 'render-markdown' },
-    }),
-})
-```
-
-## blink.cmp
-
-```lua
-require('render-markdown').setup({
-    completions = { blink = { enabled = true } },
 })
 ```
 

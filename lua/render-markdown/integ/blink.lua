@@ -1,5 +1,3 @@
----@module 'blink.cmp'
-
 local source = require('render-markdown.integ.source')
 
 ---@class render.md.source.blink.Config

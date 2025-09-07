@@ -1,4 +1,4 @@
-*render-markdown.txt*       For NVIM v0.11.3       Last change: 2025 August 29
+*render-markdown.txt*      For NVIM v0.11.4     Last change: 2025 September 07
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -13,8 +13,6 @@ Table of Contents                          *render-markdown-table-of-contents*
 5. Commands                                         |render-markdown-commands|
 6. Completions                                   |render-markdown-completions|
   - in-process lsp                |render-markdown-completions-in-process-lsp|
-  - nvim-cmp                            |render-markdown-completions-nvim-cmp|
-  - blink.cmp                          |render-markdown-completions-blink.cmp|
   - coq_nvim                            |render-markdown-completions-coq_nvim|
 7. Setup                                               |render-markdown-setup|
   - Headings                                  |render-markdown-setup-headings|
@@ -194,30 +192,11 @@ The recommended way of getting completions from this plugin. Only requires
 being enabled with no additional configuration, assuming you have general LSP
 completions.
 
+Works automatically with `nvim-cmp` and `blink.cmp`.
+
 >lua
     require('render-markdown').setup({
         completions = { lsp = { enabled = true } },
-    })
-<
-
-
-NVIM-CMP                                *render-markdown-completions-nvim-cmp*
-
->lua
-    local cmp = require('cmp')
-    cmp.setup({
-        sources = cmp.config.sources({
-            { name = 'render-markdown' },
-        }),
-    })
-<
-
-
-BLINK.CMP                              *render-markdown-completions-blink.cmp*
-
->lua
-    require('render-markdown').setup({
-        completions = { blink = { enabled = true } },
     })
 <
 
