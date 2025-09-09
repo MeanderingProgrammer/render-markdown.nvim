@@ -41,7 +41,7 @@ function M.schema()
         },
     }
     ---@type render.md.Schema
-    return { map = { key = { type = 'string' }, value = pattern } }
+    return { map = { { type = 'string' }, pattern } }
 end
 
 return M

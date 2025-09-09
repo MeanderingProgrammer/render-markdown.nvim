@@ -135,7 +135,7 @@ function M.schema()
                 scope_highlight = { optional = true, type = 'string' },
             },
         },
-        custom = { map = { key = { type = 'string' }, value = pattern } },
+        custom = { map = { { type = 'string' }, pattern } },
     })
 end
 

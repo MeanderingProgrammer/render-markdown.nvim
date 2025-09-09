@@ -52,7 +52,7 @@ function M.schema()
                 highlight = { type = 'string' },
             },
         },
-        tag = { map = { key = { type = 'string' }, value = tag } },
+        tag = { map = { { type = 'string' }, tag } },
     })
 end
 

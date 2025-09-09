@@ -85,7 +85,7 @@ function M.schema()
         right_pad = { type = 'number' },
         unchecked = component,
         checked = component,
-        custom = { map = { key = { type = 'string' }, value = custom } },
+        custom = { map = { { type = 'string' }, custom } },
     })
 end
 

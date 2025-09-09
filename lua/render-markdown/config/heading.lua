@@ -182,7 +182,7 @@ function M.schema()
         below = { type = 'string' },
         backgrounds = { list = { type = 'string' } },
         foregrounds = { list = { type = 'string' } },
-        custom = { map = { key = { type = 'string' }, value = custom } },
+        custom = { map = { { type = 'string' }, custom } },
     })
 end
 

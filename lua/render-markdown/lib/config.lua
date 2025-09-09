@@ -79,11 +79,11 @@ function Config:set_link_text(destination, icon)
     end
 end
 
----@param additional_fields render.md.schema.Fields
+---@param child render.md.schema.Record
 ---@return render.md.Schema
-function Config.schema(additional_fields)
-    ---@type render.md.schema.Fields
-    local fields = {
+function Config.schema(child)
+    ---@type render.md.schema.Record
+    local parent = {
         max_file_size = { type = 'number' },
         debounce = { type = 'number' },
         anti_conceal = require('render-markdown.config.anti_conceal').schema(),
@@ -107,8 +107,8 @@ function Config.schema(additional_fields)
         win_options = require('render-markdown.config.win_options').schema(),
         yaml = require('render-markdown.config.yaml').schema(),
     }
-    fields = vim.tbl_deep_extend('error', fields, additional_fields)
-    return require('render-markdown.config.base').schema(fields)
+    local record = vim.tbl_deep_extend('error', parent, child)
+    return require('render-markdown.config.base').schema(record)
 end
 
 return Config

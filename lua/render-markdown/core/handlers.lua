@@ -1,3 +1,4 @@
+local iter = require('render-markdown.lib.iter')
 local log = require('render-markdown.core.log')
 
 ---@class render.md.handlers.Config
@@ -28,23 +29,41 @@ end
 ---@param parser vim.treesitter.LanguageTree
 ---@return render.md.Mark[]
 function M.run(context, parser)
-    local marks = {} ---@type render.md.Mark[]
-    -- parse markdown after other nodes to get accurate state
-    local markdown = {} ---@type render.md.handler.Context[]
+    local language_roots = {} ---@type table<string, TSNode[]>
     parser:for_each_tree(function(tree, language_tree)
-        if M.config.nested or M.level(language_tree) == 1 then
-            ---@type render.md.handler.Context
-            local ctx = { buf = context.buf, root = tree:root() }
-            local language = language_tree:lang()
-            if language == 'markdown' then
-                markdown[#markdown + 1] = ctx
-            else
-                vim.list_extend(marks, M.tree(context, ctx, language))
+        local root = tree:root()
+        local language = language_tree:lang()
+        if
+            (M.config.custom[language] or M.builtin[language])
+            and (M.config.nested or M.level(language_tree) == 1)
+            and context.view:overlaps(root)
+        then
+            local roots = language_roots[language]
+            if not roots then
+                roots = {}
+                language_roots[language] = roots
             end
+            roots[#roots + 1] = root
         end
     end)
-    for _, ctx in ipairs(markdown) do
-        vim.list_extend(marks, M.tree(context, ctx, 'markdown'))
+
+    -- languages that run later will have more complete state
+    local languages = vim.tbl_keys(language_roots) ---@type string[]
+    local order = { latex = 10, markdown = 100 } ---@type table<string, integer>
+    iter.list.sort(languages, function(language)
+        return order[language] or 0
+    end)
+
+    local marks = {} ---@type render.md.Mark[]
+    for _, language in ipairs(languages) do
+        local roots = language_roots[language]
+        for i, root in ipairs(roots) do
+            M.tree(marks, language, {
+                buf = context.buf,
+                root = root,
+                last = i == #roots,
+            })
+        end
     end
     return marks
 end
@@ -66,22 +85,17 @@ end
 ---Run custom & builtin handlers when available. Custom handler is always
 ---executed, builtin handler is skipped if custom does not specify extends.
 ---@private
----@param context render.md.request.Context
----@param ctx render.md.handler.Context
+---@param marks render.md.Mark[]
 ---@param language string
----@return render.md.Mark[]
-function M.tree(context, ctx, language)
+---@param ctx render.md.handler.Context
+function M.tree(marks, language, ctx)
     log.buf('trace', 'Language', ctx.buf, language)
-    if not context.view:overlaps(ctx.root) then
-        return {}
-    end
-    local marks = {} ---@type render.md.Mark[]
     local custom = M.config.custom[language]
     if custom then
         log.buf('trace', 'Handler', ctx.buf, 'custom')
         vim.list_extend(marks, custom.parse(ctx))
         if not custom.extends then
-            return marks
+            return
         end
     end
     local builtin = M.builtin[language]
@@ -89,7 +103,6 @@ function M.tree(context, ctx, language)
         log.buf('trace', 'Handler', ctx.buf, 'builtin')
         vim.list_extend(marks, builtin.parse(ctx))
     end
-    return marks
 end
 
 return M

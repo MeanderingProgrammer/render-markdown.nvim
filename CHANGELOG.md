@@ -16,8 +16,6 @@
   [b7dad79](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b7dad793f4750b7e95884c0db374b917898a979b)
 - allow nested markdown to be skipped [#510](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/510)
   [c203eae](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c203eae127bd3397985408038f4d74fc952532e2)
-- scope and autolink highlights conflict [#518](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/518)
-  [7fd9116](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7fd911692e5bc705c5487ae1c390d0b6d9738d87)
 
 ### Bug Fixes
 
@@ -27,6 +25,8 @@
 - use display width for latex formula alignment [c4ff9ac](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c4ff9acddcf0f79b3187393319adb5cac5865bd3)
 - anti-conceal ignore modes [8074a9c](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/8074a9cc9a6f737320b7a0d76b2c4c3485155688)
 - component level render modes [84d4928](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/84d4928cb4b508847294002835989880da4ce13b)
+- scope and autolink highlights conflict [#518](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/518)
+  [7fd9116](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7fd911692e5bc705c5487ae1c390d0b6d9738d87)
 
 ### Collaborator Shoutouts
 

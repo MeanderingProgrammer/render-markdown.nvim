@@ -34,7 +34,7 @@ function M.schema()
         },
     }
     ---@type render.md.Schema
-    return { map = { key = { type = 'string' }, value = injection } }
+    return { map = { { type = 'string' }, injection } }
 end
 
 return M

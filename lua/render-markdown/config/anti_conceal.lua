@@ -77,7 +77,7 @@ function M.schema()
             disabled_modes = modes,
             above = { type = 'number' },
             below = { type = 'number' },
-            ignore = { map = { key = { enum = Element }, value = modes } },
+            ignore = { map = { { enum = Element }, modes } },
         },
     }
 end

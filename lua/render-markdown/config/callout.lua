@@ -64,7 +64,7 @@ function M.schema()
         },
     }
     ---@type render.md.Schema
-    return { map = { key = { type = 'string' }, value = callout } }
+    return { map = { { type = 'string' }, callout } }
 end
 
 return M

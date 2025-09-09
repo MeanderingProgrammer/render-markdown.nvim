@@ -37,15 +37,15 @@ end
 ---@field enum? table<any, any>
 ---@field list? render.md.Schema
 ---@field map? render.md.schema.Map
----@field record? render.md.schema.Fields
+---@field record? render.md.schema.Record
 ---@field type? type
 ---@field union? render.md.Schema[]
 
 ---@class render.md.schema.Map
----@field key render.md.Schema
----@field value render.md.Schema
+---@field [1] render.md.Schema
+---@field [2] render.md.Schema
 
----@alias render.md.schema.Fields table<string, render.md.Schema>
+---@alias render.md.schema.Record table<string, render.md.Schema>
 
 ---@class render.md.schema.Validator
 local M = {}
@@ -91,10 +91,10 @@ function M.check(ctx, data, schema)
         else
             ---@cast data table<any, any>
             for key, value in pairs(data) do
-                if #M.validate(key, schema.map.key) > 0 then
+                if #M.validate(key, schema.map[1]) > 0 then
                     ctx:get(key):error('nil', type(value))
                 else
-                    M.check(ctx:get(key), value, schema.map.value)
+                    M.check(ctx:get(key), value, schema.map[2])
                 end
             end
         end
@@ -147,8 +147,8 @@ function M.type(schema)
         result = ('%s[]'):format(M.type(schema.list))
     elseif schema.map then
         result = ('map<%s, %s>'):format(
-            M.type(schema.map.key),
-            M.type(schema.map.value)
+            M.type(schema.map[1]),
+            M.type(schema.map[2])
         )
     elseif schema.record then
         result = 'table'

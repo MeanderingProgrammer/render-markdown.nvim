@@ -5,6 +5,7 @@
 ---@class (exact) render.md.handler.Context
 ---@field buf integer
 ---@field root TSNode
+---@field last boolean
 
 ---@class render.md.handlers.Cfg
 local M = {}
@@ -25,7 +26,7 @@ function M.schema()
         },
     }
     ---@type render.md.Schema
-    return { map = { key = { type = 'string' }, value = handler } }
+    return { map = { { type = 'string' }, handler } }
 end
 
 return M

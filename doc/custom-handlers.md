@@ -19,6 +19,7 @@ Each handler must conform to the following interface:
 ---@class (exact) render.md.handler.Context
 ---@field buf integer
 ---@field root TSNode
+---@field last boolean
 
 ---@class (exact) render.md.Mark
 ---@field modes? render.md.Modes
@@ -48,6 +49,7 @@ The `parse` function takes a `ctx` parameter whose fields are:
 
 - `buf`: The buffer containing the root node
 - `root`: The root treesitter node for the specified language
+- `last`: Whether this is the last treesitter root for the specified language
 
 The `extends` parameter defines whether the builtin handler should still be run in
 conjunction with this one. Defaults to `false`.

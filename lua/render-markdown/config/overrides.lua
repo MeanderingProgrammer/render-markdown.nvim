@@ -35,15 +35,9 @@ function M.schema()
     ---@type render.md.Schema
     return {
         record = {
-            buflisted = {
-                map = { key = { type = 'boolean' }, value = Config.schema({}) },
-            },
-            buftype = {
-                map = { key = { type = 'string' }, value = Config.schema({}) },
-            },
-            filetype = {
-                map = { key = { type = 'string' }, value = Config.schema({}) },
-            },
+            buflisted = { map = { { type = 'boolean' }, Config.schema({}) } },
+            buftype = { map = { { type = 'string' }, Config.schema({}) } },
+            filetype = { map = { { type = 'string' }, Config.schema({}) } },
         },
     }
 end

@@ -42,7 +42,7 @@ function M.schema()
     ---@type render.md.Schema
     local option = { record = { default = value, rendered = value } }
     ---@type render.md.Schema
-    return { map = { key = { type = 'string' }, value = option } }
+    return { map = { { type = 'string' }, option } }
 end
 
 return M

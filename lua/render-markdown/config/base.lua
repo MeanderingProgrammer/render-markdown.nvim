@@ -7,18 +7,18 @@
 ---@class render.md.base.Cfg
 local M = {}
 
----@param additional_fields render.md.schema.Fields
+---@param child render.md.schema.Record
 ---@return render.md.Schema
-function M.schema(additional_fields)
-    ---@type render.md.schema.Fields
-    local fields = {
+function M.schema(child)
+    ---@type render.md.schema.Record
+    local parent = {
         enabled = { type = 'boolean' },
         render_modes = {
             union = { { list = { type = 'string' } }, { type = 'boolean' } },
         },
     }
     ---@type render.md.Schema
-    return { record = vim.tbl_deep_extend('error', fields, additional_fields) }
+    return { record = vim.tbl_deep_extend('error', parent, child) }
 end
 
 return M
