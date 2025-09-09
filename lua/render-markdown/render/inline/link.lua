@@ -54,20 +54,21 @@ function Render:run()
         virt_text_pos = 'inline',
     })
     if self.data.autolink then
-        self:hide(self.node.start_col, self.node.start_col + 1)
+        self:hide(self.node.start_col, 1)
         self.marks:over(self.config, 'link', self.node, {
+            priority = 1000,
             hl_group = self.data.icon[2],
         })
-        self:hide(self.node.end_col - 1, self.node.end_col)
+        self:hide(self.node.end_col - 1, 1)
     end
 end
 
 ---@private
----@param start_col integer
----@param end_col integer
-function Render:hide(start_col, end_col)
-    self.marks:add(self.config, true, self.node.start_row, start_col, {
-        end_col = end_col,
+---@param col integer
+---@param length integer
+function Render:hide(col, length)
+    self.marks:add(self.config, true, self.node.start_row, col, {
+        end_col = col + length,
         conceal = '',
     })
 end

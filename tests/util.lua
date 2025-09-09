@@ -74,16 +74,19 @@ end
 ---@param kind 'code'|'inline'|'link'
 ---@return vim.api.keyset.set_extmark
 function M.highlight(kind)
+    local priority ---@type integer?
     local highlight ---@type string
     if kind == 'code' then
         highlight = 'RmCodeInline'
     elseif kind == 'inline' then
         highlight = 'RmInlineHighlight'
     elseif kind == 'link' then
+        priority = 1000
         highlight = 'RmLink'
     end
     ---@type vim.api.keyset.set_extmark
     return {
+        priority = priority,
         hl_eol = false,
         hl_group = highlight,
     }
