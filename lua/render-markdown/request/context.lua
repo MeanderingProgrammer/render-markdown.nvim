@@ -38,13 +38,13 @@ function Context.new(buf, win, config, view)
     return self
 end
 
----@param node? render.md.Node
+---@param body? render.md.node.Body
 ---@return integer
-function Context:width(node)
-    if not node then
+function Context:width(body)
+    if not body then
         return 0
     end
-    return str.width(node.text) + self.offset:get(node) - self.conceal:get(node)
+    return str.width(body.text) + self.offset:get(body) - self.conceal:get(body)
 end
 
 ---@class render.md.request.context.Manager

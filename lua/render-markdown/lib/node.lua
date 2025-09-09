@@ -9,15 +9,17 @@ local Position = {
     last = 'last',
 }
 
----@class render.md.Node
----@field private buf integer
----@field private node TSNode
----@field type string
+---@class render.md.node.Body
 ---@field text string
 ---@field start_row integer
 ---@field start_col integer
 ---@field end_row integer
 ---@field end_col integer
+
+---@class render.md.Node: render.md.node.Body
+---@field private buf integer
+---@field private node TSNode
+---@field type string
 local Node = {}
 Node.__index = Node
 
@@ -226,7 +228,7 @@ function Node:line(position, by)
     elseif position == Position.last then
         row = self.end_row - (single and 0 or 1) - by
     else
-        error('invalid position: ' .. position)
+        error(('invalid position: %s'):format(position))
     end
     return row, vim.api.nvim_buf_get_lines(self.buf, row, row + 1, false)[1]
 end

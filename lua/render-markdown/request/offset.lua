@@ -27,13 +27,13 @@ function Offset:add(row, value)
     values[#values + 1] = value
 end
 
----@param node render.md.Node
+---@param body render.md.node.Body
 ---@return integer
-function Offset:get(node)
+function Offset:get(body)
     local result = 0
-    local values = self.values[node.start_row] or {}
+    local values = self.values[body.start_row] or {}
     for _, value in ipairs(values) do
-        if node.start_col <= value.col and node.end_col > value.col then
+        if body.start_col <= value.col and body.end_col > value.col then
             result = result + value.width
         end
     end

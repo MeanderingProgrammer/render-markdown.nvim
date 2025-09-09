@@ -87,19 +87,19 @@ function Conceal:width(character)
     end
 end
 
----@param node render.md.Node
+---@param body render.md.node.Body
 ---@return boolean
-function Conceal:hidden(node)
+function Conceal:hidden(body)
     -- conceal lines metadata require neovim >= 0.11.0 to function
-    return compat.has_11 and self:line(node).hidden
+    return compat.has_11 and self:line(body).hidden
 end
 
----@param node render.md.Node
+---@param body render.md.node.Body
 ---@return integer
-function Conceal:get(node)
+function Conceal:get(body)
     local result = 0
-    local col = { node.start_col, node.end_col } ---@type render.md.Range
-    for _, section in ipairs(self:line(node).sections) do
+    local col = { body.start_col, body.end_col } ---@type render.md.Range
+    for _, section in ipairs(self:line(body).sections) do
         if interval.overlaps(section.col, col, true) then
             local width = section.width - self:width(section.character)
             result = result + width
@@ -109,14 +109,14 @@ function Conceal:get(node)
 end
 
 ---@private
----@param node render.md.Node
+---@param body render.md.node.Body
 ---@return render.md.request.conceal.Line
-function Conceal:line(node)
+function Conceal:line(body)
     if not self.computed then
         self.computed = true
         self:compute()
     end
-    local line = self.lines[node.start_row]
+    local line = self.lines[body.start_row]
     if not line then
         line = { hidden = false, sections = {} }
     end
