@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 8.8.0 (2025-09-09)
+
 ### Features
 
 - yaml render list item bullet points [#496](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/496)
@@ -14,6 +16,8 @@
   [b7dad79](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b7dad793f4750b7e95884c0db374b917898a979b)
 - allow nested markdown to be skipped [#510](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/510)
   [c203eae](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c203eae127bd3397985408038f4d74fc952532e2)
+- scope and autolink highlights conflict [#518](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/518)
+  [7fd9116](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7fd911692e5bc705c5487ae1c390d0b6d9738d87)
 
 ### Bug Fixes
 
