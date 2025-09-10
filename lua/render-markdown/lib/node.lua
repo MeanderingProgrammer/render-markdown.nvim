@@ -63,6 +63,11 @@ function Node:get()
     return self.node
 end
 
+---@return integer
+function Node:height()
+    return self.end_row - self.start_row + 1
+end
+
 ---@return integer[]
 function Node:sections()
     local result = {} ---@type integer[]
@@ -218,15 +223,14 @@ end
 ---@return integer, string?
 function Node:line(position, by)
     local row ---@type integer
-    local single = self.start_row == self.end_row
     if position == Position.above then
         row = self.start_row - by
     elseif position == Position.first then
         row = self.start_row + by
     elseif position == Position.below then
-        row = self.end_row - (single and 0 or 1) + by
+        row = self.end_row - (self:height() == 1 and 0 or 1) + by
     elseif position == Position.last then
-        row = self.end_row - (single and 0 or 1) - by
+        row = self.end_row - (self:height() == 1 and 0 or 1) - by
     else
         error(('invalid position: %s'):format(position))
     end

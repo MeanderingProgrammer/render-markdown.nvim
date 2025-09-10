@@ -4,12 +4,12 @@
 ---@field position render.md.latex.Position
 ---@field top_pad integer
 ---@field bottom_pad integer
----@field virtual boolean
 
 ---@enum render.md.latex.Position
 local Position = {
     above = 'above',
     below = 'below',
+    center = 'center',
 }
 
 ---@class render.md.latex.Cfg
@@ -26,15 +26,14 @@ M.default = {
     -- Highlight for latex blocks.
     highlight = 'RenderMarkdownMath',
     -- Determines where latex formula is rendered relative to block.
-    -- | above | above latex block |
-    -- | below | below latex block |
-    position = 'above',
+    -- | above  | above latex block                               |
+    -- | below  | below latex block                               |
+    -- | center | centered with latex block (must be single line) |
+    position = 'center',
     -- Number of empty lines above latex blocks.
     top_pad = 0,
     -- Number of empty lines below latex blocks.
     bottom_pad = 0,
-    -- Always use virtual lines for rendering instead of attempting to inline.
-    virtual = false,
 }
 
 ---@return render.md.Schema
@@ -45,7 +44,6 @@ function M.schema()
         position = { enum = Position },
         top_pad = { type = 'number' },
         bottom_pad = { type = 'number' },
-        virtual = { type = 'boolean' },
     })
 end
 
