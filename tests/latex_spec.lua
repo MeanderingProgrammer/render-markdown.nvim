@@ -1,22 +1,6 @@
 ---@module 'luassert'
 
-local stub = require('luassert.stub')
 local util = require('tests.util')
-
----@param converter string
----@param responses table<string, string>
-local function set_responses(converter, responses)
-    stub.new(vim.fn, 'executable', function(expr)
-        assert.same(converter, expr)
-        return 1
-    end)
-    stub.new(vim.fn, 'system', function(cmd, input)
-        assert.same(converter, cmd)
-        local result = responses[input]
-        assert.is_true(result ~= nil, 'missing output for: ' .. input)
-        return result
-    end)
-end
 
 ---@param lines string[]
 ---@param prefix string
@@ -43,7 +27,7 @@ describe('latex.md', function()
             },
         }
 
-        set_responses('latex2text', {
+        util.system.mock('latex2text', {
             [text(inline.raw, '', '')] = text(inline.out, '', '\n'),
             [text(block.raw, '$$\n', '\n$$')] = text(block.out, '\n', '\n\n'),
         })

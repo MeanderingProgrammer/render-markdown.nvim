@@ -1,6 +1,7 @@
 local Callout = require('render-markdown.request.callout')
 local Checkbox = require('render-markdown.request.checkbox')
 local Conceal = require('render-markdown.request.conceal')
+local Latex = require('render-markdown.request.latex')
 local Offset = require('render-markdown.request.offset')
 local Used = require('render-markdown.request.used')
 local View = require('render-markdown.request.view')
@@ -14,6 +15,7 @@ local str = require('render-markdown.lib.str')
 ---@field conceal render.md.request.Conceal
 ---@field callout render.md.request.Callout
 ---@field checkbox render.md.request.Checkbox
+---@field latex render.md.request.Latex
 ---@field offset render.md.request.Offset
 ---@field used render.md.request.Used
 local Context = {}
@@ -33,6 +35,7 @@ function Context.new(buf, win, config, view)
     self.conceal = Conceal.new(buf, win, view)
     self.callout = Callout.new()
     self.checkbox = Checkbox.new()
+    self.latex = Latex.new()
     self.offset = Offset.new()
     self.used = Used.new()
     return self

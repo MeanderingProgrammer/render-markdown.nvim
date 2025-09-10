@@ -8,6 +8,7 @@ local str = require('render-markdown.lib.str')
 
 ---@class render.md.handler.buf.Latex
 ---@field private context render.md.request.Context
+---@field private marks render.md.Marks
 ---@field private config render.md.latex.Config
 local Handler = {}
 Handler.__index = Handler
@@ -21,13 +22,15 @@ Handler.cache = {}
 function Handler.new(buf)
     local self = setmetatable({}, Handler)
     self.context = Context.get(buf)
+    self.marks = Marks.new(self.context, true)
     self.config = self.context.config.latex
     return self
 end
 
 ---@param root TSNode
+---@param last boolean
 ---@return render.md.Mark[]
-function Handler:run(root)
+function Handler:run(root, last)
     if not self.config.enabled then
         return {}
     end
@@ -35,86 +38,122 @@ function Handler:run(root)
         log.add('debug', 'ConverterNotFound', self.config.converter)
         return {}
     end
-
     local node = Node.new(self.context.buf, root)
     log.node('latex', node)
-
-    local marks = Marks.new(self.context, true)
-    local output = str.split(self:convert(node.text), '\n', true)
-    if self.config.virtual or #output > 1 then
-        local col = node.start_col
-        local _, first = node:line('first', 0)
-        local prefix = str.pad(first and str.width(first:sub(1, col)) or col)
-        local width = vim.fn.max(iter.list.map(output, str.width))
-
-        local text = {} ---@type string[]
-        for _ = 1, self.config.top_pad do
-            text[#text + 1] = ''
+    self.context.latex:add(node)
+    if last then
+        local rows = self.context.latex:get()
+        self:convert(rows)
+        for _, nodes in ipairs(rows) do
+            self:render(nodes)
         end
-        for _, line in ipairs(output) do
-            local suffix = str.pad(width - str.width(line))
-            text[#text + 1] = prefix .. line .. suffix
+    end
+    return self.marks:get()
+end
+
+---@private
+---@param rows render.md.Node[][]
+function Handler:convert(rows)
+    local cmd = self.config.converter
+    local inputs = {} ---@type string[]
+    for _, nodes in ipairs(rows) do
+        for _, node in ipairs(nodes) do
+            local text = node.text
+            local new = not Handler.cache[text]
+            local unique = not vim.tbl_contains(inputs, text)
+            if new and unique then
+                inputs[#inputs + 1] = text
+            end
         end
-        for _ = 1, self.config.bottom_pad do
-            text[#text + 1] = ''
+    end
+    if vim.system then
+        local tasks = {} ---@type table<string, vim.SystemObj>
+        for _, text in ipairs(inputs) do
+            tasks[text] = vim.system({ cmd }, { stdin = text, text = true })
         end
-
-        local indent = self:indent(node.start_row, col)
-        local lines = iter.list.map(text, function(part)
-            local line = vim.list_extend({}, indent) ---@type render.md.mark.Line
-            line[#line + 1] = { part, self.config.highlight }
-            return line
-        end)
-
-        local above = self.config.position == 'above'
-        local row = above and node.start_row or node.end_row
-
-        marks:add(self.config, 'virtual_lines', row, 0, {
-            virt_lines = lines,
-            virt_lines_above = above,
-        })
+        for text, task in pairs(tasks) do
+            local output = task:wait()
+            local result = output.stdout
+            if output.code ~= 0 or not result then
+                log.add('error', 'ConverterFailed', cmd, result)
+                result = 'error'
+            end
+            Handler.cache[text] = result
+        end
     else
-        marks:over(self.config, true, node, {
-            virt_text = { { output[1], self.config.highlight } },
-            virt_text_pos = 'inline',
-            conceal = '',
-        })
-    end
-    return marks:get()
-end
-
----@private
----@param text string
----@return string
-function Handler:convert(text)
-    local result = Handler.cache[text]
-    if not result then
-        local converter = self.config.converter
-        result = vim.fn.system(converter, text)
-        if vim.v.shell_error == 1 then
-            log.add('error', 'ConverterFailed', converter, result)
-            result = 'error'
+        for _, text in ipairs(inputs) do
+            local result = vim.fn.system(cmd, text)
+            if vim.v.shell_error == 1 then
+                log.add('error', 'ConverterFailed', cmd, result)
+                result = 'error'
+            end
+            Handler.cache[text] = result
         end
-        Handler.cache[text] = result
     end
-    return result
 end
 
 ---@private
----@param row integer
----@param col integer
----@return render.md.mark.Line
-function Handler:indent(row, col)
+---@param nodes render.md.Node[]
+function Handler:render(nodes)
+    local first = nodes[1]
+    local indent = self:indent(first)
+    local _, line = first:line('first', 0)
+
+    for _, node in ipairs(nodes) do
+        local output = str.split(Handler.cache[node.text], '\n', true)
+        if self.config.virtual or #output > 1 then
+            local col = node.start_col
+            local prefix = str.pad(line and str.width(line:sub(1, col)) or col)
+            local width = vim.fn.max(iter.list.map(output, str.width))
+
+            local texts = {} ---@type string[]
+            for _ = 1, self.config.top_pad do
+                texts[#texts + 1] = ''
+            end
+            for _, text in ipairs(output) do
+                local suffix = str.pad(width - str.width(text))
+                texts[#texts + 1] = prefix .. text .. suffix
+            end
+            for _ = 1, self.config.bottom_pad do
+                texts[#texts + 1] = ''
+            end
+
+            local lines = iter.list.map(texts, function(text)
+                return indent:copy():text(text, self.config.highlight):get()
+            end)
+
+            local above = self.config.position == 'above'
+            local row = above and node.start_row or node.end_row
+
+            self.marks:add(self.config, 'virtual_lines', row, 0, {
+                virt_lines = lines,
+                virt_lines_above = above,
+            })
+        else
+            self.marks:over(self.config, true, node, {
+                virt_text = { { output[1], self.config.highlight } },
+                virt_text_pos = 'inline',
+                conceal = '',
+            })
+        end
+    end
+end
+
+---@private
+---@param node render.md.Node
+---@return render.md.Line
+function Handler:indent(node)
     local buf = self.context.buf
-    local node = vim.treesitter.get_node({
+    local markdown = vim.treesitter.get_node({
         bufnr = buf,
-        pos = { row, col },
+        pos = { node.start_row, node.start_col },
         lang = 'markdown',
     })
-    if not node then
-        return {}
+    if not markdown then
+        return self.context.config:line()
+    else
+        return Indent.new(self.context, Node.new(buf, markdown)):line(true)
     end
-    return Indent.new(self.context, Node.new(buf, node)):line(true):get()
 end
 
 ---@class render.md.handler.Latex: render.md.Handler
@@ -123,7 +162,7 @@ local M = {}
 ---@param ctx render.md.handler.Context
 ---@return render.md.Mark[]
 function M.parse(ctx)
-    return Handler.new(ctx.buf):run(ctx.root)
+    return Handler.new(ctx.buf):run(ctx.root, ctx.last)
 end
 
 return M

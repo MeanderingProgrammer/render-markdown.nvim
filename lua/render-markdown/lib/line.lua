@@ -37,6 +37,14 @@ function Line:extend(other)
     return self
 end
 
+---@return render.md.Line
+function Line:copy()
+    local result = setmetatable({}, Line)
+    result.highlight = self.highlight
+    result.line = vim.list_extend({}, self.line)
+    return result
+end
+
 ---@param s string
 ---@param highlight? render.md.mark.Hl
 ---@return render.md.Line

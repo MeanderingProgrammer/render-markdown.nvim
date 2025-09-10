@@ -59,6 +59,8 @@ M.row = require('tests.helpers.row').new
 
 M.marks = require('tests.helpers.marks').new
 
+M.system = require('tests.helpers.system')
+
 ---@return vim.api.keyset.set_extmark
 function M.conceal()
     ---@type vim.api.keyset.set_extmark

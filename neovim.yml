@@ -38,3 +38,8 @@ globals:
       - type: bool
       - type: string
         required: false
+  assert.not_nil:
+    args:
+      - type: any
+      - type: string
+        required: false
