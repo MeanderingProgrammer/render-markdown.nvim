@@ -34,7 +34,7 @@ function Extmark:overlaps(range)
     if not range then
         return false
     end
-    return interval.overlaps(self.range, range)
+    return interval.overlap(self.range, range) ~= nil
 end
 
 ---@param ns integer

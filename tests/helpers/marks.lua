@@ -12,7 +12,17 @@ end
 
 ---@return render.md.test.MarkInfo[]
 function Marks:get()
+    table.sort(self.marks, function(a, b)
+        return require('tests.helpers.details').__lt(a, b)
+    end)
     return self.marks
+end
+
+---@param other render.md.test.Marks
+---@return render.md.test.Marks
+function Marks:extend(other)
+    vim.list_extend(self.marks, other.marks)
+    return self
 end
 
 ---@param row render.md.test.Range|integer

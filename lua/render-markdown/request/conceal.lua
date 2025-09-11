@@ -5,12 +5,11 @@ local str = require('render-markdown.lib.str')
 
 ---@class render.md.request.conceal.Line
 ---@field hidden boolean
----@field sections render.md.request.conceal.Section[]
+---@field ranges render.md.request.conceal.Range[]
 
----@class render.md.request.conceal.Section
----@field col render.md.Range
----@field width integer
----@field character? string
+---@class render.md.request.conceal.Range: render.md.Range
+---@field [3] string replacement
+---@field [4] integer blocks
 
 ---@class render.md.request.Conceal
 ---@field private buf integer
@@ -41,46 +40,55 @@ function Conceal:enabled()
 end
 
 ---@param row integer
----@param entry boolean|render.md.request.conceal.Section
+---@param entry boolean|render.md.request.conceal.Range
 function Conceal:add(row, entry)
     if not self:enabled() then
         return
     end
     if not self.lines[row] then
-        self.lines[row] = { hidden = false, sections = {} }
+        self.lines[row] = { hidden = false, ranges = {} }
     end
     local line = self.lines[row]
     if type(entry) == 'boolean' then
         line.hidden = entry
     else
-        if entry.width > 0 and not Conceal.contains(line, entry) then
-            line.sections[#line.sections + 1] = entry
+        if interval.valid(entry, true) then
+            line.ranges[#line.ranges + 1] = entry
+            line.ranges = Conceal.coalesce(line.ranges)
         end
     end
 end
 
 ---@private
----@param line render.md.request.conceal.Line
----@param entry render.md.request.conceal.Section
----@return boolean
-function Conceal.contains(line, entry)
-    for _, section in ipairs(line.sections) do
-        if interval.contains(section.col, entry.col) then
-            return true
+---@param ranges render.md.request.conceal.Range[]
+---@return render.md.request.conceal.Range[]
+function Conceal.coalesce(ranges)
+    interval.sort(ranges)
+    local result = {} ---@type render.md.request.conceal.Range[]
+    result[#result + 1] = ranges[1]
+    for i = 2, #ranges do
+        local range, last = ranges[i], result[#result]
+        if range[1] <= last[2] then
+            last[2] = math.max(last[2], range[2])
+            last[3] = last[3] .. range[3]
+            last[4] = last[4] + range[4]
+        else
+            result[#result + 1] = range
         end
     end
-    return false
+    return result
 end
 
----@param character? string
+---@param s string
+---@param blocks integer
 ---@return integer
-function Conceal:width(character)
+function Conceal:width(s, blocks)
     if self.level == 1 then
         -- each block is replaced with one character
-        return 1
+        return blocks
     elseif self.level == 2 then
-        -- replacement character width is used
-        return str.width(character)
+        -- replacement characters width is used
+        return str.width(s)
     else
         -- text is completely hidden
         return 0
@@ -98,10 +106,15 @@ end
 ---@return integer
 function Conceal:get(body)
     local result = 0
-    local col = { body.start_col, body.end_col } ---@type render.md.Range
-    for _, section in ipairs(self:line(body).sections) do
-        if interval.overlaps(section.col, col, true) then
-            local width = section.width - self:width(section.character)
+    local target = { body.start_col, body.end_col } ---@type render.md.Range
+    for _, range in ipairs(self:line(body).ranges) do
+        local overlap = interval.overlap(range, target, true)
+        if overlap then
+            local text = body.text:sub(
+                overlap[1] - target[1] + 1,
+                overlap[2] - target[1]
+            )
+            local width = str.width(text) - self:width(range[3], range[4])
             result = result + width
         end
     end
@@ -118,7 +131,7 @@ function Conceal:line(body)
     end
     local line = self.lines[body.start_row]
     if not line then
-        line = { hidden = false, sections = {} }
+        line = { hidden = false, ranges = {} }
     end
     return line
 end
@@ -162,12 +175,7 @@ function Conceal:tree(language, root)
         end
         if data.conceal then
             local row, start_col, _, end_col = Conceal.range(id, node, data)
-            local text = vim.treesitter.get_node_text(node, self.buf)
-            self:add(row, {
-                col = { start_col, end_col },
-                width = str.width(text),
-                character = data.conceal,
-            })
+            self:add(row, { start_col, end_col, data.conceal, 1 })
         end
     end)
 end

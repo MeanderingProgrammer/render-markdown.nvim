@@ -48,7 +48,7 @@ end
 function View:overlaps(node)
     local start_row, _, end_row = node:range()
     for _, range in ipairs(self.ranges) do
-        if interval.overlaps(range, { start_row, end_row }) then
+        if interval.overlap(range, { start_row, end_row }) then
             return true
         end
     end

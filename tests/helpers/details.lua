@@ -66,11 +66,12 @@ function MarkDetails.simplify(highlight)
     return table.concat(result, ':')
 end
 
----@param a render.md.test.MarkDetails
----@param b render.md.test.MarkDetails
+---@param a render.md.test.MarkInfo
+---@param b render.md.test.MarkInfo
 ---@return boolean
 function MarkDetails.__lt(a, b)
-    local as, bs = a:priorities(), b:priorities()
+    local as = MarkDetails.priorities(a)
+    local bs = MarkDetails.priorities(b)
     assert(#as == #bs, 'priorities must be same length')
     for i = 1, #as do
         if as[i] ~= bs[i] then
@@ -81,18 +82,19 @@ function MarkDetails.__lt(a, b)
 end
 
 ---@private
+---@param mark render.md.test.MarkInfo
 ---@return number[]
-function MarkDetails:priorities()
+function MarkDetails.priorities(mark)
     local virt_row = 0
-    if self.virt_lines then
-        virt_row = self.virt_lines_above and -0.5 or 0.5
+    if mark.virt_lines then
+        virt_row = mark.virt_lines_above and -0.5 or 0.5
     end
-    local win_col = self.virt_text_win_col or 0
+    local win_col = mark.virt_text_win_col or 0
     local width = 0
-    for _, text in ipairs(self.virt_text or {}) do
+    for _, text in ipairs(mark.virt_text or {}) do
         width = width + #text[1] ---@type number
     end
-    for _, line in ipairs(self.virt_lines or {}) do
+    for _, line in ipairs(mark.virt_lines or {}) do
         for _, text in ipairs(line) do
             width = width + #text[1] ---@type number
         end
@@ -100,20 +102,20 @@ function MarkDetails:priorities()
     ---@type number[]
     return {
         -- rows
-        self.row[1] + virt_row,
-        (self.row[2] or self.row[1]) + virt_row,
+        mark.row[1] + virt_row,
+        (mark.row[2] or mark.row[1]) + virt_row,
         -- cols
-        math.max(self.col[1], win_col),
-        math.max((self.col[2] or self.col[1]), win_col),
+        math.max(mark.col[1], win_col),
+        math.max((mark.col[2] or mark.col[1]), win_col),
         -- signs
-        self.sign_text and 0 or 1,
+        mark.sign_text and 0 or 1,
         -- inline text
-        self.virt_text_pos == 'inline' and 0 or 1,
+        mark.virt_text_pos == 'inline' and 0 or 1,
         -- text width
         width,
         -- conceal
-        self.conceal and 0 or 1,
-        self.conceal_lines and 0 or 1,
+        mark.conceal and 0 or 1,
+        mark.conceal_lines and 0 or 1,
     }
 end
 

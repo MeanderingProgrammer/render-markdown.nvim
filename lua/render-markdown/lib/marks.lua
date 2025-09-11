@@ -123,19 +123,15 @@ end
 ---@private
 ---@param mark render.md.Mark
 function Marks:run_update(mark)
-    local row, start_col = mark.start_row, mark.start_col
-    if mark.opts.conceal then
-        local end_col = assert(mark.opts.end_col, 'conceal requires end_col')
-        self.context.conceal:add(row, {
-            col = { start_col, end_col },
-            width = end_col - start_col,
-            character = mark.opts.conceal,
-        })
+    local row, start_col, opts = mark.start_row, mark.start_col, mark.opts
+    if opts.conceal then
+        local end_col = assert(opts.end_col, 'conceal requires end_col')
+        self.context.conceal:add(row, { start_col, end_col, opts.conceal, 1 })
     end
-    if mark.opts.virt_text_pos == 'inline' then
+    if opts.virt_text_pos == 'inline' then
         self.context.offset:add(row, {
             col = start_col,
-            width = str.line_width(mark.opts.virt_text),
+            width = str.line_width(opts.virt_text),
         })
     end
 end

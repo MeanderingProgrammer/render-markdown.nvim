@@ -2,27 +2,27 @@
 
 local util = require('tests.util')
 
-describe('heading.md', function()
-    local lines = {
-        '',
-        '# Head 1',
-        '',
-        '## Head 2',
-        '### H3',
-        '#### H4',
-        '',
-        '  ##### Head 5',
-        '',
-        '###### Head 6',
-        '',
-        'Ext Heading',
-        '===',
-        '',
-        'Ext Heading 2',
-        'Ext Heading 2 Line 2',
-        '---',
-    }
+local lines = {
+    '',
+    '# Head 1',
+    '',
+    '## Head 2',
+    '### H3',
+    '#### H4',
+    '',
+    '  ##### Head 5',
+    '',
+    '###### Head 6',
+    '',
+    'Ext Heading',
+    '===',
+    '',
+    'Ext Heading 2',
+    'Ext Heading 2 Line 2',
+    '---',
+}
 
+describe('heading.md', function()
     it('default', function()
         util.setup.text(lines, {
             heading = {},
