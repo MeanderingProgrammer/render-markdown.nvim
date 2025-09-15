@@ -2,19 +2,19 @@
 
 local util = require('tests.util')
 
-describe('table.md conceallevel', function()
-    local lines = {
-        '',
-        '| Heading 1 | `Heading 2`            |',
-        '| --------- | ---------------------: |',
-        '| `Item 行` | [link](https://行.com) |',
-        '| &lt;1&gt; | ==Itém 2==             |',
-        '',
-        '| Heading 1 | Heading 2 |',
-        '| --------- | --------- |',
-        '| Item 1    | Item 2    |',
-    }
+local lines = {
+    '',
+    '| Heading 1 | `Heading 2`            |',
+    '| --------- | ---------------------: |',
+    '| `Item 行` | [link](https://行.com) |',
+    '| &lt;1&gt; | ==Itém 2==             |',
+    '',
+    '| Heading 1 | Heading 2 |',
+    '| --------- | --------- |',
+    '| Item 1    | Item 2    |',
+}
 
+describe('table conceallevel', function()
     it('0', function()
         util.setup.text(lines, {
             win_options = { conceallevel = { rendered = 0 } },

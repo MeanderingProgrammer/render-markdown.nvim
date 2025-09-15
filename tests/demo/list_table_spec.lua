@@ -62,7 +62,7 @@ local function shared()
     return marks
 end
 
-describe('list_table.md', function()
+describe('demo/list_table.md', function()
     it('default', function()
         util.setup.file('demo/list_table.md')
 

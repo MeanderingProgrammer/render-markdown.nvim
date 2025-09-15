@@ -2,7 +2,7 @@
 
 local util = require('tests.util')
 
-describe('callout.md', function()
+describe('demo/callout.md', function()
     it('default', function()
         util.setup.file('demo/callout.md')
 

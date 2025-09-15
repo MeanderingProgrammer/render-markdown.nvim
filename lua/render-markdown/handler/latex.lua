@@ -141,6 +141,14 @@ function Handler:render(row, nodes)
     for _, node in ipairs(nodes) do
         local output = str.split(Handler.cache[Handler.text(node)], '\n', true)
 
+        -- add top and bottom padding around output
+        for _ = 1, self.config.top_pad do
+            table.insert(output, 1, '')
+        end
+        for _ = 1, self.config.bottom_pad do
+            output[#output + 1] = ''
+        end
+
         -- pad lines to the same width
         local width = vim.fn.max(iter.list.map(output, str.width))
         for i, line in ipairs(output) do
@@ -218,18 +226,10 @@ function Handler:render(row, nodes)
     end
 
     ---@param lines string[]
-    ---@param top boolean
-    ---@param bottom boolean
     ---@param above boolean
-    local function add_lines(lines, top, bottom, above)
+    local function add_lines(lines, above)
         if #lines == 0 then
             return
-        end
-        for _ = 1, (top and self.config.top_pad or 0) do
-            table.insert(lines, 1, '')
-        end
-        for _ = 1, (bottom and self.config.bottom_pad or 0) do
-            lines[#lines + 1] = ''
         end
         self.marks:add(self.config, 'virtual_lines', row, 0, {
             virt_lines = iter.list.map(lines, function(line)
@@ -239,8 +239,8 @@ function Handler:render(row, nodes)
         })
     end
 
-    add_lines(lines_above, true, #lines_below == 0, true)
-    add_lines(lines_below, #lines_above == 0, true, false)
+    add_lines(lines_above, true)
+    add_lines(lines_below, false)
 end
 
 ---@private

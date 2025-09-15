@@ -2,7 +2,7 @@
 
 local util = require('tests.util')
 
-describe('box_dash_quote.md', function()
+describe('demo/box_dash_quote.md', function()
     it('default', function()
         util.setup.file('demo/box_dash_quote.md')
 

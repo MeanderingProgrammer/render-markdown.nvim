@@ -2,6 +2,44 @@
 
 local util = require('tests.util')
 
+local lines = {
+    '# Heading',
+    '',
+    '-',
+    '',
+    '- ',
+    '',
+    '- [',
+    '',
+    '- [-',
+    '',
+    '- [-]',
+    '',
+    '- [-] ',
+    '',
+    '- [-] todo',
+    '',
+    '- text',
+    '',
+    '# Heading',
+    '',
+    '>',
+    '',
+    '> ',
+    '',
+    '> [',
+    '',
+    '> [!',
+    '',
+    '> [!TIP',
+    '',
+    '> [!TIP]',
+    '',
+    '> [!TIP] My Tip',
+    '',
+    '> text',
+}
+
 ---@param row render.md.test.Row
 ---@param n integer
 ---@param col integer
@@ -34,45 +72,7 @@ local function item(prefix, suffix, label, detail, description)
     }
 end
 
-describe('comp.md', function()
-    local lines = {
-        '# Heading',
-        '',
-        '-',
-        '',
-        '- ',
-        '',
-        '- [',
-        '',
-        '- [-',
-        '',
-        '- [-]',
-        '',
-        '- [-] ',
-        '',
-        '- [-] todo',
-        '',
-        '- text',
-        '',
-        '# Heading',
-        '',
-        '>',
-        '',
-        '> ',
-        '',
-        '> [',
-        '',
-        '> [!',
-        '',
-        '> [!TIP',
-        '',
-        '> [!TIP]',
-        '',
-        '> [!TIP] My Tip',
-        '',
-        '> text',
-    }
-
+describe('completions', function()
     it('checkbox', function()
         util.setup.text(lines)
 

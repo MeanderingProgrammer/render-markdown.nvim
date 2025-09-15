@@ -2,7 +2,7 @@
 
 local util = require('tests.util')
 
-describe('heading_code.md', function()
+describe('demo/heading_code.md', function()
     it('default', function()
         util.setup.file('demo/heading_code.md')
 

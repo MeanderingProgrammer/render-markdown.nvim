@@ -6,6 +6,8 @@
 
 - remove delimiters around latex text before converting [2c6cf12](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/2c6cf127c577712bd29d38f6391b3045c5f0180a)
 - convert latex asynchronously [44cbac6](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/44cbac697e50ae32e4644652da08cf692b9a5a57)
+- combine latex virtual lines use center positioning [#520](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/520)
+  [9a746ff](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/9a746ff62a482f5eb722b3bfc7eefb2e9d638858)
 
 ### Bug Fixes
 

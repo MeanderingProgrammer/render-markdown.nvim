@@ -22,7 +22,7 @@ local lines = {
     '---',
 }
 
-describe('heading.md', function()
+describe('heading', function()
     it('default', function()
         util.setup.text(lines, {
             heading = {},

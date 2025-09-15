@@ -8,7 +8,7 @@ local function join(lines)
     return table.concat(lines, '\n')
 end
 
-describe('latex.md', function()
+describe('demo/latex.md', function()
     it('default', function()
         local inline = {
             raw = '\\sqrt{3x-1}+(1+x)^2',

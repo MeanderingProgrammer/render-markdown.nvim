@@ -2,6 +2,11 @@
 
 local util = require('tests.util')
 
+local lines = {
+    '`Inline` code',
+    '\\$1.50 \\$3.55',
+}
+
 ---@param ctx render.md.handler.Context
 ---@return render.md.Mark[]
 local function conceal_escape(ctx)
@@ -23,11 +28,6 @@ local function conceal_escape(ctx)
 end
 
 describe('custom handler', function()
-    local lines = {
-        '`Inline` code',
-        '\\$1.50 \\$3.55',
-    }
-
     it('default', function()
         util.setup.text(lines)
         -- inline code + no backslash escapes
