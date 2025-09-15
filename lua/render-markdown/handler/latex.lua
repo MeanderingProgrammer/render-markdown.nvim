@@ -42,28 +42,24 @@ function Handler:run(root, last)
     log.node('latex', node)
     self.context.latex:add(node)
     if last then
-        local rows = self.context.latex:get()
-        self:convert(rows)
-        for _, nodes in ipairs(rows) do
-            self:render(nodes)
+        local nodes = self.context.latex:get()
+        self:convert(nodes)
+        for _, row in ipairs(self:rows(nodes)) do
+            self:render(row)
         end
     end
     return self.marks:get()
 end
 
 ---@private
----@param rows render.md.Node[][]
-function Handler:convert(rows)
+---@param nodes render.md.Node[]
+function Handler:convert(nodes)
     local cmd = self.config.converter
     local inputs = {} ---@type string[]
-    for _, nodes in ipairs(rows) do
-        for _, node in ipairs(nodes) do
-            local text = node.text
-            local new = not Handler.cache[text]
-            local unique = not vim.tbl_contains(inputs, text)
-            if new and unique then
-                inputs[#inputs + 1] = text
-            end
+    for _, node in ipairs(nodes) do
+        local text = Handler.text(node)
+        if not Handler.cache[text] and not vim.tbl_contains(inputs, text) then
+            inputs[#inputs + 1] = text
         end
     end
     if vim.system then
@@ -94,13 +90,31 @@ end
 
 ---@private
 ---@param nodes render.md.Node[]
+---@return render.md.Node[][]
+function Handler:rows(nodes)
+    table.sort(nodes)
+    local result = {} ---@type render.md.Node[][]
+    result[#result + 1] = { nodes[1] }
+    for i = 2, #nodes do
+        local node, last = nodes[i], result[#result]
+        if node.start_row == last[#last].start_row then
+            last[#last + 1] = node
+        else
+            result[#result + 1] = { node }
+        end
+    end
+    return result
+end
+
+---@private
+---@param nodes render.md.Node[]
 function Handler:render(nodes)
     local first = nodes[1]
     local indent = self:indent(first)
     local _, line = first:line('first', 0)
 
     for _, node in ipairs(nodes) do
-        local output = str.split(Handler.cache[node.text], '\n', true)
+        local output = str.split(Handler.cache[Handler.text(node)], '\n', true)
         if self.config.virtual or #output > 1 then
             local col = node.start_col
             local prefix = str.pad(line and str.width(line:sub(1, col)) or col)
@@ -154,6 +168,14 @@ function Handler:indent(node)
     else
         return Indent.new(self.context, Node.new(buf, markdown)):line(true)
     end
+end
+
+---@private
+---@param node render.md.Node
+---@return string
+function Handler.text(node)
+    local s = node.text
+    return vim.trim(s:match('^%$*(.-)%$*$') or s)
 end
 
 ---@class render.md.handler.Latex: render.md.Handler

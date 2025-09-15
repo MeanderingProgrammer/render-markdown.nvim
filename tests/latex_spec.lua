@@ -3,18 +3,16 @@
 local util = require('tests.util')
 
 ---@param lines string[]
----@param prefix string
----@param suffix string
 ---@return string
-local function text(lines, prefix, suffix)
-    return prefix .. table.concat(lines, '\n') .. suffix
+local function join(lines)
+    return table.concat(lines, '\n')
 end
 
 describe('latex.md', function()
     it('default', function()
         local inline = {
-            raw = { '$\\sqrt{3x-1}+(1+x)^2$' },
-            out = { '√(3x-1)+(1+x)^2' },
+            raw = '\\sqrt{3x-1}+(1+x)^2',
+            out = '√(3x-1)+(1+x)^2',
         }
         local block = {
             raw = {
@@ -22,14 +20,14 @@ describe('latex.md', function()
                 'f(x,y) = \\sqrt{y} + \\frac{x^2}{4y}',
             },
             out = {
-                '    f(x,y) = x + √(y)',
-                '    f(x,y) = √(y) + x^2/4y',
+                'f(x,y) = x + √(y)',
+                'f(x,y) = √(y) + x^2/4y',
             },
         }
 
         util.system.mock('latex2text', {
-            [text(inline.raw, '', '')] = text(inline.out, '', '\n'),
-            [text(block.raw, '$$\n', '\n$$')] = text(block.out, '\n', '\n\n'),
+            [inline.raw] = inline.out .. '\n',
+            [join(block.raw)] = join(block.out) .. '\n',
         })
         util.setup.file('demo/latex.md')
 
@@ -40,14 +38,14 @@ describe('latex.md', function()
         marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(1))
 
         marks:add(row:get(1, 0), { 0, 21 }, {
-            virt_text = { { inline.out[1], 'RmMath' } },
+            virt_text = { { inline.out, 'RmMath' } },
             virt_text_pos = 'inline',
             conceal = '',
         })
         marks:add(row:get(2), 0, {
             virt_lines = vim.iter(block.out)
                 :map(function(line)
-                    return { { line .. (' '):rep(28 - #line), 'RmMath' } }
+                    return { { line .. (' '):rep(24 - #line), 'RmMath' } }
                 end)
                 :totable(),
             virt_lines_above = true,
@@ -56,7 +54,7 @@ describe('latex.md', function()
         util.assert_view(marks, {
             '󰫎 󰲡 LaTeX',
             '',
-            '  ' .. inline.out[1],
+            '  ' .. inline.out,
             '',
             '  ' .. block.out[1],
             '  ' .. block.out[2],
