@@ -1,5 +1,5 @@
 ---@class (exact) render.md.latex.Config: render.md.base.Config
----@field converter string
+---@field converter string|string[]
 ---@field highlight string
 ---@field position render.md.latex.Position
 ---@field top_pad integer
@@ -22,7 +22,8 @@ M.default = {
     -- Additional modes to render latex.
     render_modes = false,
     -- Executable used to convert latex formula to rendered unicode.
-    converter = 'latex2text',
+    -- If a list is provided the first command available on the system is used.
+    converter = { 'utftex', 'latex2text' },
     -- Highlight for latex blocks.
     highlight = 'RenderMarkdownMath',
     -- Determines where latex formula is rendered relative to block.
@@ -39,7 +40,9 @@ M.default = {
 ---@return render.md.Schema
 function M.schema()
     return require('render-markdown.config.base').schema({
-        converter = { type = 'string' },
+        converter = {
+            union = { { list = { type = 'string' } }, { type = 'string' } },
+        },
         highlight = { type = 'string' },
         position = { enum = Position },
         top_pad = { type = 'number' },

@@ -68,6 +68,20 @@ function M.range(buf, win, offset)
     return { top, bottom }
 end
 
+---@param options string|string[]
+---@return string?
+function M.command(options)
+    if type(options) == 'string' then
+        options = { options }
+    end
+    for _, option in ipairs(options) do
+        if vim.fn.executable(option) == 1 then
+            return option
+        end
+    end
+    return nil
+end
+
 ---@class render.md.env.Row
 M.row = {}
 

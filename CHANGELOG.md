@@ -12,6 +12,7 @@
 ### Bug Fixes
 
 - use display width of concealed ranges [b4885a9](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b4885a95e5082a6ed164830c581aac257a74f355)
+- top & bottom padding for latex [5b01324](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/5b01324a5fce277183098eac0a2cdb9c1b446b73)
 
 ## 8.8.0 (2025-09-09)
 

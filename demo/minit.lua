@@ -29,7 +29,7 @@ require('lazy').setup({
         },
         {
             'nvim-lualine/lualine.nvim',
-            dependencies = { 'nvim-tree/nvim-web-devicons' },
+            dependencies = { 'nvim-mini/mini.nvim' },
             config = function()
                 require('lualine').setup({
                     sections = {
@@ -64,7 +64,9 @@ require('lazy').setup({
         {
             'nvim-mini/mini.nvim',
             config = function()
-                require('mini.icons').setup({})
+                local icons = require('mini.icons')
+                icons.setup({})
+                icons.mock_nvim_web_devicons()
             end,
         },
         {

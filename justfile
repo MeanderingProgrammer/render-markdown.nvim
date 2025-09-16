@@ -32,7 +32,7 @@ health:
 log:
   cat ~/.local/state/nvim/render-markdown.log
 
-demo: heading table box latex callout
+demo: heading table quote callout latex
 
 heading:
   python demo/run.py --name "heading_code"
@@ -40,11 +40,11 @@ heading:
 table:
   python demo/run.py --name "list_table"
 
-box:
+quote:
   python demo/run.py --name "box_dash_quote"
-
-latex:
-  python demo/run.py --name "latex"
 
 callout:
   python demo/run.py --name "callout"
+
+latex:
+  python demo/run.py --name "latex"

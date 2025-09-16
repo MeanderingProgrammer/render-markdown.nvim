@@ -4,12 +4,12 @@ local util = require('tests.util')
 
 local m22 = {
     input = '\\begin{pmatrix}1 & 2\\\\3 & 4\\end{pmatrix}',
-    output = '⎛1  2⎞\n⎝3  4⎠\n',
+    output = { '⎛1  2⎞', '⎝3  4⎠' },
 }
 
 local m33 = {
     input = '\\begin{pmatrix}1 & 2 & 3\\\\4 & 5 & 6\\\\7 & 8 & 9\\end{pmatrix}',
-    output = '⎛1  2  3⎞\n⎜4  5  6⎟\n⎝7  8  9⎠\n',
+    output = { '⎛1  2  3⎞', '⎜4  5  6⎟', '⎝7  8  9⎠' },
 }
 
 util.system.mock('utftex', {
@@ -28,9 +28,11 @@ local lines = {
     '$$ & $' .. m22.input .. '$',
 }
 
-describe('utftex', function()
+describe('latex', function()
     it('default', function()
-        util.setup.text(lines, { latex = { converter = 'utftex' } })
+        util.setup.text(lines, {
+            latex = { converter = 'utftex' },
+        })
         util.assert_screen({
             '',
             '⎛1  2⎞',
@@ -51,10 +53,9 @@ describe('utftex', function()
     end)
 
     it('above', function()
-        util.setup.text(
-            lines,
-            { latex = { converter = 'utftex', position = 'above' } }
-        )
+        util.setup.text(lines, {
+            latex = { converter = 'utftex', position = 'above' },
+        })
         util.assert_screen({
             '',
             '⎛1  2⎞',
@@ -78,10 +79,9 @@ describe('utftex', function()
     end)
 
     it('below', function()
-        util.setup.text(
-            lines,
-            { latex = { converter = 'utftex', position = 'below' } }
-        )
+        util.setup.text(lines, {
+            latex = { converter = 'utftex', position = 'below' },
+        })
         util.assert_screen({
             '',
             '$\\begin{pmatrix}1 & 2\\\\3 & 4\\end{pmatrix}$',
@@ -105,10 +105,9 @@ describe('utftex', function()
     end)
 
     it('padded', function()
-        util.setup.text(
-            lines,
-            { latex = { converter = 'utftex', top_pad = 1, bottom_pad = 1 } }
-        )
+        util.setup.text(lines, {
+            latex = { converter = 'utftex', top_pad = 1, bottom_pad = 1 },
+        })
         util.assert_screen({
             '',
             '',

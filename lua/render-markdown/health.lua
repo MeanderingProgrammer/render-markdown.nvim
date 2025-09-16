@@ -1,3 +1,4 @@
+local env = require('render-markdown.lib.env')
 local icons = require('render-markdown.lib.icons')
 local state = require('render-markdown.state')
 
@@ -5,7 +6,7 @@ local state = require('render-markdown.state')
 local M = {}
 
 ---@private
-M.version = '8.8.7'
+M.version = '8.8.8'
 
 function M.check()
     M.start('versions')
@@ -17,9 +18,10 @@ function M.check()
     local errors = state.validate()
     if #errors == 0 then
         vim.health.ok('valid')
-    end
-    for _, message in ipairs(errors) do
-        vim.health.error(message)
+    else
+        for _, message in ipairs(errors) do
+            vim.health.error(message)
+        end
     end
 
     local config = state.get(0)
@@ -47,9 +49,15 @@ function M.check()
         vim.health.warn('none installed')
     end
 
-    M.start('executables')
     if latex.enabled then
-        M.executable(latex.converter, M.disable('latex'))
+        M.start('latex')
+        local cmd = env.command(latex.converter)
+        if cmd then
+            vim.health.ok('using: ' .. cmd)
+        else
+            local message = 'none installed: ' .. vim.inspect(latex.converter)
+            vim.health.warn(message, M.disable('latex'))
+        end
     end
 
     M.start('conflicts')
@@ -141,22 +149,6 @@ function M.ts_info(language, required, active)
             vim.health.error('highlighter: not enabled', {
                 ('call vim.treesitter.start on %s buffers'):format(language),
             })
-        end
-    end
-end
-
----@private
----@param name string
----@param advice? string[]
-function M.executable(name, advice)
-    if vim.fn.executable(name) == 1 then
-        vim.health.ok(name .. ': installed')
-    else
-        local message = name .. ': not installed'
-        if advice then
-            vim.health.warn(message, advice)
-        else
-            vim.health.error(message)
         end
     end
 end

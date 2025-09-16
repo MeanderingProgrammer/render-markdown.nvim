@@ -2,6 +2,7 @@ local Context = require('render-markdown.request.context')
 local Indent = require('render-markdown.lib.indent')
 local Marks = require('render-markdown.lib.marks')
 local Node = require('render-markdown.lib.node')
+local env = require('render-markdown.lib.env')
 local iter = require('render-markdown.lib.iter')
 local log = require('render-markdown.core.log')
 local str = require('render-markdown.lib.str')
@@ -34,7 +35,8 @@ function Handler:run(root, last)
     if not self.config.enabled then
         return {}
     end
-    if vim.fn.executable(self.config.converter) ~= 1 then
+    local cmd = env.command(self.config.converter)
+    if not cmd then
         log.add('debug', 'ConverterNotFound', self.config.converter)
         return {}
     end
@@ -43,7 +45,7 @@ function Handler:run(root, last)
     self.context.latex:add(node)
     if last then
         local nodes = self.context.latex:get()
-        self:convert(nodes)
+        Handler.convert(cmd, nodes)
         local rows = self:rows(nodes)
         for row, row_nodes in pairs(rows) do
             self:render(row, row_nodes)
@@ -53,9 +55,9 @@ function Handler:run(root, last)
 end
 
 ---@private
+---@param cmd string
 ---@param nodes render.md.Node[]
-function Handler:convert(nodes)
-    local cmd = self.config.converter
+function Handler.convert(cmd, nodes)
     local inputs = {} ---@type string[]
     for _, node in ipairs(nodes) do
         local text = Handler.text(node)
@@ -87,6 +89,14 @@ function Handler:convert(nodes)
             Handler.cache[text] = result
         end
     end
+end
+
+---@private
+---@param node render.md.Node
+---@return string
+function Handler.text(node)
+    local s = node.text
+    return vim.trim(s:match('^%$*(.-)%$*$') or s)
 end
 
 ---@private
@@ -258,14 +268,6 @@ function Handler:indent(node)
     else
         return Indent.new(self.context, Node.new(buf, markdown)):line(true)
     end
-end
-
----@private
----@param node render.md.Node
----@return string
-function Handler.text(node)
-    local s = node.text
-    return vim.trim(s:match('^%$*(.-)%$*$') or s)
 end
 
 ---@class render.md.handler.Latex: render.md.Handler

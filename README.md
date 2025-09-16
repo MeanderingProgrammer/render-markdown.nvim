@@ -10,7 +10,7 @@ Plugin to improve viewing Markdown files in Neovim
 | ![Table](https://github.com/user-attachments/assets/7d021918-e89c-4b7d-b33a-869390f9a826)   | ![Table](https://github.com/user-attachments/assets/fdbcfbfa-5f9e-49b7-8c19-f7e837979a7a)   |
 | ![Quote](https://github.com/user-attachments/assets/822ae62c-bc0f-40a7-b8bb-fb3a885a95f9)   | ![Quote](https://github.com/user-attachments/assets/aa002ac7-b30f-4079-bba9-505160a4ad78)   |
 | ![Callout](https://github.com/user-attachments/assets/e468a463-bc8d-420c-bb4c-da1263795092) | ![Callout](https://github.com/user-attachments/assets/d56cc5c7-43cd-4ce7-ad33-6164c2e23875) |
-| ![Latex](https://github.com/user-attachments/assets/7b859c0a-1bf6-4398-88b5-7bcde12f2390)   | ![Latex](https://github.com/user-attachments/assets/9ef14030-f688-47fd-95ff-befab1253322)   |
+| ![Latex](https://github.com/user-attachments/assets/68f27ff3-49c8-42b5-bb7a-3b89c1e98401)   | ![Latex](https://github.com/user-attachments/assets/41e657a6-bcc2-464d-ab8c-a23bfcb80b0f)   |
 
 <!-- panvimdoc-ignore-end -->
 
@@ -61,6 +61,8 @@ Plugin to improve viewing Markdown files in Neovim
   - [mini.icons](https://github.com/nvim-mini/mini.nvim/blob/main/readmes/mini-icons.md)
   - [nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons)
 - System dependencies:
+  - [libtexprintf](https://github.com/bartp5/libtexprintf) (Optional):
+    Used to transform `latex` strings to appropriate unicode using `utftex`
   - [pylatexenc](https://pypi.org/project/pylatexenc/) (Optional):
     Used to transform `latex` strings to appropriate unicode using `latex2text`
 
@@ -272,7 +274,8 @@ require('render-markdown').setup({
         -- Additional modes to render latex.
         render_modes = false,
         -- Executable used to convert latex formula to rendered unicode.
-        converter = 'latex2text',
+        -- If a list is provided the first command available on the system is used.
+        converter = { 'utftex', 'latex2text' },
         -- Highlight for latex blocks.
         highlight = 'RenderMarkdownMath',
         -- Determines where latex formula is rendered relative to block.
