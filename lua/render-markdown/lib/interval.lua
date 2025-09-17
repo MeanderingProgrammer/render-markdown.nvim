@@ -1,4 +1,4 @@
----@class render.md.Range
+---@class render.md.Range: Range2
 ---@field [1] integer start
 ---@field [2] integer end
 

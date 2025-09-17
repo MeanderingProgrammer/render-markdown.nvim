@@ -115,7 +115,7 @@ function M.file_name(buf)
     end
     local file = vim.api.nvim_buf_get_name(buf)
     local name = vim.fn.fnamemodify(file, ':t')
-    return #name == 0 and 'EMPTY' or name
+    return #name > 0 and name or 'EMPTY'
 end
 
 ---@param level render.md.log.Level
@@ -131,14 +131,12 @@ function M.add(level, name, ...)
         local message = type(value) == 'string' and value or vim.inspect(value)
         messages[#messages + 1] = message
     end
-    ---@type render.md.log.Entry
-    local entry = {
+    M.entries[#M.entries + 1] = {
         date = vim.fn.strftime('%Y-%m-%d %H:%M:%S'),
         level = string.upper(level),
         name = name,
         message = table.concat(messages, ' | '),
     }
-    M.entries[#M.entries + 1] = entry
     -- periodically flush logs to disk
     if #M.entries > 1000 then
         M.flush()

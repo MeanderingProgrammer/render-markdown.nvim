@@ -8,6 +8,7 @@
 - convert latex asynchronously [44cbac6](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/44cbac697e50ae32e4644652da08cf692b9a5a57)
 - combine latex virtual lines use center positioning [#520](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/520)
   [9a746ff](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/9a746ff62a482f5eb722b3bfc7eefb2e9d638858)
+- latex converter can now be a list, prefer utftex, fallback to latex2text [5f437a2](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/5f437a26a8a8b964eff683dd6f68bc2a0d38c5db)
 
 ### Bug Fixes
 

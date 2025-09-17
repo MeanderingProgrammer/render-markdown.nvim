@@ -24,7 +24,7 @@ function Render:setup()
         return false
     end
     -- skip single line code block
-    if self.node.end_row - self.node.start_row <= 1 then
+    if self.node:height() <= 2 then
         return false
     end
     local widths = self.node:widths()
