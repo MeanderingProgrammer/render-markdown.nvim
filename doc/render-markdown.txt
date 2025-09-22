@@ -1,4 +1,4 @@
-*render-markdown.txt*      For NVIM v0.11.4     Last change: 2025 September 17
+*render-markdown.txt*      For NVIM v0.11.4     Last change: 2025 September 22
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -915,8 +915,9 @@ Default Configuration ~
             },
             -- HTML tags whose start and end will be hidden and icon shown.
             -- The key is matched against the tag name, value type below.
-            -- | icon      | gets inlined at the start |
-            -- | highlight | highlight for the icon    |
+            -- | icon            | optional icon inlined at start of tag           |
+            -- | highlight       | optional highlight for the icon                 |
+            -- | scope_highlight | optional highlight for item associated with tag |
             tag = {},
         },
         win_options = {

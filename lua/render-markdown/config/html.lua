@@ -8,8 +8,9 @@
 ---@field highlight string
 
 ---@class (exact) render.md.html.Tag
----@field icon string
----@field highlight string
+---@field icon? string
+---@field highlight? string
+---@field scope_highlight? string
 
 ---@class render.md.html.Cfg
 local M = {}
@@ -30,8 +31,9 @@ M.default = {
     },
     -- HTML tags whose start and end will be hidden and icon shown.
     -- The key is matched against the tag name, value type below.
-    -- | icon      | gets inlined at the start |
-    -- | highlight | highlight for the icon    |
+    -- | icon            | optional icon inlined at start of tag           |
+    -- | highlight       | optional highlight for the icon                 |
+    -- | scope_highlight | optional highlight for item associated with tag |
     tag = {},
 }
 
@@ -40,8 +42,9 @@ function M.schema()
     ---@type render.md.Schema
     local tag = {
         record = {
-            icon = { type = 'string' },
-            highlight = { type = 'string' },
+            icon = { optional = true, type = 'string' },
+            highlight = { optional = true, type = 'string' },
+            scope_highlight = { optional = true, type = 'string' },
         },
     }
     return require('render-markdown.config.base').schema({
