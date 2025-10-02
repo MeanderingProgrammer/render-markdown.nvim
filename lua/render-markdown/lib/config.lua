@@ -82,33 +82,34 @@ end
 ---@param child render.md.schema.Record
 ---@return render.md.Schema
 function Config.schema(child)
+    local settings = require('render-markdown.settings')
     ---@type render.md.schema.Record
     local parent = {
         max_file_size = { type = 'number' },
         debounce = { type = 'number' },
-        anti_conceal = require('render-markdown.config.anti_conceal').schema(),
-        bullet = require('render-markdown.config.bullet').schema(),
-        callout = require('render-markdown.config.callout').schema(),
-        checkbox = require('render-markdown.config.checkbox').schema(),
-        code = require('render-markdown.config.code').schema(),
-        dash = require('render-markdown.config.dash').schema(),
-        document = require('render-markdown.config.document').schema(),
-        heading = require('render-markdown.config.heading').schema(),
-        html = require('render-markdown.config.html').schema(),
-        indent = require('render-markdown.config.indent').schema(),
-        inline_highlight = require('render-markdown.config.inline_highlight').schema(),
-        latex = require('render-markdown.config.latex').schema(),
-        link = require('render-markdown.config.link').schema(),
-        padding = require('render-markdown.config.padding').schema(),
-        paragraph = require('render-markdown.config.paragraph').schema(),
-        pipe_table = require('render-markdown.config.pipe_table').schema(),
-        quote = require('render-markdown.config.quote').schema(),
-        sign = require('render-markdown.config.sign').schema(),
-        win_options = require('render-markdown.config.win_options').schema(),
-        yaml = require('render-markdown.config.yaml').schema(),
+        anti_conceal = settings.anti_conceal.schema(),
+        bullet = settings.bullet.schema(),
+        callout = settings.callout.schema(),
+        checkbox = settings.checkbox.schema(),
+        code = settings.code.schema(),
+        dash = settings.dash.schema(),
+        document = settings.document.schema(),
+        heading = settings.heading.schema(),
+        html = settings.html.schema(),
+        indent = settings.indent.schema(),
+        inline_highlight = settings.inline_highlight.schema(),
+        latex = settings.latex.schema(),
+        link = settings.link.schema(),
+        padding = settings.padding.schema(),
+        paragraph = settings.paragraph.schema(),
+        pipe_table = settings.pipe_table.schema(),
+        quote = settings.quote.schema(),
+        sign = settings.sign.schema(),
+        win_options = settings.win_options.schema(),
+        yaml = settings.yaml.schema(),
     }
     local record = vim.tbl_deep_extend('error', parent, child)
-    return require('render-markdown.config.base').schema(record)
+    return settings.base.schema(record)
 end
 
 return Config

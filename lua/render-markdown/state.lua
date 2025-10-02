@@ -81,6 +81,7 @@ end
 
 ---@return string[]
 function M.validate()
+    local settings = require('render-markdown.settings')
     return require('render-markdown.debug.schema').validate(
         M.config,
         Config.schema({
@@ -94,12 +95,12 @@ function M.validate()
             nested = { type = 'boolean' },
             change_events = { list = { type = 'string' } },
             restart_highlighter = { type = 'boolean' },
-            injections = require('render-markdown.config.injections').schema(),
-            patterns = require('render-markdown.config.patterns').schema(),
-            on = require('render-markdown.config.on').schema(),
-            completions = require('render-markdown.config.completions').schema(),
-            overrides = require('render-markdown.config.overrides').schema(),
-            custom_handlers = require('render-markdown.config.handlers').schema(),
+            injections = settings.injections.schema(),
+            patterns = settings.patterns.schema(),
+            on = settings.on.schema(),
+            completions = settings.completions.schema(),
+            overrides = settings.overrides.schema(),
+            custom_handlers = settings.handlers.schema(),
         })
     )
 end

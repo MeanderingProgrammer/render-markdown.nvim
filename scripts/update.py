@@ -93,8 +93,10 @@ def main() -> None:
 
 
 def update_types(root: Path) -> None:
-    files: list[Path] = [root.joinpath("init.lua")]
-    files.extend(sorted(root.joinpath("config").iterdir()))
+    files: list[Path] = [
+        root.joinpath("init.lua"),
+        root.joinpath("settings.lua"),
+    ]
 
     sections: list[str] = ["---@meta"]
     for lua_type in get_lua_types(files):
@@ -108,16 +110,16 @@ def update_types(root: Path) -> None:
 
 def update_readme(root: Path) -> None:
     readme = Path("README.md")
+    settings = root.joinpath("settings.lua")
     old = get_code_block(readme, "log_level", 1)
-    new = wrap_setup(root, get_default(root.joinpath("init.lua")))
+    new = wrap_setup(root, get_default(root.joinpath("init.lua"), None))
     while True:
-        match = re.search(r"require\('(.*?)'\)\.default", new)
+        match = re.search(r"settings\.(.*?)\.default", new)
         if match is None:
             break
         statement = new[match.start() : match.end()]
-        path = match.group(1).replace(".", "/")
-        file = Path("lua").joinpath(path).with_suffix(".lua")
-        config = indent(get_default(file), "    ").strip()
+        parameter = match.group(1)
+        config = indent(get_default(settings, parameter), "    ").strip()
         new = new.replace(statement, config)
 
     text = readme.read_text().replace(old, new)
@@ -150,7 +152,7 @@ def wrap_setup(root: Path, s: str) -> str:
 
 def update_handlers(root: Path) -> None:
     files: list[Path] = [
-        root.joinpath("config/handlers.lua"),
+        root.joinpath("settings.lua"),
         root.joinpath("lib/marks.lua"),
     ]
     lua_types = {lua_type.name(): lua_type for lua_type in get_lua_types(files)}
@@ -210,15 +212,28 @@ def get_comments(file: Path) -> list[str]:
     return ts_query(file, query, "comment")
 
 
-def get_default(file: Path) -> str:
-    query = """
-    (assignment_statement
-        (variable_list
-            name: (dot_index_expression
-                field: (identifier) @name
-                (#eq? @name "default")))
-        (expression_list value: (table_constructor)) @value)
-    """
+def get_default(file: Path, name: str | None) -> str:
+    if name is None:
+        query = """
+        (assignment_statement
+            (variable_list
+                name: (dot_index_expression
+                    field: (identifier) @name
+                    (#eq? @name "default")))
+            (expression_list value: (table_constructor)) @value)
+        """
+    else:
+        query = f"""
+        (assignment_statement
+            (variable_list
+                name: (dot_index_expression
+                    table: (dot_index_expression
+                        field: (identifier) @name1
+                        (#eq? @name1 "{name}"))
+                    field: (identifier) @name2
+                    (#eq? @name2 "default")))
+            (expression_list value: (table_constructor)) @value)
+        """
     defaults = ts_query(file, query, "value")
     assert len(defaults) == 1
     return defaults[0]
