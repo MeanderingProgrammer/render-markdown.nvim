@@ -1,13 +1,7 @@
 local compat = require('render-markdown.lib.compat')
-
----@class render.md.ts.Config
----@field file_types string[]
----@field restart_highlighter boolean
----@field injections table<string, render.md.injection.Config>
----@field patterns table<string, render.md.pattern.Config>
+local state = require('render-markdown.state')
 
 ---@class render.md.Ts
----@field private config render.md.ts.Config
 local M = {}
 
 ---@private
@@ -19,10 +13,8 @@ M.initialized = false
 M.queries = {}
 
 ---called from state on setup
----@param config render.md.ts.Config
-function M.setup(config)
-    M.config = config
-    for _, language in ipairs(M.config.file_types) do
+function M.setup()
+    for _, language in ipairs(state.file_types) do
         M.inject(language)
     end
 end
@@ -33,10 +25,10 @@ function M.init()
         return
     end
     M.initialized = true
-    for _, language in ipairs(M.config.file_types) do
+    for _, language in ipairs(state.file_types) do
         M.disable(language)
     end
-    if M.config.restart_highlighter then
+    if state.restart_highlighter then
         vim.treesitter.stop()
         vim.treesitter.start()
     end
@@ -57,7 +49,7 @@ end
 ---@private
 ---@param language string
 function M.inject(language)
-    local injection = M.config.injections[language]
+    local injection = state.injections[language]
     if not injection or not injection.enabled then
         return
     end
@@ -80,7 +72,7 @@ end
 ---@private
 ---@param language string
 function M.disable(language)
-    local pattern = M.config.patterns[language]
+    local pattern = state.patterns[language]
     if not pattern or not pattern.disable then
         return
     end

@@ -1,22 +1,13 @@
 local source = require('render-markdown.integ.source')
-
----@class render.md.source.blink.Config
----@field file_types string[]
+local state = require('render-markdown.state')
 
 ---@class render.md.blink.Source: blink.cmp.Source
----@field private config render.md.source.blink.Config
 local Source = {}
 Source.__index = Source
 
 ---@private
 ---@type boolean
 Source.initialized = false
-
----called from state on setup
----@param config render.md.source.blink.Config
-function Source.setup(config)
-    Source.config = config
-end
 
 ---called from manager on buffer attach
 function Source.init()
@@ -33,7 +24,7 @@ function Source.init()
         name = 'RenderMarkdown',
         module = 'render-markdown.integ.blink',
     })
-    for _, file_type in ipairs(Source.config.file_types) do
+    for _, file_type in ipairs(state.file_types) do
         pcall(blink.add_filetype_source, file_type, id)
     end
 end

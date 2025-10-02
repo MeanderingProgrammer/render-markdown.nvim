@@ -1,10 +1,3 @@
-local Callout = require('render-markdown.request.callout')
-local Checkbox = require('render-markdown.request.checkbox')
-local Conceal = require('render-markdown.request.conceal')
-local Latex = require('render-markdown.request.latex')
-local Offset = require('render-markdown.request.offset')
-local Used = require('render-markdown.request.used')
-local View = require('render-markdown.request.view')
 local str = require('render-markdown.lib.str')
 
 ---@class render.md.request.Context
@@ -32,12 +25,13 @@ function Context.new(buf, win, config, view)
     self.win = win
     self.config = config
     self.view = view
-    self.conceal = Conceal.new(buf, win, view)
-    self.callout = Callout.new()
-    self.checkbox = Checkbox.new()
-    self.latex = Latex.new()
-    self.offset = Offset.new()
-    self.used = Used.new()
+    self.conceal =
+        require('render-markdown.request.conceal').new(buf, win, view)
+    self.callout = require('render-markdown.request.callout').new()
+    self.checkbox = require('render-markdown.request.checkbox').new()
+    self.latex = require('render-markdown.request.latex').new()
+    self.offset = require('render-markdown.request.offset').new()
+    self.used = require('render-markdown.request.used').new()
     return self
 end
 
@@ -70,7 +64,7 @@ end
 ---@param config render.md.buf.Config
 ---@return render.md.request.Context?
 function M.new(buf, win, config)
-    local view = View.new(buf)
+    local view = require('render-markdown.request.view').new(buf)
     local context = Context.new(buf, win, config, view)
     M.cache[buf] = context
     return context

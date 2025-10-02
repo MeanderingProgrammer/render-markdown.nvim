@@ -19,18 +19,8 @@ local children = vim.list_extend(vim.tbl_keys(markers), {
 
 local siblings = { 'paragraph' }
 
----@class render.md.source.Config
----@field completions render.md.completions.Config
-
 ---@class render.md.Source
----@field private config render.md.source.Config
 local M = {}
-
----called from state on setup
----@param config render.md.source.Config
-function M.setup(config)
-    M.config = config
-end
 
 ---@return boolean
 function M.enabled()
@@ -68,7 +58,7 @@ function M.items(buf, row, col)
 
     local items = {} ---@type lsp.CompletionItem[]
     local config = state.get(buf)
-    local filter = M.config.completions.filter
+    local filter = state.completions.filter
     local prefix = line:sub(before, before) == ' ' and '' or ' '
     if node.type == 'block_quote' then
         local suffix = ''

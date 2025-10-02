@@ -1,14 +1,11 @@
 local env = require('render-markdown.lib.env')
+local state = require('render-markdown.state')
 
 ---@class render.md.log.Entry
 ---@field date string
 ---@field level string
 ---@field name string
 ---@field message string
-
----@class render.md.log.Config
----@field level render.md.log.Level
----@field runtime boolean
 
 ---@enum (key) render.md.log.Level
 local Level = {
@@ -23,20 +20,13 @@ local Level = {
 ---@class render.md.Log
 ---@field private file string
 ---@field private entries render.md.log.Entry[]
----@field private config render.md.log.Config
 local M = {}
-
----called from state on setup
----@param config render.md.log.Config
-function M.setup(config)
-    -- typically resolves to ~/.local/state/nvim/render-markdown.log
-    M.file = vim.fn.stdpath('state') .. '/render-markdown.log'
-    M.entries = {}
-    M.config = config
-end
 
 ---called from plugin directory
 function M.init()
+    -- typically resolves to ~/.local/state/nvim/render-markdown.log
+    M.file = vim.fn.stdpath('state') .. '/render-markdown.log'
+    M.entries = {}
     -- clear the file contents if it is too big
     if env.file_size_mb(M.file) > 5 then
         assert(io.open(M.file, 'w')):close()
@@ -52,7 +42,7 @@ end
 ---@param callback fun()
 ---@return fun()
 function M.runtime(name, callback)
-    if M.config.runtime then
+    if state.log_runtime then
         return function()
             local compat = require('render-markdown.lib.compat')
             local start_time = compat.uv.hrtime()
@@ -122,7 +112,7 @@ end
 ---@param name string
 ---@param ... any
 function M.add(level, name, ...)
-    if M.level(level) < M.level(M.config.level) then
+    if M.level(level) < M.level(state.log_level) then
         return
     end
     local messages = {} ---@type string[]

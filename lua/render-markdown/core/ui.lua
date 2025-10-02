@@ -1,18 +1,11 @@
 local Context = require('render-markdown.request.context')
-local Decorator = require('render-markdown.lib.decorator')
-local Extmark = require('render-markdown.lib.extmark')
 local compat = require('render-markdown.lib.compat')
 local env = require('render-markdown.lib.env')
-local handlers = require('render-markdown.core.handlers')
 local iter = require('render-markdown.lib.iter')
 local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
 
----@class render.md.ui.Config
----@field on render.md.on.Config
-
 ---@class render.md.Ui
----@field private config render.md.ui.Config
 local M = {}
 
 M.ns = vim.api.nvim_create_namespace('render-markdown.nvim')
@@ -22,9 +15,7 @@ M.ns = vim.api.nvim_create_namespace('render-markdown.nvim')
 M.cache = {}
 
 ---called from state on setup
----@param config render.md.ui.Config
-function M.setup(config)
-    M.config = config
+function M.setup()
     -- clear marks and reset cache
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
         vim.api.nvim_buf_clear_namespace(buf, M.ns, 0, -1)
@@ -37,7 +28,7 @@ end
 function M.get(buf)
     local result = M.cache[buf]
     if not result then
-        result = Decorator.new(buf)
+        result = require('render-markdown.lib.decorator').new(buf)
         M.cache[buf] = result
     end
     return result
@@ -133,7 +124,7 @@ function Updater:clear()
         extmark:hide(M.ns, self.buf)
     end
     vim.api.nvim_buf_clear_namespace(self.buf, M.ns, 0, -1)
-    M.config.on.clear({ buf = self.buf, win = self.win })
+    state.on.clear({ buf = self.buf, win = self.win })
 end
 
 ---@private
@@ -148,7 +139,7 @@ function Updater:render()
             self.decorator:set(extmarks)
             if initial then
                 compat.fix_lsp_window(self.buf, self.win, extmarks)
-                M.config.on.initial({ buf = self.buf, win = self.win })
+                state.on.initial({ buf = self.buf, win = self.win })
             end
             self:display()
         end)
@@ -167,6 +158,8 @@ function Updater:parse(callback)
         if context then
             -- make sure injections are processed
             context.view:parse(parser, function()
+                local Extmark = require('render-markdown.lib.extmark')
+                local handlers = require('render-markdown.core.handlers')
                 local marks = handlers.run(context, parser)
                 callback(iter.list.map(marks, Extmark.new))
             end)
@@ -191,7 +184,7 @@ function Updater:display()
             extmark:show(M.ns, self.buf)
         end
     end
-    M.config.on.render({ buf = self.buf, win = self.win })
+    state.on.render({ buf = self.buf, win = self.win })
 end
 
 ---@private

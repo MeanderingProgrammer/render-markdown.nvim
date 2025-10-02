@@ -4,6 +4,18 @@ local Config = require('render-markdown.lib.config')
 ---@class render.md.State
 ---@field private config render.md.Config
 ---@field enabled boolean
+---@field log_level render.md.log.Level
+---@field log_runtime boolean
+---@field file_types string[]
+---@field ignore fun(buf: integer): boolean
+---@field nested boolean
+---@field change_events string[]
+---@field restart_highlighter boolean
+---@field injections table<string, render.md.injection.Config>
+---@field patterns table<string, render.md.pattern.Config>
+---@field on render.md.on.Config
+---@field completions render.md.completions.Config
+---@field custom_handlers table<string, render.md.Handler>
 local M = {}
 
 ---@private
@@ -15,38 +27,24 @@ M.cache = {}
 function M.setup(config)
     M.config = config
     M.enabled = config.enabled
-    require('render-markdown.core.handlers').setup({
-        nested = config.nested,
-        custom = config.custom_handlers,
-    })
-    require('render-markdown.core.log').setup({
-        level = config.log_level,
-        runtime = config.log_runtime,
-    })
-    require('render-markdown.core.manager').setup({
-        file_types = config.file_types,
-        ignore = config.ignore,
-        change_events = config.change_events,
-        on = config.on,
-        completions = config.completions,
-    })
-    require('render-markdown.core.ts').setup({
-        file_types = config.file_types,
-        restart_highlighter = config.restart_highlighter,
-        injections = config.injections,
-        patterns = config.patterns,
-    })
-    require('render-markdown.core.ui').setup({
-        on = config.on,
-    })
-    require('render-markdown.integ.blink').setup({
-        file_types = config.file_types,
-    })
-    require('render-markdown.integ.source').setup({
-        completions = config.completions,
-    })
+    M.log_level = config.log_level
+    M.log_runtime = config.log_runtime
+    M.file_types = config.file_types
+    M.ignore = config.ignore
+    M.nested = config.nested
+    M.change_events = config.change_events
+    M.restart_highlighter = config.restart_highlighter
+    M.injections = config.injections
+    M.patterns = config.patterns
+    M.on = config.on
+    M.completions = config.completions
+    M.custom_handlers = config.custom_handlers
+
     -- reset cache
     M.cache = {}
+
+    require('render-markdown.core.ts').setup()
+    require('render-markdown.core.ui').setup()
 end
 
 ---@param buf integer

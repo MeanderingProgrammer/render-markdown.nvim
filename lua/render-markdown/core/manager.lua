@@ -3,15 +3,7 @@ local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
 local ui = require('render-markdown.core.ui')
 
----@class render.md.manager.Config
----@field file_types string[]
----@field ignore fun(buf: integer): boolean
----@field change_events string[]
----@field on render.md.on.Config
----@field completions render.md.completions.Config
-
 ---@class render.md.Manager
----@field private config render.md.manager.Config
 local M = {}
 
 ---@private
@@ -20,12 +12,6 @@ M.group = vim.api.nvim_create_augroup('RenderMarkdown', {})
 ---@private
 ---@type integer[]
 M.buffers = {}
-
----called from state on setup
----@param config render.md.manager.Config
-function M.setup(config)
-    M.config = config
-end
 
 ---called from plugin directory
 function M.init()
@@ -99,13 +85,13 @@ function M.attach(buf)
     end
 
     local config = state.get(buf)
-    M.config.on.attach({ buf = buf })
+    state.on.attach({ buf = buf })
     require('render-markdown.core.ts').init()
-    if M.config.completions.lsp.enabled then
+    if state.completions.lsp.enabled then
         require('render-markdown.integ.lsp').init()
-    elseif M.config.completions.blink.enabled then
+    elseif state.completions.blink.enabled then
         require('render-markdown.integ.blink').init()
-    elseif M.config.completions.coq.enabled then
+    elseif state.completions.coq.enabled then
         require('render-markdown.integ.coq').init()
     else
         require('render-markdown.integ.cmp').init()
@@ -127,7 +113,7 @@ function M.attach(buf)
         events[#events + 1] = 'CursorMovedI'
         events[#events + 1] = 'TextChangedI'
     end
-    local force = M.config.change_events
+    local force = state.change_events
     for _, event in ipairs(force) do
         if not vim.tbl_contains(events, event) then
             events[#events + 1] = event
@@ -173,7 +159,7 @@ function M.should_attach(buf)
     end
 
     local file_type = env.buf.get(buf, 'filetype')
-    local file_types = M.config.file_types
+    local file_types = state.file_types
     if not vim.tbl_contains(file_types, file_type) then
         local reason = ('%s /∈ %s'):format(file_type, vim.inspect(file_types))
         log.attach(buf, 'skip', 'file type', reason)
@@ -188,7 +174,7 @@ function M.should_attach(buf)
         return false
     end
 
-    if M.config.ignore(buf) then
+    if state.ignore(buf) then
         log.attach(buf, 'skip', 'user ignore')
         return false
     end

@@ -1,12 +1,8 @@
 local iter = require('render-markdown.lib.iter')
 local log = require('render-markdown.core.log')
-
----@class render.md.handlers.Config
----@field nested boolean
----@field custom table<string, render.md.Handler>
+local state = require('render-markdown.state')
 
 ---@class render.md.Handlers
----@field private config render.md.handlers.Config
 local M = {}
 
 ---@private
@@ -19,12 +15,6 @@ M.builtin = {
     yaml = require('render-markdown.handler.yaml'),
 }
 
----called from state on setup
----@param config render.md.handlers.Config
-function M.setup(config)
-    M.config = config
-end
-
 ---@param context render.md.request.Context
 ---@param parser vim.treesitter.LanguageTree
 ---@return render.md.Mark[]
@@ -34,8 +24,8 @@ function M.run(context, parser)
         local root = tree:root()
         local language = language_tree:lang()
         if
-            (M.config.custom[language] or M.builtin[language])
-            and (M.config.nested or M.level(language_tree) == 1)
+            (state.custom_handlers[language] or M.builtin[language])
+            and (state.nested or M.level(language_tree) == 1)
             and context.view:overlaps(root)
         then
             local roots = language_roots[language]
@@ -90,7 +80,7 @@ end
 ---@param ctx render.md.handler.Context
 function M.tree(marks, language, ctx)
     log.buf('trace', 'Language', ctx.buf, language)
-    local custom = M.config.custom[language]
+    local custom = state.custom_handlers[language]
     if custom then
         log.buf('trace', 'Handler', ctx.buf, 'custom')
         vim.list_extend(marks, custom.parse(ctx))
