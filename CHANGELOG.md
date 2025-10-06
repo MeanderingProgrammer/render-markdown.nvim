@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 8.9.0 (2025-10-06)
+
 ### Features
 
 - remove delimiters around latex text before converting [2c6cf12](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/2c6cf127c577712bd29d38f6391b3045c5f0180a)
@@ -9,6 +11,10 @@
 - combine latex virtual lines use center positioning [#520](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/520)
   [9a746ff](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/9a746ff62a482f5eb722b3bfc7eefb2e9d638858)
 - latex converter can now be a list, prefer utftex, fallback to latex2text [5f437a2](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/5f437a26a8a8b964eff683dd6f68bc2a0d38c5db)
+- scope highlight for html tags [#528](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/528)
+  [9ab9dad](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/9ab9dade85d8c7d411cc89b592028da3d1b7955a)
+- improve startup time performance [06c7598](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/06c7598471911742e8816617a2afb9b2f29a808d)
+  [7e6af36](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7e6af36c846017122e07e68803bbf95f3c729ca3)
 
 ### Bug Fixes
 
