@@ -58,6 +58,7 @@
 ---@field right_pad? render.md.bullet.Integer
 ---@field highlight? render.md.bullet.String
 ---@field scope_highlight? render.md.bullet.String
+---@field scope_priority? integer
 
 ---@alias render.md.callout.UserConfigs table<string, render.md.callout.UserConfig>
 
@@ -75,6 +76,7 @@
 ---@field unchecked? render.md.checkbox.component.UserConfig
 ---@field checked? render.md.checkbox.component.UserConfig
 ---@field custom? table<string, render.md.checkbox.custom.UserConfig>
+---@field scope_priority? integer
 
 ---@class (exact) render.md.checkbox.component.UserConfig
 ---@field icon? string

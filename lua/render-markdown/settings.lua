@@ -118,6 +118,7 @@ M.bullet = {}
 ---@field right_pad render.md.bullet.Integer
 ---@field highlight render.md.bullet.String
 ---@field scope_highlight render.md.bullet.String
+---@field scope_priority? integer
 
 ---@class (exact) render.md.bullet.Context
 ---@field level integer
@@ -174,6 +175,8 @@ M.bullet.default = {
     -- Highlight for item associated with the bullet point.
     -- Output is evaluated using the same logic as 'icons'.
     scope_highlight = {},
+    -- Priority to assign to scope highlight.
+    scope_priority = nil,
 }
 
 ---@return render.md.Schema
@@ -198,6 +201,7 @@ function M.bullet.schema()
         right_pad = integer_provider,
         highlight = string_provider,
         scope_highlight = string_provider,
+        scope_priority = { optional = true, type = 'number' },
     })
 end
 
@@ -280,6 +284,7 @@ M.checkbox = {}
 ---@field unchecked render.md.checkbox.component.Config
 ---@field checked render.md.checkbox.component.Config
 ---@field custom table<string, render.md.checkbox.custom.Config>
+---@field scope_priority? integer
 
 ---@class (exact) render.md.checkbox.component.Config
 ---@field icon string
@@ -334,6 +339,8 @@ M.checkbox.default = {
     custom = {
         todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownTodo', scope_highlight = nil },
     },
+    -- Priority to assign to scope highlight.
+    scope_priority = nil,
 }
 
 ---@return render.md.Schema
@@ -362,6 +369,7 @@ function M.checkbox.schema()
         unchecked = component,
         checked = component,
         custom = { map = { { type = 'string' }, custom } },
+        scope_priority = { optional = true, type = 'number' },
     })
 end
 

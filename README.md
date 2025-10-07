@@ -583,6 +583,8 @@ require('render-markdown').setup({
         -- Highlight for item associated with the bullet point.
         -- Output is evaluated using the same logic as 'icons'.
         scope_highlight = {},
+        -- Priority to assign to scope highlight.
+        scope_priority = nil,
     },
     checkbox = {
         -- Checkboxes are a special instance of a 'list_item' that start with a 'shortcut_link'.
@@ -625,6 +627,8 @@ require('render-markdown').setup({
         custom = {
             todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownTodo', scope_highlight = nil },
         },
+        -- Priority to assign to scope highlight.
+        scope_priority = nil,
     },
     quote = {
         -- Turn on / off block quote & callout rendering.
@@ -1244,6 +1248,8 @@ require('render-markdown').setup({
         -- Highlight for item associated with the bullet point.
         -- Output is evaluated using the same logic as 'icons'.
         scope_highlight = {},
+        -- Priority to assign to scope highlight.
+        scope_priority = nil,
     },
 })
 ```
@@ -1301,6 +1307,8 @@ require('render-markdown').setup({
         custom = {
             todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownTodo', scope_highlight = nil },
         },
+        -- Priority to assign to scope highlight.
+        scope_priority = nil,
     },
 })
 ```

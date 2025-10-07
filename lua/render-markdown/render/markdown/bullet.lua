@@ -161,6 +161,7 @@ function Render:scope()
         return
     end
     self.marks:over(self.config, true, self.node:scope(), {
+        priority = self.config.scope_priority,
         hl_group = highlight,
     })
 end
