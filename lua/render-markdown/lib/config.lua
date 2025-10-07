@@ -56,7 +56,7 @@ end
 
 ---@return render.md.Line
 function Config:line()
-    return Line.new(self)
+    return Line.new(self.padding.highlight)
 end
 
 ---@param destination string

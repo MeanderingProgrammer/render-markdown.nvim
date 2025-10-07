@@ -70,6 +70,7 @@
 
 ---@class (exact) render.md.checkbox.UserConfig: render.md.base.UserConfig
 ---@field bullet? boolean
+---@field left_pad? number
 ---@field right_pad? integer
 ---@field unchecked? render.md.checkbox.component.UserConfig
 ---@field checked? render.md.checkbox.component.UserConfig

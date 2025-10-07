@@ -1,3 +1,4 @@
+local interval = require('render-markdown.lib.interval')
 local str = require('render-markdown.lib.str')
 
 ---@class render.md.Line
@@ -6,11 +7,11 @@ local str = require('render-markdown.lib.str')
 local Line = {}
 Line.__index = Line
 
----@param config render.md.buf.Config
+---@param highlight string
 ---@return render.md.Line
-function Line.new(config)
+function Line.new(highlight)
     local self = setmetatable({}, Line)
-    self.highlight = config.padding.highlight
+    self.highlight = highlight
     self.line = {}
     return self
 end
@@ -39,9 +40,24 @@ end
 
 ---@return render.md.Line
 function Line:copy()
-    local result = setmetatable({}, Line)
-    result.highlight = self.highlight
-    result.line = vim.list_extend({}, self.line)
+    return Line.new(self.highlight):extend(self)
+end
+
+---@param i integer 1-based inclusive
+---@param j integer 1-based inclusive
+---@return render.md.Line
+function Line:sub(i, j)
+    local result = Line.new(self.highlight)
+    local position = 0
+    for _, text in ipairs(self.line) do
+        local length = str.width(text[1])
+        local range = { i - position, j - position } ---@type render.md.Range
+        local overlap = interval.overlap({ 1, length }, range)
+        if overlap then
+            result:add(str.sub(text[1], overlap[1], overlap[2]), text[2])
+        end
+        position = position + length
+    end
     return result
 end
 

@@ -79,49 +79,40 @@ end
 
 ---@private
 function Render:checkbox()
+    -- add 1 to end to account for space after checkbox
     local node = self.data.checkbox
-    local right = self.config.right_pad
-
-    -- add 1 to account for space after checkbox
+    local row = node.start_row
+    local start_col = node.start_col
+    local end_col = node.end_col + 1
     local width = self.context:width(node) + 1
-    local space = width - str.width(self.data.icon)
 
-    local line = self:line():text(self.data.icon, self.data.highlight)
-    if space < 0 then
-        -- not enough space to fit the icon in-place
-        self.marks:over(self.config, 'check_icon', node, {
-            virt_text = line:pad(right):get(),
-            virt_text_pos = 'inline',
-            conceal = '',
-        }, { 0, 0, 0, 1 })
-    else
-        local fits = math.min(space, right) ---@type integer
-        space = space - fits
-        right = right - fits
+    local line = self:line()
+        :pad(self.config.left_pad)
+        :text(self.data.icon, self.data.highlight)
+        :pad(self.config.right_pad)
 
-        local row = node.start_row
-        local start_col = node.start_col
-        local end_col = node.end_col + 1
-
+    local overlay = line:sub(1, width)
+    if not overlay:empty() then
         self.marks:add(self.config, 'check_icon', row, start_col, {
-            end_col = end_col - space,
-            virt_text = line:pad(fits):get(),
+            virt_text = overlay:get(),
             virt_text_pos = 'overlay',
         })
-        if space > 0 then
-            -- remove extra space after the icon
-            self.marks:add(self.config, 'check_icon', row, end_col - space, {
-                end_col = end_col,
-                conceal = '',
-            })
-        end
-        if right > 0 then
-            -- add padding
-            self.marks:add(self.config, 'check_icon', row, end_col, {
-                virt_text = self:line():pad(right):get(),
-                virt_text_pos = 'inline',
-            })
-        end
+    end
+
+    local inline = line:sub(width + 1, line:width())
+    if not inline:empty() then
+        self.marks:add(self.config, 'check_icon', row, end_col, {
+            virt_text = inline:get(),
+            virt_text_pos = 'inline',
+        })
+    end
+
+    local space = width - overlay:width()
+    if space > 0 then
+        self.marks:add(self.config, 'check_icon', row, end_col - space, {
+            end_col = end_col,
+            conceal = '',
+        })
     end
 end
 

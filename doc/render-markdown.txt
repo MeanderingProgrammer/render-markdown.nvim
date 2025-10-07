@@ -1,4 +1,4 @@
-*render-markdown.txt*       For NVIM v0.11.4      Last change: 2025 October 06
+*render-markdown.txt*       For NVIM v0.11.4      Last change: 2025 October 07
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -656,6 +656,8 @@ Default Configuration ~
             render_modes = false,
             -- Render the bullet point before the checkbox.
             bullet = false,
+            -- Padding to add to the left of checkboxes.
+            left_pad = 0,
             -- Padding to add to the right of checkboxes.
             right_pad = 1,
             unchecked = {
@@ -1318,6 +1320,8 @@ Checkbox Configuration ~
             render_modes = false,
             -- Render the bullet point before the checkbox.
             bullet = false,
+            -- Padding to add to the left of checkboxes.
+            left_pad = 0,
             -- Padding to add to the right of checkboxes.
             right_pad = 1,
             unchecked = {

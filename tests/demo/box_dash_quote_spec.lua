@@ -13,19 +13,19 @@ describe('demo/box_dash_quote.md', function()
         marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(1))
 
         marks:add(row:get(1, 0), { 0, 2 }, util.conceal())
-        marks:add(row:get(0, 0), { 2, 5 }, {
+        marks:add(row:get(0), 2, {
             virt_text = { { '󰄱 ', 'RmUnchecked' }, { ' ', 'Normal' } },
             virt_text_pos = 'overlay',
         })
         marks:add(row:get(0, 0), { 5, 6 }, util.conceal())
         marks:add(row:get(1, 0), { 0, 2 }, util.conceal())
-        marks:add(row:get(0, 0), { 2, 5 }, {
+        marks:add(row:get(0), 2, {
             virt_text = { { '󰱒 ', 'RmChecked' }, { ' ', 'Normal' } },
             virt_text_pos = 'overlay',
         })
         marks:add(row:get(0, 0), { 5, 6 }, util.conceal())
         marks:add(row:get(1, 0), { 0, 2 }, util.conceal())
-        marks:add(row:get(0, 0), { 2, 6 }, {
+        marks:add(row:get(0), 2, {
             virt_text = { { '󰥔 ', 'RmTodo' } },
             virt_text_pos = 'overlay',
         })

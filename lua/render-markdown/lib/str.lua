@@ -9,6 +9,17 @@ function M.split(s, sep, trimempty)
     return vim.split(s, sep, { plain = true, trimempty = trimempty })
 end
 
+---@param s string
+---@param i integer 1-based inclusive
+---@param j integer 1-based inclusive
+---@return string
+function M.sub(s, i, j)
+    local bytes = vim.str_utf_pos(s)
+    local start_byte = bytes[i]
+    local end_byte = j < #bytes and bytes[j + 1] - 1 or #s
+    return s:sub(start_byte, end_byte)
+end
+
 ---number of hashtags at the start of the string
 ---@param s string
 ---@return integer

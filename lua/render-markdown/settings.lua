@@ -275,6 +275,7 @@ M.checkbox = {}
 
 ---@class (exact) render.md.checkbox.Config: render.md.base.Config
 ---@field bullet boolean
+---@field left_pad number
 ---@field right_pad integer
 ---@field unchecked render.md.checkbox.component.Config
 ---@field checked render.md.checkbox.component.Config
@@ -302,6 +303,8 @@ M.checkbox.default = {
     render_modes = false,
     -- Render the bullet point before the checkbox.
     bullet = false,
+    -- Padding to add to the left of checkboxes.
+    left_pad = 0,
     -- Padding to add to the right of checkboxes.
     right_pad = 1,
     unchecked = {
@@ -354,6 +357,7 @@ function M.checkbox.schema()
     }
     return M.base.schema({
         bullet = { type = 'boolean' },
+        left_pad = { type = 'number' },
         right_pad = { type = 'number' },
         unchecked = component,
         checked = component,
