@@ -111,18 +111,18 @@ describe('ad hoc', function()
         })
         local marks = util.marks()
         marks:add({ 0, 0 }, { 14, 23 }, {
-            virt_text = { { '¹ ᴵⁿᶠᵒ', 'RmLink' } },
+            virt_text = { { '󰯔 ¹ ᴵⁿᶠᵒ', 'RmLink' } },
             virt_text_pos = 'inline',
             conceal = '',
         })
         marks:add({ 1, 1 }, { 0, 9 }, {
-            virt_text = { { '¹ ᴵⁿᶠᵒ', 'RmLink' } },
+            virt_text = { { '󰯔 ¹ ᴵⁿᶠᵒ', 'RmLink' } },
             virt_text_pos = 'inline',
             conceal = '',
         })
         util.assert_view(marks, {
-            'Footnote Link ¹ ᴵⁿᶠᵒ',
-            '¹ ᴵⁿᶠᵒ: Some Info',
+            'Footnote Link 󰯔 ¹ ᴵⁿᶠᵒ',
+            '󰯔 ¹ ᴵⁿᶠᵒ: Some Info',
         })
     end)
 

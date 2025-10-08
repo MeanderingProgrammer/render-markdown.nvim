@@ -1174,6 +1174,7 @@ M.link = {}
 
 ---@class (exact) render.md.link.footnote.Config
 ---@field enabled boolean
+---@field icon string
 ---@field superscript boolean
 ---@field prefix string
 ---@field suffix string
@@ -1207,6 +1208,8 @@ M.link.default = {
     footnote = {
         -- Turn on / off footnote rendering.
         enabled = true,
+        -- Inlined with content.
+        icon = '󰯔 ',
         -- Replace value with superscript equivalent.
         superscript = true,
         -- Added before link content.
@@ -1272,6 +1275,7 @@ function M.link.schema()
         footnote = {
             record = {
                 enabled = { type = 'boolean' },
+                icon = { type = 'string' },
                 superscript = { type = 'boolean' },
                 prefix = { type = 'string' },
                 suffix = { type = 'string' },

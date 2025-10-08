@@ -32,8 +32,7 @@ end
 ---@protected
 function Render:run()
     local _, line = self.node:line('first', 0)
-    local wiki_pattern = '[' .. self.node.text .. ']'
-    if line and line:find(wiki_pattern, 1, true) then
+    if line and line:find('[' .. self.node.text .. ']', 1, true) then
         Wiki:execute(self.context, self.marks, self.node)
         return
     end
@@ -48,19 +47,19 @@ end
 ---@param text string
 function Render:footnote(text)
     local config = self.config.footnote
+    local highlight = self.config.highlight
     if not config.enabled then
         return
     end
-    local body = config.prefix .. text .. config.suffix
-    local value = body ---@type string?
+    local body = config.prefix .. text .. config.suffix ---@type string?
     if config.superscript then
-        value = converter.superscript(body)
+        body = body and converter.superscript(body)
     end
-    if not value then
+    if not body then
         return
     end
     self.marks:over(self.config, 'link', self.node, {
-        virt_text = { { value, self.config.highlight } },
+        virt_text = { { config.icon .. body, highlight } },
         virt_text_pos = 'inline',
         conceal = '',
     })

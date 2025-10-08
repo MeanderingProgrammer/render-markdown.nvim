@@ -757,6 +757,8 @@ require('render-markdown').setup({
         footnote = {
             -- Turn on / off footnote rendering.
             enabled = true,
+            -- Inlined with content.
+            icon = '󰯔 ',
             -- Replace value with superscript equivalent.
             superscript = true,
             -- Added before link content.
@@ -1497,6 +1499,8 @@ require('render-markdown').setup({
         footnote = {
             -- Turn on / off footnote rendering.
             enabled = true,
+            -- Inlined with content.
+            icon = '󰯔 ',
             -- Replace value with superscript equivalent.
             superscript = true,
             -- Added before link content.

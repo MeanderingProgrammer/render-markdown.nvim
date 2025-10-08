@@ -213,6 +213,7 @@
 
 ---@class (exact) render.md.link.footnote.UserConfig
 ---@field enabled? boolean
+---@field icon? string
 ---@field superscript? boolean
 ---@field prefix? string
 ---@field suffix? string
