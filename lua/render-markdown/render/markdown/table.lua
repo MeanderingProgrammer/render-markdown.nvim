@@ -56,14 +56,18 @@ function Render:setup()
     -- ensure delimiter and rows exist
     local delim_node = nil ---@type render.md.Node?
     local row_nodes = {} ---@type render.md.Node[]
+    local types = {
+        delim = 'pipe_table_delimiter_row',
+        row = { 'pipe_table_header', 'pipe_table_row' },
+        skip = { 'block_continuation' },
+    }
     self.node:for_each_child(function(node)
-        if node.type == 'pipe_table_delimiter_row' then
+        if node.type == types.delim then
             delim_node = node
         elseif self.context.view:overlaps(node:get()) then
-            local row_types = { 'pipe_table_header', 'pipe_table_row' }
-            if vim.tbl_contains(row_types, node.type) then
+            if vim.tbl_contains(types.row, node.type) then
                 row_nodes[#row_nodes + 1] = node
-            else
+            elseif not vim.tbl_contains(types.skip, node.type) then
                 log.unhandled(self.context.buf, 'markdown', 'row', node.type)
             end
         end
@@ -145,13 +149,13 @@ end
 ---@param node render.md.Node
 ---@return render.md.table.Alignment
 function Render.alignment(node)
-    local has_left = node:child('pipe_table_align_left') ~= nil
-    local has_right = node:child('pipe_table_align_right') ~= nil
-    if has_left and has_right then
+    local left = node:child('pipe_table_align_left')
+    local right = node:child('pipe_table_align_right')
+    if left and right then
         return Alignment.center
-    elseif has_left then
+    elseif left then
         return Alignment.left
-    elseif has_right then
+    elseif right then
         return Alignment.right
     else
         return Alignment.default

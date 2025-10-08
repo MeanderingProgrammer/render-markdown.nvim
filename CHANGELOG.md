@@ -2,6 +2,13 @@
 
 ## Pre-release
 
+### Features
+
+- add footnote icon [ceff151](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/ceff15170c173c9a62ba491ac6449858cbadadf3)
+- configurable scope priority [#534](https://github.com/MeanderingProgrammer/render-markdown.nvim/discussions/534)
+  [e174f52](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/e174f524cd4f07789ef8083fa0e1c3573e7fe328)
+- left padding for checkboxes [da260dd](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/da260dd4979d130f0dfc63e824c9cb2433cfded2)
+
 ## 8.9.0 (2025-10-06)
 
 ### Features
