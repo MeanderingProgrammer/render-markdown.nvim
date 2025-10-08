@@ -150,89 +150,90 @@ function Handler:render(row, nodes)
 
     for _, node in ipairs(nodes) do
         local output = str.split(Handler.cache[Handler.text(node)], '\n', true)
+        if #output > 0 then
+            -- add top and bottom padding around output
+            for _ = 1, self.config.top_pad do
+                table.insert(output, 1, '')
+            end
+            for _ = 1, self.config.bottom_pad do
+                output[#output + 1] = ''
+            end
 
-        -- add top and bottom padding around output
-        for _ = 1, self.config.top_pad do
-            table.insert(output, 1, '')
-        end
-        for _ = 1, self.config.bottom_pad do
-            output[#output + 1] = ''
-        end
+            -- pad lines to the same width
+            local width = vim.fn.max(iter.list.map(output, str.width))
+            for i, line in ipairs(output) do
+                output[i] = line .. str.pad(width - str.width(line))
+            end
 
-        -- pad lines to the same width
-        local width = vim.fn.max(iter.list.map(output, str.width))
-        for i, line in ipairs(output) do
-            output[i] = line .. str.pad(width - str.width(line))
-        end
+            -- center is only possible if formula is a single line
+            local position = self.config.position
+            if position == 'center' and node:height() > 1 then
+                position = 'above'
+            end
 
-        -- center is only possible if formula is a single line
-        local position = self.config.position
-        if position == 'center' and node:height() > 1 then
-            position = 'above'
-        end
+            -- absolute formula column
+            local col ---@type integer
+            if position == 'below' and node:height() > 1 then
+                -- latex blocks include last line, unlike markdown blocks
+                local _, line = node:line('below', 1)
+                col = line and str.spaces('start', line) or 0
+            else
+                local _, line = node:line('above', 0)
+                col = self.context:width({
+                    text = line and line:sub(1, node.start_col) or '',
+                    start_row = node.start_row,
+                    start_col = 0,
+                    end_row = node.start_row,
+                    end_col = node.start_col,
+                })
+            end
 
-        -- absolute formula column
-        local col ---@type integer
-        if position == 'below' and node:height() > 1 then
-            -- latex blocks include last line, unlike markdown blocks
-            local _, line = node:line('below', 1)
-            col = line and str.spaces('start', line) or 0
-        else
-            local _, line = node:line('above', 0)
-            col = self.context:width({
-                text = line and line:sub(1, node.start_col) or '',
-                start_row = node.start_row,
-                start_col = 0,
-                end_row = node.start_row,
-                end_col = node.start_col,
-            })
-        end
+            -- convert column to relative offset, include padding between formulas
+            local prefix = math.max(col - current, current == 0 and 0 or 1)
 
-        -- convert column to relative offset, include padding between formulas
-        local prefix = math.max(col - current, current == 0 and 0 or 1)
+            local above ---@type integer
+            local below ---@type integer
+            if position == 'above' then
+                above = #output
+                below = 0
+            elseif position == 'below' then
+                above = 0
+                below = #output
+            else
+                assert(node:height() == 1, 'invalid center height')
+                local center = math.floor(#output / 2) + 1
+                above = center - 1
+                below = #output - center
+                self.marks:over(self.config, true, node, {
+                    virt_text = { { output[center], self.config.highlight } },
+                    virt_text_pos = 'inline',
+                    conceal = '',
+                })
+            end
 
-        local above ---@type integer
-        local below ---@type integer
-        if position == 'above' then
-            above = #output
-            below = 0
-        elseif position == 'below' then
-            above = 0
-            below = #output
-        else
-            assert(node:height() == 1, 'invalid center height')
-            local center = math.floor(#output / 2) + 1
-            above = center - 1
-            below = #output - center
-            self.marks:over(self.config, true, node, {
-                virt_text = { { output[center], self.config.highlight } },
-                virt_text_pos = 'inline',
-                conceal = '',
-            })
-        end
+            -- fill in new lines at top and bottom
+            while #lines_above < above do
+                table.insert(lines_above, 1, str.pad(current))
+            end
+            while #lines_below < below do
+                lines_below[#lines_below + 1] = str.pad(current)
+            end
 
-        -- fill in new lines at top and bottom
-        while #lines_above < above do
-            table.insert(lines_above, 1, str.pad(current))
-        end
-        while #lines_below < below do
-            lines_below[#lines_below + 1] = str.pad(current)
-        end
+            -- concatenate output onto lines
+            for i, line in ipairs(lines_above) do
+                local index = i - (#lines_above - above)
+                local body = output[index] or str.pad(width)
+                lines_above[i] = line .. str.pad(prefix) .. body
+            end
+            for i, line in ipairs(lines_below) do
+                local index = i + (#output - below)
+                local body = output[index] or str.pad(width)
+                lines_below[i] = line .. str.pad(prefix) .. body
+            end
 
-        -- concatenate output onto lines
-        for i, line in ipairs(lines_above) do
-            local index = i - (#lines_above - above)
-            local body = output[index] or str.pad(width)
-            lines_above[i] = line .. str.pad(prefix) .. body
+            -- update current width of lines
+            current = current + prefix + width
         end
-        for i, line in ipairs(lines_below) do
-            local index = i + (#output - below)
-            local body = output[index] or str.pad(width)
-            lines_below[i] = line .. str.pad(prefix) .. body
-        end
-
-        -- update current width of lines
-        current = current + prefix + width
     end
 
     ---@param lines string[]
