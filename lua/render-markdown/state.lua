@@ -1,6 +1,5 @@
 local Config = require('render-markdown.lib.config')
 
----Used by LazyVim: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/extras/lang/markdown.lua
 ---@class render.md.State
 ---@field private config render.md.Config
 ---@field enabled boolean

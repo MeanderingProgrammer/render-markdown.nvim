@@ -9,6 +9,11 @@
   [e174f52](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/e174f524cd4f07789ef8083fa0e1c3573e7fe328)
 - left padding for checkboxes [da260dd](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/da260dd4979d130f0dfc63e824c9cb2433cfded2)
 
+### Bug Fixes
+
+- ignore empty output from latex converter [#535](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/535)
+  [2064980](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/2064980580af7f00385859b6344c6a4737383257)
+
 ## 8.9.0 (2025-10-06)
 
 ### Features

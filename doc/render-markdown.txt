@@ -1,4 +1,4 @@
-*render-markdown.txt*       For NVIM v0.11.4      Last change: 2025 October 08
+*render-markdown.txt*       For NVIM v0.11.4      Last change: 2025 October 09
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -10,6 +10,7 @@ Table of Contents                          *render-markdown-table-of-contents*
   - lazy.nvim                              |render-markdown-install-lazy.nvim|
   - rocks.nvim                            |render-markdown-install-rocks.nvim|
   - packer.nvim                          |render-markdown-install-packer.nvim|
+  - vim.pack                                |render-markdown-install-vim.pack|
 5. Commands                                         |render-markdown-commands|
 6. Completions                                   |render-markdown-completions|
   - in-process lsp                |render-markdown-completions-in-process-lsp|
@@ -102,8 +103,8 @@ LAZY.NVIM                                  *render-markdown-install-lazy.nvim*
 >lua
     {
         'MeanderingProgrammer/render-markdown.nvim',
-        dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' }, -- if you use the mini.nvim suite
-        -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.icons' }, -- if you use standalone mini plugins
+        dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' },            -- if you use the mini.nvim suite
+        -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.icons' },        -- if you use standalone mini plugins
         -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
         ---@module 'render-markdown'
         ---@type render.md.UserConfig
@@ -128,13 +129,27 @@ PACKER.NVIM                              *render-markdown-install-packer.nvim*
     use({
         'MeanderingProgrammer/render-markdown.nvim',
         after = { 'nvim-treesitter' },
-        requires = { 'nvim-mini/mini.nvim', opt = true }, -- if you use the mini.nvim suite
-        -- requires = { 'nvim-mini/mini.icons', opt = true }, -- if you use standalone mini plugins
+        requires = { 'nvim-mini/mini.nvim', opt = true },            -- if you use the mini.nvim suite
+        -- requires = { 'nvim-mini/mini.icons', opt = true },        -- if you use standalone mini plugins
         -- requires = { 'nvim-tree/nvim-web-devicons', opt = true }, -- if you prefer nvim-web-devicons
         config = function()
             require('render-markdown').setup({})
         end,
     })
+<
+
+
+VIM.PACK                                    *render-markdown-install-vim.pack*
+
+>lua
+    vim.pack.add({
+        'https://github.com/nvim-treesitter/nvim-treesitter',
+        'https://github.com/nvim-mini/mini.nvim',            -- if you use the mini.nvim suite
+        -- 'https://github.com/nvim-mini/mini.icons',        -- if you use standalone mini plugins
+        -- 'https://github.com/nvim-tree/nvim-web-devicons', -- if you prefer nvim-web-devicons
+        'https://github.com/MeanderingProgrammer/render-markdown.nvim',
+    })
+    require('render-markdown').setup({}) -- only mandatory if you want to set custom options
 <
 
 

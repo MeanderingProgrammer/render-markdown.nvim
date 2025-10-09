@@ -73,8 +73,8 @@ Plugin to improve viewing Markdown files in Neovim
 ```lua
 {
     'MeanderingProgrammer/render-markdown.nvim',
-    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' }, -- if you use the mini.nvim suite
-    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.icons' }, -- if you use standalone mini plugins
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' },            -- if you use the mini.nvim suite
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.icons' },        -- if you use standalone mini plugins
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
     ---@module 'render-markdown'
     ---@type render.md.UserConfig
@@ -96,13 +96,26 @@ This plugin is available on [LuaRocks](https://luarocks.org/modules/MeanderingPr
 use({
     'MeanderingProgrammer/render-markdown.nvim',
     after = { 'nvim-treesitter' },
-    requires = { 'nvim-mini/mini.nvim', opt = true }, -- if you use the mini.nvim suite
-    -- requires = { 'nvim-mini/mini.icons', opt = true }, -- if you use standalone mini plugins
+    requires = { 'nvim-mini/mini.nvim', opt = true },            -- if you use the mini.nvim suite
+    -- requires = { 'nvim-mini/mini.icons', opt = true },        -- if you use standalone mini plugins
     -- requires = { 'nvim-tree/nvim-web-devicons', opt = true }, -- if you prefer nvim-web-devicons
     config = function()
         require('render-markdown').setup({})
     end,
 })
+```
+
+## vim.pack
+
+```lua
+vim.pack.add({
+    'https://github.com/nvim-treesitter/nvim-treesitter',
+    'https://github.com/nvim-mini/mini.nvim',            -- if you use the mini.nvim suite
+    -- 'https://github.com/nvim-mini/mini.icons',        -- if you use standalone mini plugins
+    -- 'https://github.com/nvim-tree/nvim-web-devicons', -- if you prefer nvim-web-devicons
+    'https://github.com/MeanderingProgrammer/render-markdown.nvim',
+})
+require('render-markdown').setup({}) -- only mandatory if you want to set custom options
 ```
 
 # Commands
