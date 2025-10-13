@@ -1,4 +1,4 @@
-*render-markdown.txt*       For NVIM v0.11.4      Last change: 2025 October 09
+*render-markdown.txt*       For NVIM v0.11.4      Last change: 2025 October 13
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -589,6 +589,9 @@ Default Configuration ~
             style = 'full',
         },
         dash = {
+            -- Useful context to have when evaluating values.
+            -- | width | width of the current window |
+    
             -- Turn on / off thematic break rendering.
             enabled = true,
             -- Additional modes to render dash.
@@ -597,9 +600,11 @@ Default Configuration ~
             -- The icon gets repeated across the window's width.
             icon = '─',
             -- Width of the generated line.
-            -- | <number> | a hard coded width value |
-            -- | full     | full width of the window |
             -- If a float < 1 is provided it is treated as a percentage of available window space.
+            -- Output is evaluated depending on the type.
+            -- | function | `value(context)`    |
+            -- | number   | `value`             |
+            -- | full     | width of the window |
             width = 'full',
             -- Amount of margin to add to the left of dash.
             -- If a float < 1 is provided it is treated as a percentage of available window space.
@@ -1247,6 +1252,9 @@ Dashed Line Configuration ~
 >lua
     require('render-markdown').setup({
         dash = {
+            -- Useful context to have when evaluating values.
+            -- | width | width of the current window |
+    
             -- Turn on / off thematic break rendering.
             enabled = true,
             -- Additional modes to render dash.
@@ -1255,9 +1263,11 @@ Dashed Line Configuration ~
             -- The icon gets repeated across the window's width.
             icon = '─',
             -- Width of the generated line.
-            -- | <number> | a hard coded width value |
-            -- | full     | full width of the window |
             -- If a float < 1 is provided it is treated as a percentage of available window space.
+            -- Output is evaluated depending on the type.
+            -- | function | `value(context)`    |
+            -- | number   | `value`             |
+            -- | full     | width of the window |
             width = 'full',
             -- Amount of margin to add to the left of dash.
             -- If a float < 1 is provided it is treated as a percentage of available window space.

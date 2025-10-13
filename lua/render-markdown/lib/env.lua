@@ -251,6 +251,14 @@ function M.win.view(win)
 end
 
 ---@param win integer
+---@return integer
+function M.win.width(win)
+    local infos = vim.fn.getwininfo(win)
+    local textoff = #infos == 1 and infos[1].textoff or 0
+    return vim.api.nvim_win_get_width(win) - textoff
+end
+
+---@param win integer
 ---@param value number
 ---@param used integer
 ---@return integer
@@ -260,9 +268,7 @@ function M.win.percent(win, value, used)
     elseif value >= 1 then
         return value
     else
-        local infos = vim.fn.getwininfo(win)
-        local textoff = #infos == 1 and infos[1].textoff or 0
-        local width = vim.api.nvim_win_get_width(win) - textoff - used
+        local width = M.win.width(win) - used
         return math.floor((width * value) + 0.5)
     end
 end

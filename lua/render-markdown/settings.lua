@@ -633,10 +633,19 @@ M.dash = {}
 ---@field left_margin number
 ---@field highlight string
 
----@alias render.md.dash.Width 'full'|number
+---@class (exact) render.md.dash.Context
+---@field width integer
+
+---@alias render.md.dash.Width
+---| 'full'
+---| number
+---| fun(ctx: render.md.dash.Context): integer
 
 ---@type render.md.dash.Config
 M.dash.default = {
+    -- Useful context to have when evaluating values.
+    -- | width | width of the current window |
+
     -- Turn on / off thematic break rendering.
     enabled = true,
     -- Additional modes to render dash.
@@ -645,9 +654,11 @@ M.dash.default = {
     -- The icon gets repeated across the window's width.
     icon = '─',
     -- Width of the generated line.
-    -- | <number> | a hard coded width value |
-    -- | full     | full width of the window |
     -- If a float < 1 is provided it is treated as a percentage of available window space.
+    -- Output is evaluated depending on the type.
+    -- | function | `value(context)`    |
+    -- | number   | `value`             |
+    -- | full     | width of the window |
     width = 'full',
     -- Amount of margin to add to the left of dash.
     -- If a float < 1 is provided it is treated as a percentage of available window space.
@@ -661,7 +672,11 @@ function M.dash.schema()
     return M.base.schema({
         icon = { type = 'string' },
         width = {
-            union = { { enum = { 'full' } }, { type = 'number' } },
+            union = {
+                { enum = { 'full' } },
+                { type = 'number' },
+                { type = 'function' },
+            },
         },
         left_margin = { type = 'number' },
         highlight = { type = 'string' },

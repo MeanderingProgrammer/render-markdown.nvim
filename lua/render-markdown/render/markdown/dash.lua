@@ -20,7 +20,7 @@ function Render:setup()
     end
     local width = self:get_width(self.config.width, 0)
     local margin = self:get_width(self.config.left_margin, width)
-    if width <= 0 and margin <= 0 then
+    if width <= 0 then
         return false
     end
     self.data = { width = width, margin = margin }
@@ -34,6 +34,8 @@ end
 function Render:get_width(width, used)
     if type(width) == 'number' then
         return env.win.percent(self.context.win, width, used)
+    elseif type(width) == 'function' then
+        return width({ width = env.win.width(self.context.win) })
     else
         return vim.o.columns
     end
