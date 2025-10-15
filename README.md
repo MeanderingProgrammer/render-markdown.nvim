@@ -132,6 +132,7 @@ require('render-markdown').setup({}) -- only mandatory if you want to set custom
 | `:RenderMarkdown get`           | `require('render-markdown').get()`          | Return current state                              |
 | `:RenderMarkdown set bool?`     | `require('render-markdown').set(bool?)`     | Sets state, `nil` to toggle                       |
 | `:RenderMarkdown set_buf bool?` | `require('render-markdown').set_buf(bool?)` | Sets state for current buffer, `nil` to toggle    |
+| `:RenderMarkdown preview`       | `require('render-markdown').preview()`      | Show rendered buffer to the side                  |
 | `:RenderMarkdown log`           | `require('render-markdown').log()`          | Opens the log file for this plugin                |
 | `:RenderMarkdown expand`        | `require('render-markdown').expand()`       | Increase anti-conceal margin above and below by 1 |
 | `:RenderMarkdown contract`      | `require('render-markdown').contract()`     | Decrease anti-conceal margin above and below by 1 |
@@ -922,6 +923,10 @@ require('render-markdown').setup({
         },
         -- Override for different filetype values, @see :h 'filetype'.
         filetype = {},
+        -- Override for preview buffer
+        preview = {
+            render_modes = true,
+        },
     },
     custom_handlers = {
         -- Mapping from treesitter language to user defined handlers.

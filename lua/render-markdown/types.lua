@@ -241,6 +241,7 @@
 ---@field buflisted? table<boolean, render.md.partial.UserConfig>
 ---@field buftype? table<string, render.md.partial.UserConfig>
 ---@field filetype? table<string, render.md.partial.UserConfig>
+---@field preview? render.md.partial.UserConfig
 
 ---@class (exact) render.md.padding.UserConfig
 ---@field highlight? string

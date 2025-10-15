@@ -11,8 +11,9 @@ Config.__index = Config
 ---@param root render.md.Config
 ---@param enabled boolean
 ---@param buf integer
+---@param src? integer
 ---@return render.md.buf.Config
-function Config.new(root, enabled, buf)
+function Config.new(root, enabled, buf, src)
     ---@type render.md.partial.Config
     local config = {
         enabled = enabled,
@@ -42,11 +43,14 @@ function Config.new(root, enabled, buf)
     }
     config = vim.deepcopy(config)
     for _, name in ipairs({ 'buflisted', 'buftype', 'filetype' }) do
-        local value = env.buf.get(buf, name)
+        local value = env.buf.get(src or buf, name)
         local override = root.overrides[name][value] ---@type render.md.partial.UserConfig?
         if override then
             config = vim.tbl_deep_extend('force', config, override)
         end
+    end
+    if src then
+        config = vim.tbl_deep_extend('force', config, root.overrides.preview)
     end
     local self = setmetatable(config, Config)
     self.resolved = Resolved.new(config)

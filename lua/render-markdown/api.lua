@@ -40,6 +40,10 @@ function M.buf_toggle()
     M.set_buf()
 end
 
+function M.preview()
+    require('render-markdown.core.preview').attach()
+end
+
 function M.log()
     require('render-markdown.core.log').open()
 end

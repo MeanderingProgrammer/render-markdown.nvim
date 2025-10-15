@@ -51,7 +51,8 @@ end
 function M.get(buf)
     local result = M.cache[buf]
     if not result then
-        result = Config.new(M.config, M.enabled, buf)
+        local src = require('render-markdown.core.preview').get(buf)
+        result = Config.new(M.config, M.enabled, buf, src)
         M.cache[buf] = result
     end
     return result

@@ -1360,6 +1360,7 @@ M.overrides = {}
 ---@field buflisted table<boolean, render.md.partial.UserConfig>
 ---@field buftype table<string, render.md.partial.UserConfig>
 ---@field filetype table<string, render.md.partial.UserConfig>
+---@field preview render.md.partial.UserConfig
 
 ---@type render.md.overrides.Config
 M.overrides.default = {
@@ -1382,6 +1383,10 @@ M.overrides.default = {
     },
     -- Override for different filetype values, @see :h 'filetype'.
     filetype = {},
+    -- Override for preview buffer
+    preview = {
+        render_modes = true,
+    },
 }
 
 ---@return render.md.Schema
@@ -1393,6 +1398,7 @@ function M.overrides.schema()
             buflisted = { map = { { type = 'boolean' }, Config.schema({}) } },
             buftype = { map = { { type = 'string' }, Config.schema({}) } },
             filetype = { map = { { type = 'string' }, Config.schema({}) } },
+            preview = Config.schema({}),
         },
     }
 end
