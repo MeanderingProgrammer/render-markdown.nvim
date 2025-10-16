@@ -6,7 +6,7 @@ local mock = require('luassert.mock')
 ---@param win_ranges table<integer, render.md.Range>
 local function env_mock(win_ranges)
     local env = mock(require('render-markdown.lib.env'), true)
-    env.buf.windows.on_call_with(0).returns(vim.tbl_keys(win_ranges))
+    env.buf.wins.on_call_with(0).returns(vim.tbl_keys(win_ranges))
     for win, range in pairs(win_ranges) do
         env.range.on_call_with(0, win, 10).returns(range)
     end

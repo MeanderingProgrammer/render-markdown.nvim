@@ -15,7 +15,7 @@ function View.new(buf)
     local self = setmetatable({}, View)
     self.buf = buf
     local ranges = {} ---@type render.md.Range[]
-    for _, win in ipairs(env.buf.windows(buf)) do
+    for _, win in ipairs(env.buf.wins(buf)) do
         ranges[#ranges + 1] = env.range(buf, win, 10)
     end
     self.ranges = interval.coalesce(ranges)

@@ -127,11 +127,7 @@ function M.attach(buf)
             if not state.get(buf).enabled then
                 return
             end
-            local win, wins = env.win.current(), env.buf.windows(buf)
-            win = vim.tbl_contains(wins, win) and win or wins[1]
-            if not win then
-                return
-            end
+            local win = env.buf.win(buf)
             local event = args.event
             ui.update(buf, win, event, vim.tbl_contains(force, event))
         end,

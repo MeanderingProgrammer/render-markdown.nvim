@@ -194,12 +194,17 @@ end
 ---@param buf integer
 ---@return integer
 function M.buf.win(buf)
-    return vim.fn.bufwinid(buf)
+    local wins = M.buf.wins(buf)
+    if #wins == 0 then
+        return -1
+    end
+    local win = M.win.current()
+    return vim.tbl_contains(wins, win) and win or wins[1]
 end
 
 ---@param buf integer
 ---@return integer[]
-function M.buf.windows(buf)
+function M.buf.wins(buf)
     return vim.fn.win_findbuf(buf)
 end
 

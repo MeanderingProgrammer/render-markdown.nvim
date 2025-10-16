@@ -105,7 +105,7 @@ function Updater:run()
         and env.win.view(self.win).leftcol == 0
     log.buf('info', 'Render', self.buf, render)
     local next_state = render and 'rendered' or 'default'
-    for _, win in ipairs(env.buf.windows(self.buf)) do
+    for _, win in ipairs(env.buf.wins(self.buf)) do
         for name, value in pairs(self.config.win_options) do
             env.win.set(win, name, value[next_state])
         end
