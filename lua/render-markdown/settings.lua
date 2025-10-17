@@ -1383,7 +1383,7 @@ M.overrides.default = {
     },
     -- Override for different filetype values, @see :h 'filetype'.
     filetype = {},
-    -- Override for preview buffer
+    -- Override for preview buffer.
     preview = {
         render_modes = true,
     },

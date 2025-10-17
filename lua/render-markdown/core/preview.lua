@@ -23,7 +23,7 @@ function M.get(buf)
 end
 
 ---@param src_buf? integer
-function M.attach(src_buf)
+function M.open(src_buf)
     src_buf = src_buf or env.buf.current()
     if not manager.attached(src_buf) then
         return
@@ -49,7 +49,9 @@ function M.attach(src_buf)
     env.buf.set(dst_buf, 'modifiable', false)
     env.buf.set(dst_buf, 'swapfile', false)
 
+    M.copy_lines(src_buf, dst_buf)
     M.copy_cursor(src_win, dst_win)
+
     vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
         group = M.group,
         buffer = src_buf,
@@ -61,7 +63,6 @@ function M.attach(src_buf)
         end,
     })
 
-    M.copy_lines(src_buf, dst_buf)
     vim.api.nvim_create_autocmd({ 'TextChanged', 'TextChangedI' }, {
         group = M.group,
         buffer = src_buf,

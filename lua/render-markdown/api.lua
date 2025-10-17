@@ -41,7 +41,7 @@ function M.buf_toggle()
 end
 
 function M.preview()
-    require('render-markdown.core.preview').attach()
+    require('render-markdown.core.preview').open()
 end
 
 function M.log()
