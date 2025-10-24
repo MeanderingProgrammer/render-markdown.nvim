@@ -69,7 +69,7 @@ M.colors = {
 M.cache = {}
 ---@type table<string, { fg: string, bg: string }>
 M.cache.combine = {}
----@type table<string, { hl: string }>
+---@type table<string, { hl: string, visible: boolean }>
 M.cache.bg_as_fg = {}
 
 ---called from plugin directory
@@ -118,7 +118,7 @@ end
 
 ---@param highlight string
 ---@param force? boolean
----@return string
+---@return string?
 function M.bg_as_fg(highlight, force)
     local name = ('%s_%s_bg_as_fg'):format(M.prefix, highlight)
     if not M.cache.bg_as_fg[name] or force then
@@ -127,9 +127,9 @@ function M.bg_as_fg(highlight, force)
             fg = hl.bg,
             ctermfg = hl.ctermbg,
         })
-        M.cache.bg_as_fg[name] = { hl = highlight }
+        M.cache.bg_as_fg[name] = { hl = highlight, visible = hl.bg ~= nil }
     end
-    return name
+    return M.cache.bg_as_fg[name].visible and name or nil
 end
 
 ---@private

@@ -175,23 +175,28 @@ end
 ---@param thin string
 function Render:border(node, thin)
     local kind = self.config.border
-    local highlight = self.config.highlight_border
+    if kind == 'none' or not node then
+        return
+    end
     if kind == 'hide' then
         self.marks:over(self.config, true, node, { conceal_lines = '' })
-    elseif kind == 'none' or not node or not highlight then
-        -- do nothing
-    else
-        local icon = kind == 'thin' and thin or ' '
-        if icon ~= ' ' then
-            highlight = colors.bg_as_fg(highlight)
-        end
-        local block = self.config.width == 'block'
-        local width = block and self.data.body - node.start_col or vim.o.columns
-        self.marks:start(self.config, 'code_border', node, {
-            virt_text = { { icon:rep(width), highlight } },
-            virt_text_pos = 'overlay',
-        })
+        return
     end
+    local highlight = self.config.highlight_border or nil
+    if not highlight then
+        return
+    end
+    local icon = kind == 'thin' and thin or ' '
+    highlight = icon == ' ' and highlight or colors.bg_as_fg(highlight)
+    if not highlight then
+        return
+    end
+    local block = self.config.width == 'block'
+    local width = block and self.data.body - node.start_col or vim.o.columns
+    self.marks:start(self.config, 'code_border', node, {
+        virt_text = { { icon:rep(width), highlight } },
+        virt_text_pos = 'overlay',
+    })
 end
 
 ---@private

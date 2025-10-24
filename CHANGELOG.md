@@ -10,6 +10,7 @@
 - left padding for checkboxes [da260dd](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/da260dd4979d130f0dfc63e824c9cb2433cfded2)
 - dash width function [#537](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/537)
   [691651d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/691651de4e02cbea9ff50c62d7d3a679abc95564)
+- implement preview split [72f658d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/72f658d7c506fff6a10bee4e7fa2af081f91489b)
 
 ### Bug Fixes
 
