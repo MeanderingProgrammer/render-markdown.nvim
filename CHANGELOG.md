@@ -16,6 +16,12 @@
 
 - ignore empty output from latex converter [#535](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/535)
   [2064980](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/2064980580af7f00385859b6344c6a4737383257)
+- use nil if bg is missing in bg_as_fg [bfd67f1](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/bfd67f1402b97ac619cb538f4bbaed12a7fa89aa)
+- ctermbg heading borders being all white [#546](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/546)
+
+### Collaborator Shoutouts
+
+- @bew
 
 ## 8.9.0 (2025-10-06)
 
