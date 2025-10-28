@@ -127,7 +127,10 @@ function M.bg_as_fg(highlight, force)
             fg = hl.bg,
             ctermfg = hl.ctermbg,
         })
-        M.cache.bg_as_fg[name] = { hl = highlight, visible = hl.bg ~= nil }
+        M.cache.bg_as_fg[name] = {
+          hl = highlight,
+          visible = hl.bg ~= nil or hl.ctermbg ~= nil,
+        }
     end
     return M.cache.bg_as_fg[name].visible and name or nil
 end
