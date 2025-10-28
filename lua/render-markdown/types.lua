@@ -194,6 +194,11 @@
 
 ---@class (exact) render.md.inline.highlight.UserConfig: render.md.base.UserConfig
 ---@field highlight? string
+---@field custom? table<string, render.md.inline.highlight.custom.UserConfig>
+
+---@class (exact) render.md.inline.highlight.custom.UserConfig
+---@field prefix? string
+---@field highlight? string
 
 ---@class (exact) render.md.latex.UserConfig: render.md.base.UserConfig
 ---@field converter? string|string[]

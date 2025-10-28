@@ -1094,6 +1094,11 @@ M.inline_highlight = {}
 
 ---@class (exact) render.md.inline.highlight.Config: render.md.base.Config
 ---@field highlight string
+---@field custom table<string, render.md.inline.highlight.custom.Config>
+
+---@class (exact) render.md.inline.highlight.custom.Config
+---@field prefix string
+---@field highlight string
 
 ---@type render.md.inline.highlight.Config
 M.inline_highlight.default = {
@@ -1106,12 +1111,25 @@ M.inline_highlight.default = {
     render_modes = false,
     -- Applies to background of surrounded text.
     highlight = 'RenderMarkdownInlineHighlight',
+    -- Define custom highlights based on text prefix.
+    -- The key is for healthcheck and to allow users to change its values, value type below.
+    -- | prefix    | matched against text body, @see :h vim.startswith() |
+    -- | highlight | highlight for text body                             |
+    custom = {},
 }
 
 ---@return render.md.Schema
 function M.inline_highlight.schema()
+    ---@type render.md.Schema
+    local custom = {
+        record = {
+            prefix = { type = 'string' },
+            highlight = { type = 'string' },
+        },
+    }
     return M.base.schema({
         highlight = { type = 'string' },
+        custom = { map = { { type = 'string' }, custom } },
     })
 end
 

@@ -842,6 +842,11 @@ require('render-markdown').setup({
         render_modes = false,
         -- Applies to background of surrounded text.
         highlight = 'RenderMarkdownInlineHighlight',
+        -- Define custom highlights based on text prefix.
+        -- The key is for healthcheck and to allow users to change its values, value type below.
+        -- | prefix    | matched against text body, @see :h vim.startswith() |
+        -- | highlight | highlight for text body                             |
+        custom = {},
     },
     indent = {
         -- Mimic org-indent-mode behavior by indenting everything under a heading based on the
