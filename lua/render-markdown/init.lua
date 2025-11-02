@@ -128,13 +128,13 @@ function M.setup(opts)
     if M.initialized and vim.tbl_count(opts or {}) == 0 then
         return
     end
-    
+
     local needs_core_init = not M.initialized and vim.g.render_markdown_lazy_init
     M.initialized = true
-    
+
     local config = M.resolve_config(opts or {})
     require('render-markdown.state').setup(config)
-    
+
     -- Initialize core components if this is the first setup call with lazy_init enabled
     if needs_core_init then
         require('render-markdown.core.colors').init()
