@@ -118,6 +118,32 @@ vim.pack.add({
 require('render-markdown').setup({}) -- only mandatory if you want to set custom options
 ```
 
+## Lazy Initialization
+
+By default this plugin initializes immediately when loaded, unless lazy loaded
+with `lazy.nvim` using the `ft` or `cmd` options. For plugin managers other than
+`lazy.nvim`, this means that the plugin will load before any user options can be
+set via `setup()`.
+
+If you prefer to defer initialization until `setup()` is explicitly called, you
+can set:
+
+```lua
+vim.g.render_markdown_lazy_init = true
+```
+
+This must be set **before** the plugin loads. For example:
+
+```lua
+-- With vim.pack
+vim.g.render_markdown_lazy_init = true
+vim.pack.add({ 'https://github.com/MeanderingProgrammer/render-markdown.nvim' })
+require('render-markdown').setup({})
+```
+
+When `vim.g.render_markdown_lazy_init` is enabled, the plugin will not initialize until
+you explicitly call `setup()`.
+
 # Commands
 
 | Command                         | Lua Function                                | Description                                       |

@@ -123,12 +123,25 @@ function M.setup(opts)
     -- To support both we want to pickup the last non-empty configuration. This works because
     -- the plugin directory supplies an empty configuration which will be skipped if state
     -- has already been initialized by the user.
+    -- Additionally, if vim.g.render_markdown_lazy_init is set, we need to initialize core
+    -- components here since they were skipped in the plugin directory.
     if M.initialized and vim.tbl_count(opts or {}) == 0 then
         return
     end
+    
+    local needs_core_init = not M.initialized and vim.g.render_markdown_lazy_init
     M.initialized = true
+    
     local config = M.resolve_config(opts or {})
     require('render-markdown.state').setup(config)
+    
+    -- Initialize core components if this is the first setup call with lazy_init enabled
+    if needs_core_init then
+        require('render-markdown.core.colors').init()
+        require('render-markdown.core.command').init()
+        require('render-markdown.core.log').init()
+        require('render-markdown.core.manager').init()
+    end
 end
 
 ---@private

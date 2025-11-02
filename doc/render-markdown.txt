@@ -11,6 +11,7 @@ Table of Contents                          *render-markdown-table-of-contents*
   - rocks.nvim                            |render-markdown-install-rocks.nvim|
   - packer.nvim                          |render-markdown-install-packer.nvim|
   - vim.pack                                |render-markdown-install-vim.pack|
+  - Lazy init                            |render-markdown-install-lazy-init|
 5. Commands                                         |render-markdown-commands|
 6. Completions                                   |render-markdown-completions|
   - in-process lsp                |render-markdown-completions-in-process-lsp|
@@ -151,6 +152,32 @@ VIM.PACK                                    *render-markdown-install-vim.pack*
     })
     require('render-markdown').setup({}) -- only mandatory if you want to set custom options
 <
+
+
+LAZY INIT                                  *render-markdown-install-lazy-init*
+
+By default this plugin initializes immediately when loaded, unless lazy loaded
+with lazy.nvim using the `ft` or `cmd` options. For plugin managers other than
+lazy.nvim, this means that the plugin will load before any user options can be
+set via `setup()`.
+
+If you prefer to defer initialization until `setup()` is explicitly called, you
+can set `vim.g.render_markdown_lazy_init = true` before the plugin loads.
+
+>lua
+    vim.g.render_markdown_lazy_init = true
+    vim.pack.add({
+        'https://github.com/nvim-treesitter/nvim-treesitter',
+        'https://github.com/nvim-mini/mini.nvim',
+        'https://github.com/MeanderingProgrammer/render-markdown.nvim',
+    })
+    require('render-markdown').setup({
+        file_types = { 'custom_filetype' }
+    })
+<
+
+When `vim.g.render_markdown_lazy_init` is enabled, the plugin will not
+initialize until you explicitly call `setup()`.
 
 
 ==============================================================================
