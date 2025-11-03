@@ -4,7 +4,7 @@ if initialized then
 end
 initialized = true
 
-require('render-markdown').setup()
+require('render-markdown').setup(vim.g.render_markdown_config)
 require('render-markdown.core.colors').init()
 require('render-markdown.core.command').init()
 require('render-markdown.core.log').init()
