@@ -205,13 +205,15 @@ function M.bullet.schema()
     })
 end
 
+---@class (exact) render.md.raw.Config
+---@field raw string
+
 ---@class render.md.callout.Settings
 M.callout = {}
 
 ---@alias render.md.callout.Configs table<string, render.md.callout.Config>
 
----@class (exact) render.md.callout.Config
----@field raw string
+---@class (exact) render.md.callout.Config: render.md.raw.Config
 ---@field rendered string
 ---@field highlight string
 ---@field quote_icon? string
@@ -291,8 +293,7 @@ M.checkbox = {}
 ---@field highlight string
 ---@field scope_highlight? string
 
----@class (exact) render.md.checkbox.custom.Config
----@field raw string
+---@class (exact) render.md.checkbox.custom.Config: render.md.raw.Config
 ---@field rendered string
 ---@field highlight string
 ---@field scope_highlight? string
@@ -1385,9 +1386,9 @@ M.overrides.default = {
     -- More granular configuration mechanism, allows different aspects of buffers to have their own
     -- behavior. Values default to the top level configuration if no override is provided. Supports
     -- the following fields:
-    --   enabled, render_modes, max_file_size, debounce, anti_conceal, bullet, callout, checkbox,
-    --   code, dash, document, heading, html, indent, inline_highlight, latex, link, padding,
-    --   paragraph, pipe_table, quote, sign, win_options, yaml
+    --   enabled, render_modes, debounce, anti_conceal, bullet, callout, checkbox, code, dash,
+    --   document, heading, html, indent, inline_highlight, latex, link, padding, paragraph,
+    --   pipe_table, quote, sign, win_options, yaml
 
     -- Override for different buflisted values, @see :h 'buflisted'.
     buflisted = {},

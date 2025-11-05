@@ -55,17 +55,11 @@ end
 ---@param ctx render.md.bullet.Context
 ---@return string?
 function Render.get_string(values, ctx)
-    if type(values) == 'table' then
-        local value = list.cycle(values, ctx.level)
-        if type(value) == 'table' then
-            return list.clamp(value, ctx.index)
-        else
-            return value
-        end
-    elseif type(values) == 'function' then
+    if type(values) == 'function' then
         return values(ctx)
     else
-        return values
+        local value = list.cycle(values, ctx.level)
+        return list.clamp(value, ctx.index)
     end
 end
 

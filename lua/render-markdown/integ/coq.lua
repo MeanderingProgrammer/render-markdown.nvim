@@ -12,7 +12,7 @@ function M.setup()
     M.init()
 end
 
----called from manager on buffer attach or directly by user
+---called from state on attach or directly by user
 function M.init()
     if M.initialized then
         return

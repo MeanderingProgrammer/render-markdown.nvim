@@ -25,9 +25,6 @@ describe('presets', function()
                 icons = {},
             },
             checkbox = { enabled = false },
-            pipe_table = {},
-            win_options = {},
-            overrides = {},
         })
     end)
 
@@ -35,24 +32,14 @@ describe('presets', function()
         validate({
             code = { style = 'none' },
             overrides = {
-                buftype = {
-                    nofile = {
-                        code = { style = 'normal' },
-                    },
-                },
+                buftype = { nofile = { code = { style = 'normal' } } },
+                preview = { pipe_table = { style = 'normal' } },
             },
         }, {
             code = { enabled = false },
-            pipe_table = {},
-            win_options = {},
             overrides = {
-                buftype = {
-                    nofile = {
-                        code = { language = false },
-                        pipe_table = {},
-                        win_options = {},
-                    },
-                },
+                buftype = { nofile = { code = { language = false } } },
+                preview = { pipe_table = { border_enabled = false } },
             },
         })
     end)

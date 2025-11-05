@@ -57,7 +57,6 @@ describe('state', function()
                 buftype = {
                     nofile = {
                         enabled = false,
-                        max_file_size = 0,
                         render_modes = {},
                         anti_conceal = {},
                         heading = {},

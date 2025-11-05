@@ -11,14 +11,13 @@ Config.__index = Config
 ---@param root render.md.Config
 ---@param enabled boolean
 ---@param buf integer
----@param src? integer
+---@param custom? render.md.partial.UserConfig
 ---@return render.md.buf.Config
-function Config.new(root, enabled, buf, src)
+function Config.new(root, enabled, buf, custom)
     ---@type render.md.partial.Config
     local config = {
         enabled = enabled,
         render_modes = root.render_modes,
-        max_file_size = root.max_file_size,
         debounce = root.debounce,
         anti_conceal = root.anti_conceal,
         bullet = root.bullet,
@@ -42,16 +41,19 @@ function Config.new(root, enabled, buf, src)
         yaml = root.yaml,
     }
     config = vim.deepcopy(config)
-    for _, name in ipairs({ 'buflisted', 'buftype', 'filetype' }) do
-        local value = env.buf.get(src or buf, name)
-        local override = root.overrides[name][value] ---@type render.md.partial.UserConfig?
-        if override then
-            config = vim.tbl_deep_extend('force', config, override)
-        end
+
+    ---@param override? render.md.partial.UserConfig
+    local function extend(override)
+        config = vim.tbl_deep_extend('force', config, override or {})
     end
-    if src then
-        config = vim.tbl_deep_extend('force', config, root.overrides.preview)
-    end
+
+    local src = require('render-markdown.core.preview').get(buf)
+    extend(root.overrides.buflisted[env.buf.get(src or buf, 'buflisted')])
+    extend(root.overrides.buftype[env.buf.get(src or buf, 'buftype')])
+    extend(root.overrides.filetype[env.buf.get(src or buf, 'filetype')])
+    extend(src and root.overrides.preview)
+    extend(custom)
+
     local self = setmetatable(config, Config)
     self.resolved = Resolved.new(config)
     ---@cast self -render.md.partial.Config
@@ -89,7 +91,6 @@ function Config.schema(child)
     local settings = require('render-markdown.settings')
     ---@type render.md.schema.Record
     local parent = {
-        max_file_size = { type = 'number' },
         debounce = { type = 'number' },
         anti_conceal = settings.anti_conceal.schema(),
         bullet = settings.bullet.schema(),

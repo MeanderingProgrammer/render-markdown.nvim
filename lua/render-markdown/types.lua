@@ -5,6 +5,7 @@
 ---@field log_level? render.md.log.Level
 ---@field log_runtime? boolean
 ---@field file_types? string[]
+---@field max_file_size? number
 ---@field ignore? fun(buf: integer): boolean
 ---@field nested? boolean
 ---@field change_events? string[]
@@ -17,7 +18,6 @@
 ---@field custom_handlers? table<string, render.md.Handler>
 
 ---@class (exact) render.md.partial.UserConfig: render.md.base.UserConfig
----@field max_file_size? number
 ---@field debounce? integer
 ---@field anti_conceal? render.md.anti.conceal.UserConfig
 ---@field bullet? render.md.bullet.UserConfig
@@ -60,10 +60,12 @@
 ---@field scope_highlight? render.md.bullet.String
 ---@field scope_priority? integer
 
+---@class (exact) render.md.raw.UserConfig
+---@field raw? string
+
 ---@alias render.md.callout.UserConfigs table<string, render.md.callout.UserConfig>
 
----@class (exact) render.md.callout.UserConfig
----@field raw? string
+---@class (exact) render.md.callout.UserConfig: render.md.raw.UserConfig
 ---@field rendered? string
 ---@field highlight? string
 ---@field quote_icon? string
@@ -83,8 +85,7 @@
 ---@field highlight? string
 ---@field scope_highlight? string
 
----@class (exact) render.md.checkbox.custom.UserConfig
----@field raw? string
+---@class (exact) render.md.checkbox.custom.UserConfig: render.md.raw.UserConfig
 ---@field rendered? string
 ---@field highlight? string
 ---@field scope_highlight? string

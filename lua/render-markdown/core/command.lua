@@ -1,39 +1,36 @@
 local api = require('render-markdown.api')
 
----@class render.md.Command
-local M = {}
-
----@private
-M.name = 'RenderMarkdown'
-
----@private
-M.plugin = 'render-markdown.nvim'
-
----@private
+local name = 'RenderMarkdown'
+local plugin = 'render-markdown.nvim'
 ---@type table<string, type?>
-M.args = {
+local method_args = {
     set = 'boolean',
     set_buf = 'boolean',
 }
+---@type string[]
+local code_only = { 'render' }
+
+---@class render.md.Command
+local M = {}
 
 ---called from plugin directory
 function M.init()
-    vim.api.nvim_create_user_command(M.name, M.command, {
+    vim.api.nvim_create_user_command(name, M.command, {
         nargs = '*',
-        desc = M.plugin .. ' commands',
+        desc = plugin .. ' commands',
         ---@param cmdline string
         ---@param col integer
         ---@return string[]
         complete = function(_, cmdline, col)
-            local line = cmdline:sub(1, col):match('^' .. M.name .. '%s+(.*)$')
+            local line = cmdline:sub(1, col):match('^' .. name .. '%s+(.*)$')
             if line then
                 local fargs = vim.split(line, '%s+')
                 if #fargs == 1 then
-                    return M.matches(fargs[1], vim.tbl_keys(api))
+                    return M.matches(fargs[1], vim.tbl_keys(api), code_only)
                 elseif #fargs == 2 then
-                    local arg = M.args[fargs[1]]
+                    local arg = method_args[fargs[1]]
                     if arg == 'boolean' then
-                        return M.matches(fargs[2], { 'true', 'false' })
+                        return M.matches(fargs[2], { 'true', 'false' }, {})
                     end
                 end
             end
@@ -45,12 +42,15 @@ end
 ---@private
 ---@param prefix string
 ---@param values string[]
+---@param skip string[]
 ---@return string[]
-function M.matches(prefix, values)
+function M.matches(prefix, values, skip)
     local result = {} ---@type string[]
     for _, value in ipairs(values) do
-        if vim.startswith(value, prefix) then
-            result[#result + 1] = value
+        if not vim.tbl_contains(skip, value) then
+            if vim.startswith(value, prefix) then
+                result[#result + 1] = value
+            end
         end
     end
     return result
@@ -61,7 +61,7 @@ end
 function M.command(args)
     local err = M.run(args.fargs)
     if err then
-        vim.notify(('%s: %s'):format(M.plugin, err), vim.log.levels.ERROR)
+        vim.notify(('%s: %s'):format(plugin, err), vim.log.levels.ERROR)
     end
 end
 
@@ -72,23 +72,23 @@ function M.run(fargs)
     if #fargs > 2 then
         return ('invalid # arguments - %d'):format(#fargs)
     end
-    local name = fargs[1] or 'enable'
-    local command = api[name] --[[@as fun(enable?: boolean)?]]
-    if not command then
-        return ('invalid command - %s'):format(name)
+    local method = fargs[1] or 'enable'
+    local command = api[method] --[[@as fun(enable?: boolean)?]]
+    if not command or vim.tbl_contains(code_only, method) then
+        return ('invalid command - %s'):format(method)
     end
     if #fargs == 2 then
-        local arg = M.args[name]
+        local arg = method_args[method]
         local value = fargs[2]
         if not arg then
-            return ('no arguments allowed - %s'):format(name)
+            return ('no arguments allowed - %s'):format(method)
         elseif arg == 'boolean' then
             if value == 'true' then
                 command(true)
             elseif value == 'false' then
                 command(false)
             else
-                return ('invalid argument - %s(%s)'):format(name, value)
+                return ('invalid argument - %s(%s)'):format(method, value)
             end
         else
             return ('bug unhandled type - %s'):format(arg)

@@ -36,7 +36,7 @@ local M = {}
 ---@type boolean
 M.initialized = false
 
----called from manager on buffer attach
+---called from state on attach
 function M.init()
     if M.initialized then
         return

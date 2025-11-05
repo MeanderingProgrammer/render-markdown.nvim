@@ -188,9 +188,6 @@ require('render-markdown').setup({
     -- components. Individual components can be enabled for other modes. Remaining modes will be
     -- unaffected by this plugin.
     render_modes = { 'n', 'c', 't' },
-    -- Maximum file size (in MB) that this plugin will attempt to render.
-    -- File larger than this will effectively be ignored.
-    max_file_size = 10.0,
     -- Milliseconds that must pass before updating marks, updates occur.
     -- within the context of the visible window, not the entire buffer.
     debounce = 100,
@@ -208,6 +205,9 @@ require('render-markdown').setup({
     log_runtime = false,
     -- Filetypes this plugin will run on.
     file_types = { 'markdown' },
+    -- Maximum file size (in MB) that this plugin will attempt to render.
+    -- File larger than this will effectively be ignored.
+    max_file_size = 10.0,
     -- Takes buffer as input, if it returns true this plugin will not attach to the buffer.
     ignore = function()
         return false
@@ -912,9 +912,9 @@ require('render-markdown').setup({
         -- More granular configuration mechanism, allows different aspects of buffers to have their own
         -- behavior. Values default to the top level configuration if no override is provided. Supports
         -- the following fields:
-        --   enabled, render_modes, max_file_size, debounce, anti_conceal, bullet, callout, checkbox,
-        --   code, dash, document, heading, html, indent, inline_highlight, latex, link, padding,
-        --   paragraph, pipe_table, quote, sign, win_options, yaml
+        --   enabled, render_modes, debounce, anti_conceal, bullet, callout, checkbox, code, dash,
+        --   document, heading, html, indent, inline_highlight, latex, link, padding, paragraph,
+        --   pipe_table, quote, sign, win_options, yaml
 
         -- Override for different buflisted values, @see :h 'buflisted'.
         buflisted = {},

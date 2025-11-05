@@ -6,6 +6,7 @@ local Config = require('render-markdown.lib.config')
 ---@field log_level render.md.log.Level
 ---@field log_runtime boolean
 ---@field file_types string[]
+---@field max_file_size number
 ---@field ignore fun(buf: integer): boolean
 ---@field nested boolean
 ---@field change_events string[]
@@ -29,6 +30,7 @@ function M.setup(config)
     M.log_level = config.log_level
     M.log_runtime = config.log_runtime
     M.file_types = config.file_types
+    M.max_file_size = config.max_file_size
     M.ignore = config.ignore
     M.nested = config.nested
     M.change_events = config.change_events
@@ -47,15 +49,26 @@ function M.setup(config)
 end
 
 ---@param buf integer
+---@param custom? render.md.partial.UserConfig
 ---@return render.md.buf.Config
-function M.get(buf)
-    local result = M.cache[buf]
-    if not result then
-        local src = require('render-markdown.core.preview').get(buf)
-        result = Config.new(M.config, M.enabled, buf, src)
-        M.cache[buf] = result
+function M.get(buf, custom)
+    if not M.cache[buf] then
+        M.cache[buf] = Config.new(M.config, M.enabled, buf, custom)
     end
-    return result
+    return assert(M.cache[buf], 'missing buffer config')
+end
+
+function M.attach()
+    require('render-markdown.core.ts').init()
+    if M.completions.lsp.enabled then
+        require('render-markdown.integ.lsp').init()
+    elseif M.completions.blink.enabled then
+        require('render-markdown.integ.blink').init()
+    elseif M.completions.coq.enabled then
+        require('render-markdown.integ.coq').init()
+    else
+        require('render-markdown.integ.cmp').init()
+    end
 end
 
 ---@param amount integer
@@ -89,6 +102,7 @@ function M.validate()
             },
             log_runtime = { type = 'boolean' },
             file_types = { list = { type = 'string' } },
+            max_file_size = { type = 'number' },
             ignore = { type = 'function' },
             nested = { type = 'boolean' },
             change_events = { list = { type = 'string' } },

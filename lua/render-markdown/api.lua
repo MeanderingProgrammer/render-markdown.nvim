@@ -1,5 +1,30 @@
+---@class render.md.render.Context
+---@field buf integer
+---@field win? integer|integer[]
+---@field event? string
+---@field config? render.md.partial.UserConfig
+
 ---@class render.md.Api
 local M = {}
+
+---@param ctx render.md.render.Context
+function M.render(ctx)
+    local env = require('render-markdown.lib.env')
+    local list = require('render-markdown.lib.list')
+    local state = require('render-markdown.state')
+    local ui = require('render-markdown.core.ui')
+
+    local buf = ctx.buf
+    local wins = list.ensure(ctx.win or env.buf.wins(buf))
+    local event = ctx.event or 'Api'
+
+    state.get(buf, ctx.config)
+    state.attach()
+
+    for _, win in ipairs(wins) do
+        ui.update(buf, win, event, true)
+    end
+end
 
 ---@return boolean
 function M.get()

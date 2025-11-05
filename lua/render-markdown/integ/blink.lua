@@ -9,7 +9,7 @@ Source.__index = Source
 ---@type boolean
 Source.initialized = false
 
----called from manager on buffer attach
+---called from state on attach
 function Source.init()
     if Source.initialized then
         return

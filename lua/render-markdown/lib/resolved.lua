@@ -13,9 +13,10 @@ function Resolved.new(config)
     local self = setmetatable({}, Resolved)
     -- super set of render modes across top level and individual components
     self.modes = config.render_modes
-    for _, component in pairs(config) do
+    local components = config ---@type table<string, render.md.base.Config>
+    for _, component in pairs(components) do
         if type(component) == 'table' then
-            self.modes = env.mode.join(self.modes, component['render_modes'])
+            self.modes = env.mode.join(self.modes, component.render_modes)
         end
     end
     self.callouts = Resolved.normalize(config.callout)
@@ -24,13 +25,13 @@ function Resolved.new(config)
 end
 
 ---@private
----@generic T: render.md.callout.Config|render.md.checkbox.custom.Config
----@param component table<string, T>
+---@generic T: render.md.raw.Config
+---@param configs table<string, T>
 ---@return table<string, T>
-function Resolved.normalize(component)
-    local result = {}
-    for _, value in pairs(component) do
-        result[value.raw:lower()] = value
+function Resolved.normalize(configs)
+    local result = {} ---@type table<string, any>
+    for _, config in pairs(configs) do
+        result[config.raw:lower()] = config
     end
     return result
 end

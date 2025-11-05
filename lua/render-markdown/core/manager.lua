@@ -86,16 +86,7 @@ function M.attach(buf)
 
     local config = state.get(buf)
     state.on.attach({ buf = buf })
-    require('render-markdown.core.ts').init()
-    if state.completions.lsp.enabled then
-        require('render-markdown.integ.lsp').init()
-    elseif state.completions.blink.enabled then
-        require('render-markdown.integ.blink').init()
-    elseif state.completions.coq.enabled then
-        require('render-markdown.integ.coq').init()
-    else
-        require('render-markdown.integ.cmp').init()
-    end
+    state.attach()
 
     local events = {
         'BufWinEnter',
@@ -163,7 +154,7 @@ function M.should_attach(buf)
     end
 
     local file_size = env.file_size_mb(buf)
-    local max_file_size = state.get(buf).max_file_size
+    local max_file_size = state.max_file_size
     if file_size > max_file_size then
         local reason = ('%f > %f'):format(file_size, max_file_size)
         log.attach(buf, 'skip', 'file size', reason)
