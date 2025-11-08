@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 8.10.0 (2025-11-08)
+
 ### Features
 
 - add footnote icon [ceff151](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/ceff15170c173c9a62ba491ac6449858cbadadf3)
@@ -11,6 +13,10 @@
 - dash width function [#537](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/537)
   [691651d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/691651de4e02cbea9ff50c62d7d3a679abc95564)
 - implement preview split [72f658d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/72f658d7c506fff6a10bee4e7fa2af081f91489b)
+- custom inline highlight based on prefix [#544](https://github.com/MeanderingProgrammer/render-markdown.nvim/discussions/544)
+  [10126ef](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/10126effbafb74541b69219711dfb2c631e7ebf8)
+- support configuration via `vim.g.render_markdown_config` [a1b2bf0](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/a1b2bf029c37397947082f31969b4aec0d1b92bd)
+- provide more capable render API [060c911](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/060c911c62f995a9db4467dde6fafd699cf94d55)
 
 ### Bug Fixes
 
