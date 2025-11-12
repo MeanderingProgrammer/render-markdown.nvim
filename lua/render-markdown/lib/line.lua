@@ -54,7 +54,7 @@ function Line:sub(i, j)
         local range = { i - position, j - position } ---@type render.md.Range
         local overlap = interval.overlap({ 1, length }, range)
         if overlap then
-            result:add(str.sub(text[1], overlap[1], overlap[2]), text[2])
+            result:text(str.sub(text[1], overlap[1], overlap[2]), text[2])
         end
         position = position + length
     end

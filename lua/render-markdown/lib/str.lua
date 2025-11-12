@@ -15,9 +15,18 @@ end
 ---@return string
 function M.sub(s, i, j)
     local bytes = vim.str_utf_pos(s)
-    local start_byte = bytes[i]
-    local end_byte = j < #bytes and bytes[j + 1] - 1 or #s
-    return s:sub(start_byte, end_byte)
+    local col = 1
+    local result = ''
+    for k, start_byte in ipairs(bytes) do
+        local end_byte = k < #bytes and bytes[k + 1] - 1 or #s
+        local char = s:sub(start_byte, end_byte)
+        local width = M.width(char)
+        if col >= i and col + width - 1 <= j then
+            result = result .. char
+        end
+        col = col + width
+    end
+    return result
 end
 
 ---number of hashtags at the start of the string

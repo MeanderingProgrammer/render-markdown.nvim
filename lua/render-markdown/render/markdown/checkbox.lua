@@ -92,6 +92,7 @@ function Render:checkbox()
         :pad(self.config.right_pad)
 
     local overlay = line:sub(1, width)
+    local used = overlay:width()
     if not overlay:empty() then
         self.marks:add(self.config, 'check_icon', row, start_col, {
             virt_text = overlay:get(),
@@ -99,7 +100,7 @@ function Render:checkbox()
         })
     end
 
-    local inline = line:sub(width + 1, line:width())
+    local inline = line:sub(used + 1, line:width())
     if not inline:empty() then
         self.marks:add(self.config, 'check_icon', row, end_col, {
             virt_text = inline:get(),
@@ -107,7 +108,7 @@ function Render:checkbox()
         })
     end
 
-    local space = width - overlay:width()
+    local space = width - used
     if space > 0 then
         self.marks:add(self.config, 'check_icon', row, end_col - space, {
             end_col = end_col,
