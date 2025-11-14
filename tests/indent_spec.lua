@@ -2,76 +2,80 @@
 
 local util = require('tests.util')
 
-local lines = {
-    '',
-    '## Heading 2',
-    '',
-    '| Foo | Bar |',
-    '| --- | --- |',
-    '',
-    '# Heading 1',
-    '',
-    'Foo',
-    '',
-    '### Heading 3',
-    '',
-    'Bar',
-}
+describe('indent', function()
+    local lines = {
+        '',
+        '## Heading 2',
+        '',
+        '| Foo | Bar |',
+        '| --- | --- |',
+        '',
+        '# Heading 1',
+        '',
+        'Foo',
+        '',
+        '### Heading 3',
+        '',
+        'Bar',
+    }
 
----@return render.md.test.Marks
-local function shared()
-    local marks, row = util.marks(), util.row()
+    ---@return render.md.test.Marks
+    local function shared()
+        local marks, row = util.marks(), util.row()
 
-    marks:add(row:get(1), 0, util.heading.sign(2))
-    marks:add(row:get(0, 0), { 0, 2 }, util.heading.icon(2))
-    marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(2))
+        marks:add(row:get(1), 0, util.heading.sign(2))
+        marks:add(row:get(0, 0), { 0, 2 }, util.heading.icon(2))
+        marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(2))
 
-    marks:add(row:get(1, 0), { 0, 1 }, util.table.pipe(true))
-    marks:add(row:get(0, 0), { 6, 7 }, util.table.pipe(true))
-    marks:add(row:get(0, 0), { 12, 13 }, util.table.pipe(true))
-    marks:add(row:get(1, 0), { 0, 13 }, util.table.delimiter(0, { 5 }, { 5 }))
+        marks:add(row:get(1, 0), { 0, 1 }, util.table.pipe(true))
+        marks:add(row:get(0, 0), { 6, 7 }, util.table.pipe(true))
+        marks:add(row:get(0, 0), { 12, 13 }, util.table.pipe(true))
+        marks:add(
+            row:get(1, 0),
+            { 0, 13 },
+            util.table.delimiter(0, { 5 }, { 5 })
+        )
 
-    marks:add(row:get(2), 0, util.heading.sign(1))
-    marks:add(row:get(0, 0), { 0, 1 }, util.heading.icon(1))
-    marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(1))
+        marks:add(row:get(2), 0, util.heading.sign(1))
+        marks:add(row:get(0, 0), { 0, 1 }, util.heading.icon(1))
+        marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(1))
 
-    marks:add(row:get(3), 0, util.heading.sign(3))
-    marks:add(row:get(0, 0), { 0, 3 }, util.heading.icon(3))
-    marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(3))
+        marks:add(row:get(3), 0, util.heading.sign(3))
+        marks:add(row:get(0, 0), { 0, 3 }, util.heading.icon(3))
+        marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(3))
 
-    return marks
-end
-
----@return render.md.test.Marks
-local function borders()
-    ---@param level integer
-    ---@param position 'above'|'below'
-    ---@return vim.api.keyset.set_extmark
-    local function border(level, position)
-        local icon = position == 'above' and '▄' or '▀'
-        local background = ('Rm_RmH%dBg_bg_as_fg'):format(level)
-        ---@type vim.api.keyset.set_extmark
-        return {
-            virt_text = { { icon:rep(vim.o.columns), background } },
-            virt_text_pos = 'overlay',
-        }
+        return marks
     end
 
-    local marks, row = util.marks(), util.row()
+    ---@return render.md.test.Marks
+    local function borders()
+        ---@param level integer
+        ---@param position 'above'|'below'
+        ---@return vim.api.keyset.set_extmark
+        local function border(level, position)
+            local icon = position == 'above' and '▄' or '▀'
+            local background = ('Rm_RmH%dBg_bg_as_fg'):format(level)
+            ---@type vim.api.keyset.set_extmark
+            return {
+                virt_text = { { icon:rep(vim.o.columns), background } },
+                virt_text_pos = 'overlay',
+            }
+        end
 
-    marks:add(row:get(0), 0, border(2, 'above'))
-    marks:add(row:get(2), 0, border(2, 'below'))
+        local marks, row = util.marks(), util.row()
 
-    marks:add(row:get(3), 0, border(1, 'above'))
-    marks:add(row:get(2), 0, border(1, 'below'))
+        marks:add(row:get(0), 0, border(2, 'above'))
+        marks:add(row:get(2), 0, border(2, 'below'))
 
-    marks:add(row:get(2), 0, border(3, 'above'))
-    marks:add(row:get(2), 0, border(3, 'below'))
+        marks:add(row:get(3), 0, border(1, 'above'))
+        marks:add(row:get(2), 0, border(1, 'below'))
 
-    return marks
-end
+        marks:add(row:get(2), 0, border(3, 'above'))
+        marks:add(row:get(2), 0, border(3, 'below'))
 
-describe('indent', function()
+        return marks
+    end
+
     it('with heading border & no icon', function()
         util.setup.text(lines, {
             heading = { border = true },

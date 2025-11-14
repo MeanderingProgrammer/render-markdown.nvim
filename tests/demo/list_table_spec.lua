@@ -2,67 +2,67 @@
 
 local util = require('tests.util')
 
----@return render.md.test.Marks
-local function shared()
-    local marks, row = util.marks(), util.row()
-
-    marks:add(row:get(0), 0, util.heading.sign(1))
-    marks:add(row:get(0, 0), { 0, 1 }, util.heading.icon(1))
-    marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(1))
-
-    marks:add(row:get(1, 0), { 0, 2 }, util.bullet(1))
-    marks:add(row:get(0), 20, util.link('web'))
-    marks:add(row:get(1, 0), { 0, 2 }, util.bullet(1))
-    marks:add(row:get(0, 0), { 20, 28 }, util.highlight('code'))
-    marks:add(row:get(1, 0), { 2, 6 }, util.bullet(2, 2))
-    marks:add(row:get(1, 0), { 4, 6 }, util.bullet(2))
-    marks:add(row:get(1, 0), { 6, 8 }, util.bullet(3))
-    marks:add(row:get(1, 0), { 8, 10 }, util.bullet(4))
-    marks:add(row:get(1, 0), { 10, 12 }, util.bullet(1))
-    marks:add(row:get(1, 0), { 0, 2 }, util.bullet(1))
-    marks:add(row:get(0), 20, util.link('link'))
-
-    marks:add(row:get(2), 0, util.heading.sign(1))
-    marks:add(row:get(0, 0), { 0, 1 }, util.heading.icon(1))
-    marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(1))
-
-    marks:add(row:get(1, 0), { 0, 3 }, util.ordered(1))
-    marks:add(row:get(1, 0), { 0, 3 }, util.ordered(2))
-
-    marks:add(row:get(2), 0, util.heading.sign(1))
-    marks:add(row:get(0, 0), { 0, 1 }, util.heading.icon(1))
-    marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(1))
-
-    marks:add(row:get(1, 0), { 0, 1 }, util.table.pipe(true))
-    marks:add(row:get(0, 0), { 2, 8 }, util.highlight('code'))
-    marks:add(row:get(0, 0), { 9, 10 }, util.table.pipe(true))
-    marks:add(row:get(0), 11, util.table.padding(3))
-    marks:add(row:get(0, 0), { 24, 25 }, util.conceal())
-    marks:add(row:get(0, 0), { 25, 26 }, util.table.pipe(true))
-    marks:add(row:get(0, 0), { 33, 34 }, util.table.pipe(true))
-    marks:add(row:get(0, 0), { 40, 41 }, util.table.pipe(true))
-    marks:add(row:get(2, 0), { 0, 1 }, util.table.pipe(false))
-    marks:add(row:get(0, 0), { 2, 8 }, util.highlight('code'))
-    marks:add(row:get(0, 0), { 9, 10 }, util.table.pipe(false))
-    marks:add(row:get(0), 11, util.table.padding(4))
-    marks:add(row:get(0, 0), { 25, 26 }, util.table.pipe(false))
-    marks:add(row:get(0, 0), { 33, 34 }, util.table.pipe(false))
-    marks:add(row:get(0, 0), { 40, 41 }, util.table.pipe(false))
-    marks:add(row:get(1, 0), { 0, 1 }, util.table.pipe(false))
-    marks:add(row:get(0, 0), { 9, 10 }, util.table.pipe(false))
-    marks:add(row:get(0), 11, util.table.padding(3))
-    marks:add(row:get(0), 11, util.link('link'))
-    marks:add(row:get(0), 25, util.table.padding(4))
-    marks:add(row:get(0, 0), { 25, 26 }, util.table.pipe(false))
-    marks:add(row:get(0), 27, util.table.padding(1))
-    marks:add(row:get(0, 0), { 32, 33 }, util.conceal())
-    marks:add(row:get(0, 0), { 33, 34 }, util.table.pipe(false))
-    marks:add(row:get(0, 0), { 40, 41 }, util.table.pipe(false))
-
-    return marks
-end
-
 describe('demo/list_table.md', function()
+    ---@return render.md.test.Marks
+    local function shared()
+        local marks, row = util.marks(), util.row()
+
+        marks:add(row:get(0), 0, util.heading.sign(1))
+        marks:add(row:get(0, 0), { 0, 1 }, util.heading.icon(1))
+        marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(1))
+
+        marks:add(row:get(1, 0), { 0, 2 }, util.bullet(1))
+        marks:add(row:get(0), 20, util.link('web'))
+        marks:add(row:get(1, 0), { 0, 2 }, util.bullet(1))
+        marks:add(row:get(0, 0), { 20, 28 }, util.highlight('code'))
+        marks:add(row:get(1, 0), { 2, 6 }, util.bullet(2, 2))
+        marks:add(row:get(1, 0), { 4, 6 }, util.bullet(2))
+        marks:add(row:get(1, 0), { 6, 8 }, util.bullet(3))
+        marks:add(row:get(1, 0), { 8, 10 }, util.bullet(4))
+        marks:add(row:get(1, 0), { 10, 12 }, util.bullet(1))
+        marks:add(row:get(1, 0), { 0, 2 }, util.bullet(1))
+        marks:add(row:get(0), 20, util.link('link'))
+
+        marks:add(row:get(2), 0, util.heading.sign(1))
+        marks:add(row:get(0, 0), { 0, 1 }, util.heading.icon(1))
+        marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(1))
+
+        marks:add(row:get(1, 0), { 0, 3 }, util.ordered(1))
+        marks:add(row:get(1, 0), { 0, 3 }, util.ordered(2))
+
+        marks:add(row:get(2), 0, util.heading.sign(1))
+        marks:add(row:get(0, 0), { 0, 1 }, util.heading.icon(1))
+        marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(1))
+
+        marks:add(row:get(1, 0), { 0, 1 }, util.table.pipe(true))
+        marks:add(row:get(0, 0), { 2, 8 }, util.highlight('code'))
+        marks:add(row:get(0, 0), { 9, 10 }, util.table.pipe(true))
+        marks:add(row:get(0), 11, util.table.padding(3))
+        marks:add(row:get(0, 0), { 24, 25 }, util.conceal())
+        marks:add(row:get(0, 0), { 25, 26 }, util.table.pipe(true))
+        marks:add(row:get(0, 0), { 33, 34 }, util.table.pipe(true))
+        marks:add(row:get(0, 0), { 40, 41 }, util.table.pipe(true))
+        marks:add(row:get(2, 0), { 0, 1 }, util.table.pipe(false))
+        marks:add(row:get(0, 0), { 2, 8 }, util.highlight('code'))
+        marks:add(row:get(0, 0), { 9, 10 }, util.table.pipe(false))
+        marks:add(row:get(0), 11, util.table.padding(4))
+        marks:add(row:get(0, 0), { 25, 26 }, util.table.pipe(false))
+        marks:add(row:get(0, 0), { 33, 34 }, util.table.pipe(false))
+        marks:add(row:get(0, 0), { 40, 41 }, util.table.pipe(false))
+        marks:add(row:get(1, 0), { 0, 1 }, util.table.pipe(false))
+        marks:add(row:get(0, 0), { 9, 10 }, util.table.pipe(false))
+        marks:add(row:get(0), 11, util.table.padding(3))
+        marks:add(row:get(0), 11, util.link('link'))
+        marks:add(row:get(0), 25, util.table.padding(4))
+        marks:add(row:get(0, 0), { 25, 26 }, util.table.pipe(false))
+        marks:add(row:get(0), 27, util.table.padding(1))
+        marks:add(row:get(0, 0), { 32, 33 }, util.conceal())
+        marks:add(row:get(0, 0), { 33, 34 }, util.table.pipe(false))
+        marks:add(row:get(0, 0), { 40, 41 }, util.table.pipe(false))
+
+        return marks
+    end
+
     it('default', function()
         util.setup.file('demo/list_table.md')
 

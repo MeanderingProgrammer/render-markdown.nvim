@@ -2,77 +2,77 @@
 
 local util = require('tests.util')
 
-local lines = {
-    '# Heading',
-    '',
-    '-',
-    '',
-    '- ',
-    '',
-    '- [',
-    '',
-    '- [-',
-    '',
-    '- [-]',
-    '',
-    '- [-] ',
-    '',
-    '- [-] todo',
-    '',
-    '- text',
-    '',
-    '# Heading',
-    '',
-    '>',
-    '',
-    '> ',
-    '',
-    '> [',
-    '',
-    '> [!',
-    '',
-    '> [!TIP',
-    '',
-    '> [!TIP]',
-    '',
-    '> [!TIP] My Tip',
-    '',
-    '> text',
-}
-
----@param row render.md.test.Row
----@param n integer
----@param col integer
----@param expected lsp.CompletionItem[]
-local function assert_items(row, n, col, expected)
-    local source = require('render-markdown.integ.source')
-    local actual = source.items(0, row:get(n)[1], col) or {}
-    table.sort(actual, function(a, b)
-        return a.label < b.label
-    end)
-    assert.same(expected, actual)
-end
-
----@param prefix string
----@param suffix string
----@param label string
----@param detail string
----@param description? string
----@return lsp.CompletionItem
-local function item(prefix, suffix, label, detail, description)
-    ---@type lsp.CompletionItem
-    return {
-        kind = 12,
-        label = label,
-        labelDetails = {
-            detail = ' ' .. detail,
-            description = description,
-        },
-        insertText = prefix .. label .. suffix,
-    }
-end
-
 describe('completions', function()
+    local lines = {
+        '# Heading',
+        '',
+        '-',
+        '',
+        '- ',
+        '',
+        '- [',
+        '',
+        '- [-',
+        '',
+        '- [-]',
+        '',
+        '- [-] ',
+        '',
+        '- [-] todo',
+        '',
+        '- text',
+        '',
+        '# Heading',
+        '',
+        '>',
+        '',
+        '> ',
+        '',
+        '> [',
+        '',
+        '> [!',
+        '',
+        '> [!TIP',
+        '',
+        '> [!TIP]',
+        '',
+        '> [!TIP] My Tip',
+        '',
+        '> text',
+    }
+
+    ---@param row render.md.test.Row
+    ---@param n integer
+    ---@param col integer
+    ---@param expected lsp.CompletionItem[]
+    local function validate(row, n, col, expected)
+        local source = require('render-markdown.integ.source')
+        local actual = source.items(0, row:get(n)[1], col) or {}
+        table.sort(actual, function(a, b)
+            return a.label < b.label
+        end)
+        assert.same(expected, actual)
+    end
+
+    ---@param prefix string
+    ---@param suffix string
+    ---@param label string
+    ---@param detail string
+    ---@param description? string
+    ---@return lsp.CompletionItem
+    local function item(prefix, suffix, label, detail, description)
+        ---@type lsp.CompletionItem
+        return {
+            kind = 12,
+            label = label,
+            labelDetails = {
+                detail = ' ' .. detail,
+                description = description,
+            },
+            insertText = prefix .. label .. suffix,
+        }
+    end
+
     it('checkbox', function()
         util.setup.text(lines)
 
@@ -87,15 +87,15 @@ describe('completions', function()
         end
 
         local row = util.row()
-        assert_items(row, 2, 1, items(' '))
-        assert_items(row, 2, 2, items(''))
-        assert_items(row, 2, 3, items(''))
-        assert_items(row, 2, 4, items(''))
-        assert_items(row, 2, 5, {})
-        assert_items(row, 2, 6, {})
-        assert_items(row, 2, 10, {})
-        assert_items(row, 2, 6, {})
-        assert_items(row, 1, 0, {})
+        validate(row, 2, 1, items(' '))
+        validate(row, 2, 2, items(''))
+        validate(row, 2, 3, items(''))
+        validate(row, 2, 4, items(''))
+        validate(row, 2, 5, {})
+        validate(row, 2, 6, {})
+        validate(row, 2, 10, {})
+        validate(row, 2, 6, {})
+        validate(row, 1, 0, {})
     end)
 
     it('callout', function()
@@ -136,13 +136,13 @@ describe('completions', function()
         end
 
         local row = util.row()
-        assert_items(row, 20, 1, items(' '))
-        assert_items(row, 2, 2, items(''))
-        assert_items(row, 2, 3, items(''))
-        assert_items(row, 2, 4, items(''))
-        assert_items(row, 2, 7, items(''))
-        assert_items(row, 2, 8, {})
-        assert_items(row, 2, 15, {})
-        assert_items(row, 2, 6, {})
+        validate(row, 20, 1, items(' '))
+        validate(row, 2, 2, items(''))
+        validate(row, 2, 3, items(''))
+        validate(row, 2, 4, items(''))
+        validate(row, 2, 7, items(''))
+        validate(row, 2, 8, {})
+        validate(row, 2, 15, {})
+        validate(row, 2, 6, {})
     end)
 end)

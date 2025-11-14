@@ -2,21 +2,21 @@
 
 local state = require('render-markdown.state')
 
----@param config render.md.UserConfig
----@param expected string[]
-local function validate(config, expected)
-    require('render-markdown').setup(config)
-    assert.same(expected, state.validate())
-end
-
----@param expected any
----@param path string[]
-local function option(expected, path)
-    local config = state.get(0)
-    assert.same(expected, vim.tbl_get(config, unpack(path)))
-end
-
 describe('state', function()
+    ---@param config render.md.UserConfig
+    ---@param expected string[]
+    local function validate(config, expected)
+        require('render-markdown').setup(config)
+        assert.same(expected, state.validate())
+    end
+
+    ---@param expected any
+    ---@param path string[]
+    local function option(expected, path)
+        local config = state.get(0)
+        assert.same(expected, vim.tbl_get(config, unpack(path)))
+    end
+
     it('default', function()
         validate({}, {})
     end)

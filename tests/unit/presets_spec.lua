@@ -1,13 +1,13 @@
 ---@module 'luassert'
 
----@param user render.md.UserConfig
----@param expected render.md.UserConfig
-local function validate(user, expected)
-    local actual = require('render-markdown.lib.presets').get(user)
-    assert.same(expected, actual)
-end
-
 describe('presets', function()
+    ---@param user render.md.UserConfig
+    ---@param expected render.md.UserConfig
+    local function validate(user, expected)
+        local actual = require('render-markdown.lib.presets').get(user)
+        assert.same(expected, actual)
+    end
+
     it('overlap', function()
         validate({
             preset = 'lazy',

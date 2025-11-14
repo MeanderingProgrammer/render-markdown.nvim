@@ -2,69 +2,69 @@
 
 local util = require('tests.util')
 
-local lines = {
-    '',
-    '| Heading 1 | `Heading 2`            |',
-    '| --------- | ---------------------: |',
-    '| `Item 行` | [link](https://行.com) |',
-    '| &lt;1&gt; | ==Itém 2==             |',
-    '| Regular   | [[行\\|link]]           |',
-    '',
-    '| Heading 1 | Heading 2 |',
-    '| --------- | --------- |',
-    '| Item 1    | Item 2    |',
-}
-
----@return render.md.test.Marks
-local function shared()
-    local marks, row = util.marks(), util.row()
-
-    marks:add(row:get(1, 0), { 14, 25 }, util.highlight('code'))
-
-    marks:add(row:get(2, 0), { 2, 12 }, util.highlight('code'))
-
-    marks:add(row:get(0), 15, util.link('web'))
-
-    marks:add(row:get(1, 0), { 14, 16 }, util.conceal())
-    marks:add(row:get(0, 0), { 14, 25 }, util.highlight('inline'))
-    marks:add(row:get(0, 0), { 23, 25 }, util.conceal())
-
-    marks:add(row:get(1, 0), { 14, 16 }, util.conceal())
-    marks:add(row:get(0), 16, util.link('wiki'))
-    marks:add(row:get(0, 0), { 16, 21 }, util.conceal())
-    marks:add(row:get(0, 0), { 25, 27 }, util.conceal())
-
-    return marks
-end
-
----@return render.md.test.Marks
-local function pipes()
-    local marks, row = util.marks(), util.row()
-
-    marks:add(row:get(1, 0), { 0, 1 }, util.table.pipe(true))
-    marks:add(row:get(0, 0), { 12, 13 }, util.table.pipe(true))
-    marks:add(row:get(0, 0), { 37, 38 }, util.table.pipe(true))
-    marks:add(row:get(2, 0), { 0, 1 }, util.table.pipe(false))
-    marks:add(row:get(0, 0), { 13, 14 }, util.table.pipe(false))
-    marks:add(row:get(0, 0), { 39, 40 }, util.table.pipe(false))
-    marks:add(row:get(1, 0), { 0, 1 }, util.table.pipe(false))
-    marks:add(row:get(0, 0), { 12, 13 }, util.table.pipe(false))
-    marks:add(row:get(0, 0), { 38, 39 }, util.table.pipe(false))
-    marks:add(row:get(1, 0), { 0, 1 }, util.table.pipe(false))
-    marks:add(row:get(0, 0), { 12, 13 }, util.table.pipe(false))
-    marks:add(row:get(0, 0), { 38, 39 }, util.table.pipe(false))
-
-    marks:add(row:get(2, 0), { 0, 1 }, util.table.pipe(true))
-    marks:add(row:get(0, 0), { 12, 13 }, util.table.pipe(true))
-    marks:add(row:get(0, 0), { 24, 25 }, util.table.pipe(true))
-    marks:add(row:get(2, 0), { 0, 1 }, util.table.pipe(false))
-    marks:add(row:get(0, 0), { 12, 13 }, util.table.pipe(false))
-    marks:add(row:get(0, 0), { 24, 25 }, util.table.pipe(false))
-
-    return marks
-end
-
 describe('table', function()
+    local lines = {
+        '',
+        '| Heading 1 | `Heading 2`            |',
+        '| --------- | ---------------------: |',
+        '| `Item 行` | [link](https://行.com) |',
+        '| &lt;1&gt; | ==Itém 2==             |',
+        '| Regular   | [[行\\|link]]           |',
+        '',
+        '| Heading 1 | Heading 2 |',
+        '| --------- | --------- |',
+        '| Item 1    | Item 2    |',
+    }
+
+    ---@return render.md.test.Marks
+    local function shared()
+        local marks, row = util.marks(), util.row()
+
+        marks:add(row:get(1, 0), { 14, 25 }, util.highlight('code'))
+
+        marks:add(row:get(2, 0), { 2, 12 }, util.highlight('code'))
+
+        marks:add(row:get(0), 15, util.link('web'))
+
+        marks:add(row:get(1, 0), { 14, 16 }, util.conceal())
+        marks:add(row:get(0, 0), { 14, 25 }, util.highlight('inline'))
+        marks:add(row:get(0, 0), { 23, 25 }, util.conceal())
+
+        marks:add(row:get(1, 0), { 14, 16 }, util.conceal())
+        marks:add(row:get(0), 16, util.link('wiki'))
+        marks:add(row:get(0, 0), { 16, 21 }, util.conceal())
+        marks:add(row:get(0, 0), { 25, 27 }, util.conceal())
+
+        return marks
+    end
+
+    ---@return render.md.test.Marks
+    local function pipes()
+        local marks, row = util.marks(), util.row()
+
+        marks:add(row:get(1, 0), { 0, 1 }, util.table.pipe(true))
+        marks:add(row:get(0, 0), { 12, 13 }, util.table.pipe(true))
+        marks:add(row:get(0, 0), { 37, 38 }, util.table.pipe(true))
+        marks:add(row:get(2, 0), { 0, 1 }, util.table.pipe(false))
+        marks:add(row:get(0, 0), { 13, 14 }, util.table.pipe(false))
+        marks:add(row:get(0, 0), { 39, 40 }, util.table.pipe(false))
+        marks:add(row:get(1, 0), { 0, 1 }, util.table.pipe(false))
+        marks:add(row:get(0, 0), { 12, 13 }, util.table.pipe(false))
+        marks:add(row:get(0, 0), { 38, 39 }, util.table.pipe(false))
+        marks:add(row:get(1, 0), { 0, 1 }, util.table.pipe(false))
+        marks:add(row:get(0, 0), { 12, 13 }, util.table.pipe(false))
+        marks:add(row:get(0, 0), { 38, 39 }, util.table.pipe(false))
+
+        marks:add(row:get(2, 0), { 0, 1 }, util.table.pipe(true))
+        marks:add(row:get(0, 0), { 12, 13 }, util.table.pipe(true))
+        marks:add(row:get(0, 0), { 24, 25 }, util.table.pipe(true))
+        marks:add(row:get(2, 0), { 0, 1 }, util.table.pipe(false))
+        marks:add(row:get(0, 0), { 12, 13 }, util.table.pipe(false))
+        marks:add(row:get(0, 0), { 24, 25 }, util.table.pipe(false))
+
+        return marks
+    end
+
     it('default', function()
         util.setup.text(lines)
 

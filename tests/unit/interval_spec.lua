@@ -2,12 +2,12 @@
 
 local interval = require('render-markdown.lib.interval')
 
----@class render.md.test.range.Entry
----@field [1] any
----@field [2] render.md.Range
----@field [3] string
-
 describe('interval', function()
+    ---@class render.md.test.range.Entry
+    ---@field [1] any
+    ---@field [2] render.md.Range
+    ---@field [3] string
+
     it('contains', function()
         ---@type render.md.Range
         local range = { 5, 9 }

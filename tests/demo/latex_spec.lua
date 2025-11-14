@@ -2,29 +2,29 @@
 
 local util = require('tests.util')
 
-local inline = {
-    input = '\\sqrt{3x-1}+(1+x)^2',
-    output = {
-        ' ┌────┐',
-        '╲│3x-1 +(1+x)²',
-    },
-}
-
-local block = {
-    input = '\\lim_{n\\to\\infty} \\left(1 + \\frac{1}{n}\\right)^n',
-    output = {
-        '    ⎛    1⎞ⁿ',
-        'lim ⎜1 + ─⎟',
-        'n→∞ ⎝    n⎠',
-    },
-}
-
-util.system.mock('utftex', {
-    [inline.input] = inline.output,
-    [block.input] = block.output,
-})
-
 describe('demo/latex.md', function()
+    local inline = {
+        input = '\\sqrt{3x-1}+(1+x)^2',
+        output = {
+            ' ┌────┐',
+            '╲│3x-1 +(1+x)²',
+        },
+    }
+
+    local block = {
+        input = '\\lim_{n\\to\\infty} \\left(1 + \\frac{1}{n}\\right)^n',
+        output = {
+            '    ⎛    1⎞ⁿ',
+            'lim ⎜1 + ─⎟',
+            'n→∞ ⎝    n⎠',
+        },
+    }
+
+    util.system.mock('utftex', {
+        [inline.input] = inline.output,
+        [block.input] = block.output,
+    })
+
     it('default', function()
         util.setup.file('demo/latex.md')
 

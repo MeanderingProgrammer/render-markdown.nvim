@@ -2,80 +2,80 @@
 
 local util = require('tests.util')
 
-local lines = {
-    '```rust',
-    'fn main() {',
-    '    println!("Hello, World!");',
-    '}',
-    '```',
-    '',
-    '- List Divider',
-    '',
-    '  ```py',
-    '  print("hello")',
-    '',
-    '  print("world")',
-    '  ```',
-    '',
-    'Paragraph Divider',
-    '',
-    '  ```lua',
-    "  print('hello')",
-    '',
-    "  print('world')",
-    '  ```',
-    '',
-    '- List Divider',
-    '',
-    '```',
-    "	print('Hello, World!')",
-    '```',
-}
-
-local tab = vim.o.tabstop
-
-local width = { 30, 16, 16, 22 + tab }
-
----@return render.md.test.Marks
-local function shared()
-    local marks, row = util.marks(), util.row()
-
-    marks:add(row:get(0), 0, util.code.sign('rust'))
-    marks:add(row:get(0, 0), { 0, 3 }, util.conceal())
-    marks:add(row:get(0, 0), { 3, 7 }, util.conceal())
-    marks:add(row:get(1, 1), { 0, 0 }, util.code.bg())
-    marks:add(row:get(0, 1), { 0, 0 }, util.code.bg())
-    marks:add(row:get(0, 1), { 0, 0 }, util.code.bg())
-    marks:add(row:get(0, 0), { 0, 3 }, util.conceal())
-
-    marks:add(row:get(2, 0), { 0, 2 }, util.bullet(1))
-
-    marks:add(row:get(2), 2, util.code.sign('py'))
-    marks:add(row:get(0, 0), { 2, 5 }, util.conceal())
-    marks:add(row:get(0, 0), { 5, 7 }, util.conceal())
-    marks:add(row:get(1, 1), { 2, 0 }, util.code.bg())
-    marks:add(row:get(0, 1), { 0, 0 }, util.code.bg())
-    marks:add(row:get(0, 1), { 2, 0 }, util.code.bg())
-    marks:add(row:get(0, 0), { 2, 5 }, util.conceal())
-
-    marks:add(row:get(4), 0, util.code.sign('lua'))
-    marks:add(row:get(0, 0), { 0, 5 }, util.conceal())
-    marks:add(row:get(0, 0), { 5, 8 }, util.conceal())
-    marks:add(row:get(1, 1), { 0, 0 }, util.code.bg())
-    marks:add(row:get(0, 1), { 0, 0 }, util.code.bg())
-    marks:add(row:get(0, 1), { 0, 0 }, util.code.bg())
-    marks:add(row:get(0, 0), { 0, 5 }, util.conceal())
-
-    marks:add(row:get(2, 0), { 0, 2 }, util.bullet(1))
-
-    marks:add(row:get(2, 0), { 0, 3 }, util.conceal())
-    marks:add(row:get(1, 1), { 0, 0 }, util.code.bg())
-    marks:add(row:get(0, 0), { 0, 3 }, util.conceal())
-
-    return marks
-end
-
 describe('code', function()
+    local lines = {
+        '```rust',
+        'fn main() {',
+        '    println!("Hello, World!");',
+        '}',
+        '```',
+        '',
+        '- List Divider',
+        '',
+        '  ```py',
+        '  print("hello")',
+        '',
+        '  print("world")',
+        '  ```',
+        '',
+        'Paragraph Divider',
+        '',
+        '  ```lua',
+        "  print('hello')",
+        '',
+        "  print('world')",
+        '  ```',
+        '',
+        '- List Divider',
+        '',
+        '```',
+        "	print('Hello, World!')",
+        '```',
+    }
+
+    local tab = vim.o.tabstop
+
+    local width = { 30, 16, 16, 22 + tab }
+
+    ---@return render.md.test.Marks
+    local function shared()
+        local marks, row = util.marks(), util.row()
+
+        marks:add(row:get(0), 0, util.code.sign('rust'))
+        marks:add(row:get(0, 0), { 0, 3 }, util.conceal())
+        marks:add(row:get(0, 0), { 3, 7 }, util.conceal())
+        marks:add(row:get(1, 1), { 0, 0 }, util.code.bg())
+        marks:add(row:get(0, 1), { 0, 0 }, util.code.bg())
+        marks:add(row:get(0, 1), { 0, 0 }, util.code.bg())
+        marks:add(row:get(0, 0), { 0, 3 }, util.conceal())
+
+        marks:add(row:get(2, 0), { 0, 2 }, util.bullet(1))
+
+        marks:add(row:get(2), 2, util.code.sign('py'))
+        marks:add(row:get(0, 0), { 2, 5 }, util.conceal())
+        marks:add(row:get(0, 0), { 5, 7 }, util.conceal())
+        marks:add(row:get(1, 1), { 2, 0 }, util.code.bg())
+        marks:add(row:get(0, 1), { 0, 0 }, util.code.bg())
+        marks:add(row:get(0, 1), { 2, 0 }, util.code.bg())
+        marks:add(row:get(0, 0), { 2, 5 }, util.conceal())
+
+        marks:add(row:get(4), 0, util.code.sign('lua'))
+        marks:add(row:get(0, 0), { 0, 5 }, util.conceal())
+        marks:add(row:get(0, 0), { 5, 8 }, util.conceal())
+        marks:add(row:get(1, 1), { 0, 0 }, util.code.bg())
+        marks:add(row:get(0, 1), { 0, 0 }, util.code.bg())
+        marks:add(row:get(0, 1), { 0, 0 }, util.code.bg())
+        marks:add(row:get(0, 0), { 0, 5 }, util.conceal())
+
+        marks:add(row:get(2, 0), { 0, 2 }, util.bullet(1))
+
+        marks:add(row:get(2, 0), { 0, 3 }, util.conceal())
+        marks:add(row:get(1, 1), { 0, 0 }, util.code.bg())
+        marks:add(row:get(0, 0), { 0, 3 }, util.conceal())
+
+        return marks
+    end
+
     it('default', function()
         util.setup.text(lines)
 

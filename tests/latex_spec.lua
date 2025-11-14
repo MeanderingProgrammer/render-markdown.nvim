@@ -2,33 +2,33 @@
 
 local util = require('tests.util')
 
-local m22 = {
-    input = '\\begin{pmatrix}1 & 2\\\\3 & 4\\end{pmatrix}',
-    output = { '⎛1  2⎞', '⎝3  4⎠' },
-}
-
-local m33 = {
-    input = '\\begin{pmatrix}1 & 2 & 3\\\\4 & 5 & 6\\\\7 & 8 & 9\\end{pmatrix}',
-    output = { '⎛1  2  3⎞', '⎜4  5  6⎟', '⎝7  8  9⎠' },
-}
-
-util.system.mock('utftex', {
-    [m22.input] = m22.output,
-    [m33.input] = m33.output,
-})
-
-local lines = {
-    '',
-    '$' .. m22.input .. '$',
-    '',
-    '$' .. m22.input .. '$ & $' .. m33.input .. '$',
-    '',
-    '$' .. m22.input .. '$ & $$',
-    m33.input,
-    '$$ & $' .. m22.input .. '$',
-}
-
 describe('latex', function()
+    local m22 = {
+        input = '\\begin{pmatrix}1 & 2\\\\3 & 4\\end{pmatrix}',
+        output = { '⎛1  2⎞', '⎝3  4⎠' },
+    }
+
+    local m33 = {
+        input = '\\begin{pmatrix}1 & 2 & 3\\\\4 & 5 & 6\\\\7 & 8 & 9\\end{pmatrix}',
+        output = { '⎛1  2  3⎞', '⎜4  5  6⎟', '⎝7  8  9⎠' },
+    }
+
+    local lines = {
+        '',
+        '$' .. m22.input .. '$',
+        '',
+        '$' .. m22.input .. '$ & $' .. m33.input .. '$',
+        '',
+        '$' .. m22.input .. '$ & $$',
+        m33.input,
+        '$$ & $' .. m22.input .. '$',
+    }
+
+    util.system.mock('utftex', {
+        [m22.input] = m22.output,
+        [m33.input] = m33.output,
+    })
+
     it('default', function()
         util.setup.text(lines, {
             latex = { converter = 'utftex' },
