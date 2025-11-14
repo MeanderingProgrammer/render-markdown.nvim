@@ -35,8 +35,8 @@ function Handler:run(root, last)
     if not self.config.enabled then
         return {}
     end
-    local cmd = env.command(self.config.converter)
-    if not cmd then
+    local cmds = env.commands(self.config.converter)
+    if #cmds == 0 then
         log.add('debug', 'ConverterNotFound', self.config.converter)
         return {}
     end
@@ -45,7 +45,14 @@ function Handler:run(root, last)
     self.context.latex:add(node)
     if last then
         local nodes = self.context.latex:get()
-        Handler.convert(cmd, nodes)
+        local inputs = Handler.inputs(nodes)
+        for _, cmd in ipairs(cmds) do
+            inputs = Handler.convert(cmd, inputs)
+        end
+        for _, input in ipairs(inputs) do
+            log.add('error', 'ConvertersFailed', input)
+            Handler.cache[input] = 'error'
+        end
         local rows = self:rows(nodes)
         for row, row_nodes in pairs(rows) do
             self:render(row, row_nodes)
@@ -55,48 +62,58 @@ function Handler:run(root, last)
 end
 
 ---@private
----@param cmd string
 ---@param nodes render.md.Node[]
-function Handler.convert(cmd, nodes)
+---@return string[]
+function Handler.inputs(nodes)
     local inputs = {} ---@type string[]
     for _, node in ipairs(nodes) do
-        local text = Handler.text(node)
-        if not Handler.cache[text] and not vim.tbl_contains(inputs, text) then
-            inputs[#inputs + 1] = text
+        local input = Handler.input(node)
+        if not Handler.cache[input] and not vim.tbl_contains(inputs, input) then
+            inputs[#inputs + 1] = input
         end
     end
-    if vim.system then
-        local tasks = {} ---@type table<string, vim.SystemObj>
-        for _, text in ipairs(inputs) do
-            tasks[text] = vim.system({ cmd }, { stdin = text, text = true })
-        end
-        for text, task in pairs(tasks) do
-            local output = task:wait()
-            local result = output.stdout
-            if output.code ~= 0 or not result then
-                log.add('error', 'ConverterFailed', cmd, result)
-                result = 'error'
-            end
-            Handler.cache[text] = result
-        end
-    else
-        for _, text in ipairs(inputs) do
-            local result = vim.fn.system(cmd, text)
-            if vim.v.shell_error == 1 then
-                log.add('error', 'ConverterFailed', cmd, result)
-                result = 'error'
-            end
-            Handler.cache[text] = result
-        end
-    end
+    return inputs
 end
 
 ---@private
 ---@param node render.md.Node
 ---@return string
-function Handler.text(node)
-    local s = node.text
-    return vim.trim(s:match('^%$*(.-)%$*$') or s)
+function Handler.input(node)
+    local text = node.text
+    return vim.trim(text:match('^%$*(.-)%$*$') or text)
+end
+
+---@private
+---@param cmd string
+---@param inputs string[]
+---@return string[]
+function Handler.convert(cmd, inputs)
+    local failed = {} ---@type string[]
+    if vim.system then
+        local tasks = {} ---@type table<string, vim.SystemObj>
+        for _, input in ipairs(inputs) do
+            tasks[input] = vim.system({ cmd }, { stdin = input, text = true })
+        end
+        for input, task in pairs(tasks) do
+            local output = task:wait()
+            local result = output.stdout
+            if output.code == 0 and result then
+                Handler.cache[input] = result
+            else
+                failed[#failed + 1] = input
+            end
+        end
+    else
+        for _, input in ipairs(inputs) do
+            local result = vim.fn.system(cmd, input)
+            if vim.v.shell_error == 0 and result then
+                Handler.cache[input] = result
+            else
+                failed[#failed + 1] = input
+            end
+        end
+    end
+    return failed
 end
 
 ---@private
@@ -149,7 +166,7 @@ function Handler:render(row, nodes)
     local current = 0
 
     for _, node in ipairs(nodes) do
-        local output = str.split(Handler.cache[Handler.text(node)], '\n', true)
+        local output = str.split(Handler.cache[Handler.input(node)], '\n', true)
         if #output > 0 then
             -- add top and bottom padding around output
             for _ = 1, self.config.top_pad do

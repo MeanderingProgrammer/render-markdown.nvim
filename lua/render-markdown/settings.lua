@@ -1158,7 +1158,7 @@ M.latex.default = {
     -- Additional modes to render latex.
     render_modes = false,
     -- Executable used to convert latex formula to rendered unicode.
-    -- If a list is provided the first command available on the system is used.
+    -- If a list is provided the commands run in order until the first success.
     converter = { 'utftex', 'latex2text' },
     -- Highlight for latex blocks.
     highlight = 'RenderMarkdownMath',

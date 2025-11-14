@@ -6,7 +6,7 @@ local state = require('render-markdown.state')
 local M = {}
 
 ---@private
-M.version = '8.10.1'
+M.version = '8.10.2'
 
 function M.check()
     M.start('versions')
@@ -51,12 +51,12 @@ function M.check()
 
     if latex.enabled then
         M.start('latex')
-        local cmd = env.command(latex.converter)
-        if cmd then
-            vim.health.ok('using: ' .. cmd)
-        else
+        local cmds = env.commands(latex.converter)
+        if #cmds == 0 then
             local message = 'none installed: ' .. vim.inspect(latex.converter)
             vim.health.warn(message, M.disable('latex'))
+        else
+            vim.health.ok('using: ' .. vim.inspect(cmds))
         end
     end
 

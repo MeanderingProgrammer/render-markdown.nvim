@@ -28,8 +28,7 @@ local M = {}
 ---@param outputs table<string, string[]>
 function M.mock(command, outputs)
     stub.new(vim.fn, 'executable', function(expr)
-        assert.same(command, expr)
-        return 1
+        return expr == command and 1 or 0
     end)
     stub.new(vim, 'system', function(cmd, opts)
         assert.same({ command }, cmd)
