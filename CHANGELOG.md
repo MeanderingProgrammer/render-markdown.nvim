@@ -2,6 +2,15 @@
 
 ## Pre-release
 
+### Features
+
+- handle latex converters as fallback [13bfaaa](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/13bfaaabaaf732cf58d14004ed79b331bb40b838)
+
+### Bug Fixes
+
+- handle double width glyph checkboxes [#553](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/553)
+  [f58c05f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/f58c05f349d6e7650f4b40b0df1514400f0c10de)
+
 ## 8.10.0 (2025-11-08)
 
 ### Features

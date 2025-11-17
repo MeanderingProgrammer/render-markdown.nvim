@@ -1,5 +1,22 @@
 # Limitations
 
+## Concealed text keeps unnecessary line breaks
+
+[ISSUE #82](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/82)
+
+When text is concealed and line wrapping is enabled the place where the line break
+happens will always remain the same. This means even if enough text is concealed
+to avoid the need for line wrapping that will not "free up" any lines.
+
+This problem manifests in many different ways and is particularly impactful when
+rendering tables with links. The result will often be what appear like random line
+breaks, and overall "ugly" results.
+
+Unfortunately this problem stems from how neovim handles concealed text and line
+wrapping and there are really no options available to plugins to resolve this problem.
+Worse yet the issue seems incredibly complicated and unlikely to be solved any time
+soon [ISSUE #14409](https://github.com/neovim/neovim/issues/14409).
+
 ## `block` Width Removes Column Features
 
 [ISSUE #385](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/385)
@@ -175,7 +192,7 @@ Should no longer be an issue when using neovim >= `0.10.0`.
 
 [ISSUE #35](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/35)
 
-Text that extends beyond available space will can overwrite content.
+Text that extends beyond available space can overwrite content.
 
 ## Which Key Limiting Modes
 

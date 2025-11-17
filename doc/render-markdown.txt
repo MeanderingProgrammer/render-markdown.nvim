@@ -1,4 +1,4 @@
-*render-markdown.txt*      For NVIM v0.11.5      Last change: 2025 November 14
+*render-markdown.txt*      For NVIM v0.11.5      Last change: 2025 November 16
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
