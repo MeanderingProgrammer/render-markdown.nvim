@@ -27,6 +27,7 @@ M.anti_conceal.element = {
     head_border = 'head_border',
     head_icon = 'head_icon',
     indent = 'indent',
+    latex = 'latex',
     link = 'link',
     quote = 'quote',
     sign = 'sign',
@@ -54,6 +55,7 @@ M.anti_conceal.default = {
     --   dash
     --   head_background, head_border, head_icon
     --   indent
+    --   latex
     --   link
     --   quote
     --   sign

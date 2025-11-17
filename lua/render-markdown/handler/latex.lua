@@ -221,7 +221,7 @@ function Handler:render(row, nodes)
                 local center = math.floor(#output / 2) + 1
                 above = center - 1
                 below = #output - center
-                self.marks:over(self.config, true, node, {
+                self.marks:over(self.config, 'latex', node, {
                     virt_text = { { output[center], self.config.highlight } },
                     virt_text_pos = 'inline',
                     conceal = '',

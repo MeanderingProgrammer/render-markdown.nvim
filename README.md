@@ -266,6 +266,7 @@ require('render-markdown').setup({
         --   dash
         --   head_background, head_border, head_icon
         --   indent
+        --   latex
         --   link
         --   quote
         --   sign
