@@ -5,6 +5,7 @@
 ### Features
 
 - handle latex converters as fallback [13bfaaa](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/13bfaaabaaf732cf58d14004ed79b331bb40b838)
+- support anti-conceal ignore for inline latex [e6a5cf4](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/e6a5cf4edb228ebdab835252f1de19381ed41aa6)
 
 ### Bug Fixes
 

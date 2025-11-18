@@ -34,7 +34,6 @@ function M.get(buf)
     return result
 end
 
----Used by fzf-lua: https://github.com/ibhagwan/fzf-lua/blob/main/lua/fzf-lua/previewer/builtin.lua
 ---@param buf integer
 ---@param win integer
 ---@param event string
