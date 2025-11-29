@@ -115,6 +115,7 @@
 ---@field inline_left? string
 ---@field inline_right? string
 ---@field inline_pad? integer
+---@field priority? integer
 ---@field highlight? string
 ---@field highlight_info? string
 ---@field highlight_language? string
