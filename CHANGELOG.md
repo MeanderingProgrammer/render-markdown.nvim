@@ -6,11 +6,18 @@
 
 - handle latex converters as fallback [13bfaaa](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/13bfaaabaaf732cf58d14004ed79b331bb40b838)
 - support anti-conceal ignore for inline latex [e6a5cf4](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/e6a5cf4edb228ebdab835252f1de19381ed41aa6)
+- add priority to code background [#563](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/563)
+- add more default link icons [#565](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/565)
 
 ### Bug Fixes
 
 - handle double width glyph checkboxes [#553](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/553)
   [f58c05f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/f58c05f349d6e7650f4b40b0df1514400f0c10de)
+
+### Collaborator Shoutouts
+
+- @Lutetium-Vanadium
+- @chrisgrieser
 
 ## 8.10.0 (2025-11-08)
 
