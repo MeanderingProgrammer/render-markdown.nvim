@@ -511,7 +511,7 @@ M.code.default = {
     inline_right = '',
     -- Padding to add to the left & right of inline code.
     inline_pad = 0,
-    -- Priority to assign to highlight for code blocks.
+    -- Priority to assign to code background highlight.
     priority = nil,
     -- Highlight for code blocks.
     highlight = 'RenderMarkdownCode',
@@ -562,6 +562,7 @@ function M.code.schema()
         inline_left = { type = 'string' },
         inline_right = { type = 'string' },
         inline_pad = { type = 'number' },
+        priority = { optional = true, type = 'number' },
         highlight = { type = 'string' },
         highlight_info = { type = 'string' },
         highlight_language = { optional = true, type = 'string' },

@@ -507,7 +507,7 @@ require('render-markdown').setup({
         inline_right = '',
         -- Padding to add to the left & right of inline code.
         inline_pad = 0,
-        -- Priority to assign to highlight for code blocks.
+        -- Priority to assign to code background highlight.
         priority = nil,
         -- Highlight for code blocks.
         highlight = 'RenderMarkdownCode',
@@ -1174,7 +1174,7 @@ require('render-markdown').setup({
         inline_right = '',
         -- Padding to add to the left & right of inline code.
         inline_pad = 0,
-        -- Priority to assign to highlight for code blocks.
+        -- Priority to assign to code background highlight.
         priority = nil,
         -- Highlight for code blocks.
         highlight = 'RenderMarkdownCode',

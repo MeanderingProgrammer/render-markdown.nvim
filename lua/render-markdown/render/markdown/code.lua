@@ -225,9 +225,9 @@ function Render:background(start_row, end_row)
     for row = start_row, end_row do
         self.marks:add(self.config, 'code_background', row, col, {
             end_row = row + 1,
+            priority = self.config.priority,
             hl_group = self.config.highlight,
             hl_eol = true,
-            priority = self.config.priority,
         })
         if not padding:empty() and win_col > 0 then
             -- overwrite anything beyond width with padding
