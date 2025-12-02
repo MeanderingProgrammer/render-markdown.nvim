@@ -227,6 +227,7 @@ function Render:background(start_row, end_row)
             end_row = row + 1,
             hl_group = self.config.highlight,
             hl_eol = true,
+            priority = self.config.priority,
         })
         if not padding:empty() and win_col > 0 then
             -- overwrite anything beyond width with padding
