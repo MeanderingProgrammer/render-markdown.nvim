@@ -1289,6 +1289,7 @@ M.link.default = {
         gitlab = { pattern = 'gitlab%.com', icon = '󰮠 ' },
         google = { pattern = 'google%.com', icon = '󰊭 ' },
         hackernews = { pattern = "ycombinator%.com", icon = " " },
+        linkedin = { pattern = "linkedin%.com", icon = "󰌻 " },
         microsoft = { pattern = "microsoft%.com", icon = " " },
         neovim = { pattern = 'neovim%.io', icon = ' ' },
         reddit = { pattern = 'reddit%.com', icon = '󰑍 ' },
