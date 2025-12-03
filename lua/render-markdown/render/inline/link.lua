@@ -49,6 +49,7 @@ end
 ---@protected
 function Render:run()
     self.marks:start(self.config, 'link', self.node, {
+        priority = 9000,
         hl_mode = 'combine',
         virt_text = { self.data.icon },
         virt_text_pos = 'inline',

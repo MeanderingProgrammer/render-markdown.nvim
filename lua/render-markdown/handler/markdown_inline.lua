@@ -8,25 +8,23 @@ local M = {}
 ---@param ctx render.md.handler.Context
 ---@return render.md.Mark[]
 function M.parse(ctx)
-    local query = ts.parse(
-        'markdown_inline',
-        [[
-            (code_span) @code
+    -- stylua: ignore
+    local query = ts.parse('markdown_inline', [[
+        (code_span) @code
 
-            ((inline) @highlight
-                (#lua-match? @highlight "==[^=]+=="))
+        ((inline) @highlight
+            (#lua-match? @highlight "==[^=]+=="))
 
-            [
-                (email_autolink)
-                (full_reference_link)
-                (image)
-                (inline_link)
-                (uri_autolink)
-            ] @link
+        [
+            (email_autolink)
+            (full_reference_link)
+            (image)
+            (inline_link)
+            (uri_autolink)
+        ] @link
 
-            (shortcut_link) @shortcut
-        ]]
-    )
+        (shortcut_link) @shortcut
+    ]])
     ---@type table<string, render.md.Render>
     local renders = {
         code = require('render-markdown.render.inline.code'),

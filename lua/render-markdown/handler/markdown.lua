@@ -8,35 +8,33 @@ local M = {}
 ---@param ctx render.md.handler.Context
 ---@return render.md.Mark[]
 function M.parse(ctx)
-    local query = ts.parse(
-        'markdown',
-        [[
-            (fenced_code_block) @code
+    -- stylua: ignore
+    local query = ts.parse('markdown', [[
+        (fenced_code_block) @code
 
-            [
-                (thematic_break)
-                (minus_metadata)
-                (plus_metadata)
-            ] @dash
+        [
+            (thematic_break)
+            (minus_metadata)
+            (plus_metadata)
+        ] @dash
 
-            (document) @document
+        (document) @document
 
-            [
-                (atx_heading)
-                (setext_heading)
-            ] @heading
+        [
+            (atx_heading)
+            (setext_heading)
+        ] @heading
 
-            (list_item) @list
+        (list_item) @list
 
-            (section (paragraph) @paragraph)
+        (section (paragraph) @paragraph)
 
-            (block_quote) @quote
+        (block_quote) @quote
 
-            (section) @section
+        (section) @section
 
-            (pipe_table) @table
-        ]]
-    )
+        (pipe_table) @table
+    ]])
     ---@type table<string, render.md.Render>
     local renders = {
         code = require('render-markdown.render.markdown.code'),

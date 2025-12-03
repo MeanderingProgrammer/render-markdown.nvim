@@ -133,6 +133,7 @@ function M.link(kind)
     local highlight = kind == 'wiki' and 'RmWikiLink' or 'RmLink'
     ---@type vim.api.keyset.set_extmark
     return {
+        priority = 9000,
         hl_mode = 'combine',
         virt_text = { { icons[kind], highlight } },
         virt_text_pos = 'inline',

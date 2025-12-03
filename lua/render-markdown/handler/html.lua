@@ -8,13 +8,11 @@ local M = {}
 ---@param ctx render.md.handler.Context
 ---@return render.md.Mark[]
 function M.parse(ctx)
-    local query = ts.parse(
-        'html',
-        [[
-            (comment) @comment
-            (element) @tag
-        ]]
-    )
+    -- stylua: ignore
+    local query = ts.parse('html', [[
+        (comment) @comment
+        (element) @tag
+    ]])
     ---@type table<string, render.md.Render>
     local renders = {
         comment = require('render-markdown.render.html.comment'),

@@ -81,13 +81,11 @@ end
 
 ---@private
 function Render:markers()
-    local query = ts.parse(
-        'markdown',
-        [[
-            (block_quote_marker) @marker
-            (block_continuation) @continuation
-        ]]
-    )
+    -- stylua: ignore
+    local query = ts.parse('markdown', [[
+        (block_quote_marker) @marker
+        (block_continuation) @continuation
+    ]])
     self.context.view:nodes(self.node:get(), query, function(capture, node)
         if capture == 'marker' then
             -- marker nodes are a single '>' at the start of a block quote

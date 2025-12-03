@@ -51,6 +51,7 @@ function Render:run()
     if not body then
         -- add icon
         self.marks:add(self.config, 'link', row, start_col, {
+            priority = 9000,
             hl_mode = 'combine',
             virt_text = { icon },
             virt_text_pos = 'inline',

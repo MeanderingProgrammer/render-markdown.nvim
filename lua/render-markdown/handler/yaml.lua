@@ -8,15 +8,13 @@ local M = {}
 ---@param ctx render.md.handler.Context
 ---@return render.md.Mark[]
 function M.parse(ctx)
-    local query = ts.parse(
-        'yaml',
-        [[
-            (block_sequence_item) @bullet
+    -- stylua: ignore
+    local query = ts.parse('yaml', [[
+        (block_sequence_item) @bullet
 
-            ((double_quote_scalar) @link
-                (#lua-match? @link "^\"%[%[.+%]%]\"$"))
-        ]]
-    )
+        ((double_quote_scalar) @link
+            (#lua-match? @link "^\"%[%[.+%]%]\"$"))
+    ]])
     ---@type table<string, render.md.Render>
     local renders = {
         bullet = require('render-markdown.render.yaml.bullet'),
