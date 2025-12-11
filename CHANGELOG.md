@@ -13,6 +13,8 @@
 
 - handle double width glyph checkboxes [#553](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/553)
   [f58c05f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/f58c05f349d6e7650f4b40b0df1514400f0c10de)
+- link icons following long checkboxes [#564](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/564)
+  [b2b1353](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b2b135347e299ffbf7f4123fb7811899b0c9f4b8)
 
 ### Collaborator Shoutouts
 

@@ -1409,6 +1409,7 @@ M.overrides.default = {
     buftype = {
         nofile = {
             render_modes = true,
+            code = { priority = 175 },
             padding = { highlight = 'NormalFloat' },
             sign = { enabled = false },
         },

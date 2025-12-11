@@ -1,4 +1,4 @@
-*render-markdown.txt*      For NVIM v0.11.5      Last change: 2025 December 02
+*render-markdown.txt*      For NVIM v0.11.5      Last change: 2025 December 11
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -998,6 +998,7 @@ Default Configuration ~
             buftype = {
                 nofile = {
                     render_modes = true,
+                    code = { priority = 175 },
                     padding = { highlight = 'NormalFloat' },
                     sign = { enabled = false },
                 },
