@@ -1303,6 +1303,8 @@ M.link.default = {
         twitter = { pattern = 'x%.com', icon = ' ' },
         wikipedia = { pattern = 'wikipedia%.org', icon = '󰖬 ' },
         youtube = { pattern = 'youtube%.com', icon = '󰗃 ' },
+        youtube_nocookie = { pattern = 'youtube-nocookie%.com', icon = '󰗃 ' },
+        youtube_short = { pattern = 'youtu%.be', icon = '󰗃 ' },
     },
 }
 
