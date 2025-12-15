@@ -1302,8 +1302,7 @@ M.link.default = {
         steam = { pattern = 'steampowered%.com', icon = ' ' },
         twitter = { pattern = 'x%.com', icon = ' ' },
         wikipedia = { pattern = 'wikipedia%.org', icon = '󰖬 ' },
-        youtube = { pattern = 'youtube%.com', icon = '󰗃 ' },
-        youtube_nocookie = { pattern = 'youtube-nocookie%.com', icon = '󰗃 ' },
+        youtube = { pattern = 'youtube[^.]*%.com', icon = '󰗃 ' },
         youtube_short = { pattern = 'youtu%.be', icon = '󰗃 ' },
     },
 }

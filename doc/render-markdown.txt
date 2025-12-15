@@ -1,4 +1,4 @@
-*render-markdown.txt*      For NVIM v0.11.5      Last change: 2025 December 14
+*render-markdown.txt*      For NVIM v0.11.5      Last change: 2025 December 15
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -899,7 +899,8 @@ Default Configuration ~
                 steam = { pattern = 'steampowered%.com', icon = ' ' },
                 twitter = { pattern = 'x%.com', icon = ' ' },
                 wikipedia = { pattern = 'wikipedia%.org', icon = '󰖬 ' },
-                youtube = { pattern = 'youtube%.com', icon = '󰗃 ' },
+                youtube = { pattern = 'youtube[^.]*%.com', icon = '󰗃 ' },
+                youtube_short = { pattern = 'youtu%.be', icon = '󰗃 ' },
             },
         },
         sign = {
@@ -1645,7 +1646,8 @@ Link Configuration ~
                 steam = { pattern = 'steampowered%.com', icon = ' ' },
                 twitter = { pattern = 'x%.com', icon = ' ' },
                 wikipedia = { pattern = 'wikipedia%.org', icon = '󰖬 ' },
-                youtube = { pattern = 'youtube%.com', icon = '󰗃 ' },
+                youtube = { pattern = 'youtube[^.]*%.com', icon = '󰗃 ' },
+                youtube_short = { pattern = 'youtu%.be', icon = '󰗃 ' },
             },
         },
     })

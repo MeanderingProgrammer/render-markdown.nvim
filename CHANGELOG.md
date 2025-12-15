@@ -8,6 +8,7 @@
 - support anti-conceal ignore for inline latex [e6a5cf4](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/e6a5cf4edb228ebdab835252f1de19381ed41aa6)
 - add priority to code background [#563](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/563)
 - add more default link icons [#565](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/565)
+- add more YouTube domains [#569](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/569)
 
 ### Bug Fixes
 
@@ -15,6 +16,9 @@
   [f58c05f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/f58c05f349d6e7650f4b40b0df1514400f0c10de)
 - link icons following long checkboxes [#564](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/564)
   [b2b1353](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b2b135347e299ffbf7f4123fb7811899b0c9f4b8)
+- reduce code background priority in nofile buffers [26097a4](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/26097a4eb95b391d0308c1b77cce89b28bbc9916)
+- ignore inline highlights that start or end in nested node [#568](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/568)
+  [7a43c8b](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7a43c8b444fa15b7736b34b248addb951126f723)
 
 ### Collaborator Shoutouts
 
