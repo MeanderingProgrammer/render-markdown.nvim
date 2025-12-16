@@ -6,7 +6,7 @@ body:
   - type: input
     attributes:
       label: Neovim version (nvim -v)
-      placeholder: 0.10.0
+      placeholder: 0.11.0
     validations:
       required: true
   - type: input
@@ -19,5 +19,19 @@ body:
     attributes:
       label: Description
       description: What is it you're trying to do?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Healthcheck output
+      description: Output of :checkhealth render-markdown
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Plugin configuration
+      description: Your configuration for this plugin (:RenderMarkdown config).
+      render: lua
     validations:
       required: true
