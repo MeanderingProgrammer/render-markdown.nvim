@@ -958,8 +958,15 @@ M.html = {}
 
 ---@class (exact) render.md.html.comment.Config
 ---@field conceal boolean
----@field text? string
+---@field text? render.md.html.comment.String
 ---@field highlight string
+
+---@class (exact) render.md.html.comment.Context
+---@field text string
+
+---@alias render.md.html.comment.String
+---| string
+---| fun(ctx: render.md.html.comment.Context): string?
 
 ---@class (exact) render.md.html.Tag
 ---@field icon? string
@@ -973,9 +980,16 @@ M.html.default = {
     -- Additional modes to render HTML.
     render_modes = false,
     comment = {
+        -- Useful context to have when evaluating values.
+        -- | text | text value of the comment node |
+
         -- Turn on / off HTML comment concealing.
         conceal = true,
-        -- Optional text to inline before the concealed comment.
+        -- Text to inline before the concealed comment.
+        -- Output is evaluated depending on the type.
+        -- | function | `value(context)` |
+        -- | string   | `value`          |
+        -- | nil      | nothing          |
         text = nil,
         -- Highlight for the inlined text.
         highlight = 'RenderMarkdownHtmlComment',
@@ -1002,7 +1016,10 @@ function M.html.schema()
         comment = {
             record = {
                 conceal = { type = 'boolean' },
-                text = { optional = true, type = 'string' },
+                text = {
+                    optional = true,
+                    union = { { type = 'string' }, { type = 'function' } },
+                },
                 highlight = { type = 'string' },
             },
         },

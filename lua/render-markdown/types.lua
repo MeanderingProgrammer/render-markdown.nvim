@@ -177,7 +177,7 @@
 
 ---@class (exact) render.md.html.comment.UserConfig
 ---@field conceal? boolean
----@field text? string
+---@field text? render.md.html.comment.String
 ---@field highlight? string
 
 ---@class (exact) render.md.indent.UserConfig: render.md.base.UserConfig

@@ -887,9 +887,16 @@ require('render-markdown').setup({
         -- Additional modes to render HTML.
         render_modes = false,
         comment = {
+            -- Useful context to have when evaluating values.
+            -- | text | text value of the comment node |
+
             -- Turn on / off HTML comment concealing.
             conceal = true,
-            -- Optional text to inline before the concealed comment.
+            -- Text to inline before the concealed comment.
+            -- Output is evaluated depending on the type.
+            -- | function | `value(context)` |
+            -- | string   | `value`          |
+            -- | nil      | nothing          |
             text = nil,
             -- Highlight for the inlined text.
             highlight = 'RenderMarkdownHtmlComment',
