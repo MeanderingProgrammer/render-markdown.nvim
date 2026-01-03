@@ -9,6 +9,8 @@
 - add priority to code background [#563](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/563)
 - add more default link icons [#565](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/565)
 - add more YouTube domains [#569](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/569)
+- allow html.comment.text to be a function [#574](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/574)
+  [acddb80](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/acddb80d9a12e33c03ca288de39c9963396f358a)
 
 ### Bug Fixes
 
@@ -24,6 +26,7 @@
 
 - @Lutetium-Vanadium
 - @chrisgrieser
+- @yzoug
 
 ## 8.10.0 (2025-11-08)
 

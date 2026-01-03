@@ -549,6 +549,8 @@ require('render-markdown').setup({
         -- Amount of margin to add to the left of dash.
         -- If a float < 1 is provided it is treated as a percentage of available window space.
         left_margin = 0,
+        -- Priority to assign to dash.
+        priority = nil,
         -- Highlight for the whole line generated from the icon.
         highlight = 'RenderMarkdownDash',
     },
@@ -1247,6 +1249,8 @@ require('render-markdown').setup({
         -- Amount of margin to add to the left of dash.
         -- If a float < 1 is provided it is treated as a percentage of available window space.
         left_margin = 0,
+        -- Priority to assign to dash.
+        priority = nil,
         -- Highlight for the whole line generated from the icon.
         highlight = 'RenderMarkdownDash',
     },

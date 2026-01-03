@@ -638,6 +638,7 @@ M.dash = {}
 ---@field icon string
 ---@field width render.md.dash.Width
 ---@field left_margin number
+---@field priority? integer
 ---@field highlight string
 
 ---@class (exact) render.md.dash.Context
@@ -670,6 +671,8 @@ M.dash.default = {
     -- Amount of margin to add to the left of dash.
     -- If a float < 1 is provided it is treated as a percentage of available window space.
     left_margin = 0,
+    -- Priority to assign to dash.
+    priority = nil,
     -- Highlight for the whole line generated from the icon.
     highlight = 'RenderMarkdownDash',
 }
@@ -686,6 +689,7 @@ function M.dash.schema()
             },
         },
         left_margin = { type = 'number' },
+        priority = { optional = true, type = 'number' },
         highlight = { type = 'string' },
     })
 end

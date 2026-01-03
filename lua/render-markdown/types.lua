@@ -141,6 +141,7 @@
 ---@field icon? string
 ---@field width? render.md.dash.Width
 ---@field left_margin? number
+---@field priority? integer
 ---@field highlight? string
 
 ---@class (exact) render.md.document.UserConfig: render.md.base.UserConfig

@@ -56,6 +56,7 @@ end
 ---@param row integer
 function Render:dash(line, row)
     self.marks:add(self.config, 'dash', row, 0, {
+        priority = self.config.priority,
         virt_text = line:get(),
         virt_text_pos = 'overlay',
     })
