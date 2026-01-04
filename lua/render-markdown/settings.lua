@@ -512,7 +512,7 @@ M.code.default = {
     -- Padding to add to the left & right of inline code.
     inline_pad = 0,
     -- Priority to assign to code background highlight.
-    priority = nil,
+    priority = 140,
     -- Highlight for code blocks.
     highlight = 'RenderMarkdownCode',
     -- Highlight for code info section, after the language.
