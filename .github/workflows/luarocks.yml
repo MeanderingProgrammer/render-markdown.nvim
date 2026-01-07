@@ -8,10 +8,10 @@ on:
 
 jobs:
   luarocks-upload:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0 # Required to get the tags
 
