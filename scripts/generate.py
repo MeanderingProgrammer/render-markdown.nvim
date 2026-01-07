@@ -48,7 +48,7 @@ def main(force: bool) -> None:
     sizes: dict[str, int] = dict(small=10, medium=100, large=1000)
     for generator in generators:
         for size, n in sizes.items():
-            path = Path("temp").joinpath(generator.name(size))
+            path = Path("temp") / generator.name(size)
             if not path.exists() or force:
                 sections = generator.create(n)
                 content = "\n\n".join(["\n".join(section) for section in sections])

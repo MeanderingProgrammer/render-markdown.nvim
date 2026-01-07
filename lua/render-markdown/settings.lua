@@ -404,7 +404,7 @@ M.code = {}
 ---@field inline_left string
 ---@field inline_right string
 ---@field inline_pad integer
----@field priority? integer
+---@field priority integer
 ---@field highlight string
 ---@field highlight_info string
 ---@field highlight_language? string
@@ -562,7 +562,7 @@ function M.code.schema()
         inline_left = { type = 'string' },
         inline_right = { type = 'string' },
         inline_pad = { type = 'number' },
-        priority = { optional = true, type = 'number' },
+        priority = { type = 'number' },
         highlight = { type = 'string' },
         highlight_info = { type = 'string' },
         highlight_language = { optional = true, type = 'string' },
@@ -1431,7 +1431,6 @@ M.overrides.default = {
     buftype = {
         nofile = {
             render_modes = true,
-            code = { priority = 175 },
             padding = { highlight = 'NormalFloat' },
             sign = { enabled = false },
         },

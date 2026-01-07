@@ -93,26 +93,26 @@ def main() -> None:
 
 
 def update_types(root: Path) -> None:
-    files: list[Path] = [
-        root.joinpath("init.lua"),
-        root.joinpath("settings.lua"),
+    files = [
+        root / "init.lua",
+        root / "settings.lua",
     ]
 
-    sections: list[str] = ["---@meta"]
+    sections = ["---@meta"]
     for lua_type in get_lua_types(files):
         user = lua_type.to_user()
         if user is not None:
             sections.append(user)
 
-    types = root.joinpath("types.lua")
+    types = root / "types.lua"
     types.write_text("\n\n".join(sections) + "\n")
 
 
 def update_readme(root: Path) -> None:
     readme = Path("README.md")
-    settings = root.joinpath("settings.lua")
+    settings = root / "settings.lua"
     old = get_code_block(readme, "log_level", 1)
-    new = wrap_setup(root, get_default(root.joinpath("init.lua"), None))
+    new = wrap_setup(root, get_default(root / "init.lua", None))
     while True:
         match = re.search(r"settings\.(.*?)\.default", new)
         if match is None:
@@ -151,9 +151,9 @@ def wrap_setup(root: Path, s: str) -> str:
 
 
 def update_handlers(root: Path) -> None:
-    files: list[Path] = [
-        root.joinpath("settings.lua"),
-        root.joinpath("lib/marks.lua"),
+    files = [
+        root / "settings.lua",
+        root / "lib/marks.lua",
     ]
     lua_types = {lua_type.name(): lua_type for lua_type in get_lua_types(files)}
     names = [
@@ -197,13 +197,13 @@ def get_lua_types(files: list[Path]) -> list[LuaType]:
 
 
 def get_config_for(config: str, parameter: str) -> str:
-    lines: list[str] = config.splitlines()
-    start: int = lines.index(f"    {parameter} = {{")
+    lines = config.splitlines()
+    start = lines.index(f"    {parameter} = {{")
     for i in range(start - 1, 0, -1):
         if "--" not in lines[i]:
             start = i + 1
             break
-    end: int = lines.index("    },", start)
+    end = lines.index("    },", start)
     return "\n".join(["{"] + lines[start : end + 1] + ["}"])
 
 

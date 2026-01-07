@@ -1,4 +1,4 @@
-*render-markdown.txt*       For NVIM v0.11.5      Last change: 2026 January 03
+*render-markdown.txt*       For NVIM v0.11.5      Last change: 2026 January 07
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -574,7 +574,7 @@ Default Configuration ~
             -- Padding to add to the left & right of inline code.
             inline_pad = 0,
             -- Priority to assign to code background highlight.
-            priority = nil,
+            priority = 140,
             -- Highlight for code blocks.
             highlight = 'RenderMarkdownCode',
             -- Highlight for code info section, after the language.
@@ -1008,7 +1008,6 @@ Default Configuration ~
             buftype = {
                 nofile = {
                     render_modes = true,
-                    code = { priority = 175 },
                     padding = { highlight = 'NormalFloat' },
                     sign = { enabled = false },
                 },
@@ -1253,7 +1252,7 @@ Code Block Configuration ~
             -- Padding to add to the left & right of inline code.
             inline_pad = 0,
             -- Priority to assign to code background highlight.
-            priority = nil,
+            priority = 140,
             -- Highlight for code blocks.
             highlight = 'RenderMarkdownCode',
             -- Highlight for code info section, after the language.

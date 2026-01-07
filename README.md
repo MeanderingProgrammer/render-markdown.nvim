@@ -508,7 +508,7 @@ require('render-markdown').setup({
         -- Padding to add to the left & right of inline code.
         inline_pad = 0,
         -- Priority to assign to code background highlight.
-        priority = nil,
+        priority = 140,
         -- Highlight for code blocks.
         highlight = 'RenderMarkdownCode',
         -- Highlight for code info section, after the language.
@@ -942,7 +942,6 @@ require('render-markdown').setup({
         buftype = {
             nofile = {
                 render_modes = true,
-                code = { priority = 175 },
                 padding = { highlight = 'NormalFloat' },
                 sign = { enabled = false },
             },
@@ -1193,7 +1192,7 @@ require('render-markdown').setup({
         -- Padding to add to the left & right of inline code.
         inline_pad = 0,
         -- Priority to assign to code background highlight.
-        priority = nil,
+        priority = 140,
         -- Highlight for code blocks.
         highlight = 'RenderMarkdownCode',
         -- Highlight for code info section, after the language.
