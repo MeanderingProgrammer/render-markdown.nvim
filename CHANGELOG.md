@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 8.11.0 (2026-01-07)
+
 ### Features
 
 - handle latex converters as fallback [13bfaaa](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/13bfaaabaaf732cf58d14004ed79b331bb40b838)
