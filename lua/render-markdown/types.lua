@@ -216,6 +216,7 @@
 ---@field email? string
 ---@field hyperlink? string
 ---@field highlight? string
+---@field highlight_title? string
 ---@field wiki? render.md.link.wiki.UserConfig
 ---@field custom? table<string, render.md.link.custom.UserConfig>
 

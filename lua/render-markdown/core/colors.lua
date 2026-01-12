@@ -47,6 +47,7 @@ M.colors = {
     HtmlComment     = '@comment',
     -- Links
     Link            = '@markup.link.label.markdown_inline',
+    LinkTitle       = '@markup.link.markdown_inline',
     WikiLink        = 'RenderMarkdownLink',
     -- Checkboxes
     Unchecked       = '@markup.list.unchecked',

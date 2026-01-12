@@ -1222,6 +1222,7 @@ M.link = {}
 ---@field email string
 ---@field hyperlink string
 ---@field highlight string
+---@field highlight_title string
 ---@field wiki render.md.link.wiki.Config
 ---@field custom table<string, render.md.link.custom.Config>
 
@@ -1286,6 +1287,8 @@ M.link.default = {
     hyperlink = '󰌹 ',
     -- Applies to the inlined icon as a fallback.
     highlight = 'RenderMarkdownLink',
+    -- Applies to the link title.
+    highlight_title = 'RenderMarkdownLinkTitle',
     -- Applies to WikiLink elements.
     wiki = {
         icon = '󱗖 ',
@@ -1354,6 +1357,7 @@ function M.link.schema()
         email = { type = 'string' },
         hyperlink = { type = 'string' },
         highlight = { type = 'string' },
+        highlight_title = { type = 'string' },
         wiki = {
             record = {
                 icon = { type = 'string' },

@@ -1,4 +1,4 @@
-*render-markdown.txt*       For NVIM v0.11.5      Last change: 2026 January 07
+*render-markdown.txt*       For NVIM v0.11.5      Last change: 2026 January 11
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -864,6 +864,8 @@ Default Configuration ~
             hyperlink = '󰌹 ',
             -- Applies to the inlined icon as a fallback.
             highlight = 'RenderMarkdownLink',
+            -- Applies to the link title.
+            highlight_title = 'RenderMarkdownLinkTitle',
             -- Applies to WikiLink elements.
             wiki = {
                 icon = '󱗖 ',
@@ -1619,6 +1621,8 @@ Link Configuration ~
             hyperlink = '󰌹 ',
             -- Applies to the inlined icon as a fallback.
             highlight = 'RenderMarkdownLink',
+            -- Applies to the link title.
+            highlight_title = 'RenderMarkdownLinkTitle',
             -- Applies to WikiLink elements.
             wiki = {
                 icon = '󱗖 ',
@@ -1804,8 +1808,9 @@ The table below shows all the highlight groups with their default link
   RenderMarkdownHtmlComment       @comment                             HTML comment inline
                                                                        text
 
-  RenderMarkdownLink              @markup.link.label.markdown_inline   Image & hyperlink
-                                                                       icons
+  RenderMarkdownLink              @markup.link.label.markdown_inline   Link icons
+
+  RenderMarkdownLinkTitle         @markup.link.markdown_inline         Link titles
 
   RenderMarkdownWikiLink          RenderMarkdownLink                   WikiLink icon & text
 

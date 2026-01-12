@@ -73,7 +73,7 @@ function M.conceal_lines()
     return { conceal_lines = '' }
 end
 
----@param kind 'code'|'inline'|'link'
+---@param kind 'code'|'inline'|'link'|'title'
 ---@return vim.api.keyset.set_extmark
 function M.highlight(kind)
     local priority ---@type integer?
@@ -86,6 +86,9 @@ function M.highlight(kind)
     elseif kind == 'link' then
         priority = 1000
         highlight = 'RmLink'
+    elseif kind == 'title' then
+        priority = 1000
+        highlight = 'RmLinkTitle'
     end
     ---@type vim.api.keyset.set_extmark
     return {

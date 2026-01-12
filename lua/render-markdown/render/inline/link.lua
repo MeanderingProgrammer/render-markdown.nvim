@@ -2,6 +2,7 @@ local Base = require('render-markdown.render.base')
 
 ---@class render.md.inline.link.Data
 ---@field icon render.md.mark.Text
+---@field title? render.md.Node
 ---@field autolink boolean
 
 ---@class render.md.render.inline.Link: render.md.Render
@@ -20,8 +21,8 @@ function Render:setup()
     if self.node:descendant('shortcut_link') then
         return false
     end
-    ---@type render.md.mark.Text
-    local icon = { self.config.hyperlink, self.config.highlight }
+    local icon = { self.config.hyperlink, self.config.highlight } ---@type render.md.mark.Text
+    local title = nil ---@type render.md.Node?
     local autolink = false
     if self.node.type == 'email_autolink' then
         icon[1] = self.config.email
@@ -32,17 +33,19 @@ function Render:setup()
         if destination then
             self.context.config:set_link_text(destination.text, icon)
         end
+        title = self.node:child('link_title')
     elseif self.node.type == 'inline_link' then
         local destination = self.node:child('link_destination')
         if destination then
             self.context.config:set_link_text(destination.text, icon)
         end
+        title = self.node:child('link_title')
     elseif self.node.type == 'uri_autolink' then
         local destination = self.node.text:sub(2, -2)
         self.context.config:set_link_text(destination, icon)
         autolink = true
     end
-    self.data = { icon = icon, autolink = autolink }
+    self.data = { icon = icon, title = title, autolink = autolink }
     return true
 end
 
@@ -53,6 +56,10 @@ function Render:run()
         hl_mode = 'combine',
         virt_text = { self.data.icon },
         virt_text_pos = 'inline',
+    })
+    self.marks:over(self.config, 'link', self.data.title, {
+        priority = 1000,
+        hl_group = self.config.highlight_title,
     })
     if self.data.autolink then
         self:hide(self.node.start_col, 1)

@@ -798,6 +798,8 @@ require('render-markdown').setup({
         hyperlink = '󰌹 ',
         -- Applies to the inlined icon as a fallback.
         highlight = 'RenderMarkdownLink',
+        -- Applies to the link title.
+        highlight_title = 'RenderMarkdownLinkTitle',
         -- Applies to WikiLink elements.
         wiki = {
             icon = '󱗖 ',
@@ -1573,6 +1575,8 @@ require('render-markdown').setup({
         hyperlink = '󰌹 ',
         -- Applies to the inlined icon as a fallback.
         highlight = 'RenderMarkdownLink',
+        -- Applies to the link title.
+        highlight_title = 'RenderMarkdownLinkTitle',
         -- Applies to WikiLink elements.
         wiki = {
             icon = '󱗖 ',
@@ -1714,7 +1718,8 @@ The table below shows all the highlight groups with their default link
 | RenderMarkdownMath            | @markup.math                       | Latex lines                |
 | RenderMarkdownIndent          | Whitespace                         | Indent icon                |
 | RenderMarkdownHtmlComment     | @comment                           | HTML comment inline text   |
-| RenderMarkdownLink            | @markup.link.label.markdown_inline | Image & hyperlink icons    |
+| RenderMarkdownLink            | @markup.link.label.markdown_inline | Link icons                 |
+| RenderMarkdownLinkTitle       | @markup.link.markdown_inline       | Link titles                |
 | RenderMarkdownWikiLink        | RenderMarkdownLink                 | WikiLink icon & text       |
 | RenderMarkdownUnchecked       | @markup.list.unchecked             | Unchecked checkbox         |
 | RenderMarkdownChecked         | @markup.list.checked               | Checked checkbox           |
