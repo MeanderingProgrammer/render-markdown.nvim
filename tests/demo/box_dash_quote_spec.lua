@@ -44,7 +44,7 @@ describe('demo/box_dash_quote.md', function()
         marks:add(row:get(1, 0), { 2, 3 }, util.quote('RmQuote1'))
 
         util.assert_view(marks, {
-            '󰫎 󰲡 Checkbox / Dash / Quote',
+            '󰫎 ① Checkbox / Dash / Quote',
             '',
             '  󰄱  Unchecked Checkbox',
             '  󰱒  Checked Checkbox',

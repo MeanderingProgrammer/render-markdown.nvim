@@ -79,7 +79,7 @@ describe('demo/list_table.md', function()
         marks:add(row:get(2), 0, util.table.border(false, false, 8, 15, 7, 6))
 
         util.assert_view(marks, {
-            '󰫎 󰲡 Unordered List',
+            '󰫎 ① Unordered List',
             '',
             '  ● List Item 1: with 󰖟 link',
             '  ● List Item 2: with inline code',
@@ -90,12 +90,12 @@ describe('demo/list_table.md', function()
             '            ● Nested List 4 Item 1',
             '  ● List Item 3: with 󰌹 reference link',
             '',
-            '󰫎 󰲡 Ordered List',
+            '󰫎 ① Ordered List',
             '',
             '  1. Item 1',
             '  2. Item 2',
             '',
-            '󰫎 󰲡 Table',
+            '󰫎 ① Table',
             '  ┌────────┬───────────────┬───────┬──────┐',
             '  │ Left   │    Center     │ Right │ None │',
             '  ├━───────┼━─────────────━┼──────━┼──────┤',
@@ -152,7 +152,7 @@ describe('demo/list_table.md', function()
         marks:add(row:get(1), 0, util.table.border(false, false, 10, 15, 7, 6))
 
         util.assert_view(marks, {
-            '󰫎 󰲡 Unordered List',
+            '󰫎 ① Unordered List',
             '',
             '    ●   List Item 1: with 󰖟 link',
             '    ●   List Item 2: with   inline   code',
@@ -163,12 +163,12 @@ describe('demo/list_table.md', function()
             '              ●   Nested List 4 Item 1',
             '    ●   List Item 3: with 󰌹 reference link',
             '',
-            '󰫎 󰲡 Ordered List',
+            '󰫎 ① Ordered List',
             '',
             '    1.   Item 1',
             '    2.   Item 2',
             '',
-            '󰫎 󰲡 Table',
+            '󰫎 ① Table',
             '  ┌──────────┬───────────────┬───────┬──────┐',
             '  │   Left   │    Center     │ Right │ None │',
             '  ├━─────────┼━─────────────━┼──────━┼──────┤',

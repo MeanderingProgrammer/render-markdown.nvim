@@ -46,15 +46,15 @@ describe('demo/heading_code.md', function()
         marks:add(row:get(0, 0), { 0, 3 }, util.conceal_lines())
 
         util.assert_view(marks, {
-            '󰫎 󰲡 Heading 1',
+            '󰫎 ① Heading 1',
             '',
-            '󰫎   󰲥 Heading 3',
+            '󰫎   ③ Heading 3',
             '',
-            '󰫎    󰲧 Heading 4',
+            '󰫎    ④ Heading 4',
             '',
-            '󰫎     󰲩 Heading 5',
+            '󰫎     ⑤ Heading 5',
             '',
-            '󰫎      󰲫 Heading 6',
+            '󰫎      ⑥ Heading 6',
             '',
             '  󰥶 Image',
             '',

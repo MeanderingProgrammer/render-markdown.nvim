@@ -56,7 +56,7 @@ describe('demo/latex.md', function()
         })
 
         util.assert_view(marks, {
-            '󰫎 󰲡 LaTeX',
+            '󰫎 ① LaTeX',
             '',
             '  ' .. inline.output[1],
             '  ' .. inline.output[2],

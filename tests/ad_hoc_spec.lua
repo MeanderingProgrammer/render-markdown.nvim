@@ -12,7 +12,7 @@ describe('ad hoc', function()
         local marks = util.marks()
         marks:add(0, 0, util.heading.sign(2))
         marks:add(0, 0, {
-            virt_text = { { '󰲣 ', 'RmH2:RmH2Bg' } },
+            virt_text = { { '② ', 'RmH2:RmH2Bg' } },
             virt_text_pos = 'inline',
         })
         marks:add({ 0, 1 }, { 0, 0 }, util.heading.bg(2))
@@ -29,7 +29,7 @@ describe('ad hoc', function()
         marks:add({ 2, 2 }, { 0, 3 }, util.conceal_lines())
         marks:add({ 2, 3 }, { 0, 0 }, util.heading.bg(2))
         util.assert_view(marks, {
-            '󰫎 󰲣 Heading 2 Line 1',
+            '󰫎 ② Heading 2 Line 1',
             '    Heading 2 Line 2',
         })
     end)

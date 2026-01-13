@@ -223,7 +223,7 @@ end
 ---@return vim.api.keyset.set_extmark
 function M.heading.icon(level)
     local icons =
-        { '󰲡 ', ' 󰲣 ', '  󰲥 ', '   󰲧 ', '    󰲩 ', '     󰲫 ' }
+        { '① ', ' ② ', '  ③ ', '   ④ ', '    ⑤ ', '     ⑥ ' }
     local highlight = ('RmH%d:RmH%dBg'):format(level, level)
     ---@type vim.api.keyset.set_extmark
     return {
