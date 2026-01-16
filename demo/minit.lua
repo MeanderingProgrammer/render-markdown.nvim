@@ -1,15 +1,15 @@
--- General settings
-vim.opt.termguicolors = true
-vim.opt.cursorline = true
+-- general settings
+vim.o.termguicolors = true
+vim.o.cursorline = true
 
--- Line settings
-vim.opt.wrap = false
-vim.opt.number = true
-vim.opt.relativenumber = true
-vim.opt.statuscolumn = '%s%=%{v:relnum?v:relnum:v:lnum} '
+-- line settings
+vim.o.number = true
+vim.o.relativenumber = true
+vim.o.statuscolumn = '%s%=%{v:relnum?v:relnum:v:lnum} '
+vim.o.wrap = false
 
--- Mode is already in status line plugin
-vim.opt.showmode = false
+-- mode is already in status line plugin
+vim.o.showmode = false
 
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
 assert(vim.uv.fs_stat(lazypath))
@@ -19,6 +19,42 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
     dev = { path = '~/dev/repos/personal' },
     spec = {
+        {
+            'MeanderingProgrammer/render-markdown.nvim',
+            dev = true,
+            dependencies = {
+                'nvim-mini/mini.nvim',
+                'nvim-treesitter/nvim-treesitter',
+            },
+            config = function()
+                require('render-markdown').setup({})
+            end,
+        },
+        {
+            'nvim-mini/mini.nvim',
+            config = function()
+                local icons = require('mini.icons')
+                icons.setup({})
+                icons.mock_nvim_web_devicons()
+            end,
+        },
+        {
+            'nvim-treesitter/nvim-treesitter',
+            build = ':TSUpdate',
+            config = function()
+                require('nvim-treesitter')
+                    .install({ 'html', 'latex', 'markdown', 'markdown_inline', 'yaml' })
+                    :wait()
+
+                vim.api.nvim_create_autocmd('FileType', {
+                    group = vim.api.nvim_create_augroup('Highlighter', {}),
+                    pattern = 'markdown',
+                    callback = function(args)
+                        vim.treesitter.start(args.buf)
+                    end,
+                })
+            end,
+        },
         {
             'folke/tokyonight.nvim',
             config = function()
@@ -41,43 +77,6 @@ require('lazy').setup({
                         lualine_z = { 'location' },
                     },
                 })
-            end,
-        },
-        {
-            'nvim-treesitter/nvim-treesitter',
-            branch = 'main',
-            build = ':TSUpdate',
-            config = function()
-                require('nvim-treesitter')
-                    .install({ 'html', 'latex', 'markdown', 'markdown_inline' })
-                    :wait()
-
-                vim.api.nvim_create_autocmd('FileType', {
-                    group = vim.api.nvim_create_augroup('Highlighter', {}),
-                    pattern = 'markdown',
-                    callback = function(args)
-                        vim.treesitter.start(args.buf)
-                    end,
-                })
-            end,
-        },
-        {
-            'nvim-mini/mini.nvim',
-            config = function()
-                local icons = require('mini.icons')
-                icons.setup({})
-                icons.mock_nvim_web_devicons()
-            end,
-        },
-        {
-            'MeanderingProgrammer/render-markdown.nvim',
-            dev = true,
-            dependencies = {
-                'nvim-treesitter/nvim-treesitter',
-                'nvim-mini/mini.nvim',
-            },
-            config = function()
-                require('render-markdown').setup({})
             end,
         },
     },

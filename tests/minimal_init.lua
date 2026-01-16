@@ -8,10 +8,10 @@ local function get_path(name)
 end
 
 -- settings
-vim.opt.lines = 40
-vim.opt.columns = 80
-vim.opt.tabstop = 4
-vim.opt.wrap = false
+vim.o.columns = 80
+vim.o.lines = 40
+vim.o.tabstop = 4
+vim.o.wrap = false
 
 -- source dependencies first
 vim.opt.rtp:prepend(get_path('nvim-treesitter'))
