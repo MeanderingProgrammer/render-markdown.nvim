@@ -381,6 +381,7 @@ M.code = {}
 
 ---@class (exact) render.md.code.Config: render.md.base.Config
 ---@field sign boolean
+---@field ignore string[]
 ---@field conceal_delimiters boolean
 ---@field language boolean
 ---@field position render.md.code.Position
@@ -447,6 +448,8 @@ M.code.default = {
     enabled = true,
     -- Additional modes to render code blocks.
     render_modes = false,
+    -- List of languages to ignore rendering for.
+    ignore = {},
     -- Turn on / off sign column related rendering.
     sign = true,
     -- Whether to conceal nodes at the top and bottom of code blocks.
@@ -536,6 +539,7 @@ M.code.default = {
 ---@return render.md.Schema
 function M.code.schema()
     return M.base.schema({
+        ignore = { list = { type = 'string' } },
         sign = { type = 'boolean' },
         conceal_delimiters = { type = 'boolean' },
         language = { type = 'boolean' },
