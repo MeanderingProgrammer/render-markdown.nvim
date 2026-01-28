@@ -1242,6 +1242,7 @@ M.link = {}
 ---@field suffix string
 
 ---@class (exact) render.md.link.wiki.Config
+---@field enabled boolean
 ---@field icon string
 ---@field body fun(ctx: render.md.link.Context): render.md.mark.Text|string?
 ---@field highlight string
@@ -1291,6 +1292,8 @@ M.link.default = {
     highlight_title = 'RenderMarkdownLinkTitle',
     -- Applies to WikiLink elements.
     wiki = {
+        -- Turn on / off WikiLink rendering.
+        enabled = true,
         icon = '󱗖 ',
         body = function()
             return nil
@@ -1360,6 +1363,7 @@ function M.link.schema()
         highlight_title = { type = 'string' },
         wiki = {
             record = {
+                enabled = { type = 'boolean' },
                 icon = { type = 'string' },
                 body = { type = 'function' },
                 highlight = { type = 'string' },

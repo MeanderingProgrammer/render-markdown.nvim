@@ -802,6 +802,8 @@ require('render-markdown').setup({
         highlight_title = 'RenderMarkdownLinkTitle',
         -- Applies to WikiLink elements.
         wiki = {
+            -- Turn on / off WikiLink rendering.
+            enabled = true,
             icon = '󱗖 ',
             body = function()
                 return nil
@@ -1579,6 +1581,8 @@ require('render-markdown').setup({
         highlight_title = 'RenderMarkdownLinkTitle',
         -- Applies to WikiLink elements.
         wiki = {
+            -- Turn on / off WikiLink rendering.
+            enabled = true,
             icon = '󱗖 ',
             body = function()
                 return nil

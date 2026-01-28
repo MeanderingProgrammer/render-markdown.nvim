@@ -1,4 +1,4 @@
-*render-markdown.txt*       For NVIM v0.11.5      Last change: 2026 January 16
+*render-markdown.txt*       For NVIM v0.11.6      Last change: 2026 January 28
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -868,6 +868,8 @@ Default Configuration ~
             highlight_title = 'RenderMarkdownLinkTitle',
             -- Applies to WikiLink elements.
             wiki = {
+                -- Turn on / off WikiLink rendering.
+                enabled = true,
                 icon = '󱗖 ',
                 body = function()
                     return nil
@@ -1625,6 +1627,8 @@ Link Configuration ~
             highlight_title = 'RenderMarkdownLinkTitle',
             -- Applies to WikiLink elements.
             wiki = {
+                -- Turn on / off WikiLink rendering.
+                enabled = true,
                 icon = '󱗖 ',
                 body = function()
                     return nil

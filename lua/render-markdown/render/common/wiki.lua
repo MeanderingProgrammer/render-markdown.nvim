@@ -19,6 +19,9 @@ end
 ---@protected
 function Render:run()
     local config = self.config.wiki
+    if not config.enabled then
+        return
+    end
 
     local _, _, pre, text, post = self.node.text:find('^(.-%[+)(.-)(%]+.-)$')
     if not pre or not text or not post then

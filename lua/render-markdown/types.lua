@@ -228,6 +228,7 @@
 ---@field suffix? string
 
 ---@class (exact) render.md.link.wiki.UserConfig
+---@field enabled? boolean
 ---@field icon? string
 ---@field body? fun(ctx: render.md.link.Context): render.md.mark.Text|string?
 ---@field highlight? string
