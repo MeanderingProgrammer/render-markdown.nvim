@@ -145,25 +145,32 @@ function Render:language(info, language, delim)
         :extend(text)
         :text(self.config.language_right, border_hl)
 
-    local border = border_hl and self.config.language_border or ' '
-    local width = self.data.body - delim.start_col
-
-    local prefix = self:line()
     -- code blocks can pick up varying amounts of leading white space
     -- this is lumped into the delimiter node and needs to be handled
-    prefix:rep(border, str.spaces('start', delim.text), border_hl)
+    local prefix = str.spaces('start', delim.text)
+    local suffix = 0
+    -- space within block after accounting for white space and padding
+    local width = self.data.body - delim.start_col
+    local extra = width - prefix - body:width() - suffix - self.data.language ---@type integer
     if self.config.position == 'left' then
-        prefix:rep(border, self.data.language, border_hl)
-        body:rep(border, width - prefix:width() - body:width(), border_hl)
+        prefix = prefix + self.data.language
+        suffix = suffix + extra
+    elseif self.config.position == 'right' then
+        prefix = prefix + extra
+        suffix = suffix + self.data.language
     else
-        body:rep(border, self.data.language, border_hl)
-        prefix:rep(border, width - prefix:width() - body:width(), border_hl)
+        prefix = prefix + self.data.language + math.floor(extra / 2)
+        suffix = suffix + math.ceil(extra / 2)
+    end
+    if self.config.width == 'full' then
+        suffix = suffix + vim.o.columns
     end
 
-    local line = prefix:extend(body)
-    if self.config.width == 'full' then
-        line:rep(border, vim.o.columns, border_hl)
-    end
+    local border = border_hl and self.config.language_border or ' '
+    local line = self:line()
+        :rep(border, prefix, border_hl)
+        :extend(body)
+        :rep(border, suffix, border_hl)
     return self.marks:start(self.config, 'code_language', delim, {
         virt_text = line:get(),
         virt_text_pos = 'overlay',

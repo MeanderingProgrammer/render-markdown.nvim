@@ -2,6 +2,12 @@
 
 ## Pre-release
 
+### Features
+
+- link.highlight_title option [#583](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/583)
+  [ae89236](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/ae89236e2389836cf1c3787b2b80d5d8685cc13f)
+- toggle WikiLink rendering via enabled flag [8314d14](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/8314d14b9f56306bc876fb3b386f31dc8c5a2711)
+
 ## 8.11.0 (2026-01-07)
 
 ### Features

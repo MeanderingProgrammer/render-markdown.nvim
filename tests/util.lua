@@ -262,7 +262,10 @@ end
 ---@return vim.api.keyset.set_extmark
 function M.code.border(border, full, ...)
     local parts = { ... }
-    parts[#parts + 1] = full and vim.o.columns or nil
+    if full then
+        assert(type(parts[#parts]) == 'number', 'invalid full border')
+        parts[#parts] = parts[#parts] + vim.o.columns
+    end
 
     local line = {} ---@type render.md.mark.Line
     for _, part in ipairs(parts) do
@@ -278,9 +281,10 @@ function M.code.border(border, full, ...)
         elseif type(part) == 'number' then
             line[#line + 1] = { border:rep(part), 'Rm_RmCodeBorder_bg_as_fg' }
         else
-            error(('invalid border part type: %s'):format(type(part)))
+            error(('invalid border type: %s'):format(type(part)))
         end
     end
+
     ---@type vim.api.keyset.set_extmark
     return {
         virt_text = line,
@@ -288,7 +292,7 @@ function M.code.border(border, full, ...)
     }
 end
 
----@alias render.md.test.Language 'python'|'py'|'rust'|'rs'|'lua'
+---@alias render.md.test.Language 'lua'|'py'|'python'|'rs'|'rust'
 
 ---@class render.md.test.Icon
 ---@field [1] string
@@ -298,15 +302,15 @@ end
 ---@param name render.md.test.Language
 ---@return render.md.test.Icon?
 function M.code.icon(name)
-    if name == 'python' or name == 'py' then
-        ---@type render.md.test.Icon
-        return { '󰌠 ', 'MiniIconsYellow' }
-    elseif name == 'rust' or name == 'rs' then
-        ---@type render.md.test.Icon
-        return { '󱘗 ', 'MiniIconsOrange' }
-    elseif name == 'lua' then
+    if name == 'lua' then
         ---@type render.md.test.Icon
         return { '󰢱 ', 'MiniIconsAzure' }
+    elseif name == 'py' or name == 'python' then
+        ---@type render.md.test.Icon
+        return { '󰌠 ', 'MiniIconsYellow' }
+    elseif name == 'rs' or name == 'rust' then
+        ---@type render.md.test.Icon
+        return { '󱘗 ', 'MiniIconsOrange' }
     else
         return nil
     end

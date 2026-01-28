@@ -417,6 +417,7 @@ M.code = {}
 M.code.position = {
     left = 'left',
     right = 'right',
+    center = 'center',
 }
 
 ---@enum render.md.code.Width
@@ -454,8 +455,9 @@ M.code.default = {
     -- Turn on / off language heading related rendering.
     language = true,
     -- Determines where language icon is rendered.
-    -- | right | right side of code block |
-    -- | left  | left side of code block  |
+    -- | center | center of code block |
+    -- | right  | right of code block  |
+    -- | left   | left of code block   |
     position = 'left',
     -- Whether to include the language icon above code blocks.
     language_icon = true,

@@ -254,6 +254,40 @@ describe('code', function()
         })
     end)
 
+    it('block center', function()
+        util.setup.text(lines, {
+            code = {
+                width = 'block',
+                position = 'center',
+                language_border = '▁',
+            },
+        })
+        util.assert_screen({
+            '󱘗 ▁▁▁▁▁▁▁▁▁▁▁▁󱘗 rust▁▁▁▁▁▁▁▁▁▁▁▁',
+            '  fn main() {',
+            '      println!("Hello, World!");',
+            '  }',
+            '',
+            '  ● List Divider',
+            '',
+            '󰌠   ▁▁▁▁▁󰌠 py▁▁▁▁▁',
+            '    print("hello")',
+            '',
+            '    print("world")',
+            '',
+            '  Paragraph Divider',
+            '',
+            '󰢱 ▁▁▁▁▁▁󰢱 lua▁▁▁▁▁',
+            "    print('hello')",
+            '',
+            "    print('world')",
+            '',
+            '  ● List Divider',
+            '',
+            "      print('Hello, World!')",
+        })
+    end)
+
     it('quarto executable', function()
         util.setup.text({ '```  {{rust} info', '```' })
         util.assert_screen({
