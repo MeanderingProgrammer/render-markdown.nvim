@@ -784,6 +784,11 @@ require('render-markdown').setup({
             enabled = true,
             -- Inlined with content.
             icon = '󰯔 ',
+            -- Custom processing for footnote body to show.
+            -- Runs before prefix / suffix are added and superscript processing.
+            body = function(ctx)
+                return ctx.text
+            end,
             -- Replace value with superscript equivalent.
             superscript = true,
             -- Added before link content.
@@ -1566,6 +1571,11 @@ require('render-markdown').setup({
             enabled = true,
             -- Inlined with content.
             icon = '󰯔 ',
+            -- Custom processing for footnote body to show.
+            -- Runs before prefix / suffix are added and superscript processing.
+            body = function(ctx)
+                return ctx.text
+            end,
             -- Replace value with superscript equivalent.
             superscript = true,
             -- Added before link content.

@@ -223,6 +223,7 @@
 ---@class (exact) render.md.link.footnote.UserConfig
 ---@field enabled? boolean
 ---@field icon? string
+---@field body? fun(ctx: render.md.link.footnote.Context): string?
 ---@field superscript? boolean
 ---@field prefix? string
 ---@field suffix? string
@@ -230,7 +231,7 @@
 ---@class (exact) render.md.link.wiki.UserConfig
 ---@field enabled? boolean
 ---@field icon? string
----@field body? fun(ctx: render.md.link.Context): render.md.mark.Text|string?
+---@field body? fun(ctx: render.md.link.wiki.Context): render.md.mark.Text|string?
 ---@field highlight? string
 ---@field scope_highlight? string
 

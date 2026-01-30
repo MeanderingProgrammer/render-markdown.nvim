@@ -51,7 +51,8 @@ function Render:footnote(text)
     if not config.enabled then
         return
     end
-    local body = config.prefix .. text .. config.suffix ---@type string?
+    local body = config.body({ text = text })
+    body = body and config.prefix .. body .. config.suffix
     if config.superscript then
         body = body and converter.superscript(body)
     end

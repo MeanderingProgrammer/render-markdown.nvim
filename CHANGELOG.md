@@ -7,6 +7,10 @@
 - link.highlight_title option [#583](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/583)
   [ae89236](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/ae89236e2389836cf1c3787b2b80d5d8685cc13f)
 - toggle WikiLink rendering via enabled flag [8314d14](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/8314d14b9f56306bc876fb3b386f31dc8c5a2711)
+- center code language position [#591](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/591)
+  [99bfa5d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/99bfa5d61381a29eedc75810898cb9c0fc755064)
+- add priority to sign configuration [#601](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/601)
+  [996ec12](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/996ec12e1164e56401babf236c56cb2d9321d923)
 
 ## 8.11.0 (2026-01-07)
 

@@ -1228,7 +1228,18 @@ M.link = {}
 ---@field wiki render.md.link.wiki.Config
 ---@field custom table<string, render.md.link.custom.Config>
 
----@class (exact) render.md.link.Context
+---@class (exact) render.md.link.footnote.Context
+---@field text string
+
+---@class (exact) render.md.link.footnote.Config
+---@field enabled boolean
+---@field icon string
+---@field body fun(ctx: render.md.link.footnote.Context): string?
+---@field superscript boolean
+---@field prefix string
+---@field suffix string
+
+---@class (exact) render.md.link.wiki.Context
 ---@field buf integer
 ---@field row integer
 ---@field start_col integer
@@ -1236,17 +1247,10 @@ M.link = {}
 ---@field destination string
 ---@field alias? string
 
----@class (exact) render.md.link.footnote.Config
----@field enabled boolean
----@field icon string
----@field superscript boolean
----@field prefix string
----@field suffix string
-
 ---@class (exact) render.md.link.wiki.Config
 ---@field enabled boolean
 ---@field icon string
----@field body fun(ctx: render.md.link.Context): render.md.mark.Text|string?
+---@field body fun(ctx: render.md.link.wiki.Context): render.md.mark.Text|string?
 ---@field highlight string
 ---@field scope_highlight? string
 
@@ -1275,6 +1279,11 @@ M.link.default = {
         enabled = true,
         -- Inlined with content.
         icon = '󰯔 ',
+        -- Custom processing for footnote body to show.
+        -- Runs before prefix / suffix are added and superscript processing.
+        body = function(ctx)
+            return ctx.text
+        end,
         -- Replace value with superscript equivalent.
         superscript = true,
         -- Added before link content.
@@ -1353,6 +1362,7 @@ function M.link.schema()
             record = {
                 enabled = { type = 'boolean' },
                 icon = { type = 'string' },
+                body = { type = 'function' },
                 superscript = { type = 'boolean' },
                 prefix = { type = 'string' },
                 suffix = { type = 'string' },
