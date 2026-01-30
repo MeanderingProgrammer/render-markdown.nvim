@@ -1,4 +1,4 @@
-*render-markdown.txt*       For NVIM v0.11.6      Last change: 2026 January 28
+*render-markdown.txt*       For NVIM v0.11.6      Last change: 2026 January 29
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -913,6 +913,8 @@ Default Configuration ~
         sign = {
             -- Turn on / off sign rendering.
             enabled = true,
+            -- Priority to assign to sign.
+            priority = nil,
             -- Applies to background of sign text.
             highlight = 'RenderMarkdownSign',
         },
@@ -1686,6 +1688,8 @@ Sign Configuration ~
         sign = {
             -- Turn on / off sign rendering.
             enabled = true,
+            -- Priority to assign to sign.
+            priority = nil,
             -- Applies to background of sign text.
             highlight = 'RenderMarkdownSign',
         },

@@ -293,6 +293,7 @@
 
 ---@class (exact) render.md.sign.UserConfig
 ---@field enabled? boolean
+---@field priority? integer
 ---@field highlight? string
 
 ---@alias render.md.window.UserConfigs table<string, render.md.window.UserConfig>

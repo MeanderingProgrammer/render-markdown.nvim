@@ -1750,12 +1750,15 @@ M.sign = {}
 
 ---@class (exact) render.md.sign.Config
 ---@field enabled boolean
+---@field priority? integer
 ---@field highlight string
 
 ---@type render.md.sign.Config
 M.sign.default = {
     -- Turn on / off sign rendering.
     enabled = true,
+    -- Priority to assign to sign.
+    priority = nil,
     -- Applies to background of sign text.
     highlight = 'RenderMarkdownSign',
 }
@@ -1766,6 +1769,7 @@ function M.sign.schema()
     return {
         record = {
             enabled = { type = 'boolean' },
+            priority = { optional = true, type = 'number' },
             highlight = { type = 'string' },
         },
     }

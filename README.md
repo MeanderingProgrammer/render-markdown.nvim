@@ -847,6 +847,8 @@ require('render-markdown').setup({
     sign = {
         -- Turn on / off sign rendering.
         enabled = true,
+        -- Priority to assign to sign.
+        priority = nil,
         -- Applies to background of sign text.
         highlight = 'RenderMarkdownSign',
     },
@@ -1642,6 +1644,8 @@ require('render-markdown').setup({
     sign = {
         -- Turn on / off sign rendering.
         enabled = true,
+        -- Priority to assign to sign.
+        priority = nil,
         -- Applies to background of sign text.
         highlight = 'RenderMarkdownSign',
     },

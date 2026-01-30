@@ -63,6 +63,7 @@ function Base:sign(config, enabled, text, highlight)
         sign_highlight = colors.combine(highlight, sign_highlight)
     end
     self.marks:start(config, 'sign', self.node, {
+        priority = sign.priority,
         sign_text = text,
         sign_hl_group = sign_highlight,
     })
