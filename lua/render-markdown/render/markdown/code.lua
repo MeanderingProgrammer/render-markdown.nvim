@@ -23,6 +23,16 @@ function Render:setup()
     if not self.config.enabled then
         return false
     end
+    -- ignore specific languages
+    local info = self.node:child('info_string')
+    local language = info and info:child('language')
+    if
+        language
+        and self.config.ignore
+        and vim.tbl_contains(self.config.ignore, language.text)
+    then
+        return false
+    end
     -- skip single line code block
     if self.node:height() <= 2 then
         return false

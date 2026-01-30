@@ -92,6 +92,7 @@
 
 ---@class (exact) render.md.code.UserConfig: render.md.base.UserConfig
 ---@field sign? boolean
+---@field ignore? string[]
 ---@field conceal_delimiters? boolean
 ---@field language? boolean
 ---@field position? render.md.code.Position
