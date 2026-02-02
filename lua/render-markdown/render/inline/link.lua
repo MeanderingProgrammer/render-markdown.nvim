@@ -28,11 +28,11 @@ function Render:setup()
         icon[1] = self.config.email
         autolink = true
     elseif self.node.type == 'image' then
-        icon[1] = self.config.image
         local destination = self.node:child('link_destination')
         if destination then
             self.context.config:set_link_text(destination.text, icon)
         end
+        icon[1] = self.config.image
         title = self.node:child('link_title')
     elseif self.node.type == 'inline_link' then
         local destination = self.node:child('link_destination')
