@@ -1,4 +1,4 @@
-*render-markdown.txt*       For NVIM v0.11.6      Last change: 2026 January 29
+*render-markdown.txt*      For NVIM v0.11.6      Last change: 2026 February 02
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -909,8 +909,9 @@ Default Configuration ~
                 slack = { pattern = 'slack%.com', icon = '󰒱 ' },
                 stackoverflow = { pattern = 'stackoverflow%.com', icon = '󰓌 ' },
                 steam = { pattern = 'steampowered%.com', icon = ' ' },
-                twitter = { pattern = 'x%.com', icon = ' ' },
+                twitter = { pattern = 'twitter%.com', icon = ' ' },
                 wikipedia = { pattern = 'wikipedia%.org', icon = '󰖬 ' },
+                x = { pattern = 'x%.com', icon = ' ' },
                 youtube = { pattern = 'youtube[^.]*%.com', icon = '󰗃 ' },
                 youtube_short = { pattern = 'youtu%.be', icon = '󰗃 ' },
             },
@@ -1676,8 +1677,9 @@ Link Configuration ~
                 slack = { pattern = 'slack%.com', icon = '󰒱 ' },
                 stackoverflow = { pattern = 'stackoverflow%.com', icon = '󰓌 ' },
                 steam = { pattern = 'steampowered%.com', icon = ' ' },
-                twitter = { pattern = 'x%.com', icon = ' ' },
+                twitter = { pattern = 'twitter%.com', icon = ' ' },
                 wikipedia = { pattern = 'wikipedia%.org', icon = '󰖬 ' },
+                x = { pattern = 'x%.com', icon = ' ' },
                 youtube = { pattern = 'youtube[^.]*%.com', icon = '󰗃 ' },
                 youtube_short = { pattern = 'youtu%.be', icon = '󰗃 ' },
             },

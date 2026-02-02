@@ -11,6 +11,7 @@
   [99bfa5d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/99bfa5d61381a29eedc75810898cb9c0fc755064)
 - add priority to sign configuration [#601](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/601)
   [996ec12](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/996ec12e1164e56401babf236c56cb2d9321d923)
+- support math superscript characters and body transformer for footnotes [48934b4](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/48934b49a2363b49ae1d698ed4cb30fb79d7efe8)
 
 ## 8.11.0 (2026-01-07)
 
