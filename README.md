@@ -810,16 +810,20 @@ require('render-markdown').setup({
         wiki = {
             -- Turn on / off WikiLink rendering.
             enabled = true,
+            -- Inlined with content.
             icon = '󱗖 ',
+            -- Custom processing for WikiLink body to show.
             body = function()
                 return nil
             end,
+            -- Applies to the inlined icon.
             highlight = 'RenderMarkdownWikiLink',
+            -- Highlight for item associated with the WikiLink.
             scope_highlight = nil,
         },
         -- Define custom destination patterns so icons can quickly inform you of what a link
-        -- contains. Applies to 'inline_link', 'uri_autolink', and wikilink nodes. When multiple
-        -- patterns match a link the one with the longer pattern is used.
+        -- contains. Applies to 'image', 'inline_link', 'uri_autolink', and WikiLink nodes.
+        -- When multiple patterns match a link the one with the longer pattern is used.
         -- The key is for healthcheck and to allow users to change its values, value type below.
         -- | pattern   | matched against the destination text                            |
         -- | icon      | gets inlined before the link text                               |
@@ -1598,16 +1602,20 @@ require('render-markdown').setup({
         wiki = {
             -- Turn on / off WikiLink rendering.
             enabled = true,
+            -- Inlined with content.
             icon = '󱗖 ',
+            -- Custom processing for WikiLink body to show.
             body = function()
                 return nil
             end,
+            -- Applies to the inlined icon.
             highlight = 'RenderMarkdownWikiLink',
+            -- Highlight for item associated with the WikiLink.
             scope_highlight = nil,
         },
         -- Define custom destination patterns so icons can quickly inform you of what a link
-        -- contains. Applies to 'inline_link', 'uri_autolink', and wikilink nodes. When multiple
-        -- patterns match a link the one with the longer pattern is used.
+        -- contains. Applies to 'image', 'inline_link', 'uri_autolink', and WikiLink nodes.
+        -- When multiple patterns match a link the one with the longer pattern is used.
         -- The key is for healthcheck and to allow users to change its values, value type below.
         -- | pattern   | matched against the destination text                            |
         -- | icon      | gets inlined before the link text                               |
@@ -1740,9 +1748,9 @@ The table below shows all the highlight groups with their default link
 | RenderMarkdownMath            | @markup.math                       | Latex lines                |
 | RenderMarkdownIndent          | Whitespace                         | Indent icon                |
 | RenderMarkdownHtmlComment     | @comment                           | HTML comment inline text   |
-| RenderMarkdownLink            | @markup.link.label.markdown_inline | Link icons                 |
-| RenderMarkdownLinkTitle       | @markup.link.markdown_inline       | Link titles                |
-| RenderMarkdownWikiLink        | RenderMarkdownLink                 | WikiLink icon & text       |
+| RenderMarkdownLink            | @markup.link.label.markdown_inline | Link icon                  |
+| RenderMarkdownLinkTitle       | @markup.link.markdown_inline       | Link title                 |
+| RenderMarkdownWikiLink        | RenderMarkdownLink                 | WikiLink icon              |
 | RenderMarkdownUnchecked       | @markup.list.unchecked             | Unchecked checkbox         |
 | RenderMarkdownChecked         | @markup.list.checked               | Checked checkbox           |
 | RenderMarkdownTodo            | @markup.raw                        | Todo custom checkbox       |
