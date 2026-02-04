@@ -10,6 +10,8 @@ local str = require('render-markdown.lib.str')
 ---@class render.md.table.DelimRow
 ---@field node render.md.Node
 ---@field cols render.md.table.DelimCol[]
+---@field has_leading boolean
+---@field has_trailing boolean
 
 ---@class render.md.table.DelimCol
 ---@field width integer
@@ -27,6 +29,8 @@ local Alignment = {
 ---@field node render.md.Node
 ---@field pipes render.md.Node[]
 ---@field cols render.md.table.Col[]
+---@field has_leading boolean
+---@field has_trailing boolean
 
 ---@class render.md.table.Col
 ---@field row integer
@@ -122,13 +126,17 @@ end
 ---@param node render.md.Node
 ---@return render.md.table.DelimRow?
 function Render:parse_delim(node)
-    local pipes, cells = self:parse_cells(node, 'pipe_table_delimiter_cell')
+    local pipes, cells, has_leading, has_trailing =
+        self:parse_cells(node, 'pipe_table_delimiter_cell')
     if not pipes or not cells then
         return nil
     end
     local cols = {} ---@type render.md.table.DelimCol[]
-    for i, cell in ipairs(cells) do
-        local start_col, end_col = pipes[i].end_col, pipes[i + 1].start_col
+
+    ---@param start_col integer
+    ---@param end_col integer
+    ---@return integer
+    local function get_width(start_col, end_col)
         local width = end_col - start_col
         assert(width >= 0, 'invalid table layout')
         if self.config.cell == 'padded' then
@@ -136,13 +144,39 @@ function Render:parse_delim(node)
         elseif self.config.cell == 'trimmed' then
             width = self.config.min_width
         end
+        return width
+    end
+    if not has_leading then
+        -- as there is no leading pipe the first cell is used for alignment
+        local start_col, end_col = cells[1].start_col, pipes[1].start_col
+        -- add the first column
         cols[#cols + 1] = {
-            width = width,
+            width = get_width(start_col, end_col),
+            alignment = Render.alignment(cells[1]),
+        }
+        -- now remove the first cell so that it isn't repocessed below
+        table.remove(cells, 1)
+    end
+    for i, cell in ipairs(cells) do
+        local start_col = pipes[i].end_col
+        local end_col = 0
+        if i + 1 <= #pipes then
+            end_col = pipes[i + 1].start_col
+        elseif not has_trailing then
+            end_col = cells[i].end_col
+        end
+        cols[#cols + 1] = {
+            width = get_width(start_col, end_col),
             alignment = Render.alignment(cell),
         }
     end
     ---@type render.md.table.DelimRow
-    return { node = node, cols = cols }
+    return {
+        node = node,
+        cols = cols,
+        has_leading = has_leading,
+        has_trailing = has_trailing,
+    }
 end
 
 ---@private
@@ -167,24 +201,57 @@ end
 ---@param num_cols integer
 ---@return render.md.table.Row?
 function Render:parse_row(node, num_cols)
-    local pipes, cells = self:parse_cells(node, 'pipe_table_cell')
+    local pipes, cells, has_leading, has_trailing =
+        self:parse_cells(node, 'pipe_table_cell')
     if not pipes or not cells or #cells ~= num_cols then
         return nil
     end
     local cols = {} ---@type render.md.table.Col[]
-    for i, cell in ipairs(cells) do
-        -- account for double width glyphs by replacing cell range with width
-        local start_col, end_col = pipes[i].end_col, pipes[i + 1].start_col
+    ---@param start_col integer
+    ---@param end_col integer
+    ---@param cell render.md.Node
+    ---@return integer
+    local function get_width(start_col, end_col, cell)
         local width = (end_col - start_col)
             - (cell.end_col - cell.start_col)
             + self.context:width(cell)
             + self.config.cell_offset({ node = cell:get() })
         assert(width >= 0, 'invalid table layout')
+        return width
+    end
+    if not has_leading then
+        local cell = cells[1]
+        local start_col, end_col = cell.start_col, pipes[1].start_col
         cols[#cols + 1] = {
             row = cell.start_row,
             start_col = cell.start_col,
             end_col = cell.end_col,
-            width = width,
+            width = get_width(start_col, end_col, cell),
+            space = {
+                -- gap between the cell start and the pipe start
+                left = math.max(cell.start_col - start_col, 0),
+                -- attached to the end of the cell itself
+                right = math.max(str.spaces('end', cell.text), 0),
+            },
+        }
+        -- remove the first cell so that it is not reprocesed below
+        table.remove(cells, 1)
+    end
+    for i, cell in ipairs(cells) do
+        -- account for double width glyphs by replacing cell range with width
+        local start_col = pipes[i].end_col
+        local end_col = 0
+        if i + 1 <= #pipes then
+            end_col = pipes[i + 1].start_col
+        elseif not has_trailing then
+            end_col = cells[i].end_col
+        end
+
+        cols[#cols + 1] = {
+            row = cell.start_row,
+            start_col = cell.start_col,
+            end_col = cell.end_col,
+            width = get_width(start_col, end_col, cell),
             space = {
                 -- gap between the cell start and the pipe start
                 left = math.max(cell.start_col - start_col, 0),
@@ -194,16 +261,23 @@ function Render:parse_row(node, num_cols)
         }
     end
     ---@type render.md.table.Row
-    return { node = node, pipes = pipes, cols = cols }
+    return {
+        node = node,
+        pipes = pipes,
+        cols = cols,
+        has_leading = has_leading,
+        has_trailing = has_trailing,
+    }
 end
 
 ---@private
 ---@param node render.md.Node
 ---@param cell string
----@return render.md.Node[]?, render.md.Node[]?
+---@return render.md.Node[]?, render.md.Node[]?, boolean, boolean
 function Render:parse_cells(node, cell)
     local pipes = {} ---@type render.md.Node[]
     local cells = {} ---@type render.md.Node[]
+    local has_leading = true
     node:for_each_child(function(child)
         if child.type == '|' then
             pipes[#pipes + 1] = child
@@ -212,13 +286,19 @@ function Render:parse_cells(node, cell)
         else
             log.unhandled(self.context.buf, 'markdown', 'cell', child.type)
         end
+        if #pipes == 0 and #cells == 1 then
+            -- this means that the first cell was reached before the first cell (i.e. no leading pipe)
+            has_leading = false
+        end
     end)
-    if #pipes == 0 or #cells == 0 or #pipes ~= #cells + 1 then
-        return nil, nil
+    local has_trailing = pipes[#pipes].end_col >= cells[#cells].end_col
+    local offset = 1 - (has_leading and 0 or 1) - (has_trailing and 0 or 1)
+    if #pipes == 0 or #cells == 0 or #pipes ~= #cells + offset then
+        return nil, nil, false, false
     end
     table.sort(pipes)
     table.sort(cells)
-    return pipes, cells
+    return pipes, cells, has_leading, has_trailing
 end
 
 ---@protected
@@ -255,7 +335,9 @@ function Render:delimiter()
             return indicator .. icon:rep(col.width - 2) .. indicator
         end
     end)
-    local delimiter = border[4] .. table.concat(parts, border[5]) .. border[6]
+    local delimiter = (delim.has_leading and border[4] or '')
+        .. table.concat(parts, border[5])
+        .. (delim.has_trailing and border[6] or '')
 
     local line = self:line()
     line:pad(str.spaces('start', delim.node.text))
@@ -421,10 +503,17 @@ function Render:border()
             })
         end
     end
-
-    table_border(first_node, true, { border[1], border[2], border[3] })
+    table_border(first_node, true, {
+        first.has_leading and border[1] or '',
+        border[2],
+        first.has_trailing and border[3] or '',
+    })
     if #rows > 1 then
-        table_border(last_node, false, { border[7], border[8], border[9] })
+        table_border(last_node, false, {
+            first.has_leading and border[7] or '',
+            border[8],
+            first.has_trailing and border[9] or '',
+        })
     end
 end
 
