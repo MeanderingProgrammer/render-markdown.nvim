@@ -651,6 +651,7 @@ require('render-markdown').setup({
         -- stylua: ignore
         custom = {
             todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownTodo', scope_highlight = nil },
+            bug  = { raw = '[b]', rendered = '󰃤 ', highlight = 'RenderMarkdownBug',  scope_highlight = nil },
         },
         -- Priority to assign to scope highlight.
         scope_priority = nil,
@@ -1383,6 +1384,7 @@ require('render-markdown').setup({
         -- stylua: ignore
         custom = {
             todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownTodo', scope_highlight = nil },
+            bug  = { raw = '[b]', rendered = '󰃤 ', highlight = 'RenderMarkdownBug',  scope_highlight = nil },
         },
         -- Priority to assign to scope highlight.
         scope_priority = nil,
@@ -1754,6 +1756,7 @@ The table below shows all the highlight groups with their default link
 | RenderMarkdownUnchecked       | @markup.list.unchecked             | Unchecked checkbox         |
 | RenderMarkdownChecked         | @markup.list.checked               | Checked checkbox           |
 | RenderMarkdownTodo            | @markup.raw                        | Todo custom checkbox       |
+| RenderMarkdownBug             | DiagnosticError                    | Bug custom checkbox        |
 | RenderMarkdownTableHead       | @markup.heading                    | Pipe table heading rows    |
 | RenderMarkdownTableRow        | Normal                             | Pipe table body rows       |
 | RenderMarkdownTableFill       | Conceal                            | Pipe table inline padding  |

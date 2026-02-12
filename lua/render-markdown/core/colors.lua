@@ -53,6 +53,7 @@ M.colors = {
     Unchecked       = '@markup.list.unchecked',
     Checked         = '@markup.list.checked',
     Todo            = '@markup.raw',
+    Bug             = 'DiagnosticError',
     -- Pipe tables
     TableHead       = '@markup.heading',
     TableRow        = 'Normal',
