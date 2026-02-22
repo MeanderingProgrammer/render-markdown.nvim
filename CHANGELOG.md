@@ -13,6 +13,15 @@
   [996ec12](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/996ec12e1164e56401babf236c56cb2d9321d923)
 - support math superscript characters and body transformer for footnotes [48934b4](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/48934b49a2363b49ae1d698ed4cb30fb79d7efe8)
 
+### Bug Fixes
+
+- separate twitter and x link icons [#604](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/604)
+  [b3efd64](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b3efd6408e4e4d66d6caaee0579e72b579bc0884)
+
+### Collaborator Shoutouts
+
+- @calebdw
+
 ## 8.11.0 (2026-01-07)
 
 ### Features

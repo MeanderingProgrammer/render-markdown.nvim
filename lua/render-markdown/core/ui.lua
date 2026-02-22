@@ -71,11 +71,8 @@ function Updater:start()
     if not env.valid(self.buf, self.win) then
         return
     end
-    if env.buf.empty(self.buf) then
-        return
-    end
     self.decorator:schedule(
-        self:changed(),
+        self:changed() and not env.buf.empty(self.buf),
         self.config.debounce,
         log.runtime('update', function()
             self:run()
