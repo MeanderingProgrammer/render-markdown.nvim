@@ -14,9 +14,14 @@ View.__index = View
 function View.new(buf)
     local self = setmetatable({}, View)
     self.buf = buf
+    local wins = env.buf.wins and env.buf.wins(buf)
+        or (env.buf.windows and env.buf.windows(buf))
+        or {}
     local ranges = {} ---@type render.md.Range[]
-    for _, win in ipairs(env.buf.wins(buf)) do
-        ranges[#ranges + 1] = env.range(buf, win, 10)
+    for _, win in ipairs(wins) do
+        if not env.valid or env.valid(buf, win) then
+            ranges[#ranges + 1] = env.range(buf, win, 10)
+        end
     end
     self.ranges = interval.coalesce(ranges)
     return self
@@ -34,6 +39,9 @@ end
 ---@param win integer
 ---@return boolean
 function View:contains(win)
+    if env.valid and not env.valid(self.buf, win) then
+        return false
+    end
     local rows = env.range(self.buf, win, 0)
     for _, range in ipairs(self.ranges) do
         if interval.contains(range, rows) then

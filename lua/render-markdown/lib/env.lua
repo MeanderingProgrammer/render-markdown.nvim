@@ -207,6 +207,12 @@ function M.buf.wins(buf)
     return vim.fn.win_findbuf(buf)
 end
 
+---@param buf integer
+---@return integer[]
+function M.buf.windows(buf)
+    return M.buf.wins(buf)
+end
+
 ---@class render.md.env.Win
 M.win = {}
 

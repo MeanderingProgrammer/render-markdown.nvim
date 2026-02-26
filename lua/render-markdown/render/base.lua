@@ -13,6 +13,15 @@ Base.__index = Base
 ---@param node render.md.Node
 ---@return boolean
 function Base:execute(context, marks, node)
+    if type(node) ~= 'table' or type(node.height) ~= 'function' then
+        local Node = require('render-markdown.lib.node')
+        local ok, wrapped = pcall(Node.new, context.buf, node)
+        if not ok or not wrapped then
+            return false
+        end
+        node = wrapped
+    end
+
     local instance = setmetatable({}, self)
     instance.context = context
     instance.marks = marks

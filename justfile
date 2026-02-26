@@ -24,7 +24,7 @@ bench:
 
 [private]
 busted path:
-  nvim --headless --noplugin -u {{init}} -c "PlenaryBustedDirectory {{path}} {{settings}}"
+  nvim --headless --clean -u {{init}} -c "PlenaryBustedDirectory {{path}} {{settings}}"
 
 health:
   nvim -c "checkhealth render-markdown" -- -
