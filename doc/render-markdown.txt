@@ -1,4 +1,4 @@
-*render-markdown.txt*      For NVIM v0.11.6      Last change: 2026 February 22
+*render-markdown.txt*        For NVIM v0.11.6       Last change: 2026 March 02
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -529,6 +529,8 @@ Default Configuration ~
             -- Amount of padding to add around the language.
             -- If a float < 1 is provided it is treated as a percentage of available window space.
             language_pad = 0,
+            -- A list of language names for which rendering will be disabled.
+            disable = {},
             -- A list of language names for which background highlighting will be disabled.
             -- Likely because that language has background highlights itself.
             -- Use a boolean to make behavior apply to all languages.
@@ -1224,6 +1226,8 @@ Code Block Configuration ~
             -- Amount of padding to add around the language.
             -- If a float < 1 is provided it is treated as a percentage of available window space.
             language_pad = 0,
+            -- A list of language names for which rendering will be disabled.
+            disable = {},
             -- A list of language names for which background highlighting will be disabled.
             -- Likely because that language has background highlights itself.
             -- Use a boolean to make behavior apply to all languages.

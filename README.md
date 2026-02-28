@@ -463,6 +463,8 @@ require('render-markdown').setup({
         -- Amount of padding to add around the language.
         -- If a float < 1 is provided it is treated as a percentage of available window space.
         language_pad = 0,
+        -- A list of language names for which rendering will be disabled.
+        disable = {},
         -- A list of language names for which background highlighting will be disabled.
         -- Likely because that language has background highlights itself.
         -- Use a boolean to make behavior apply to all languages.
@@ -1164,6 +1166,8 @@ require('render-markdown').setup({
         -- Amount of padding to add around the language.
         -- If a float < 1 is provided it is treated as a percentage of available window space.
         language_pad = 0,
+        -- A list of language names for which rendering will be disabled.
+        disable = {},
         -- A list of language names for which background highlighting will be disabled.
         -- Likely because that language has background highlights itself.
         -- Use a boolean to make behavior apply to all languages.

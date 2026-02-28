@@ -388,6 +388,7 @@ M.code = {}
 ---@field language_name boolean
 ---@field language_info boolean
 ---@field language_pad number
+---@field disable string[]
 ---@field disable_background boolean|string[]
 ---@field width render.md.code.Width
 ---@field left_margin number
@@ -468,6 +469,8 @@ M.code.default = {
     -- Amount of padding to add around the language.
     -- If a float < 1 is provided it is treated as a percentage of available window space.
     language_pad = 0,
+    -- A list of language names for which rendering will be disabled.
+    disable = {},
     -- A list of language names for which background highlighting will be disabled.
     -- Likely because that language has background highlights itself.
     -- Use a boolean to make behavior apply to all languages.
@@ -546,6 +549,7 @@ function M.code.schema()
         language_name = { type = 'boolean' },
         language_info = { type = 'boolean' },
         language_pad = { type = 'number' },
+        disable = { list = { type = 'string' } },
         disable_background = {
             union = { { list = { type = 'string' } }, { type = 'boolean' } },
         },
