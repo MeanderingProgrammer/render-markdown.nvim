@@ -14,7 +14,7 @@ local str = require('render-markdown.lib.str')
 ---@class render.md.mark.Opts: vim.api.keyset.set_extmark
 ---@field hl_mode? 'replace'|'combine'|'blend'
 ---@field virt_text? render.md.mark.Line
----@field virt_text_pos? 'eol'|'inline'|'overlay'
+---@field virt_text_pos? 'eol'|'eol_right_align'|'inline'|'overlay'
 ---@field virt_lines? render.md.mark.Line[]
 
 ---@alias render.md.mark.Line render.md.mark.Text[]
@@ -90,8 +90,8 @@ function Marks:add(config, conceal, start_row, start_col, opts)
         start_col = start_col,
         opts = opts,
     }
-    local valid, feature, min_version = self:validate(mark.opts)
-    if not valid then
+    local feature, min_version = self:validate(mark.opts)
+    if feature and min_version then
         local message = feature .. ' requires neovim >= ' .. min_version
         log.add('error', 'Mark', message, mark)
         return false
@@ -106,18 +106,25 @@ end
 
 ---@private
 ---@param opts render.md.mark.Opts
----@return boolean, string, string
+---@return string?, string?
 function Marks:validate(opts)
-    if opts.virt_text_pos == 'inline' and not compat.has_10 then
-        return false, "virt_text_pos = 'inline'", '0.10.0'
+    if not compat.has_10 then
+        if opts.virt_text_pos == 'inline' then
+            return "virt_text_pos = 'inline'", '0.10.0'
+        end
+        if opts.virt_text_repeat_linebreak then
+            return 'virt_text_repeat_linebreak', '0.10.0'
+        end
     end
-    if opts.virt_text_repeat_linebreak and not compat.has_10 then
-        return false, 'virt_text_repeat_linebreak', '0.10.0'
+    if not compat.has_11 then
+        if opts.virt_text_pos == 'eol_right_align' then
+            return "virt_text_pos = 'eol_right_align'", '0.11.0'
+        end
+        if opts.conceal_lines then
+            return 'conceal_lines', '0.11.0'
+        end
     end
-    if opts.conceal_lines and not compat.has_11 then
-        return false, 'conceal_lines', '0.11.0'
-    end
-    return true, '', ''
+    return nil, nil
 end
 
 ---@private

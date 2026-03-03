@@ -806,6 +806,7 @@ M.heading.position = {
     overlay = 'overlay',
     inline = 'inline',
     right = 'right',
+    eol = 'eol',
 }
 
 ---@enum render.md.heading.Width
@@ -842,9 +843,10 @@ M.heading.default = {
     -- | string[] | `cycle(value, context.level)` |
     icons = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
     -- Determines how icons fill the available space.
-    -- | right   | '#'s are concealed and icon is appended to right side                      |
-    -- | inline  | '#'s are concealed and icon is inlined on left side                        |
-    -- | overlay | icon is left padded with spaces and inserted on left hiding additional '#' |
+    -- | eol     | '#'s are concealed and icon is placed at right most column   |
+    -- | right   | '#'s are concealed and icon is appended to right side        |
+    -- | inline  | '#'s are concealed and icon is inlined on left side          |
+    -- | overlay | icon is left padded with spaces and overlayed hiding all '#' |
     position = 'overlay',
     -- Added to the sign column if enabled.
     -- Output is evaluated by `cycle(value, context.level)`.

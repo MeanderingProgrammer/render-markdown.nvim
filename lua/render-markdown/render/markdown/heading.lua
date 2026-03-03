@@ -119,73 +119,76 @@ end
 ---@return integer
 function Render:marker()
     local icon = self.data.icon
+    local position = self.config.position
     local highlight = {} ---@type string[]
-    if self.data.fg then
-        highlight[#highlight + 1] = self.data.fg
-    end
-    if self.data.bg then
-        highlight[#highlight + 1] = self.data.bg
-    end
+    highlight[#highlight + 1] = self.data.fg
+    highlight[#highlight + 1] = self.data.bg
+
     if self.data.atx then
         local node = self.data.marker
-        -- add 1 to account for space after last '#'
+
+        -- add 1 to right to account for space after last '#'
         local width = self.context:width(node) + 1
+        local offset = { 0, 0, 0, 1 } ---@type Range4
+
         if not icon or #highlight == 0 then
             return width
         end
-        if self.config.position == 'right' then
-            self.marks:over(self.config, true, node, {
-                conceal = '',
-            }, { 0, 0, 0, 1 })
+
+        if position == 'eol' or position == 'right' then
+            self.marks:over(self.config, true, node, { conceal = '' }, offset)
             self.marks:start(self.config, 'head_icon', node, {
                 priority = 1000,
                 virt_text = { { icon, highlight } },
-                virt_text_pos = 'eol',
+                virt_text_pos = position == 'eol' and 'eol_right_align'
+                    or 'eol',
             })
-            return 1 + str.width(icon)
-        else
-            local padding = width - str.width(icon)
-            if self.config.position == 'inline' or padding < 0 then
-                local added = self.marks:over(self.config, 'head_icon', node, {
-                    virt_text = { { icon, highlight } },
-                    virt_text_pos = 'inline',
-                    conceal = '',
-                }, { 0, 0, 0, 1 })
-                return added and str.width(icon) or width
-            else
-                self.marks:over(self.config, 'head_icon', node, {
-                    virt_text = { { str.pad(padding) .. icon, highlight } },
-                    virt_text_pos = 'overlay',
-                })
-                return width
-            end
+            return position == 'eol' and 0 or 1 + str.width(icon)
         end
+
+        local space = width - str.width(icon)
+        if position == 'inline' or space < 0 then
+            local added = self.marks:over(self.config, 'head_icon', node, {
+                virt_text = { { icon, highlight } },
+                virt_text_pos = 'inline',
+                conceal = '',
+            }, offset)
+            return added and str.width(icon) or width
+        end
+
+        self.marks:over(self.config, 'head_icon', node, {
+            virt_text = { { str.pad(space) .. icon, highlight } },
+            virt_text_pos = 'overlay',
+        })
+        return width
     else
         local node = self.node
+
         if not icon or #highlight == 0 then
             return 0
         end
-        if self.config.position == 'right' then
+
+        if position == 'eol' or position == 'right' then
             self.marks:start(self.config, 'head_icon', node, {
                 priority = 1000,
                 virt_text = { { icon, highlight } },
-                virt_text_pos = 'eol',
+                virt_text_pos = position == 'eol' and 'eol_right_align'
+                    or 'eol',
             })
-            return 1 + str.width(icon)
-        else
-            local col = node.start_col
-            local added = true
-            for row = node.start_row, node.end_row - 1 do
-                local start = row == node.start_row
-                local text = start and icon or str.pad(str.width(icon))
-                added = added
-                    and self.marks:add(self.config, 'head_icon', row, col, {
-                        virt_text = { { text, highlight } },
-                        virt_text_pos = 'inline',
-                    })
-            end
-            return added and str.width(icon) or 0
+            return position == 'eol' and 0 or 1 + str.width(icon)
         end
+
+        local added = self.marks:start(self.config, 'head_icon', node, {
+            virt_text = { { icon, highlight } },
+            virt_text_pos = 'inline',
+        })
+        for row = node.start_row + 1, node.end_row - 1 do
+            self.marks:add(self.config, 'head_icon', row, node.start_col, {
+                virt_text = { { str.pad(str.width(icon)), highlight } },
+                virt_text_pos = 'inline',
+            })
+        end
+        return added and str.width(icon) or 0
     end
 end
 
