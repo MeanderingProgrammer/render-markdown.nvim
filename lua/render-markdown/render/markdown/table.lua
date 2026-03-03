@@ -4,14 +4,14 @@ local log = require('render-markdown.core.log')
 local str = require('render-markdown.lib.str')
 
 ---@class render.md.table.Data
----@field delim render.md.table.DelimRow
----@field rows render.md.table.Row[]
+---@field delim render.md.table.delim.Row
+---@field rows render.md.table.body.Row[]
 
----@class render.md.table.DelimRow
+---@class render.md.table.delim.Row
 ---@field node render.md.Node
----@field cols render.md.table.DelimCol[]
+---@field cols render.md.table.delim.Col[]
 
----@class render.md.table.DelimCol
+---@class render.md.table.delim.Col
 ---@field width integer
 ---@field alignment render.md.table.Alignment
 
@@ -23,12 +23,12 @@ local Alignment = {
     default = 'default',
 }
 
----@class render.md.table.Row
+---@class render.md.table.body.Row
 ---@field node render.md.Node
 ---@field pipes render.md.Node[]
----@field cols render.md.table.Col[]
+---@field cols render.md.table.body.Col[]
 
----@class render.md.table.Col
+---@class render.md.table.body.Col
 ---@field row integer
 ---@field start_col integer
 ---@field end_col integer
@@ -38,6 +38,10 @@ local Alignment = {
 ---@class render.md.table.Space
 ---@field left integer
 ---@field right integer
+
+---@class render.md.table.Row
+---@field pipes render.md.Node[]
+---@field cells render.md.Node[]
 
 ---@class render.md.render.Table: render.md.Render
 ---@field private config render.md.table.Config
@@ -77,16 +81,16 @@ function Render:setup()
     end
 
     -- double check delimiter exists after parsing
-    local delim = self:parse_delim(delim_node)
+    local delim = self:parse_delim_row(delim_node)
     if not delim then
         return false
     end
 
     -- double check rows exist after parsing
-    local rows = {} ---@type render.md.table.Row[]
+    local rows = {} ---@type render.md.table.body.Row[]
     table.sort(row_nodes)
     for _, row_node in ipairs(row_nodes) do
-        local row = self:parse_row(row_node, #delim.cols)
+        local row = self:parse_body_row(row_node, #delim.cols)
         if row then
             rows[#rows + 1] = row
         end
@@ -120,15 +124,16 @@ end
 
 ---@private
 ---@param node render.md.Node
----@return render.md.table.DelimRow?
-function Render:parse_delim(node)
-    local pipes, cells = self:parse_cells(node, 'pipe_table_delimiter_cell')
-    if not pipes or not cells then
+---@return render.md.table.delim.Row?
+function Render:parse_delim_row(node)
+    local row = self:parse_row(node, 'pipe_table_delimiter_cell')
+    if not row then
         return nil
     end
-    local cols = {} ---@type render.md.table.DelimCol[]
-    for i, cell in ipairs(cells) do
-        local start_col, end_col = pipes[i].end_col, pipes[i + 1].start_col
+    local cols = {} ---@type render.md.table.delim.Col[]
+    for i, cell in ipairs(row.cells) do
+        local start_col = row.pipes[i].end_col
+        local end_col = row.pipes[i + 1].start_col
         local width = end_col - start_col
         assert(width >= 0, 'invalid table layout')
         if self.config.cell == 'padded' then
@@ -141,7 +146,7 @@ function Render:parse_delim(node)
             alignment = Render.alignment(cell),
         }
     end
-    ---@type render.md.table.DelimRow
+    ---@type render.md.table.delim.Row
     return { node = node, cols = cols }
 end
 
@@ -165,16 +170,17 @@ end
 ---@private
 ---@param node render.md.Node
 ---@param num_cols integer
----@return render.md.table.Row?
-function Render:parse_row(node, num_cols)
-    local pipes, cells = self:parse_cells(node, 'pipe_table_cell')
-    if not pipes or not cells or #cells ~= num_cols then
+---@return render.md.table.body.Row?
+function Render:parse_body_row(node, num_cols)
+    local row = self:parse_row(node, 'pipe_table_cell')
+    if not row or #row.cells ~= num_cols then
         return nil
     end
-    local cols = {} ---@type render.md.table.Col[]
-    for i, cell in ipairs(cells) do
+    local cols = {} ---@type render.md.table.body.Col[]
+    for i, cell in ipairs(row.cells) do
         -- account for double width glyphs by replacing cell range with width
-        local start_col, end_col = pipes[i].end_col, pipes[i + 1].start_col
+        local start_col = row.pipes[i].end_col
+        local end_col = row.pipes[i + 1].start_col
         local width = (end_col - start_col)
             - (cell.end_col - cell.start_col)
             + self.context:width(cell)
@@ -193,32 +199,33 @@ function Render:parse_row(node, num_cols)
             },
         }
     end
-    ---@type render.md.table.Row
-    return { node = node, pipes = pipes, cols = cols }
+    ---@type render.md.table.body.Row
+    return { node = node, pipes = row.pipes, cols = cols }
 end
 
 ---@private
 ---@param node render.md.Node
----@param cell string
----@return render.md.Node[]?, render.md.Node[]?
-function Render:parse_cells(node, cell)
+---@param cell_type string
+---@return render.md.table.Row?
+function Render:parse_row(node, cell_type)
     local pipes = {} ---@type render.md.Node[]
     local cells = {} ---@type render.md.Node[]
     node:for_each_child(function(child)
         if child.type == '|' then
             pipes[#pipes + 1] = child
-        elseif child.type == cell then
+        elseif child.type == cell_type then
             cells[#cells + 1] = child
         else
             log.unhandled(self.context.buf, 'markdown', 'cell', child.type)
         end
     end)
     if #pipes == 0 or #cells == 0 or #pipes ~= #cells + 1 then
-        return nil, nil
+        return nil
     end
     table.sort(pipes)
     table.sort(cells)
-    return pipes, cells
+    ---@type render.md.table.Row
+    return { pipes = pipes, cells = cells }
 end
 
 ---@protected
@@ -268,7 +275,7 @@ function Render:delimiter()
 end
 
 ---@private
----@param row render.md.table.Row
+---@param row render.md.table.body.Row
 function Render:row(row)
     local icon = self.config.border[10]
     local header = row.node.type == 'pipe_table_header'
@@ -325,7 +332,7 @@ end
 
 ---Use low priority to include pipe marks
 ---@private
----@param col render.md.table.Col
+---@param col render.md.table.body.Col
 ---@param side 'left'|'right'
 ---@param amount integer
 function Render:shift(col, side, amount)
@@ -352,7 +359,7 @@ function Render:border()
     local rows = self.data.rows
     local border = self.config.border
 
-    ---@param row render.md.table.Row
+    ---@param row render.md.table.body.Row
     ---@return boolean
     local function width_equal(row)
         if vim.tbl_contains({ 'trimmed', 'padded' }, self.config.cell) then
@@ -399,7 +406,7 @@ function Render:border()
 
     ---@param node render.md.Node
     ---@param above boolean
-    ---@param chars { [1]: string, [2]: string, [3]: string }
+    ---@param chars [string, string, string]
     local function table_border(node, above, chars)
         local text = chars[1] .. table.concat(sections, chars[2]) .. chars[3]
         local highlight = above and self.config.head or self.config.row
