@@ -214,6 +214,7 @@
 ---@class (exact) render.md.link.UserConfig: render.md.base.UserConfig
 ---@field footnote? render.md.link.footnote.UserConfig
 ---@field image? string
+---@field image_custom? boolean
 ---@field email? string
 ---@field hyperlink? string
 ---@field highlight? string

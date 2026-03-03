@@ -1225,6 +1225,7 @@ M.link = {}
 ---@class (exact) render.md.link.Config: render.md.base.Config
 ---@field footnote render.md.link.footnote.Config
 ---@field image string
+---@field image_custom boolean
 ---@field email string
 ---@field hyperlink string
 ---@field highlight string
@@ -1297,6 +1298,8 @@ M.link.default = {
     },
     -- Inlined with 'image' elements.
     image = '󰥶 ',
+    -- Check custom for 'image' elements.
+    image_custom = true,
     -- Inlined with 'email_autolink' elements.
     email = '󰀓 ',
     -- Fallback icon for 'inline_link' and 'uri_autolink' elements.
@@ -1378,6 +1381,7 @@ function M.link.schema()
             },
         },
         image = { type = 'string' },
+        image_custom = { type = 'boolean' },
         email = { type = 'string' },
         hyperlink = { type = 'string' },
         highlight = { type = 'string' },

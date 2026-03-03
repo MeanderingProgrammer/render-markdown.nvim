@@ -30,7 +30,7 @@ function Render:setup()
     elseif self.node.type == 'image' then
         icon[1] = self.config.image
         local destination = self.node:child('link_destination')
-        if destination then
+        if destination and self.config.image_custom then
             self.context.config:set_link_text(destination.text, icon)
         end
         title = self.node:child('link_title')

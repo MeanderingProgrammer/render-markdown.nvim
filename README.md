@@ -800,6 +800,8 @@ require('render-markdown').setup({
         },
         -- Inlined with 'image' elements.
         image = '󰥶 ',
+        -- Check custom for 'image' elements.
+        image_custom = true,
         -- Inlined with 'email_autolink' elements.
         email = '󰀓 ',
         -- Fallback icon for 'inline_link' and 'uri_autolink' elements.
@@ -1594,6 +1596,8 @@ require('render-markdown').setup({
         },
         -- Inlined with 'image' elements.
         image = '󰥶 ',
+        -- Check custom for 'image' elements.
+        image_custom = true,
         -- Inlined with 'email_autolink' elements.
         email = '󰀓 ',
         -- Fallback icon for 'inline_link' and 'uri_autolink' elements.
