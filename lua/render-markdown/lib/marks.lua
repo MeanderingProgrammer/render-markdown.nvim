@@ -132,6 +132,7 @@ function Marks:run_update(mark)
         self.context.offset:add(row, {
             col = start_col,
             width = str.line_width(opts.virt_text),
+            virt_text = opts.virt_text or {},
         })
     end
 end
