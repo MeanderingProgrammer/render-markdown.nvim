@@ -191,11 +191,6 @@ function Render:compute_layout()
         total_natural = total_natural + w
     end
 
-    -- Table already fits; use existing renderer
-    if total_natural <= text_budget then
-        return no_wrap
-    end
-
     -- Iterative redistribution:
     -- Start with an equal share per column. Any column whose content fits
     -- within that share gets locked at its natural width, freeing up budget
