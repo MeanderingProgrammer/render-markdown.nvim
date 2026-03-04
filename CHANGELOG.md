@@ -14,6 +14,9 @@
 - support math superscript characters and body transformer for footnotes [48934b4](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/48934b49a2363b49ae1d698ed4cb30fb79d7efe8)
 - disable code based on languages [#596](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/596)
   [477997f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/477997fc95432e9241e8cabaebfcda998863b2d6)
+- allow custom link icons to be disabled for images [8a71090](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/8a710903a95053955a063949a434189987387818)
+- heading icon eol position [#593](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/593)
+  [1641b43](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/1641b434bda26e0f4e3610985b3357fc213cf834)
 
 ### Bug Fixes
 

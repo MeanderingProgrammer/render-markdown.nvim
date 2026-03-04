@@ -29,9 +29,7 @@ local Alignment = {
 ---@field cols render.md.table.body.Col[]
 
 ---@class render.md.table.body.Col
----@field row integer
----@field start_col integer
----@field end_col integer
+---@field node render.md.Node
 ---@field width integer
 ---@field space render.md.table.Space
 
@@ -187,9 +185,7 @@ function Render:parse_body_row(node, num_cols)
             + self.config.cell_offset({ node = cell:get() })
         assert(width >= 0, 'invalid table layout')
         cols[#cols + 1] = {
-            row = cell.start_row,
-            start_col = cell.start_col,
-            end_col = cell.end_col,
+            node = cell,
             width = width,
             space = {
                 -- gap between the cell start and the pipe start
@@ -292,6 +288,7 @@ function Render:row(row)
 
     if vim.tbl_contains({ 'trimmed', 'padded' }, self.config.cell) then
         for i, col in ipairs(row.cols) do
+            local node = col.node
             local delim = self.data.delim.cols[i]
             local space = col.space
             local fill = delim.width - col.width
@@ -301,25 +298,25 @@ function Render:row(row)
             if not self.context.conceal:enabled() then
                 -- result: ----XXXXXXX--_______
                 -- without concealing it is impossible to do full alignment
-                self:shift(col, 'right', fill)
+                self:shift(node, 'right', fill)
             elseif delim.alignment == Alignment.center then
                 -- (7 + 2 - 4) // 2 = 5 // 2 = 2 -> move two spaces to the right
                 -- result: __----XXXXXXX--_____
                 local shift = math.floor((fill + space.right - space.left) / 2)
-                self:shift(col, 'left', shift)
-                self:shift(col, 'right', fill - shift)
+                self:shift(node, 'left', shift)
+                self:shift(node, 'right', fill - shift)
             elseif delim.alignment == Alignment.right then
                 -- 2 - 1 = 1 -> conceal one space on right side
                 -- result: -_______----XXXXXXX-
                 local shift = space.right - self.config.padding
-                self:shift(col, 'left', fill + shift)
-                self:shift(col, 'right', -shift)
+                self:shift(node, 'left', fill + shift)
+                self:shift(node, 'right', -shift)
             else
                 -- 4 - 1 = 3 -> conceal three spaces on left side
                 -- result: -XXXXXXX--_______---
                 local shift = space.left - self.config.padding
-                self:shift(col, 'left', -shift)
-                self:shift(col, 'right', fill + shift)
+                self:shift(node, 'left', -shift)
+                self:shift(node, 'right', fill + shift)
             end
         end
     elseif self.config.cell == 'overlay' then
@@ -332,22 +329,22 @@ end
 
 ---Use low priority to include pipe marks
 ---@private
----@param col render.md.table.body.Col
+---@param node render.md.Node
 ---@param side 'left'|'right'
 ---@param amount integer
-function Render:shift(col, side, amount)
-    local column = side == 'left' and col.start_col or col.end_col
+function Render:shift(node, side, amount)
+    local col = side == 'left' and node.start_col or node.end_col
     if amount > 0 then
-        self.marks:add(self.config, true, col.row, column, {
+        self.marks:add(self.config, true, node.start_row, col, {
             priority = 0,
             virt_text = self:line():pad(amount, self.config.filler):get(),
             virt_text_pos = 'inline',
         })
     elseif amount < 0 then
         amount = amount - self.context.conceal:width('', 1)
-        self.marks:add(self.config, true, col.row, column + amount, {
+        self.marks:add(self.config, true, node.start_row, col + amount, {
             priority = 0,
-            end_col = column,
+            end_col = col,
             conceal = '',
         })
     end
