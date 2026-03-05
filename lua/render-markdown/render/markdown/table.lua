@@ -288,8 +288,8 @@ function Render:row(row)
 
     if vim.tbl_contains({ 'trimmed', 'padded' }, self.config.cell) then
         for i, col in ipairs(row.cols) do
-            local node = col.node
             local delim = self.data.delim.cols[i]
+            local node = col.node
             local space = col.space
             local fill = delim.width - col.width
             -- delim(20) : --------------------
@@ -337,7 +337,7 @@ function Render:shift(node, side, amount)
     if amount > 0 then
         self.marks:add(self.config, true, node.start_row, col, {
             priority = 0,
-            virt_text = self:line():pad(amount, self.config.filler):get(),
+            virt_text = self:line():pad(amount):get(),
             virt_text_pos = 'inline',
         })
     elseif amount < 0 then

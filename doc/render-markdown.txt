@@ -1,4 +1,4 @@
-*render-markdown.txt*        For NVIM v0.11.6       Last change: 2026 March 04
+*render-markdown.txt*        For NVIM v0.11.6       Last change: 2026 March 05
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -796,8 +796,6 @@ Default Configuration ~
             head = 'RenderMarkdownTableHead',
             -- Highlight for everything else, main table rows and the line below.
             row = 'RenderMarkdownTableRow',
-            -- Highlight for inline padding used to add back concealed space.
-            filler = 'RenderMarkdownTableFill',
             -- Determines how the table as a whole is rendered.
             -- | none   | { enabled = false }        |
             -- | normal | { border_enabled = false } |
@@ -1547,8 +1545,6 @@ Table Configuration ~
             head = 'RenderMarkdownTableHead',
             -- Highlight for everything else, main table rows and the line below.
             row = 'RenderMarkdownTableRow',
-            -- Highlight for inline padding used to add back concealed space.
-            filler = 'RenderMarkdownTableFill',
             -- Determines how the table as a whole is rendered.
             -- | none   | { enabled = false }        |
             -- | normal | { border_enabled = false } |
@@ -1864,9 +1860,6 @@ The table below shows all the highlight groups with their default link
                                                                        rows
 
   RenderMarkdownTableRow          Normal                               Pipe table body rows
-
-  RenderMarkdownTableFill         Conceal                              Pipe table inline
-                                                                       padding
 
   RenderMarkdownSuccess           DiagnosticOk                         Success related
                                                                        callouts

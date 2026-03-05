@@ -730,8 +730,6 @@ require('render-markdown').setup({
         head = 'RenderMarkdownTableHead',
         -- Highlight for everything else, main table rows and the line below.
         row = 'RenderMarkdownTableRow',
-        -- Highlight for inline padding used to add back concealed space.
-        filler = 'RenderMarkdownTableFill',
         -- Determines how the table as a whole is rendered.
         -- | none   | { enabled = false }        |
         -- | normal | { border_enabled = false } |
@@ -1497,8 +1495,6 @@ require('render-markdown').setup({
         head = 'RenderMarkdownTableHead',
         -- Highlight for everything else, main table rows and the line below.
         row = 'RenderMarkdownTableRow',
-        -- Highlight for inline padding used to add back concealed space.
-        filler = 'RenderMarkdownTableFill',
         -- Determines how the table as a whole is rendered.
         -- | none   | { enabled = false }        |
         -- | normal | { border_enabled = false } |
@@ -1766,7 +1762,6 @@ The table below shows all the highlight groups with their default link
 | RenderMarkdownTodo            | @markup.raw                        | Todo custom checkbox       |
 | RenderMarkdownTableHead       | @markup.heading                    | Pipe table heading rows    |
 | RenderMarkdownTableRow        | Normal                             | Pipe table body rows       |
-| RenderMarkdownTableFill       | Conceal                            | Pipe table inline padding  |
 | RenderMarkdownSuccess         | DiagnosticOk                       | Success related callouts   |
 | RenderMarkdownInfo            | DiagnosticInfo                     | Info related callouts      |
 | RenderMarkdownHint            | DiagnosticHint                     | Hint related callouts      |

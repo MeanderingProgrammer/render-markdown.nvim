@@ -416,7 +416,7 @@ end
 ---@param spaces integer
 ---@return vim.api.keyset.set_extmark
 function M.table.padding(spaces)
-    return M.padding(spaces, 0, 'RmTableFill')
+    return M.padding(spaces, 0)
 end
 
 ---@param marks render.md.test.Marks

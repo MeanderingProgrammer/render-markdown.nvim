@@ -56,7 +56,6 @@ M.colors = {
     -- Pipe tables
     TableHead       = '@markup.heading',
     TableRow        = 'Normal',
-    TableFill       = 'Conceal',
     -- Callouts
     Success         = 'DiagnosticOk',
     Info            = 'DiagnosticInfo',

@@ -286,7 +286,6 @@
 ---@field alignment_indicator? string
 ---@field head? string
 ---@field row? string
----@field filler? string
 ---@field style? render.md.table.Style
 
 ---@class (exact) render.md.quote.UserConfig: render.md.base.UserConfig
