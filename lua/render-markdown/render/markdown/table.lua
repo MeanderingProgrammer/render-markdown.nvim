@@ -4,14 +4,11 @@ local log = require('render-markdown.core.log')
 local str = require('render-markdown.lib.str')
 
 ---@class render.md.table.Data
----@field delim render.md.table.delim.Row
----@field rows render.md.table.body.Row[]
+---@field delim render.md.Node
+---@field cols render.md.table.Col[]
+---@field rows render.md.table.Row[]
 
----@class render.md.table.delim.Row
----@field node render.md.Node
----@field cols render.md.table.delim.Col[]
-
----@class render.md.table.delim.Col
+---@class render.md.table.Col
 ---@field width integer
 ---@field alignment render.md.table.Alignment
 
@@ -23,12 +20,12 @@ local Alignment = {
     default = 'default',
 }
 
----@class render.md.table.body.Row
+---@class render.md.table.Row
 ---@field node render.md.Node
 ---@field pipes render.md.Node[]
----@field cols render.md.table.body.Col[]
+---@field cells render.md.table.Cell[]
 
----@class render.md.table.body.Col
+---@class render.md.table.Cell
 ---@field node render.md.Node
 ---@field width integer
 ---@field space render.md.table.Space
@@ -37,7 +34,7 @@ local Alignment = {
 ---@field left integer
 ---@field right integer
 
----@class render.md.table.Row
+---@class render.md.table.row.Parts
 ---@field pipes render.md.Node[]
 ---@field cells render.md.Node[]
 
@@ -56,7 +53,7 @@ function Render:setup()
     end
 
     -- ensure delimiter and rows exist
-    local delim_node = nil ---@type render.md.Node?
+    local delim = nil ---@type render.md.Node?
     local row_nodes = {} ---@type render.md.Node[]
     local types = {
         delim = 'pipe_table_delimiter_row',
@@ -65,7 +62,7 @@ function Render:setup()
     }
     self.node:for_each_child(function(node)
         if node.type == types.delim then
-            delim_node = node
+            delim = node
         elseif self.context.view:overlaps(node:get()) then
             if vim.tbl_contains(types.row, node.type) then
                 row_nodes[#row_nodes + 1] = node
@@ -74,21 +71,19 @@ function Render:setup()
             end
         end
     end)
-    if not delim_node or #row_nodes == 0 then
+    if not delim or #row_nodes == 0 then
         return false
     end
 
-    -- double check delimiter exists after parsing
-    local delim = self:parse_delim_row(delim_node)
-    if not delim then
+    local cols = self:parse_cols(delim)
+    if not cols then
         return false
     end
 
-    -- double check rows exist after parsing
-    local rows = {} ---@type render.md.table.body.Row[]
+    local rows = {} ---@type render.md.table.Row[]
     table.sort(row_nodes)
     for _, row_node in ipairs(row_nodes) do
-        local row = self:parse_body_row(row_node, #delim.cols)
+        local row = self:parse_row(row_node, #cols)
         if row then
             rows[#rows + 1] = row
         end
@@ -97,41 +92,40 @@ function Render:setup()
         return false
     end
 
-    -- store the max width in the delimiter
+    -- store the max width in cols
     for _, row in ipairs(rows) do
-        for i, col in ipairs(row.cols) do
-            local space = col.space.left + col.space.right
+        for i, cell in ipairs(row.cells) do
+            local space = cell.space.left + cell.space.right
             local available = space - (2 * self.config.padding)
             -- if we don't have enough space for padding add it to the width
-            local width = col.width
+            local width = cell.width
             if available < 0 then
                 width = width - available
             end
             if self.config.cell == 'trimmed' then
                 width = width - math.max(available, 0)
             end
-            local delim_col = delim.cols[i]
-            delim_col.width = math.max(delim_col.width, width)
+            cols[i].width = math.max(cols[i].width, width)
         end
     end
 
-    self.data = { delim = delim, rows = rows }
+    self.data = { delim = delim, cols = cols, rows = rows }
 
     return true
 end
 
 ---@private
 ---@param node render.md.Node
----@return render.md.table.delim.Row?
-function Render:parse_delim_row(node)
-    local row = self:parse_row(node, 'pipe_table_delimiter_cell')
-    if not row then
+---@return render.md.table.Col[]?
+function Render:parse_cols(node)
+    local parts = self:parse_row_parts(node, 'pipe_table_delimiter_cell')
+    if not parts then
         return nil
     end
-    local cols = {} ---@type render.md.table.delim.Col[]
-    for i, cell in ipairs(row.cells) do
-        local start_col = row.pipes[i].end_col
-        local end_col = row.pipes[i + 1].start_col
+    local cols = {} ---@type render.md.table.Col[]
+    for i, cell in ipairs(parts.cells) do
+        local start_col = parts.pipes[i].end_col
+        local end_col = parts.pipes[i + 1].start_col
         local width = end_col - start_col
         assert(width >= 0, 'invalid table layout')
         if self.config.cell == 'padded' then
@@ -144,8 +138,7 @@ function Render:parse_delim_row(node)
             alignment = Render.alignment(cell),
         }
     end
-    ---@type render.md.table.delim.Row
-    return { node = node, cols = cols }
+    return cols
 end
 
 ---@private
@@ -168,23 +161,23 @@ end
 ---@private
 ---@param node render.md.Node
 ---@param num_cols integer
----@return render.md.table.body.Row?
-function Render:parse_body_row(node, num_cols)
-    local row = self:parse_row(node, 'pipe_table_cell')
-    if not row or #row.cells ~= num_cols then
+---@return render.md.table.Row?
+function Render:parse_row(node, num_cols)
+    local parts = self:parse_row_parts(node, 'pipe_table_cell')
+    if not parts or #parts.cells ~= num_cols then
         return nil
     end
-    local cols = {} ---@type render.md.table.body.Col[]
-    for i, cell in ipairs(row.cells) do
+    local cells = {} ---@type render.md.table.Cell[]
+    for i, cell in ipairs(parts.cells) do
         -- account for double width glyphs by replacing cell range with width
-        local start_col = row.pipes[i].end_col
-        local end_col = row.pipes[i + 1].start_col
+        local start_col = parts.pipes[i].end_col
+        local end_col = parts.pipes[i + 1].start_col
         local width = (end_col - start_col)
             - (cell.end_col - cell.start_col)
             + self.context:width(cell)
             + self.config.cell_offset({ node = cell:get() })
         assert(width >= 0, 'invalid table layout')
-        cols[#cols + 1] = {
+        cells[#cells + 1] = {
             node = cell,
             width = width,
             space = {
@@ -195,15 +188,15 @@ function Render:parse_body_row(node, num_cols)
             },
         }
     end
-    ---@type render.md.table.body.Row
-    return { node = node, pipes = row.pipes, cols = cols }
+    ---@type render.md.table.Row
+    return { node = node, pipes = parts.pipes, cells = cells }
 end
 
 ---@private
 ---@param node render.md.Node
 ---@param cell_type string
----@return render.md.table.Row?
-function Render:parse_row(node, cell_type)
+---@return render.md.table.row.Parts?
+function Render:parse_row_parts(node, cell_type)
     local pipes = {} ---@type render.md.Node[]
     local cells = {} ---@type render.md.Node[]
     node:for_each_child(function(child)
@@ -220,7 +213,7 @@ function Render:parse_row(node, cell_type)
     end
     table.sort(pipes)
     table.sort(cells)
-    ---@type render.md.table.Row
+    ---@type render.md.table.row.Parts
     return { pipes = pipes, cells = cells }
 end
 
@@ -237,10 +230,12 @@ end
 
 ---@private
 function Render:delimiter()
-    local delim, border = self.data.delim, self.config.border
+    local delim = self.data.delim
+    local border = self.config.border
+    local indicator = self.config.alignment_indicator
 
-    local indicator, icon = self.config.alignment_indicator, border[11]
-    local parts = iter.list.map(delim.cols, function(col)
+    local icon = border[11]
+    local parts = iter.list.map(self.data.cols, function(col)
         -- must have enough space to put the alignment indicator
         -- alignment indicator must be exactly one character wide
         -- do not put an indicator for default alignment
@@ -261,17 +256,17 @@ function Render:delimiter()
     local delimiter = border[4] .. table.concat(parts, border[5]) .. border[6]
 
     local line = self:line()
-    line:pad(str.spaces('start', delim.node.text))
+    line:pad(str.spaces('start', delim.text))
     line:text(delimiter, self.config.head)
-    line:pad(str.width(delim.node.text) - line:width())
-    self.marks:over(self.config, 'table_border', delim.node, {
+    line:pad(str.width(delim.text) - line:width())
+    self.marks:over(self.config, 'table_border', delim, {
         virt_text = line:get(),
         virt_text_pos = 'overlay',
     })
 end
 
 ---@private
----@param row render.md.table.body.Row
+---@param row render.md.table.Row
 function Render:row(row)
     local icon = self.config.border[10]
     local header = row.node.type == 'pipe_table_header'
@@ -287,11 +282,11 @@ function Render:row(row)
     end
 
     if vim.tbl_contains({ 'trimmed', 'padded' }, self.config.cell) then
-        for i, col in ipairs(row.cols) do
-            local delim = self.data.delim.cols[i]
-            local node = col.node
-            local space = col.space
-            local fill = delim.width - col.width
+        for i, cell in ipairs(row.cells) do
+            local col = self.data.cols[i]
+            local node = cell.node
+            local space = cell.space
+            local fill = col.width - cell.width
             -- delim(20) : --------------------
             -- col(4,7,2): ----XXXXXXX--
             -- fill(7)   :              _______
@@ -299,13 +294,13 @@ function Render:row(row)
                 -- result: ----XXXXXXX--_______
                 -- without concealing it is impossible to do full alignment
                 self:shift(node, 'right', fill)
-            elseif delim.alignment == Alignment.center then
+            elseif col.alignment == Alignment.center then
                 -- (7 + 2 - 4) // 2 = 5 // 2 = 2 -> move two spaces to the right
                 -- result: __----XXXXXXX--_____
                 local shift = math.floor((fill + space.right - space.left) / 2)
                 self:shift(node, 'left', shift)
                 self:shift(node, 'right', fill - shift)
-            elseif delim.alignment == Alignment.right then
+            elseif col.alignment == Alignment.right then
                 -- 2 - 1 = 1 -> conceal one space on right side
                 -- result: -_______----XXXXXXX-
                 local shift = space.right - self.config.padding
@@ -356,7 +351,7 @@ function Render:border()
     local rows = self.data.rows
     local border = self.config.border
 
-    ---@param row render.md.table.body.Row
+    ---@param row render.md.table.Row
     ---@return boolean
     local function width_equal(row)
         if vim.tbl_contains({ 'trimmed', 'padded' }, self.config.cell) then
@@ -364,21 +359,22 @@ function Render:border()
             return true
         elseif self.config.cell == 'raw' then
             -- want the computed widths to match
-            for i, col in ipairs(row.cols) do
-                if delim.cols[i].width ~= col.width then
+            for i, cell in ipairs(row.cells) do
+                if cell.width ~= self.data.cols[i].width then
                     return false
                 end
             end
             return true
         elseif self.config.cell == 'overlay' then
             -- want the underlying text widths to match
-            return str.width(delim.node.text) == str.width(row.node.text)
+            return str.width(row.node.text) == str.width(delim.text)
         else
             return false
         end
     end
 
-    local first, last = rows[1], rows[#rows]
+    local first = rows[1]
+    local last = rows[#rows]
     if not width_equal(first) or not width_equal(last) then
         return
     end
@@ -391,21 +387,22 @@ function Render:border()
     end
 
     local first_node = first.node
-    local last_node = #rows == 1 and delim.node or last.node
+    local last_node = #rows == 1 and delim or last.node
     local spaces = get_spaces(first_node)
     if spaces ~= get_spaces(last_node) then
         return
     end
 
-    local sections = iter.list.map(delim.cols, function(col)
-        return border[11]:rep(col.width)
+    local icon = border[11]
+    local parts = iter.list.map(self.data.cols, function(col)
+        return icon:rep(col.width)
     end)
 
     ---@param node render.md.Node
     ---@param above boolean
     ---@param chars [string, string, string]
     local function table_border(node, above, chars)
-        local text = chars[1] .. table.concat(sections, chars[2]) .. chars[3]
+        local text = chars[1] .. table.concat(parts, chars[2]) .. chars[3]
         local highlight = above and self.config.head or self.config.row
         local line = self:line():pad(spaces):text(text, highlight)
 

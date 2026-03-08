@@ -24,6 +24,7 @@
   [b3efd64](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/b3efd6408e4e4d66d6caaee0579e72b579bc0884)
 - handle rendering empty buffers [#597](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/597)
   [1c95813](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/1c958131c083c8557ea499fdb08c88b8afb05c4e)
+- remove pipe_table.filler config and RenderMarkdownTableFill highlight [9075055](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/907505549edc2f90c82fc429348af03ee8c3a825)
 
 ### Collaborator Shoutouts
 
