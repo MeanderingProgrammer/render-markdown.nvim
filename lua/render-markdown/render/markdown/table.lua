@@ -10,9 +10,9 @@ local str = require('render-markdown.lib.str')
 
 ---@class render.md.table.Col
 ---@field width integer
----@field alignment render.md.table.Alignment
+---@field alignment render.md.table.col.Alignment
 
----@enum render.md.table.Alignment
+---@enum render.md.table.col.Alignment
 local Alignment = {
     left = 'left',
     right = 'right',
@@ -23,14 +23,14 @@ local Alignment = {
 ---@class render.md.table.Row
 ---@field node render.md.Node
 ---@field pipes render.md.Node[]
----@field cells render.md.table.Cell[]
+---@field cells render.md.table.row.Cell[]
 
----@class render.md.table.Cell
+---@class render.md.table.row.Cell
 ---@field node render.md.Node
 ---@field width integer
----@field space render.md.table.Space
+---@field space render.md.table.cell.Space
 
----@class render.md.table.Space
+---@class render.md.table.cell.Space
 ---@field left integer
 ---@field right integer
 
@@ -143,7 +143,7 @@ end
 
 ---@private
 ---@param node render.md.Node
----@return render.md.table.Alignment
+---@return render.md.table.col.Alignment
 function Render.alignment(node)
     local left = node:child('pipe_table_align_left')
     local right = node:child('pipe_table_align_right')
@@ -167,7 +167,7 @@ function Render:parse_row(node, num_cols)
     if not parts or #parts.cells ~= num_cols then
         return nil
     end
-    local cells = {} ---@type render.md.table.Cell[]
+    local cells = {} ---@type render.md.table.row.Cell[]
     for i, cell in ipairs(parts.cells) do
         -- account for double width glyphs by replacing cell range with width
         local start_col = parts.pipes[i].end_col
