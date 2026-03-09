@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 8.12.0 (2026-03-08)
+
 ### Features
 
 - link.highlight_title option [#583](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/583)
