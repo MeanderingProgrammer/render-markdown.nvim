@@ -38,18 +38,6 @@ function M.init()
             end
         end,
     })
-    -- terminal / GUI resize — re-render all visible attached windows
-    vim.api.nvim_create_autocmd('VimResized', {
-        group = M.group,
-        callback = function(args)
-            for _, win in ipairs(vim.api.nvim_list_wins()) do
-                local buf = env.win.buf(win)
-                if M.attached(buf) and state.get(buf).enabled then
-                    ui.update(buf, win, args.event, true)
-                end
-            end
-        end,
-    })
     -- wrap option toggled (:set wrap / :set nowrap) — re-render the current window
     vim.api.nvim_create_autocmd('OptionSet', {
         group = M.group,
