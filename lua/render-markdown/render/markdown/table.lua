@@ -124,7 +124,7 @@ function Render:setup()
     -- uses the capped widths (padding is included in delim col width).
     if self.layout.wrap then
         for i, w in ipairs(self.layout.col_widths) do
-            self.data.delim.cols[i].width = w + 2 * self.config.padding
+            self.data.cols[i].width = w + 2 * self.config.padding
         end
     end
 
@@ -164,7 +164,7 @@ function Render:compute_layout()
         -- Absolute character width
         available = math.floor(mtw)
     end
-    local num_cols = #self.data.delim.cols
+    local num_cols = #self.data.cols
     local padding = self.config.padding
 
     -- Total table display width = (num_cols+1) pipes + num_cols*(2*padding + text_width)
@@ -176,12 +176,12 @@ function Render:compute_layout()
     local max_content = {} ---@type integer[]
     for i = 1, num_cols do
         max_content[i] = math.max(
-            self.data.delim.cols[i].width - 2 * padding,
+            self.data.cols[i].width - 2 * padding,
             self.config.min_width
         )
     end
     for _, row in ipairs(self.data.rows) do
-        for i, col in ipairs(row.cols) do
+        for i, col in ipairs(row.cells) do
             max_content[i] = math.max(max_content[i], col.width)
         end
     end
@@ -230,7 +230,7 @@ function Render:compute_layout()
     local needs_wrap = false
     for r, row in ipairs(self.data.rows) do
         local max_lines = 1
-        for i, col in ipairs(row.cols) do
+        for i, col in ipairs(row.cells) do
             local w = col_widths[i]
             if w > 0 and col.width > w then
                 local lines = math.ceil(col.width / w)
@@ -561,15 +561,15 @@ function Render:row_wrapped(row, row_index)
 
     -- Pre-compute display segments for each cell in this row
     local cell_segs = {} ---@type render.md.mark.Line[]
-    for i, col in ipairs(row.cols) do
-        cell_segs[i] = self:cell_segments(col.row, col.start_col, col.end_col)
+    for i, col in ipairs(row.cells) do
+        cell_segs[i] = self:cell_segments(col.node.start_row, col.node.start_col, col.node.end_col)
     end
 
     local filler = self.config.filler
     local function build_line(visual_line)
         local line = self:line()
         line:pad(spaces, filler)
-        for i, _ in ipairs(self.data.delim.cols) do
+        for i, _ in ipairs(self.data.cols) do
             local col_width = self.layout.col_widths[i]
             line:text(border_icon, highlight)
             line:pad(padding, filler)
