@@ -606,35 +606,33 @@ function Render:row_wrapped(row, row_index)
     })
 
     -- Lines 1..height-1: overlay buffer wrap continuations, then virt_lines.
-    if height > 1 then
-        local virt_lines = {} ---@type render.md.mark.Line[]
-        for vl = 1, height - 1 do
-            if vl < buf_screen_lines then
-                local byte_col = vim.fn.byteidx(buf_line, vl * win_width)
-                if byte_col < 0 then byte_col = #buf_line end
-                if #virt_lines > 0 then
-                    self.marks:add(self.config, 'virtual_lines', row.node.start_row, 0, {
-                        virt_lines = virt_lines,
-                        virt_lines_above = false,
-                    })
-                    virt_lines = {}
-                end
-                self.marks:add(self.config, 'table_border', row.node.start_row, byte_col, {
-                    virt_text = build_line(vl):get(),
-                    virt_text_pos = 'overlay',
-                    hl_mode = 'combine',
+    local virt_lines = {} ---@type render.md.mark.Line[]
+    for vl = 1, height - 1 do
+        if vl < buf_screen_lines then
+            local byte_col = vim.fn.byteidx(buf_line, vl * win_width)
+            if byte_col < 0 then byte_col = #buf_line end
+            if #virt_lines > 0 then
+                self.marks:add(self.config, 'virtual_lines', row.node.start_row, 0, {
+                    virt_lines = virt_lines,
+                    virt_lines_above = false,
                 })
-            else
-                local vline = self:indent():line(true):extend(build_line(vl))
-                virt_lines[#virt_lines + 1] = vline:get()
+                virt_lines = {}
             end
-        end
-        if #virt_lines > 0 then
-            self.marks:add(self.config, 'virtual_lines', row.node.start_row, 0, {
-                virt_lines = virt_lines,
-                virt_lines_above = false,
+            self.marks:add(self.config, 'table_border', row.node.start_row, byte_col, {
+                virt_text = build_line(vl):get(),
+                virt_text_pos = 'overlay',
+                hl_mode = 'combine',
             })
+        else
+            local vline = self:indent():line(true):extend(build_line(vl))
+            virt_lines[#virt_lines + 1] = vline:get()
         end
+    end
+    if #virt_lines > 0 then
+        self.marks:add(self.config, 'virtual_lines', row.node.start_row, 0, {
+            virt_lines = virt_lines,
+            virt_lines_above = false,
+        })
     end
 end
 
