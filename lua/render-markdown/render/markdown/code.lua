@@ -239,7 +239,10 @@ function Render:background(start_row, end_row)
     end
     local col = self.node.start_col
     for row = start_row, end_row do
-        self.marks:add(self.config, 'code_background', row, col, {
+        -- Allow cursorline to work when using full width backgrounds
+        local conceal = self.config.width == 'full' and true
+            or 'code_background'
+        self.marks:add(self.config, conceal, row, col, {
             end_row = row + 1,
             priority = self.config.priority,
             hl_group = self.config.highlight,
