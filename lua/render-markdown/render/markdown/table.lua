@@ -186,11 +186,6 @@ function Render:compute_layout()
         end
     end
 
-    local total_natural = 0
-    for _, w in ipairs(max_content) do
-        total_natural = total_natural + w
-    end
-
     -- Iterative redistribution:
     -- Start with an equal share per column. Any column whose content fits
     -- within that share gets locked at its natural width, freeing up budget
