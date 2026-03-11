@@ -1,4 +1,6 @@
 local Base = require('render-markdown.render.base')
+local Line = require('render-markdown.lib.line')
+local env = require('render-markdown.lib.env')
 local iter = require('render-markdown.lib.iter')
 local log = require('render-markdown.core.log')
 local str = require('render-markdown.lib.str')
@@ -38,9 +40,15 @@ local Alignment = {
 ---@field pipes render.md.Node[]
 ---@field cells render.md.Node[]
 
+---@class render.md.table.Layout
+---@field wrap boolean
+---@field col_widths integer[]
+---@field row_heights integer[]
+
 ---@class render.md.render.Table: render.md.Render
 ---@field private config render.md.table.Config
 ---@field private data render.md.table.Data
+---@field private layout render.md.table.Layout
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
@@ -110,8 +118,143 @@ function Render:setup()
     end
 
     self.data = { delim = delim, cols = cols, rows = rows }
+    self.layout = self:compute_layout()
+
+    -- When wrapping, update delim col widths so delimiter/border rendering
+    -- uses the capped widths (padding is included in delim col width).
+    if self.layout.wrap then
+        for i, w in ipairs(self.layout.col_widths) do
+            self.data.cols[i].width = w + 2 * self.config.padding
+        end
+    end
 
     return true
+end
+
+---@private
+---@return render.md.table.Layout
+function Render:compute_layout()
+    local no_wrap = { wrap = false, col_widths = {}, row_heights = {} }
+
+    -- Feature disabled when max_table_width is 0 (unset)
+    if self.config.max_table_width == 0 then
+        return no_wrap
+    end
+    -- Feature disabled when the window has line-wrap turned off — the table will
+    -- scroll horizontally so there are no continuation screen lines to fill, and
+    -- the col-redistribution logic would make things narrower for no reason.
+    if not env.win.get(self.context.win, 'wrap') then
+        return no_wrap
+    end
+    -- Only supported for padded/trimmed cell modes
+    if not vim.tbl_contains({ 'padded', 'trimmed' }, self.config.cell) then
+        return no_wrap
+    end
+
+    local win_width = env.win.width(self.context.win)
+    local mtw = self.config.max_table_width
+    local available
+    if mtw < 0 then
+        -- Negative: characters from right edge
+        available = win_width + mtw
+    elseif mtw <= 1 then
+        -- Fraction of window width
+        available = math.floor(win_width * mtw)
+    else
+        -- Absolute character width
+        available = math.floor(mtw)
+    end
+    local num_cols = #self.data.cols
+    local padding = self.config.padding
+
+    -- Total table display width = (num_cols+1) pipes + num_cols*(2*padding + text_width)
+    -- => text budget = available - (num_cols+1) - num_cols*2*padding
+    local overhead = (num_cols + 1) + (num_cols * 2 * padding)
+    local text_budget = available - overhead
+
+    -- Collect the natural text-area width for each column (max content width across all rows)
+    local max_content = {} ---@type integer[]
+    for i = 1, num_cols do
+        max_content[i] = math.max(
+            self.data.cols[i].width - 2 * padding,
+            self.config.min_width
+        )
+    end
+    for _, row in ipairs(self.data.rows) do
+        for i, col in ipairs(row.cells) do
+            max_content[i] = math.max(max_content[i], col.width)
+        end
+    end
+
+    -- Iterative redistribution:
+    -- Start with an equal share per column. Any column whose content fits
+    -- within that share gets locked at its natural width, freeing up budget
+    -- for the remaining columns. Repeat until stable.
+    local col_widths = {} ---@type integer[]
+    local locked = {} ---@type boolean[]
+    local locked_total = 0
+    local locked_count = 0
+
+    local share = math.floor(text_budget / num_cols)
+    local changed = true
+    while changed do
+        changed = false
+        for i = 1, num_cols do
+            if not locked[i] and max_content[i] <= share then
+                locked[i] = true
+                locked_total = locked_total + max_content[i]
+                locked_count = locked_count + 1
+                changed = true
+            end
+        end
+        if changed then
+            local free = num_cols - locked_count
+            if free > 0 then
+                share = math.floor((text_budget - locked_total) / free)
+            end
+        end
+    end
+
+    -- Assign final widths: locked columns get their natural width, others get the share
+    for i = 1, num_cols do
+        col_widths[i] = locked[i] and max_content[i] or math.max(share, 1)
+    end
+
+    -- Compute per-row heights based on how many lines each cell needs.
+    -- Also account for the raw (unrendered) buffer line wrapping: if the source
+    -- text is longer than the rendered text (e.g. a long concealed URL), the
+    -- buffer line may wrap onto more screen lines than the rendered content
+    -- requires.  We must cover all of those screen lines with overlay marks,
+    -- so the effective height is max(rendered_lines, raw_screen_lines).
+    local row_heights = {} ---@type integer[]
+    local needs_wrap = false
+    for r, row in ipairs(self.data.rows) do
+        local max_lines = 1
+        for i, col in ipairs(row.cells) do
+            local w = col_widths[i]
+            if w > 0 and col.width > w then
+                local lines = math.ceil(col.width / w)
+                if lines > max_lines then
+                    max_lines = lines
+                end
+                needs_wrap = true
+            end
+        end
+        -- Raw buffer line screen-wrap: ceil(display_width_of_source / win_width)
+        local _, line = row.node:line('first', 0)
+        local raw_screen_lines = math.ceil(str.width(line) / win_width)
+        if raw_screen_lines > max_lines then
+            max_lines = raw_screen_lines
+            needs_wrap = true
+        end
+        row_heights[r] = max_lines
+    end
+
+    if not needs_wrap then
+        return no_wrap
+    end
+
+    return { wrap = true, col_widths = col_widths, row_heights = row_heights }
 end
 
 ---@private
@@ -158,6 +301,79 @@ function Render.alignment(node)
     end
 end
 
+
+---Compute display segments for a cell: raw text − concealed + injected,
+---with treesitter highlight groups preserved.
+---@private
+---@param node render.md.Node
+---@return render.md.mark.Line
+function Render:cell_segments(node)
+    local row = node.start_row
+    local start_col = node.start_col
+    local end_col = node.end_col
+
+    local lead = #(node.text:match('^(%s*)') or '')
+    local trail = #(node.text:match('(%s*)$') or '')
+    local raw = node.text:sub(lead + 1, #node.text - trail)
+    local base_col = start_col + lead
+    local injections = self.context.offset:range(row, start_col, end_col)
+
+    local segments = {} ---@type render.md.mark.Line
+    local function push(text, hl)
+        if #text == 0 then return end
+        if #segments > 0 and segments[#segments][2] == hl then
+            segments[#segments][1] = segments[#segments][1] .. text
+        else
+            segments[#segments + 1] = { text, hl }
+        end
+    end
+
+    local function push_injection(inj)
+        for _, seg in ipairs(inj.virt_text) do
+            push(seg[1], seg[2] or '')
+        end
+    end
+
+    local inj_i = 1
+    -- Flush injections anchored in leading whitespace
+    while inj_i <= #injections and injections[inj_i].col < base_col do
+        push_injection(injections[inj_i])
+        inj_i = inj_i + 1
+    end
+    local bytes = vim.str_utf_pos(raw)
+    for k, start_byte in ipairs(bytes) do
+        local end_byte = k < #bytes and bytes[k + 1] - 1 or #raw
+        local abs_col = base_col + start_byte - 1
+        -- Insert any injections anchored at this byte position
+        while inj_i <= #injections and injections[inj_i].col == abs_col do
+            push_injection(injections[inj_i])
+            inj_i = inj_i + 1
+        end
+        local char = raw:sub(start_byte, end_byte)
+        local body = {
+            start_row = row, start_col = abs_col,
+            end_col = abs_col + end_byte - start_byte + 1, text = char,
+        }
+        if self.context.conceal:get(body) <= 0 then
+            -- Use built-in API to get the treesitter highlight at this position
+            local hl = ''
+            for _, cap in ipairs(vim.treesitter.get_captures_at_pos(self.context.buf, row, abs_col)) do
+                if cap.lang == 'markdown_inline' and not vim.startswith(cap.capture, 'conceal') then
+                    hl = '@' .. cap.capture
+                end
+            end
+            push(char, hl)
+        end
+    end
+    -- Trailing injections after the last character
+    while inj_i <= #injections do
+        push_injection(injections[inj_i])
+        inj_i = inj_i + 1
+    end
+    return segments
+end
+
+--TODO: Critical piece of code
 ---@private
 ---@param node render.md.Node
 ---@param num_cols integer
@@ -220,8 +436,14 @@ end
 ---@protected
 function Render:run()
     self:delimiter()
-    for _, row in ipairs(self.data.rows) do
-        self:row(row)
+    if self.layout.wrap then
+        for r, row in ipairs(self.data.rows) do
+            self:row_wrapped(row, r)
+        end
+    else
+        for _, row in ipairs(self.data.rows) do
+            self:row(row)
+        end
     end
     if self.config.border_enabled then
         self:border()
@@ -318,6 +540,93 @@ function Render:row(row)
         self.marks:over(self.config, 'table_border', row.node, {
             virt_text = { { row.node.text:gsub('|', icon), highlight } },
             virt_text_pos = 'overlay',
+        })
+    end
+end
+
+---@private
+---@param row render.md.table.Row
+---@param row_index integer
+function Render:row_wrapped(row, row_index)
+    local height = self.layout.row_heights[row_index]
+    local header = row.node.type == 'pipe_table_header'
+    local highlight = header and self.config.head or self.config.row
+    local border_icon = self.config.border[10]
+    local padding = self.config.padding
+    local spaces = math.max(str.spaces('start', row.node.text), row.node.start_col)
+
+    -- Pre-compute display segments for each cell in this row
+    local cell_segs = {} ---@type render.md.mark.Line[]
+    for i, col in ipairs(row.cells) do
+        cell_segs[i] = self:cell_segments(col.node)
+    end
+
+    local filler = self.config.filler
+    local function build_line(visual_line)
+        local line = self:line()
+        line:pad(spaces, filler)
+        for i, _ in ipairs(self.data.cols) do
+            local col_width = self.layout.col_widths[i]
+            line:text(border_icon, highlight)
+            line:pad(padding, filler)
+            local cell_line = Line.new(filler)
+            vim.list_extend(cell_line:get(), cell_segs[i] or {})
+            local chunk = cell_line:sub(visual_line * col_width + 1, (visual_line + 1) * col_width)
+            line:extend(chunk)
+            line:pad(col_width - chunk:width(), filler)
+            line:pad(padding, filler)
+        end
+        line:text(border_icon, highlight)
+        return line
+    end
+
+    local win_width = env.win.width(self.context.win)
+    local _, buf_line = row.node:line('first', 0)
+    buf_line = buf_line or ''
+    local buf_screen_lines = math.ceil(str.width(buf_line) / win_width)
+
+    -- Line 0: conceal the source line then overlay the rendered row on top.
+    if #buf_line > 0 then
+        self.marks:add(self.config, 'table_border', row.node.start_row, 0, {
+            end_row = row.node.start_row,
+            end_col = #buf_line,
+            conceal = '',
+        })
+    end
+    local first_line = build_line(0)
+    self.marks:add(self.config, 'table_border', row.node.start_row, 0, {
+        virt_text = first_line:get(),
+        virt_text_pos = 'overlay',
+        hl_mode = 'combine',
+    })
+
+    -- Lines 1..height-1: overlay buffer wrap continuations, then virt_lines.
+    local virt_lines = {} ---@type render.md.mark.Line[]
+    for vl = 1, height - 1 do
+        if vl < buf_screen_lines then
+            local byte_col = vim.fn.byteidx(buf_line, vl * win_width)
+            if byte_col < 0 then byte_col = #buf_line end
+            if #virt_lines > 0 then
+                self.marks:add(self.config, 'virtual_lines', row.node.start_row, 0, {
+                    virt_lines = virt_lines,
+                    virt_lines_above = false,
+                })
+                virt_lines = {}
+            end
+            self.marks:add(self.config, 'table_border', row.node.start_row, byte_col, {
+                virt_text = build_line(vl):get(),
+                virt_text_pos = 'overlay',
+                hl_mode = 'combine',
+            })
+        else
+            local vline = self:indent():line(true):extend(build_line(vl))
+            virt_lines[#virt_lines + 1] = vline:get()
+        end
+    end
+    if #virt_lines > 0 then
+        self.marks:add(self.config, 'virtual_lines', row.node.start_row, 0, {
+            virt_lines = virt_lines,
+            virt_lines_above = false,
         })
     end
 end
