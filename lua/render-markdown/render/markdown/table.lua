@@ -241,10 +241,8 @@ function Render:compute_layout()
             end
         end
         -- Raw buffer line screen-wrap: ceil(display_width_of_source / win_width)
-        local buf_line = vim.api.nvim_buf_get_lines(
-            self.context.buf, row.node.start_row, row.node.start_row + 1, false
-        )[1] or ''
-        local raw_screen_lines = math.max(1, math.ceil(str.width(buf_line) / win_width))
+        local _, line = row.node:line('first', 0)
+        local raw_screen_lines = math.ceil(str.width(line) / win_width)
         if raw_screen_lines > max_lines then
             max_lines = raw_screen_lines
             needs_wrap = true
@@ -582,11 +580,10 @@ function Render:row_wrapped(row, row_index)
         return line
     end
 
-    local buf_line = vim.api.nvim_buf_get_lines(
-        self.context.buf, row.node.start_row, row.node.start_row + 1, false
-    )[1] or ''
     local win_width = env.win.width(self.context.win)
-    local buf_screen_lines = math.max(1, math.ceil(str.width(buf_line) / win_width))
+    local _, buf_line = row.node:line('first', 0)
+    buf_line = buf_line or ''
+    local buf_screen_lines = math.ceil(str.width(buf_line) / win_width)
 
     -- Line 0: conceal the source line then overlay the rendered row on top.
     if #buf_line > 0 then
