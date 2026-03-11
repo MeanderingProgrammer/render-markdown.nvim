@@ -307,18 +307,16 @@ end
 ---Compute display segments for a cell: raw text − concealed + injected,
 ---with treesitter highlight groups preserved.
 ---@private
----@param row integer
----@param start_col integer
----@param end_col integer
+---@param node render.md.Node
 ---@return render.md.mark.Line
-function Render:cell_segments(row, start_col, end_col)
-    local raw_full = vim.api.nvim_buf_get_text(
-        self.context.buf, row, start_col, row, end_col, {}
-    )[1] or ''
-    -- Trim cell padding upfront so we don't need post-processing
-    local lead = #(raw_full:match('^(%s*)') or '')
-    local trail = #(raw_full:match('(%s*)$') or '')
-    local raw = raw_full:sub(lead + 1, #raw_full - trail)
+function Render:cell_segments(node)
+    local row = node.start_row
+    local start_col = node.start_col
+    local end_col = node.end_col
+
+    local lead = #(node.text:match('^(%s*)') or '')
+    local trail = #(node.text:match('(%s*)$') or '')
+    local raw = node.text:sub(lead + 1, #node.text - trail)
     local base_col = start_col + lead
     local injections = self.context.offset:range(row, start_col, end_col)
 
@@ -562,7 +560,7 @@ function Render:row_wrapped(row, row_index)
     -- Pre-compute display segments for each cell in this row
     local cell_segs = {} ---@type render.md.mark.Line[]
     for i, col in ipairs(row.cells) do
-        cell_segs[i] = self:cell_segments(col.node.start_row, col.node.start_col, col.node.end_col)
+        cell_segs[i] = self:cell_segments(col.node)
     end
 
     local filler = self.config.filler
