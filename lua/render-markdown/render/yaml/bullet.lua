@@ -24,7 +24,7 @@ end
 function Render:run()
     ---@type render.md.bullet.Context
     local ctx = {
-        level = self.node:level_in('block_sequence', 'document'),
+        level = self.node:level_in('block_sequence'),
         index = self.node:sibling_count('block_sequence_item'),
         value = '-',
     }

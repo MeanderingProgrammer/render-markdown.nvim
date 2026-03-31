@@ -28,7 +28,7 @@ function Render:setup()
     if not marker then
         return false
     end
-    local level, root = self.node:level_in('list', 'section')
+    local level, root = self.node:level_in('list')
     ---@type render.md.bullet.Context
     local ctx = {
         level = level,

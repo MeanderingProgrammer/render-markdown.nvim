@@ -103,13 +103,12 @@ function Node:level(parent)
 end
 
 ---@param target string
----@param outside string
 ---@return integer, render.md.Node?
-function Node:level_in(target, outside)
+function Node:level_in(target)
     local level = 0
     local root = nil ---@type TSNode?
     local node = self.node ---@type TSNode?
-    while node and node:type() ~= outside do
+    while node and node:type() ~= 'document' do
         if node:type() == target then
             level = level + 1
             root = node
