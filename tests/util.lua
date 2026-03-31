@@ -333,6 +333,7 @@ function M.code.hide(width)
     return {
         priority = 0,
         virt_text = { { (' '):rep(vim.o.columns * 2), 'Normal' } },
+        ---@diagnostic disable-next-line: assign-type-mismatch
         virt_text_pos = 'win_col',
         virt_text_win_col = width,
     }

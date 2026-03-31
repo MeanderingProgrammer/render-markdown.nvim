@@ -24,6 +24,7 @@ function M.server(dispatchers)
     ---@type vim.lsp.rpc.PublicClient
     return {
         request = function(method, params, callback)
+            id = id + 1
             if method == 'initialize' then
                 callback(nil, {
                     capabilities = {
@@ -31,13 +32,12 @@ function M.server(dispatchers)
                             triggerCharacters = source.trigger_characters(),
                         },
                     },
-                })
+                }, id)
             elseif method == 'textDocument/completion' then
-                callback(nil, M.completions(params))
+                callback(nil, M.completions(params), id)
             elseif method == 'shutdown' then
-                callback(nil, nil)
+                callback(nil, nil, id)
             end
-            id = id + 1
             return true, id
         end,
         notify = function(method)

@@ -98,7 +98,10 @@ function M.copy_lines(src, dst)
 
     local src_text = table.concat(src_lines, '\n') .. '\n'
     local dst_text = table.concat(dst_lines, '\n') .. '\n'
-    local diff = vim.diff(dst_text, src_text, { result_type = 'indices' })
+
+    ---@diagnostic disable-next-line: deprecated
+    local get_diff = vim.text and vim.text.diff or vim.diff
+    local diff = get_diff(dst_text, src_text, { result_type = 'indices' })
     assert(type(diff) == 'table', 'diff must provide indices')
 
     env.buf.set(dst, 'modifiable', true)

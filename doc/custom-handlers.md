@@ -31,9 +31,7 @@ Each handler must conform to the following interface:
 ---@alias render.md.mark.Conceal boolean|render.md.Element
 
 ---@class render.md.mark.Opts: vim.api.keyset.set_extmark
----@field hl_mode? 'replace'|'combine'|'blend'
 ---@field virt_text? render.md.mark.Line
----@field virt_text_pos? 'eol'|'eol_right_align'|'inline'|'overlay'
 ---@field virt_lines? render.md.mark.Line[]
 
 ---@alias render.md.mark.Line render.md.mark.Text[]
