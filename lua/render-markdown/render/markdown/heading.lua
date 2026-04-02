@@ -252,8 +252,9 @@ function Render:padding(box)
     if line:empty() then
         return
     end
+    local start_col = self.node.start_col
     for row = self.node.start_row, self.node.end_row - 1 do
-        self.marks:add(self.config, false, row, 0, {
+        self.marks:add(self.config, false, row, start_col, {
             priority = 100,
             virt_text = line:get(),
             virt_text_pos = 'inline',
