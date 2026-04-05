@@ -1,8 +1,7 @@
-local initialized = false
-if initialized then
+if vim.g.loaded_render_markdown then
     return
 end
-initialized = true
+vim.g.loaded_render_markdown = true
 
 require('render-markdown').setup(vim.g.render_markdown_config)
 require('render-markdown.core.colors').init()
