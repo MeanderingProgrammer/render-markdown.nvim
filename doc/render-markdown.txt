@@ -7,10 +7,10 @@ Table of Contents                          *render-markdown-table-of-contents*
 2. Features                                         |render-markdown-features|
 3. Requirements                                 |render-markdown-requirements|
 4. Install                                           |render-markdown-install|
+  - vim.pack                                |render-markdown-install-vim.pack|
   - lazy.nvim                              |render-markdown-install-lazy.nvim|
   - rocks.nvim                            |render-markdown-install-rocks.nvim|
   - packer.nvim                          |render-markdown-install-packer.nvim|
-  - vim.pack                                |render-markdown-install-vim.pack|
 5. Commands                                         |render-markdown-commands|
 6. Completions                                   |render-markdown-completions|
   - in-process lsp                |render-markdown-completions-in-process-lsp|
@@ -98,6 +98,20 @@ Plugin to improve viewing Markdown files in Neovim
 4. Install                                           *render-markdown-install*
 
 
+VIM.PACK                                    *render-markdown-install-vim.pack*
+
+>lua
+    vim.pack.add({
+        'https://github.com/nvim-treesitter/nvim-treesitter',
+        'https://github.com/nvim-mini/mini.nvim',            -- if you use the mini.nvim suite
+        -- 'https://github.com/nvim-mini/mini.icons',        -- if you use standalone mini plugins
+        -- 'https://github.com/nvim-tree/nvim-web-devicons', -- if you prefer nvim-web-devicons
+        'https://github.com/MeanderingProgrammer/render-markdown.nvim',
+    })
+    require('render-markdown').setup({}) -- only mandatory if you want to set custom options
+<
+
+
 LAZY.NVIM                                  *render-markdown-install-lazy.nvim*
 
 >lua
@@ -136,20 +150,6 @@ PACKER.NVIM                              *render-markdown-install-packer.nvim*
             require('render-markdown').setup({})
         end,
     })
-<
-
-
-VIM.PACK                                    *render-markdown-install-vim.pack*
-
->lua
-    vim.pack.add({
-        'https://github.com/nvim-treesitter/nvim-treesitter',
-        'https://github.com/nvim-mini/mini.nvim',            -- if you use the mini.nvim suite
-        -- 'https://github.com/nvim-mini/mini.icons',        -- if you use standalone mini plugins
-        -- 'https://github.com/nvim-tree/nvim-web-devicons', -- if you prefer nvim-web-devicons
-        'https://github.com/MeanderingProgrammer/render-markdown.nvim',
-    })
-    require('render-markdown').setup({}) -- only mandatory if you want to set custom options
 <
 
 

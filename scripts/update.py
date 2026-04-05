@@ -6,7 +6,7 @@ from typing import Protocol
 
 import tree_sitter_lua
 import tree_sitter_markdown
-from tree_sitter import Language, Parser
+from tree_sitter import Language, Parser, Query, QueryCursor
 
 
 class LuaType(Protocol):
@@ -248,19 +248,23 @@ def get_code_block(file: Path, content: str, n: int) -> str:
 
 
 def ts_query(file: Path, query: str, target: str) -> list[str]:
-    tree_sitter = {
-        ".lua": tree_sitter_lua,
-        ".md": tree_sitter_markdown,
+    tree_sitter_language = {
+        ".lua": tree_sitter_lua.language(),
+        ".md": tree_sitter_markdown.language(),
     }[file.suffix]
 
-    language = Language(tree_sitter.language())
+    language = Language(tree_sitter_language)
     tree = Parser(language).parse(file.read_text().encode())
-    captures = language.query(query).captures(tree.root_node)
+    captures = QueryCursor(Query(language, query)).captures(tree.root_node)
 
     nodes = captures[target]
     nodes.sort(key=lambda node: node.start_byte)
-    texts = [node.text for node in nodes]
-    return [text.decode() for text in texts if text is not None]
+    result: list[str] = []
+    for node in nodes:
+        text = node.text
+        assert text is not None
+        result.append(text.decode())
+    return result
 
 
 if __name__ == "__main__":

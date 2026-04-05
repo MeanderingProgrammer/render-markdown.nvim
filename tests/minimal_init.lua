@@ -1,10 +1,9 @@
 ---@param name string
 ---@return string
 local function get_path(name)
-    local data_path = vim.fn.stdpath('data')
-    local plugin_path = vim.fs.find(name, { path = data_path })
-    assert(#plugin_path == 1, 'plugin must have one path')
-    return plugin_path[1]
+    local paths = vim.fs.find(name, { path = vim.fn.stdpath('data') })
+    assert(#paths == 1, 'plugin must have one path')
+    return paths[1]
 end
 
 -- settings

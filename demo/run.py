@@ -4,12 +4,12 @@ from pathlib import Path
 
 from PIL import Image
 
-DEMOS: dict[str, tuple[int, str]] = dict(
+DEMOS: dict[str, tuple[int, str | None]] = dict(
     heading_code=(550, "## Heading 2"),
-    list_table=(550, ""),
-    box_dash_quote=(250, ""),
-    latex=(250, ""),
-    callout=(750, ""),
+    list_table=(550, None),
+    box_dash_quote=(250, None),
+    latex=(250, None),
+    callout=(750, None),
 )
 
 
@@ -57,7 +57,7 @@ def create_screenshot(name: str) -> None:
     rendered.unlink()
 
 
-def tape_content(file: Path, gif: Path, height: int, content: str) -> str:
+def tape_content(file: Path, gif: Path, height: int, content: str | None) -> str:
     result = Path("demo/format.tape").read_text()
     result = result.replace("INPUT", str(file))
     result = result.replace("OUTPUT", str(gif))
@@ -68,9 +68,9 @@ def tape_content(file: Path, gif: Path, height: int, content: str) -> str:
     return result
 
 
-def get_write(content: str) -> str:
+def get_write(content: str | None) -> str:
     write: list[str] = []
-    if len(content) > 0:
+    if content is not None:
         write.append('Type "o"')
         write.append("Enter")
         write.append(f'Type "{content}" Escape')
@@ -80,8 +80,8 @@ def get_write(content: str) -> str:
 
 def get_move(file: Path) -> str:
     move: list[str] = []
-    # Get lines so we know how to scroll down, account for starting on second line
-    lines: list[str] = file.read_text().splitlines()[2:]
+    # get lines so we know how to scroll down, account for starting on second line
+    lines = file.read_text().splitlines()[2:]
     for line in lines:
         skip = ("    ", "def", "if")
         duration = 0.1 if line == "" or line.startswith(skip) else 0.75
