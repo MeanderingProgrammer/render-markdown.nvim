@@ -226,6 +226,7 @@ end
 ---@return render.md.option.Value
 ---@overload fun(win: integer, name: 'conceallevel'): integer
 ---@overload fun(win: integer, name: 'diff'): boolean
+---@overload fun(win: integer, name: 'wrap'): boolean
 function M.win.get(win, name)
     return vim.api.nvim_get_option_value(name, { scope = 'local', win = win })
 end

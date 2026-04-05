@@ -273,8 +273,7 @@ function M.code.border(border, full, ...)
             local icon = M.code.icon(part)
             if icon then
                 local icon_hl = ('%s:RmCodeBorder'):format(icon[2])
-                line[#line + 1] = { icon[1], icon_hl }
-                line[#line + 1] = { part, icon_hl }
+                line[#line + 1] = { icon[1] .. part, icon_hl }
             else
                 line[#line + 1] = { part, 'RmCodeInfo:RmCodeBorder' }
             end

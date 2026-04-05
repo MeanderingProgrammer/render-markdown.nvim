@@ -64,6 +64,11 @@ function Node:get()
 end
 
 ---@return integer
+function Node:col()
+    return self.start_col + str.spaces('start', self.text)
+end
+
+---@return integer
 function Node:height()
     return self.end_row - self.start_row + 1
 end

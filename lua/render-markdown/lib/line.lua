@@ -3,6 +3,7 @@ local str = require('render-markdown.lib.str')
 
 ---@class render.md.Line
 ---@field private highlight string
+---@field private previous? render.md.mark.Hl
 ---@field private line render.md.mark.Line
 local Line = {}
 Line.__index = Line
@@ -12,6 +13,7 @@ Line.__index = Line
 function Line.new(highlight)
     local self = setmetatable({}, Line)
     self.highlight = highlight
+    self.previous = nil
     self.line = {}
     return self
 end
@@ -34,7 +36,9 @@ end
 ---@param other render.md.Line
 ---@return render.md.Line
 function Line:extend(other)
-    vim.list_extend(self.line, other.line)
+    for _, text in ipairs(other.line) do
+        self:add(text[1], text[2])
+    end
     return self
 end
 
@@ -93,7 +97,13 @@ end
 ---@param text string
 ---@param highlight? render.md.mark.Hl
 function Line:add(text, highlight)
-    self.line[#self.line + 1] = { text, highlight or self.highlight }
+    highlight = highlight or self.highlight
+    if highlight == self.previous then
+        self.line[#self.line][1] = self.line[#self.line][1] .. text
+    else
+        self.line[#self.line + 1] = { text, highlight }
+        self.previous = highlight
+    end
 end
 
 return Line

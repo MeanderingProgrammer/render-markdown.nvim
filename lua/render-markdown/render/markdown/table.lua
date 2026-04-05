@@ -4,9 +4,14 @@ local log = require('render-markdown.core.log')
 local str = require('render-markdown.lib.str')
 
 ---@class render.md.table.Data
+---@field layout render.md.table.Layout
 ---@field delim render.md.Node
 ---@field cols render.md.table.Col[]
 ---@field rows render.md.table.Row[]
+
+---@class render.md.table.Layout
+---@field col integer
+---@field valid boolean
 
 ---@class render.md.table.Col
 ---@field width integer
@@ -75,6 +80,9 @@ function Render:setup()
         return false
     end
 
+    ---@type render.md.table.Layout
+    local layout = { col = delim:col(), valid = true }
+
     local cols = self:parse_cols(delim)
     if not cols then
         return false
@@ -85,6 +93,9 @@ function Render:setup()
     for _, row_node in ipairs(row_nodes) do
         local row = self:parse_row(row_node, #cols)
         if row then
+            if row.node:col() ~= layout.col then
+                layout.valid = false
+            end
             rows[#rows + 1] = row
         end
     end
@@ -109,7 +120,7 @@ function Render:setup()
         end
     end
 
-    self.data = { delim = delim, cols = cols, rows = rows }
+    self.data = { layout = layout, delim = delim, cols = cols, rows = rows }
 
     return true
 end
@@ -223,7 +234,7 @@ function Render:run()
     for _, row in ipairs(self.data.rows) do
         self:row(row)
     end
-    if self.config.border_enabled then
+    if self.config.border_enabled and self.data.layout.valid then
         self:border()
     end
 end
@@ -347,7 +358,6 @@ end
 
 ---@private
 function Render:border()
-    local delim = self.data.delim
     local rows = self.data.rows
     local border = self.config.border
 
@@ -367,7 +377,7 @@ function Render:border()
             return true
         elseif self.config.cell == 'overlay' then
             -- want the underlying text widths to match
-            return str.width(row.node.text) == str.width(delim.text)
+            return str.width(row.node.text) == str.width(self.data.delim.text)
         else
             return false
         end
@@ -376,20 +386,6 @@ function Render:border()
     local first = rows[1]
     local last = rows[#rows]
     if not width_equal(first) or not width_equal(last) then
-        return
-    end
-
-    ---@param node render.md.Node
-    ---@return integer
-    local function get_spaces(node)
-        local _, line = node:line('first', 0)
-        return math.max(str.spaces('start', line or ''), node.start_col)
-    end
-
-    local first_node = first.node
-    local last_node = #rows == 1 and delim or last.node
-    local spaces = get_spaces(first_node)
-    if spaces ~= get_spaces(last_node) then
         return
     end
 
@@ -404,7 +400,7 @@ function Render:border()
     local function table_border(node, above, chars)
         local text = chars[1] .. table.concat(parts, chars[2]) .. chars[3]
         local highlight = above and self.config.head or self.config.row
-        local line = self:line():pad(spaces):text(text, highlight)
+        local line = self:line():pad(self.data.layout.col):text(text, highlight)
 
         local virtual = self.config.border_virtual
         local row, target = node:line(above and 'above' or 'below', 1)
@@ -423,9 +419,9 @@ function Render:border()
         end
     end
 
-    table_border(first_node, true, { border[1], border[2], border[3] })
+    table_border(first.node, true, { border[1], border[2], border[3] })
     if #rows > 1 then
-        table_border(last_node, false, { border[7], border[8], border[9] })
+        table_border(last.node, false, { border[7], border[8], border[9] })
     end
 end
 
