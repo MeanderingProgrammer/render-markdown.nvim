@@ -35,13 +35,18 @@ end
 ---@param left boolean
 function Render:padding(highlight, left)
     local line = self:line()
-    local icon_highlight = colors.bg_as_fg(highlight)
     if left then
-        line:text(self.config.inline_left, icon_highlight)
+        line:text(
+            self.config.inline_left,
+            self.config.highlight_inline_left or colors.bg_as_fg(highlight)
+        )
         line:pad(self.config.inline_pad, highlight)
     else
         line:pad(self.config.inline_pad, highlight)
-        line:text(self.config.inline_right, icon_highlight)
+        line:text(
+            self.config.inline_right,
+            self.config.highlight_inline_right or colors.bg_as_fg(highlight)
+        )
     end
     if not line:empty() then
         local row = left and self.node.start_row or self.node.end_row

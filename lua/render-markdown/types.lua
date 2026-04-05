@@ -123,6 +123,8 @@
 ---@field highlight_border? false|string
 ---@field highlight_fallback? string
 ---@field highlight_inline? string
+---@field highlight_inline_left? string
+---@field highlight_inline_right? string
 ---@field style? render.md.code.Style
 
 ---@class (exact) render.md.completions.UserConfig

@@ -412,6 +412,8 @@ M.code = {}
 ---@field highlight_border false|string
 ---@field highlight_fallback string
 ---@field highlight_inline string
+---@field highlight_inline_left? string
+---@field highlight_inline_right? string
 ---@field style render.md.code.Style
 
 ---@enum render.md.code.Position
@@ -530,6 +532,10 @@ M.code.default = {
     highlight_fallback = 'RenderMarkdownCodeFallback',
     -- Highlight for inline code.
     highlight_inline = 'RenderMarkdownCodeInline',
+    -- Highlight for inline code left icon, default to reverse of highlight_inline.
+    highlight_inline_left = nil,
+    -- Highlight for inline code right icon, default to reverse of highlight_inline.
+    highlight_inline_right = nil,
     -- Determines how code blocks & inline code are rendered.
     -- | none     | { enabled = false }                           |
     -- | normal   | { language = false }                          |
@@ -577,6 +583,8 @@ function M.code.schema()
         },
         highlight_fallback = { type = 'string' },
         highlight_inline = { type = 'string' },
+        highlight_inline_left = { optional = true, type = 'string' },
+        highlight_inline_right = { optional = true, type = 'string' },
         style = { enum = M.code.style },
     })
 end

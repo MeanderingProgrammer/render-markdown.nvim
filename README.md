@@ -525,6 +525,10 @@ require('render-markdown').setup({
         highlight_fallback = 'RenderMarkdownCodeFallback',
         -- Highlight for inline code.
         highlight_inline = 'RenderMarkdownCodeInline',
+        -- Highlight for inline code left icon, default to reverse of highlight_inline.
+        highlight_inline_left = nil,
+        -- Highlight for inline code right icon, default to reverse of highlight_inline.
+        highlight_inline_right = nil,
         -- Determines how code blocks & inline code are rendered.
         -- | none     | { enabled = false }                           |
         -- | normal   | { language = false }                          |
@@ -1229,6 +1233,10 @@ require('render-markdown').setup({
         highlight_fallback = 'RenderMarkdownCodeFallback',
         -- Highlight for inline code.
         highlight_inline = 'RenderMarkdownCodeInline',
+        -- Highlight for inline code left icon, default to reverse of highlight_inline.
+        highlight_inline_left = nil,
+        -- Highlight for inline code right icon, default to reverse of highlight_inline.
+        highlight_inline_right = nil,
         -- Determines how code blocks & inline code are rendered.
         -- | none     | { enabled = false }                           |
         -- | normal   | { language = false }                          |

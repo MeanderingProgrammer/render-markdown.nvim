@@ -1,4 +1,4 @@
-*render-markdown.txt*        For NVIM v0.12.0       Last change: 2026 April 04
+*render-markdown.txt*        For NVIM v0.12.0       Last change: 2026 April 05
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -591,6 +591,10 @@ Default Configuration ~
             highlight_fallback = 'RenderMarkdownCodeFallback',
             -- Highlight for inline code.
             highlight_inline = 'RenderMarkdownCodeInline',
+            -- Highlight for inline code left icon, default to reverse of highlight_inline.
+            highlight_inline_left = nil,
+            -- Highlight for inline code right icon, default to reverse of highlight_inline.
+            highlight_inline_right = nil,
             -- Determines how code blocks & inline code are rendered.
             -- | none     | { enabled = false }                           |
             -- | normal   | { language = false }                          |
@@ -1289,6 +1293,10 @@ Code Block Configuration ~
             highlight_fallback = 'RenderMarkdownCodeFallback',
             -- Highlight for inline code.
             highlight_inline = 'RenderMarkdownCodeInline',
+            -- Highlight for inline code left icon, default to reverse of highlight_inline.
+            highlight_inline_left = nil,
+            -- Highlight for inline code right icon, default to reverse of highlight_inline.
+            highlight_inline_right = nil,
             -- Determines how code blocks & inline code are rendered.
             -- | none     | { enabled = false }                           |
             -- | normal   | { language = false }                          |
