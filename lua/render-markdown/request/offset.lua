@@ -1,6 +1,7 @@
 ---@class render.md.request.offset.Value
 ---@field col integer
 ---@field width integer
+---@field virt_text render.md.mark.Line original virtual text segments
 
 ---@class render.md.request.Offset
 ---@field private values table<integer, render.md.request.offset.Value[]>
@@ -37,6 +38,22 @@ function Offset:get(body)
             result = result + value.width
         end
     end
+    return result
+end
+
+---Return injections within a column range on a row, sorted by col.
+---@param row integer
+---@param start_col integer
+---@param end_col integer
+---@return render.md.request.offset.Value[]
+function Offset:range(row, start_col, end_col)
+    local result = {} ---@type render.md.request.offset.Value[]
+    for _, value in ipairs(self.values[row] or {}) do
+        if value.col >= start_col and value.col < end_col then
+            result[#result + 1] = value
+        end
+    end
+    table.sort(result, function(a, b) return a.col < b.col end)
     return result
 end
 

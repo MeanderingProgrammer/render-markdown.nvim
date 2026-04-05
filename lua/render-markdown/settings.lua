@@ -1611,6 +1611,7 @@ M.pipe_table = {}
 ---@field cell_offset fun(ctx: render.md.table.cell.Context): integer
 ---@field padding integer
 ---@field min_width integer
+---@field max_table_width number
 ---@field border string[]
 ---@field border_enabled boolean
 ---@field border_virtual boolean
@@ -1671,6 +1672,17 @@ M.pipe_table.default = {
     padding = 1,
     -- Minimum column width to use for padded or trimmed cell.
     min_width = 0,
+    -- Maximum width of the rendered table. When a table's natural width exceeds
+    -- this limit, column widths are reduced proportionally and cell content that
+    -- no longer fits will wrap onto additional virtual lines.
+    -- Only applies to padded & trimmed cell modes, and only when the window
+    -- has 'wrap' enabled (otherwise the table scrolls horizontally).
+    -- Set to 0 to disable wrapping (default).
+    -- | 0       | disabled, no wrapping                              |
+    -- | 0.1–1.0 | fraction of window width, e.g. 0.8 = 80%          |
+    -- | 2+      | absolute character width, e.g. 80 = 80 columns     |
+    -- | < 0     | window width minus N, e.g. -10 = width minus 10    |
+    max_table_width = 0,
     -- Characters used to replace table border.
     -- Correspond to top(3), delimiter(3), bottom(3), vertical, & horizontal.
     -- stylua: ignore
@@ -1706,6 +1718,7 @@ function M.pipe_table.schema()
         cell_offset = { type = 'function' },
         padding = { type = 'number' },
         min_width = { type = 'number' },
+        max_table_width = { type = 'number' },
         border = { list = { type = 'string' } },
         border_enabled = { type = 'boolean' },
         border_virtual = { type = 'boolean' },
