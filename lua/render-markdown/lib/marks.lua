@@ -1,6 +1,5 @@
 local compat = require('render-markdown.lib.compat')
 local log = require('render-markdown.core.log')
-local str = require('render-markdown.lib.str')
 
 ---@class (exact) render.md.Mark
 ---@field modes? render.md.Modes
@@ -134,9 +133,9 @@ function Marks:run_update(mark)
         self.context.conceal:add(row, { start_col, end_col, opts.conceal, 1 })
     end
     if opts.virt_text_pos == 'inline' then
-        self.context.offset:add(row, {
+        self.context.inline:add(row, {
             col = start_col,
-            width = str.line_width(opts.virt_text),
+            line = opts.virt_text or {},
         })
     end
 end

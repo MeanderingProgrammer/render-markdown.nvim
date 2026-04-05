@@ -33,10 +33,11 @@ function Line:width()
     return str.line_width(self.line)
 end
 
----@param other render.md.Line
+---@param other render.md.Line|render.md.mark.Line
 ---@return render.md.Line
 function Line:extend(other)
-    for _, text in ipairs(other.line) do
+    local line = other.line or other
+    for _, text in ipairs(line) do
         self:add(text[1], text[2])
     end
     return self

@@ -9,7 +9,7 @@ local str = require('render-markdown.lib.str')
 ---@field callout render.md.request.Callout
 ---@field checkbox render.md.request.Checkbox
 ---@field latex render.md.request.Latex
----@field offset render.md.request.Offset
+---@field inline render.md.request.Inline
 ---@field used render.md.request.Used
 local Context = {}
 Context.__index = Context
@@ -30,7 +30,7 @@ function Context.new(buf, win, config, view)
     self.callout = require('render-markdown.request.callout').new()
     self.checkbox = require('render-markdown.request.checkbox').new()
     self.latex = require('render-markdown.request.latex').new()
-    self.offset = require('render-markdown.request.offset').new()
+    self.inline = require('render-markdown.request.inline').new()
     self.used = require('render-markdown.request.used').new()
     return self
 end
@@ -41,7 +41,9 @@ function Context:width(body)
     if not body then
         return 0
     end
-    return str.width(body.text) + self.offset:get(body) - self.conceal:get(body)
+    return str.width(body.text)
+        + self.inline:width(body)
+        - self.conceal:get(body)
 end
 
 ---@class render.md.request.context.Manager
