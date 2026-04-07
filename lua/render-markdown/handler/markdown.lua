@@ -20,6 +20,8 @@ function M.parse(ctx)
 
         (document) @document
 
+        (link_reference_definition (link_label) @footnote)
+
         [
             (atx_heading)
             (setext_heading)
@@ -40,6 +42,7 @@ function M.parse(ctx)
         code = require('render-markdown.render.markdown.code'),
         dash = require('render-markdown.render.markdown.dash'),
         document = require('render-markdown.render.markdown.document'),
+        footnote = require('render-markdown.render.common.footnote'),
         heading = require('render-markdown.render.markdown.heading'),
         list = require('render-markdown.render.markdown.list'),
         paragraph = require('render-markdown.render.markdown.paragraph'),
