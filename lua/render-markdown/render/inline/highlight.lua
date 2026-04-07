@@ -9,10 +9,7 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     self.config = self.context.config.inline_highlight
-    if not self.config.enabled then
-        return false
-    end
-    return true
+    return self.config.enabled
 end
 
 ---@protected

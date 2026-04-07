@@ -12,6 +12,8 @@
 - nested headings inside block quotes [#625](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/625)
   [c7188a8](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c7188a8f9d2953696b6303caccbf39c51fa2c1b1)
 - heading padding column offset inside block quotes [#629](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/629)
+- handle footnotes in link_reference_definition nodes [#632](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/632)
+  [35c1925](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/35c19259bbb8ea0894fa525246c0a6b040314eaa)
 
 ### Collaborator Shoutouts
 

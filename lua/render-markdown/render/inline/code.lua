@@ -10,13 +10,10 @@ Render.__index = Render
 ---@return boolean
 function Render:setup()
     self.config = self.context.config.code
-    if not self.config.enabled then
-        return false
-    end
     if not self.config.inline then
         return false
     end
-    return true
+    return self.config.enabled
 end
 
 ---@protected
