@@ -6,7 +6,7 @@ local state = require('render-markdown.state')
 local M = {}
 
 ---@private
-M.version = '8.12.8'
+M.version = '8.12.9'
 
 function M.check()
     M.start('versions')
@@ -64,7 +64,9 @@ function M.check()
     M.plugin('headlines')
     M.plugin('markview')
     M.plugin('obsidian', function(obsidian)
-        if obsidian.get_client().opts.ui.enable == false then
+        -- selene: allow(undefined_variable)
+        local client = Obsidian or obsidian.get_client()
+        if client.opts.ui.enable == false then
             return nil
         else
             return {

@@ -1,4 +1,4 @@
-*render-markdown.txt*        For NVIM v0.12.0       Last change: 2026 April 06
+*render-markdown.txt*        For NVIM v0.12.1       Last change: 2026 April 07
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -1924,19 +1924,7 @@ OBSIDIAN.NVIM                             *render-markdown-info-obsidian.nvim*
   suggested in #116
   <https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/116>,
   though things like this can break at any time given the reliance on internal
-  logic:
-  >lua
-      return {
-          'MeanderingProgrammer/render-markdown.nvim',
-          cmd = { 'RenderMarkdown' },
-          dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' },
-          config = function()
-              require('obsidian').get_client().opts.ui.enable = false
-              vim.api.nvim_buf_clear_namespace(0, vim.api.nvim_get_namespaces()['ObsidianUI'], 0, -1)
-              require('render-markdown').setup({})
-          end,
-      }
-  <
+  logic.
 
 IMAGES                                           *render-markdown-info-images*
 
