@@ -1,5 +1,6 @@
 local Base = require('render-markdown.render.base')
 local colors = require('render-markdown.core.colors')
+local str = require('render-markdown.lib.str')
 
 ---@class render.md.render.inline.Code: render.md.Render
 ---@field private config render.md.code.Config
@@ -23,50 +24,9 @@ function Render:run()
         priority = self.config.priority,
         hl_group = highlight,
     })
-    self:conceal_padding()
     self:padding(highlight, true)
     self:padding(highlight, false)
-end
-
---- Per CommonMark spec, when a code span uses multiple backtick delimiters,
---- a single leading and trailing space is stripped from the content (provided
---- the content is not entirely whitespace). Conceal those spaces so the
---- rendered output matches what CommonMark produces.
----@private
-function Render:conceal_padding()
-    local delimiters = {}
-    self.node:for_each_child(function(child)
-        if child.type == 'code_span_delimiter' then
-            delimiters[#delimiters + 1] = child
-        end
-    end)
-    if #delimiters < 2 then
-        return
-    end
-    -- Only applies when delimiter is more than one backtick
-    local open = delimiters[1]
-    local close = delimiters[#delimiters]
-    if (open.end_col - open.start_col) <= 1 then
-        return
-    end
-    -- Extract the text between delimiters
-    local content = self.node.text:sub(open.end_col - self.node.start_col + 1, close.start_col - self.node.start_col)
-    -- Content must start and end with a space and not be entirely whitespace
-    if not (content:sub(1, 1) == ' ' and content:sub(-1) == ' ' and content:match('%S')) then
-        return
-    end
-    -- Conceal the leading space (right after opening delimiter)
-    self.marks:add(self.config, true, open.end_row, open.end_col, {
-        end_row = open.end_row,
-        end_col = open.end_col + 1,
-        conceal = '',
-    })
-    -- Conceal the trailing space (right before closing delimiter)
-    self.marks:add(self.config, true, close.start_row, close.start_col - 1, {
-        end_row = close.start_row,
-        end_col = close.start_col,
-        conceal = '',
-    })
+    self:hide_spaces()
 end
 
 ---@private
@@ -96,6 +56,44 @@ function Render:padding(highlight, left)
             virt_text_pos = 'inline',
         })
     end
+end
+
+---@private
+function Render:hide_spaces()
+    local delimiters = {} ---@type render.md.Node[]
+    self.node:for_each_child(function(child)
+        if child.type == 'code_span_delimiter' then
+            delimiters[#delimiters + 1] = child
+        end
+    end)
+    if #delimiters ~= 2 then
+        return
+    end
+    local open, close = unpack(delimiters)
+    local opens = str.width(open.text)
+    local closes = str.width(close.text)
+    if opens == 0 or closes == 0 or opens ~= closes then
+        return
+    end
+    local body = self.node.text:sub(opens + 1, -(closes + 1))
+    local leading = str.spaces('start', body)
+    local trailing = str.spaces('end', body)
+    if leading == 0 or trailing == 0 or not body:match('%S') then
+        return
+    end
+    self:hide(open.end_row, open.end_col, 1)
+    self:hide(close.start_row, close.start_col - 1, 1)
+end
+
+---@private
+---@param row integer
+---@param col integer
+---@param length integer
+function Render:hide(row, col, length)
+    self.marks:add(self.config, true, row, col, {
+        end_col = col + length,
+        conceal = '',
+    })
 end
 
 return Render

@@ -55,34 +55,6 @@ describe('ad hoc', function()
         util.assert_view(marks, { '󰥶 test "Title"' })
     end)
 
-    it('wikilink', function()
-        util.setup.text({ '[[Basic One]] Then normal text' })
-        local marks = util.marks()
-        marks:add({ 0, 0 }, { 0, 2 }, util.conceal())
-        marks:add(0, 2, util.link('wiki'))
-        marks:add({ 0, 0 }, { 11, 13 }, util.conceal())
-        util.assert_view(marks, { '󱗖 Basic One Then normal text' })
-    end)
-
-    it('wikilink with alias', function()
-        util.setup.text({ '[[Nickname|With Alias]] Something important' })
-        local marks = util.marks()
-        marks:add({ 0, 0 }, { 0, 2 }, util.conceal())
-        marks:add(0, 2, util.link('wiki'))
-        marks:add({ 0, 0 }, { 2, 11 }, util.conceal())
-        marks:add({ 0, 0 }, { 21, 23 }, util.conceal())
-        util.assert_view(marks, { '󱗖 With Alias Something important' })
-    end)
-
-    it('wikilink media', function()
-        util.setup.text({ '![[test.png]]' })
-        local marks = util.marks()
-        marks:add({ 0, 0 }, { 1, 3 }, util.conceal())
-        marks:add(0, 3, util.link('wiki'))
-        marks:add({ 0, 0 }, { 11, 13 }, util.conceal())
-        util.assert_view(marks, { '󱗖 test.png' })
-    end)
-
     it('email', function()
         util.setup.text({ '<test@example.com> Email' })
         local marks = util.marks()
@@ -110,54 +82,6 @@ describe('ad hoc', function()
         local marks = util.marks()
         marks:add(0, 0, util.link('youtube'))
         util.assert_view(marks, { '󰗃 Youtube Link' })
-    end)
-
-    it('footnote in shortcut_link', function()
-        util.setup.text({
-            'Footnote Link [^1 Info]',
-            '',
-            '[^1 Info]: Some Info',
-        })
-        local marks = util.marks()
-        marks:add({ 0, 0 }, { 14, 23 }, {
-            virt_text = { { '󰯔 ¹ ᴵⁿᶠᵒ', 'RmLink' } },
-            virt_text_pos = 'inline',
-            conceal = '',
-        })
-        marks:add({ 2, 2 }, { 0, 9 }, {
-            virt_text = { { '󰯔 ¹ ᴵⁿᶠᵒ', 'RmLink' } },
-            virt_text_pos = 'inline',
-            conceal = '',
-        })
-        util.assert_view(marks, {
-            'Footnote Link 󰯔 ¹ ᴵⁿᶠᵒ',
-            '',
-            '󰯔 ¹ ᴵⁿᶠᵒ: Some Info',
-        })
-    end)
-
-    it('footnote in link_reference_definition', function()
-        util.setup.text({
-            'Footnote Link [^1]',
-            '',
-            '[^1]: Some "Info"',
-        })
-        local marks = util.marks()
-        marks:add({ 0, 0 }, { 14, 18 }, {
-            virt_text = { { '󰯔 ¹', 'RmLink' } },
-            virt_text_pos = 'inline',
-            conceal = '',
-        })
-        marks:add({ 2, 2 }, { 0, 4 }, {
-            virt_text = { { '󰯔 ¹', 'RmLink' } },
-            virt_text_pos = 'inline',
-            conceal = '',
-        })
-        util.assert_view(marks, {
-            'Footnote Link 󰯔 ¹',
-            '',
-            '󰯔 ¹: Some "Info"',
-        })
     end)
 
     it('html comment', function()

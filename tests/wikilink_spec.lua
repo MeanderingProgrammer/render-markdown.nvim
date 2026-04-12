@@ -1,0 +1,33 @@
+---@module 'luassert'
+
+local util = require('tests.util')
+
+describe('wikilink', function()
+    it('basic', function()
+        util.setup.text({ '[[Basic One]] Then normal text' })
+        local marks = util.marks()
+        marks:add({ 0, 0 }, { 0, 2 }, util.conceal())
+        marks:add(0, 2, util.link('wiki'))
+        marks:add({ 0, 0 }, { 11, 13 }, util.conceal())
+        util.assert_view(marks, { '󱗖 Basic One Then normal text' })
+    end)
+
+    it('with alias', function()
+        util.setup.text({ '[[Nickname|With Alias]] Something important' })
+        local marks = util.marks()
+        marks:add({ 0, 0 }, { 0, 2 }, util.conceal())
+        marks:add(0, 2, util.link('wiki'))
+        marks:add({ 0, 0 }, { 2, 11 }, util.conceal())
+        marks:add({ 0, 0 }, { 21, 23 }, util.conceal())
+        util.assert_view(marks, { '󱗖 With Alias Something important' })
+    end)
+
+    it('media', function()
+        util.setup.text({ '![[test.png]]' })
+        local marks = util.marks()
+        marks:add({ 0, 0 }, { 1, 3 }, util.conceal())
+        marks:add(0, 3, util.link('wiki'))
+        marks:add({ 0, 0 }, { 11, 13 }, util.conceal())
+        util.assert_view(marks, { '󱗖 test.png' })
+    end)
+end)

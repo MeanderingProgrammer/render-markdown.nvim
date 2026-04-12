@@ -14,10 +14,14 @@
 - heading padding column offset inside block quotes [#629](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/629)
 - handle footnotes in link_reference_definition nodes [#632](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/632)
   [35c1925](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/35c19259bbb8ea0894fa525246c0a6b040314eaa)
+- check global Obsidian.opts for Obsidian.nvim in healthcheck [#633](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/633)
+  [54d4b54](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/54d4b5431e9634ee3d8d30784e017239b5b89d41)
+- conceal padding spaces in multi-backtick code spans per CommonMark spec [#635](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/635)
 
 ### Collaborator Shoutouts
 
 - @qq3g7bad
+- @0x1b2c
 
 ## 8.12.0 (2026-03-08)
 
