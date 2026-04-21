@@ -65,7 +65,7 @@ function Render:run()
             })
         end
         -- hide destination if there is an alias
-        if alias then
+        if alias and config.conceal_destination then
             self:hide(start_col, #destination + 1)
         end
     else

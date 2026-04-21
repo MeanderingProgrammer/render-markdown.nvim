@@ -1,4 +1,4 @@
-*render-markdown.txt*        For NVIM v0.12.1       Last change: 2026 April 12
+*render-markdown.txt*        For NVIM v0.12.1       Last change: 2026 April 20
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -885,6 +885,8 @@ Default Configuration ~
                 enabled = true,
                 -- Inlined with content.
                 icon = '󱗖 ',
+                -- Hide destination if there is an alias.
+                conceal_destination = true,
                 -- Custom processing for WikiLink body to show.
                 body = function()
                     return nil
@@ -1664,6 +1666,8 @@ Link Configuration ~
                 enabled = true,
                 -- Inlined with content.
                 icon = '󱗖 ',
+                -- Hide destination if there is an alias.
+                conceal_destination = true,
                 -- Custom processing for WikiLink body to show.
                 body = function()
                     return nil

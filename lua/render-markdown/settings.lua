@@ -1265,6 +1265,7 @@ M.link = {}
 ---@class (exact) render.md.link.wiki.Config
 ---@field enabled boolean
 ---@field icon string
+---@field conceal_destination boolean
 ---@field body fun(ctx: render.md.link.wiki.Context): render.md.mark.Text|string?
 ---@field highlight string
 ---@field scope_highlight? string
@@ -1324,6 +1325,8 @@ M.link.default = {
         enabled = true,
         -- Inlined with content.
         icon = '󱗖 ',
+        -- Hide destination if there is an alias.
+        conceal_destination = true,
         -- Custom processing for WikiLink body to show.
         body = function()
             return nil
@@ -1400,6 +1403,7 @@ function M.link.schema()
             record = {
                 enabled = { type = 'boolean' },
                 icon = { type = 'string' },
+                conceal_destination = { type = 'boolean' },
                 body = { type = 'function' },
                 highlight = { type = 'string' },
                 scope_highlight = { optional = true, type = 'string' },

@@ -235,6 +235,7 @@
 ---@class (exact) render.md.link.wiki.UserConfig
 ---@field enabled? boolean
 ---@field icon? string
+---@field conceal_destination? boolean
 ---@field body? fun(ctx: render.md.link.wiki.Context): render.md.mark.Text|string?
 ---@field highlight? string
 ---@field scope_highlight? string

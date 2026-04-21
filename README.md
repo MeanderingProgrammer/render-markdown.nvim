@@ -819,6 +819,8 @@ require('render-markdown').setup({
             enabled = true,
             -- Inlined with content.
             icon = '󱗖 ',
+            -- Hide destination if there is an alias.
+            conceal_destination = true,
             -- Custom processing for WikiLink body to show.
             body = function()
                 return nil
@@ -1618,6 +1620,8 @@ require('render-markdown').setup({
             enabled = true,
             -- Inlined with content.
             icon = '󱗖 ',
+            -- Hide destination if there is an alias.
+            conceal_destination = true,
             -- Custom processing for WikiLink body to show.
             body = function()
                 return nil
