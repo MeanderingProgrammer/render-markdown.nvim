@@ -6,6 +6,7 @@
 
 - allow inline code left and right icon highlight to be specified [e9d7409](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/e9d7409c2d604dc12589c00ef922e08e3998e000)
 - improve table start column tracking [2247dcd](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/2247dcd1ff0c223cfa7e317783f89b8d00457ce6)
+- ability to not conceal wikilink destination when there is an alias [d67113f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/d67113f11384c0dad96fced2f7b91f1fc811e97f)
 
 ### Bug Fixes
 

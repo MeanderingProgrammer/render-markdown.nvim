@@ -108,7 +108,8 @@ function Render:run()
 
     local background = self:enabled(self.config.disable_background)
     if background then
-        self:background(start_row + 1, end_row - 1)
+        local inset = self.config.background_inset
+        self:background(start_row + inset, end_row - inset)
     end
     self:padding(background)
 end

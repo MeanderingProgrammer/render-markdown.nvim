@@ -390,6 +390,7 @@ M.code = {}
 ---@field language_pad number
 ---@field disable string[]
 ---@field disable_background boolean|string[]
+---@field background_inset integer
 ---@field width render.md.code.Width
 ---@field left_margin number
 ---@field left_pad number
@@ -478,6 +479,8 @@ M.code.default = {
     -- Use a boolean to make behavior apply to all languages.
     -- Borders above & below blocks will continue to be rendered.
     disable_background = { 'diff' },
+    -- Number of lines from start/end to skip rendering background.
+    background_inset = 1,
     -- Width of the code block background.
     -- | block | width of the code block  |
     -- | full  | full width of the window |
@@ -559,6 +562,7 @@ function M.code.schema()
         disable_background = {
             union = { { list = { type = 'string' } }, { type = 'boolean' } },
         },
+        background_inset = { type = 'number' },
         width = { enum = M.code.width },
         left_margin = { type = 'number' },
         left_pad = { type = 'number' },

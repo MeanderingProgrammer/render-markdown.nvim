@@ -101,6 +101,7 @@
 ---@field language_pad? number
 ---@field disable? string[]
 ---@field disable_background? boolean|string[]
+---@field background_inset? integer
 ---@field width? render.md.code.Width
 ---@field left_margin? number
 ---@field left_pad? number

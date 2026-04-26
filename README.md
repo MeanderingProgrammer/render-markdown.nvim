@@ -471,6 +471,8 @@ require('render-markdown').setup({
         -- Use a boolean to make behavior apply to all languages.
         -- Borders above & below blocks will continue to be rendered.
         disable_background = { 'diff' },
+        -- Number of lines from start/end to skip rendering background.
+        background_inset = 1,
         -- Width of the code block background.
         -- | block | width of the code block  |
         -- | full  | full width of the window |
@@ -1181,6 +1183,8 @@ require('render-markdown').setup({
         -- Use a boolean to make behavior apply to all languages.
         -- Borders above & below blocks will continue to be rendered.
         disable_background = { 'diff' },
+        -- Number of lines from start/end to skip rendering background.
+        background_inset = 1,
         -- Width of the code block background.
         -- | block | width of the code block  |
         -- | full  | full width of the window |

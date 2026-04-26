@@ -1,4 +1,4 @@
-*render-markdown.txt*        For NVIM v0.12.1       Last change: 2026 April 20
+*render-markdown.txt*        For NVIM v0.12.1       Last change: 2026 April 26
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -537,6 +537,8 @@ Default Configuration ~
             -- Use a boolean to make behavior apply to all languages.
             -- Borders above & below blocks will continue to be rendered.
             disable_background = { 'diff' },
+            -- Number of lines from start/end to skip rendering background.
+            background_inset = 1,
             -- Width of the code block background.
             -- | block | width of the code block  |
             -- | full  | full width of the window |
@@ -1241,6 +1243,8 @@ Code Block Configuration ~
             -- Use a boolean to make behavior apply to all languages.
             -- Borders above & below blocks will continue to be rendered.
             disable_background = { 'diff' },
+            -- Number of lines from start/end to skip rendering background.
+            background_inset = 1,
             -- Width of the code block background.
             -- | block | width of the code block  |
             -- | full  | full width of the window |
