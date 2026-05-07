@@ -8,8 +8,9 @@ update:
   python scripts/update.py
   # https://github.com/kdheepak/panvimdoc
   ../../../tools/panvimdoc/panvimdoc.sh \
+    --input-file README.md \
     --project-name render-markdown \
-    --input-file README.md
+    --description "Improve viewing Markdown in Neovim"
 
 check:
   selene --quiet .

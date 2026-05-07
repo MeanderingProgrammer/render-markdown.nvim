@@ -1275,8 +1275,8 @@ M.link = {}
 ---@field scope_highlight? string
 
 ---@class (exact) render.md.link.custom.Config
----@field pattern string
 ---@field icon string
+---@field pattern string
 ---@field kind? render.md.link.custom.Kind
 ---@field priority? integer
 ---@field highlight? string
@@ -1285,6 +1285,7 @@ M.link = {}
 M.link.kind = {
     pattern = 'pattern',
     suffix = 'suffix',
+    url = 'url',
 }
 
 ---@type render.md.link.Config
@@ -1344,33 +1345,35 @@ M.link.default = {
     -- contains. Applies to 'image', 'inline_link', 'uri_autolink', and WikiLink nodes.
     -- When multiple patterns match a link the one with the longer pattern is used.
     -- The key is for healthcheck and to allow users to change its values, value type below.
-    -- | pattern   | matched against the destination text                            |
     -- | icon      | gets inlined before the link text                               |
+    -- | pattern   | matched against the destination text                            |
     -- | kind      | optional determines how pattern is checked                      |
     -- |           | pattern | @see :h lua-patterns, is the default if not set       |
     -- |           | suffix  | @see :h vim.endswith()                                |
+    -- |           | url     | similar to pattern with additional prefix checks      |
     -- | priority  | optional used when multiple match, uses pattern length if empty |
     -- | highlight | optional highlight for 'icon', uses fallback highlight if empty |
+    -- stylua: ignore
     custom = {
-        web = { pattern = '^http', icon = '󰖟 ' },
-        apple = { pattern = 'apple%.com', icon = ' ' },
-        discord = { pattern = 'discord%.com', icon = '󰙯 ' },
-        github = { pattern = 'github%.com', icon = '󰊤 ' },
-        gitlab = { pattern = 'gitlab%.com', icon = '󰮠 ' },
-        google = { pattern = 'google%.com', icon = '󰊭 ' },
-        hackernews = { pattern = 'ycombinator%.com', icon = ' ' },
-        linkedin = { pattern = 'linkedin%.com', icon = '󰌻 ' },
-        microsoft = { pattern = 'microsoft%.com', icon = ' ' },
-        neovim = { pattern = 'neovim%.io', icon = ' ' },
-        reddit = { pattern = 'reddit%.com', icon = '󰑍 ' },
-        slack = { pattern = 'slack%.com', icon = '󰒱 ' },
-        stackoverflow = { pattern = 'stackoverflow%.com', icon = '󰓌 ' },
-        steam = { pattern = 'steampowered%.com', icon = ' ' },
-        twitter = { pattern = 'twitter%.com', icon = ' ' },
-        wikipedia = { pattern = 'wikipedia%.org', icon = '󰖬 ' },
-        x = { pattern = 'x%.com', icon = ' ' },
-        youtube = { pattern = 'youtube[^.]*%.com', icon = '󰗃 ' },
-        youtube_short = { pattern = 'youtu%.be', icon = '󰗃 ' },
+        web = { icon = '󰖟 ', pattern = '^http' },
+        apple = { icon = ' ', pattern = 'apple%.com', kind = 'url' },
+        discord = { icon = '󰙯 ', pattern = 'discord%.com', kind = 'url' },
+        github = { icon = '󰊤 ', pattern = 'github%.com', kind = 'url' },
+        gitlab = { icon = '󰮠 ', pattern = 'gitlab%.com', kind = 'url' },
+        google = { icon = '󰊭 ', pattern = 'google%.com', kind = 'url' },
+        hackernews = { icon = ' ', pattern = 'ycombinator%.com', kind = 'url' },
+        linkedin = { icon = '󰌻 ', pattern = 'linkedin%.com', kind = 'url' },
+        microsoft = { icon = ' ', pattern = 'microsoft%.com', kind = 'url' },
+        neovim = { icon = ' ', pattern = 'neovim%.io', kind = 'url' },
+        reddit = { icon = '󰑍 ', pattern = 'reddit%.com', kind = 'url' },
+        slack = { icon = '󰒱 ', pattern = 'slack%.com', kind = 'url' },
+        stackoverflow = { icon = '󰓌 ', pattern = 'stackoverflow%.com', kind = 'url' },
+        steam = { icon = ' ', pattern = 'steampowered%.com', kind = 'url' },
+        twitter = { icon = ' ', pattern = 'twitter%.com', kind = 'url' },
+        wikipedia = { icon = '󰖬 ', pattern = 'wikipedia%.org', kind = 'url' },
+        x = { icon = ' ', pattern = 'x%.com', kind = 'url' },
+        youtube = { icon = '󰗃 ', pattern = 'youtube[^.]*%.com', kind = 'url' },
+        youtube_short = { icon = '󰗃 ', pattern = 'youtu%.be', kind = 'url' },
     },
 }
 
@@ -1379,8 +1382,8 @@ function M.link.schema()
     ---@type render.md.Schema
     local pattern = {
         record = {
-            pattern = { type = 'string' },
             icon = { type = 'string' },
+            pattern = { type = 'string' },
             kind = { optional = true, enum = M.link.kind },
             priority = { optional = true, type = 'number' },
             highlight = { optional = true, type = 'string' },

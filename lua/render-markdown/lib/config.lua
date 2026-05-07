@@ -71,6 +71,15 @@ function Config:set_link_text(destination, icon)
     local options = iter.table.filter(self.link.custom, function(custom)
         if custom.kind == 'suffix' then
             return vim.endswith(destination, custom.pattern)
+        elseif custom.kind == 'url' then
+            local prefix = destination:match('^(.*)' .. custom.pattern) ---@type string?
+            if not prefix then
+                return false
+            end
+            prefix = prefix:gsub('^https?://', '', 1)
+            prefix = prefix:gsub('^www%.', '', 1)
+            local last = prefix:sub(-1)
+            return last == '' or last == '.'
         else
             return destination:find(custom.pattern) ~= nil
         end
