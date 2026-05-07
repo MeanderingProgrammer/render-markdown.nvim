@@ -1,21 +1,8 @@
 local Config = require('render-markdown.lib.config')
 
----@class render.md.State
+---@class render.md.State: render.md.state.Config
 ---@field private config render.md.Config
 ---@field enabled boolean
----@field log_level render.md.log.Level
----@field log_runtime boolean
----@field file_types string[]
----@field max_file_size number
----@field ignore fun(buf: integer): boolean
----@field nested boolean
----@field change_events string[]
----@field restart_highlighter boolean
----@field injections table<string, render.md.injection.Config>
----@field patterns table<string, render.md.pattern.Config>
----@field on render.md.on.Config
----@field completions render.md.completions.Config
----@field custom_handlers table<string, render.md.Handler>
 local M = {}
 
 ---@private

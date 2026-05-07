@@ -97,8 +97,8 @@ function Updater:run()
     self.mode = env.mode.get() -- mode is only available after this point
     local render = self.config.enabled
         and self.config.resolved:render(self.mode)
-        and not env.win.get(self.win, 'diff')
         and env.win.view(self.win).leftcol == 0
+        and not env.win.get(self.win, 'diff')
     log.buf('info', 'Render', self.buf, render)
     local next_state = render and 'rendered' or 'default'
     for _, win in ipairs(env.buf.wins(self.buf)) do

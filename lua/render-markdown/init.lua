@@ -3,22 +3,9 @@ local settings = require('render-markdown.settings')
 ---@class render.md.Init: render.md.Api
 local M = {}
 
----@class (exact) render.md.Config: render.md.partial.Config
+---@class (exact) render.md.Config: render.md.partial.Config, render.md.state.Config
 ---@field preset render.md.config.Preset
----@field log_level render.md.log.Level
----@field log_runtime boolean
----@field file_types string[]
----@field max_file_size number
----@field ignore fun(buf: integer): boolean
----@field nested boolean
----@field change_events string[]
----@field restart_highlighter boolean
----@field injections render.md.injection.Configs
----@field patterns render.md.pattern.Configs
----@field on render.md.on.Config
----@field completions render.md.completions.Config
 ---@field overrides render.md.overrides.Config
----@field custom_handlers table<string, render.md.Handler>
 
 ---@class (exact) render.md.partial.Config: render.md.base.Config
 ---@field debounce integer
@@ -42,6 +29,21 @@ local M = {}
 ---@field sign render.md.sign.Config
 ---@field win_options render.md.window.Configs
 ---@field yaml render.md.yaml.Config
+
+---@class (exact) render.md.state.Config
+---@field log_level render.md.log.Level
+---@field log_runtime boolean
+---@field file_types string[]
+---@field max_file_size number
+---@field ignore fun(buf: integer): boolean
+---@field nested boolean
+---@field change_events string[]
+---@field restart_highlighter boolean
+---@field injections render.md.injection.Configs
+---@field patterns render.md.pattern.Configs
+---@field on render.md.on.Config
+---@field completions render.md.completions.Config
+---@field custom_handlers table<string, render.md.Handler>
 
 ---@private
 ---@type boolean

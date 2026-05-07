@@ -20,6 +20,8 @@
 - check global Obsidian.opts for Obsidian.nvim in healthcheck [#633](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/633)
   [54d4b54](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/54d4b5431e9634ee3d8d30784e017239b5b89d41)
 - conceal padding spaces in multi-backtick code spans per CommonMark spec [#635](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/635)
+- false positive link matching [#650](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/650)
+  [ff2fcd6](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/ff2fcd6f2c7b69ae2c08ebfb003b644b0d8b9acb)
 
 ### Collaborator Shoutouts
 
