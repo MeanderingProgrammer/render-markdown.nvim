@@ -26,6 +26,7 @@ local M = {}
 ---@field paragraph render.md.paragraph.Config
 ---@field pipe_table render.md.table.Config
 ---@field quote render.md.quote.Config
+---@field render render.md.render.Config
 ---@field sign render.md.sign.Config
 ---@field win_options render.md.window.Configs
 ---@field yaml render.md.yaml.Config
@@ -105,6 +106,7 @@ M.default = {
     bullet = settings.bullet.default,
     checkbox = settings.checkbox.default,
     quote = settings.quote.default,
+    render = settings.render.default,
     pipe_table = settings.pipe_table.default,
     callout = settings.callout.default,
     link = settings.link.default,

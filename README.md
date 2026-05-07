@@ -691,6 +691,10 @@ require('render-markdown').setup({
             'RenderMarkdownQuote6',
         },
     },
+    render = {
+        -- Whether to render when window is in diff-mode.
+        diff = false,
+    },
     pipe_table = {
         -- Turn on / off pipe table rendering.
         enabled = true,

@@ -23,6 +23,7 @@
 ---@field paragraph? render.md.paragraph.UserConfig
 ---@field pipe_table? render.md.table.UserConfig
 ---@field quote? render.md.quote.UserConfig
+---@field render? render.md.render.UserConfig
 ---@field sign? render.md.sign.UserConfig
 ---@field win_options? render.md.window.UserConfigs
 ---@field yaml? render.md.yaml.UserConfig
@@ -298,6 +299,9 @@
 ---@field icon? string|string[]
 ---@field repeat_linebreak? boolean
 ---@field highlight? string|string[]
+
+---@class (exact) render.md.render.UserConfig
+---@field diff? boolean
 
 ---@class (exact) render.md.sign.UserConfig
 ---@field enabled? boolean

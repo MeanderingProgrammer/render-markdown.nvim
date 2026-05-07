@@ -1785,6 +1785,28 @@ function M.quote.schema()
     })
 end
 
+---@class render.md.render.Settings
+M.render = {}
+
+---@class (exact) render.md.render.Config
+---@field diff boolean
+
+---@type render.md.render.Config
+M.render.default = {
+    -- Whether to render when window is in diff-mode.
+    diff = false,
+}
+
+---@return render.md.Schema
+function M.render.schema()
+    ---@type render.md.Schema
+    return {
+        record = {
+            diff = { type = 'boolean' },
+        },
+    }
+end
+
 ---@class render.md.sign.Settings
 M.sign = {}
 
