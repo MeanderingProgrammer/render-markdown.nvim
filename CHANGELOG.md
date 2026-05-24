@@ -9,6 +9,8 @@
 - ability to not conceal wikilink destination when there is an alias [d67113f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/d67113f11384c0dad96fced2f7b91f1fc811e97f)
 - configurable code block background inset [#643](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/643)
   [3f3eea9](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/3f3eea97b80839f629c951ca660ffd125bfa5b34)
+- allow rendering when window is in diff mode [#645](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/645)
+  [629eb95](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/629eb9533ec989d9d5c6cab8f3ad5372422c24e0)
 
 ### Bug Fixes
 

@@ -2,11 +2,18 @@ local env = require('render-markdown.lib.env')
 local icons = require('render-markdown.lib.icons')
 local state = require('render-markdown.state')
 
+---@alias render.md.health.Language
+---| 'html'
+---| 'latex'
+---| 'markdown'
+---| 'markdown_inline'
+---| 'yaml'
+
 ---@class render.md.Health
 local M = {}
 
 ---@private
-M.version = '8.12.15'
+M.version = '8.12.16'
 
 function M.check()
     M.start('versions')
@@ -49,6 +56,7 @@ function M.check()
         vim.health.warn('none installed')
     end
 
+    local latex_works = false
     if latex.enabled then
         M.start('latex')
         local cmds = env.commands(latex.converter)
@@ -56,6 +64,7 @@ function M.check()
             local message = 'none installed: ' .. vim.inspect(latex.converter)
             vim.health.warn(message, M.disable('latex'))
         else
+            latex_works = true
             vim.health.ok('using: ' .. vim.inspect(cmds))
         end
     end
@@ -68,13 +77,37 @@ function M.check()
         local client = Obsidian or obsidian.get_client()
         if client.opts.ui.enable == false then
             return nil
-        else
-            return {
-                'Disable the UI in your obsidian.nvim config',
-                "require('obsidian').setup({ ui = { enable = false } })",
-            }
         end
+        return [[
+        disable the ui in your obsidian.nvim config
+        require("obsidian").setup({
+            ui = { enable = false },
+        })
+        ]]
     end)
+    if latex_works then
+        M.plugin('snacks', function(snacks)
+            local image = snacks.config.image
+            if not image or not image.enabled then
+                return nil
+            end
+            if image.doc and image.doc.enabled == false then
+                return nil
+            end
+            if image.math and image.math.enabled == false then
+                return nil
+            end
+            return [[
+            disable latex math rendering in your snacks.nvim config
+            require("snacks").setup({
+                image = {
+                    enabled = true,
+                    math = { enabled = false },
+                },
+            })
+            ]]
+        end)
+    end
 end
 
 ---@private
@@ -97,7 +130,7 @@ function M.neovim(min, rec)
 end
 
 ---@private
----@param language string
+---@param language render.md.health.Language
 ---@param required boolean
 ---@param active boolean
 function M.ts_info(language, required, active)
@@ -149,7 +182,7 @@ function M.ts_info(language, required, active)
             vim.health.ok('highlighter: enabled')
         else
             vim.health.error('highlighter: not enabled', {
-                ('call vim.treesitter.start on %s buffers'):format(language),
+                ('call vim.treesitter.start() on %s buffers'):format(language),
             })
         end
     end
@@ -157,7 +190,7 @@ end
 
 ---@private
 ---@param name string
----@param validate? fun(plugin: any): string[]?
+---@param validate? fun(plugin: any): string?
 function M.plugin(name, validate)
     local has_plugin, plugin = pcall(require, name) ---@type boolean, any
     if not has_plugin then
@@ -167,7 +200,7 @@ function M.plugin(name, validate)
     else
         local advice = validate(plugin)
         if advice then
-            vim.health.error(name .. ': installed', advice)
+            vim.health.error(name .. ': installed', M.trim(advice))
         else
             vim.health.ok(name .. ': installed but should not conflict')
         end
@@ -175,14 +208,23 @@ function M.plugin(name, validate)
 end
 
 ---@private
----@param language string
----@return string[]
+---@param language render.md.health.Language
+---@return string
 function M.disable(language)
-    local setup = "require('render-markdown').setup"
-    return {
-        ('disable %s support to avoid this warning'):format(language),
-        ('%s({ %s = { enabled = false } })'):format(setup, language),
-    }
+    local format = [[
+    disable %s support to avoid this warning
+    require("render-markdown").setup({
+        %s = { enabled = false },
+    })
+    ]]
+    return M.trim(format:format(language, language))
+end
+
+---@private
+---@param s string
+---@return string
+function M.trim(s)
+    return (s:gsub('%s+$', ''))
 end
 
 return M
