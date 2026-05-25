@@ -13,26 +13,14 @@ describe('demo/box_dash_quote.md', function()
         marks:add(row:get(0, 1), { 0, 0 }, util.heading.bg(1))
 
         marks:add(row:get(1, 0), { 0, 2 }, util.conceal())
-        marks:add(row:get(0), 2, {
-            virt_text = { { '󰄱 ', 'RmUnchecked' }, { ' ', 'Normal' } },
-            virt_text_pos = 'overlay',
-        })
+        marks:add(row:get(0), 2, util.checkbox('unchecked', 1))
         marks:add(row:get(0, 0), { 5, 6 }, util.conceal())
         marks:add(row:get(1, 0), { 0, 2 }, util.conceal())
-        marks:add(row:get(0), 2, {
-            virt_text = { { '󰱒 ', 'RmChecked' }, { ' ', 'Normal' } },
-            virt_text_pos = 'overlay',
-        })
+        marks:add(row:get(0), 2, util.checkbox('checked', 1))
         marks:add(row:get(0, 0), { 5, 6 }, util.conceal())
         marks:add(row:get(1, 0), { 0, 2 }, util.conceal())
-        marks:add(row:get(0), 2, {
-            virt_text = { { '󰥔 ', 'RmTodo' } },
-            virt_text_pos = 'overlay',
-        })
-        marks:add(row:get(0), 6, {
-            virt_text = { { ' ', 'Normal' } },
-            virt_text_pos = 'inline',
-        })
+        marks:add(row:get(0), 2, util.checkbox('todo', 0))
+        marks:add(row:get(0), 6, util.padding(1, false))
         marks:add(row:get(1, 0), { 0, 2 }, util.bullet(1))
 
         marks:add(row:get(2), 0, {

@@ -30,6 +30,9 @@ function Render:setup()
     if not value then
         return false
     end
+    if value.node.start_col ~= marker.end_col then
+        return false
+    end
     self.data = {
         marker = marker,
         checkbox = value.node,

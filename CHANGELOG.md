@@ -11,6 +11,7 @@
   [3f3eea9](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/3f3eea97b80839f629c951ca660ffd125bfa5b34)
 - allow rendering when window is in diff mode [#645](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/645)
   [629eb95](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/629eb9533ec989d9d5c6cab8f3ad5372422c24e0)
+- add snacks.nvim image as conflict if latex is enabled [dcb7751](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/dcb77511efb1665b5073d8396a0033b3e4d680f6)
 
 ### Bug Fixes
 

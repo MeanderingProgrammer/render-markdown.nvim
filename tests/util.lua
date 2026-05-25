@@ -98,6 +98,28 @@ function M.highlight(kind)
     }
 end
 
+---@param kind 'checked'|'unchecked'|'todo'
+---@param space integer
+---@return vim.api.keyset.set_extmark
+function M.checkbox(kind, space)
+    local line = {} ---@type render.md.mark.Line
+    if kind == 'checked' then
+        line[#line + 1] = { '󰱒 ', 'RmChecked' }
+    elseif kind == 'unchecked' then
+        line[#line + 1] = { '󰄱 ', 'RmUnchecked' }
+    elseif kind == 'todo' then
+        line[#line + 1] = { '󰥔 ', 'RmTodo' }
+    end
+    if space > 0 then
+        line[#line + 1] = { (' '):rep(space), 'Normal' }
+    end
+    ---@type vim.api.keyset.set_extmark
+    return {
+        virt_text = line,
+        virt_text_pos = 'overlay',
+    }
+end
+
 ---@param level integer
 ---@param spaces? integer
 ---@return vim.api.keyset.set_extmark
@@ -155,13 +177,13 @@ function M.quote(highlight)
 end
 
 ---@param spaces integer
----@param priority? integer
+---@param priority? integer|false
 ---@param highlight? string
 ---@return vim.api.keyset.set_extmark
 function M.padding(spaces, priority, highlight)
     ---@type vim.api.keyset.set_extmark
     return {
-        priority = priority or 100,
+        priority = priority or (priority ~= false and 100 or nil),
         virt_text = { { (' '):rep(spaces), highlight or 'Normal' } },
         virt_text_pos = 'inline',
     }

@@ -195,7 +195,7 @@ function Handler:render(row, nodes)
                 local _, line = node:line('below', 1)
                 col = line and str.spaces('start', line) or 0
             else
-                local _, line = node:line('above', 0)
+                local _, line = node:line('first', 0)
                 col = self.context:width({
                     text = line and line:sub(1, node.start_col) or '',
                     start_row = node.start_row,
