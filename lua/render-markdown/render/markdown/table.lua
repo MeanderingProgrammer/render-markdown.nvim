@@ -480,6 +480,17 @@ end
 ---@private
 function Render:delimiter()
     local delim = self.data.delim
+    local line = self:delimiter_line(self:delimiter_text())
+    line:pad(str.width(delim.text) - line:width())
+    self.marks:over(self.config, 'table_border', delim, {
+        virt_text = line:get(),
+        virt_text_pos = 'overlay',
+    })
+end
+
+---@private
+---@return string
+function Render:delimiter_text()
     local border = self.config.border
     local indicator = self.config.alignment_indicator
 
@@ -502,16 +513,34 @@ function Render:delimiter()
             return indicator .. icon:rep(col.width - 2) .. indicator
         end
     end)
-    local delimiter = border[4] .. table.concat(parts, border[5]) .. border[6]
+    return border[4] .. table.concat(parts, border[5]) .. border[6]
+end
 
-    local line = self:line()
-    line:pad(str.spaces('start', delim.text))
-    line:text(delimiter, self.config.head)
-    line:pad(str.width(delim.text) - line:width())
-    self.marks:over(self.config, 'table_border', delim, {
-        virt_text = line:get(),
-        virt_text_pos = 'overlay',
-    })
+---@private
+---@param delimiter string
+---@return render.md.Line
+function Render:delimiter_line(delimiter)
+    return self:line()
+        :pad(str.spaces('start', self.data.delim.text))
+        :text(delimiter, self.config.head)
+end
+
+---@private
+---@param above boolean
+---@return render.md.Line
+function Render:border_line(above)
+    local border = self.config.border
+    local chars = above and { border[1], border[2], border[3] }
+        or { border[7], border[8], border[9] }
+    local icon = border[11]
+    local parts = iter.list.map(self.data.cols, function(col)
+        return icon:rep(col.width)
+    end)
+    local text = chars[1] .. table.concat(parts, chars[2]) .. chars[3]
+    local highlight = above and self.config.head or self.config.row
+    local first = self.data.rows[1].node
+    local spaces = math.max(str.spaces('start', first.text), first.start_col)
+    return self:line():pad(spaces):text(text, highlight)
 end
 
 ---@private
