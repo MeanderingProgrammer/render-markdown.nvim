@@ -3,6 +3,18 @@
 local util = require('tests.util')
 
 describe('table', function()
+    ---@param columns integer
+    ---@param callback function
+    local function with_columns(columns, callback)
+        local previous = vim.o.columns
+        vim.o.columns = columns
+        local ok, err = pcall(callback)
+        vim.o.columns = previous
+        if not ok then
+            error(err, 0)
+        end
+    end
+
     local lines = {
         '',
         '| Heading 1 | `Heading 2`            |',
@@ -300,6 +312,37 @@ describe('table', function()
             '│      │ hout needing a trailing blank line.    │          │',
             '└──────┴────────────────────────────────────────┴──────────┘',
         })
+    end)
+
+    it('wrapped indented table', function()
+        with_columns(60, function()
+            util.setup.text({
+                '',
+                '   | Approach | Allocations | Performance |',
+                '   |----------|-------------|-------------|',
+                '   | `format!()` in loop | N | Slow |',
+                '   | `write!()` to reused buffer | 1 | Fast |',
+                '   | `push_str()` + `push()` | 1 | Fastest |',
+                '   | Pre-sized `String::with_capacity()` | 1 (no realloc) | Fast |',
+            }, {
+                pipe_table = { max_table_width = -2 },
+                win_options = { wrap = { default = false, rendered = true } },
+            })
+
+            util.assert_screen({
+                '   ┌────────────────────┬────────────────┬───────────────┐',
+                '   │ Approach           │ Allocations    │ Performance   │',
+                '   ├────────────────────┼────────────────┼───────────────┤',
+                '   │ format!() in loop  │ N              │ Slow          │',
+                '   │ write!() to reused │ 1              │ Fast          │',
+                '   │  buffer            │                │               │',
+                '   │ push_str() + push( │ 1              │ Fastest       │',
+                '   │ )                  │                │               │',
+                '   │ Pre-sized String:: │ 1 (no realloc) │ Fast          │',
+                '   │ with_capacity()    │                │               │',
+                '   └────────────────────┴────────────────┴───────────────┘',
+            })
+        end)
     end)
 
     it('wrapped long delimiter', function()

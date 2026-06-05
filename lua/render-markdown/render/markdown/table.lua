@@ -166,17 +166,18 @@ function Render:compute_layout()
     end
 
     local win_width = env.win.width(self.context.win)
+    local remaining_width = math.max(win_width - self:indent_width(), 1)
     local mtw = self.config.max_table_width
     local available
     if mtw < 0 then
         -- Negative: characters from right edge
-        available = win_width + mtw
+        available = remaining_width + mtw
     elseif mtw <= 1 then
         -- Fraction of window width
-        available = math.floor(win_width * mtw)
+        available = math.floor(remaining_width * mtw)
     else
-        -- Absolute character width
-        available = math.floor(mtw)
+        -- Absolute character width, capped to fit after indentation
+        available = math.min(math.floor(mtw), remaining_width)
     end
     local num_cols = #self.data.cols
     local padding = self.config.padding
@@ -265,6 +266,13 @@ function Render:compute_layout()
     end
 
     return { wrap = true, col_widths = col_widths, row_heights = row_heights }
+end
+
+---@private
+---@return integer
+function Render:indent_width()
+    local first = self.data.rows[1].node
+    return math.max(str.spaces('start', first.text), first.start_col)
 end
 
 ---@private
@@ -537,9 +545,7 @@ function Render:border_line(above)
     end)
     local text = chars[1] .. table.concat(parts, chars[2]) .. chars[3]
     local highlight = above and self.config.head or self.config.row
-    local first = self.data.rows[1].node
-    local spaces = math.max(str.spaces('start', first.text), first.start_col)
-    return self:line():pad(spaces):text(text, highlight)
+    return self:line():pad(self:indent_width()):text(text, highlight)
 end
 
 ---@private
