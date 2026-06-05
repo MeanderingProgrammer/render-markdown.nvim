@@ -17,6 +17,7 @@ local str = require('render-markdown.lib.str')
 
 ---@class render.md.table.Col
 ---@field width integer
+---@field delimiter_width integer
 ---@field alignment render.md.table.col.Alignment
 
 ---@enum render.md.table.col.Alignment
@@ -185,17 +186,20 @@ function Render:compute_layout()
     local overhead = (num_cols + 1) + (num_cols * 2 * padding)
     local text_budget = available - overhead
 
+    ---@param cell render.md.table.row.Cell
+    ---@return integer
+    local function content_width(cell)
+        return math.max(cell.width - cell.space.left - cell.space.right, 0)
+    end
+
     -- Collect the natural text-area width for each column (max content width across all rows)
     local max_content = {} ---@type integer[]
     for i = 1, num_cols do
-        max_content[i] = math.max(
-            self.data.cols[i].width - 2 * padding,
-            self.config.min_width
-        )
+        max_content[i] = self.data.cols[i].delimiter_width
     end
     for _, row in ipairs(self.data.rows) do
         for i, cell in ipairs(row.cells) do
-            max_content[i] = math.max(max_content[i], cell.width)
+            max_content[i] = math.max(max_content[i], content_width(cell))
         end
     end
 
@@ -233,34 +237,25 @@ function Render:compute_layout()
         col_widths[i] = locked[i] and max_content[i] or math.max(share, 1)
     end
 
-    -- Compute per-row heights based on how many lines each cell needs.
-    -- Also account for the raw (unrendered) buffer line wrapping: if the source
-    -- text is longer than the rendered text (e.g. a long concealed URL), the
-    -- buffer line may wrap onto more screen lines than the rendered content
-    -- requires.  We must cover all of those screen lines with overlay marks,
-    -- so the effective height is max(rendered_lines, raw_screen_lines).
+    -- Compute per-row heights based on how many rendered lines each cell needs.
+    -- Long delimiter cells can also force wrapping even when row contents fit.
     local row_heights = {} ---@type integer[]
     local needs_wrap = false
+    for i, width in ipairs(max_content) do
+        needs_wrap = needs_wrap or width > col_widths[i]
+    end
     for r, row in ipairs(self.data.rows) do
         local max_lines = 1
         for i, cell in ipairs(row.cells) do
             local w = col_widths[i]
-            if w > 0 and cell.width > w then
-                local lines = math.ceil(cell.width / w)
+            local width = content_width(cell)
+            if w > 0 and width > w then
+                local lines = math.ceil(width / w)
                 if lines > max_lines then
                     max_lines = lines
                 end
                 needs_wrap = true
             end
-        end
-        -- Raw buffer line screen-wrap: ceil(display_width_of_source / win_width)
-        local _, line = row.node:line('first', 0)
-        line = line or ''
-        local raw_screen_lines =
-            math.max(1, math.ceil(str.width(line) / win_width))
-        if raw_screen_lines > max_lines then
-            max_lines = raw_screen_lines
-            needs_wrap = true
         end
         row_heights[r] = max_lines
     end
@@ -293,6 +288,7 @@ function Render:parse_cols(node)
         end
         cols[#cols + 1] = {
             width = width,
+            delimiter_width = math.max(width, self.config.min_width),
             alignment = Render.alignment(cell),
         }
     end
