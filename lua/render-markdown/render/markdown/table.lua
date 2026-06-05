@@ -249,14 +249,11 @@ function Render:compute_layout()
         local max_lines = 1
         for i, cell in ipairs(row.cells) do
             local w = col_widths[i]
-            local width = content_width(cell)
-            if w > 0 and width > w then
-                local lines = math.ceil(width / w)
-                if lines > max_lines then
-                    max_lines = lines
-                end
-                needs_wrap = true
+            local lines = #self:wrap_line(self:cell_line(cell.node), w)
+            if lines > max_lines then
+                max_lines = lines
             end
+            needs_wrap = needs_wrap or lines > 1
         end
         row_heights[r] = max_lines
     end
@@ -318,6 +315,15 @@ function Render.alignment(node)
     else
         return Alignment.default
     end
+end
+
+---@private
+---@param node render.md.Node
+---@return render.md.Line
+function Render:cell_line(node)
+    local line = Line.new(self.config.filler)
+    vim.list_extend(line:get(), self:cell_segments(node))
+    return line
 end
 
 ---Compute display segments for a cell: raw text − concealed + injected,
@@ -606,6 +612,76 @@ function Render:row(row)
 end
 
 ---@private
+---@param line render.md.Line
+---@param width integer
+---@return render.md.Line[]
+function Render:wrap_line(line, width)
+    if width <= 0 then
+        return { Line.new(self.config.filler) }
+    end
+
+    local total = line:width()
+    if total == 0 then
+        return { Line.new(self.config.filler) }
+    end
+
+    local spaces = {} ---@type table<integer, boolean>
+    local column = 1
+    for _, segment in ipairs(line:get()) do
+        local text = segment[1]
+        local bytes = vim.str_utf_pos(text)
+        for index, start_byte in ipairs(bytes) do
+            local end_byte = index < #bytes and bytes[index + 1] - 1 or #text
+            local char = text:sub(start_byte, end_byte)
+            local width = str.width(char)
+            if char:match('^%s$') then
+                spaces[column] = true
+            end
+            column = column + width
+        end
+    end
+
+    ---@param column integer
+    ---@return boolean
+    local function is_space(column)
+        return spaces[column] == true
+    end
+
+    local result = {} ---@type render.md.Line[]
+    local start = 1
+    while start <= total do
+        while start <= total and is_space(start) do
+            start = start + 1
+        end
+        if start > total then
+            break
+        end
+
+        local limit = math.min(start + width - 1, total)
+        local chunk_end = limit
+        local next_start = limit + 1
+        if limit < total then
+            for column = limit, start, -1 do
+                if is_space(column) then
+                    chunk_end = column - 1
+                    next_start = column + 1
+                    break
+                end
+            end
+        end
+        if chunk_end < start then
+            chunk_end = limit
+            next_start = limit + 1
+        end
+
+        result[#result + 1] = line:sub(start, chunk_end)
+        start = next_start
+    end
+
+    return #result > 0 and result or { Line.new(self.config.filler) }
+end
+
+---@private
 ---@param row render.md.table.Row
 ---@param row_index integer
 ---@return render.md.Line[]
@@ -618,10 +694,11 @@ function Render:row_wrapped_lines(row, row_index)
     local spaces =
         math.max(str.spaces('start', row.node.text), row.node.start_col)
 
-    -- Pre-compute display segments for each cell in this row
-    local cell_segs = {} ---@type render.md.mark.Line[]
+    -- Pre-compute wrapped display lines for each cell in this row
+    local cell_lines = {} ---@type render.md.Line[][]
     for i, cell in ipairs(row.cells) do
-        cell_segs[i] = self:cell_segments(cell.node)
+        cell_lines[i] =
+            self:wrap_line(self:cell_line(cell.node), self.layout.col_widths[i])
     end
 
     local filler = self.config.filler
@@ -633,12 +710,7 @@ function Render:row_wrapped_lines(row, row_index)
             local col_width = self.layout.col_widths[i]
             line:text(border_icon, highlight)
             line:pad(padding, filler)
-            local cell_line = Line.new(filler)
-            vim.list_extend(cell_line:get(), cell_segs[i] or {})
-            local chunk = cell_line:sub(
-                visual_line * col_width + 1,
-                (visual_line + 1) * col_width
-            )
+            local chunk = cell_lines[i][visual_line + 1] or Line.new(filler)
             line:extend(chunk)
             line:pad(col_width - chunk:width(), filler)
             line:pad(padding, filler)
