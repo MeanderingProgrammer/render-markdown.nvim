@@ -48,15 +48,15 @@ local Alignment = {
 ---@field pipes render.md.Node[]
 ---@field cells render.md.Node[]
 
----@class render.md.table.Layout
----@field wrap boolean
+---@class render.md.table.WrapLayout
+---@field enabled boolean
 ---@field col_widths integer[]
 ---@field row_heights integer[]
 
 ---@class render.md.render.Table: render.md.Render
 ---@field private config render.md.table.Config
 ---@field private data render.md.table.Data
----@field private layout render.md.table.Layout
+---@field private wrap_layout render.md.table.WrapLayout
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
@@ -132,12 +132,12 @@ function Render:setup()
     end
 
     self.data = { layout = layout, delim = delim, cols = cols, rows = rows }
-    self.layout = self:compute_layout()
+    self.wrap_layout = self:compute_wrap_layout()
 
     -- When wrapping, update col widths so delimiter/border rendering
     -- uses the capped widths (padding is included in col width).
-    if self.layout.wrap then
-        for i, w in ipairs(self.layout.col_widths) do
+    if self.wrap_layout.enabled then
+        for i, w in ipairs(self.wrap_layout.col_widths) do
             self.data.cols[i].width = w + 2 * self.config.padding
         end
     end
@@ -146,9 +146,9 @@ function Render:setup()
 end
 
 ---@private
----@return render.md.table.Layout
-function Render:compute_layout()
-    local no_wrap = { wrap = false, col_widths = {}, row_heights = {} }
+---@return render.md.table.WrapLayout
+function Render:compute_wrap_layout()
+    local no_wrap = { enabled = false, col_widths = {}, row_heights = {} }
 
     -- Feature disabled when max_table_width is 0 (unset)
     if self.config.max_table_width == 0 then
@@ -262,7 +262,7 @@ function Render:compute_layout()
         return no_wrap
     end
 
-    return { wrap = true, col_widths = col_widths, row_heights = row_heights }
+    return { enabled = true, col_widths = col_widths, row_heights = row_heights }
 end
 
 ---@private
@@ -476,7 +476,7 @@ end
 
 ---@protected
 function Render:run()
-    if self.layout.wrap then
+    if self.wrap_layout.enabled then
         self:wrapped()
         return
     end
@@ -686,7 +686,7 @@ end
 ---@param row_index integer
 ---@return render.md.Line[]
 function Render:row_wrapped_lines(row, row_index)
-    local height = self.layout.row_heights[row_index]
+    local height = self.wrap_layout.row_heights[row_index]
     local header = row.node.type == 'pipe_table_header'
     local highlight = header and self.config.head or self.config.row
     local border_icon = self.config.border[10]
@@ -697,8 +697,10 @@ function Render:row_wrapped_lines(row, row_index)
     -- Pre-compute wrapped display lines for each cell in this row
     local cell_lines = {} ---@type render.md.Line[][]
     for i, cell in ipairs(row.cells) do
-        cell_lines[i] =
-            self:wrap_line(self:cell_line(cell.node), self.layout.col_widths[i])
+        cell_lines[i] = self:wrap_line(
+            self:cell_line(cell.node),
+            self.wrap_layout.col_widths[i]
+        )
     end
 
     local filler = self.config.filler
@@ -707,7 +709,7 @@ function Render:row_wrapped_lines(row, row_index)
         local line = self:line()
         line:pad(spaces, filler)
         for i, _ in ipairs(self.data.cols) do
-            local col_width = self.layout.col_widths[i]
+            local col_width = self.wrap_layout.col_widths[i]
             line:text(border_icon, highlight)
             line:pad(padding, filler)
             local chunk = cell_lines[i][visual_line + 1] or Line.new(filler)
@@ -893,7 +895,7 @@ function Render:border()
             })
         else
             local col = 0
-            if not above and self.layout.wrap then
+            if not above and self.wrap_layout.enabled then
                 -- Place after wrapped row virtual lines at column 0.
                 col = node.end_col
             end
