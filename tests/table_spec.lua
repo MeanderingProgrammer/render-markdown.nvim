@@ -301,4 +301,40 @@ describe('table', function()
             '└──────┴────────────────────────────────────────┴──────────┘',
         })
     end)
+
+    it('wrapped long delimiter', function()
+        util.setup.text({
+            '',
+            '| ID    | Title                                                                                                                                                                                                                                                                                                                                                                           | Severity | Status |',
+            '|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|--------|',
+            "| [T-1] | Here's a long text that definitely causes wrapping. My hands are typing words. If you're reading this then my hands continued typing words to make long enough a line for testing. Also you possess the highly coveted skill of reading. Good for you. Sorry, didn't mean to sound so sarcastic there. Honestly I'm thrilled for you. I have just trouble showing it. | High     | Open   |",
+        }, {
+            pipe_table = { max_table_width = 60 },
+            win_options = { wrap = { default = false, rendered = true } },
+        })
+
+        util.assert_screen({
+            '┌─────────┬────────────────────────┬────────────┬──────────┐',
+            '│ ID      │ Title                  │ Severity   │ Status   │',
+            '├─────────┼────────────────────────┼────────────┼──────────┤',
+            "│ T-1     │ Here's a long text tha │ High       │ Open     │",
+            '│         │ t definitely causes wr │            │          │',
+            '│         │ apping. My hands are t │            │          │',
+            "│         │ yping words. If you're │            │          │",
+            '│         │  reading this then my  │            │          │',
+            '│         │ hands continued typing │            │          │',
+            '│         │  words to make long en │            │          │',
+            '│         │ ough a line for testin │            │          │',
+            '│         │ g. Also you possess th │            │          │',
+            '│         │ e highly coveted skill │            │          │',
+            '│         │  of reading. Good for  │            │          │',
+            "│         │ you. Sorry, didn't mea │            │          │",
+            '│         │ n to sound so sarcasti │            │          │',
+            "│         │ c there. Honestly I'm  │            │          │",
+            '│         │ thrilled for you. I ha │            │          │',
+            '│         │ ve just trouble showin │            │          │',
+            '│         │ g it.                  │            │          │',
+            '└─────────┴────────────────────────┴────────────┴──────────┘',
+        })
+    end)
 end)

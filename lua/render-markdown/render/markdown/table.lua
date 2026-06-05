@@ -462,15 +462,14 @@ end
 
 ---@protected
 function Render:run()
-    self:delimiter()
     if self.layout.wrap then
-        for r, row in ipairs(self.data.rows) do
-            self:row_wrapped(row, r)
-        end
-    else
-        for _, row in ipairs(self.data.rows) do
-            self:row(row)
-        end
+        self:wrapped()
+        return
+    end
+
+    self:delimiter()
+    for _, row in ipairs(self.data.rows) do
+        self:row(row)
     end
     if self.config.border_enabled and self.data.layout.valid then
         self:border()
@@ -603,7 +602,8 @@ end
 ---@private
 ---@param row render.md.table.Row
 ---@param row_index integer
-function Render:row_wrapped(row, row_index)
+---@return render.md.Line[]
+function Render:row_wrapped_lines(row, row_index)
     local height = self.layout.row_heights[row_index]
     local header = row.node.type == 'pipe_table_header'
     local highlight = header and self.config.head or self.config.row
@@ -619,7 +619,8 @@ function Render:row_wrapped(row, row_index)
     end
 
     local filler = self.config.filler
-    local function build_line(visual_line)
+    local result = {} ---@type render.md.Line[]
+    for visual_line = 0, height - 1 do
         local line = self:line()
         line:pad(spaces, filler)
         for i, _ in ipairs(self.data.cols) do
@@ -637,72 +638,100 @@ function Render:row_wrapped(row, row_index)
             line:pad(padding, filler)
         end
         line:text(border_icon, highlight)
-        return line
+        result[#result + 1] = line
+    end
+    return result
+end
+
+---@private
+function Render:wrapped()
+    local visual = {} ---@type render.md.Line[]
+    for r, row in ipairs(self.data.rows) do
+        vim.list_extend(visual, self:row_wrapped_lines(row, r))
+        if r == 1 then
+            visual[#visual + 1] = self:delimiter_line(self:delimiter_text())
+        end
+    end
+    if self.config.border_enabled then
+        if #self.data.rows > 1 then
+            visual[#visual + 1] = self:border_line(false)
+        end
+
+        local first = self.data.rows[1].node
+        local line = self:border_line(true)
+        local row, target = first:line('above', 1)
+        if
+            target
+            and str.width(target) == 0
+            and self.context.used:take(row)
+        then
+            self.marks:add(self.config, 'table_border', row, 0, {
+                virt_text = line:get(),
+                virt_text_pos = 'overlay',
+            })
+        else
+            self.marks:add(self.config, 'virtual_lines', first.start_row, 0, {
+                virt_lines = { self:indent():line(true):extend(line):get() },
+                virt_lines_above = true,
+            })
+        end
     end
 
-    local _, buf_line = row.node:line('first', 0)
-    buf_line = buf_line or ''
+    local nodes = { self.data.rows[1].node, self.data.delim } ---@type render.md.Node[]
+    for i = 2, #self.data.rows do
+        nodes[#nodes + 1] = self.data.rows[i].node
+    end
+
     local win_width = env.win.width(self.context.win)
-    local buf_screen_lines =
-        math.max(1, math.ceil(str.width(buf_line) / win_width))
-
-    -- Line 0: conceal the source line then overlay the rendered row on top.
-    if #buf_line > 0 then
-        self.marks:add(self.config, 'table_border', row.node.start_row, 0, {
-            end_row = row.node.start_row,
-            end_col = #buf_line,
-            conceal = '',
-        })
-    end
-    local first_line = build_line(0)
-    self.marks:add(self.config, 'table_border', row.node.start_row, 0, {
-        virt_text = first_line:get(),
-        virt_text_pos = 'overlay',
-        hl_mode = 'combine',
-    })
-
-    -- Lines 1..height-1: overlay buffer wrap continuations, then virt_lines.
-    local virt_lines = {} ---@type render.md.mark.Line[]
-    for vl = 1, height - 1 do
-        if vl < buf_screen_lines then
-            local byte_col = vim.fn.byteidx(buf_line, vl * win_width)
+    local slots = {} ---@type { row: integer, col: integer }[]
+    for _, node in ipairs(nodes) do
+        local _, buf_line = node:line('first', 0)
+        buf_line = buf_line or ''
+        if #buf_line > 0 then
+            self.marks:add(self.config, 'table_border', node.start_row, 0, {
+                end_row = node.start_row,
+                end_col = #buf_line,
+                conceal = '',
+            })
+        end
+        local screen_lines =
+            math.max(math.ceil(str.width(buf_line) / win_width), 1)
+        for line = 0, screen_lines - 1 do
+            local byte_col = line == 0 and 0
+                or vim.fn.byteidx(buf_line, line * win_width)
             if byte_col < 0 then
                 byte_col = #buf_line
             end
-            if #virt_lines > 0 then
-                self.marks:add(
-                    self.config,
-                    'virtual_lines',
-                    row.node.start_row,
-                    0,
-                    {
-                        virt_lines = virt_lines,
-                        virt_lines_above = false,
-                    }
-                )
-                virt_lines = {}
-            end
-            self.marks:add(
-                self.config,
-                'table_border',
-                row.node.start_row,
-                byte_col,
-                {
-                    virt_text = build_line(vl):get(),
-                    virt_text_pos = 'overlay',
-                    hl_mode = 'combine',
-                }
-            )
+            slots[#slots + 1] = { row = node.start_row, col = byte_col }
+        end
+    end
+
+    local virt_lines = {} ---@type render.md.mark.Line[]
+    for i, line in ipairs(visual) do
+        local slot = slots[i]
+        if slot then
+            self.marks:add(self.config, 'table_border', slot.row, slot.col, {
+                virt_text = line:get(),
+                virt_text_pos = 'overlay',
+                hl_mode = 'combine',
+            })
         else
-            local vline = self:indent():line(true):extend(build_line(vl))
-            virt_lines[#virt_lines + 1] = vline:get()
+            virt_lines[#virt_lines + 1] =
+                self:indent():line(true):extend(line):get()
         end
     end
     if #virt_lines > 0 then
-        self.marks:add(self.config, 'virtual_lines', row.node.start_row, 0, {
-            virt_lines = virt_lines,
-            virt_lines_above = false,
-        })
+        local last = self.data.rows[#self.data.rows].node
+        self.marks:add(
+            self.config,
+            'virtual_lines',
+            last.start_row,
+            last.end_col,
+            {
+                virt_lines = virt_lines,
+                virt_lines_above = false,
+            }
+        )
     end
 end
 
