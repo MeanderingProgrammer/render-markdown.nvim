@@ -279,4 +279,26 @@ describe('table', function()
             '└───────────┴───────────┘',
         })
     end)
+
+    it('wrapped eof bottom border', function()
+        util.setup.text({
+            '',
+            '| ID | Title | Status |',
+            '| -- | ----- | ------ |',
+            '| 1 | This sentence is long enough to wrap across several rendered table lines without needing a trailing blank line. | Open |',
+        }, {
+            pipe_table = { max_table_width = 60 },
+            win_options = { wrap = { default = false, rendered = true } },
+        })
+
+        util.assert_screen({
+            '┌──────┬────────────────────────────────────────┬──────────┐',
+            '│ ID   │ Title                                  │ Status   │',
+            '├──────┼────────────────────────────────────────┼──────────┤',
+            '│ 1    │ This sentence is long enough to wrap a │ Open     │',
+            '│      │ cross several rendered table lines wit │          │',
+            '│      │ hout needing a trailing blank line.    │          │',
+            '└──────┴────────────────────────────────────────┴──────────┘',
+        })
+    end)
 end)

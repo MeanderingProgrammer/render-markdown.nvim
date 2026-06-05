@@ -760,7 +760,12 @@ function Render:border()
                 virt_text_pos = 'overlay',
             })
         else
-            self.marks:add(self.config, 'virtual_lines', node.start_row, 0, {
+            local col = 0
+            if not above and self.layout.wrap then
+                -- Place after wrapped row virtual lines at column 0.
+                col = node.end_col
+            end
+            self.marks:add(self.config, 'virtual_lines', node.start_row, col, {
                 virt_lines = { self:indent():line(true):extend(line):get() },
                 virt_lines_above = above,
             })
