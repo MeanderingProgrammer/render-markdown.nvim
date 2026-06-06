@@ -1,9 +1,24 @@
 ---@param name string
+---@param optional? boolean
 ---@return string
-local function get_path(name)
+local function get_path(name, optional)
     local paths = vim.fs.find(name, { path = vim.fn.stdpath('data') })
-    assert(#paths == 1, 'plugin must have one path')
+    if not optional then
+        assert(#paths == 1, 'plugin must have one path')
+    end
     return paths[1]
+end
+
+---@param names string[]
+---@return string
+local function get_first_path(names)
+    for _, name in ipairs(names) do
+        local path = get_path(name, true)
+        if path then
+            return path
+        end
+    end
+    error(table.concat(names, ' or ') .. ' must be installed')
 end
 
 -- settings
@@ -15,7 +30,7 @@ vim.o.wrap = false
 -- source dependencies first
 vim.opt.rtp:prepend(get_path('nvim-treesitter'))
 vim.cmd.runtime('plugin/nvim-treesitter.lua')
-vim.opt.rtp:prepend(get_path('mini.nvim'))
+vim.opt.rtp:prepend(get_first_path({ 'mini.icons', 'mini.nvim' }))
 
 -- source this plugin
 vim.opt.rtp:prepend('.')
