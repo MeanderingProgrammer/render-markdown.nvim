@@ -346,6 +346,37 @@ describe('table', function()
         end)
     end)
 
+    it('wrapped showbreak continuation', function()
+        with_columns(36, function()
+            util.setup.text({
+                '',
+                '| ID | Title |',
+                '| -- | ----- |',
+                '| 1 | alpha beta gamma delta epsilon zeta eta theta iota kappa lambda mu nu xi omicron pi rho sigma tau |',
+            }, {
+                pipe_table = { max_table_width = 30 },
+                win_options = {
+                    wrap = { default = false, rendered = true },
+                    linebreak = { default = false, rendered = true },
+                    showbreak = { default = '', rendered = '>>>>' },
+                },
+            })
+
+            util.assert_screen({
+                '┌──────┬─────────────────────┐',
+                '│ ID   │ Title               │',
+                '├──────┼─────────────────────┤',
+                '│ 1    │ alpha beta gamma    │',
+                '│      │ delta epsilon zeta  │',
+                '│      │ eta theta iota      │',
+                '│      │ kappa lambda mu nu  │',
+                '│      │ xi omicron pi rho   │',
+                '│      │ sigma tau           │',
+                '└──────┴─────────────────────┘',
+            })
+        end)
+    end)
+
     it('wrapped long delimiter', function()
         util.setup.text({
             '',

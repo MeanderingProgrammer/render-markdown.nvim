@@ -724,6 +724,74 @@ function Render:row_wrapped_lines(row, row_index)
 end
 
 ---@private
+---@param text string
+---@param win_width integer
+---@return integer[]
+function Render:wrapped_slots(text, win_width)
+    if #text == 0 then
+        return { 0 }
+    end
+
+    local linebreak = env.win.get(self.context.win, 'linebreak') == true
+    local breakat = vim.api.nvim_get_option_value('breakat', {})
+    local showbreak = env.win.get(self.context.win, 'showbreak')
+    local breakindent = env.win.get(self.context.win, 'breakindent') == true
+    local indent = breakindent and str.spaces('start', text) or 0
+    local continuation_width =
+        math.max(win_width - str.width(tostring(showbreak)) - indent, 1)
+
+    local chars = {} ---@type { col: integer, text: string, width: integer }[]
+    local bytes = vim.str_utf_pos(text)
+    for index, start_byte in ipairs(bytes) do
+        local end_byte = index < #bytes and bytes[index + 1] - 1 or #text
+        local char = text:sub(start_byte, end_byte)
+        chars[#chars + 1] = {
+            col = start_byte - 1,
+            text = char,
+            width = str.width(char),
+        }
+    end
+
+    local slots = {} ---@type integer[]
+    local index = 1
+    local first = true
+    while index <= #chars do
+        slots[#slots + 1] = chars[index].col
+        local width = first and win_width or continuation_width
+        local used = 0
+        local next_index = index
+        local break_index = nil ---@type integer?
+        while next_index <= #chars do
+            local char = chars[next_index]
+            if used > 0 and used + char.width > width then
+                break
+            end
+            used = used + char.width
+            if linebreak and breakat:find(char.text, 1, true) then
+                break_index = next_index
+            end
+            next_index = next_index + 1
+            if used >= width then
+                break
+            end
+        end
+        if next_index > #chars then
+            break
+        elseif linebreak and break_index and break_index >= index then
+            index = break_index + 1
+            while index <= #chars and chars[index].text:match('^%s$') do
+                index = index + 1
+            end
+        else
+            index = next_index
+        end
+        first = false
+    end
+
+    return slots
+end
+
+---@private
 function Render:wrapped()
     local visual = {} ---@type render.md.Line[]
     for r, row in ipairs(self.data.rows) do
@@ -774,15 +842,8 @@ function Render:wrapped()
                 conceal = '',
             })
         end
-        local screen_lines =
-            math.max(math.ceil(str.width(buf_line) / win_width), 1)
-        for line = 0, screen_lines - 1 do
-            local byte_col = line == 0 and 0
-                or vim.fn.byteidx(buf_line, line * win_width)
-            if byte_col < 0 then
-                byte_col = #buf_line
-            end
-            slots[#slots + 1] = { row = node.start_row, col = byte_col }
+        for _, col in ipairs(self:wrapped_slots(buf_line, win_width)) do
+            slots[#slots + 1] = { row = node.start_row, col = col }
         end
     end
 
@@ -793,6 +854,7 @@ function Render:wrapped()
             self.marks:add(self.config, 'table_border', slot.row, slot.col, {
                 virt_text = line:get(),
                 virt_text_pos = 'overlay',
+                virt_text_win_col = 0,
                 hl_mode = 'combine',
             })
         else
