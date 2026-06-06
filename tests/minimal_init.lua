@@ -12,6 +12,10 @@ vim.o.lines = 40
 vim.o.tabstop = 4
 vim.o.wrap = false
 
+-- isolate tests from user ftplugins
+vim.opt.rtp:remove(vim.fn.stdpath('config'))
+vim.opt.rtp:remove(vim.fn.stdpath('config') .. '/after')
+
 -- source dependencies first
 vim.opt.rtp:prepend(get_path('nvim-treesitter'))
 vim.cmd.runtime('plugin/nvim-treesitter.lua')
