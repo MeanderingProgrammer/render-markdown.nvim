@@ -712,9 +712,22 @@ function Render:row_wrapped_lines(row, row_index)
             local col_width = self.wrap_layout.col_widths[i]
             line:text(border_icon, highlight)
             line:pad(padding, filler)
-            local chunk = cell_lines[i][visual_line + 1] or Line.new(filler)
-            line:extend(chunk)
-            line:pad(col_width - chunk:width(), filler)
+            local chunks = cell_lines[i]
+            local chunk = chunks[visual_line + 1] or Line.new(filler)
+            local fill = col_width - chunk:width()
+            local alignment = self.data.cols[i].alignment
+            if alignment == Alignment.center then
+                local left = math.floor(fill / 2)
+                line:pad(left, filler)
+                line:extend(chunk)
+                line:pad(fill - left, filler)
+            elseif alignment == Alignment.right then
+                line:pad(fill, filler)
+                line:extend(chunk)
+            else
+                line:extend(chunk)
+                line:pad(fill, filler)
+            end
             line:pad(padding, filler)
         end
         line:text(border_icon, highlight)

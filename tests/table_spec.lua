@@ -377,6 +377,51 @@ describe('table', function()
         end)
     end)
 
+    it('wrapped aligns unwrapped cells', function()
+        util.setup.text({
+            '',
+            '|Left|Right|Center|Long|',
+            '|:---|----:|:----:|----|',
+            '|a|2|mid|one two three four five six seven|',
+        }, {
+            pipe_table = { max_table_width = 40 },
+            win_options = { wrap = { default = false, rendered = true } },
+        })
+
+        util.assert_screen({
+            '┌──────┬───────┬────────┬──────────────┐',
+            '│ Left │ Right │ Center │ Long         │',
+            '├━─────┼──────━┼━──────━┼──────────────┤',
+            '│ a    │     2 │  mid   │ one two      │',
+            '│      │       │        │ three four   │',
+            '│      │       │        │ five six     │',
+            '│      │       │        │ seven        │',
+            '└──────┴───────┴────────┴──────────────┘',
+        })
+    end)
+
+    it('wrapped aligns wrapped cells', function()
+        util.setup.text({
+            '',
+            '| L | R | C |',
+            '|:--|--:|:-:|',
+            '| a | one two three four five six | one two three four five six |',
+        }, {
+            pipe_table = { max_table_width = 40 },
+            win_options = { wrap = { default = false, rendered = true } },
+        })
+
+        util.assert_screen({
+            '┌─────┬───────────────┬───────────────┐',
+            '│ L   │             R │       C       │',
+            '├━────┼──────────────━┼━─────────────━┤',
+            '│ a   │       one two │    one two    │',
+            '│     │    three four │  three four   │',
+            '│     │      five six │   five six    │',
+            '└─────┴───────────────┴───────────────┘',
+        })
+    end)
+
     it('wrapped long delimiter', function()
         util.setup.text({
             '',
