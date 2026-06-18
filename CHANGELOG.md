@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 8.13.0 (2026-06-18)
+
 ### Features
 
 - allow inline code left and right icon highlight to be specified [e9d7409](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/e9d7409c2d604dc12589c00ef922e08e3998e000)
@@ -16,6 +18,8 @@
   [#667](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/667)
   [ae8e75f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/ae8e75f098ace7447c725bf1f0493d57294ddbe2)
   [7bb5e54](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7bb5e54102cf140e12a7eb0f6ddf2f73c3b43922)
+- support toggling inline and block latex individually [#668](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/668)
+  [fb0e70c](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/fb0e70cdca1bf748a838ef96cfadba1550b8925f)
 
 ### Bug Fixes
 
