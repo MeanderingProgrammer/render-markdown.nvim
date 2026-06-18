@@ -25,7 +25,11 @@ bench:
 
 [private]
 busted path:
-  nvim --headless --noplugin -u {{init}} -c "PlenaryBustedDirectory {{path}} {{settings}}"
+  # needed to isolate child processes from user config
+  # as plenary does not pass the --clean flag
+  XDG_CONFIG_HOME="{{justfile_directory()}}/config" \
+    nvim --headless --noplugin -u {{init}} \
+    -c "PlenaryBustedDirectory {{path}} {{settings}}"
 
 health:
   nvim -c "checkhealth render-markdown" -- -
