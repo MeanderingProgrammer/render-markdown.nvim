@@ -3,6 +3,18 @@
 local util = require('tests.util')
 
 describe('table', function()
+    ---@param columns integer
+    ---@param callback function
+    local function with_columns(columns, callback)
+        local previous = vim.o.columns
+        vim.o.columns = columns
+        local ok, err = pcall(callback)
+        vim.o.columns = previous
+        if not ok then
+            error(err, 0)
+        end
+    end
+
     local lines = {
         '',
         '| Heading 1 | `Heading 2`            |',
@@ -277,6 +289,174 @@ describe('table', function()
             '├───────────┼───────────┤',
             '│ Item 1    │ Item 2    │',
             '└───────────┴───────────┘',
+        })
+    end)
+
+    it('wrapped eof bottom border', function()
+        util.setup.text({
+            '',
+            '| ID | Title | Status |',
+            '| -- | ----- | ------ |',
+            '| 1 | This sentence is long enough to wrap across several rendered table lines without needing a trailing blank line. | Open |',
+        }, {
+            pipe_table = { max_table_width = 60 },
+            win_options = { wrap = { default = false, rendered = true } },
+        })
+
+        util.assert_screen({
+            '┌──────┬────────────────────────────────────────┬──────────┐',
+            '│ ID   │ Title                                  │ Status   │',
+            '├──────┼────────────────────────────────────────┼──────────┤',
+            '│ 1    │ This sentence is long enough to wrap   │ Open     │',
+            '│      │ across several rendered table lines    │          │',
+            '│      │ without needing a trailing blank line. │          │',
+            '└──────┴────────────────────────────────────────┴──────────┘',
+        })
+    end)
+
+    it('wrapped indented table', function()
+        with_columns(60, function()
+            util.setup.text({
+                '',
+                '   | Approach | Allocations | Performance |',
+                '   |----------|-------------|-------------|',
+                '   | `format!()` in loop | N | Slow |',
+                '   | `write!()` to reused buffer | 1 | Fast |',
+                '   | `push_str()` + `push()` | 1 | Fastest |',
+                '   | Pre-sized `String::with_capacity()` | 1 (no realloc) | Fast |',
+            }, {
+                pipe_table = { max_table_width = -2 },
+                win_options = { wrap = { default = false, rendered = true } },
+            })
+
+            util.assert_screen({
+                '   ┌────────────────────┬────────────────┬───────────────┐',
+                '   │ Approach           │ Allocations    │ Performance   │',
+                '   ├────────────────────┼────────────────┼───────────────┤',
+                '   │ format!() in loop  │ N              │ Slow          │',
+                '   │ write!() to        │ 1              │ Fast          │',
+                '   │ reused buffer      │                │               │',
+                '   │ push_str() +       │ 1              │ Fastest       │',
+                '   │ push()             │                │               │',
+                '   │ Pre-sized          │ 1 (no realloc) │ Fast          │',
+                '   │ String::with_capac │                │               │',
+                '   │ ity()              │                │               │',
+                '   └────────────────────┴────────────────┴───────────────┘',
+            })
+        end)
+    end)
+
+    it('wrapped showbreak continuation', function()
+        with_columns(36, function()
+            util.setup.text({
+                '',
+                '| ID | Title |',
+                '| -- | ----- |',
+                '| 1 | alpha beta gamma delta epsilon zeta eta theta iota kappa lambda mu nu xi omicron pi rho sigma tau |',
+            }, {
+                pipe_table = { max_table_width = 30 },
+                win_options = {
+                    wrap = { default = false, rendered = true },
+                    linebreak = { default = false, rendered = true },
+                    showbreak = { default = '', rendered = '>>>>' },
+                },
+            })
+
+            util.assert_screen({
+                '┌──────┬─────────────────────┐',
+                '│ ID   │ Title               │',
+                '├──────┼─────────────────────┤',
+                '│ 1    │ alpha beta gamma    │',
+                '│      │ delta epsilon zeta  │',
+                '│      │ eta theta iota      │',
+                '│      │ kappa lambda mu nu  │',
+                '│      │ xi omicron pi rho   │',
+                '│      │ sigma tau           │',
+                '└──────┴─────────────────────┘',
+            })
+        end)
+    end)
+
+    it('wrapped aligns unwrapped cells', function()
+        util.setup.text({
+            '',
+            '|Left|Right|Center|Long|',
+            '|:---|----:|:----:|----|',
+            '|a|2|mid|one two three four five six seven|',
+        }, {
+            pipe_table = { max_table_width = 40 },
+            win_options = { wrap = { default = false, rendered = true } },
+        })
+
+        util.assert_screen({
+            '┌──────┬───────┬────────┬──────────────┐',
+            '│ Left │ Right │ Center │ Long         │',
+            '├━─────┼──────━┼━──────━┼──────────────┤',
+            '│ a    │     2 │  mid   │ one two      │',
+            '│      │       │        │ three four   │',
+            '│      │       │        │ five six     │',
+            '│      │       │        │ seven        │',
+            '└──────┴───────┴────────┴──────────────┘',
+        })
+    end)
+
+    it('wrapped aligns wrapped cells', function()
+        util.setup.text({
+            '',
+            '| L | R | C |',
+            '|:--|--:|:-:|',
+            '| a | one two three four five six | one two three four five six |',
+        }, {
+            pipe_table = { max_table_width = 40 },
+            win_options = { wrap = { default = false, rendered = true } },
+        })
+
+        util.assert_screen({
+            '┌─────┬───────────────┬───────────────┐',
+            '│ L   │             R │       C       │',
+            '├━────┼──────────────━┼━─────────────━┤',
+            '│ a   │       one two │    one two    │',
+            '│     │    three four │  three four   │',
+            '│     │      five six │   five six    │',
+            '└─────┴───────────────┴───────────────┘',
+        })
+    end)
+
+    it('wrapped long delimiter', function()
+        util.setup.text({
+            '',
+            '| ID    | Title                                                                                                                                                                                                                                                                                                                                                                           | Severity | Status |',
+            '|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|--------|',
+            "| [T-1] | Here's a long text that definitely causes wrapping. My hands are typing words. If you're reading this then my hands continued typing words to make long enough a line for testing. Also you possess the highly coveted skill of reading. Good for you. Sorry, didn't mean to sound so sarcastic there. Honestly I'm thrilled for you. I have just trouble showing it. | High     | Open   |",
+        }, {
+            pipe_table = { max_table_width = 60 },
+            win_options = { wrap = { default = false, rendered = true } },
+        })
+
+        util.assert_screen({
+            '┌─────────┬────────────────────────┬────────────┬──────────┐',
+            '│ ID      │ Title                  │ Severity   │ Status   │',
+            '├─────────┼────────────────────────┼────────────┼──────────┤',
+            "│ T-1     │ Here's a long text     │ High       │ Open     │",
+            '│         │ that definitely        │            │          │',
+            '│         │ causes wrapping. My    │            │          │',
+            '│         │ hands are typing       │            │          │',
+            "│         │ words. If you're       │            │          │",
+            '│         │ reading this then my   │            │          │',
+            '│         │ hands continued        │            │          │',
+            '│         │ typing words to make   │            │          │',
+            '│         │ long enough a line     │            │          │',
+            '│         │ for testing. Also you  │            │          │',
+            '│         │ possess the highly     │            │          │',
+            '│         │ coveted skill of       │            │          │',
+            '│         │ reading. Good for      │            │          │',
+            "│         │ you. Sorry, didn't     │            │          │",
+            '│         │ mean to sound so       │            │          │',
+            '│         │ sarcastic there.       │            │          │',
+            "│         │ Honestly I'm thrilled  │            │          │",
+            '│         │ for you. I have just   │            │          │',
+            '│         │ trouble showing it.    │            │          │',
+            '└─────────┴────────────────────────┴────────────┴──────────┘',
         })
     end)
 end)

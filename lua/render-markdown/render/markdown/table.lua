@@ -1,4 +1,6 @@
 local Base = require('render-markdown.render.base')
+local Line = require('render-markdown.lib.line')
+local env = require('render-markdown.lib.env')
 local iter = require('render-markdown.lib.iter')
 local log = require('render-markdown.core.log')
 local str = require('render-markdown.lib.str')
@@ -15,6 +17,7 @@ local str = require('render-markdown.lib.str')
 
 ---@class render.md.table.Col
 ---@field width integer
+---@field delimiter_width integer
 ---@field alignment render.md.table.col.Alignment
 
 ---@enum render.md.table.col.Alignment
@@ -32,6 +35,8 @@ local Alignment = {
 
 ---@class render.md.table.row.Cell
 ---@field node render.md.Node
+---@field start_col integer
+---@field end_col integer
 ---@field width integer
 ---@field space render.md.table.cell.Space
 
@@ -43,9 +48,15 @@ local Alignment = {
 ---@field pipes render.md.Node[]
 ---@field cells render.md.Node[]
 
+---@class render.md.table.WrapLayout
+---@field enabled boolean
+---@field col_widths integer[]
+---@field row_heights integer[]
+
 ---@class render.md.render.Table: render.md.Render
 ---@field private config render.md.table.Config
 ---@field private data render.md.table.Data
+---@field private wrap_layout render.md.table.WrapLayout
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
@@ -121,8 +132,144 @@ function Render:setup()
     end
 
     self.data = { layout = layout, delim = delim, cols = cols, rows = rows }
+    self.wrap_layout = self:compute_wrap_layout()
+
+    -- When wrapping, update col widths so delimiter/border rendering
+    -- uses the capped widths (padding is included in col width).
+    if self.wrap_layout.enabled then
+        for i, w in ipairs(self.wrap_layout.col_widths) do
+            self.data.cols[i].width = w + 2 * self.config.padding
+        end
+    end
 
     return true
+end
+
+---@private
+---@return render.md.table.WrapLayout
+function Render:compute_wrap_layout()
+    local no_wrap = { enabled = false, col_widths = {}, row_heights = {} }
+
+    -- Feature disabled when max_table_width is 0 (unset)
+    if self.config.max_table_width == 0 then
+        return no_wrap
+    end
+    -- Feature disabled when the window has line-wrap turned off — the table will
+    -- scroll horizontally so there are no continuation screen lines to fill, and
+    -- the col-redistribution logic would make things narrower for no reason.
+    if not env.win.get(self.context.win, 'wrap') then
+        return no_wrap
+    end
+    -- Only supported for padded/trimmed cell modes
+    if not vim.tbl_contains({ 'padded', 'trimmed' }, self.config.cell) then
+        return no_wrap
+    end
+
+    local win_width = env.win.width(self.context.win)
+    local remaining_width = math.max(win_width - self:indent_width(), 1)
+    local mtw = self.config.max_table_width
+    local available
+    if mtw < 0 then
+        -- Negative: characters from right edge
+        available = remaining_width + mtw
+    elseif mtw <= 1 then
+        -- Fraction of window width
+        available = math.floor(remaining_width * mtw)
+    else
+        -- Absolute character width, capped to fit after indentation
+        available = math.min(math.floor(mtw), remaining_width)
+    end
+    local num_cols = #self.data.cols
+    local padding = self.config.padding
+
+    -- Total table display width = (num_cols+1) pipes + num_cols*(2*padding + text_width)
+    -- => text budget = available - (num_cols+1) - num_cols*2*padding
+    local overhead = (num_cols + 1) + (num_cols * 2 * padding)
+    local text_budget = available - overhead
+
+    ---@param cell render.md.table.row.Cell
+    ---@return integer
+    local function content_width(cell)
+        return math.max(cell.width - cell.space.left - cell.space.right, 0)
+    end
+
+    -- Collect the natural text-area width for each column (max content width across all rows)
+    local max_content = {} ---@type integer[]
+    for i = 1, num_cols do
+        max_content[i] = self.data.cols[i].delimiter_width
+    end
+    for _, row in ipairs(self.data.rows) do
+        for i, cell in ipairs(row.cells) do
+            max_content[i] = math.max(max_content[i], content_width(cell))
+        end
+    end
+
+    -- Iterative redistribution:
+    -- Start with an equal share per column. Any column whose content fits
+    -- within that share gets locked at its natural width, freeing up budget
+    -- for the remaining columns. Repeat until stable.
+    local col_widths = {} ---@type integer[]
+    local locked = {} ---@type boolean[]
+    local locked_total = 0
+    local locked_count = 0
+
+    local share = math.floor(text_budget / num_cols)
+    local changed = true
+    while changed do
+        changed = false
+        for i = 1, num_cols do
+            if not locked[i] and max_content[i] <= share then
+                locked[i] = true
+                locked_total = locked_total + max_content[i]
+                locked_count = locked_count + 1
+                changed = true
+            end
+        end
+        if changed then
+            local free = num_cols - locked_count
+            if free > 0 then
+                share = math.floor((text_budget - locked_total) / free)
+            end
+        end
+    end
+
+    -- Assign final widths: locked columns get their natural width, others get the share
+    for i = 1, num_cols do
+        col_widths[i] = locked[i] and max_content[i] or math.max(share, 1)
+    end
+
+    -- Compute per-row heights based on how many rendered lines each cell needs.
+    -- Long delimiter cells can also force wrapping even when row contents fit.
+    local row_heights = {} ---@type integer[]
+    local needs_wrap = false
+    for i, width in ipairs(max_content) do
+        needs_wrap = needs_wrap or width > col_widths[i]
+    end
+    for r, row in ipairs(self.data.rows) do
+        local max_lines = 1
+        for i, cell in ipairs(row.cells) do
+            local w = col_widths[i]
+            local lines = #self:wrap_line(self:cell_line(cell.node), w)
+            if lines > max_lines then
+                max_lines = lines
+            end
+            needs_wrap = needs_wrap or lines > 1
+        end
+        row_heights[r] = max_lines
+    end
+
+    if not needs_wrap then
+        return no_wrap
+    end
+
+    return { enabled = true, col_widths = col_widths, row_heights = row_heights }
+end
+
+---@private
+---@return integer
+function Render:indent_width()
+    local first = self.data.rows[1].node
+    return math.max(str.spaces('start', first.text), first.start_col)
 end
 
 ---@private
@@ -146,6 +293,7 @@ function Render:parse_cols(node)
         end
         cols[#cols + 1] = {
             width = width,
+            delimiter_width = math.max(width, self.config.min_width),
             alignment = Render.alignment(cell),
         }
     end
@@ -171,6 +319,102 @@ end
 
 ---@private
 ---@param node render.md.Node
+---@return render.md.Line
+function Render:cell_line(node)
+    local line = Line.new(self.config.filler)
+    vim.list_extend(line:get(), self:cell_segments(node))
+    return line
+end
+
+---Compute display segments for a cell: raw text − concealed + injected,
+---with treesitter highlight groups preserved.
+---@private
+---@param node render.md.Node
+---@return render.md.mark.Line
+function Render:cell_segments(node)
+    local row = node.start_row
+    local start_col = node.start_col
+    local end_col = node.end_col
+
+    local lead = #(node.text:match('^(%s*)') or '')
+    local trail = #(node.text:match('(%s*)$') or '')
+    local raw = node.text:sub(lead + 1, #node.text - trail)
+    local base_col = start_col + lead
+    local injections = self.context.inline:range(row, start_col, end_col)
+
+    local segments = {} ---@type render.md.mark.Line
+    local function push(text, hl)
+        if #text == 0 then
+            return
+        end
+        if #segments > 0 and segments[#segments][2] == hl then
+            segments[#segments][1] = segments[#segments][1] .. text
+        else
+            segments[#segments + 1] = { text, hl }
+        end
+    end
+
+    local function push_injection(inj)
+        for _, seg in ipairs(inj.line) do
+            push(seg[1], seg[2] or '')
+        end
+    end
+
+    local inj_i = 1
+    -- Flush injections anchored in leading whitespace
+    while inj_i <= #injections and injections[inj_i].col < base_col do
+        push_injection(injections[inj_i])
+        inj_i = inj_i + 1
+    end
+    local bytes = vim.str_utf_pos(raw)
+    for k, start_byte in ipairs(bytes) do
+        local end_byte = k < #bytes and bytes[k + 1] - 1 or #raw
+        local abs_col = base_col + start_byte - 1
+        -- Insert any injections anchored at this byte position
+        while inj_i <= #injections and injections[inj_i].col == abs_col do
+            push_injection(injections[inj_i])
+            inj_i = inj_i + 1
+        end
+        local char = raw:sub(start_byte, end_byte)
+        local body = {
+            start_row = row,
+            start_col = abs_col,
+            end_col = abs_col + end_byte - start_byte + 1,
+            text = char,
+        }
+        if self.context.conceal:get(body) <= 0 then
+            -- Use built-in API to get the treesitter highlight at this position
+            local hl = ''
+            for _, cap in
+                ipairs(
+                    vim.treesitter.get_captures_at_pos(
+                        self.context.buf,
+                        row,
+                        abs_col
+                    )
+                )
+            do
+                if
+                    cap.lang == 'markdown_inline'
+                    and not vim.startswith(cap.capture, 'conceal')
+                then
+                    hl = '@' .. cap.capture
+                end
+            end
+            push(char, hl)
+        end
+    end
+    -- Trailing injections after the last character
+    while inj_i <= #injections do
+        push_injection(injections[inj_i])
+        inj_i = inj_i + 1
+    end
+    return segments
+end
+
+--TODO: Critical piece of code
+---@private
+---@param node render.md.Node
 ---@param num_cols integer
 ---@return render.md.table.Row?
 function Render:parse_row(node, num_cols)
@@ -190,6 +434,8 @@ function Render:parse_row(node, num_cols)
         assert(width >= 0, 'invalid table layout')
         cells[#cells + 1] = {
             node = cell,
+            start_col = start_col,
+            end_col = end_col,
             width = width,
             space = {
                 -- gap between the cell start and the pipe start
@@ -230,6 +476,11 @@ end
 
 ---@protected
 function Render:run()
+    if self.wrap_layout.enabled then
+        self:wrapped()
+        return
+    end
+
     self:delimiter()
     for _, row in ipairs(self.data.rows) do
         self:row(row)
@@ -242,6 +493,17 @@ end
 ---@private
 function Render:delimiter()
     local delim = self.data.delim
+    local line = self:delimiter_line(self:delimiter_text())
+    line:pad(str.width(delim.text) - line:width())
+    self.marks:over(self.config, 'table_border', delim, {
+        virt_text = line:get(),
+        virt_text_pos = 'overlay',
+    })
+end
+
+---@private
+---@return string
+function Render:delimiter_text()
     local border = self.config.border
     local indicator = self.config.alignment_indicator
 
@@ -264,16 +526,32 @@ function Render:delimiter()
             return indicator .. icon:rep(col.width - 2) .. indicator
         end
     end)
-    local delimiter = border[4] .. table.concat(parts, border[5]) .. border[6]
+    return border[4] .. table.concat(parts, border[5]) .. border[6]
+end
 
-    local line = self:line()
-    line:pad(str.spaces('start', delim.text))
-    line:text(delimiter, self.config.head)
-    line:pad(str.width(delim.text) - line:width())
-    self.marks:over(self.config, 'table_border', delim, {
-        virt_text = line:get(),
-        virt_text_pos = 'overlay',
-    })
+---@private
+---@param delimiter string
+---@return render.md.Line
+function Render:delimiter_line(delimiter)
+    return self:line()
+        :pad(str.spaces('start', self.data.delim.text))
+        :text(delimiter, self.config.head)
+end
+
+---@private
+---@param above boolean
+---@return render.md.Line
+function Render:border_line(above)
+    local border = self.config.border
+    local chars = above and { border[1], border[2], border[3] }
+        or { border[7], border[8], border[9] }
+    local icon = border[11]
+    local parts = iter.list.map(self.data.cols, function(col)
+        return icon:rep(col.width)
+    end)
+    local text = chars[1] .. table.concat(parts, chars[2]) .. chars[3]
+    local highlight = above and self.config.head or self.config.row
+    return self:line():pad(self:indent_width()):text(text, highlight)
 end
 
 ---@private
@@ -330,6 +608,285 @@ function Render:row(row)
             virt_text = { { row.node.text:gsub('|', icon), highlight } },
             virt_text_pos = 'overlay',
         })
+    end
+end
+
+---@private
+---@param line render.md.Line
+---@param width integer
+---@return render.md.Line[]
+function Render:wrap_line(line, width)
+    if width <= 0 then
+        return { Line.new(self.config.filler) }
+    end
+
+    local total = line:width()
+    if total == 0 then
+        return { Line.new(self.config.filler) }
+    end
+
+    local spaces = {} ---@type table<integer, boolean>
+    local column = 1
+    for _, segment in ipairs(line:get()) do
+        local text = segment[1]
+        local bytes = vim.str_utf_pos(text)
+        for index, start_byte in ipairs(bytes) do
+            local end_byte = index < #bytes and bytes[index + 1] - 1 or #text
+            local char = text:sub(start_byte, end_byte)
+            local width = str.width(char)
+            if char:match('^%s$') then
+                spaces[column] = true
+            end
+            column = column + width
+        end
+    end
+
+    ---@param column integer
+    ---@return boolean
+    local function is_space(column)
+        return spaces[column] == true
+    end
+
+    local result = {} ---@type render.md.Line[]
+    local start = 1
+    while start <= total do
+        while start <= total and is_space(start) do
+            start = start + 1
+        end
+        if start > total then
+            break
+        end
+
+        local limit = math.min(start + width - 1, total)
+        local chunk_end = limit
+        local next_start = limit + 1
+        if limit < total then
+            for column = limit, start, -1 do
+                if is_space(column) then
+                    chunk_end = column - 1
+                    next_start = column + 1
+                    break
+                end
+            end
+        end
+        if chunk_end < start then
+            chunk_end = limit
+            next_start = limit + 1
+        end
+
+        result[#result + 1] = line:sub(start, chunk_end)
+        start = next_start
+    end
+
+    return #result > 0 and result or { Line.new(self.config.filler) }
+end
+
+---@private
+---@param row render.md.table.Row
+---@param row_index integer
+---@return render.md.Line[]
+function Render:row_wrapped_lines(row, row_index)
+    local height = self.wrap_layout.row_heights[row_index]
+    local header = row.node.type == 'pipe_table_header'
+    local highlight = header and self.config.head or self.config.row
+    local border_icon = self.config.border[10]
+    local padding = self.config.padding
+    local spaces =
+        math.max(str.spaces('start', row.node.text), row.node.start_col)
+
+    -- Pre-compute wrapped display lines for each cell in this row
+    local cell_lines = {} ---@type render.md.Line[][]
+    for i, cell in ipairs(row.cells) do
+        cell_lines[i] = self:wrap_line(
+            self:cell_line(cell.node),
+            self.wrap_layout.col_widths[i]
+        )
+    end
+
+    local filler = self.config.filler
+    local result = {} ---@type render.md.Line[]
+    for visual_line = 0, height - 1 do
+        local line = self:line()
+        line:pad(spaces, filler)
+        for i, _ in ipairs(self.data.cols) do
+            local col_width = self.wrap_layout.col_widths[i]
+            line:text(border_icon, highlight)
+            line:pad(padding, filler)
+            local chunks = cell_lines[i]
+            local chunk = chunks[visual_line + 1] or Line.new(filler)
+            local fill = col_width - chunk:width()
+            local alignment = self.data.cols[i].alignment
+            if alignment == Alignment.center then
+                local left = math.floor(fill / 2)
+                line:pad(left, filler)
+                line:extend(chunk)
+                line:pad(fill - left, filler)
+            elseif alignment == Alignment.right then
+                line:pad(fill, filler)
+                line:extend(chunk)
+            else
+                line:extend(chunk)
+                line:pad(fill, filler)
+            end
+            line:pad(padding, filler)
+        end
+        line:text(border_icon, highlight)
+        result[#result + 1] = line
+    end
+    return result
+end
+
+---@private
+---@param text string
+---@param win_width integer
+---@return integer[]
+function Render:wrapped_slots(text, win_width)
+    if #text == 0 then
+        return { 0 }
+    end
+
+    local linebreak = env.win.get(self.context.win, 'linebreak') == true
+    local breakat = vim.api.nvim_get_option_value('breakat', {})
+    local showbreak = env.win.get(self.context.win, 'showbreak')
+    local breakindent = env.win.get(self.context.win, 'breakindent') == true
+    local indent = breakindent and str.spaces('start', text) or 0
+    local continuation_width =
+        math.max(win_width - str.width(tostring(showbreak)) - indent, 1)
+
+    local chars = {} ---@type { col: integer, text: string, width: integer }[]
+    local bytes = vim.str_utf_pos(text)
+    for index, start_byte in ipairs(bytes) do
+        local end_byte = index < #bytes and bytes[index + 1] - 1 or #text
+        local char = text:sub(start_byte, end_byte)
+        chars[#chars + 1] = {
+            col = start_byte - 1,
+            text = char,
+            width = str.width(char),
+        }
+    end
+
+    local slots = {} ---@type integer[]
+    local index = 1
+    local first = true
+    while index <= #chars do
+        slots[#slots + 1] = chars[index].col
+        local width = first and win_width or continuation_width
+        local used = 0
+        local next_index = index
+        local break_index = nil ---@type integer?
+        while next_index <= #chars do
+            local char = chars[next_index]
+            if used > 0 and used + char.width > width then
+                break
+            end
+            used = used + char.width
+            if linebreak and breakat:find(char.text, 1, true) then
+                break_index = next_index
+            end
+            next_index = next_index + 1
+            if used >= width then
+                break
+            end
+        end
+        if next_index > #chars then
+            break
+        elseif linebreak and break_index and break_index >= index then
+            index = break_index + 1
+            while index <= #chars and chars[index].text:match('^%s$') do
+                index = index + 1
+            end
+        else
+            index = next_index
+        end
+        first = false
+    end
+
+    return slots
+end
+
+---@private
+function Render:wrapped()
+    local visual = {} ---@type render.md.Line[]
+    for r, row in ipairs(self.data.rows) do
+        vim.list_extend(visual, self:row_wrapped_lines(row, r))
+        if r == 1 then
+            visual[#visual + 1] = self:delimiter_line(self:delimiter_text())
+        end
+    end
+    if self.config.border_enabled then
+        if #self.data.rows > 1 then
+            visual[#visual + 1] = self:border_line(false)
+        end
+
+        local first = self.data.rows[1].node
+        local line = self:border_line(true)
+        local row, target = first:line('above', 1)
+        if
+            target
+            and str.width(target) == 0
+            and self.context.used:take(row)
+        then
+            self.marks:add(self.config, 'table_border', row, 0, {
+                virt_text = line:get(),
+                virt_text_pos = 'overlay',
+            })
+        else
+            self.marks:add(self.config, 'virtual_lines', first.start_row, 0, {
+                virt_lines = { self:indent():line(true):extend(line):get() },
+                virt_lines_above = true,
+            })
+        end
+    end
+
+    local nodes = { self.data.rows[1].node, self.data.delim } ---@type render.md.Node[]
+    for i = 2, #self.data.rows do
+        nodes[#nodes + 1] = self.data.rows[i].node
+    end
+
+    local win_width = env.win.width(self.context.win)
+    local slots = {} ---@type { row: integer, col: integer }[]
+    for _, node in ipairs(nodes) do
+        local _, buf_line = node:line('first', 0)
+        buf_line = buf_line or ''
+        if #buf_line > 0 then
+            self.marks:add(self.config, 'table_border', node.start_row, 0, {
+                end_row = node.start_row,
+                end_col = #buf_line,
+                conceal = '',
+            })
+        end
+        for _, col in ipairs(self:wrapped_slots(buf_line, win_width)) do
+            slots[#slots + 1] = { row = node.start_row, col = col }
+        end
+    end
+
+    local virt_lines = {} ---@type render.md.mark.Line[]
+    for i, line in ipairs(visual) do
+        local slot = slots[i]
+        if slot then
+            self.marks:add(self.config, 'table_border', slot.row, slot.col, {
+                virt_text = line:get(),
+                virt_text_pos = 'overlay',
+                virt_text_win_col = 0,
+                hl_mode = 'combine',
+            })
+        else
+            virt_lines[#virt_lines + 1] =
+                self:indent():line(true):extend(line):get()
+        end
+    end
+    if #virt_lines > 0 then
+        local last = self.data.rows[#self.data.rows].node
+        self.marks:add(
+            self.config,
+            'virtual_lines',
+            last.start_row,
+            last.end_col,
+            {
+                virt_lines = virt_lines,
+                virt_lines_above = false,
+            }
+        )
     end
 end
 
@@ -412,7 +969,12 @@ function Render:border()
                 virt_text_pos = 'overlay',
             })
         else
-            self.marks:add(self.config, 'virtual_lines', node.start_row, 0, {
+            local col = 0
+            if not above and self.wrap_layout.enabled then
+                -- Place after wrapped row virtual lines at column 0.
+                col = node.end_col
+            end
+            self.marks:add(self.config, 'virtual_lines', node.start_row, col, {
                 virt_lines = { self:indent():line(true):extend(line):get() },
                 virt_lines_above = above,
             })
