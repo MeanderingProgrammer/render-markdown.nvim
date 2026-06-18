@@ -29,11 +29,12 @@ function M.sub(s, i, j)
     return result
 end
 
----number of hashtags at the start of the string
+---number of a specific character at the start of the string
 ---@param s string
+---@param ch string
 ---@return integer
-function M.level(s)
-    local match = s:match('^%s*(#+)')
+function M.chars(s, ch)
+    local match = s:match('^%s*(' .. vim.pesc(ch) .. '+)')
     return match and #match or 0
 end
 

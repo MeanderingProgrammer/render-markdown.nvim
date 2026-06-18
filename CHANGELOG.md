@@ -12,6 +12,10 @@
 - allow rendering when window is in diff mode [#645](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/645)
   [629eb95](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/629eb9533ec989d9d5c6cab8f3ad5372422c24e0)
 - add snacks.nvim image as conflict if latex is enabled [dcb7751](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/dcb77511efb1665b5073d8396a0033b3e4d680f6)
+- improvements to testing setup [#666](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/666)
+  [#667](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/667)
+  [ae8e75f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/ae8e75f098ace7447c725bf1f0493d57294ddbe2)
+  [7bb5e54](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7bb5e54102cf140e12a7eb0f6ddf2f73c3b43922)
 
 ### Bug Fixes
 
@@ -25,11 +29,14 @@
 - conceal padding spaces in multi-backtick code spans per CommonMark spec [#635](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/635)
 - false positive link matching [#650](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/650)
   [ff2fcd6](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/ff2fcd6f2c7b69ae2c08ebfb003b644b0d8b9acb)
+- handle checkbox rendering in single line nested lists [#659](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/659)
+  [5adf089](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/5adf0895310c1904e5abfaad40a2baad7fe44a07)
 
 ### Collaborator Shoutouts
 
 - @qq3g7bad
 - @0x1b2c
+- @okuuva
 
 ## 8.12.0 (2026-03-08)
 

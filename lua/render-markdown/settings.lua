@@ -1186,6 +1186,8 @@ M.latex = {}
 
 ---@class (exact) render.md.latex.Config: render.md.base.Config
 ---@field converter string|string[]
+---@field inline boolean
+---@field block boolean
 ---@field highlight string
 ---@field position render.md.latex.Position
 ---@field top_pad integer
@@ -1207,6 +1209,10 @@ M.latex.default = {
     -- Executable used to convert latex formula to rendered unicode.
     -- If a list is provided the commands run in order until the first success.
     converter = { 'utftex', 'latex2text' },
+    -- Render inline latex formulas.
+    inline = true,
+    -- Render block latex formulas.
+    block = true,
     -- Highlight for latex blocks.
     highlight = 'RenderMarkdownMath',
     -- Determines where latex formula is rendered relative to block.
@@ -1226,6 +1232,8 @@ function M.latex.schema()
         converter = {
             union = { { list = { type = 'string' } }, { type = 'string' } },
         },
+        inline = { type = 'boolean' },
+        block = { type = 'boolean' },
         highlight = { type = 'string' },
         position = { enum = M.latex.position },
         top_pad = { type = 'number' },

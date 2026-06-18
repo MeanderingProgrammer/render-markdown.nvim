@@ -212,6 +212,8 @@
 
 ---@class (exact) render.md.latex.UserConfig: render.md.base.UserConfig
 ---@field converter? string|string[]
+---@field inline? boolean
+---@field block? boolean
 ---@field highlight? string
 ---@field position? render.md.latex.Position
 ---@field top_pad? integer

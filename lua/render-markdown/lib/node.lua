@@ -104,7 +104,7 @@ function Node:level(parent)
     if not node then
         return 0
     end
-    return str.level(vim.treesitter.get_node_text(node, self.buf))
+    return str.chars(vim.treesitter.get_node_text(node, self.buf), '#')
 end
 
 ---@param target string

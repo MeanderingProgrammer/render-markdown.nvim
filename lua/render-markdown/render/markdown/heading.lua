@@ -46,7 +46,7 @@ function Render:setup()
     if self.node.type == 'atx_heading' and self.config.atx then
         atx = true
         marker = assert(self.node:child_at(0), 'atx heading missing marker')
-        level = str.level(marker.text)
+        level = str.chars(marker.text, '#')
     elseif self.node.type == 'setext_heading' and self.config.setext then
         atx = false
         marker = assert(self.node:child_at(1), 'ext heading missing underline')

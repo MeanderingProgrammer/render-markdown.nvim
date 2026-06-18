@@ -86,7 +86,7 @@ end
 ---@return boolean
 function Render:section(position, by)
     local _, line = self.node:line(position, by)
-    return line and str.level(line) > 0 or false
+    return line and str.chars(line, '#') > 0 or false
 end
 
 return Render

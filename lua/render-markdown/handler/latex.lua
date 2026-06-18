@@ -35,14 +35,22 @@ function Handler:run(root, last)
     if not self.config.enabled then
         return {}
     end
+
     local cmds = env.commands(self.config.converter)
     if #cmds == 0 then
         log.add('debug', 'ConverterNotFound', self.config.converter)
         return {}
     end
+
     local node = Node.new(self.context.buf, root)
-    log.node('latex', node)
-    self.context.latex:add(node)
+    local count = str.chars(node.text, '$')
+    local include = (count <= 1 and self.config.inline)
+        or (count >= 2 and self.config.block)
+    if include then
+        log.node('latex', node)
+        self.context.latex:add(node)
+    end
+
     if last then
         local nodes = self.context.latex:get()
         local inputs = Handler.inputs(nodes)
@@ -58,6 +66,7 @@ function Handler:run(root, last)
             self:render(row, row_nodes)
         end
     end
+
     return self.marks:get()
 end
 

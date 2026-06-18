@@ -291,6 +291,10 @@ require('render-markdown').setup({
         -- Executable used to convert latex formula to rendered unicode.
         -- If a list is provided the commands run in order until the first success.
         converter = { 'utftex', 'latex2text' },
+        -- Render inline latex formulas.
+        inline = true,
+        -- Render block latex formulas.
+        block = true,
         -- Highlight for latex blocks.
         highlight = 'RenderMarkdownMath',
         -- Determines where latex formula is rendered relative to block.
