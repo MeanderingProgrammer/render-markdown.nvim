@@ -224,7 +224,10 @@ function Render:background(box)
     local win_col = 0
     if self.data.width == 'block' then
         padding:pad(vim.o.columns * 2)
-        win_col = box.margin + box.body + self:indent():size(self.data.level)
+        win_col = self.node.start_col
+            + box.margin
+            + box.body
+            + self:indent():size(self.data.level)
     end
     local col = self.node.start_col
     for row = self.node.start_row, self.node.end_row - 1 do
@@ -276,7 +279,7 @@ function Render:border(box, above)
     local width = self.data.width == 'block' and box.body or vim.o.columns
     local icon = above and self.config.above or self.config.below
 
-    local line = self:line():pad(box.margin)
+    local line = self:line():pad(self.node.start_col):pad(box.margin)
     line:rep(icon, box.padding, bg)
     line:rep(icon, prefix, fg)
     line:rep(icon, width - box.padding - prefix, bg)
