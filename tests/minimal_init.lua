@@ -12,7 +12,7 @@ end
 
 -- settings
 vim.o.columns = 80
-vim.o.lines = 40
+vim.o.lines = 60
 vim.o.tabstop = 4
 vim.o.wrap = false
 
