@@ -6,6 +6,7 @@ local str = require('render-markdown.lib.str')
 ---@class render.md.table.Data
 ---@field layout render.md.table.Layout
 ---@field delim render.md.Node
+---@field delim_width integer
 ---@field cols render.md.table.Col[]
 ---@field rows render.md.table.Row[]
 
@@ -29,6 +30,15 @@ local Alignment = {
 ---@field node render.md.Node
 ---@field pipes render.md.Node[]
 ---@field cells render.md.table.row.Cell[]
+---@field outer render.md.table.row.Outer
+
+---@class render.md.table.row.Outer
+---@field left boolean
+---@field right boolean
+
+---@class render.md.table.row.Bounds
+---@field start_col integer
+---@field end_col integer
 
 ---@class render.md.table.row.Cell
 ---@field node render.md.Node
@@ -42,6 +52,8 @@ local Alignment = {
 ---@class render.md.table.row.Parts
 ---@field pipes render.md.Node[]
 ---@field cells render.md.Node[]
+---@field bounds render.md.table.row.Bounds[]
+---@field outer render.md.table.row.Outer
 
 ---@class render.md.render.Table: render.md.Render
 ---@field private config render.md.table.Config
@@ -83,8 +95,8 @@ function Render:setup()
     ---@type render.md.table.Layout
     local layout = { col = delim:col(), valid = true }
 
-    local cols = self:parse_cols(delim)
-    if not cols then
+    local cols, delim_width = self:parse_cols(delim)
+    if not cols or not delim_width then
         return false
     end
 
@@ -120,14 +132,20 @@ function Render:setup()
         end
     end
 
-    self.data = { layout = layout, delim = delim, cols = cols, rows = rows }
+    self.data = {
+        layout = layout,
+        delim = delim,
+        delim_width = delim_width,
+        cols = cols,
+        rows = rows,
+    }
 
     return true
 end
 
 ---@private
 ---@param node render.md.Node
----@return render.md.table.Col[]?
+---@return render.md.table.Col[]?, integer?
 function Render:parse_cols(node)
     local parts = self:parse_row_parts(node, 'pipe_table_delimiter_cell')
     if not parts then
@@ -135,9 +153,8 @@ function Render:parse_cols(node)
     end
     local cols = {} ---@type render.md.table.Col[]
     for i, cell in ipairs(parts.cells) do
-        local start_col = parts.pipes[i].end_col
-        local end_col = parts.pipes[i + 1].start_col
-        local width = end_col - start_col
+        local bounds = parts.bounds[i]
+        local width = bounds.end_col - bounds.start_col
         assert(width >= 0, 'invalid table layout')
         if self.config.cell == 'padded' then
             width = math.max(width, self.config.min_width)
@@ -149,7 +166,9 @@ function Render:parse_cols(node)
             alignment = Render.alignment(cell),
         }
     end
-    return cols
+    local missing = (parts.outer.left and 0 or 1)
+        + (parts.outer.right and 0 or 1)
+    return cols, str.width(node.text) + missing
 end
 
 ---@private
@@ -181,9 +200,8 @@ function Render:parse_row(node, num_cols)
     local cells = {} ---@type render.md.table.row.Cell[]
     for i, cell in ipairs(parts.cells) do
         -- account for double width glyphs by replacing cell range with width
-        local start_col = parts.pipes[i].end_col
-        local end_col = parts.pipes[i + 1].start_col
-        local width = (end_col - start_col)
+        local bounds = parts.bounds[i]
+        local width = (bounds.end_col - bounds.start_col)
             - (cell.end_col - cell.start_col)
             + self.context:width(cell)
             + self.config.cell_offset({ node = cell:get() })
@@ -193,14 +211,19 @@ function Render:parse_row(node, num_cols)
             width = width,
             space = {
                 -- gap between the cell start and the pipe start
-                left = math.max(cell.start_col - start_col, 0),
+                left = math.max(cell.start_col - bounds.start_col, 0),
                 -- attached to the end of the cell itself
                 right = math.max(str.spaces('end', cell.text), 0),
             },
         }
     end
     ---@type render.md.table.Row
-    return { node = node, pipes = parts.pipes, cells = cells }
+    return {
+        node = node,
+        pipes = parts.pipes,
+        cells = cells,
+        outer = parts.outer,
+    }
 end
 
 ---@private
@@ -219,13 +242,35 @@ function Render:parse_row_parts(node, cell_type)
             log.unhandled(self.context.buf, 'markdown', 'cell', child.type)
         end
     end)
-    if #pipes == 0 or #cells == 0 or #pipes ~= #cells + 1 then
+    if #cells == 0 then
         return nil
     end
     table.sort(pipes)
     table.sort(cells)
+
+    local first_pipe = pipes[1]
+    local last_pipe = pipes[#pipes]
+    local outer = {
+        left = first_pipe ~= nil and first_pipe.start_col < cells[1].start_col,
+        right = last_pipe ~= nil
+            and last_pipe.start_col >= cells[#cells].end_col,
+    }
+    local num_outer = (outer.left and 1 or 0) + (outer.right and 1 or 0)
+    if #pipes ~= #cells - 1 + num_outer then
+        return nil
+    end
+
+    local bounds = {} ---@type render.md.table.row.Bounds[]
+    for i = 1, #cells do
+        local left = pipes[i - (outer.left and 0 or 1)]
+        local right = pipes[i + (outer.left and 1 or 0)]
+        bounds[i] = {
+            start_col = left and left.end_col or node.start_col,
+            end_col = right and right.start_col or node.end_col,
+        }
+    end
     ---@type render.md.table.row.Parts
-    return { pipes = pipes, cells = cells }
+    return { pipes = pipes, cells = cells, bounds = bounds, outer = outer }
 end
 
 ---@protected
@@ -290,6 +335,9 @@ function Render:row(row)
                 virt_text_pos = 'overlay',
             })
         end
+        if not row.outer.left then
+            self:outer(row, row.node.start_col, icon, highlight)
+        end
     end
 
     if vim.tbl_contains({ 'trimmed', 'padded' }, self.config.cell) then
@@ -326,11 +374,31 @@ function Render:row(row)
             end
         end
     elseif self.config.cell == 'overlay' then
+        local text = row.node.text:gsub('|', icon)
+        text = row.outer.left and text or icon .. text
+        text = row.outer.right and text or text .. icon
         self.marks:over(self.config, 'table_border', row.node, {
-            virt_text = { { row.node.text:gsub('|', icon), highlight } },
+            virt_text = { { text, highlight } },
             virt_text_pos = 'overlay',
         })
     end
+
+    if self.config.cell ~= 'overlay' and not row.outer.right then
+        self:outer(row, row.node.end_col, icon, highlight)
+    end
+end
+
+---@private
+---@param row render.md.table.Row
+---@param col integer
+---@param icon string
+---@param highlight string
+function Render:outer(row, col, icon, highlight)
+    self.marks:add(self.config, 'table_border', row.node.start_row, col, {
+        priority = 0,
+        virt_text = { { icon, highlight } },
+        virt_text_pos = 'inline',
+    })
 end
 
 ---Use low priority to include pipe marks
@@ -376,8 +444,10 @@ function Render:border()
             end
             return true
         elseif self.config.cell == 'overlay' then
-            -- want the underlying text widths to match
-            return str.width(row.node.text) == str.width(self.data.delim.text)
+            -- want the normalized rendered width to match
+            local missing = (row.outer.left and 0 or 1)
+                + (row.outer.right and 0 or 1)
+            return str.width(row.node.text) + missing == self.data.delim_width
         else
             return false
         end
