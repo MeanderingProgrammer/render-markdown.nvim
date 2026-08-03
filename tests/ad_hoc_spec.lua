@@ -90,4 +90,30 @@ describe('ad hoc', function()
         marks:add({ 0, 0 }, { 0, 16 }, util.conceal())
         util.assert_view(marks, { '' })
     end)
+
+    it('inline styles on one line', function()
+        util.setup.text({ '*a* **b** ~c~' })
+        util.assert_screen({ 'a b c' })
+    end)
+
+    it('inline styles across lines', function()
+        -- 3 shell prompts pair the 2nd '~' with the 3rd, striking everything
+        -- between them, the same goes for any odd number of style delimiters
+        local lines = {
+            '~/code/one',
+            '~/code/two',
+            '~/code/three',
+            '',
+            '*a',
+            'b*',
+            '',
+            '**c',
+            'd**',
+            '',
+            '/var/tmp/uid_65534',
+            '/var/tmp/uid_65534',
+        }
+        util.setup.text(lines)
+        util.assert_screen(lines)
+    end)
 end)

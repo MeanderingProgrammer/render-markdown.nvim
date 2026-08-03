@@ -173,9 +173,11 @@ function Conceal:tree(language, root)
             local row = Conceal.range(id, node, data)
             self:add(row, true)
         end
-        if data.conceal then
+        -- conceal can be set at the pattern level or on a particular capture
+        local conceal = data.conceal or data[id] and data[id].conceal
+        if conceal then
             local row, start_col, _, end_col = Conceal.range(id, node, data)
-            self:add(row, { start_col, end_col, data.conceal, 1 })
+            self:add(row, { start_col, end_col, conceal, 1 })
         end
     end)
 end

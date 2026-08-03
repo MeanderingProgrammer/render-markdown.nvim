@@ -14,6 +14,7 @@ M.queries = {}
 
 ---called from state on setup
 function M.setup()
+    M.patch_styles()
     for _, language in ipairs(state.file_types) do
         M.inject(language)
     end
@@ -44,6 +45,67 @@ function M.parse(language, query)
         M.queries[query] = result
     end
     return result
+end
+
+---@private
+---@type [string, string][]
+M.styles = {
+    { 'emphasis', 'markup.italic' },
+    { 'strong_emphasis', 'markup.strong' },
+    { 'strikethrough', 'markup.strikethrough' },
+}
+
+---inline styles are allowed to span lines, which mangles unrelated text such as
+---shell prompts containing '~', limit upstream highlights & conceals to one line
+---@private
+function M.patch_styles()
+    local query = ''
+    local files =
+        vim.treesitter.query.get_files('markdown_inline', 'highlights')
+    for _, file in ipairs(files) do
+        local f = assert(io.open(file, 'r'))
+        query = query .. f:read('*a') .. '\n'
+        f:close()
+    end
+
+    ---@param from string
+    ---@param to string
+    ---@return boolean
+    local function replace(from, to)
+        local start, stop = query:find(from, 1, true)
+        if not start then
+            return false
+        end
+        query = query:sub(1, start - 1) .. to .. query:sub(stop + 1)
+        return true
+    end
+
+    -- long strings keep '\n' as an escape for the query parser to handle
+    local highlight = [[
+((%s) @%s
+  (#not-lua-match? @%s "\n"))]]
+    local conceal = [[
+
+((%s (emphasis_delimiter) @conceal) @_style
+  (#not-lua-match? @_style "\n")
+  (#set! @conceal conceal ""))
+]]
+
+    -- delimiters are concealed for every style at once, drop them from that
+    -- pattern and conceal them per style, gated on the style being one line
+    local patched = replace('(emphasis_delimiter)', '')
+    for _, style in ipairs(M.styles) do
+        local node, capture = style[1], style[2]
+        local from = ('(%s) @%s'):format(node, capture)
+        local to = highlight:format(node, capture, capture)
+        patched = replace(from, to) and patched
+        query = query .. conceal:format(node)
+    end
+
+    -- all or nothing, a partial patch conceals delimiters that no longer exist
+    if patched then
+        pcall(vim.treesitter.query.set, 'markdown_inline', 'highlights', query)
+    end
 end
 
 ---@private
