@@ -806,18 +806,8 @@ end
 
 ---@private
 function Render:wrapped()
-    local visual = {} ---@type render.md.Line[]
-    for r, row in ipairs(self.data.rows) do
-        vim.list_extend(visual, self:row_wrapped_lines(row, r))
-        if r == 1 then
-            visual[#visual + 1] = self:delimiter_line(self:delimiter_text())
-        end
-    end
+    -- Top border (above first row)
     if self.config.border_enabled then
-        if #self.data.rows > 1 then
-            visual[#visual + 1] = self:border_line(false)
-        end
-
         local first = self.data.rows[1].node
         local line = self:border_line(true)
         local row, target = first:line('above', 1)
@@ -838,33 +828,78 @@ function Render:wrapped()
         end
     end
 
-    local nodes = { self.data.rows[1].node, self.data.delim } ---@type render.md.Node[]
-    for i = 2, #self.data.rows do
-        nodes[#nodes + 1] = self.data.rows[i].node
+    -- One visual group per buffer line so overflow virt_lines stay on that
+    -- row. Cursor j/k then jumps by each row's rendered height instead of
+    -- dumping all overflow onto the last table row.
+    ---@type { node: render.md.Node, lines: render.md.Line[] }[]
+    local groups = {}
+
+    -- Header
+    groups[#groups + 1] = {
+        node = self.data.rows[1].node,
+        lines = self:row_wrapped_lines(self.data.rows[1], 1),
+    }
+    -- Delimiter row
+    groups[#groups + 1] = {
+        node = self.data.delim,
+        lines = { self:delimiter_line(self:delimiter_text()) },
+    }
+    -- Body rows
+    for r = 2, #self.data.rows do
+        groups[#groups + 1] = {
+            node = self.data.rows[r].node,
+            lines = self:row_wrapped_lines(self.data.rows[r], r),
+        }
+    end
+
+    -- Bottom border rides with the last body/header group
+    if self.config.border_enabled and #self.data.rows > 1 then
+        local last_group = groups[#groups]
+        last_group.lines[#last_group.lines + 1] = self:border_line(false)
     end
 
     local win_width = env.win.width(self.context.win)
-    local slots = {} ---@type { row: integer, col: integer }[]
-    for _, node in ipairs(nodes) do
-        local _, buf_line = node:line('first', 0)
-        buf_line = buf_line or ''
-        if #buf_line > 0 then
-            self.marks:add(self.config, 'table_border', node.start_row, 0, {
-                end_row = node.start_row,
-                end_col = #buf_line,
-                conceal = '',
-            })
-        end
-        for _, col in ipairs(self:wrapped_slots(buf_line, win_width)) do
-            slots[#slots + 1] = { row = node.start_row, col = col }
-        end
+    for _, group in ipairs(groups) do
+        self:place_wrapped_group(group.node, group.lines, win_width)
+    end
+end
+
+---Conceal a buffer line and paint its visual lines onto that line's wrap
+---slots; remaining visual lines become virt_lines below the SAME row.
+---
+---Per-row attachment is required for cursor motion: the previous design pooled
+---all overflow virt_lines onto the last table row, so j/k between earlier rows
+---only moved one buffer line even when a row rendered as many screen lines.
+---
+---Wrap-slot overlays fill the natural screen rows of a long source line (which
+---still occupy height under wrap). virt_lines cover height beyond those slots.
+---virtual_lines stay visible under anti-conceal by default, so multi-line
+---height is preserved when the cursor is on the row.
+---@private
+---@param node render.md.Node
+---@param lines render.md.Line[]
+---@param win_width integer
+function Render:place_wrapped_group(node, lines, win_width)
+    local _, buf_line = node:line('first', 0)
+    buf_line = buf_line or ''
+    if #buf_line > 0 then
+        self.marks:add(self.config, 'table_border', node.start_row, 0, {
+            end_row = node.start_row,
+            end_col = #buf_line,
+            conceal = '',
+        })
     end
 
+    if #lines == 0 then
+        return
+    end
+
+    local slots = self:wrapped_slots(buf_line, win_width)
     local virt_lines = {} ---@type render.md.mark.Line[]
-    for i, line in ipairs(visual) do
-        local slot = slots[i]
-        if slot then
-            self.marks:add(self.config, 'table_border', slot.row, slot.col, {
+    for i, line in ipairs(lines) do
+        local col = slots[i]
+        if col then
+            self.marks:add(self.config, 'table_border', node.start_row, col, {
                 virt_text = line:get(),
                 virt_text_pos = 'overlay',
                 virt_text_win_col = 0,
@@ -876,12 +911,11 @@ function Render:wrapped()
         end
     end
     if #virt_lines > 0 then
-        local last = self.data.rows[#self.data.rows].node
         self.marks:add(
             self.config,
             'virtual_lines',
-            last.start_row,
-            last.end_col,
+            node.start_row,
+            node.end_col,
             {
                 virt_lines = virt_lines,
                 virt_lines_above = false,
