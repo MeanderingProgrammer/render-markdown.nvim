@@ -42,13 +42,24 @@ end
 ---@param body render.md.node.Body
 ---@return render.md.request.inline.Value[]
 function Inline:get(body)
+    return self:range(body.start_row, body.start_col, body.end_col)
+end
+
+---@param row integer
+---@param start_col integer
+---@param end_col integer
+---@return render.md.request.inline.Value[]
+function Inline:range(row, start_col, end_col)
     local result = {} ---@type render.md.request.inline.Value[]
-    local values = self.values[body.start_row] or {}
+    local values = self.values[row] or {}
     for _, value in ipairs(values) do
-        if body.start_col <= value.col and body.end_col > value.col then
+        if start_col <= value.col and end_col > value.col then
             result[#result + 1] = value
         end
     end
+    table.sort(result, function(a, b)
+        return a.col < b.col
+    end)
     return result
 end
 
