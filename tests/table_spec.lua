@@ -279,4 +279,72 @@ describe('table', function()
             '└───────────┴───────────┘',
         })
     end)
+
+    it('optional outer pipes', function()
+        util.setup.text({
+            '| Name | Description',
+            '| --- | ---',
+            '| A | Longer value',
+            '',
+            'Name | Description |',
+            '--- | --- |',
+            'A | Longer value |',
+            '',
+            'Name | Description',
+            '--- | ---',
+            'A | Longer value',
+        }, {
+            pipe_table = { style = 'normal' },
+        })
+
+        util.assert_screen({
+            '│ Name │ Description  │',
+            '├──────┼──────────────┤',
+            '│ A    │ Longer value │',
+            '',
+            '│ Name │ Description  │',
+            '├──────┼──────────────┤',
+            '│ A    │ Longer value │',
+            '',
+            '│ Name │ Description  │',
+            '├──────┼──────────────┤',
+            '│ A    │ Longer value │',
+        })
+    end)
+
+    it('optional outer pipes with full borders', function()
+        util.setup.text({
+            '',
+            'Name | Description',
+            '--- | ---',
+            'A | Longer value',
+            '',
+        })
+
+        util.assert_screen({
+            '┌──────┬──────────────┐',
+            '│ Name │ Description  │',
+            '├──────┼──────────────┤',
+            '│ A    │ Longer value │',
+            '└──────┴──────────────┘',
+        })
+    end)
+
+    for _, cell in ipairs({ 'raw', 'overlay' }) do
+        it(('optional outer pipes with %s cells'):format(cell), function()
+            util.setup.text({
+                'Name | Description',
+                '--- | ---',
+                'A | Longer value',
+            }, {
+                pipe_table = { cell = cell, style = 'normal' },
+            })
+
+            util.assert_screen({
+                '│Name │ Description│',
+                '├──────┼──────────────┤',
+                '│A │ Longer value│',
+            })
+        end)
+    end
 end)
