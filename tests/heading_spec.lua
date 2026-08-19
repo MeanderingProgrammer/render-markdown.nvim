@@ -21,6 +21,11 @@ describe('heading', function()
         'Ext Heading 2',
         'Ext Heading 2 Line 2',
         '---',
+        '',
+        '- # Heading',
+        '  - ## Heading 2',
+        '',
+        '> # Quote heading',
     }
 
     it('default', function()
@@ -43,6 +48,11 @@ describe('heading', function()
             '',
             '󰫎 󰲣 Ext Heading 2',
             '    Ext Heading 2 Line 2',
+            '',
+            '󰫎 ● 󰲡 Heading',
+            '󰫎   ○  󰲣 Heading 2',
+            '',
+            '󰫎 ▋ 󰲡 Quote heading',
         })
     end)
 
@@ -73,6 +83,15 @@ describe('heading', function()
             '',
             '󰫎 󰲣 Ext Heading 2',
             '    Ext Heading 2 Line 2',
+            '    ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
+            '󰫎 ● 󰲡 Heading',
+            '    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
+            '      ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
+            '󰫎   ○  󰲣 Heading 2',
+            '      ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
+            '    ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
+            '󰫎 ▋ 󰲡 Quote heading',
+            '    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
         })
     end)
 
@@ -103,6 +122,15 @@ describe('heading', function()
             '',
             '󰫎 󰲣 Ext Heading 2',
             '    Ext Heading 2 Line 2',
+            '    ▄▄▄▄▄▄▄▄▄',
+            '󰫎 ● 󰲡 Heading',
+            '    ▀▀▀▀▀▀▀▀▀',
+            '      ▄▄▄▄▄▄▄▄▄▄▄▄',
+            '󰫎   ○  󰲣 Heading 2',
+            '      ▀▀▀▀▀▀▀▀▀▀▀▀',
+            '    ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
+            '󰫎 ▋ 󰲡 Quote heading',
+            '    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
         })
     end)
 
@@ -126,6 +154,11 @@ describe('heading', function()
             '',
             '󰫎 󰲣 Ext Heading 2',
             '    Ext Heading 2 Line 2',
+            '',
+            '󰫎 ● 󰲡 Heading',
+            '󰫎   ○ 󰲣 Heading 2',
+            '',
+            '󰫎 ▋ 󰲡 Quote heading',
         })
     end)
 
@@ -161,6 +194,17 @@ describe('heading', function()
             '',
             '󰫎 󰲣 Ext Heading 2',
             '    Ext Heading 2 Line 2',
+            '',
+            '    ▄▄▄▄▄▄▄▄▄',
+            '󰫎 ● 󰲡 Heading',
+            '    ▀▀▀▀▀▀▀▀▀',
+            '      ▄▄▄▄▄▄▄▄▄▄▄▄',
+            '󰫎   ○  󰲣 Heading 2',
+            '      ▀▀▀▀▀▀▀▀▀▀▀▀',
+            '',
+            '    ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
+            '󰫎 ▋ 󰲡 Quote heading',
+            '    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
         })
     end)
 
@@ -191,6 +235,15 @@ describe('heading', function()
             '',
             '󰫎 󰲣 Ext Heading 2',
             '    Ext Heading 2 Line 2',
+            '    ▄▄▄▄▄▄▄▄▄',
+            '󰫎 ● 󰲡 Heading',
+            '    ▀▀▀▀▀▀▀▀▀',
+            '      ▄▄▄▄▄▄▄▄▄▄▄',
+            '󰫎   ○ 󰲣 Heading 2',
+            '      ▀▀▀▀▀▀▀▀▀▀▀',
+            '    ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
+            '󰫎 ▋ 󰲡 Quote heading',
+            '    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
         })
     end)
 
@@ -214,6 +267,11 @@ describe('heading', function()
             '',
             '󰫎 Ext Heading 2 󰲣',
             '  Ext Heading 2 Line 2',
+            '',
+            '󰫎 ● Heading 󰲡',
+            '󰫎   ○ Heading 2 󰲣',
+            '',
+            '󰫎 ▋ Quote heading 󰲡',
         })
     end)
 
@@ -244,6 +302,15 @@ describe('heading', function()
             '',
             '󰫎 Ext Heading 2 󰲣',
             '  Ext Heading 2 Line 2',
+            '    ▄▄▄▄▄▄▄▄▄▄',
+            '󰫎 ● Heading 󰲡',
+            '    ▀▀▀▀▀▀▀▀▀▀',
+            '      ▄▄▄▄▄▄▄▄▄▄▄▄',
+            '󰫎   ○ Heading 2 󰲣',
+            '      ▀▀▀▀▀▀▀▀▀▀▀▀',
+            '    ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
+            '󰫎 ▋ Quote heading 󰲡',
+            '    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
         })
     end)
 
@@ -267,6 +334,11 @@ describe('heading', function()
             '',
             '󰫎                              󰲣 Ext Heading 2',
             '                                 Ext Heading 2 Line 2',
+            '',
+            '󰫎 ●                                     󰲡 Heading',
+            '󰫎   ○                                    󰲣 Heading 2',
+            '',
+            '󰫎 ▋                                  󰲡 Quote heading',
         })
     end)
 
@@ -290,6 +362,11 @@ describe('heading', function()
             '',
             '󰫎 Ext Heading 2                                                               󰲣',
             '  Ext Heading 2 Line 2',
+            '',
+            '󰫎 ● Heading                                                                   󰲡',
+            '󰫎   ○ Heading 2                                                               󰲣',
+            '',
+            '󰫎 ▋ Quote heading                                                             󰲡',
         })
     end)
 end)
