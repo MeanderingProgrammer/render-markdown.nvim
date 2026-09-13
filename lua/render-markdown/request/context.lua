@@ -5,9 +5,10 @@ local str = require('render-markdown.lib.str')
 ---@field win integer
 ---@field config render.md.buf.Config
 ---@field view render.md.request.View
----@field conceal render.md.request.Conceal
 ---@field callout render.md.request.Callout
 ---@field checkbox render.md.request.Checkbox
+---@field conceal render.md.request.Conceal
+---@field highlights render.md.request.Highlights
 ---@field inline render.md.request.Inline
 ---@field latex render.md.request.Latex
 ---@field used render.md.request.Used
@@ -25,10 +26,11 @@ function Context.new(buf, win, config, view)
     self.win = win
     self.config = config
     self.view = view
-    self.conceal =
-        require('render-markdown.request.conceal').new(buf, win, view)
     self.callout = require('render-markdown.request.callout').new()
     self.checkbox = require('render-markdown.request.checkbox').new()
+    self.conceal = require('render-markdown.request.conceal').new(self)
+    self.highlights =
+        require('render-markdown.request.highlights').new(buf, view)
     self.inline = require('render-markdown.request.inline').new()
     self.latex = require('render-markdown.request.latex').new()
     self.used = require('render-markdown.request.used').new()

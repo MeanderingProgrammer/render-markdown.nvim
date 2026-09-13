@@ -6,6 +6,8 @@
 
 - checkbox background not matching dynamic highlights [#679](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/679)
   [4663eb3](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4663eb3ecd538bd5062628fb6d95bbe6bdca78f6)
+- character splitting for checkbox icon
+  [4286b83](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4286b83f505f3c0e2ca04763a77c9dda0d732340)
 
 ## 8.13.0 (2026-06-18)
 
