@@ -133,15 +133,12 @@ end
 ---@param node TSNode
 ---@return integer, integer, integer, integer
 function Highlights.range(id, data, node)
-    local range = (data[id] or {}).range
-    if range then
-        return range[1], range[2], range[3], range[4]
-    end
-    range = data.range
-    if range then
-        return range[1], range[2], range[3], range[4]
-    end
-    return node:range()
+    local range = (data[id] or {}).range or data.range or { node:range() }
+    local offset = (data[id] or {}).offset or data.offset or { 0, 0, 0, 0 }
+    return range[1] + tonumber(offset[1]),
+        range[2] + tonumber(offset[2]),
+        range[3] + tonumber(offset[3]),
+        range[4] + tonumber(offset[4])
 end
 
 return Highlights
