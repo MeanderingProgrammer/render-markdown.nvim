@@ -131,7 +131,12 @@ function Marks:run_update(mark)
     if opts.conceal then
         local end_col = assert(opts.end_col, 'conceal requires end_col')
         self.context.highlights:add(row, {
-            conceal = { start_col, end_col, opts.conceal, 1 },
+            conceal = {
+                start_col,
+                end_col,
+                replacement = opts.conceal,
+                blocks = 1,
+            },
         })
     end
     if opts.virt_text_pos == 'inline' then

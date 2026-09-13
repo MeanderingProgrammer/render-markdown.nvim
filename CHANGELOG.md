@@ -6,8 +6,8 @@
 
 - checkbox background not matching dynamic highlights [#679](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/679)
   [4663eb3](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4663eb3ecd538bd5062628fb6d95bbe6bdca78f6)
-- character splitting for checkbox icon
-  [4286b83](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4286b83f505f3c0e2ca04763a77c9dda0d732340)
+- character splitting for checkbox icon [4286b83](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4286b83f505f3c0e2ca04763a77c9dda0d732340)
+- concealed backslash escape in tables [facc647](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/facc647f5d8110e3f20e8f793ef792fe6a78d444)
 
 ## 8.13.0 (2026-06-18)
 
@@ -366,8 +366,10 @@
 - allow html tags to be replaced with icons [#336](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/336)
   [6d446de](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/6d446de33937633bc2104f45c943f4fae632b822)
 - `autocommand` events and wiki link `body` customization [#228](https://github.com/MeanderingProgrammer/render-markdown.nvim/discussions/228)
-  [#345](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/345) [0df6719](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/0df6719abc3b547bc5b7111a750d8d7e035a7234)
-  [#350](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/350) [a53ac54](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/a53ac54cebaad8dff37015d9b4c2d3b8c7d122ae)
+  [#345](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/345)
+  [0df6719](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/0df6719abc3b547bc5b7111a750d8d7e035a7234)
+  [#350](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/350)
+  [a53ac54](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/a53ac54cebaad8dff37015d9b4c2d3b8c7d122ae)
 - indent mode icon support [#343](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/343)
   [21623a9](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/21623a9ded5a5f3d1fbd8626a69c174fbeb0543e)
   [33673e6](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/33673e630187669d52ec4f813b84d1d808e4619d)
@@ -426,8 +428,8 @@ function(ctx)
 end
 ```
 
-If you use the same parameters many times in the function and don't want to add the
-`ctx.` prefix everywhere you can add a line at the top to define local variables
+If you use the same parameters many times in the function and don't want to add
+the `ctx.` prefix everywhere you can add a line at the top to define local variables
 with the same name as before and keep the rest of the function body unchanged:
 
 ```lua
@@ -499,7 +501,8 @@ The fields impacted are:
 - nvim-cmp completion source [3d2dc15](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/3d2dc15542e56671dd14dfbfff63434ec21d8fcd)
 - blink.cmp completion source [3d2dc15](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/3d2dc15542e56671dd14dfbfff63434ec21d8fcd)
 - coq_nvim completion source [#258](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/258)
-  [#259](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/259) [75cdf9d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/75cdf9d2b049f0e27440bd78cc52b39acd15cd6e)
+  [#259](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/259)
+  [75cdf9d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/75cdf9d2b049f0e27440bd78cc52b39acd15cd6e)
 - dash width and margin percent [#272](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/272)
 - include icon provider warning in health check [032c640](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/032c6401b6f076adeb704bb8a3ac174fb813fbdb)
 - inline code padding [#274](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/274)
@@ -857,8 +860,8 @@ The fields impacted are:
 ### Bug Fixes
 
 - Repo has been renamed `markdown.nvim` -> `render-markdown.nvim`, one can argue
-  this was a long standing bug. Everything internally & externally already used the
-  `render markdown` naming convention except for the repo itself. Since Github
+  this was a long standing bug. Everything internally & externally already used
+  the `render markdown` naming convention except for the repo itself. Since Github
   treats the URLs the same and redirects between the 2 there should be no breaking
   changes from this. [aeb5cec](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/aeb5cec617c3bd5738ab82ba2c3f9ccdc27656c2)
   [090ea1e](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/090ea1e9913457fa8848c7afdbfa3b73bb7c7ac8)
@@ -954,7 +957,8 @@ The fields impacted are:
 
 - Improve handling conealed text for tables, code blocks, and headings. Add 'padded'
   cell style which fills in concealled width. Inline headings when there is no space.
-  [#49](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/49) [#50](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/50)
+  [#49](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/49)
+  [#50](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/50)
   [9b7fdea](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/9b7fdea8058d48285585c5d82df16f0c829b2384)
   [5ce3566](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/5ce35662725b1024c6dddc8d0bc03befc5abc878)
 - Add thin border style for code blocks [#62](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/62)
@@ -963,7 +967,8 @@ The fields impacted are:
   [501e5e0](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/501e5e01493204926aa4e2a12f97b7289636b136)
 - Add signs for headings and code blocks [7acc1bf](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/7acc1bf0ecc207411ad6dcf8ecf02f76fe8cbe13)
 - Allow signs to be disabled based on buftype, improve highlight color [#58](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/58)
-  [#61](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/61) [d398f3e](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/d398f3e9f21d88e1de51594cd4a78f56a3a3eb9e)
+  [#61](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/61)
+  [d398f3e](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/d398f3e9f21d88e1de51594cd4a78f56a3a3eb9e)
 - Add defaults for all Obsidian callouts [be3f6e3](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/be3f6e3c6ce38399464a9c3e98309901c06ca80e)
 - Add code style 'language', adds icon without background [#52](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/52)
   [308f9a8](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/308f9a826e371e33512234e4604cf581fe1d4ef8)
@@ -1107,8 +1112,8 @@ The fields impacted are:
 
 ### ⚠ BREAKING CHANGES
 
-- Allow all window options to be configurable between rendered and non rendered view
-  [#31](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/31)
+- Allow all window options to be configurable between rendered and non rendered
+  view [#31](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/31)
   [258da4b](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/258da4bcdecdc83318a515fc4c6c3e18c0c65a61)
 - In order to fix:
   - `conceal = { default = <v1>, rendered = <v2> }` ->

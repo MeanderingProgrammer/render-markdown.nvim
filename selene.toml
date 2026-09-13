@@ -2,3 +2,6 @@ std = "neovim"
 
 [config]
 empty_if = { comments_count = true }
+
+[rules]
+mixed_table = "allow"

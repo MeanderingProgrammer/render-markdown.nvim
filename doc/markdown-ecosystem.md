@@ -8,16 +8,16 @@ Below is a categorized (incomplete) list of available plugins.
 
 ## Render in Neovim
 
-Using any of these plugins with this one will likely lead to undesired behavior as
-different functionality will clash.
+Using any of these plugins with this one will likely lead to undesired behavior
+as different functionality will clash.
 
 - [lukas-reineke/headlines.nvim](https://github.com/lukas-reineke/headlines.nvim)
   Same high level idea and starting point of this plugin, different feature sets
 - [epwalsh/obsidian.nvim](https://github.com/epwalsh/obsidian.nvim) While this plugin
   has many more `obsidian` related features it also provides a UI enabled by
   default that clashes with this plugin
-- [OXY2DEV/markview.nvim](https://github.com/OXY2DEV/markview.nvim) An offshoot of
-  this plugin with different style choices
+- [OXY2DEV/markview.nvim](https://github.com/OXY2DEV/markview.nvim) An offshoot
+  of this plugin with different style choices
 
 ## Render in Browser
 

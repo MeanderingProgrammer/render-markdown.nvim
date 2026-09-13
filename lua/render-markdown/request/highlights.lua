@@ -9,8 +9,8 @@ local interval = require('render-markdown.lib.interval')
 ---@field conceal? render.md.request.highlights.Conceal
 
 ---@class render.md.request.highlights.Conceal: render.md.Range
----@field [3] string replacement
----@field [4] integer blocks
+---@field replacement string
+---@field blocks integer
 
 ---@class render.md.request.Highlights
 ---@field private buf integer
@@ -61,8 +61,8 @@ function Highlights.coalesce_conceals(conceals)
         local conceal, last = conceals[i], result[#result]
         if conceal[1] <= last[2] then
             last[2] = math.max(last[2], conceal[2])
-            last[3] = last[3] .. conceal[3]
-            last[4] = last[4] + conceal[4]
+            last.replacement = last.replacement .. conceal.replacement
+            last.blocks = last.blocks + conceal.blocks
         else
             result[#result + 1] = conceal
         end
@@ -70,14 +70,14 @@ function Highlights.coalesce_conceals(conceals)
     return result
 end
 
----@param body render.md.node.Body
+---@param row integer
 ---@return render.md.request.highlights.Line
-function Highlights:line(body)
+function Highlights:line(row)
     if not self.computed then
         self.computed = true
         self:compute()
     end
-    local line = self.lines[body.start_row]
+    local line = self.lines[row]
     if not line then
         line = { hidden = false, conceals = {} }
     end
@@ -121,7 +121,12 @@ function Highlights:tree(language, root)
         if data.conceal then
             local row, start_col, _, end_col = Highlights.range(id, data, node)
             self:add(row, {
-                conceal = { start_col, end_col, data.conceal, 1 },
+                conceal = {
+                    start_col,
+                    end_col,
+                    replacement = data.conceal,
+                    blocks = 1,
+                },
             })
         end
     end)

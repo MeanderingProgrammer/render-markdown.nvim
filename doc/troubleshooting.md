@@ -35,8 +35,8 @@ the `filetype` of the current buffer and make sure it is in that list:
 
 This is only a potential issue if you are using a distribution, as opposed to your
 own configuration. The configuration for this plugin could be set by the distribution
-to some default the author prefers. So the settings you think you are using are not
-necessarily the only ones be used.
+to some default the author prefers. So the settings you think you are using are
+not necessarily the only ones be used.
 
 Run `:RenderMarkdown config`, which will output only the non-default values being
 used, you might be surprised by what you find.

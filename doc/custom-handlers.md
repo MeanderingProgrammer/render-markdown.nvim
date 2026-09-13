@@ -49,8 +49,8 @@ The `parse` function takes a `ctx` parameter whose fields are:
 - `root`: The root treesitter node for the specified language
 - `last`: Whether this is the last treesitter root for the specified language
 
-The `extends` parameter defines whether the builtin handler should still be run in
-conjunction with this one. Defaults to `false`.
+The `extends` parameter defines whether the builtin handler should still be run
+in conjunction with this one. Defaults to `false`.
 
 This is a high level interface, as such creating, parsing, and iterating through
 a treesitter query is entirely up to the user if the functionality they want needs
@@ -68,9 +68,9 @@ For each `mark` in the return value the fields mean:
 ## Example 1: Disable a Builtin
 
 By not specifying the `extends` field and having the `parse` implementation return
-an empty table we can disable a builtin handler. Though this has little benefit and
-can be accomplished in other ways like setting `{ latex = { enabled = false } }`
-for `latex`.
+an empty table we can disable a builtin handler. Though this has little benefit
+and can be accomplished in other ways like setting
+`{ latex = { enabled = false } }` for `latex`.
 
 Still as a toy example disabling the `latex` handler can be done with:
 

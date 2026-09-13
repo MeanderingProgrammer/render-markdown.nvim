@@ -120,7 +120,12 @@ function Render:setup()
         end
     end
 
-    self.data = { layout = layout, delim = delim, cols = cols, rows = rows }
+    self.data = {
+        layout = layout,
+        delim = delim,
+        cols = cols,
+        rows = rows,
+    }
 
     return true
 end
@@ -294,42 +299,47 @@ function Render:row(row)
 
     if vim.tbl_contains({ 'trimmed', 'padded' }, self.config.cell) then
         for i, cell in ipairs(row.cells) do
-            local col = self.data.cols[i]
-            local node = cell.node
-            local space = cell.space
-            local fill = col.width - cell.width
-            -- delim(20) : --------------------
-            -- col(4,7,2): ----XXXXXXX--
-            -- fill(7)   :              _______
-            if not self.context.conceal:enabled() then
-                -- result: ----XXXXXXX--_______
-                -- without concealing it is impossible to do full alignment
-                self:shift(node, 'right', fill)
-            elseif col.alignment == Alignment.center then
-                -- (7 + 2 - 4) // 2 = 5 // 2 = 2 -> move two spaces to the right
-                -- result: __----XXXXXXX--_____
-                local shift = math.floor((fill + space.right - space.left) / 2)
-                self:shift(node, 'left', shift)
-                self:shift(node, 'right', fill - shift)
-            elseif col.alignment == Alignment.right then
-                -- 2 - 1 = 1 -> conceal one space on right side
-                -- result: -_______----XXXXXXX-
-                local shift = space.right - self.config.padding
-                self:shift(node, 'left', fill + shift)
-                self:shift(node, 'right', -shift)
-            else
-                -- 4 - 1 = 3 -> conceal three spaces on left side
-                -- result: -XXXXXXX--_______---
-                local shift = space.left - self.config.padding
-                self:shift(node, 'left', -shift)
-                self:shift(node, 'right', fill + shift)
-            end
+            local left, right = self:shifts(self.data.cols[i], cell)
+            self:shift(cell.node, 'left', left)
+            self:shift(cell.node, 'right', right)
         end
     elseif self.config.cell == 'overlay' then
         self.marks:over(self.config, 'table_border', row.node, {
             virt_text = { { row.node.text:gsub('|', icon), highlight } },
             virt_text_pos = 'overlay',
         })
+    end
+end
+
+---@private
+---@param col render.md.table.Col
+---@param cell render.md.table.row.Cell
+---@return integer, integer
+function Render:shifts(col, cell)
+    local space = cell.space
+    local fill = col.width - cell.width
+    -- delim(20) : --------------------
+    -- col(4,7,2): ----XXXXXXX--
+    -- fill(7)   :              _______
+    if not self.context.conceal:enabled() then
+        -- result: ----XXXXXXX--_______
+        -- without concealing it is impossible to do full alignment
+        return 0, fill
+    elseif col.alignment == Alignment.center then
+        -- (7 + 2 - 4) // 2 = 5 // 2 = 2 -> move two spaces to the right
+        -- result: __----XXXXXXX--_____
+        local shift = math.floor((fill + space.right - space.left) / 2)
+        return shift, fill - shift
+    elseif col.alignment == Alignment.right then
+        -- 2 - 1 = 1 -> conceal one space on right side
+        -- result: -_______----XXXXXXX-
+        local shift = space.right - self.config.padding
+        return fill + shift, -shift
+    else
+        -- 4 - 1 = 3 -> conceal three spaces on left side
+        -- result: -XXXXXXX--_______---
+        local shift = space.left - self.config.padding
+        return -shift, fill + shift
     end
 end
 

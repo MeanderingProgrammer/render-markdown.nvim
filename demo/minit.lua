@@ -40,7 +40,6 @@ local icons = require('mini.icons')
 icons.setup({})
 icons.mock_nvim_web_devicons()
 
--- selene: allow(mixed_table)
 require('lualine').setup({
     sections = {
         lualine_a = { 'mode' },

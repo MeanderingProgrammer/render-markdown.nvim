@@ -64,7 +64,8 @@ function Conceal:get(body)
                 overlap[1] - target[1] + 1,
                 overlap[2] - target[1]
             )
-            local width = str.width(text) - self:width(conceal[3], conceal[4])
+            local concealed = self:width(conceal.replacement, conceal.blocks)
+            local width = str.width(text) - concealed
             result = result + width
         end
     end
@@ -75,7 +76,7 @@ end
 ---@param body render.md.node.Body
 ---@return render.md.request.highlights.Line
 function Conceal:line(body)
-    return self.context.highlights:line(body)
+    return self.context.highlights:line(body.start_row)
 end
 
 return Conceal

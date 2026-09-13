@@ -12,8 +12,8 @@ This problem manifests in many different ways and is particularly impactful when
 rendering tables with links. The result will often be what appear like random line
 breaks, and overall "ugly" results.
 
-Unfortunately this problem stems from how neovim handles concealed text and line
-wrapping and there are really no options available to plugins to resolve this problem.
+This problem stems from how neovim handles character-level concealment and line
+wrapping. Concealing more characters cannot remove those screen lines.
 Worse yet the issue seems incredibly complicated and unlikely to be solved any time
 soon [ISSUE #14409](https://github.com/neovim/neovim/issues/14409).
 
@@ -34,8 +34,8 @@ and ends at specific columns. So instead to achieve the effect we combine 2 high
 
 Why does it work like this? To explain that lets see how else we could implement
 this. The starting point would be to avoid highlighting the entire line, so we don't
-then need to hide the highlight. This part is easy, just remove `hl_eol = true` from
-the first mark, done!
+then need to hide the highlight. This part is easy, just remove `hl_eol = true`
+from the first mark, done!
 
 Now we have all the inner text highlighted with the background, so the problem is
 now to extend each one of these so it reaches our target column.
@@ -45,18 +45,18 @@ to figure out how long to make each line. Well, unfortunately `eol` does not mea
 right at the end of the line, there's actually a space that gets added before the
 mark starts that we cannot get rid of, so this one is a non-starter.
 
-Your second thought might be to use `virt_text_win_col`, but set it to be right after
-each line, after that it's the same as the previous approach. To make this work we
-need to compute the width of each line exactly. If we make it one too large we'll
-have an empty space, too small and we'll cut off text in the code block. To do this
-correctly we'll need to properly handle concealed ranges for all of the code blocks.
-This isn't impossible but it is slow and error prone since we also need to handle
-the odd case where another `markdown` block is nested.
+Your second thought might be to use `virt_text_win_col`, but set it to be right
+after each line, after that it's the same as the previous approach. To make this
+work we need to compute the width of each line exactly. If we make it one too large
+we'll have an empty space, too small and we'll cut off text in the code block. To
+do this correctly we'll need to properly handle concealed ranges for all of the
+code blocks. This isn't impossible but it is slow and error prone since we also
+need to handle the odd case where another `markdown` block is nested.
 
 To avoid all this additional complexity we take the approach of using 2 highlights
-which works because the simple string width calculation is if anything going to be
-an over-estimate which is not really a big deal, just adds some extra padding in
-the worst case but the block remains contiguous.
+which works because the simple string width calculation is if anything going to
+be an over-estimate which is not really a big deal, just adds some extra padding
+in the worst case but the block remains contiguous.
 
 The `colorcolumn` will also be missing on any `virt_lines` marks. This applies to
 the lines above and below pipe tables, heading borders, latex formulas, and potentially
