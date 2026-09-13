@@ -97,15 +97,16 @@ end
 
 ---@param kind 'checked'|'unchecked'|'todo'
 ---@param space integer
+---@param icon? string
 ---@return vim.api.keyset.set_extmark
-function M.checkbox(kind, space)
+function M.checkbox(kind, space, icon)
     local line = {} ---@type render.md.mark.Line
     if kind == 'checked' then
-        line[#line + 1] = { '󰱒 ', 'RmChecked' }
+        line[#line + 1] = { icon or '󰱒 ', 'RmChecked' }
     elseif kind == 'unchecked' then
-        line[#line + 1] = { '󰄱 ', 'RmUnchecked' }
+        line[#line + 1] = { icon or '󰄱 ', 'RmUnchecked' }
     elseif kind == 'todo' then
-        line[#line + 1] = { '󰥔 ', 'RmTodo' }
+        line[#line + 1] = { icon or '󰥔 ', 'RmTodo' }
     end
     if space > 0 then
         line[#line + 1] = { (' '):rep(space), 'RmPadding' }

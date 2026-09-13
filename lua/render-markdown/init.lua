@@ -141,15 +141,18 @@ end
 function M.resolve_config(user)
     local preset = require('render-markdown.lib.presets').get(user)
     local config = vim.tbl_deep_extend('force', M.default, preset, user)
-    -- section indentation is built to support headings
-    if config.indent.enabled then
-        config.pipe_table.border_virtual = true
-    end
-    -- override settings incompatible with neovim version with compatible alternatives
+
+    -- override settings that are incompatible with neovim version
     local compat = require('render-markdown.lib.compat')
     if config.code.border == 'hide' and not compat.has_11 then
         config.code.border = 'thin'
     end
+
+    -- override settings that are incompatible with other settings
+    if config.indent.enabled then
+        config.pipe_table.border_virtual = true
+    end
+
     -- use lazy.nvim file type configuration if available and no user value is specified
     if not user.file_types then
         local lazy_file_types = require('render-markdown.lib.env').lazy('ft')
@@ -157,6 +160,7 @@ function M.resolve_config(user)
             config.file_types = lazy_file_types
         end
     end
+
     return config
 end
 

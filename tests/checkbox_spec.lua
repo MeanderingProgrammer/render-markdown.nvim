@@ -33,4 +33,19 @@ describe('checkbox', function()
             '● Todo - Checkbox',
         })
     end)
+
+    it('handles character splitting', function()
+        util.setup.text({
+            '- [ ] Unchecked Checkbox',
+        }, {
+            checkbox = { unchecked = { icon = 'é' } },
+        })
+        local marks = util.marks()
+        marks:add({ 0, 0 }, { 0, 2 }, util.conceal())
+        marks:add(0, 2, util.checkbox('unchecked', 1, 'é'))
+        marks:add({ 0, 0 }, { 4, 6 }, util.conceal())
+        util.assert_view(marks, {
+            'é Unchecked Checkbox',
+        })
+    end)
 end)

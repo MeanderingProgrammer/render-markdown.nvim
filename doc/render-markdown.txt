@@ -1,5 +1,5 @@
 *render-markdown.txt*                       Improve viewing Markdown in Neovim
-                               For NVIM v0.12.4    Last change: 2026 August 11
+                            For NVIM v0.12.5    Last change: 2026 September 13
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*

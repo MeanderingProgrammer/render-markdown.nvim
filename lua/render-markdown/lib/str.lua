@@ -10,16 +10,19 @@ function M.split(s, sep, trimempty)
 end
 
 ---@param s string
+---@return string[]
+function M.chars(s)
+    return vim.fn.split(s, [[\zs]])
+end
+
+---@param s string
 ---@param i integer 1-based inclusive
 ---@param j integer 1-based inclusive
 ---@return string
 function M.sub(s, i, j)
-    local bytes = vim.str_utf_pos(s)
     local col = 1
     local result = ''
-    for k, start_byte in ipairs(bytes) do
-        local end_byte = k < #bytes and bytes[k + 1] - 1 or #s
-        local char = s:sub(start_byte, end_byte)
+    for _, char in ipairs(M.chars(s)) do
         local width = M.width(char)
         if col >= i and col + width - 1 <= j then
             result = result .. char
@@ -29,11 +32,11 @@ function M.sub(s, i, j)
     return result
 end
 
----number of a specific character at the start of the string
+---number of a specific character at the start of a string
 ---@param s string
 ---@param ch string
 ---@return integer
-function M.chars(s, ch)
+function M.char_count(s, ch)
     local match = s:match('^%s*(' .. vim.pesc(ch) .. '+)')
     return match and #match or 0
 end

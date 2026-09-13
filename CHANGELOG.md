@@ -2,6 +2,11 @@
 
 ## Pre-release
 
+### Bug Fixes
+
+- checkbox background not matching dynamic highlights [#679](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/679)
+  [4663eb3](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4663eb3ecd538bd5062628fb6d95bbe6bdca78f6)
+
 ## 8.13.0 (2026-06-18)
 
 ### Features

@@ -1,3 +1,5 @@
+local str = require('render-markdown.lib.str')
+
 ---@class render.md.debug.Range
 ---@field [1] integer
 ---@field [2]? integer
@@ -128,14 +130,13 @@ end
 ---@param text string
 ---@return string
 function Mark.text(text)
-    local chars = vim.fn.str2list(text) ---@type integer[]
-    local first, same = chars[1], true
+    local chars = str.chars(text)
+    local same = true
     for _, char in ipairs(chars) do
-        same = same and (first == char)
+        same = same and (char == chars[1])
     end
-    if #chars > 1 and same then
-        local char = vim.fn.nr2char(first)
-        return ('rep(%s, %d)'):format(char, #chars)
+    if #chars > 9 and same then
+        return ('rep(%s, %d)'):format(chars[1], #chars)
     else
         return text
     end

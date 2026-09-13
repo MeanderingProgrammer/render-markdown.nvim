@@ -43,7 +43,7 @@ function Handler:run(root, last)
     end
 
     local node = Node.new(self.context.buf, root)
-    local count = str.chars(node.text, '$')
+    local count = str.char_count(node.text, '$')
     local include = (count <= 1 and self.config.inline)
         or (count >= 2 and self.config.block)
     if include then

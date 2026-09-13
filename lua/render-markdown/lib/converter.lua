@@ -1,8 +1,11 @@
+local str = require('render-markdown.lib.str')
+
 ---@class render.md.Converter
 local M = {}
 
 -- stylua: ignore
 ---@private
+---@type table<string, string|nil>
 M.superscripts = {
     [' '] = ' ', ['('] = '⁽', [')'] = '⁾',
     ['+'] = '⁺', ['-'] = '⁻', ['='] = '⁼',
@@ -29,7 +32,7 @@ M.superscripts = {
 ---@return string?
 function M.superscript(s)
     local chars = {} ---@type string[]
-    for char in s:gmatch('.') do
+    for _, char in ipairs(str.chars(s)) do
         char = M.superscripts[char]
         if not char then
             return nil
