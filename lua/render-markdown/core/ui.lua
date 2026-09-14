@@ -168,10 +168,17 @@ end
 
 ---@private
 function Updater:display()
+    local cursor = vim.api.nvim_win_get_cursor(self.win)
     local range = self:hidden()
     self.decorator:display(M.ns, function(extmark)
         return self:hide(extmark, range)
     end)
+    if env.valid(self.buf, self.win) then
+        local current = vim.api.nvim_win_get_cursor(self.win)
+        if not vim.deep_equal(current, cursor) then
+            vim.api.nvim_win_set_cursor(self.win, cursor)
+        end
+    end
     state.on.render({ buf = self.buf, win = self.win })
 end
 

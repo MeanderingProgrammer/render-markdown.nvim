@@ -385,6 +385,20 @@ describe('table wrapping', function()
         util.assert_screen(mixed_rendered)
     end)
 
+    it('motion into wrapped row preserves cursor', function()
+        util.setup.text(mixed, { pipe_table = { cell = 'trimmed' } })
+
+        vim.api.nvim_win_set_cursor(0, { 7, 0 })
+        vim.cmd('doautocmd CursorMoved')
+        vim.wait(0)
+        util.assert_screen(mixed_rendered)
+
+        vim.cmd('normal! k')
+        vim.cmd('doautocmd CursorMoved')
+        vim.wait(0)
+        assert.same({ 6, 0 }, vim.api.nvim_win_get_cursor(0))
+    end)
+
     it('cursor on wrapped row with nowrap', function()
         vim.o.wrap = false
         util.setup.text(mixed, { pipe_table = { cell = 'trimmed' } })
