@@ -32,6 +32,7 @@ function M.mock(command, outputs)
     end)
     stub.new(vim, 'system', function(cmd, opts)
         assert.same({ command }, cmd)
+        assert.same({ PYTHONIOENCODING = 'utf-8' }, opts.env)
         local output = outputs[opts.stdin]
         assert.not_nil(output, ('missing output: %s'):format(opts.stdin))
         return Task.new(table.concat(output, '\n') .. '\n')
