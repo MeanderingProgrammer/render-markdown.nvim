@@ -17,6 +17,9 @@ wrapping. Concealing more characters cannot remove those screen lines.
 Worse yet the issue seems incredibly complicated and unlikely to be solved any time
 soon [ISSUE #14409](https://github.com/neovim/neovim/issues/14409).
 
+For tables `pipe_table.wrap = true` provides an alternative on Neovim 0.11+ by
+completely replacing the lines with virtual lines.
+
 ## `block` Width Removes Column Features
 
 [ISSUE #385](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/385)

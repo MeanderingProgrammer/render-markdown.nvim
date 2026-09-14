@@ -40,12 +40,14 @@ function Inline:width(body)
 end
 
 ---@param body render.md.node.Body
+---@param include_end? boolean
 ---@return render.md.request.inline.Value[]
-function Inline:get(body)
+function Inline:get(body, include_end)
     local result = {} ---@type render.md.request.inline.Value[]
     local values = self.values[body.start_row] or {}
     for _, value in ipairs(values) do
-        if body.start_col <= value.col and body.end_col > value.col then
+        local end_col = body.end_col + (include_end and 1 or 0)
+        if value.col >= body.start_col and value.col < end_col then
             result[#result + 1] = value
         end
     end

@@ -147,10 +147,16 @@ function M.resolve_config(user)
     if config.code.border == 'hide' and not compat.has_11 then
         config.code.border = 'thin'
     end
+    if config.pipe_table.wrap and not compat.has_11 then
+        config.pipe_table.wrap = false
+    end
 
     -- override settings that are incompatible with other settings
     if config.indent.enabled then
         config.pipe_table.border_virtual = true
+    end
+    if vim.tbl_contains({ 'raw', 'overlay' }, config.pipe_table.cell) then
+        config.pipe_table.wrap = false
     end
 
     -- use lazy.nvim file type configuration if available and no user value is specified

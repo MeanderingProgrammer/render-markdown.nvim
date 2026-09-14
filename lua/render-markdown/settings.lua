@@ -1634,6 +1634,7 @@ M.pipe_table = {}
 ---@class (exact) render.md.table.Config: render.md.base.Config
 ---@field preset render.md.table.Preset
 ---@field cell render.md.table.Cell
+---@field wrap boolean
 ---@field cell_offset fun(ctx: render.md.table.cell.Context): integer
 ---@field padding integer
 ---@field min_width integer
@@ -1689,6 +1690,8 @@ M.pipe_table.default = {
     -- | padded  | raw + cells are padded to maximum visual width for each column             |
     -- | trimmed | padded except empty space is subtracted from visual width calculation      |
     cell = 'padded',
+    -- Fit wide tables to the current window by wrapping individual cells.
+    wrap = true,
     -- Adjust the computed width of table cells using custom logic.
     cell_offset = function()
         return 0
@@ -1729,6 +1732,7 @@ function M.pipe_table.schema()
     return M.base.schema({
         preset = { enum = M.pipe_table.preset },
         cell = { enum = M.pipe_table.cell },
+        wrap = { type = 'boolean' },
         cell_offset = { type = 'function' },
         padding = { type = 'number' },
         min_width = { type = 'number' },

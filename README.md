@@ -716,6 +716,8 @@ require('render-markdown').setup({
         -- | padded  | raw + cells are padded to maximum visual width for each column             |
         -- | trimmed | padded except empty space is subtracted from visual width calculation      |
         cell = 'padded',
+        -- Fit wide tables to the current window by wrapping individual cells.
+        wrap = true,
         -- Adjust the computed width of table cells using custom logic.
         cell_offset = function()
             return 0
@@ -1490,6 +1492,8 @@ require('render-markdown').setup({
         -- | padded  | raw + cells are padded to maximum visual width for each column             |
         -- | trimmed | padded except empty space is subtracted from visual width calculation      |
         cell = 'padded',
+        -- Fit wide tables to the current window by wrapping individual cells.
+        wrap = true,
         -- Adjust the computed width of table cells using custom logic.
         cell_offset = function()
             return 0
