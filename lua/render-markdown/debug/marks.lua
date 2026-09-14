@@ -10,6 +10,7 @@ local str = require('render-markdown.lib.str')
 ---@field row render.md.debug.Range
 ---@field col render.md.debug.Range
 ---@field opts render.md.mark.Opts
+---@field replace render.md.mark.Line[]
 local Mark = {}
 Mark.__index = Mark
 
@@ -22,6 +23,7 @@ function Mark.new(mark)
     self.row = { mark.start_row, mark.opts.end_row }
     self.col = { mark.start_col, mark.opts.end_col }
     self.opts = mark.opts
+    self.replace = mark.replace or {}
     return self
 end
 
@@ -66,6 +68,7 @@ function Mark:__tostring()
     lines[#lines + 1] = ('conceal: %s'):format(vim.inspect(self.conceal))
     lines[#lines + 1] = ('row: %s'):format(Mark.collapse(self.row))
     lines[#lines + 1] = ('column: %s'):format(Mark.collapse(self.col))
+    lines[#lines + 1] = ('replace: %s'):format(Mark.lines(self.replace))
 
     ---@param name string
     ---@param f fun(value: any): string

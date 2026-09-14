@@ -7,6 +7,7 @@ local log = require('render-markdown.core.log')
 ---@field start_row integer
 ---@field start_col integer
 ---@field opts render.md.mark.Opts
+---@field replace? render.md.mark.Line[]
 
 ---@alias render.md.mark.Conceal boolean|render.md.Element
 
@@ -73,20 +74,43 @@ function Marks:over(config, conceal, node, opts, offset)
 end
 
 ---@param config render.md.base.Config
+---@param node render.md.Node
+---@param lines render.md.mark.Line[]
+function Marks:replace(config, node, lines)
+    self:insert(config, {
+        conceal = true,
+        start_row = node.start_row,
+        start_col = node.start_col,
+        opts = {
+            end_row = node.end_row,
+            end_col = node.end_col,
+            conceal_lines = '',
+        },
+        replace = lines,
+    })
+end
+
+---@param config render.md.base.Config
 ---@param conceal render.md.mark.Conceal
 ---@param start_row integer
 ---@param start_col integer
 ---@param opts render.md.mark.Opts
 ---@return boolean
 function Marks:add(config, conceal, start_row, start_col, opts)
-    ---@type render.md.Mark
-    local mark = {
-        modes = config.render_modes,
+    return self:insert(config, {
         conceal = conceal,
         start_row = start_row,
         start_col = start_col,
         opts = opts,
-    }
+    })
+end
+
+---@private
+---@param config render.md.base.Config
+---@param mark render.md.Mark
+---@return boolean
+function Marks:insert(config, mark)
+    mark.modes = config.render_modes
     local feature, min_version = self:validate(mark.opts)
     if feature and min_version then
         local message = feature .. ' requires neovim >= ' .. min_version
@@ -136,6 +160,16 @@ function Marks:run_update(mark)
                 end_col,
                 replacement = opts.conceal,
                 blocks = 1,
+            },
+        })
+    end
+    if opts.hl_group and opts.end_col then
+        self.context.highlights:add(row, {
+            group = {
+                start_col,
+                opts.end_col,
+                priority = opts.priority or 4096,
+                highlight = opts.hl_group,
             },
         })
     end

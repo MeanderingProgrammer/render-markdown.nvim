@@ -5,7 +5,7 @@ local str = require('render-markdown.lib.str')
 
 ---@class render.md.request.Conceal
 ---@field private context render.md.request.Context
----@field private level integer
+---@field level integer
 local Conceal = {}
 Conceal.__index = Conceal
 
@@ -37,6 +37,12 @@ function Conceal:width(s, blocks)
         -- text is completely hidden
         return 0
     end
+end
+
+---@param s string
+---@return string
+function Conceal:replacement(s)
+    return self.level == 3 and '' or s
 end
 
 ---@param body render.md.node.Body

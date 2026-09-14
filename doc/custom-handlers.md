@@ -27,6 +27,7 @@ Each handler must conform to the following interface:
 ---@field start_row integer
 ---@field start_col integer
 ---@field opts render.md.mark.Opts
+---@field replace? render.md.mark.Line[]
 
 ---@alias render.md.mark.Conceal boolean|render.md.Element
 

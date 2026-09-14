@@ -115,10 +115,7 @@ end
 
 ---@private
 function Updater:clear()
-    local extmarks = self.decorator:get()
-    for _, extmark in ipairs(extmarks) do
-        extmark:hide(M.ns, self.buf)
-    end
+    self.decorator:clear(M.ns)
     vim.api.nvim_buf_clear_namespace(self.buf, M.ns, 0, -1)
     state.on.clear({ buf = self.buf, win = self.win })
 end
@@ -172,14 +169,9 @@ end
 ---@private
 function Updater:display()
     local range = self:hidden()
-    local extmarks = self.decorator:get()
-    for _, extmark in ipairs(extmarks) do
-        if self:hide(extmark, range) then
-            extmark:hide(M.ns, self.buf)
-        else
-            extmark:show(M.ns, self.buf)
-        end
-    end
+    self.decorator:display(M.ns, function(extmark)
+        return self:hide(extmark, range)
+    end)
     state.on.render({ buf = self.buf, win = self.win })
 end
 
@@ -213,6 +205,14 @@ end
 ---@return boolean
 function Updater:hide(extmark, range)
     local mark = extmark:get()
+
+    -- virtual row -> no editable screen cells -> must hide
+    if mark.replace then
+        local row = env.row.get(self.buf, self.win)
+        if row and row == mark.start_row then
+            return true
+        end
+    end
 
     -- not in top level or mark level modes -> hide
     local show = env.mode.join(self.config.render_modes, mark.modes)

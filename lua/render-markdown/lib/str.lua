@@ -66,6 +66,12 @@ function M.spaces(pos, s)
     return (from and to) and to - from + 1 or 0
 end
 
+---@param s string
+---@return boolean
+function M.whitespace(s)
+    return s:match('^%s+$') ~= nil
+end
+
 ---@param n integer
 ---@return string
 function M.pad(n)
