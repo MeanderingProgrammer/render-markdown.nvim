@@ -442,6 +442,17 @@ function M.table.padding(spaces)
     return M.padding(spaces, { priority = 0 })
 end
 
+---@param row integer
+---@param scroll_to_top? boolean
+function M.set_row(row, scroll_to_top)
+    vim.api.nvim_win_set_cursor(0, { row, 0 })
+    if scroll_to_top then
+        vim.cmd('normal! zt')
+    end
+    vim.api.nvim_exec_autocmds('CursorMoved', {})
+    vim.wait(0)
+end
+
 ---@param marks render.md.test.Marks
 ---@param screen string[]
 function M.assert_view(marks, screen)

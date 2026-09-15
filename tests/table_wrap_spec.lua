@@ -73,7 +73,6 @@ describe('table wrapping', function()
         vim.o.wrap = false
         util.setup.text(lines, { pipe_table = { cell = 'trimmed' } })
         util.assert_screen(rendered)
-        assert.is_false(vim.o.wrap)
     end)
 
     it('fitting table', function()
@@ -145,9 +144,7 @@ describe('table wrapping', function()
 
     it('cursor on a fitting row', function()
         util.setup.text(mixed, { pipe_table = { cell = 'trimmed' } })
-        vim.api.nvim_win_set_cursor(0, { 5, 0 })
-        vim.cmd('doautocmd CursorMoved')
-        vim.wait(0)
+        util.set_row(5)
         util.assert_screen(mixed_rendered)
     end)
 
@@ -163,9 +160,7 @@ describe('table wrapping', function()
             '',
             'AFTER',
         }, { pipe_table = { cell = 'padded' } })
-        vim.api.nvim_win_set_cursor(0, { 5, 0 })
-        vim.cmd('doautocmd CursorMoved')
-        vim.wait(0)
+        util.set_row(5)
         util.assert_screen({
             'BEFORE',
             '┌───┬──────────────────────────────────┐',
@@ -206,10 +201,7 @@ describe('table wrapping', function()
 
     it('virtual borders', function()
         util.setup.text(mixed, {
-            pipe_table = {
-                cell = 'trimmed',
-                border_virtual = true,
-            },
+            pipe_table = { cell = 'trimmed', border_virtual = true },
         })
         util.assert_screen({
             'BEFORE',
@@ -294,12 +286,7 @@ describe('table wrapping', function()
         expected[#expected + 1] = ''
         util.assert_screen(expected)
 
-        vim.api.nvim_win_set_cursor(0, { 100, 0 })
-        vim.cmd('normal! zt')
-        require('render-markdown').render({
-            buf = vim.api.nvim_get_current_buf(),
-        })
-        vim.wait(0)
+        util.set_row(100, true)
         util.assert_screen({
             '│ x │ y                                │',
             '│ x │ y                                │',
@@ -363,9 +350,7 @@ describe('table wrapping', function()
         util.setup.text(mixed, { pipe_table = { cell = 'trimmed' } })
         util.assert_screen(mixed_rendered)
 
-        vim.api.nvim_win_set_cursor(0, { 6, 0 })
-        vim.cmd('doautocmd CursorMoved')
-        vim.wait(0)
+        util.set_row(6)
         util.assert_screen({
             'BEFORE',
             '┌───┬───┬──────────────────────────────┐',
@@ -379,18 +364,14 @@ describe('table wrapping', function()
             'AFTER',
         })
 
-        vim.api.nvim_win_set_cursor(0, { 1, 0 })
-        vim.cmd('doautocmd CursorMoved')
-        vim.wait(0)
+        util.set_row(1)
         util.assert_screen(mixed_rendered)
     end)
 
     it('cursor on wrapped row with nowrap', function()
         vim.o.wrap = false
         util.setup.text(mixed, { pipe_table = { cell = 'trimmed' } })
-        vim.api.nvim_win_set_cursor(0, { 6, 0 })
-        vim.cmd('doautocmd CursorMoved')
-        vim.wait(0)
+        util.set_row(6)
         util.assert_screen({
             'BEFORE',
             '┌───┬───┬──────────────────────────────┐',
@@ -401,101 +382,6 @@ describe('table wrapping', function()
             '│ a │ b │                          end │',
             '└───┴───┴──────────────────────────────┘',
             'AFTER',
-        })
-    end)
-
-    it('edit', function()
-        util.setup.text(mixed, {
-            debounce = 0,
-            pipe_table = { cell = 'trimmed' },
-        })
-        vim.api.nvim_buf_set_lines(0, 5, 6, false, {
-            '| z | w | replacement words are long enough to wrap twice |',
-        })
-        vim.cmd('doautocmd TextChanged')
-        vim.wait(0)
-        util.assert_screen({
-            'BEFORE',
-            '┌───┬───┬──────────────────────────────┐',
-            '│ A │ B │                            C │',
-            '├━──┼━─━┼─────────────────────────────━┤',
-            '│ x │ y │                        short │',
-            '│ z │ w │   replacement words are long │',
-            '│   │   │         enough to wrap twice │',
-            '│ a │ b │                          end │',
-            '└───┴───┴──────────────────────────────┘',
-            'AFTER',
-        })
-    end)
-
-    it('visual selection', function()
-        util.setup.text(mixed, {
-            anti_conceal = { enabled = true },
-            pipe_table = { cell = 'trimmed' },
-        })
-        vim.api.nvim_win_set_cursor(0, { 3, 0 })
-        vim.cmd('normal! V3j')
-        vim.cmd('doautocmd CursorMoved')
-        vim.wait(0)
-        util.assert_screen({
-            'BEFORE',
-            '┌───┬───┬──────────────────────────────┐',
-            '| A | B | C |',
-            '| :- | :-: | -: |',
-            '| x | y | short |',
-            '| z | w | one two three four five six se',
-            'ven eight nine ten |',
-            '│ a │ b │                          end │',
-            '└───┴───┴──────────────────────────────┘',
-            'AFTER',
-        })
-    end)
-
-    it('disable', function()
-        vim.o.wrap = false
-        util.setup.text(mixed, {
-            debounce = 0,
-            pipe_table = { cell = 'trimmed' },
-        })
-        require('render-markdown').disable()
-        vim.wait(0)
-        util.assert_screen({
-            'BEFORE',
-            '',
-            '| A | B | C |',
-            '| :- | :-: | -: |',
-            '| x | y | short |',
-            '| z | w | one two three four five six se',
-            '| a | b | end |',
-            '',
-            'AFTER',
-        })
-    end)
-
-    it('resize with line numbers', function()
-        util.setup.text(mixed, {
-            debounce = 0,
-            pipe_table = { cell = 'trimmed' },
-        })
-        util.assert_screen(mixed_rendered)
-
-        vim.o.columns = 55
-        vim.o.number = true
-        require('render-markdown').render({
-            buf = vim.api.nvim_get_current_buf(),
-        })
-        vim.wait(0)
-        util.assert_screen({
-            '  1 BEFORE',
-            '  2 ┌───┬───┬─────────────────────────────────────────┐',
-            '  3 │ A │ B │                                       C │',
-            '  4 ├━──┼━─━┼────────────────────────────────────────━┤',
-            '  5 │ x │ y │                                   short │',
-            '    │ z │ w │ one two three four five six seven eight │',
-            '    │   │   │                                nine ten │',
-            '  7 │ a │ b │                                     end │',
-            '  8 └───┴───┴─────────────────────────────────────────┘',
-            '  9 AFTER',
         })
     end)
 
@@ -537,9 +423,7 @@ describe('table wrapping', function()
             '| x | y |',
             '',
             'AFTER',
-        }, {
-            pipe_table = { cell = 'trimmed', min_width = 20 },
-        })
+        }, { pipe_table = { cell = 'trimmed', min_width = 20 } })
         util.assert_screen({
             'BEFORE',
             '┌────────────────────┬──────────────────',

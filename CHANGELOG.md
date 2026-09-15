@@ -2,12 +2,23 @@
 
 ## Pre-release
 
+## 8.14.0 (2026-09-14)
+
+### Features
+
+- multiline table cell rendering [a778444](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/a778444a73080301a50c4a6f58c90d7e094dd59e)
+  [a5cc706](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/a5cc7061625a9437c1a4dbcbd27fa8932abae9a1)
+
 ### Bug Fixes
 
 - checkbox background not matching dynamic highlights [#679](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/679)
   [4663eb3](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4663eb3ecd538bd5062628fb6d95bbe6bdca78f6)
 - character splitting for checkbox icon [4286b83](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/4286b83f505f3c0e2ca04763a77c9dda0d732340)
 - concealed backslash escape in tables [facc647](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/facc647f5d8110e3f20e8f793ef792fe6a78d444)
+
+### Collaborator Shoutouts
+
+- @MaxDillon
 
 ## 8.13.0 (2026-06-18)
 
