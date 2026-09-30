@@ -25,6 +25,9 @@ globals:
   before_each:
     args:
       - type: function
+  after_each:
+    args:
+      - type: function
   assert.same:
     args:
       - type: any

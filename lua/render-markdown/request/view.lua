@@ -55,6 +55,28 @@ function View:overlaps(node)
     return false
 end
 
+---Iterate inclusive decoration bounds clipped to the combined half-open views.
+---@param first integer
+---@param last integer
+---@return fun(): integer?
+function View:rows(first, last)
+    local index, row, stop = 0, 0, -1
+    return function()
+        while row > stop do
+            index = index + 1
+            local range = self.ranges[index]
+            if not range then
+                return nil
+            end
+            row = math.max(first, range[1])
+            stop = math.min(last, range[2] - 1)
+        end
+        local result = row
+        row = row + 1
+        return result
+    end
+end
+
 ---@param parser vim.treesitter.LanguageTree
 ---@param callback fun()
 function View:parse(parser, callback)
