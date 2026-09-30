@@ -184,6 +184,9 @@ PACKER.NVIM                              *render-markdown-install-packer.nvim*
   :RenderMarkdown preview         require('render-markdown').preview()        Show rendered buffer to the
                                                                               side
 
+  :RenderMarkdown yank_code       require('render-markdown').yank_code()      Yank code block under
+                                                                              cursor, without fences
+
   :RenderMarkdown log             require('render-markdown').log()            Opens the log file for this
                                                                               plugin
 

@@ -69,6 +69,11 @@ function M.preview()
     require('render-markdown.core.preview').open()
 end
 
+---@param register? string
+function M.yank_code(register)
+    require('render-markdown.core.yank').code(register)
+end
+
 function M.log()
     require('render-markdown.core.log').open()
 end
