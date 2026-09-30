@@ -14,6 +14,7 @@ local M = {}
 ---@field callout render.md.callout.Configs
 ---@field checkbox render.md.checkbox.Config
 ---@field code render.md.code.Config
+---@field cursor render.md.cursor.Config
 ---@field dash render.md.dash.Config
 ---@field document render.md.document.Config
 ---@field heading render.md.heading.Config
@@ -94,6 +95,7 @@ M.default = {
     injections = settings.injections.default,
     patterns = settings.patterns.default,
     anti_conceal = settings.anti_conceal.default,
+    cursor = settings.cursor.default,
     padding = settings.padding.default,
     latex = settings.latex.default,
     on = settings.on.default,

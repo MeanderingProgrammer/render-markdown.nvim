@@ -1,3 +1,4 @@
+local cursor = require('render-markdown.core.cursor')
 local env = require('render-markdown.lib.env')
 local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
@@ -115,11 +116,15 @@ function M.attach(buf)
         group = M.group,
         buffer = buf,
         callback = function(args)
-            if not state.get(buf).enabled then
+            local buf_config = state.get(buf)
+            if not buf_config.enabled then
                 return
             end
             local win = env.buf.win(buf)
             local event = args.event
+            if event == 'CursorMoved' and buf_config.cursor.skip_hidden then
+                cursor.update(buf, win)
+            end
             ui.update(buf, win, event, vim.tbl_contains(force, event))
         end,
     })
