@@ -25,6 +25,9 @@ globals:
   before_each:
     args:
       - type: function
+  after_each:
+    args:
+      - type: function
   assert.same:
     args:
       - type: any
@@ -46,3 +49,19 @@ globals:
       - type: any
       - type: string
         required: false
+  assert.is_not_nil:
+    args:
+      - type: any
+      - type: string
+        required: false
+  assert.is_nil:
+    args:
+      - type: any
+      - type: string
+        required: false
+  assert.spy:
+    args:
+      - type: table
+  assert.stub:
+    args:
+      - type: table
