@@ -161,7 +161,7 @@ M.bullet.default = {
     ordered_icons = function(ctx)
         local value = vim.trim(ctx.value)
         local index = tonumber(value:sub(1, #value - 1))
-        return ('%d.'):format(index > 1 and index or ctx.index)
+        return ('%d.'):format(index and index > 1 and index or ctx.index)
     end,
     -- Padding to add to the left of bullet point.
     -- Output is evaluated depending on the type.
