@@ -407,7 +407,9 @@ function M.table.border(virtual, above, ...)
         ---@type vim.api.keyset.set_extmark
         return {
             virt_text = { { text, highlight } },
-            virt_text_pos = 'overlay',
+            ---@diagnostic disable-next-line: assign-type-mismatch
+            virt_text_pos = 'win_col',
+            virt_text_win_col = 0,
         }
     end
 end
