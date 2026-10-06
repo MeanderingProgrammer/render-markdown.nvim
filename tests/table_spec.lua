@@ -279,4 +279,55 @@ describe('table', function()
             '└───────────┴───────────┘',
         })
     end)
+
+    it('indented border keeps marks before table', function()
+        util.setup.text({
+            '- Item',
+            '',
+            '  | A | B |',
+            '  | - | - |',
+            '  | 1 | 2 |',
+            '',
+        })
+        -- simulate an indent scope plugin drawing before the table column
+        local ns = vim.api.nvim_create_namespace('test.scope')
+        for row = 1, 5 do
+            vim.api.nvim_buf_set_extmark(0, ns, row, 0, {
+                priority = 1,
+                virt_text = { { '│', 'Normal' } },
+                virt_text_win_col = 0,
+            })
+        end
+
+        local marks, row = util.marks(), util.row()
+
+        local top = util.table.border(false, true, 3, 3)
+        top.virt_text_win_col = 2
+        local bottom = util.table.border(false, false, 3, 3)
+        bottom.virt_text_win_col = 2
+
+        marks:add(row:get(0, 0), { 0, 2 }, util.bullet(1))
+        marks:add(row:get(1), 0, top)
+        marks:add(row:get(1, 0), { 2, 3 }, util.table.pipe(true))
+        marks:add(row:get(0, 0), { 6, 7 }, util.table.pipe(true))
+        marks:add(row:get(0, 0), { 10, 11 }, util.table.pipe(true))
+        marks:add(
+            row:get(1, 0),
+            { 2, 11 },
+            util.table.delimiter(0, { 3 }, { 3 })
+        )
+        marks:add(row:get(1, 0), { 2, 3 }, util.table.pipe(false))
+        marks:add(row:get(0, 0), { 6, 7 }, util.table.pipe(false))
+        marks:add(row:get(0, 0), { 10, 11 }, util.table.pipe(false))
+        marks:add(row:get(1), 0, bottom)
+
+        util.assert_view(marks, {
+            '● Item',
+            '│ ┌───┬───┐',
+            '│ │ A │ B │',
+            '│ ├───┼───┤',
+            '│ │ 1 │ 2 │',
+            '│ └───┴───┘',
+        })
+    end)
 end)

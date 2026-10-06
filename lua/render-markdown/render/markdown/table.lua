@@ -293,19 +293,22 @@ function Render:border(wrapped)
         local item = rows[index]
         local text = chars[1] .. table.concat(parts, chars[2]) .. chars[3]
         local highlight = above and self.config.head or self.config.row
-        local line = self:line():pad(self.data.layout.col):text(text, highlight)
+        local line = self:line():text(text, highlight)
+        local col = self.data.layout.col
 
         local virtual = self.config.border_virtual
         local row, target = item.node:line(above and 'above' or 'below', 1)
         local available = target and str.width(target) == 0
 
         if not virtual and available and self.context.used:take(row) then
+            -- position at table column rather than padding over earlier marks
             self.marks:add(self.config, 'table_border', row, 0, {
                 virt_text = line:get(),
-                virt_text_pos = 'overlay',
+                virt_text_win_col = self:indent():size() + col,
             })
         else
-            local virtual_line = self:indent():line(true):extend(line):get()
+            local virtual_line =
+                self:indent():line(true):pad(col):extend(line):get()
             local lines = wrapped[index]
             if lines then
                 table.insert(lines, above and 1 or #lines + 1, virtual_line)
