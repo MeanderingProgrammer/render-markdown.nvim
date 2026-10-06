@@ -1,5 +1,5 @@
 *render-markdown.txt*                       Improve viewing Markdown in Neovim
-                            For NVIM v0.12.5    Last change: 2026 September 14
+                              For NVIM v0.12.5    Last change: 2026 October 06
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -61,11 +61,11 @@ Improve viewing Markdown in Neovim
     - Code blocks: background, language icon  , border, padding , width
     - Code inline: background
     - Horizontal breaks: icon, color, width
-    - List bullets: icon, color, padding 
+    - List bullets: icon, color, padding
     - Checkboxes: icon, color, user defined states
-    - Block quotes: icon, color, line breaks 
+    - Block quotes: icon, color, line breaks
     - Callouts: icon, color, user defined values, Github & Obsidian defaults
-    - Tables: border, color, alignment indicator, auto align cells 
+    - Tables: border, color, alignment indicator, auto align cells
     - Links : icon, color, user defined destinations
     - Latex blocks : renders formulas
     - Org indent mode : per level padding
@@ -292,7 +292,7 @@ Default Configuration ~
             -- Out of the box language injections for known filetypes that allow markdown to be interpreted
             -- in specified locations, see :h treesitter-language-injections.
             -- Set enabled to false in order to disable.
-    
+
             gitcommit = {
                 enabled = true,
                 query = [[
@@ -305,7 +305,7 @@ Default Configuration ~
         },
         patterns = {
             -- Highlight patterns to disable for filetypes, i.e. lines concealed around code blocks
-    
+
             markdown = {
                 disable = true,
                 directives = {
@@ -406,7 +406,7 @@ Default Configuration ~
             -- Useful context to have when evaluating values.
             -- | level    | the number of '#' in the heading marker         |
             -- | sections | for each level how deeply nested the heading is |
-    
+
             -- Turn on / off heading icon & background rendering.
             enabled = true,
             -- Additional modes to render headings.
@@ -493,7 +493,7 @@ Default Configuration ~
         paragraph = {
             -- Useful context to have when evaluating values.
             -- | text | text value of the node |
-    
+
             -- Turn on / off paragraph rendering.
             enabled = true,
             -- Additional modes to render paragraphs.
@@ -612,7 +612,7 @@ Default Configuration ~
         dash = {
             -- Useful context to have when evaluating values.
             -- | width | width of the current window |
-    
+
             -- Turn on / off thematic break rendering.
             enabled = true,
             -- Additional modes to render dash.
@@ -654,7 +654,7 @@ Default Configuration ~
             -- | level | how deeply nested the list is, 1-indexed          |
             -- | index | how far down the item is at that level, 1-indexed |
             -- | value | text value of the marker node                     |
-    
+
             -- Turn on / off list bullet rendering
             enabled = true,
             -- Additional modes to render list bullets
@@ -671,7 +671,7 @@ Default Configuration ~
             -- Output is evaluated using the same logic as 'icons'.
             ordered_icons = function(ctx)
                 local value = vim.trim(ctx.value)
-                local index = tonumber(value:sub(1, #value - 1))
+                local index = tonumber(value:sub(1, #value - 1)) or 0
                 return ('%d.'):format(index > 1 and index or ctx.index)
             end,
             -- Padding to add to the left of bullet point.
@@ -694,7 +694,7 @@ Default Configuration ~
         checkbox = {
             -- Checkboxes are a special instance of a 'list_item' that start with a 'shortcut_link'.
             -- There are two special states for unchecked & checked defined in the markdown grammar.
-    
+
             -- Turn on / off checkbox state rendering.
             enabled = true,
             -- Additional modes to render checkboxes.
@@ -827,7 +827,7 @@ Default Configuration ~
             -- | highlight  | highlight for the 'rendered' text and quote markers                 |
             -- | quote_icon | optional override for quote.icon value for individual callout       |
             -- | category   | optional metadata useful for filtering                              |
-    
+
             note      = { raw = '[!NOTE]',      rendered = '󰋽 Note',      highlight = 'RenderMarkdownInfo',    category = 'github'   },
             tip       = { raw = '[!TIP]',       rendered = '󰌶 Tip',       highlight = 'RenderMarkdownSuccess', category = 'github'   },
             important = { raw = '[!IMPORTANT]', rendered = '󰅾 Important', highlight = 'RenderMarkdownHint',    category = 'github'   },
@@ -955,7 +955,7 @@ Default Configuration ~
         inline_highlight = {
             -- Mimics Obsidian inline highlights when content is surrounded by double equals.
             -- The equals on both ends are concealed and the inner content is highlighted.
-    
+
             -- Turn on / off inline highlight rendering.
             enabled = true,
             -- Additional modes to render inline highlights.
@@ -971,7 +971,7 @@ Default Configuration ~
         indent = {
             -- Mimic org-indent-mode behavior by indenting everything under a heading based on the
             -- level of the heading. Indenting starts from level 2 headings onward by default.
-    
+
             -- Turn on / off org-indent-mode.
             enabled = false,
             -- Additional modes to render indents.
@@ -998,7 +998,7 @@ Default Configuration ~
             comment = {
                 -- Useful context to have when evaluating values.
                 -- | text | text value of the comment node |
-    
+
                 -- Turn on / off HTML comment concealing.
                 conceal = true,
                 -- Text to inline before the concealed comment.
@@ -1019,7 +1019,7 @@ Default Configuration ~
         },
         win_options = {
             -- Window options to use that change between rendered and raw view.
-    
+
             -- @see :h 'conceallevel'
             conceallevel = {
                 -- Used when not being rendered, get user setting.
@@ -1042,7 +1042,7 @@ Default Configuration ~
             --   enabled, render_modes, debounce, anti_conceal, bullet, callout, checkbox, code, dash,
             --   document, heading, html, indent, inline_highlight, latex, link, padding, paragraph,
             --   pipe_table, quote, sign, win_options, yaml
-    
+
             -- Override for different buflisted values, @see :h 'buflisted'.
             buflisted = {},
             -- Override for different buftype values, @see :h 'buftype'.
@@ -1093,7 +1093,7 @@ Heading Configuration ~
             -- Useful context to have when evaluating values.
             -- | level    | the number of '#' in the heading marker         |
             -- | sections | for each level how deeply nested the heading is |
-    
+
             -- Turn on / off heading icon & background rendering.
             enabled = true,
             -- Additional modes to render headings.
@@ -1193,7 +1193,7 @@ Paragraph Configuration ~
         paragraph = {
             -- Useful context to have when evaluating values.
             -- | text | text value of the node |
-    
+
             -- Turn on / off paragraph rendering.
             enabled = true,
             -- Additional modes to render paragraphs.
@@ -1338,7 +1338,7 @@ Dashed Line Configuration ~
         dash = {
             -- Useful context to have when evaluating values.
             -- | width | width of the current window |
-    
+
             -- Turn on / off thematic break rendering.
             enabled = true,
             -- Additional modes to render dash.
@@ -1379,7 +1379,7 @@ Bullet Point Configuration ~
             -- | level | how deeply nested the list is, 1-indexed          |
             -- | index | how far down the item is at that level, 1-indexed |
             -- | value | text value of the marker node                     |
-    
+
             -- Turn on / off list bullet rendering
             enabled = true,
             -- Additional modes to render list bullets
@@ -1396,7 +1396,7 @@ Bullet Point Configuration ~
             -- Output is evaluated using the same logic as 'icons'.
             ordered_icons = function(ctx)
                 local value = vim.trim(ctx.value)
-                local index = tonumber(value:sub(1, #value - 1))
+                local index = tonumber(value:sub(1, #value - 1)) or 0
                 return ('%d.'):format(index > 1 and index or ctx.index)
             end,
             -- Padding to add to the left of bullet point.
@@ -1432,7 +1432,7 @@ Checkbox Configuration ~
         checkbox = {
             -- Checkboxes are a special instance of a 'list_item' that start with a 'shortcut_link'.
             -- There are two special states for unchecked & checked defined in the markdown grammar.
-    
+
             -- Turn on / off checkbox state rendering.
             enabled = true,
             -- Additional modes to render checkboxes.
@@ -1600,7 +1600,7 @@ Callout Configuration ~
             -- | highlight  | highlight for the 'rendered' text and quote markers                 |
             -- | quote_icon | optional override for quote.icon value for individual callout       |
             -- | category   | optional metadata useful for filtering                              |
-    
+
             note      = { raw = '[!NOTE]',      rendered = '󰋽 Note',      highlight = 'RenderMarkdownInfo',    category = 'github'   },
             tip       = { raw = '[!TIP]',       rendered = '󰌶 Tip',       highlight = 'RenderMarkdownSuccess', category = 'github'   },
             important = { raw = '[!IMPORTANT]', rendered = '󰅾 Important', highlight = 'RenderMarkdownHint',    category = 'github'   },
@@ -1767,7 +1767,7 @@ Indent Configuration ~
         indent = {
             -- Mimic org-indent-mode behavior by indenting everything under a heading based on the
             -- level of the heading. Indenting starts from level 2 headings onward by default.
-    
+
             -- Turn on / off org-indent-mode.
             enabled = false,
             -- Additional modes to render indents.
