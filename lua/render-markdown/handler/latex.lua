@@ -101,7 +101,14 @@ function Handler.convert(cmd, inputs)
     if vim.system then
         local tasks = {} ---@type table<string, vim.SystemObj>
         for _, input in ipairs(inputs) do
-            tasks[input] = vim.system({ cmd }, { stdin = input, text = true })
+            tasks[input] = vim.system({ cmd }, {
+                stdin = input,
+                text = true,
+                -- Python defaults redirected streams to the active code page on
+                -- Windows. latex2text can emit characters that code page cannot
+                -- represent, causing the converter to exit with an encoding error.
+                env = { PYTHONIOENCODING = 'utf-8' },
+            })
         end
         for input, task in pairs(tasks) do
             local output = task:wait()
@@ -113,6 +120,8 @@ function Handler.convert(cmd, inputs)
             end
         end
     else
+        local encoding = vim.env.PYTHONIOENCODING
+        vim.env.PYTHONIOENCODING = 'utf-8'
         for _, input in ipairs(inputs) do
             local result = vim.fn.system(cmd, input)
             if vim.v.shell_error == 0 and result then
@@ -121,6 +130,7 @@ function Handler.convert(cmd, inputs)
                 failed[#failed + 1] = input
             end
         end
+        vim.env.PYTHONIOENCODING = encoding
     end
     return failed
 end
