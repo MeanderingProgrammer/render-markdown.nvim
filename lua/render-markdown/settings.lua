@@ -649,6 +649,30 @@ function M.completions.schema()
     }
 end
 
+---@class render.md.cursor.Settings
+M.cursor = {}
+
+---@class (exact) render.md.cursor.Config
+---@field skip_hidden boolean
+
+---@type render.md.cursor.Config
+M.cursor.default = {
+    -- Whether to move the cursor off lines that would stay hidden under it, i.e. lines concealed
+    -- entirely like code borders with code.border = 'hide' when concealcursor includes the mode.
+    -- The cursor moves to the nearest visible line in the direction it was moving.
+    skip_hidden = false,
+}
+
+---@return render.md.Schema
+function M.cursor.schema()
+    ---@type render.md.Schema
+    return {
+        record = {
+            skip_hidden = { type = 'boolean' },
+        },
+    }
+end
+
 ---@class render.md.dash.Settings
 M.dash = {}
 
@@ -1483,8 +1507,8 @@ M.overrides.default = {
     -- More granular configuration mechanism, allows different aspects of buffers to have their own
     -- behavior. Values default to the top level configuration if no override is provided. Supports
     -- the following fields:
-    --   enabled, render_modes, debounce, anti_conceal, bullet, callout, checkbox, code, dash,
-    --   document, heading, html, indent, inline_highlight, latex, link, padding, paragraph,
+    --   enabled, render_modes, debounce, anti_conceal, bullet, callout, checkbox, code, cursor,
+    --   dash, document, heading, html, indent, inline_highlight, latex, link, padding, paragraph,
     --   pipe_table, quote, sign, win_options, yaml
 
     -- Override for different buflisted values, @see :h 'buflisted'.

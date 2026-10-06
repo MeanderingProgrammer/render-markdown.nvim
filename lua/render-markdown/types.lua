@@ -11,6 +11,7 @@
 ---@field callout? render.md.callout.UserConfigs
 ---@field checkbox? render.md.checkbox.UserConfig
 ---@field code? render.md.code.UserConfig
+---@field cursor? render.md.cursor.UserConfig
 ---@field dash? render.md.dash.UserConfig
 ---@field document? render.md.document.UserConfig
 ---@field heading? render.md.heading.UserConfig
@@ -143,6 +144,9 @@
 ---@class (exact) render.md.completion.filter.UserConfig
 ---@field callout? fun(value: render.md.callout.UserConfig): boolean
 ---@field checkbox? fun(value: render.md.checkbox.custom.UserConfig): boolean
+
+---@class (exact) render.md.cursor.UserConfig
+---@field skip_hidden? boolean
 
 ---@class (exact) render.md.dash.UserConfig: render.md.base.UserConfig
 ---@field icon? string

@@ -279,6 +279,12 @@ require('render-markdown').setup({
             virtual_lines = true,
         },
     },
+    cursor = {
+        -- Whether to move the cursor off lines that would stay hidden under it, i.e. lines concealed
+        -- entirely like code borders with code.border = 'hide' when concealcursor includes the mode.
+        -- The cursor moves to the nearest visible line in the direction it was moving.
+        skip_hidden = false,
+    },
     padding = {
         -- Highlight to use when adding whitespace, should blend in with background.
         highlight = 'RenderMarkdownPadding',
@@ -972,8 +978,8 @@ require('render-markdown').setup({
         -- More granular configuration mechanism, allows different aspects of buffers to have their own
         -- behavior. Values default to the top level configuration if no override is provided. Supports
         -- the following fields:
-        --   enabled, render_modes, debounce, anti_conceal, bullet, callout, checkbox, code, dash,
-        --   document, heading, html, indent, inline_highlight, latex, link, padding, paragraph,
+        --   enabled, render_modes, debounce, anti_conceal, bullet, callout, checkbox, code, cursor,
+        --   dash, document, heading, html, indent, inline_highlight, latex, link, padding, paragraph,
         --   pipe_table, quote, sign, win_options, yaml
 
         -- Override for different buflisted values, @see :h 'buflisted'.
