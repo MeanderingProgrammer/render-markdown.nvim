@@ -1,4 +1,5 @@
 local Indent = require('render-markdown.lib.indent')
+local Node = require('render-markdown.lib.node')
 local display = require('render-markdown.lib.display')
 local env = require('render-markdown.lib.env')
 local log = require('render-markdown.core.log')
@@ -80,17 +81,18 @@ function Parser:parse(root, marks)
         row = { 'pipe_table_header', 'pipe_table_row' },
         skip = { 'block_continuation' },
     }
-    root:for_each_child(function(node)
-        if node.type == types.delim then
-            delim = node
-        elseif self.context.view:overlaps(node:get()) then
-            if vim.tbl_contains(types.row, node.type) then
-                row_nodes[#row_nodes + 1] = node
-            elseif not vim.tbl_contains(types.skip, node.type) then
-                log.unhandled(self.context.buf, 'markdown', 'row', node.type)
+    for child in root:get():iter_children() do
+        local kind = child:type()
+        if kind == types.delim then
+            delim = Node.new(self.context.buf, child)
+        elseif self.context.view:overlaps(child) then
+            if vim.tbl_contains(types.row, kind) then
+                row_nodes[#row_nodes + 1] = Node.new(self.context.buf, child)
+            elseif not vim.tbl_contains(types.skip, kind) then
+                log.unhandled(self.context.buf, 'markdown', 'row', kind)
             end
         end
-    end)
+    end
     if not delim or #row_nodes == 0 then
         return nil
     end
