@@ -169,9 +169,12 @@ end
 ---@private
 function Updater:display()
     local range = self:hidden()
+    -- Cursor row of a wrapped table must stay a real line, or j/k move
+    -- through zero-height concealed rows and the screen cursor never updates.
+    local row = env.row.get(self.buf, self.win)
     self.decorator:display(M.ns, function(extmark)
         return self:hide(extmark, range)
-    end)
+    end, row)
     state.on.render({ buf = self.buf, win = self.win })
 end
 
@@ -205,14 +208,6 @@ end
 ---@return boolean
 function Updater:hide(extmark, range)
     local mark = extmark:get()
-
-    -- virtual row -> no editable screen cells -> must hide
-    if mark.replace then
-        local row = env.row.get(self.buf, self.win)
-        if row and row == mark.start_row then
-            return true
-        end
-    end
 
     -- not in top level or mark level modes -> hide
     local show = env.mode.join(self.config.render_modes, mark.modes)

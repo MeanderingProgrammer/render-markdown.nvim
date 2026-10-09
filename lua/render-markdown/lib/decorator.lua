@@ -62,19 +62,29 @@ end
 
 ---@param ns integer
 ---@param hide fun(extmark: render.md.Extmark): boolean
-function Decorator:display(ns, hide)
+---@param cursor_row? integer
+function Decorator:display(ns, hide, cursor_row)
     local visible = {} ---@type render.md.Mark[]
     for _, extmark in ipairs(self.marks) do
         if hide(extmark) then
             extmark:hide(ns, self.buf)
         else
-            extmark:show(ns, self.buf)
-            visible[#visible + 1] = extmark:get()
+            local mark = extmark:get()
+            -- Every wrapped row stays a real line. Concealing the ones above
+            -- the cursor makes k draw the cursor on the table head until the
+            -- next render gives that row a height.
+            if mark.replace then
+                local kind = 'row:' .. tostring(self.n)
+                extmark:show(ns, self.buf, kind, replacements.cursor_opts(mark), 0)
+            else
+                extmark:show(ns, self.buf, 'default')
+            end
+            visible[#visible + 1] = mark
         end
     end
 
     local line_count = vim.api.nvim_buf_line_count(self.buf)
-    local generated = replacements.resolve(visible, line_count)
+    local generated = replacements.resolve(visible, line_count, cursor_row)
     local current = {} ---@type render.md.Mark[]
     for _, extmark in ipairs(self.generated) do
         current[#current + 1] = extmark:get()

@@ -2,6 +2,7 @@ local interval = require('render-markdown.lib.interval')
 
 ---@class render.md.Extmark
 ---@field private id? integer
+---@field private kind? string
 ---@field private mark render.md.Mark
 ---@field private range render.md.Range
 local Extmark = {}
@@ -37,21 +38,33 @@ function Extmark:overlaps(range)
     return interval.overlap(self.range, range) ~= nil
 end
 
+---kind distinguishes a normal show from the cursor-row presentation.
+---The extmark is recreated when kind changes so conceal_lines can be added
+---or removed as the cursor moves.
 ---@param ns integer
 ---@param buf integer
-function Extmark:show(ns, buf)
+---@param kind? string
+---@param opts? render.md.mark.Opts
+---@param col? integer
+function Extmark:show(ns, buf, kind, opts, col)
+    kind = kind or 'default'
     if self.id then
-        return
+        if self.kind == kind then
+            return
+        end
+        self:hide(ns, buf)
     end
+    self.kind = kind
     local mark = self.mark
-    mark.opts.strict = false
+    local applied = opts or mark.opts
+    applied.strict = false
     local ok, id = pcall(
         vim.api.nvim_buf_set_extmark,
         buf,
         ns,
         mark.start_row,
-        mark.start_col,
-        mark.opts
+        col or mark.start_col,
+        applied
     )
     if ok then
         self.id = id
