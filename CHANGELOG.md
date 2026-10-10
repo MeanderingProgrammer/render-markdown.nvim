@@ -2,6 +2,11 @@
 
 ## Pre-release
 
+### Bug Fixes
+
+- handle ordered icon tonumber returning nil [#698](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/698)
+  [245956d](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/245956d67572c137df375dbf256e96bdb07e0937)
+
 ## 8.14.0 (2026-09-14)
 
 ### Features

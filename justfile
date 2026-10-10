@@ -4,52 +4,52 @@ settings := "{ minimal_init = " + quote(init) + ", sequential = true, keep_going
 default: update check test bench health
 
 update:
-  # keep documentation in sync with code
-  python scripts/update.py
-  # https://github.com/kdheepak/panvimdoc
-  ../../../tools/panvimdoc/panvimdoc.sh \
-    --input-file README.md \
-    --project-name render-markdown \
-    --description "Improve viewing Markdown in Neovim"
+    # keep documentation in sync with code
+    python scripts/update.py
+    # https://github.com/kdheepak/panvimdoc
+    ../../../tools/panvimdoc/panvimdoc.sh \
+        --input-file README.md \
+        --project-name render-markdown \
+        --description "Improve viewing Markdown in Neovim"
 
 check:
-  selene --quiet .
-  stylua --check .
+    selene --quiet .
+    stylua --check .
 
 test:
-  just busted "tests"
+    just busted "tests"
 
 bench:
-  python scripts/generate.py
-  just busted "benches"
+    python scripts/generate.py
+    just busted "benches"
 
 [private]
 busted path:
-  # needed to isolate child processes from user config
-  # as plenary does not pass the --clean flag
-  XDG_CONFIG_HOME="{{justfile_directory()}}/config" \
-    nvim --headless --noplugin -u {{init}} \
-    -c "PlenaryBustedDirectory {{path}} {{settings}}"
+    # needed to isolate child processes from user config
+    # as plenary does not pass the --clean flag
+    XDG_CONFIG_HOME="{{ justfile_directory() }}/config" \
+        nvim --headless --noplugin -u {{ init }} \
+        -c "PlenaryBustedDirectory {{ path }} {{ settings }}"
 
 health:
-  nvim -c "checkhealth render-markdown" -- -
+    nvim -c "checkhealth render-markdown" -- -
 
 log:
-  cat ~/.local/state/nvim/render-markdown.log
+    cat ~/.local/state/nvim/render-markdown.log
 
 demo: heading table quote callout latex
 
 heading:
-  python demo/run.py --name "heading_code"
+    python demo/run.py --name "heading_code"
 
 table:
-  python demo/run.py --name "list_table"
+    python demo/run.py --name "list_table"
 
 quote:
-  python demo/run.py --name "box_dash_quote"
+    python demo/run.py --name "box_dash_quote"
 
 callout:
-  python demo/run.py --name "callout"
+    python demo/run.py --name "callout"
 
 latex:
-  python demo/run.py --name "latex"
+    python demo/run.py --name "latex"
