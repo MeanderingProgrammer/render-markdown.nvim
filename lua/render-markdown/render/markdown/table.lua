@@ -243,9 +243,7 @@ function Render:border_row(row, position, lines)
     local start_row = row.node.start_row
     local line = self:line()
 
-    if position == 'body' then
-        line:extend(self.data.prefixes[start_row])
-    else
+    if position ~= 'body' then
         -- needed for type narrowing
         position = position == 'above' and 'above' or 'below'
         local target_row, target = row.node:line(position, 1)
@@ -253,7 +251,17 @@ function Render:border_row(row, position, lines)
             or not (target and str.width(target) == 0)
             or not self.context.used:take(target_row)
         start_row = virtual and start_row or target_row
-        line:pad(self.data.layout.col)
+    end
+
+    local col = self.data.layout.col
+    -- account for inline padding from a parent, i.e. a code block
+    local offset = virtual and not lines and self.context.offset[start_row]
+    if offset and offset.col <= col then
+        line:pad(offset.col):extend(offset.line):pad(col - offset.col)
+    elseif position == 'body' then
+        line:extend(self.data.prefixes[start_row])
+    else
+        line:pad(col)
     end
 
     line:extend(self:border_line(position, {}))
