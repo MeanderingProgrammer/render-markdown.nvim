@@ -311,6 +311,18 @@ function Render:border(wrapped)
                 table.insert(lines, above and 1 or #lines + 1, virtual_line)
             else
                 local start_row = item.node.start_row
+                -- account for inline padding from a parent, i.e. a code block
+                local col = self.data.layout.col
+                local offset = self.context.offset[start_row]
+                if offset and offset.col <= col then
+                    virtual_line = self:indent()
+                        :line(true)
+                        :pad(offset.col)
+                        :extend(offset.line)
+                        :pad(col - offset.col)
+                        :text(text, highlight)
+                        :get()
+                end
                 self.marks:add(self.config, 'virtual_lines', start_row, 0, {
                     virt_lines = { virtual_line },
                     virt_lines_above = above,

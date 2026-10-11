@@ -279,4 +279,25 @@ describe('table', function()
             '└───────────┴───────────┘',
         })
     end)
+
+    it('inside code block', function()
+        util.setup.text({
+            '```markdown',
+            '| Heading 1 | Heading 2 |',
+            '| --------- | --------- |',
+            '| Item 1    | Item 2    |',
+            '```',
+        }, {
+            code = { border = 'thin', left_pad = 2 },
+        })
+        util.assert_screen({
+            '󰍔 󰍔 markdown' .. ('█'):rep(68),
+            '    ┌───────────┬───────────┐',
+            '    │ Heading 1 │ Heading 2 │',
+            '    ├───────────┼───────────┤',
+            '    │ Item 1    │ Item 2    │',
+            '    └───────────┴───────────┘',
+            '  ' .. ('▀'):rep(78),
+        })
+    end)
 end)
