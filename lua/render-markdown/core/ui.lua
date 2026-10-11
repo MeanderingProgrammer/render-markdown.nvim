@@ -83,10 +83,16 @@ end
 ---@private
 ---@return boolean
 function Updater:changed()
-    -- force or buffer has changed or we have not handled the visible range yet
-    return self.force
-        or self.decorator:changed()
-        or not Context.contains(self.buf, self.win)
+    if self.force or self.decorator:changed() then
+        return true
+    end
+    -- an inactive split can scroll without changing the current window
+    for _, win in ipairs(env.buf.wins(self.buf)) do
+        if not Context.contains(self.buf, win) then
+            return true
+        end
+    end
+    return false
 end
 
 ---@private

@@ -239,7 +239,7 @@ function Render:background(start_row, end_row)
         win_col = self.data.margin + self.data.body + self:indent():size()
     end
     local col = self.node.start_col
-    for row = start_row, end_row do
+    for row in self.context.view:rows(start_row, end_row) do
         self.marks:add(self.config, 'code_background', row, col, {
             end_row = row + 1,
             priority = self.config.priority,
@@ -273,7 +273,7 @@ function Render:padding(background)
         return
     end
     local highlight = background and self.config.highlight or nil
-    for row = start_row, end_row do
+    for row in self.context.view:rows(start_row, end_row) do
         local line = self:line()
         if vim.tbl_contains(empty, row) then
             line:pad(col)
