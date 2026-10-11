@@ -392,9 +392,11 @@ end
 
 ---@param units render.md.table.Unit[]
 ---@param width integer
----@return render.md.mark.Line[]
+---@return render.md.mark.Line[] lines
+---@return integer[] starts index of the first unit in each line
 function Parser.wrap(units, width)
     local result = {} ---@type render.md.mark.Line[]
+    local starts = {} ---@type integer[]
     local first = 1
     while first <= #units do
         local last = first - 1
@@ -429,12 +431,16 @@ function Parser.wrap(units, width)
             end
         end
         result[#result + 1] = line
+        starts[#starts + 1] = first
         first = next_unit
         while first <= #units and str.whitespace(units[first].text) do
             first = first + 1 ---@type integer
         end
     end
-    return #result > 0 and result or { {} }
+    if #result == 0 then
+        return { {} }, { 1 }
+    end
+    return result, starts
 end
 
 ---@param line render.md.mark.Line

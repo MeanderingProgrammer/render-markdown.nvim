@@ -172,6 +172,7 @@ function Handler:render(row, nodes)
 
     local lines_above = {} ---@type string[]
     local lines_below = {} ---@type string[]
+    local items = {} ---@type render.md.request.latex.Item[]
     local current = 0
 
     for _, node in ipairs(nodes) do
@@ -257,6 +258,14 @@ function Handler:render(row, nodes)
                 lines_below[i] = line .. str.pad(prefix) .. body
             end
 
+            -- keep output per formula so tables can lay it out within cells
+            items[#items + 1] = {
+                node = node,
+                width = width,
+                above = vim.list_slice(output, 1, above),
+                below = vim.list_slice(output, #output - below + 1),
+            }
+
             -- update current width of lines
             current = current + prefix + width
         end
@@ -264,20 +273,34 @@ function Handler:render(row, nodes)
 
     ---@param lines string[]
     ---@param above boolean
+    ---@return render.md.Mark?
     local function add_lines(lines, above)
         if #lines == 0 then
-            return
+            return nil
         end
-        self.marks:add(self.config, 'virtual_lines', row, 0, {
+        local added = self.marks:add(self.config, 'virtual_lines', row, 0, {
             virt_lines = iter.list.map(lines, function(line)
                 return indent:copy():text(line, self.config.highlight):get()
             end),
             virt_lines_above = above,
         })
+        if not added then
+            return nil
+        end
+        local marks = self.marks:get()
+        return marks[#marks]
     end
 
-    add_lines(lines_above, true)
-    add_lines(lines_below, false)
+    local above = add_lines(lines_above, true)
+    local below = add_lines(lines_below, false)
+    if above or below then
+        self.context.latex:set_row(row, {
+            highlight = self.config.highlight,
+            items = items,
+            above = above,
+            below = below,
+        })
+    end
 end
 
 ---@private

@@ -30,15 +30,20 @@ end
 function Render:run()
     self:delimiter()
     local wrapped = {} ---@type table<integer, render.md.mark.Line[]>
+    local latex = {} ---@type table<integer, render.md.request.latex.Row>
     for i, row in ipairs(self.data.rows) do
         if self.data.layout.wrap and not self:row_fits(row) then
             wrapped[i] = self:wrapped_row(row)
         else
             self:row(row)
         end
+        latex[i] = self.context.latex:take_row(row.node.start_row)
+        if latex[i] then
+            self:latex(row, latex[i], wrapped[i])
+        end
     end
     if self.config.border_enabled and self.data.layout.valid then
-        self:border(wrapped)
+        self:border(wrapped, latex)
     end
     for i, row in ipairs(self.data.rows) do
         local lines = wrapped[i]
@@ -192,6 +197,205 @@ function Render:wrapped_row(row)
     return lines
 end
 
+---@class render.md.table.latex.Placed
+---@field offset integer display column within the cell
+---@field item render.md.request.latex.Item
+
+---Take over the virtual lines latex added for multi-line formulas in a row,
+---so they are framed by the table and each formula lines up with its cell
+---@private
+---@param row render.md.table.Row
+---@param latex render.md.request.latex.Row
+---@param wrapped? render.md.mark.Line[]
+function Render:latex(row, latex, wrapped)
+    local placed, widths = self:latex_place(row, latex, wrapped ~= nil)
+    if next(placed) == nil then
+        -- nothing lines up with a cell, keep the lines latex added
+        return
+    end
+    if not wrapped then
+        local prefix = self:indent():line(true):pad(row.node:col())
+        if latex.above then
+            latex.above.opts.virt_lines =
+                self:latex_lines(row, prefix, latex, placed[1], widths, true)
+        end
+        if latex.below then
+            latex.below.opts.virt_lines =
+                self:latex_lines(row, prefix, latex, placed[1], widths, false)
+        end
+        return
+    end
+    -- row is replaced by virtual lines, so ours go around each fragment of it
+    local prefix = self:line():extend(self.data.prefixes[row.node.start_row])
+    if latex.above then
+        latex.above.opts.virt_lines = {}
+    end
+    if latex.below then
+        latex.below.opts.virt_lines = {}
+    end
+    -- go backwards so inserting lines does not shift remaining fragments
+    for fragment = #wrapped, 1, -1 do
+        local cells = placed[fragment]
+        if cells then
+            local below =
+                self:latex_lines(row, prefix, latex, cells, widths, false)
+            for i, line in ipairs(below) do
+                table.insert(wrapped, fragment + i, line)
+            end
+            local above =
+                self:latex_lines(row, prefix, latex, cells, widths, true)
+            for i, line in ipairs(above) do
+                table.insert(wrapped, fragment + i - 1, line)
+            end
+        end
+    end
+end
+
+---Places each formula within its cell, grouped by the wrapped fragment it
+---ends up on (always the first one when the row is not wrapped)
+---@private
+---@param row render.md.table.Row
+---@param latex render.md.request.latex.Row
+---@param wrapped boolean
+---@return table<integer, render.md.table.latex.Placed[][]>, integer[]
+function Render:latex_place(row, latex, wrapped)
+    local padding = self.config.padding
+    local shifted = vim.tbl_contains({ 'trimmed', 'padded' }, self.config.cell)
+    local _, source = row.node:line('first', 0)
+
+    local placed = {} ---@type table<integer, render.md.table.latex.Placed[][]>
+    local widths = {} ---@type integer[]
+    for i, cell in ipairs(row.cells) do
+        local col = self.data.cols[i]
+        widths[i] = (wrapped or shifted) and col.width or cell.width
+
+        local lines, starts ---@type render.md.mark.Line[]?, integer[]?
+        local units = cell.units
+        if wrapped and units then
+            lines, starts = Parser.wrap(units, col.width - 2 * padding)
+        end
+
+        for _, item in ipairs(latex.items) do
+            local node = item.node
+            if
+                node.start_col >= cell.node.start_col
+                and node.end_col <= cell.node.end_col
+            then
+                -- display width of the cell text in front of the formula
+                local before = self.context:width({
+                    text = (source or ''):sub(
+                        cell.node.start_col + 1,
+                        node.start_col
+                    ),
+                    start_row = node.start_row,
+                    start_col = cell.node.start_col,
+                    end_row = node.start_row,
+                    end_col = node.start_col,
+                })
+
+                local fragment, offset = 1, 0
+                if units and lines and starts then
+                    -- wrapped units start after leading spaces of the cell
+                    before = before - str.spaces('start', cell.node.text)
+                    local unit, width = 1, 0
+                    while unit <= #units and width < before do
+                        width = width + units[unit].width
+                        unit = unit + 1
+                    end
+                    while
+                        starts[fragment + 1]
+                        and starts[fragment + 1] <= unit
+                    do
+                        fragment = fragment + 1
+                    end
+                    for j = starts[fragment], unit - 1 do
+                        offset = offset + units[j].width
+                    end
+                    -- same alignment as Parser.align
+                    local extra = col.width
+                        - 2 * padding
+                        - str.line_width(lines[fragment])
+                    if col.alignment == Parser.Alignment.right then
+                        offset = offset + extra
+                    elseif col.alignment == Parser.Alignment.center then
+                        offset = offset + math.floor(extra / 2)
+                    end
+                    offset = offset + padding
+                elseif shifted then
+                    local left = self:shifts(col, cell)
+                    offset = cell.space.left + left + before
+                else
+                    offset = cell.space.left + before
+                end
+
+                if not placed[fragment] then
+                    placed[fragment] = {}
+                end
+                local cells = placed[fragment]
+                if not cells[i] then
+                    cells[i] = {}
+                end
+                cells[i][#cells[i] + 1] = { offset = offset, item = item }
+            end
+        end
+    end
+    return placed, widths
+end
+
+---@private
+---@param row render.md.table.Row
+---@param prefix render.md.Line
+---@param latex render.md.request.latex.Row
+---@param cells render.md.table.latex.Placed[][]
+---@param widths integer[]
+---@param above boolean
+---@return render.md.mark.Line[]
+function Render:latex_lines(row, prefix, latex, cells, widths, above)
+    local icon = self.config.border[10]
+    local header = row.node.type == 'pipe_table_header'
+    local highlight = header and self.config.head or self.config.row
+
+    ---@param item render.md.request.latex.Item
+    ---@return string[]
+    local function fragments(item)
+        return above and item.above or item.below
+    end
+
+    local height = 0
+    for _, values in pairs(cells) do
+        for _, value in ipairs(values) do
+            height = math.max(height, #fragments(value.item))
+        end
+    end
+
+    local lines = {} ---@type render.md.mark.Line[]
+    for l = 1, height do
+        local line = prefix:copy():text(icon, highlight)
+        for i, width in ipairs(widths) do
+            local cell = self:line()
+            local current = 0
+            for _, value in ipairs(cells[i] or {}) do
+                local item = value.item
+                local position = math.max(value.offset, current)
+                position = math.max(math.min(position, width - item.width), 0)
+                -- above lines are aligned to the bottom, below lines to the top
+                local index = above and l - (height - #fragments(item)) or l
+                local body = fragments(item)[index]
+                if body then
+                    cell:pad(position - cell:width())
+                    cell:text(body, latex.highlight)
+                end
+                -- keep at least one space between formulas
+                current = position + item.width + 1
+            end
+            cell = cell:sub(1, width)
+            line:extend(cell):pad(width - cell:width()):text(icon, highlight)
+        end
+        lines[#lines + 1] = line:get()
+    end
+    return lines
+end
+
 ---@private
 ---@param col render.md.table.Col
 ---@param cell render.md.table.row.Cell
@@ -249,7 +453,8 @@ end
 
 ---@private
 ---@param wrapped table<integer, render.md.mark.Line[]>
-function Render:border(wrapped)
+---@param latex table<integer, render.md.request.latex.Row>
+function Render:border(wrapped, latex)
     local rows = self.data.rows
     local border = self.config.border
 
@@ -307,6 +512,12 @@ function Render:border(wrapped)
         else
             local virtual_line = self:indent():line(true):extend(line):get()
             local lines = wrapped[index]
+            local mark = latex[index]
+                and latex[index][above and 'above' or 'below']
+            if not lines and mark then
+                -- keep border outside of the latex lines framed by the table
+                lines = mark.opts.virt_lines
+            end
             if lines then
                 table.insert(lines, above and 1 or #lines + 1, virtual_line)
             else
