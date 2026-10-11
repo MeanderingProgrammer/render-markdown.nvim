@@ -281,6 +281,8 @@ function Render:padding(background)
         line:pad(self.data.margin)
         if row > start_row and row < end_row then
             line:pad(self.data.padding, highlight)
+            -- allows nested content to align virtual lines with this row
+            self.context.offset[row] = { col = col, line = line:get() }
         end
         if not line:empty() then
             self.marks:add(self.config, false, row, col, {
