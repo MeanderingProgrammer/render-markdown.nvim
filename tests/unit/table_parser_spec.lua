@@ -29,11 +29,13 @@ describe('table parser', function()
             { 'abc def ', 'Normal' },
             { 'abcdefghij', 'String' },
         })
+        local lines, starts = Parser.wrap(units, 7)
         assert.same({
             { { 'abc def', 'Normal' } },
             { { 'abcdefg', 'String' } },
             { { 'hij', 'String' } },
-        }, Parser.wrap(units, 7))
+        }, lines)
+        assert.same({ 1, 9, 16 }, starts)
     end)
 
     it('keeps composing characters and wide glyphs intact', function()
@@ -67,6 +69,8 @@ describe('table parser', function()
             { { ' ', 'Normal' }, { '     ', 'Normal' } },
             Parser.align({}, 6, 'left', 1, 'Normal')
         )
-        assert.same({ {} }, Parser.wrap({}, 1))
+        local lines, starts = Parser.wrap({}, 1)
+        assert.same({ {} }, lines)
+        assert.same({ 1 }, starts)
     end)
 end)
