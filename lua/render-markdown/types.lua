@@ -293,6 +293,7 @@
 ---@field border? string[]
 ---@field border_enabled? boolean
 ---@field border_virtual? boolean
+---@field full_grid? boolean
 ---@field alignment_indicator? string
 ---@field head? string
 ---@field row? string

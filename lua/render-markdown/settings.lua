@@ -1641,6 +1641,7 @@ M.pipe_table = {}
 ---@field border string[]
 ---@field border_enabled boolean
 ---@field border_virtual boolean
+---@field full_grid boolean
 ---@field alignment_indicator string
 ---@field head string
 ---@field row string
@@ -1714,6 +1715,8 @@ M.pipe_table.default = {
     -- Always use virtual lines for table borders instead of attempting to use empty lines.
     -- Will be automatically enabled if indentation module is enabled.
     border_virtual = false,
+    -- Draw a horizontal line between every body row, adds one virtual line per separator.
+    full_grid = false,
     -- Gets placed in delimiter row for each column, position is based on alignment.
     alignment_indicator = '━',
     -- Highlight for table heading, delimiter, and the line above.
@@ -1739,6 +1742,7 @@ function M.pipe_table.schema()
         border = { list = { type = 'string' } },
         border_enabled = { type = 'boolean' },
         border_virtual = { type = 'boolean' },
+        full_grid = { type = 'boolean' },
         alignment_indicator = { type = 'string' },
         head = { type = 'string' },
         row = { type = 'string' },

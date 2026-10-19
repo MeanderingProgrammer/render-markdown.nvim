@@ -37,8 +37,13 @@ function Render:run()
             self:row(row)
         end
     end
-    if self.config.border_enabled and self.data.layout.valid then
-        self:border(wrapped)
+    if self.data.layout.valid then
+        if self.config.border_enabled then
+            self:border(wrapped)
+        end
+        if self.config.full_grid then
+            self:separators(wrapped)
+        end
     end
     for i, row in ipairs(self.data.rows) do
         local lines = wrapped[i]
@@ -248,36 +253,37 @@ function Render:shift(node, side, amount)
 end
 
 ---@private
+---@param row render.md.table.Row
+---@return boolean
+function Render:width_equal(row)
+    if vim.tbl_contains({ 'trimmed', 'padded' }, self.config.cell) then
+        -- assume table was modified to match
+        return true
+    elseif self.config.cell == 'raw' then
+        -- want the computed widths to match
+        for i, cell in ipairs(row.cells) do
+            if cell.width ~= self.data.cols[i].width then
+                return false
+            end
+        end
+        return true
+    elseif self.config.cell == 'overlay' then
+        -- want the underlying text widths to match
+        return str.width(row.node.text) == str.width(self.data.delim.text)
+    else
+        return false
+    end
+end
+
+---@private
 ---@param wrapped table<integer, render.md.mark.Line[]>
 function Render:border(wrapped)
     local rows = self.data.rows
     local border = self.config.border
 
-    ---@param row render.md.table.Row
-    ---@return boolean
-    local function width_equal(row)
-        if vim.tbl_contains({ 'trimmed', 'padded' }, self.config.cell) then
-            -- assume table was modified to match
-            return true
-        elseif self.config.cell == 'raw' then
-            -- want the computed widths to match
-            for i, cell in ipairs(row.cells) do
-                if cell.width ~= self.data.cols[i].width then
-                    return false
-                end
-            end
-            return true
-        elseif self.config.cell == 'overlay' then
-            -- want the underlying text widths to match
-            return str.width(row.node.text) == str.width(self.data.delim.text)
-        else
-            return false
-        end
-    end
-
     local first = rows[1]
     local last = rows[#rows]
-    if not width_equal(first) or not width_equal(last) then
+    if not self:width_equal(first) or not self:width_equal(last) then
         return
     end
 
@@ -322,6 +328,49 @@ function Render:border(wrapped)
     table_border(1, true, { border[1], border[2], border[3] })
     if #rows > 1 then
         table_border(#rows, false, { border[7], border[8], border[9] })
+    end
+end
+
+---Draw a line between every pair of adjacent body rows, rows[1] is the heading
+---and the delimiter already separates it from rows[2]
+---@private
+---@param wrapped table<integer, render.md.mark.Line[]>
+function Render:separators(wrapped)
+    local rows = self.data.rows
+    local border = self.config.border
+
+    -- all or nothing so the grid never ends up partially drawn
+    for i = 2, #rows do
+        if not self:width_equal(rows[i]) then
+            return
+        end
+    end
+
+    local icon = border[11]
+    local parts = iter.list.map(self.data.cols, function(col)
+        return icon:rep(col.width)
+    end)
+    local text = border[4] .. table.concat(parts, border[5]) .. border[6]
+    local line =
+        self:line():pad(self.data.layout.col):text(text, self.config.row)
+    local virtual_line = self:indent():line(true):extend(line):get()
+
+    for i = 2, #rows - 1 do
+        local lines = wrapped[i]
+        if lines then
+            lines[#lines + 1] = virtual_line
+        else
+            self.marks:add(
+                self.config,
+                'virtual_lines',
+                rows[i].node.start_row,
+                0,
+                {
+                    virt_lines = { virtual_line },
+                    virt_lines_above = false,
+                }
+            )
+        end
     end
 end
 
