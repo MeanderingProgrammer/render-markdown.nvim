@@ -103,7 +103,12 @@ function Render:row(row)
     local header = row.node.type == 'pipe_table_header'
     local highlight = header and self.config.head or self.config.row
 
-    if vim.tbl_contains({ 'trimmed', 'padded', 'raw' }, self.config.cell) then
+    if
+        vim.tbl_contains(
+            { 'fit', 'trimmed', 'padded', 'raw' },
+            self.config.cell
+        )
+    then
         for _, pipe in ipairs(row.pipes) do
             self.marks:over(self.config, 'table_border', pipe, {
                 virt_text = { { icon, highlight } },
@@ -112,7 +117,7 @@ function Render:row(row)
         end
     end
 
-    if vim.tbl_contains({ 'trimmed', 'padded' }, self.config.cell) then
+    if vim.tbl_contains({ 'fit', 'trimmed', 'padded' }, self.config.cell) then
         for i, cell in ipairs(row.cells) do
             local left, right = self:shifts(self.data.cols[i], cell)
             self:shift(cell.node, 'left', left)
@@ -256,7 +261,9 @@ function Render:border(wrapped)
     ---@param row render.md.table.Row
     ---@return boolean
     local function width_equal(row)
-        if vim.tbl_contains({ 'trimmed', 'padded' }, self.config.cell) then
+        if
+            vim.tbl_contains({ 'fit', 'trimmed', 'padded' }, self.config.cell)
+        then
             -- assume table was modified to match
             return true
         elseif self.config.cell == 'raw' then

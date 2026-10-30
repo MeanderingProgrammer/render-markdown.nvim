@@ -290,6 +290,8 @@
 ---@field cell_offset? fun(ctx: render.md.table.cell.Context): integer
 ---@field padding? integer
 ---@field min_width? integer
+---@field max_table_width? integer
+---@field right_margin? integer
 ---@field border? string[]
 ---@field border_enabled? boolean
 ---@field border_virtual? boolean

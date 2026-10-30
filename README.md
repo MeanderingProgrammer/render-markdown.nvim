@@ -715,6 +715,7 @@ require('render-markdown').setup({
         -- | raw     | replaces only the '|' characters in each row, leaving the cells unmodified |
         -- | padded  | raw + cells are padded to maximum visual width for each column             |
         -- | trimmed | padded except empty space is subtracted from visual width calculation      |
+        -- | fit     | trimmed + long columns share the window by length, wrapping between words  |
         cell = 'padded',
         -- Fit wide tables to the current window by wrapping individual cells.
         wrap = true,
@@ -724,8 +725,13 @@ require('render-markdown').setup({
         end,
         -- Amount of space to put between cell contents and border.
         padding = 1,
-        -- Minimum column width to use for padded or trimmed cell.
+        -- Minimum column width to use for padded, trimmed, or fit cell.
         min_width = 0,
+        -- Maximum width of the whole table to use for fit cell, wrapping cells to stay within it.
+        -- Tables are always limited by the window, 0 means there is no additional limit.
+        max_table_width = 0,
+        -- Amount of space to keep between wrapped tables and the right edge of the window.
+        right_margin = 0,
         -- Characters used to replace table border.
         -- Correspond to top(3), delimiter(3), bottom(3), vertical, & horizontal.
         -- stylua: ignore
@@ -1491,6 +1497,7 @@ require('render-markdown').setup({
         -- | raw     | replaces only the '|' characters in each row, leaving the cells unmodified |
         -- | padded  | raw + cells are padded to maximum visual width for each column             |
         -- | trimmed | padded except empty space is subtracted from visual width calculation      |
+        -- | fit     | trimmed + long columns share the window by length, wrapping between words  |
         cell = 'padded',
         -- Fit wide tables to the current window by wrapping individual cells.
         wrap = true,
@@ -1500,8 +1507,13 @@ require('render-markdown').setup({
         end,
         -- Amount of space to put between cell contents and border.
         padding = 1,
-        -- Minimum column width to use for padded or trimmed cell.
+        -- Minimum column width to use for padded, trimmed, or fit cell.
         min_width = 0,
+        -- Maximum width of the whole table to use for fit cell, wrapping cells to stay within it.
+        -- Tables are always limited by the window, 0 means there is no additional limit.
+        max_table_width = 0,
+        -- Amount of space to keep between wrapped tables and the right edge of the window.
+        right_margin = 0,
         -- Characters used to replace table border.
         -- Correspond to top(3), delimiter(3), bottom(3), vertical, & horizontal.
         -- stylua: ignore

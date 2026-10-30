@@ -133,7 +133,7 @@ function Parser:parse(root, marks)
             if available < 0 then
                 width = width - available
             end
-            if self.config.cell == 'trimmed' then
+            if vim.tbl_contains({ 'trimmed', 'fit' }, self.config.cell) then
                 width = width - math.max(available, 0)
             end
             cols[i].width = math.max(cols[i].width, width)
@@ -160,10 +160,12 @@ function Parser:parse(root, marks)
 
         local desired = {} ---@type integer[]
         local minimum = {} ---@type integer[]
+        local words = {} ---@type integer[]
         local padding = self.config.padding
         for i, col in ipairs(cols) do
             desired[i] = col.width
             minimum[i] = math.max(self.config.min_width, 2 * padding + 1)
+            words[i] = minimum[i]
         end
 
         prefix(delim)
@@ -185,13 +187,29 @@ function Parser:parse(root, marks)
                 local width, smallest = Parser.measure(cell.units)
                 desired[i] = math.max(desired[i], 2 * padding + width)
                 minimum[i] = math.max(minimum[i], 2 * padding + smallest)
+                words[i] = math.max(
+                    words[i],
+                    2 * padding + Parser.longest_word(cell.units)
+                )
             end
         end
 
+        local fit = self.config.cell == 'fit'
         local budget = env.win.width(self.context.win)
+        budget = budget - self.config.right_margin
+        if fit and self.config.max_table_width > 0 then
+            budget = math.min(budget, self.config.max_table_width)
+        end
         budget = budget - (prefix_width + #cols + 1)
 
-        local widths = Parser.allocate(desired, minimum, budget)
+        local widths = nil ---@type integer[]?
+        if fit then
+            -- keep words whole unless there is not enough space to do so
+            widths = Parser.fit(desired, words, budget)
+                or Parser.fit(desired, minimum, budget)
+        else
+            widths = Parser.allocate(desired, minimum, budget)
+        end
         if not widths then
             layout.wrap = false
         else
@@ -227,7 +245,7 @@ function Parser:cols(node)
         assert(width >= 0, 'invalid table layout')
         if self.config.cell == 'padded' then
             width = math.max(width, self.config.min_width)
-        elseif self.config.cell == 'trimmed' then
+        elseif vim.tbl_contains({ 'trimmed', 'fit' }, self.config.cell) then
             width = self.config.min_width
         end
         cols[#cols + 1] = {
@@ -341,6 +359,21 @@ function Parser.measure(units)
     return width, minimum
 end
 
+---@param units render.md.table.Unit[]
+---@return integer
+function Parser.longest_word(units)
+    local longest, current = 0, 0
+    for _, unit in ipairs(units) do
+        if str.whitespace(unit.text) then
+            current = 0
+        else
+            current = current + unit.width
+            longest = math.max(longest, current)
+        end
+    end
+    return longest
+end
+
 ---@param desired integer[]
 ---@param minimum integer[]
 ---@param budget integer
@@ -385,6 +418,90 @@ function Parser.allocate(desired, minimum, budget)
     budget = budget - (free * share)
     for i = 1, budget do
         widths[i] = widths[i] + 1
+    end
+
+    return widths
+end
+
+---@param desired integer[]
+---@param minimum integer[]
+---@param budget integer
+---@return integer[]?
+function Parser.fit(desired, minimum, budget)
+    -- empty columns can have a desired width below the minimum
+    local floors = {} ---@type integer[]
+    local natural = 0
+    local floor = 0
+    for i, width in ipairs(desired) do
+        floors[i] = math.min(minimum[i], width)
+        natural = natural + width ---@type integer
+        floor = floor + floors[i] ---@type integer
+    end
+    if natural <= budget then
+        return desired
+    end
+    if budget < floor then
+        return nil
+    end
+
+    -- columns under an equal share of the budget keep their desired width
+    local locked = {} ---@type table<integer, true>
+    local left = budget
+    local free = #desired
+    local share = math.floor(left / free)
+    local changed = true
+    while changed do
+        changed = false
+        for i = 1, #desired do
+            if not locked[i] and desired[i] <= share then
+                locked[i] = true
+                left = left - desired[i]
+                free = free - 1
+                changed = true
+            end
+        end
+        share = math.floor(left / free)
+    end
+
+    ---@return integer, integer
+    local function unlocked()
+        local low, need = 0, 0
+        for i, width in ipairs(desired) do
+            if not locked[i] then
+                low = low + floors[i]
+                need = need + width - floors[i]
+            end
+        end
+        return low, need
+    end
+
+    -- not enough space left over for the other columns so all must shrink
+    local low, need = unlocked()
+    if left < low then
+        locked = {}
+        left = budget
+        low, need = unlocked()
+    end
+
+    -- split extra space based on how much more each column wants
+    local extra = left - low
+    local widths = {} ---@type integer[]
+    for i, width in ipairs(desired) do
+        if locked[i] then
+            widths[i] = width
+        else
+            local wants = width - floors[i]
+            widths[i] = floors[i] + math.floor(extra * wants / need)
+            left = left - widths[i]
+        end
+    end
+
+    -- share any leftover budget arbitrarily
+    for i, width in ipairs(desired) do
+        if left > 0 and not locked[i] and widths[i] < width then
+            widths[i] = widths[i] + 1
+            left = left - 1
+        end
     end
 
     return widths
