@@ -219,6 +219,200 @@ describe('table wrapping', function()
         })
     end)
 
+    it('full grid', function()
+        util.setup.text(mixed, {
+            pipe_table = { cell = 'trimmed', full_grid = true },
+        })
+        util.assert_screen({
+            'BEFORE',
+            '┌───┬───┬──────────────────────────────┐',
+            '│ A │ B │                            C │',
+            '├━──┼━─━┼─────────────────────────────━┤',
+            '│ x │ y │                        short │',
+            '├───┼───┼──────────────────────────────┤',
+            '│ z │ w │  one two three four five six │',
+            '│   │   │         seven eight nine ten │',
+            '├───┼───┼──────────────────────────────┤',
+            '│ a │ b │                          end │',
+            '└───┴───┴──────────────────────────────┘',
+            'AFTER',
+        })
+    end)
+
+    it('full grid with fit', function()
+        util.setup.text({
+            'BEFORE',
+            '',
+            '| A | B |',
+            '| - | - |',
+            '| x | one two three four five six seven eight nine ten eleven |',
+            '| y | short |',
+            '',
+            'AFTER',
+        }, { pipe_table = { cell = 'fit', full_grid = true } })
+        util.assert_screen({
+            'BEFORE',
+            '┌───┬──────────────────────────────────┐',
+            '│ A │ B                                │',
+            '├───┼──────────────────────────────────┤',
+            '│ x │ one two three four five six      │',
+            '│   │ seven eight nine ten eleven      │',
+            '├───┼──────────────────────────────────┤',
+            '│ y │ short                            │',
+            '└───┴──────────────────────────────────┘',
+            'AFTER',
+        })
+    end)
+
+    it('full grid without top and bottom borders', function()
+        util.setup.text({
+            'BEFORE',
+            '',
+            '| A | B |',
+            '| - | - |',
+            '| x | y |',
+            '| z | w |',
+            '',
+            'AFTER',
+        }, {
+            pipe_table = {
+                cell = 'trimmed',
+                border_enabled = false,
+                full_grid = true,
+            },
+        })
+        util.assert_screen({
+            'BEFORE',
+            '',
+            '│ A │ B │',
+            '├───┼───┤',
+            '│ x │ y │',
+            '├───┼───┤',
+            '│ z │ w │',
+            '',
+            'AFTER',
+        })
+    end)
+
+    it('full grid when header is outside the view', function()
+        local input = { '', '| A | B |', '| - | - |' }
+        for _ = 1, 100 do
+            input[#input + 1] = '| x | y |'
+        end
+        util.setup.text(input, {
+            debounce = 0,
+            pipe_table = { cell = 'trimmed', full_grid = true },
+        })
+        util.set_row(60, true)
+        local expected = {}
+        for i = 1, 39 do
+            expected[i] = i % 2 == 1 and '│ x │ y │'
+                or '├───┼───┤'
+        end
+        expected[#expected + 1] = ''
+        util.assert_screen(expected)
+    end)
+
+    it('full grid in a list', function()
+        util.setup.text({
+            '- item',
+            '',
+            '  | A | B |',
+            '  | - | - |',
+            '  | x | y |',
+            '  | z | w |',
+            '',
+            'AFTER',
+        }, { pipe_table = { cell = 'trimmed', full_grid = true } })
+        util.assert_screen({
+            '● item',
+            '  ┌───┬───┐',
+            '  │ A │ B │',
+            '  ├───┼───┤',
+            '  │ x │ y │',
+            '  ├───┼───┤',
+            '  │ z │ w │',
+            '  └───┴───┘',
+            'AFTER',
+        })
+    end)
+
+    it('full grid in a quote without wrap', function()
+        util.setup.text({
+            'BEFORE',
+            '',
+            '> | A | B |',
+            '> | - | - |',
+            '> | x | y |',
+            '> | z | w |',
+            '',
+            'AFTER',
+        }, {
+            pipe_table = { cell = 'trimmed', wrap = false, full_grid = true },
+        })
+        util.assert_screen({
+            'BEFORE',
+            '  ┌───┬───┐',
+            '▋ │ A │ B │',
+            '▋ ├───┼───┤',
+            '▋ │ x │ y │',
+            '▋ ├───┼───┤',
+            '▋ │ z │ w │',
+            '  └───┴───┘',
+            'AFTER',
+        })
+    end)
+
+    it('full grid skip misaligned raw rows', function()
+        util.setup.text({
+            'BEFORE',
+            '',
+            '| A | B |',
+            '| - | - |',
+            '| longer | y |',
+            '| x      | y |',
+            '| z | w |',
+            '',
+            'AFTER',
+        }, { pipe_table = { cell = 'raw', full_grid = true } })
+        util.assert_screen({
+            'BEFORE',
+            '',
+            '│ A │ B │',
+            '├────────┼───┤',
+            '│ longer │ y │',
+            '├────────┼───┤',
+            '│ x      │ y │',
+            '│ z │ w │',
+            '',
+            'AFTER',
+        })
+    end)
+
+    it('full grid in a quote', function()
+        util.setup.text({
+            'BEFORE',
+            '',
+            '> | A | B |',
+            '> | - | - |',
+            '> | x | y |',
+            '> | z | w |',
+            '',
+            'AFTER',
+        }, { pipe_table = { cell = 'trimmed', full_grid = true } })
+        util.assert_screen({
+            'BEFORE',
+            '  ┌───┬───┐',
+            '▋ │ A │ B │',
+            '▋ ├───┼───┤',
+            '▋ │ x │ y │',
+            '▋ ├───┼───┤',
+            '▋ │ z │ w │',
+            '  └───┴───┘',
+            'AFTER',
+        })
+    end)
+
     it('quote', function()
         util.setup.text({
             'BEFORE',

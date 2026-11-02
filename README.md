@@ -743,6 +743,8 @@ require('render-markdown').setup({
         },
         -- Turn on / off top & bottom lines.
         border_enabled = true,
+        -- Draw a line between body rows, using the delimiter border characters.
+        full_grid = false,
         -- Always use virtual lines for table borders instead of attempting to use empty lines.
         -- Will be automatically enabled if indentation module is enabled.
         border_virtual = false,
@@ -1525,6 +1527,8 @@ require('render-markdown').setup({
         },
         -- Turn on / off top & bottom lines.
         border_enabled = true,
+        -- Draw a line between body rows, using the delimiter border characters.
+        full_grid = false,
         -- Always use virtual lines for table borders instead of attempting to use empty lines.
         -- Will be automatically enabled if indentation module is enabled.
         border_virtual = false,

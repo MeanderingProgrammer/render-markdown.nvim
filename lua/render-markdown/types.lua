@@ -294,6 +294,7 @@
 ---@field right_margin? integer
 ---@field border? string[]
 ---@field border_enabled? boolean
+---@field full_grid? boolean
 ---@field border_virtual? boolean
 ---@field alignment_indicator? string
 ---@field head? string

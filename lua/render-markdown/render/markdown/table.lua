@@ -37,7 +37,10 @@ function Render:run()
             self:row(row)
         end
     end
-    if self.config.border_enabled and self.data.layout.valid then
+    if
+        (self.config.border_enabled or self.config.full_grid)
+        and self.data.layout.valid
+    then
         self:border(wrapped)
     end
     for i, row in ipairs(self.data.rows) do
@@ -282,12 +285,6 @@ function Render:border(wrapped)
         end
     end
 
-    local first = rows[1]
-    local last = rows[#rows]
-    if not width_equal(first) or not width_equal(last) then
-        return
-    end
-
     local icon = border[11]
     local parts = iter.list.map(self.data.cols, function(col)
         return icon:rep(col.width)
@@ -326,9 +323,49 @@ function Render:border(wrapped)
         end
     end
 
-    table_border(1, true, { border[1], border[2], border[3] })
-    if #rows > 1 then
-        table_border(#rows, false, { border[7], border[8], border[9] })
+    if
+        self.config.border_enabled
+        and width_equal(rows[1])
+        and width_equal(rows[#rows])
+    then
+        table_border(1, true, { border[1], border[2], border[3] })
+        if #rows > 1 then
+            table_border(#rows, false, { border[7], border[8], border[9] })
+        end
+    end
+
+    ---@param index integer
+    local function row_border(index)
+        local start_row = rows[index].node.start_row
+        local text = border[4] .. table.concat(parts, border[5]) .. border[6]
+        -- rows have prefixes, such as quote markers, unlike the outer borders
+        local line = self:line()
+            :extend(self.data.prefixes[start_row])
+            :text(text, self.config.row)
+            :get()
+        local lines = wrapped[index]
+        if lines then
+            lines[#lines + 1] = line
+        else
+            self.marks:add(self.config, 'virtual_lines', start_row, 0, {
+                virt_lines = { line },
+            })
+        end
+    end
+
+    if self.config.full_grid then
+        for i = 1, #rows - 1 do
+            -- header is already separated by the delimiter row
+            -- only rows in the view are parsed so it may not be the first
+            local header = rows[i].node.type == 'pipe_table_header'
+            if
+                not header
+                and width_equal(rows[i])
+                and width_equal(rows[i + 1])
+            then
+                row_border(i)
+            end
+        end
     end
 end
 

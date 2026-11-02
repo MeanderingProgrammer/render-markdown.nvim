@@ -141,9 +141,9 @@ function Parser:parse(root, marks)
     end
 
     local prefixes = {} ---@type table<integer, render.md.mark.Line>
-    if layout.wrap then
+    local prefix_width = 0
+    if layout.wrap or self.config.full_grid then
         local indent = Indent.new(self.context, root):line(true)
-        local prefix_width = 0
 
         ---@param node render.md.Node
         local function prefix(node)
@@ -158,6 +158,13 @@ function Parser:parse(root, marks)
             prefix_width = math.max(prefix_width, expanded:width())
         end
 
+        prefix(delim)
+        for _, row in ipairs(rows) do
+            prefix(row.node)
+        end
+    end
+
+    if layout.wrap then
         local desired = {} ---@type integer[]
         local minimum = {} ---@type integer[]
         local words = {} ---@type integer[]
@@ -168,9 +175,7 @@ function Parser:parse(root, marks)
             words[i] = minimum[i]
         end
 
-        prefix(delim)
         for _, row in ipairs(rows) do
-            prefix(row.node)
             for i, cell in ipairs(row.cells) do
                 local node = cell.node
                 local left = str.spaces('start', node.text)
