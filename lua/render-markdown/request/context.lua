@@ -34,7 +34,43 @@ function Context.new(buf, win, config, view)
     self.inline = require('render-markdown.request.inline').new()
     self.latex = require('render-markdown.request.latex').new()
     self.used = require('render-markdown.request.used').new()
+    self:extmarks()
     return self
+end
+
+---Extmarks from other plugins can change what a line displays, by concealing
+---text or adding inline virtual text. Include them so measurements and lines
+---drawn from buffer text, like wrapped table rows, match what is displayed.
+---@private
+function Context:extmarks()
+    local own = require('render-markdown.core.ui').ns
+    local names = {} ---@type table<integer, string>
+    for name, id in pairs(vim.api.nvim_get_namespaces()) do
+        names[id] = name
+    end
+    self.view:extmarks(function(row, col, details)
+        local ns = details.ns_id
+        -- treesitter conceals are already computed from the highlights queries
+        local skip = ns == own
+            or vim.startswith(names[ns] or '', 'nvim.treesitter')
+            or details.invalid
+        if skip then
+            return
+        end
+        if details.conceal and details.end_row == row and details.end_col then
+            self.highlights:add(row, {
+                conceal = {
+                    col,
+                    details.end_col,
+                    replacement = details.conceal,
+                    blocks = 1,
+                },
+            })
+        end
+        if details.virt_text_pos == 'inline' and details.virt_text then
+            self.inline:add(row, { col = col, line = details.virt_text })
+        end
+    end)
 end
 
 ---@param body? render.md.node.Body

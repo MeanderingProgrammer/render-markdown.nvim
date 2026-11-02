@@ -90,4 +90,20 @@ function View:query(root, query, callback)
     end
 end
 
+---@param callback fun(row: integer, col: integer, details: vim.api.keyset.extmark_details)
+function View:extmarks(callback)
+    for _, range in ipairs(self.ranges) do
+        local extmarks = vim.api.nvim_buf_get_extmarks(
+            self.buf,
+            -1,
+            { range[1], 0 },
+            { range[2], -1 },
+            { details = true }
+        )
+        for _, extmark in ipairs(extmarks) do
+            callback(extmark[2], extmark[3], assert(extmark[4]))
+        end
+    end
+end
+
 return View
