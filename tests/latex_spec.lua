@@ -135,4 +135,27 @@ describe('latex', function()
             '',
         })
     end)
+
+    it('replace', function()
+        local replace_lines = {
+            '',
+            '$$' .. m22.input .. '$$',
+            '',
+            '$$' .. m33.input .. '$$',
+            '',
+        }
+        util.setup.text(replace_lines, {
+            latex = { converter = 'utftex', position = 'replace' },
+        })
+        util.assert_screen({
+            '',
+            '⎛1  2⎞',
+            '⎝3  4⎠',
+            '',
+            '⎛1  2  3⎞',
+            '⎜4  5  6⎟',
+            '⎝7  8  9⎠',
+            '',
+        })
+    end)
 end)

@@ -197,68 +197,76 @@ function Handler:render(row, nodes)
                 position = 'above'
             end
 
-            -- absolute formula column
-            local col ---@type integer
-            if position == 'below' and node:height() > 1 then
-                -- latex blocks include last line, unlike markdown blocks
-                local _, line = node:line('below', 1)
-                col = line and str.spaces('start', line) or 0
+            -- replace: conceal source lines and show rendered output
+            if position == 'replace' then
+                local lines = iter.list.map(output, function(line)
+                    return indent:copy():text(line, self.config.highlight):get()
+                end)
+                self.marks:replace(self.config, node, lines)
             else
-                local _, line = node:line('first', 0)
-                col = self.context:width({
-                    text = line and line:sub(1, node.start_col) or '',
-                    start_row = node.start_row,
-                    start_col = 0,
-                    end_row = node.start_row,
-                    end_col = node.start_col,
-                })
-            end
+                -- absolute formula column
+                local col ---@type integer
+                if position == 'below' and node:height() > 1 then
+                    -- latex blocks include last line, unlike markdown blocks
+                    local _, line = node:line('below', 1)
+                    col = line and str.spaces('start', line) or 0
+                else
+                    local _, line = node:line('first', 0)
+                    col = self.context:width({
+                        text = line and line:sub(1, node.start_col) or '',
+                        start_row = node.start_row,
+                        start_col = 0,
+                        end_row = node.start_row,
+                        end_col = node.start_col,
+                    })
+                end
 
-            -- convert column to relative offset, include padding between formulas
-            local prefix = math.max(col - current, current == 0 and 0 or 1)
+                -- convert column to relative offset, include padding between formulas
+                local prefix = math.max(col - current, current == 0 and 0 or 1)
 
-            local above ---@type integer
-            local below ---@type integer
-            if position == 'above' then
-                above = #output
-                below = 0
-            elseif position == 'below' then
-                above = 0
-                below = #output
-            else
-                assert(node:height() == 1, 'invalid center height')
-                local center = math.floor(#output / 2) + 1
-                above = center - 1
-                below = #output - center
-                self.marks:over(self.config, 'latex', node, {
-                    virt_text = { { output[center], self.config.highlight } },
-                    virt_text_pos = 'inline',
-                    conceal = '',
-                })
-            end
+                local above ---@type integer
+                local below ---@type integer
+                if position == 'above' then
+                    above = #output
+                    below = 0
+                elseif position == 'below' then
+                    above = 0
+                    below = #output
+                else
+                    assert(node:height() == 1, 'invalid center height')
+                    local center = math.floor(#output / 2) + 1
+                    above = center - 1
+                    below = #output - center
+                    self.marks:over(self.config, 'latex', node, {
+                        virt_text = { { output[center], self.config.highlight } },
+                        virt_text_pos = 'inline',
+                        conceal = '',
+                    })
+                end
 
-            -- fill in new lines at top and bottom
-            while #lines_above < above do
-                table.insert(lines_above, 1, str.pad(current))
-            end
-            while #lines_below < below do
-                lines_below[#lines_below + 1] = str.pad(current)
-            end
+                -- fill in new lines at top and bottom
+                while #lines_above < above do
+                    table.insert(lines_above, 1, str.pad(current))
+                end
+                while #lines_below < below do
+                    lines_below[#lines_below + 1] = str.pad(current)
+                end
 
-            -- concatenate output onto lines
-            for i, line in ipairs(lines_above) do
-                local index = i - (#lines_above - above)
-                local body = output[index] or str.pad(width)
-                lines_above[i] = line .. str.pad(prefix) .. body
-            end
-            for i, line in ipairs(lines_below) do
-                local index = i + (#output - below)
-                local body = output[index] or str.pad(width)
-                lines_below[i] = line .. str.pad(prefix) .. body
-            end
+                -- concatenate output onto lines
+                for i, line in ipairs(lines_above) do
+                    local index = i - (#lines_above - above)
+                    local body = output[index] or str.pad(width)
+                    lines_above[i] = line .. str.pad(prefix) .. body
+                end
+                for i, line in ipairs(lines_below) do
+                    local index = i + (#output - below)
+                    local body = output[index] or str.pad(width)
+                    lines_below[i] = line .. str.pad(prefix) .. body
+                end
 
-            -- update current width of lines
-            current = current + prefix + width
+                -- update current width of lines
+                current = current + prefix + width
+            end
         end
     end
 
