@@ -197,8 +197,8 @@ function Handler:render(row, nodes)
                 position = 'above'
             end
 
-            -- replace: conceal source lines and show rendered output
-            if position == 'replace' then
+            -- replace: conceal source and show rendered output
+            if position == 'replace' and node:height() > 1 then
                 local lines = iter.list.map(output, function(line)
                     return indent:copy():text(line, self.config.highlight):get()
                 end)

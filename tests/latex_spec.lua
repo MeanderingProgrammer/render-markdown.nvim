@@ -158,4 +158,22 @@ describe('latex', function()
             '',
         })
     end)
+
+    it('replace inline', function()
+        local inline_lines = {
+            'Here is an equation $x = y$ in this sentence.',
+            'Another $a + b = c$ here.',
+        }
+        util.system.mock('utftex', {
+            ['x = y'] = { 'x = y' },
+            ['a + b = c'] = { 'a + b = c' },
+        })
+        util.setup.text(inline_lines, {
+            latex = { converter = 'utftex', position = 'replace' },
+        })
+        util.assert_screen({
+            'Here is an equation x = y in this sentence.',
+            'Another a + b = c here.',
+        })
+    end)
 end)
