@@ -33,7 +33,7 @@ end
 ---@protected
 function Render:run()
     local start_row, end_row = self:rows()
-    if self.config.innermost then
+    if self.config.style == 'innermost' then
         -- inline marks at the same column have no reliable order, so each row
         -- gets a single mark with the full indent from the deepest section
         local level = self.node:level(false) - self.config.skip_level

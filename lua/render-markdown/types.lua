@@ -193,7 +193,7 @@
 ---@field skip_level? integer
 ---@field skip_heading? boolean
 ---@field icon? string
----@field innermost? boolean
+---@field style? render.md.indent.Style
 ---@field priority? integer
 ---@field highlight? string
 

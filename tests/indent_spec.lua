@@ -192,7 +192,7 @@ describe('indent', function()
 
     it('with innermost', function()
         util.setup.text(nested, {
-            indent = { enabled = true, innermost = true },
+            indent = { enabled = true, style = 'innermost' },
         })
 
         util.assert_screen({
@@ -219,7 +219,7 @@ describe('indent', function()
     end)
     it('with innermost & skip_heading', function()
         util.setup.text(nested, {
-            indent = { enabled = true, innermost = true, skip_heading = true },
+            indent = { enabled = true, style = 'innermost', skip_heading = true },
         })
 
         util.assert_screen({
@@ -248,7 +248,7 @@ describe('indent', function()
     it('with innermost & heading border', function()
         util.setup.text(nested, {
             heading = { border = true },
-            indent = { enabled = true, innermost = true },
+            indent = { enabled = true, style = 'innermost' },
         })
 
         local w = vim.o.columns

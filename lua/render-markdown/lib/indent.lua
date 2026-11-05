@@ -34,7 +34,7 @@ function Indent:line(virtual, level)
             line:pad(self.config.per_level * level)
         else
             for i = 1, level do
-                if self.config.innermost and i < level then
+                if self.config.style == 'innermost' and i < level then
                     line:pad(self.config.per_level)
                 else
                     line:text(self.config.icon, self.config.highlight)
