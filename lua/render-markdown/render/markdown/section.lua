@@ -78,6 +78,20 @@ function Render:covered()
             for row = start_row, end_row do
                 result[row] = true
             end
+            -- empty lines around a nested heading (above it, and below it when
+            -- the heading is skipped) are left bare, otherwise the outer guide
+            -- shows a stub right before the inner one starts
+            for row = child.start_row - 1, start_row - 1 do
+                local line = vim.api.nvim_buf_get_lines(
+                    child.buf,
+                    row,
+                    row + 1,
+                    false
+                )[1]
+                if row > self.node.start_row and str.width(line) == 0 then
+                    result[row] = true
+                end
+            end
         end
     end)
     return result
