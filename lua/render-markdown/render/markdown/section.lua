@@ -32,17 +32,66 @@ end
 
 ---@protected
 function Render:run()
+    local start_row, end_row = self:rows()
+    if self.config.innermost then
+        -- inline marks at the same column have no reliable order, so each row
+        -- gets a single mark with the full indent from the deepest section
+        local covered = self:covered()
+        local level = self.node:level(false) - self.config.skip_level
+        local line = self:indent():line(false, math.max(level, 0)):get()
+        for row = start_row, end_row do
+            if not covered[row] then
+                self:add(row, line)
+            end
+        end
+    else
+        -- each level stacks inline marks so we only add changes in level
+        local line = self:indent():line(false, self.data.level_change):get()
+        for row = start_row, end_row do
+            self:add(row, line)
+        end
+    end
+end
+
+---@private
+---@return integer, integer
+function Render:rows()
     local start_row = math.max(self.node.start_row + self:start_below(), 0)
     local end_row = self.node.end_row - 1 - self:end_above()
-    -- each level stacks inline marks so we only add changes in level
-    local line = self:indent():line(false, self.data.level_change):get()
-    for row = start_row, end_row do
-        self.marks:add(self.config, 'indent', row, 0, {
-            priority = self.config.priority,
-            virt_text = line,
-            virt_text_pos = 'inline',
-        })
-    end
+    return start_row, end_row
+end
+
+---@private
+---@return table<integer, boolean>
+function Render:covered()
+    local result = {} ---@type table<integer, boolean>
+    self.node:for_each_child(function(child)
+        if child.type ~= 'section' then
+            return
+        end
+        local render = setmetatable({}, Render)
+        render.context = self.context
+        render.marks = self.marks
+        render.node = child
+        if render:setup() then
+            local start_row, end_row = render:rows()
+            for row = start_row, end_row do
+                result[row] = true
+            end
+        end
+    end)
+    return result
+end
+
+---@private
+---@param row integer
+---@param line render.md.mark.Line
+function Render:add(row, line)
+    self.marks:add(self.config, 'indent', row, 0, {
+        priority = self.config.priority,
+        virt_text = line,
+        virt_text_pos = 'inline',
+    })
 end
 
 ---@private
@@ -52,6 +101,9 @@ function Render:start_below()
         -- exclude second line of current section if empty
         local empty = self:empty('first', 1)
         return empty and 2 or 1
+    elseif self.config.innermost then
+        -- start with the heading: the line above belongs to the outer guide
+        return 0
     else
         -- include last line of previous section if empty
         -- skip if it is the only line in the previous section

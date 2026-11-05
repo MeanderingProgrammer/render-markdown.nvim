@@ -193,6 +193,7 @@
 ---@field skip_level? integer
 ---@field skip_heading? boolean
 ---@field icon? string
+---@field innermost? boolean
 ---@field priority? integer
 ---@field highlight? string
 

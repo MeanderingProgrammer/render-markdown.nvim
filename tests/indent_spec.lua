@@ -169,4 +169,50 @@ describe('indent', function()
             '  ▎   ▎   ▎   Bar',
         })
     end)
+    it('with innermost', function()
+        util.setup.text({
+            '# Heading 1',
+            '',
+            '## Heading 2',
+            '',
+            'Foo',
+            '',
+            '### Heading 3',
+            '',
+            '| Foo | Bar |',
+            '| --- | --- |',
+            '',
+            '#### Heading 4',
+            '',
+            'Bar',
+            '',
+            '## Heading 2',
+            '',
+            'Baz',
+        }, {
+            indent = { enabled = true, innermost = true },
+        })
+
+        util.assert_screen({
+            '󰫎 󰲡 Heading 1',
+            '',
+            '󰫎 ▎  󰲣 Heading 2',
+            '  ▎',
+            '  ▎ Foo',
+            '  ▎',
+            '󰫎   ▎   󰲥 Heading 3',
+            '    ▎',
+            '    ▎ ┌─────┬─────┐',
+            '    ▎ │ Foo │ Bar │',
+            '    ▎ ├─────┼─────┤',
+            '    ▎',
+            '󰫎     ▎    󰲧 Heading 4',
+            '      ▎',
+            '      ▎ Bar',
+            '',
+            '󰫎 ▎  󰲣 Heading 2',
+            '  ▎',
+            '  ▎ Baz',
+        })
+    end)
 end)

@@ -1059,6 +1059,7 @@ M.indent = {}
 ---@field skip_level integer
 ---@field skip_heading boolean
 ---@field icon string
+---@field innermost boolean
 ---@field priority integer
 ---@field highlight string
 
@@ -1080,6 +1081,9 @@ M.indent.default = {
     skip_heading = false,
     -- Prefix added when indenting, one per level.
     icon = '▎',
+    -- Only draw the icon of the innermost level, outer levels are padded with spaces instead.
+    -- Nested sections then show a single guide rather than one per level.
+    innermost = false,
     -- Priority to assign to extmarks.
     priority = 0,
     -- Applied to icon.
@@ -1093,6 +1097,7 @@ function M.indent.schema()
         skip_level = { type = 'number' },
         skip_heading = { type = 'boolean' },
         icon = { type = 'string' },
+        innermost = { type = 'boolean' },
         priority = { type = 'number' },
         highlight = { type = 'string' },
     })
