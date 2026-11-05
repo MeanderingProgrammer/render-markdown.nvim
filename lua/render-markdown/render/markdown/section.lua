@@ -36,12 +36,18 @@ function Render:run()
     if self.config.innermost then
         -- inline marks at the same column have no reliable order, so each row
         -- gets a single mark with the full indent from the deepest section
-        local covered = self:covered()
         local level = self.node:level(false) - self.config.skip_level
-        local line = self:indent():line(false, math.max(level, 0)):get()
+        local indent = self:indent():line(false, math.max(level, 0))
+        local line = indent:get()
+        local blank = self:line():pad(indent:width()):get()
+        local covered, quiet = self:children()
         for row = start_row, end_row do
             if not covered[row] then
-                self:add(row, line)
+                -- the empty line above the heading keeps the indent (a border
+                -- may be drawn there) without the guide, so it starts with the
+                -- heading
+                local bare = quiet[row] or row < self.node.start_row
+                self:add(row, bare and blank or line)
             end
         end
     else
@@ -62,9 +68,12 @@ function Render:rows()
 end
 
 ---@private
----@return table<integer, boolean>
-function Render:covered()
-    local result = {} ---@type table<integer, boolean>
+---@return table<integer, boolean>, table<integer, boolean>
+function Render:children()
+    -- rows marked by a nested section, and empty rows of a skipped nested
+    -- heading this section marks without its guide
+    local covered = {} ---@type table<integer, boolean>
+    local quiet = {} ---@type table<integer, boolean>
     self.node:for_each_child(function(child)
         if child.type ~= 'section' then
             return
@@ -76,25 +85,17 @@ function Render:covered()
         if render:setup() then
             local start_row, end_row = render:rows()
             for row = start_row, end_row do
-                result[row] = true
+                covered[row] = true
             end
-            -- empty lines around a nested heading (above it, and below it when
-            -- the heading is skipped) are left bare, otherwise the outer guide
-            -- shows a stub right before the inner one starts
-            for row = child.start_row - 1, start_row - 1 do
-                local line = vim.api.nvim_buf_get_lines(
-                    child.buf,
-                    row,
-                    row + 1,
-                    false
-                )[1]
-                if row > self.node.start_row and str.width(line) == 0 then
-                    result[row] = true
+            for row = child.start_row + 1, start_row - 1 do
+                local _, line = child:line('first', row - child.start_row)
+                if str.width(line) == 0 then
+                    quiet[row] = true
                 end
             end
         end
     end)
-    return result
+    return covered, quiet
 end
 
 ---@private
@@ -115,9 +116,6 @@ function Render:start_below()
         -- exclude second line of current section if empty
         local empty = self:empty('first', 1)
         return empty and 2 or 1
-    elseif self.config.innermost then
-        -- start with the heading: the line above belongs to the outer guide
-        return 0
     else
         -- include last line of previous section if empty
         -- skip if it is the only line in the previous section
