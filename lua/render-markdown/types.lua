@@ -287,6 +287,7 @@
 ---@field preset? render.md.table.Preset
 ---@field cell? render.md.table.Cell
 ---@field wrap? boolean
+---@field grid? boolean
 ---@field cell_offset? fun(ctx: render.md.table.cell.Context): integer
 ---@field padding? integer
 ---@field min_width? integer

@@ -199,6 +199,26 @@ describe('table wrapping', function()
         })
     end)
 
+    it('grid', function()
+        util.setup.text(mixed, {
+            pipe_table = { cell = 'trimmed', grid = true },
+        })
+        util.assert_screen({
+            'BEFORE',
+            '┌───┬───┬──────────────────────────────┐',
+            '│ A │ B │                            C │',
+            '├━──┼━─━┼─────────────────────────────━┤',
+            '│ x │ y │                        short │',
+            '├───┼───┼──────────────────────────────┤',
+            '│ z │ w │  one two three four five six │',
+            '│   │   │         seven eight nine ten │',
+            '├───┼───┼──────────────────────────────┤',
+            '│ a │ b │                          end │',
+            '└───┴───┴──────────────────────────────┘',
+            'AFTER',
+        })
+    end)
+
     it('virtual borders', function()
         util.setup.text(mixed, {
             pipe_table = { cell = 'trimmed', border_virtual = true },

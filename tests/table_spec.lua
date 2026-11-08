@@ -160,6 +160,29 @@ describe('table', function()
         })
     end)
 
+    it('grid', function()
+        util.setup.text(lines, {
+            pipe_table = { grid = true },
+        })
+
+        util.assert_screen({
+            '┌───────────┬────────────────────────┐',
+            '│ Heading 1 │              Heading 2 │',
+            '├───────────┼───────────────────────━┤',
+            '│ Item 行   │                 󰖟 link │',
+            '├───────────┼────────────────────────┤',
+            '│ 1         │                 Itém 2 │',
+            '├───────────┼────────────────────────┤',
+            '│ Regular   │                 󱗖 link │',
+            '└───────────┴────────────────────────┘',
+            '┌───────────┬───────────┐',
+            '│ Heading 1 │ Heading 2 │',
+            '├───────────┼───────────┤',
+            '│ Item 1    │ Item 2    │',
+            '└───────────┴───────────┘',
+        })
+    end)
+
     it('raw', function()
         util.setup.text(lines, {
             pipe_table = { cell = 'raw' },

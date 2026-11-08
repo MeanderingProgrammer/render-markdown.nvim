@@ -718,6 +718,8 @@ require('render-markdown').setup({
         cell = 'padded',
         -- Fit wide tables to the current window by wrapping individual cells.
         wrap = true,
+        -- Draw a horizontal line between every body row.
+        grid = false,
         -- Adjust the computed width of table cells using custom logic.
         cell_offset = function()
             return 0
@@ -1494,6 +1496,8 @@ require('render-markdown').setup({
         cell = 'padded',
         -- Fit wide tables to the current window by wrapping individual cells.
         wrap = true,
+        -- Draw a horizontal line between every body row.
+        grid = false,
         -- Adjust the computed width of table cells using custom logic.
         cell_offset = function()
             return 0

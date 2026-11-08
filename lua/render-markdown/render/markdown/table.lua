@@ -43,6 +43,8 @@ function Render:run()
                 self:border_row(row, 'above', lines)
             elseif i == #self.data.rows and self.config.border_enabled then
                 self:border_row(row, 'below', lines)
+            elseif i > 1 and i < #self.data.rows and self.config.grid then
+                self:border_row(row, 'body', lines)
             end
         end
 
@@ -234,13 +236,20 @@ end
 
 ---@private
 ---@param row render.md.table.Row
----@param position 'above'|'below'
+---@param position 'above'|'body'|'below'
 ---@param lines? render.md.mark.Line[]
 function Render:border_row(row, position, lines)
-    local target_row, target = row.node:line(position, 1)
-    local virtual = self.config.border_virtual
-        or not (target and str.width(target) == 0)
-        or not self.context.used:take(target_row)
+    local start_row = row.node.start_row
+    local virtual = true
+    if position ~= 'body' then
+        -- needed for type narrowing
+        position = position == 'above' and 'above' or 'below'
+        local target_row, target = row.node:line(position, 1)
+        virtual = self.config.border_virtual
+            or not (target and str.width(target) == 0)
+            or not self.context.used:take(target_row)
+        start_row = virtual and start_row or target_row
+    end
 
     local line = self:line()
         :pad(self.data.layout.col)
@@ -248,7 +257,7 @@ function Render:border_row(row, position, lines)
         :get()
 
     if not virtual then
-        self.marks:add(self.config, 'table_border', target_row, 0, {
+        self.marks:add(self.config, 'table_border', start_row, 0, {
             virt_text = line,
             virt_text_pos = 'overlay',
         })
@@ -257,7 +266,6 @@ function Render:border_row(row, position, lines)
         if lines then
             table.insert(lines, position == 'above' and 1 or #lines + 1, line)
         else
-            local start_row = row.node.start_row
             self.marks:add(self.config, 'virtual_lines', start_row, 0, {
                 virt_lines = { line },
                 virt_lines_above = position == 'above',
