@@ -193,6 +193,8 @@ function Handler:item(node)
     local position = self.config.position
     if position == 'center' and node:height() > 1 then
         position = 'above'
+    elseif position == 'replace' and node:height() == 1 then
+        position = 'center'
     end
 
     local above, below = 0, 0
@@ -266,16 +268,24 @@ function Handler:render(row, items)
             below[i] = line .. str.pad(prefix) .. body
         end
 
-        -- update current width of lines
-        current = current + prefix + item.width
+        -- replace: conceal source and show rendered output
+        if item.position == 'replace' then
+            local lines = iter.list.map(item.output, function(line)
+                return indent:copy():text(line, highlight):get()
+            end)
+            self.marks:replace(self.config, item.node, lines)
+        else
+            -- update current width of lines
+            current = current + prefix + item.width
 
-        -- render center line
-        if item.position == 'center' then
-            self.marks:over(self.config, 'latex', item.node, {
-                virt_text = { { item.output[item.above + 1], highlight } },
-                virt_text_pos = 'inline',
-                conceal = '',
-            })
+            -- render center line
+            if item.position == 'center' then
+                self.marks:over(self.config, 'latex', item.node, {
+                    virt_text = { { item.output[item.above + 1], highlight } },
+                    virt_text_pos = 'inline',
+                    conceal = '',
+                })
+            end
         end
     end
 

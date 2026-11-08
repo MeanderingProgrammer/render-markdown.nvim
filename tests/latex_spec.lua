@@ -135,4 +135,45 @@ describe('latex', function()
             '',
         })
     end)
+
+    it('replace', function()
+        local replace_lines = {
+            '',
+            '$$' .. m22.input .. '$$',
+            '',
+            '$$' .. m33.input .. '$$',
+            '',
+        }
+        util.setup.text(replace_lines, {
+            latex = { converter = 'utftex', position = 'replace' },
+        })
+        util.assert_screen({
+            '',
+            '⎛1  2⎞',
+            '⎝3  4⎠',
+            '',
+            '⎛1  2  3⎞',
+            '⎜4  5  6⎟',
+            '⎝7  8  9⎠',
+            '',
+        })
+    end)
+
+    it('replace inline', function()
+        local inline_lines = {
+            'Here is an equation $x = y$ in this sentence.',
+            'Another $a + b = c$ here.',
+        }
+        util.system.mock('utftex', {
+            ['x = y'] = { 'x = y' },
+            ['a + b = c'] = { 'a + b = c' },
+        })
+        util.setup.text(inline_lines, {
+            latex = { converter = 'utftex', position = 'replace' },
+        })
+        util.assert_screen({
+            'Here is an equation x = y in this sentence.',
+            'Another a + b = c here.',
+        })
+    end)
 end)
