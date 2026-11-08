@@ -261,6 +261,33 @@ describe('table wrapping', function()
         })
     end)
 
+    it('quote grid', function()
+        util.setup.text({
+            'BEFORE',
+            '',
+            '> | A | B |',
+            '> | - | - |',
+            '> | 1 | 2 |',
+            '> | 3 | 4 |',
+            '> | 5 | 6 |',
+            '',
+            'AFTER',
+        }, { pipe_table = { cell = 'trimmed', grid = true } })
+        util.assert_screen({
+            'BEFORE',
+            '  ┌───┬───┐',
+            '▋ │ A │ B │',
+            '▋ ├───┼───┤',
+            '▋ │ 1 │ 2 │',
+            '▋ ├───┼───┤',
+            '▋ │ 3 │ 4 │',
+            '▋ ├───┼───┤',
+            '▋ │ 5 │ 6 │',
+            '  └───┴───┘',
+            'AFTER',
+        })
+    end)
+
     it('section indentation', function()
         util.setup.text({
             '# Section',

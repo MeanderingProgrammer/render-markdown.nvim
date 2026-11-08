@@ -5,6 +5,9 @@
 ### Features
 
 - add optional buf arg to get API [82918ef](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/82918efec990b831135d23626ed9486e895c5265)
+- grid style table [#661](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/661)
+  [#710](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/710)
+  [de8ef99](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/de8ef998f4b50de23771999fade54a87719a3567)
 
 ### Bug Fixes
 
@@ -16,6 +19,7 @@
 ### Collaborator Shoutouts
 
 - @trent-howard
+- @StudentWeis
 
 ## 8.14.0 (2026-09-14)
 

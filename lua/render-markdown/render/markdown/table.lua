@@ -239,9 +239,13 @@ end
 ---@param position 'above'|'body'|'below'
 ---@param lines? render.md.mark.Line[]
 function Render:border_row(row, position, lines)
-    local start_row = row.node.start_row
     local virtual = true
-    if position ~= 'body' then
+    local start_row = row.node.start_row
+    local line = self:line()
+
+    if position == 'body' then
+        line:extend(self.data.prefixes[start_row])
+    else
         -- needed for type narrowing
         position = position == 'above' and 'above' or 'below'
         local target_row, target = row.node:line(position, 1)
@@ -249,28 +253,28 @@ function Render:border_row(row, position, lines)
             or not (target and str.width(target) == 0)
             or not self.context.used:take(target_row)
         start_row = virtual and start_row or target_row
+        line:pad(self.data.layout.col)
     end
 
-    local line = self:line()
-        :pad(self.data.layout.col)
-        :extend(self:border_line(position, {}))
-        :get()
+    line:extend(self:border_line(position, {}))
 
     if not virtual then
         self.marks:add(self.config, 'table_border', start_row, 0, {
-            virt_text = line,
+            virt_text = line:get(),
             virt_text_pos = 'overlay',
         })
+        return
+    end
+
+    local output = self:indent():line(true):extend(line):get()
+    if lines then
+        local index = position == 'above' and 1 or #lines + 1
+        table.insert(lines, index, output)
     else
-        line = self:indent():line(true):extend(line):get()
-        if lines then
-            table.insert(lines, position == 'above' and 1 or #lines + 1, line)
-        else
-            self.marks:add(self.config, 'virtual_lines', start_row, 0, {
-                virt_lines = { line },
-                virt_lines_above = position == 'above',
-            })
-        end
+        self.marks:add(self.config, 'virtual_lines', start_row, 0, {
+            virt_lines = { output },
+            virt_lines_above = position == 'above',
+        })
     end
 end
 
