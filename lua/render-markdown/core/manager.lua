@@ -1,6 +1,7 @@
 local env = require('render-markdown.lib.env')
 local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
+local str = require('render-markdown.lib.str')
 local ui = require('render-markdown.core.ui')
 
 ---@class render.md.Manager
@@ -147,7 +148,11 @@ function M.should_attach(buf)
 
     local file_type = env.buf.get(buf, 'filetype')
     local file_types = state.file_types
-    if not vim.tbl_contains(file_types, file_type) then
+    local matches = vim.tbl_contains(file_types, file_type)
+    for _, ft in ipairs(str.split(file_type, '.', true)) do
+        matches = matches or vim.tbl_contains(file_types, ft)
+    end
+    if not matches then
         local reason = ('%s /∈ %s'):format(file_type, vim.inspect(file_types))
         log.attach(buf, 'skip', 'file type', reason)
         return false
