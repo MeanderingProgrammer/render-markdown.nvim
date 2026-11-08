@@ -8,6 +8,8 @@
 - grid style table [#661](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/661)
   [#710](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/710)
   [de8ef99](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/de8ef998f4b50de23771999fade54a87719a3567)
+- prefix link kind [c1f257f](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/c1f257fdbc7641d3a14f6ce12152e456df561d2a)
+- add replace latex position [#718](https://github.com/MeanderingProgrammer/render-markdown.nvim/pull/718)
 
 ### Bug Fixes
 
@@ -20,6 +22,7 @@
 
 - @trent-howard
 - @StudentWeis
+- @hirak99
 
 ## 8.14.0 (2026-09-14)
 

@@ -268,7 +268,6 @@ function Handler:render(row, items)
             below[i] = line .. str.pad(prefix) .. body
         end
 
-        -- replace: conceal source and show rendered output
         if item.position == 'replace' then
             local lines = iter.list.map(item.output, function(line)
                 return indent:copy():text(line, highlight):get()
