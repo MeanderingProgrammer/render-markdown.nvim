@@ -58,11 +58,7 @@ end
 ---@param ranges render.md.Range[]
 function M.sort(ranges)
     table.sort(ranges, function(a, b)
-        if a[1] ~= b[1] then
-            return a[1] < b[1]
-        else
-            return a[2] < b[2]
-        end
+        return a[1] == b[1] and a[2] < b[2] or a[1] < b[1]
     end)
 end
 

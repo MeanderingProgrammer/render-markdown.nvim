@@ -7,6 +7,14 @@ local iter = require('render-markdown.lib.iter')
 local log = require('render-markdown.core.log')
 local str = require('render-markdown.lib.str')
 
+---@class render.md.latex.Item
+---@field node render.md.Node
+---@field output string[]
+---@field width integer
+---@field position render.md.latex.Position
+---@field above integer
+---@field below integer
+
 ---@class render.md.handler.buf.Latex
 ---@field private context render.md.request.Context
 ---@field private marks render.md.Marks
@@ -62,8 +70,8 @@ function Handler:run(root, last)
             Handler.cache[input] = 'error'
         end
         local rows = self:rows(nodes)
-        for row, row_nodes in pairs(rows) do
-            self:render(row, row_nodes)
+        for row, items in pairs(rows) do
+            self:render(row, items)
         end
     end
 
@@ -127,14 +135,12 @@ end
 
 ---@private
 ---@param nodes render.md.Node[]
----@return table<integer, render.md.Node[]>
+---@return table<integer, render.md.latex.Item[]>
 function Handler:rows(nodes)
-    local position = self.config.position
-
     ---@param node render.md.Node
     ---@return integer, integer
     local function get(node)
-        if position == 'below' and node:height() > 1 then
+        if self.config.position == 'below' and node:height() > 1 then
             return node.end_row, 0
         else
             return node.start_row, node.start_col
@@ -144,140 +150,151 @@ function Handler:rows(nodes)
     table.sort(nodes, function(a, b)
         local a_row, a_col = get(a)
         local b_row, b_col = get(b)
-        if a_row ~= b_row then
-            return a_row < b_row
-        else
-            return a_col < b_col
-        end
+        return a_row == b_row and a_col < b_col or a_row < b_row
     end)
 
-    local result = {} ---@type table<integer, render.md.Node[]>
+    local result = {} ---@type table<integer, render.md.latex.Item[]>
     for _, node in ipairs(nodes) do
-        local node_row = get(node)
-        if not result[node_row] then
-            result[node_row] = {}
+        local item = self:item(node)
+        if item then
+            local row = get(node)
+            result[row] = result[row] or {}
+            local items = result[row]
+            items[#items + 1] = item
         end
-        local row = result[node_row]
-        row[#row + 1] = node
     end
     return result
 end
 
 ---@private
+---@param node render.md.Node
+---@return render.md.latex.Item?
+function Handler:item(node)
+    local output = str.split(Handler.cache[Handler.input(node)], '\n', true)
+    if #output == 0 then
+        return nil
+    end
+
+    -- add top and bottom padding
+    for _ = 1, self.config.top_pad do
+        table.insert(output, 1, '')
+    end
+    for _ = 1, self.config.bottom_pad do
+        output[#output + 1] = ''
+    end
+
+    -- pad lines to the same width
+    local width = vim.fn.max(iter.list.map(output, str.width))
+    for i, line in ipairs(output) do
+        output[i] = line .. str.pad(width - str.width(line))
+    end
+
+    -- determine position based on config and height
+    local position = self.config.position
+    if position == 'center' and node:height() > 1 then
+        position = 'above'
+    end
+
+    local above, below = 0, 0
+    if position == 'above' then
+        above = #output
+    elseif position == 'below' then
+        below = #output
+    elseif position == 'center' then
+        above = math.floor(#output / 2)
+        below = #output - above - 1
+    end
+
+    ---@type render.md.latex.Item
+    return {
+        node = node,
+        output = output,
+        width = width,
+        position = position,
+        above = above,
+        below = below,
+    }
+end
+
+---@private
 ---@param row integer
----@param nodes render.md.Node[]
-function Handler:render(row, nodes)
-    local first = nodes[1]
-    local indent = self:indent(first)
+---@param items render.md.latex.Item[]
+function Handler:render(row, items)
+    local max_above, max_below = 0, 0
+    for _, item in ipairs(items) do
+        max_above = math.max(max_above, item.above)
+        max_below = math.max(max_below, item.below)
+    end
 
-    local lines_above = {} ---@type string[]
-    local lines_below = {} ---@type string[]
+    local indent = self:indent(items[1].node)
+    local highlight = self.config.highlight
+
     local current = 0
+    local above = vim.fn['repeat']({ '' }, max_above) ---@type string[]
+    local below = vim.fn['repeat']({ '' }, max_below) ---@type string[]
 
-    for _, node in ipairs(nodes) do
-        local output = str.split(Handler.cache[Handler.input(node)], '\n', true)
-        if #output > 0 then
-            -- add top and bottom padding around output
-            for _ = 1, self.config.top_pad do
-                table.insert(output, 1, '')
-            end
-            for _ = 1, self.config.bottom_pad do
-                output[#output + 1] = ''
-            end
+    for _, item in ipairs(items) do
+        -- absolute formula column
+        local column ---@type integer
+        if item.position == 'below' and item.node:height() > 1 then
+            -- latex blocks include last line, unlike markdown blocks
+            local _, line = item.node:line('below', 1)
+            column = line and str.spaces('start', line) or 0
+        else
+            local _, line = item.node:line('first', 0)
+            column = self.context:width({
+                text = line and line:sub(1, item.node.start_col) or '',
+                start_row = item.node.start_row,
+                start_col = 0,
+                end_row = item.node.start_row,
+                end_col = item.node.start_col,
+            })
+        end
 
-            -- pad lines to the same width
-            local width = vim.fn.max(iter.list.map(output, str.width))
-            for i, line in ipairs(output) do
-                output[i] = line .. str.pad(width - str.width(line))
-            end
+        -- convert column to relative offset, include padding between formulas
+        local prefix = math.max(column - current, current == 0 and 0 or 1)
 
-            -- center is only possible if formula is a single line
-            local position = self.config.position
-            if position == 'center' and node:height() > 1 then
-                position = 'above'
-            end
+        -- concatenate output onto lines
+        for i, line in ipairs(above) do
+            local index = i - (#above - item.above)
+            local body = item.output[index] or str.pad(item.width)
+            above[i] = line .. str.pad(prefix) .. body
+        end
+        for i, line in ipairs(below) do
+            local index = i + (#item.output - item.below)
+            local body = item.output[index] or str.pad(item.width)
+            below[i] = line .. str.pad(prefix) .. body
+        end
 
-            -- absolute formula column
-            local col ---@type integer
-            if position == 'below' and node:height() > 1 then
-                -- latex blocks include last line, unlike markdown blocks
-                local _, line = node:line('below', 1)
-                col = line and str.spaces('start', line) or 0
-            else
-                local _, line = node:line('first', 0)
-                col = self.context:width({
-                    text = line and line:sub(1, node.start_col) or '',
-                    start_row = node.start_row,
-                    start_col = 0,
-                    end_row = node.start_row,
-                    end_col = node.start_col,
-                })
-            end
+        -- update current width of lines
+        current = current + prefix + item.width
 
-            -- convert column to relative offset, include padding between formulas
-            local prefix = math.max(col - current, current == 0 and 0 or 1)
-
-            local above ---@type integer
-            local below ---@type integer
-            if position == 'above' then
-                above = #output
-                below = 0
-            elseif position == 'below' then
-                above = 0
-                below = #output
-            else
-                assert(node:height() == 1, 'invalid center height')
-                local center = math.floor(#output / 2) + 1
-                above = center - 1
-                below = #output - center
-                self.marks:over(self.config, 'latex', node, {
-                    virt_text = { { output[center], self.config.highlight } },
-                    virt_text_pos = 'inline',
-                    conceal = '',
-                })
-            end
-
-            -- fill in new lines at top and bottom
-            while #lines_above < above do
-                table.insert(lines_above, 1, str.pad(current))
-            end
-            while #lines_below < below do
-                lines_below[#lines_below + 1] = str.pad(current)
-            end
-
-            -- concatenate output onto lines
-            for i, line in ipairs(lines_above) do
-                local index = i - (#lines_above - above)
-                local body = output[index] or str.pad(width)
-                lines_above[i] = line .. str.pad(prefix) .. body
-            end
-            for i, line in ipairs(lines_below) do
-                local index = i + (#output - below)
-                local body = output[index] or str.pad(width)
-                lines_below[i] = line .. str.pad(prefix) .. body
-            end
-
-            -- update current width of lines
-            current = current + prefix + width
+        -- render center line
+        if item.position == 'center' then
+            self.marks:over(self.config, 'latex', item.node, {
+                virt_text = { { item.output[item.above + 1], highlight } },
+                virt_text_pos = 'inline',
+                conceal = '',
+            })
         end
     end
 
     ---@param lines string[]
-    ---@param above boolean
-    local function add_lines(lines, above)
+    ---@param position 'above'|'below'
+    local function add_lines(lines, position)
         if #lines == 0 then
             return
         end
         self.marks:add(self.config, 'virtual_lines', row, 0, {
             virt_lines = iter.list.map(lines, function(line)
-                return indent:copy():text(line, self.config.highlight):get()
+                return indent:copy():text(line, highlight):get()
             end),
-            virt_lines_above = above,
+            virt_lines_above = position == 'above',
         })
     end
 
-    add_lines(lines_above, true)
-    add_lines(lines_below, false)
+    add_lines(above, 'above')
+    add_lines(below, 'below')
 end
 
 ---@private
@@ -292,9 +309,8 @@ function Handler:indent(node)
     })
     if not markdown then
         return self.context.config:line()
-    else
-        return Indent.new(self.context, Node.new(buf, markdown)):line(true)
     end
+    return Indent.new(self.context, Node.new(buf, markdown)):line(true)
 end
 
 ---@class render.md.handler.Latex: render.md.Handler
