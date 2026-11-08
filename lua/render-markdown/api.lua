@@ -26,9 +26,17 @@ function M.render(ctx)
     end
 end
 
+---@param buf? integer
 ---@return boolean
-function M.get()
-    return require('render-markdown.state').enabled
+function M.get(buf)
+    local state = require('render-markdown.state')
+
+    if buf then
+        local config = state.get_config(buf)
+        return config and config.enabled or false
+    else
+        return state.enabled
+    end
 end
 
 ---@param enable? boolean
