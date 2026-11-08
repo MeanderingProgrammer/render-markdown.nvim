@@ -45,6 +45,12 @@ function M.get(buf, custom)
     return assert(M.cache[buf], 'missing buffer config')
 end
 
+---@param buf integer
+---@return render.md.buf.Config?
+function M.get_config(buf)
+    return M.cache[buf]
+end
+
 function M.attach()
     require('render-markdown.core.ts').init()
     if M.completions.lsp.enabled then

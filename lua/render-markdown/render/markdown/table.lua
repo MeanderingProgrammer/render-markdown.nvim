@@ -253,31 +253,9 @@ function Render:border(wrapped)
     local rows = self.data.rows
     local border = self.config.border
 
-    ---@param row render.md.table.Row
-    ---@return boolean
-    local function width_equal(row)
-        if vim.tbl_contains({ 'trimmed', 'padded' }, self.config.cell) then
-            -- assume table was modified to match
-            return true
-        elseif self.config.cell == 'raw' then
-            -- want the computed widths to match
-            for i, cell in ipairs(row.cells) do
-                if cell.width ~= self.data.cols[i].width then
-                    return false
-                end
-            end
-            return true
-        elseif self.config.cell == 'overlay' then
-            -- want the underlying text widths to match
-            return str.width(row.node.text) == str.width(self.data.delim.text)
-        else
-            return false
-        end
-    end
-
     local first = rows[1]
     local last = rows[#rows]
-    if not width_equal(first) or not width_equal(last) then
+    if not self:border_equal(first) or not self:border_equal(last) then
         return
     end
 
@@ -322,6 +300,29 @@ function Render:border(wrapped)
     table_border(1, true, { border[1], border[2], border[3] })
     if #rows > 1 then
         table_border(#rows, false, { border[7], border[8], border[9] })
+    end
+end
+
+---@private
+---@param row render.md.table.Row
+---@return boolean
+function Render:border_equal(row)
+    if vim.tbl_contains({ 'trimmed', 'padded' }, self.config.cell) then
+        -- assume table was modified to match
+        return true
+    elseif self.config.cell == 'raw' then
+        -- want the computed widths to match
+        for i, cell in ipairs(row.cells) do
+            if cell.width ~= self.data.cols[i].width then
+                return false
+            end
+        end
+        return true
+    elseif self.config.cell == 'overlay' then
+        -- want the underlying text widths to match
+        return str.width(row.node.text) == str.width(self.data.delim.text)
+    else
+        return false
     end
 end
 

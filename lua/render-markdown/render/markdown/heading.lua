@@ -220,20 +220,21 @@ function Render:background(box)
     if not highlight then
         return
     end
-    local padding = self:line()
-    local win_col = 0
-    if self.data.width == 'block' then
-        padding:pad(vim.o.columns * 2)
-        win_col = box.margin + box.body + self:indent():size(self.data.level)
-    end
     local col = self.node.start_col
+    local win_col = 0
+    local padding = self:line()
+    if self.data.width == 'block' then
+        local indent = self:indent():size(self.data.level)
+        win_col = col + box.margin + box.body + indent
+        padding:pad(vim.o.columns * 2)
+    end
     for row = self.node.start_row, self.node.end_row - 1 do
         self.marks:add(self.config, 'head_background', row, col, {
             end_row = row + 1,
             hl_group = highlight,
             hl_eol = true,
         })
-        if not padding:empty() and win_col > 0 then
+        if win_col > 0 then
             -- overwrite anything beyond width with padding
             self.marks:add(self.config, 'head_background', row, col, {
                 priority = 0,
@@ -276,7 +277,7 @@ function Render:border(box, above)
     local width = self.data.width == 'block' and box.body or vim.o.columns
     local icon = above and self.config.above or self.config.below
 
-    local line = self:line():pad(box.margin)
+    local line = self:line():pad(self.node.start_col + box.margin)
     line:rep(icon, box.padding, bg)
     line:rep(icon, prefix, fg)
     line:rep(icon, width - box.padding - prefix, bg)

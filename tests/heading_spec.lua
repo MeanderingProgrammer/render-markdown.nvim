@@ -21,6 +21,8 @@ describe('heading', function()
         'Ext Heading 2',
         'Ext Heading 2 Line 2',
         '---',
+        '',
+        '> # Nested Heading',
     }
 
     it('default', function()
@@ -43,6 +45,8 @@ describe('heading', function()
             '',
             '󰫎 󰲣 Ext Heading 2',
             '    Ext Heading 2 Line 2',
+            '',
+            '󰫎 ▋ 󰲡 Nested Heading',
         })
     end)
 
@@ -73,6 +77,9 @@ describe('heading', function()
             '',
             '󰫎 󰲣 Ext Heading 2',
             '    Ext Heading 2 Line 2',
+            '    ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
+            '󰫎 ▋ 󰲡 Nested Heading',
+            '    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
         })
     end)
 
@@ -103,6 +110,9 @@ describe('heading', function()
             '',
             '󰫎 󰲣 Ext Heading 2',
             '    Ext Heading 2 Line 2',
+            '    ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
+            '󰫎 ▋ 󰲡 Nested Heading',
+            '    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
         })
     end)
 
@@ -126,6 +136,8 @@ describe('heading', function()
             '',
             '󰫎 󰲣 Ext Heading 2',
             '    Ext Heading 2 Line 2',
+            '',
+            '󰫎 ▋ 󰲡 Nested Heading',
         })
     end)
 
@@ -161,6 +173,10 @@ describe('heading', function()
             '',
             '󰫎 󰲣 Ext Heading 2',
             '    Ext Heading 2 Line 2',
+            '',
+            '    ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
+            '󰫎 ▋ 󰲡 Nested Heading',
+            '    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
         })
     end)
 
@@ -191,6 +207,9 @@ describe('heading', function()
             '',
             '󰫎 󰲣 Ext Heading 2',
             '    Ext Heading 2 Line 2',
+            '    ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
+            '󰫎 ▋ 󰲡 Nested Heading',
+            '    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
         })
     end)
 
@@ -214,6 +233,8 @@ describe('heading', function()
             '',
             '󰫎 Ext Heading 2 󰲣',
             '  Ext Heading 2 Line 2',
+            '',
+            '󰫎 ▋ Nested Heading 󰲡',
         })
     end)
 
@@ -244,6 +265,9 @@ describe('heading', function()
             '',
             '󰫎 Ext Heading 2 󰲣',
             '  Ext Heading 2 Line 2',
+            '    ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
+            '󰫎 ▋ Nested Heading 󰲡',
+            '    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀',
         })
     end)
 
@@ -267,6 +291,8 @@ describe('heading', function()
             '',
             '󰫎                              󰲣 Ext Heading 2',
             '                                 Ext Heading 2 Line 2',
+            '',
+            '󰫎 ▋                                 󰲡 Nested Heading',
         })
     end)
 
@@ -290,6 +316,8 @@ describe('heading', function()
             '',
             '󰫎 Ext Heading 2                                                               󰲣',
             '  Ext Heading 2 Line 2',
+            '',
+            '󰫎 ▋ Nested Heading                                                            󰲡',
         })
     end)
 end)
