@@ -1292,6 +1292,7 @@ M.link = {}
 ---@enum render.md.link.custom.Kind
 M.link.kind = {
     pattern = 'pattern',
+    prefix = 'prefix',
     suffix = 'suffix',
     url = 'url',
 }
@@ -1357,6 +1358,7 @@ M.link.default = {
     -- | pattern   | matched against the destination text                            |
     -- | kind      | optional determines how pattern is checked                      |
     -- |           | pattern | @see :h lua-patterns, is the default if not set       |
+    -- |           | prefix  | @see :h vim.startswith()                              |
     -- |           | suffix  | @see :h vim.endswith()                                |
     -- |           | url     | similar to pattern with additional prefix checks      |
     -- | priority  | optional used when multiple match, uses pattern length if empty |
