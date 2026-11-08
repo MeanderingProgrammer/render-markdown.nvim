@@ -260,6 +260,7 @@ function Render:border_row(row, position, lines)
 
     if not virtual then
         self.marks:add(self.config, 'table_border', start_row, 0, {
+            priority = self.config.border_priority,
             virt_text = line:get(),
             virt_text_pos = 'overlay',
         })

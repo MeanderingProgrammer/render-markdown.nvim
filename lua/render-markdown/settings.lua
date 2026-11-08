@@ -1645,6 +1645,7 @@ M.pipe_table = {}
 ---@field min_width integer
 ---@field border string[]
 ---@field border_enabled boolean
+---@field border_priority? integer
 ---@field border_virtual boolean
 ---@field alignment_indicator string
 ---@field head string
@@ -1718,6 +1719,8 @@ M.pipe_table.default = {
     },
     -- Turn on / off top & bottom lines.
     border_enabled = true,
+    -- Priority to assign to table border.
+    border_priority = nil,
     -- Always use virtual lines for table borders instead of attempting to use empty lines.
     -- Will be automatically enabled if indentation module is enabled.
     border_virtual = false,
@@ -1746,6 +1749,7 @@ function M.pipe_table.schema()
         min_width = { type = 'number' },
         border = { list = { type = 'string' } },
         border_enabled = { type = 'boolean' },
+        border_priority = { optional = true, type = 'number' },
         border_virtual = { type = 'boolean' },
         alignment_indicator = { type = 'string' },
         head = { type = 'string' },

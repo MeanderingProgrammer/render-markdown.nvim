@@ -293,6 +293,7 @@
 ---@field min_width? integer
 ---@field border? string[]
 ---@field border_enabled? boolean
+---@field border_priority? integer
 ---@field border_virtual? boolean
 ---@field alignment_indicator? string
 ---@field head? string
