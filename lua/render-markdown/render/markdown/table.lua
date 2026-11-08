@@ -29,19 +29,23 @@ end
 ---@protected
 function Render:run()
     self:delimiter()
-    local wrapped = {} ---@type table<integer, render.md.mark.Line[]>
+
     for i, row in ipairs(self.data.rows) do
+        local lines = nil ---@type render.md.mark.Line[]?
         if self.data.layout.wrap and not self:row_fits(row) then
-            wrapped[i] = self:wrapped_row(row)
+            lines = self:wrapped_row(row)
         else
             self:row(row)
         end
-    end
-    if self.config.border_enabled and self.data.layout.valid then
-        self:border(wrapped)
-    end
-    for i, row in ipairs(self.data.rows) do
-        local lines = wrapped[i]
+
+        if self.data.layout.valid and self:border_equal(row) then
+            if i == 1 and self.config.border_enabled then
+                self:border_row(row, 'above', lines)
+            elseif i == #self.data.rows and self.config.border_enabled then
+                self:border_row(row, 'below', lines)
+            end
+        end
+
         if lines then
             self.marks:replace(self.config, row.node, lines)
         end
@@ -51,49 +55,56 @@ end
 ---@private
 function Render:delimiter()
     local delim = self.data.delim
-    local border = self.config.border
-    local indicator = self.config.alignment_indicator
 
-    local icon = border[11]
-    local parts = iter.list.map(self.data.cols, function(col)
-        -- must have enough space to put the alignment indicator
-        -- alignment indicator must be exactly one character wide
-        -- do not put an indicator for default alignment
-        local add_indicator = col.width >= 3
-            and str.width(indicator) == 1
-            and col.alignment ~= Parser.Alignment.default
-        if not add_indicator then
-            return icon:rep(col.width)
-        end
-        if col.alignment == Parser.Alignment.left then
-            return indicator .. icon:rep(col.width - 1)
-        elseif col.alignment == Parser.Alignment.right then
-            return icon:rep(col.width - 1) .. indicator
-        else
-            return indicator .. icon:rep(col.width - 2) .. indicator
-        end
-    end)
-    local delimiter = border[4] .. table.concat(parts, border[5]) .. border[6]
-
+    local replace = false
     if self.data.layout.wrap and env.win.get(self.context.win, 'wrap') then
         local _, source = delim:line('first', 0)
         local width = str.width(source) + self:indent():size()
-        if width > env.win.width(self.context.win) then
-            local line = self:line()
-            line:extend(self.data.prefixes[delim.start_row])
-            line:text(delimiter, self.config.head)
-            self.marks:replace(self.config, delim, { line:get() })
-            return
-        end
+        replace = width > env.win.width(self.context.win)
     end
+
+    local delimiter = self:border_line('body', { delimiter = true })
+
     local line = self:line()
-    line:pad(str.spaces('start', delim.text))
-    line:text(delimiter, self.config.head)
-    line:pad(str.width(delim.text) - line:width())
-    self.marks:over(self.config, 'table_border', delim, {
-        virt_text = line:get(),
-        virt_text_pos = 'overlay',
-    })
+    if replace then
+        line:extend(self.data.prefixes[delim.start_row])
+        line:extend(delimiter)
+        self.marks:replace(self.config, delim, { line:get() })
+    else
+        line:pad(str.spaces('start', delim.text))
+        line:extend(delimiter)
+        line:pad(str.width(delim.text) - line:width())
+        self.marks:over(self.config, 'table_border', delim, {
+            virt_text = line:get(),
+            virt_text_pos = 'overlay',
+        })
+    end
+end
+
+---@private
+---@param row render.md.table.Row
+---@return boolean
+function Render:row_fits(row)
+    local added = self.context.inline:width(row.node)
+    for i, cell in ipairs(row.cells) do
+        local col = self.data.cols[i]
+        local units = assert(cell.units, 'missing cell units')
+        local width = Parser.measure(units)
+        if width + 2 * self.config.padding > col.width then
+            return false
+        end
+        local left, right = self:shifts(col, cell)
+        if width ~= cell.width - cell.space.left - cell.space.right then
+            return false
+        end
+        added = added + math.max(left, 0) + math.max(right, 0) ---@type integer
+    end
+    if env.win.get(self.context.win, 'wrap') then
+        local _, source = row.node:line('first', 0)
+        local width = str.width(source) + self:indent():size() + added
+        return width <= env.win.width(self.context.win)
+    end
+    return true
 end
 
 ---@private
@@ -124,32 +135,6 @@ function Render:row(row)
             virt_text_pos = 'overlay',
         })
     end
-end
-
----@private
----@param row render.md.table.Row
----@return boolean
-function Render:row_fits(row)
-    local added = self.context.inline:width(row.node)
-    for i, cell in ipairs(row.cells) do
-        local col = self.data.cols[i]
-        local units = assert(cell.units, 'missing cell units')
-        local width = Parser.measure(units)
-        if width + 2 * self.config.padding > col.width then
-            return false
-        end
-        local left, right = self:shifts(col, cell)
-        if width ~= cell.width - cell.space.left - cell.space.right then
-            return false
-        end
-        added = added + math.max(left, 0) + math.max(right, 0) ---@type integer
-    end
-    if env.win.get(self.context.win, 'wrap') then
-        local _, source = row.node:line('first', 0)
-        local width = str.width(source) + self:indent():size() + added
-        return width <= env.win.width(self.context.win)
-    end
-    return true
 end
 
 ---@private
@@ -248,59 +233,80 @@ function Render:shift(node, side, amount)
 end
 
 ---@private
----@param wrapped table<integer, render.md.mark.Line[]>
-function Render:border(wrapped)
-    local rows = self.data.rows
-    local border = self.config.border
+---@param row render.md.table.Row
+---@param position 'above'|'below'
+---@param lines? render.md.mark.Line[]
+function Render:border_row(row, position, lines)
+    local target_row, target = row.node:line(position, 1)
+    local virtual = self.config.border_virtual
+        or not (target and str.width(target) == 0)
+        or not self.context.used:take(target_row)
 
-    local first = rows[1]
-    local last = rows[#rows]
-    if not self:border_equal(first) or not self:border_equal(last) then
-        return
-    end
+    local line = self:line()
+        :pad(self.data.layout.col)
+        :extend(self:border_line(position, {}))
+        :get()
 
-    local icon = border[11]
-    local parts = iter.list.map(self.data.cols, function(col)
-        return icon:rep(col.width)
-    end)
-
-    ---@param index integer
-    ---@param above boolean
-    ---@param chars [string, string, string]
-    local function table_border(index, above, chars)
-        local item = rows[index]
-        local text = chars[1] .. table.concat(parts, chars[2]) .. chars[3]
-        local highlight = above and self.config.head or self.config.row
-        local line = self:line():pad(self.data.layout.col):text(text, highlight)
-
-        local virtual = self.config.border_virtual
-        local row, target = item.node:line(above and 'above' or 'below', 1)
-        local available = target and str.width(target) == 0
-
-        if not virtual and available and self.context.used:take(row) then
-            self.marks:add(self.config, 'table_border', row, 0, {
-                virt_text = line:get(),
-                virt_text_pos = 'overlay',
-            })
+    if not virtual then
+        self.marks:add(self.config, 'table_border', target_row, 0, {
+            virt_text = line,
+            virt_text_pos = 'overlay',
+        })
+    else
+        line = self:indent():line(true):extend(line):get()
+        if lines then
+            table.insert(lines, position == 'above' and 1 or #lines + 1, line)
         else
-            local virtual_line = self:indent():line(true):extend(line):get()
-            local lines = wrapped[index]
-            if lines then
-                table.insert(lines, above and 1 or #lines + 1, virtual_line)
-            else
-                local start_row = item.node.start_row
-                self.marks:add(self.config, 'virtual_lines', start_row, 0, {
-                    virt_lines = { virtual_line },
-                    virt_lines_above = above,
-                })
-            end
+            local start_row = row.node.start_row
+            self.marks:add(self.config, 'virtual_lines', start_row, 0, {
+                virt_lines = { line },
+                virt_lines_above = position == 'above',
+            })
         end
     end
+end
 
-    table_border(1, true, { border[1], border[2], border[3] })
-    if #rows > 1 then
-        table_border(#rows, false, { border[7], border[8], border[9] })
-    end
+---@private
+---@param position 'above'|'body'|'below'
+---@param opts { delimiter?: boolean }
+---@return render.md.mark.Line
+function Render:border_line(position, opts)
+    local border = self.config.border
+    local indicator = self.config.alignment_indicator
+    local base = border[11]
+
+    local parts = iter.list.map(self.data.cols, function(col)
+        if
+            -- must be on delimiter node
+            not opts.delimiter
+            -- must have enough space to put the alignment indicator
+            or col.width < 3
+            -- alignment indicator must be exactly one character wide
+            or str.width(indicator) ~= 1
+            -- default alignment does not include an indicator
+            or col.alignment == Parser.Alignment.default
+        then
+            return base:rep(col.width)
+        elseif col.alignment == Parser.Alignment.left then
+            return indicator .. base:rep(col.width - 1)
+        elseif col.alignment == Parser.Alignment.right then
+            return base:rep(col.width - 1) .. indicator
+        else
+            return indicator .. base:rep(col.width - 2) .. indicator
+        end
+    end)
+
+    local index = ({ above = 1, body = 4, below = 7 })[position]
+
+    local text = border[index]
+        .. table.concat(parts, border[index + 1])
+        .. border[index + 2]
+
+    local highlight = (position == 'above' or opts.delimiter)
+            and self.config.head
+        or self.config.row
+
+    return self:line():text(text, highlight):get()
 end
 
 ---@private
