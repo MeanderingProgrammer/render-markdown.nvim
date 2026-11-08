@@ -72,7 +72,7 @@ function Updater:start()
         return
     end
     self.decorator:schedule(
-        self:changed() and not env.buf.empty(self.buf),
+        self:changed() and not self.force and not env.buf.empty(self.buf),
         self.config.debounce,
         log.runtime('update', function()
             self:run()

@@ -2,6 +2,7 @@
 ---@field buf integer
 ---@field win? integer|integer[]
 ---@field event? string
+---@field force? boolean
 ---@field config? render.md.partial.UserConfig
 
 ---@class render.md.Api
@@ -17,12 +18,13 @@ function M.render(ctx)
     local buf = ctx.buf
     local wins = list.ensure(ctx.win or env.buf.wins(buf))
     local event = ctx.event or 'Api'
+    local force = ctx.force ~= false
 
     state.get(buf, ctx.config)
     state.attach()
 
     for _, win in ipairs(wins) do
-        ui.update(buf, win, event, true)
+        ui.update(buf, win, event, force)
     end
 end
 
