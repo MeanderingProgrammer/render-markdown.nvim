@@ -232,13 +232,14 @@ end
 ---@param start_row integer
 ---@param end_row integer
 function Render:background(start_row, end_row)
-    local padding = self:line()
-    local win_col = 0
-    if self.config.width == 'block' then
-        padding:pad(vim.o.columns * 2)
-        win_col = self.data.margin + self.data.body + self:indent():size()
-    end
     local col = self.node.start_col
+    local win_col = 0
+    local padding = self:line()
+    if self.config.width == 'block' then
+        local indent = self:indent():size()
+        win_col = self.data.margin + self.data.body + indent
+        padding:pad(vim.o.columns * 2)
+    end
     for row = start_row, end_row do
         self.marks:add(self.config, 'code_background', row, col, {
             end_row = row + 1,
@@ -246,7 +247,7 @@ function Render:background(start_row, end_row)
             hl_group = self.config.highlight,
             hl_eol = true,
         })
-        if not padding:empty() and win_col > 0 then
+        if win_col > 0 then
             -- overwrite anything beyond width with padding
             self.marks:add(self.config, 'code_background', row, col, {
                 priority = 0,
