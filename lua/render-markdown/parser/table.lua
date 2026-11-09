@@ -140,24 +140,30 @@ function Parser:parse(root, marks)
         end
     end
 
+    -- Prefixes also align virtual lines (e.g. grid borders) when wrapping is disabled.
     local prefixes = {} ---@type table<integer, render.md.mark.Line>
-    if layout.wrap then
-        local indent = Indent.new(self.context, root):line(true)
-        local prefix_width = 0
+    local indent = Indent.new(self.context, root):line(true)
+    local prefix_width = 0
 
-        ---@param node render.md.Node
-        local function prefix(node)
-            local expanded = self.context.config:line()
-            local line = indent:copy():extend(
-                display.prefix(self.context, marks:get(), node)
-            )
-            for _, unit in ipairs(Parser.units(line:get())) do
-                expanded:text(unit.text, unit.highlight)
-            end
-            prefixes[node.start_row] = expanded:get()
-            prefix_width = math.max(prefix_width, expanded:width())
+    ---@param node render.md.Node
+    local function prefix(node)
+        local expanded = self.context.config:line()
+        local line = indent
+            :copy()
+            :extend(display.prefix(self.context, marks:get(), node))
+        for _, unit in ipairs(Parser.units(line:get())) do
+            expanded:text(unit.text, unit.highlight)
         end
+        prefixes[node.start_row] = expanded:get()
+        prefix_width = math.max(prefix_width, expanded:width())
+    end
 
+    prefix(delim)
+    for _, row in ipairs(rows) do
+        prefix(row.node)
+    end
+
+    if layout.wrap then
         local desired = {} ---@type integer[]
         local minimum = {} ---@type integer[]
         local padding = self.config.padding
@@ -166,9 +172,7 @@ function Parser:parse(root, marks)
             minimum[i] = math.max(self.config.min_width, 2 * padding + 1)
         end
 
-        prefix(delim)
         for _, row in ipairs(rows) do
-            prefix(row.node)
             for i, cell in ipairs(row.cells) do
                 local node = cell.node
                 local left = str.spaces('start', node.text)
