@@ -140,27 +140,28 @@ function Parser:parse(root, marks)
         end
     end
 
-    -- Prefixes also align virtual lines (e.g. grid borders) when wrapping is disabled.
     local prefixes = {} ---@type table<integer, render.md.mark.Line>
-    local indent = Indent.new(self.context, root):line(true)
     local prefix_width = 0
+    if layout.wrap or self.config.grid then
+        local indent = Indent.new(self.context, root):line(true)
 
-    ---@param node render.md.Node
-    local function prefix(node)
-        local expanded = self.context.config:line()
-        local line = indent
-            :copy()
-            :extend(display.prefix(self.context, marks:get(), node))
-        for _, unit in ipairs(Parser.units(line:get())) do
-            expanded:text(unit.text, unit.highlight)
+        ---@param node render.md.Node
+        local function prefix(node)
+            local expanded = self.context.config:line()
+            local line = indent:copy():extend(
+                display.prefix(self.context, marks:get(), node)
+            )
+            for _, unit in ipairs(Parser.units(line:get())) do
+                expanded:text(unit.text, unit.highlight)
+            end
+            prefixes[node.start_row] = expanded:get()
+            prefix_width = math.max(prefix_width, expanded:width())
         end
-        prefixes[node.start_row] = expanded:get()
-        prefix_width = math.max(prefix_width, expanded:width())
-    end
 
-    prefix(delim)
-    for _, row in ipairs(rows) do
-        prefix(row.node)
+        prefix(delim)
+        for _, row in ipairs(rows) do
+            prefix(row.node)
+        end
     end
 
     if layout.wrap then
