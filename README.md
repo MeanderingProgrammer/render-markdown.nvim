@@ -924,6 +924,10 @@ require('render-markdown').setup({
         skip_heading = false,
         -- Prefix added when indenting, one per level.
         icon = '▎',
+        -- Determines how the icon is drawn when sections are nested.
+        -- | stack     | one icon per level                                  |
+        -- | innermost | only the innermost level, outer levels are padded   |
+        style = 'stack',
         -- Priority to assign to extmarks.
         priority = 0,
         -- Applied to icon.
@@ -1749,6 +1753,10 @@ require('render-markdown').setup({
         skip_heading = false,
         -- Prefix added when indenting, one per level.
         icon = '▎',
+        -- Determines how the icon is drawn when sections are nested.
+        -- | stack     | one icon per level                                  |
+        -- | innermost | only the innermost level, outer levels are padded   |
+        style = 'stack',
         -- Priority to assign to extmarks.
         priority = 0,
         -- Applied to icon.

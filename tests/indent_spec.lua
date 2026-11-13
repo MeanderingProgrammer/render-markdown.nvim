@@ -169,4 +169,110 @@ describe('indent', function()
             '  ▎   ▎   ▎   Bar',
         })
     end)
+    local nested = {
+        '# Heading 1',
+        '',
+        '## Heading 2',
+        '',
+        'Foo',
+        '',
+        '### Heading 3',
+        '',
+        '| Foo | Bar |',
+        '| --- | --- |',
+        '',
+        '#### Heading 4',
+        '',
+        'Bar',
+        '',
+        '## Heading 2',
+        '',
+        'Baz',
+    }
+
+    it('with innermost', function()
+        util.setup.text(nested, {
+            indent = { enabled = true, style = 'innermost' },
+        })
+
+        util.assert_screen({
+            '󰫎 󰲡 Heading 1',
+            '',
+            '󰫎 ▎  󰲣 Heading 2',
+            '  ▎',
+            '  ▎ Foo',
+            '',
+            '󰫎   ▎   󰲥 Heading 3',
+            '    ▎',
+            '    ▎ ┌─────┬─────┐',
+            '    ▎ │ Foo │ Bar │',
+            '    ▎ ├─────┼─────┤',
+            '',
+            '󰫎     ▎    󰲧 Heading 4',
+            '      ▎',
+            '      ▎ Bar',
+            '',
+            '󰫎 ▎  󰲣 Heading 2',
+            '  ▎',
+            '  ▎ Baz',
+        })
+    end)
+    it('with innermost & skip_heading', function()
+        util.setup.text(nested, {
+            indent = { enabled = true, style = 'innermost', skip_heading = true },
+        })
+
+        util.assert_screen({
+            '󰫎 󰲡 Heading 1',
+            '',
+            '󰫎  󰲣 Heading 2',
+            '',
+            '  ▎ Foo',
+            '  ▎',
+            '󰫎 ▎   󰲥 Heading 3',
+            '',
+            '    ▎ ┌─────┬─────┐',
+            '    ▎ │ Foo │ Bar │',
+            '    ▎ ├─────┼─────┤',
+            '    ▎',
+            '󰫎   ▎    󰲧 Heading 4',
+            '',
+            '      ▎ Bar',
+            '',
+            '󰫎  󰲣 Heading 2',
+            '',
+            '  ▎ Baz',
+        })
+    end)
+
+    it('with innermost & heading border', function()
+        util.setup.text(nested, {
+            heading = { border = true },
+            indent = { enabled = true, style = 'innermost' },
+        })
+
+        local w = vim.o.columns
+        util.assert_screen({
+            '󰫎 󰲡 Heading 1',
+            '  ' .. ('▀'):rep(w - 2),
+            '  ▎ ' .. ('▄'):rep(w - 4),
+            '󰫎 ▎  󰲣 Heading 2',
+            '  ▎ ' .. ('▀'):rep(w - 4),
+            '  ▎ Foo',
+            '      ' .. ('▄'):rep(w - 6),
+            '󰫎   ▎   󰲥 Heading 3',
+            '    ▎ ' .. ('▀'):rep(w - 6),
+            '    ▎ ┌─────┬─────┐',
+            '    ▎ │ Foo │ Bar │',
+            '    ▎ ├─────┼─────┤',
+            '        ' .. ('▄'):rep(w - 8),
+            '󰫎     ▎    󰲧 Heading 4',
+            '      ▎ ' .. ('▀'):rep(w - 8),
+            '      ▎ Bar',
+            '    ' .. ('▄'):rep(w - 4),
+            '󰫎 ▎  󰲣 Heading 2',
+            '  ▎ ' .. ('▀'):rep(w - 4),
+            '  ▎ Baz',
+        })
+    end)
 end)
