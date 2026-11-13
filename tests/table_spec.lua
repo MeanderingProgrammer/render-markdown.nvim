@@ -183,6 +183,55 @@ describe('table', function()
         })
     end)
 
+    it('grid without wrap', function()
+        util.setup.text(lines, {
+            pipe_table = { grid = true, wrap = false },
+        })
+
+        util.assert_screen({
+            '┌───────────┬────────────────────────┐',
+            '│ Heading 1 │              Heading 2 │',
+            '├───────────┼───────────────────────━┤',
+            '│ Item 行   │                 󰖟 link │',
+            '├───────────┼────────────────────────┤',
+            '│ 1         │                 Itém 2 │',
+            '├───────────┼────────────────────────┤',
+            '│ Regular   │                 󱗖 link │',
+            '└───────────┴────────────────────────┘',
+            '┌───────────┬───────────┐',
+            '│ Heading 1 │ Heading 2 │',
+            '├───────────┼───────────┤',
+            '│ Item 1    │ Item 2    │',
+            '└───────────┴───────────┘',
+        })
+    end)
+
+    it('grid without wrap in list', function()
+        util.setup.text({
+            '',
+            '- item',
+            '  | A | B |',
+            '  | --- | --- |',
+            '  | 1 | 2 |',
+            '  | 3 | 4 |',
+            '',
+        }, {
+            pipe_table = { grid = true, wrap = false },
+        })
+
+        util.assert_screen({
+            '',
+            '● item',
+            '  ┌─────┬─────┐',
+            '  │ A   │ B   │',
+            '  ├─────┼─────┤',
+            '  │ 1   │ 2   │',
+            '  ├─────┼─────┤',
+            '  │ 3   │ 4   │',
+            '  └─────┴─────┘',
+        })
+    end)
+
     it('raw', function()
         util.setup.text(lines, {
             pipe_table = { cell = 'raw' },
