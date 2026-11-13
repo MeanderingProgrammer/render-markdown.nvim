@@ -6,6 +6,7 @@ local replacements = require('render-markdown.lib.replacements')
 ---@field private buf integer
 ---@field private timer uv.uv_timer_t
 ---@field private running boolean
+---@field private pending? fun()
 ---@field private marks render.md.Extmark[]
 ---@field private generated render.md.Extmark[]
 ---@field private tick integer?
@@ -20,6 +21,7 @@ function Decorator.new(buf)
     self.buf = buf
     self.timer = assert(compat.uv.new_timer())
     self.running = false
+    self.pending = nil
     self.marks = {}
     self.generated = {}
     self.tick = nil
@@ -100,10 +102,20 @@ function Decorator:schedule(debounce, ms, callback)
     if debounce and ms > 0 then
         self.timer:start(ms, 0, function()
             self.running = false
+            -- run the latest update skipped while running, otherwise it is lost
+            local pending = self.pending
+            self.pending = nil
+            if pending then
+                vim.schedule(function()
+                    self:schedule(debounce, ms, pending)
+                end)
+            end
         end)
         if not self.running then
             self.running = true
             vim.schedule(callback)
+        else
+            self.pending = callback
         end
     else
         vim.schedule(callback)
