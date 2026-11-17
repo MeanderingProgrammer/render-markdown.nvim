@@ -1,5 +1,9 @@
 local str = require('render-markdown.lib.str')
 
+---@class render.md.request.context.Offset
+---@field col integer
+---@field line render.md.mark.Line
+
 ---@class render.md.request.Context
 ---@field buf integer
 ---@field win integer
@@ -11,6 +15,7 @@ local str = require('render-markdown.lib.str')
 ---@field highlights render.md.request.Highlights
 ---@field inline render.md.request.Inline
 ---@field latex render.md.request.Latex
+---@field offset table<integer, render.md.request.context.Offset>
 ---@field used render.md.request.Used
 local Context = {}
 Context.__index = Context
@@ -33,6 +38,7 @@ function Context.new(buf, win, config, view)
         require('render-markdown.request.highlights').new(buf, view)
     self.inline = require('render-markdown.request.inline').new()
     self.latex = require('render-markdown.request.latex').new()
+    self.offset = {}
     self.used = require('render-markdown.request.used').new()
     return self
 end
