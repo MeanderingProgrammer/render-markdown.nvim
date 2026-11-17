@@ -1063,8 +1063,15 @@ M.indent = {}
 ---@field skip_level integer
 ---@field skip_heading boolean
 ---@field icon string
+---@field style render.md.indent.Style
 ---@field priority integer
 ---@field highlight string
+
+---@enum render.md.indent.Style
+M.indent.style = {
+    stack = 'stack',
+    innermost = 'innermost',
+}
 
 ---@type render.md.indent.Config
 M.indent.default = {
@@ -1084,6 +1091,10 @@ M.indent.default = {
     skip_heading = false,
     -- Prefix added when indenting, one per level.
     icon = '▎',
+    -- Determines how the icon is drawn when sections are nested.
+    -- | stack     | one icon per level                                  |
+    -- | innermost | only the innermost level, outer levels are padded   |
+    style = 'stack',
     -- Priority to assign to extmarks.
     priority = 0,
     -- Applied to icon.
@@ -1097,6 +1108,7 @@ function M.indent.schema()
         skip_level = { type = 'number' },
         skip_heading = { type = 'boolean' },
         icon = { type = 'string' },
+        style = { enum = M.indent.style },
         priority = { type = 'number' },
         highlight = { type = 'string' },
     })

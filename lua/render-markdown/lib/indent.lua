@@ -33,9 +33,13 @@ function Indent:line(virtual, level)
         if icon_width == 0 then
             line:pad(self.config.per_level * level)
         else
-            for _ = 1, level do
-                line:text(self.config.icon, self.config.highlight)
-                line:pad(self.config.per_level - icon_width)
+            for i = 1, level do
+                if self.config.style == 'innermost' and i < level then
+                    line:pad(self.config.per_level)
+                else
+                    line:text(self.config.icon, self.config.highlight)
+                    line:pad(self.config.per_level - icon_width)
+                end
             end
         end
     end
