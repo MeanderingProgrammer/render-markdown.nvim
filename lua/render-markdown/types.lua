@@ -175,6 +175,7 @@
 ---@field border_prefix? boolean
 ---@field above? string
 ---@field below? string
+---@field show_underline? boolean
 ---@field backgrounds? string[]
 ---@field foregrounds? string[]
 ---@field custom? table<string, render.md.heading.Custom>

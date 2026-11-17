@@ -109,9 +109,11 @@ function Render:run()
         self:border(box, true)
         self:border(box, false)
     else
-        local node = self.data.marker
-        self.marks:over(self.config, true, node, { conceal = '' })
-        self.marks:over(self.config, true, node, { conceal_lines = '' })
+        if not self.config.show_underline then
+            local node = self.data.marker
+            self.marks:over(self.config, true, node, { conceal = '' })
+            self.marks:over(self.config, true, node, { conceal_lines = '' })
+        end
     end
 end
 

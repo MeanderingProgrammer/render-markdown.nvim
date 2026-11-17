@@ -801,6 +801,7 @@ M.heading = {}
 ---@field border_prefix boolean
 ---@field above string
 ---@field below string
+---@field show_underline boolean
 ---@field backgrounds string[]
 ---@field foregrounds string[]
 ---@field custom table<string, render.md.heading.Custom>
@@ -893,6 +894,8 @@ M.heading.default = {
     above = '▄',
     -- Used below heading for border.
     below = '▀',
+    -- Show underline under setext headings.
+    show_underline = false,
     -- Highlight for the heading icon and extends through the entire line.
     -- Output is evaluated by `clamp(value, context.level)`.
     backgrounds = {
@@ -967,6 +970,7 @@ function M.heading.schema()
         border_prefix = { type = 'boolean' },
         above = { type = 'string' },
         below = { type = 'string' },
+        show_underline = { type = 'boolean' },
         backgrounds = { list = { type = 'string' } },
         foregrounds = { list = { type = 'string' } },
         custom = { map = { { type = 'string' }, custom } },

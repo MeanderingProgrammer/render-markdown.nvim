@@ -1,5 +1,5 @@
 *render-markdown.txt*                       Improve viewing Markdown in Neovim
-                             For NVIM v0.12.6    Last change: 2026 November 12
+                             For NVIM v0.12.6    Last change: 2026 November 16
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -462,6 +462,8 @@ Default Configuration ~
             above = '▄',
             -- Used below heading for border.
             below = '▀',
+            -- Show underline under setext headings.
+            show_underline = false,
             -- Highlight for the heading icon and extends through the entire line.
             -- Output is evaluated by `clamp(value, context.level)`.
             backgrounds = {
@@ -1154,6 +1156,8 @@ Heading Configuration ~
             above = '▄',
             -- Used below heading for border.
             below = '▀',
+            -- Show underline under setext headings.
+            show_underline = false,
             -- Highlight for the heading icon and extends through the entire line.
             -- Output is evaluated by `clamp(value, context.level)`.
             backgrounds = {

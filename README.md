@@ -395,6 +395,8 @@ require('render-markdown').setup({
         above = '▄',
         -- Used below heading for border.
         below = '▀',
+        -- Show underline under setext headings.
+        show_underline = false,
         -- Highlight for the heading icon and extends through the entire line.
         -- Output is evaluated by `clamp(value, context.level)`.
         backgrounds = {
@@ -1089,6 +1091,8 @@ require('render-markdown').setup({
         above = '▄',
         -- Used below heading for border.
         below = '▀',
+        -- Show underline under setext headings.
+        show_underline = false,
         -- Highlight for the heading icon and extends through the entire line.
         -- Output is evaluated by `clamp(value, context.level)`.
         backgrounds = {
