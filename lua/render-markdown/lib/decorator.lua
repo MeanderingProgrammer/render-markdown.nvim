@@ -6,6 +6,7 @@ local replacements = require('render-markdown.lib.replacements')
 ---@field private buf integer
 ---@field private timer uv.uv_timer_t
 ---@field private running boolean
+---@field private pending? fun()
 ---@field private marks render.md.Extmark[]
 ---@field private generated render.md.Extmark[]
 ---@field private tick integer?
@@ -98,16 +99,33 @@ end
 ---@param callback fun()
 function Decorator:schedule(debounce, ms, callback)
     if debounce and ms > 0 then
-        self.timer:start(ms, 0, function()
-            self.running = false
-        end)
-        if not self.running then
+        if self.running then
+            -- within the window, remember the latest request so the final
+            -- state (e.g. where scrolling stopped) is always rendered
+            self.pending = callback
+        else
             self.running = true
             vim.schedule(callback)
+            self:throttle(ms)
         end
     else
         vim.schedule(callback)
     end
+end
+
+---@private
+---@param ms integer
+function Decorator:throttle(ms)
+    self.timer:start(ms, 0, function()
+        local pending = self.pending
+        self.pending = nil
+        if pending then
+            vim.schedule(pending)
+            self:throttle(ms)
+        else
+            self.running = false
+        end
+    end)
 end
 
 ---@private
