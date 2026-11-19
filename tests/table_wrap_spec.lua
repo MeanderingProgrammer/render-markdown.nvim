@@ -110,6 +110,40 @@ describe('table wrapping', function()
         })
     end)
 
+    it('extmarks from other plugins', function()
+        util.setup.text({
+            '',
+            '| A | B |',
+            '| - | - |',
+            '| x | \\alpha one two three four five six seven eight |',
+            '',
+        }, {
+            debounce = 0,
+            pipe_table = { cell = 'trimmed' },
+            win_options = { conceallevel = { rendered = 2 } },
+        })
+        local buf = vim.api.nvim_get_current_buf()
+        local ns = vim.api.nvim_create_namespace('other')
+        vim.api.nvim_buf_set_extmark(buf, ns, 3, 6, {
+            end_col = 12,
+            conceal = 'α',
+        })
+        vim.api.nvim_buf_set_extmark(buf, ns, 3, 12, {
+            virt_text = { { '!' } },
+            virt_text_pos = 'inline',
+        })
+        require('render-markdown').render({ buf = buf })
+        vim.wait(0)
+        util.assert_screen({
+            '┌───┬──────────────────────────────────┐',
+            '│ A │ B                                │',
+            '├───┼──────────────────────────────────┤',
+            '│ x │ α! one two three four five six   │',
+            '│   │ seven eight                      │',
+            '└───┴──────────────────────────────────┘',
+        })
+    end)
+
     it('delimiter wider than the window', function()
         util.setup.text({
             'BEFORE',

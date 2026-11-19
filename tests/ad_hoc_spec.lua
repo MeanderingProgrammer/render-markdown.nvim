@@ -90,4 +90,13 @@ describe('ad hoc', function()
         marks:add({ 0, 0 }, { 0, 16 }, util.conceal())
         util.assert_view(marks, { '' })
     end)
+
+    it('update skipped while debouncing', function()
+        util.setup.text({ '# Heading' })
+        util.assert_screen({ '󰫎 󰲡 Heading' })
+        -- the render above starts the debounce, this update arrives during it
+        require('render-markdown').disable()
+        vim.wait(200)
+        util.assert_screen({ '# Heading' })
+    end)
 end)
